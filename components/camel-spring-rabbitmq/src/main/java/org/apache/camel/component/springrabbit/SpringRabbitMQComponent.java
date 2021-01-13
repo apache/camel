@@ -29,12 +29,12 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.util.ErrorHandler;
 
-import static org.apache.camel.component.springrabbit.RabbitMQEndpoint.ARG_PREFIX;
+import static org.apache.camel.component.springrabbit.SpringRabbitMQEndpoint.ARG_PREFIX;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
 
 @Component("spring-rabbitmq")
-public class RabbitMQComponent extends HeaderFilterStrategyComponent {
+public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
 
     @Metadata(autowired = true,
               description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
@@ -95,7 +95,7 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
         super.doInit();
 
         if (getHeaderFilterStrategy() == null) {
-            setHeaderFilterStrategy(new RabbitMQHeaderFilterStrategy());
+            setHeaderFilterStrategy(new SpringRabbitMQHeaderFilterStrategy());
         }
         if (messageConverter == null) {
             messageConverter = new DefaultMessageConverter(getCamelContext());
@@ -107,7 +107,7 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        RabbitMQEndpoint endpoint = new RabbitMQEndpoint(uri, this, remaining);
+        SpringRabbitMQEndpoint endpoint = new SpringRabbitMQEndpoint(uri, this, remaining);
         endpoint.setConnectionFactory(connectionFactory);
         endpoint.setTestConnectionOnStartup(testConnectionOnStartup);
         endpoint.setMessageConverter(messageConverter);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.springrabbit.integration;
 
+import java.nio.charset.Charset;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -101,6 +104,30 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         Message out = template.receive("myqueue");
         Assertions.assertEquals("foo", new String(out.getBody()));
         Assertions.assertEquals("baz", out.getMessageProperties().getHeader("bar"));
+    }
+
+    @Test
+    public void testProducerContentType() throws Exception {
+        ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
+
+        Queue q = new Queue("myqueue");
+        TopicExchange t = new TopicExchange("foo");
+
+        AmqpAdmin admin = new RabbitAdmin(cf);
+        admin.declareQueue(q);
+        admin.declareExchange(t);
+        admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
+
+        template.sendBodyAndHeader("direct:start", "<price>123</price>", Exchange.CONTENT_TYPE, "application/xml");
+
+        AmqpTemplate template = new RabbitTemplate(cf);
+        Message out = template.receive("myqueue");
+
+        String encoding = out.getMessageProperties().getContentEncoding();
+        Assertions.assertEquals(Charset.defaultCharset().name(), encoding);
+        Assertions.assertEquals("<price>123</price>", new String(out.getBody(), encoding));
+        Assertions.assertEquals("application/xml", out.getMessageProperties().getContentType());
+        Assertions.assertEquals(0, out.getMessageProperties().getHeaders().size());
     }
 
     @Override

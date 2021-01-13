@@ -167,7 +167,7 @@ to("spring-rabbitmq:default?routingKey=foo")
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
 In development mode it may be desirable to let Camel automatic do this.
-You can enable this by setting `autoDeclare=true` on the `RabbitMQComponent`.
+You can enable this by setting `autoDeclare=true` on the `SpringRabbitMQComponent`.
 
 Then Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
 
@@ -203,6 +203,16 @@ See details in the RabbitMQ documentation.
 You can also configure any additional `x-` arguments, such as the message time to live, via `x-message-ttl`, and many others.
 See details in the RabbitMQ documentation.
 
+== Mapping from Camel to RabbitMQ
+
+The message body is mapped from Camel Message body to a `byte[]` which is the type that RabbitMQ uses for message body.
+Camel wil use its type converter to convert the message body to byte array.
+
+Spring Rabbit comes out of the box with support for mapping Java serialized objects but Camel Spring RabbitMQ
+does *not* support this due to security vulnerabilities and using Java objects is a bad design as it enforces strong coupling.
+
+Custom message headers is mapped from Camel Message headers to RabbitMQ headers. This behaviour can be customized by configuring
+a new implementation of `HeaderFilterStrategy` on the Camel component.
 
 == Request / Reply
 

@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.springframework.amqp.core.MessageProperties;
 
 public class DefaultMessagePropertiesConverter implements MessagePropertiesConverter {
@@ -38,6 +39,10 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
     @Override
     public MessageProperties toMessageProperties(Exchange exchange) {
         MessageProperties answer = new MessageProperties();
+        String contentType = ExchangeHelper.getContentType(exchange);
+        if (contentType != null) {
+            answer.setContentType(contentType);
+        }
 
         Set<Map.Entry<String, Object>> entries = exchange.getMessage().getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
@@ -59,6 +64,9 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
                 String headerName = entry.getKey();
                 Object headerValue = entry.getValue();
                 appendInputHeader(answer, headerName, headerValue, exchange);
+            }
+            if (messageProperties.getContentType() != null) {
+                answer.put(Exchange.CONTENT_TYPE, messageProperties.getContentType());
             }
         }
 

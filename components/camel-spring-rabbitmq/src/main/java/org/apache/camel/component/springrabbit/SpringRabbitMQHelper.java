@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.springrabbit;
 
-public final class RabbitMQHelper {
+public final class SpringRabbitMQHelper {
 
-    private RabbitMQHelper() {
+    private SpringRabbitMQHelper() {
     }
 
     public static boolean isDefaultExchange(String exchangeName) {
         return exchangeName == null || exchangeName.isEmpty()
-                || exchangeName.equalsIgnoreCase(RabbitMQConstants.DEFAULT_EXCHANGE_NAME);
+                || exchangeName.equalsIgnoreCase(SpringRabbitMQConstants.DEFAULT_EXCHANGE_NAME);
     }
 }

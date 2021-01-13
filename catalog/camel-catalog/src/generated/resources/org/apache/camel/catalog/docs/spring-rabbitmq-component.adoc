@@ -167,7 +167,7 @@ to("spring-rabbitmq:default?routingKey=foo")
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
 In development mode it may be desirable to let Camel automatic do this.
-You can enable this by setting `autoDeclare=true` on the `RabbitMQComponent`.
+You can enable this by setting `autoDeclare=true` on the `SpringRabbitMQComponent`.
 
 Then Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
 

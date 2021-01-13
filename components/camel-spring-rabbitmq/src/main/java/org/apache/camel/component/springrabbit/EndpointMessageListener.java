@@ -39,13 +39,13 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
 
-    private final RabbitMQEndpoint endpoint;
+    private final SpringRabbitMQEndpoint endpoint;
     private final AsyncProcessor processor;
     private RabbitTemplate template;
     private boolean disableReplyTo;
     private boolean async;
 
-    public EndpointMessageListener(RabbitMQEndpoint endpoint, Processor processor) {
+    public EndpointMessageListener(SpringRabbitMQEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
@@ -149,7 +149,7 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
 
     protected Exchange createExchange(Message message, Channel channel, Object replyDestination) {
         Exchange exchange = endpoint.createExchange(message);
-        exchange.setProperty(RabbitMQConstants.CHANNEL, channel);
+        exchange.setProperty(SpringRabbitMQConstants.CHANNEL, channel);
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
@@ -168,11 +168,11 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
 
         private final Message message;
         private final Exchange exchange;
-        private final RabbitMQEndpoint endpoint;
+        private final SpringRabbitMQEndpoint endpoint;
         private final boolean sendReply;
         private final Address replyDestination;
 
-        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, RabbitMQEndpoint endpoint,
+        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, SpringRabbitMQEndpoint endpoint,
                                                      boolean sendReply, Address replyDestination) {
             this.message = message;
             this.exchange = exchange;
@@ -256,6 +256,8 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                 mp.setCorrelationId(cid);
                 msg = endpoint.getMessageConverter().toMessage(body, mp);
             }
+
+            // TODO: Exchange.CONTENT_TYPE
 
             // send reply back
             if (LOG.isDebugEnabled()) {

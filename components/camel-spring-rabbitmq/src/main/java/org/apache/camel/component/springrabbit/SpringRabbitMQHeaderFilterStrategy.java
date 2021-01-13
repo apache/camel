@@ -18,15 +18,19 @@ package org.apache.camel.component.springrabbit;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class SpringRabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-    public RabbitMQHeaderFilterStrategy() {
+    public SpringRabbitMQHeaderFilterStrategy() {
         initialize();
     }
 
     protected void initialize() {
-        setOutFilterPattern("CamelRabbitmq.*");
-        setInFilterPattern("CamelRabbitmq.*");
+        this.getOutFilter().add("content-encoding");
+        this.getOutFilter().add("content-length");
+        this.getOutFilter().add("content-type");
+        this.setLowerCase(true);
+        this.setOutFilterPattern(CAMEL_FILTER_PATTERN);
+        this.setInFilterPattern(CAMEL_FILTER_PATTERN);
     }
 
 }

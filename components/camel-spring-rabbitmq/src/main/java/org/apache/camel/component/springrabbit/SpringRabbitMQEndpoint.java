@@ -52,7 +52,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 @UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
              syntax = "spring-rabbitmq:exchangeName",
              category = { Category.MESSAGING })
-public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
+public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public static final String ARG_PREFIX = "arg.";
     public static final String CONSUMER_ARG_PREFIX = "consumer.";
@@ -63,7 +63,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public static final String DLQ_QUEUE_ARG_PREFIX = "dlq.queue.";
     public static final String DLQ_BINDING_PREFIX = "dlq.binding.";
 
-    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SpringRabbitMQEndpoint.class);
 
     @UriPath
     @Metadata(required = true,
@@ -148,14 +148,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long replyTimeout = 5000;
 
-    public RabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
+    public SpringRabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
         super(endpointUri, component);
         this.exchangeName = exchangeName;
     }
 
     @Override
-    public RabbitMQComponent getComponent() {
-        return (RabbitMQComponent) super.getComponent();
+    public SpringRabbitMQComponent getComponent() {
+        return (SpringRabbitMQComponent) super.getComponent();
     }
 
     public String getExchangeName() {
@@ -332,7 +332,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new RabbitMQProducer(this);
+        return new SpringRabbitMQProducer(this);
     }
 
     public Exchange createExchange(Message message) {
@@ -487,7 +487,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                          + "reopening the connection.");
             }
 
-            String en = RabbitMQHelper.isDefaultExchange(getExchangeName()) ? "" : getExchangeName();
+            String en = SpringRabbitMQHelper.isDefaultExchange(getExchangeName()) ? "" : getExchangeName();
             ExchangeBuilder eb = new ExchangeBuilder(en, getExchangeType());
             eb.durable(durable);
             if (autoDelete) {
@@ -566,42 +566,42 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     private void prepareDeadLetterQueueArgs(Map<String, Object> args) {
         if (deadLetterExchange != null) {
-            args.put(RabbitMQConstants.DEAD_LETTER_EXCHANGE, deadLetterExchange);
+            args.put(SpringRabbitMQConstants.DEAD_LETTER_EXCHANGE, deadLetterExchange);
             if (deadLetterRoutingKey != null) {
-                args.put(RabbitMQConstants.DEAD_LETTER_ROUTING_KEY, deadLetterRoutingKey);
+                args.put(SpringRabbitMQConstants.DEAD_LETTER_ROUTING_KEY, deadLetterRoutingKey);
             }
         }
     }
 
     private void prepareArgs(Map<String, Object> args) {
         // some arguments must be in numeric values so we need to fix this
-        Object arg = args.get(RabbitMQConstants.MAX_LENGTH);
+        Object arg = args.get(SpringRabbitMQConstants.MAX_LENGTH);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.MAX_LENGTH, Long.parseLong((String) arg));
+            args.put(SpringRabbitMQConstants.MAX_LENGTH, Long.parseLong((String) arg));
         }
-        arg = args.get(RabbitMQConstants.MAX_LENGTH_BYTES);
+        arg = args.get(SpringRabbitMQConstants.MAX_LENGTH_BYTES);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.MAX_LENGTH_BYTES, Long.parseLong((String) arg));
+            args.put(SpringRabbitMQConstants.MAX_LENGTH_BYTES, Long.parseLong((String) arg));
         }
-        arg = args.get(RabbitMQConstants.MAX_PRIORITY);
+        arg = args.get(SpringRabbitMQConstants.MAX_PRIORITY);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.MAX_PRIORITY, Integer.parseInt((String) arg));
+            args.put(SpringRabbitMQConstants.MAX_PRIORITY, Integer.parseInt((String) arg));
         }
-        arg = args.get(RabbitMQConstants.DELIVERY_LIMIT);
+        arg = args.get(SpringRabbitMQConstants.DELIVERY_LIMIT);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.DELIVERY_LIMIT, Integer.parseInt((String) arg));
+            args.put(SpringRabbitMQConstants.DELIVERY_LIMIT, Integer.parseInt((String) arg));
         }
-        arg = args.get(RabbitMQConstants.MESSAGE_TTL);
+        arg = args.get(SpringRabbitMQConstants.MESSAGE_TTL);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.MESSAGE_TTL, Long.parseLong((String) arg));
+            args.put(SpringRabbitMQConstants.MESSAGE_TTL, Long.parseLong((String) arg));
         }
-        arg = args.get(RabbitMQConstants.EXPIRES);
+        arg = args.get(SpringRabbitMQConstants.EXPIRES);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.EXPIRES, Long.parseLong((String) arg));
+            args.put(SpringRabbitMQConstants.EXPIRES, Long.parseLong((String) arg));
         }
-        arg = args.get(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER);
+        arg = args.get(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER);
         if (arg instanceof String) {
-            args.put(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean((String) arg));
+            args.put(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean((String) arg));
         }
     }
 

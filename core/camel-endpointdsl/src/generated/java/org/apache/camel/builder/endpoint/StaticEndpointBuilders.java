@@ -14341,9 +14341,9 @@ public class StaticEndpointBuilders {
      * @param path exchangeName
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder springRabbitmq(
+    public static org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("spring-rabbitmq", path);
+        return org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.endpointBuilder("spring-rabbitmq", path);
     }
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
@@ -14366,10 +14366,10 @@ public class StaticEndpointBuilders {
      * @param path exchangeName
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder springRabbitmq(
+    public static org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spring Redis (camel-spring-redis)

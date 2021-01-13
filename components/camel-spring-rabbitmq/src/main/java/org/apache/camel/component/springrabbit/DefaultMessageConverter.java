@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.springrabbit;
 
-import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.support.converter.AbstractMessageConverter;
 import org.springframework.amqp.support.converter.MessageConversionException;
-import org.springframework.amqp.support.converter.SimpleMessageConverter;
 
-public class DefaultMessageConverter extends SimpleMessageConverter {
+public class DefaultMessageConverter extends AbstractMessageConverter {
 
+    private final String defaultCharset = Charset.defaultCharset().name();
     private final CamelContext camelContext;
 
     public DefaultMessageConverter(CamelContext camelContext) {
@@ -34,16 +37,54 @@ public class DefaultMessageConverter extends SimpleMessageConverter {
 
     @Override
     public Message createMessage(Object body, MessageProperties messageProperties) throws MessageConversionException {
-        if (body instanceof String || body instanceof byte[] || body instanceof Serializable) {
-            return super.createMessage(body, messageProperties);
+        boolean text = body instanceof String;
+        byte[] data;
+        try {
+            if (body instanceof String) {
+                String encoding = messageProperties.getContentEncoding();
+                if (encoding != null) {
+                    data = ((String) body).getBytes(encoding);
+                } else {
+                    data = ((String) body).getBytes(defaultCharset);
+                    messageProperties.setContentEncoding(defaultCharset);
+                }
+            } else {
+                data = camelContext.getTypeConverter().mandatoryConvertTo(byte[].class, body);
+            }
+        } catch (NoTypeConversionAvailableException | UnsupportedEncodingException e) {
+            throw new MessageConversionException(
+                    "failed to convert to byte[] for rabbitmq message", e);
         }
-        // favour byte[] at first
-        Object data = camelContext.getTypeConverter().convertTo(byte[].class, body);
-        if (data != null) {
-            return super.createMessage(data, messageProperties);
-        } else {
-            data = camelContext.getTypeConverter().convertTo(String.class, body);
-            return super.createMessage(data, messageProperties);
+        messageProperties.setContentLength(data.length);
+        Message answer = new Message(data, messageProperties);
+        if (MessageProperties.DEFAULT_CONTENT_TYPE.equals(messageProperties.getContentType()) && text) {
+            messageProperties.setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
         }
+        return answer;
+    }
+
+    @Override
+    public Object fromMessage(Message message) throws MessageConversionException {
+        Object content = null;
+        MessageProperties properties = message.getMessageProperties();
+        if (properties != null) {
+            String contentType = properties.getContentType();
+            if (contentType != null && contentType.startsWith("text")) {
+                String encoding = properties.getContentEncoding();
+                if (encoding == null) {
+                    encoding = defaultCharset;
+                }
+                try {
+                    content = new String(message.getBody(), encoding);
+                } catch (UnsupportedEncodingException e) {
+                    throw new MessageConversionException(
+                            "failed to convert text-based Message content", e);
+                }
+            }
+        }
+        if (content == null) {
+            content = message.getBody();
+        }
+        return content;
     }
 }
