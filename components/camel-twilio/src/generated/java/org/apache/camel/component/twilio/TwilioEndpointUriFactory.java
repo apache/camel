@@ -20,11 +20,10 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(68);
+        Set<String> props = new HashSet<>(67);
         props.add("apiName");
         props.add("endDate");
         props.add("pathConferenceSid");
-        props.add("synchronous");
         props.add("postalCode");
         props.add("initialDelay");
         props.add("body");

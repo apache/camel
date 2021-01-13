@@ -43,7 +43,6 @@ public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements
         case "repositoryId": target.getSessionFacade().setRepositoryId(property(camelContext, java.lang.String.class, value)); return true;
         case "sessionfacadefactory":
         case "sessionFacadeFactory": target.setSessionFacadeFactory(property(camelContext, org.apache.camel.component.cmis.CMISSessionFacadeFactory.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getSessionFacade().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -74,7 +73,6 @@ public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements
         case "repositoryId": return java.lang.String.class;
         case "sessionfacadefactory":
         case "sessionFacadeFactory": return org.apache.camel.component.cmis.CMISSessionFacadeFactory.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -106,7 +104,6 @@ public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements
         case "repositoryId": return target.getSessionFacade().getRepositoryId();
         case "sessionfacadefactory":
         case "sessionFacadeFactory": return target.getSessionFacadeFactory();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getSessionFacade().getUsername();
         default: return null;
         }

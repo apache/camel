@@ -123,7 +123,7 @@ with the following path and query parameters:
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element: arg.consumer. arg.exchange. arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue. arg.dlq.binding. For example to declare a queue with message ttl argument: args=arg.queue.x-message-ttl=60000 |  | Map
 | *messageConverter* (advanced) | To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message. |  | MessageConverter
 | *messagePropertiesConverter* (advanced) | To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties. |  | MessagePropertiesConverter
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
 |===
 // endpoint options: END
 

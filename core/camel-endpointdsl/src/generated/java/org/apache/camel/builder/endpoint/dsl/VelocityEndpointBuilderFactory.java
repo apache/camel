@@ -34,9 +34,6 @@ public interface VelocityEndpointBuilderFactory {
      * Builder for endpoint for the Velocity component.
      */
     public interface VelocityEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedVelocityEndpointBuilder advanced() {
-            return (AdvancedVelocityEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -263,50 +260,6 @@ public interface VelocityEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Velocity component.
-     */
-    public interface AdvancedVelocityEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default VelocityEndpointBuilder basic() {
-            return (VelocityEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVelocityEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVelocityEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface VelocityBuilders {
         /**
          * Velocity (camel-velocity)
@@ -364,7 +317,7 @@ public interface VelocityEndpointBuilderFactory {
     static VelocityEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class VelocityEndpointBuilderImpl extends AbstractEndpointBuilder implements VelocityEndpointBuilder, AdvancedVelocityEndpointBuilder {
+        class VelocityEndpointBuilderImpl extends AbstractEndpointBuilder implements VelocityEndpointBuilder {
             public VelocityEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

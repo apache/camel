@@ -20,9 +20,8 @@ public class AtomEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(28);
         props.add("backoffMultiplier");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("scheduler");
         props.add("password");

@@ -49,7 +49,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queryParameters": target.setQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "routeid":
         case "routeId": target.setRouteId(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -85,7 +84,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queryParameters": return java.lang.String.class;
         case "routeid":
         case "routeId": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -122,7 +120,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queryParameters": return target.getQueryParameters();
         case "routeid":
         case "routeId": return target.getRouteId();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

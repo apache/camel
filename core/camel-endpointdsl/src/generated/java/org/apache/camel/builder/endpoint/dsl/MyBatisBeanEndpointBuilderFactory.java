@@ -37,9 +37,6 @@ public interface MyBatisBeanEndpointBuilderFactory {
     public interface MyBatisBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedMyBatisBeanEndpointBuilder advanced() {
-            return (AdvancedMyBatisBeanEndpointBuilder) this;
-        }
         /**
          * The executor type to be used while executing statements. simple -
          * executor does nothing special. reuse - executor reuses prepared
@@ -168,52 +165,6 @@ public interface MyBatisBeanEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the MyBatis Bean component.
-     */
-    public interface AdvancedMyBatisBeanEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MyBatisBeanEndpointBuilder basic() {
-            return (MyBatisBeanEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMyBatisBeanEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMyBatisBeanEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
      */
     enum ExecutorType {
@@ -279,7 +230,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     static MyBatisBeanEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder, AdvancedMyBatisBeanEndpointBuilder {
+        class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder {
             public MyBatisBeanEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

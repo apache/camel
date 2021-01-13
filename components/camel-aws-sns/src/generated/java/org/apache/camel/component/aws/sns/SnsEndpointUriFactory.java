@@ -20,14 +20,13 @@ public class SnsEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(20);
         props.add("autoDiscoverClient");
         props.add("serverSideEncryptionEnabled");
         props.add("autoCreateTopic");
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("subject");
-        props.add("synchronous");
         props.add("subscribeSNStoSQS");
         props.add("queueUrl");
         props.add("messageStructure");

@@ -20,9 +20,8 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(21);
         props.add("clearHeaders");
-        props.add("synchronous");
         props.add("certificate");
         props.add("certificateName");
         props.add("keystoreName");

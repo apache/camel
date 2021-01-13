@@ -178,7 +178,7 @@ public class JmsEndpoint extends DefaultEndpoint
     @Override
     public Producer createProducer() throws Exception {
         Producer answer = new JmsProducer(this);
-        if (isSynchronous()) {
+        if (getConfiguration().isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
         } else {
             return answer;

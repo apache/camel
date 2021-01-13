@@ -65,6 +65,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private Timer timer;
     @UriParam(defaultValue = "true")
     private boolean includeMetadata = true;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public TimerEndpoint() {
     }
@@ -256,6 +259,14 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @ManagedAttribute(description = "Include metadata")
     public void setIncludeMetadata(boolean includeMetadata) {
         this.includeMetadata = includeMetadata;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public void removeTimer(TimerConsumer consumer) {

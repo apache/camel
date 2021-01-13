@@ -34,9 +34,6 @@ public interface GlanceEndpointBuilderFactory {
      * Builder for endpoint for the OpenStack Glance component.
      */
     public interface GlanceEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedGlanceEndpointBuilder advanced() {
-            return (AdvancedGlanceEndpointBuilder) this;
-        }
         /**
          * OpenStack API version.
          * 
@@ -206,50 +203,6 @@ public interface GlanceEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the OpenStack Glance component.
-     */
-    public interface AdvancedGlanceEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default GlanceEndpointBuilder basic() {
-            return (GlanceEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGlanceEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGlanceEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface GlanceBuilders {
         /**
          * OpenStack Glance (camel-openstack)
@@ -297,7 +250,7 @@ public interface GlanceEndpointBuilderFactory {
     static GlanceEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
+        class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

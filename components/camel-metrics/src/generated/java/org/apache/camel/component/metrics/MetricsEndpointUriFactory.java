@@ -20,12 +20,11 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(9);
         props.add("metricsType");
         props.add("lazyStartProducer");
         props.add("decrement");
         props.add("subject");
-        props.add("synchronous");
         props.add("metricsName");
         props.add("action");
         props.add("increment");

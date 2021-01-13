@@ -36,9 +36,6 @@ public interface StringTemplateEndpointBuilderFactory {
     public interface StringTemplateEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedStringTemplateEndpointBuilder advanced() {
-            return (AdvancedStringTemplateEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -264,52 +261,6 @@ public interface StringTemplateEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the String Template component.
-     */
-    public interface AdvancedStringTemplateEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default StringTemplateEndpointBuilder basic() {
-            return (StringTemplateEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStringTemplateEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStringTemplateEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface StringTemplateBuilders {
         /**
          * String Template (camel-stringtemplate)
@@ -367,7 +318,7 @@ public interface StringTemplateEndpointBuilderFactory {
     static StringTemplateEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {
+        class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder {
             public StringTemplateEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

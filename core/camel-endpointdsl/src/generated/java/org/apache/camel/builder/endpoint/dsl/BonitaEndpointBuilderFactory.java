@@ -34,9 +34,6 @@ public interface BonitaEndpointBuilderFactory {
      * Builder for endpoint for the Bonita component.
      */
     public interface BonitaEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedBonitaEndpointBuilder advanced() {
-            return (AdvancedBonitaEndpointBuilder) this;
-        }
         /**
          * Hostname where Bonita engine runs.
          * 
@@ -159,50 +156,6 @@ public interface BonitaEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Bonita component.
-     */
-    public interface AdvancedBonitaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default BonitaEndpointBuilder basic() {
-            return (BonitaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedBonitaEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedBonitaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface BonitaBuilders {
         /**
          * Bonita (camel-bonita)
@@ -250,7 +203,7 @@ public interface BonitaEndpointBuilderFactory {
     static BonitaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {
+        class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder {
             public BonitaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

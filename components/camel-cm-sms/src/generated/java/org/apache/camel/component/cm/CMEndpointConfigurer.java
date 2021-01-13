@@ -29,7 +29,6 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "producttoken":
         case "productToken": target.getConfiguration().setProductToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -47,7 +46,6 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "lazyStartProducer": return boolean.class;
         case "producttoken":
         case "productToken": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
         default: return null;
@@ -66,7 +64,6 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "producttoken":
         case "productToken": return target.getConfiguration().getProductToken();
-        case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.getConfiguration().isTestConnectionOnStartup();
         default: return null;

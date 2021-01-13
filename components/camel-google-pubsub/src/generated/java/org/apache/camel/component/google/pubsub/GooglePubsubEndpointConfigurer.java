@@ -38,7 +38,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
         case "serializer": target.setSerializer(property(camelContext, org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "synchronouspull":
         case "synchronousPull": target.setSynchronousPull(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -70,7 +69,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return java.lang.Integer.class;
         case "serializer": return org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class;
-        case "synchronous": return boolean.class;
         case "synchronouspull":
         case "synchronousPull": return boolean.class;
         default: return null;
@@ -98,7 +96,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "serializer": return target.getSerializer();
-        case "synchronous": return target.isSynchronous();
         case "synchronouspull":
         case "synchronousPull": return target.isSynchronousPull();
         default: return null;

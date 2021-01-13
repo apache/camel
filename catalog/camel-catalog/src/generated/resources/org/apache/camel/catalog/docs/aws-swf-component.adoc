@@ -99,7 +99,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (31 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -123,7 +123,6 @@ with the following path and query parameters:
 | *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key. |  | String
 | *secretKey* (security) | Amazon AWS Secret Key. |  | String
 | *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String

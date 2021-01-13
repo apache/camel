@@ -257,8 +257,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                 msg = endpoint.getMessageConverter().toMessage(body, mp);
             }
 
-            // TODO: Exchange.CONTENT_TYPE
-
             // send reply back
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} sending reply message [correlationId:{}]: {}", endpoint, cid, msg);

@@ -62,7 +62,6 @@ public class RssEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "splitEntries": target.setSplitEntries(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "throttleentries":
         case "throttleEntries": target.setThrottleEntries(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -118,7 +117,6 @@ public class RssEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "splitEntries": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "throttleentries":
         case "throttleEntries": return boolean.class;
         case "timeunit":
@@ -175,7 +173,6 @@ public class RssEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "splitEntries": return target.isSplitEntries();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "throttleentries":
         case "throttleEntries": return target.isThrottleEntries();
         case "timeunit":

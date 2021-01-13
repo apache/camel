@@ -20,13 +20,12 @@ public class SWFEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(31);
         props.add("activityTypeRegistrationOptions");
         props.add("clientConfigurationParameters");
         props.add("stateResultType");
         props.add("amazonSWClient");
         props.add("activitySchedulingOptions");
-        props.add("synchronous");
         props.add("activityThreadPoolSize");
         props.add("type");
         props.add("terminationDetails");

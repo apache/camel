@@ -34,9 +34,6 @@ public interface FlinkEndpointBuilderFactory {
      * Builder for endpoint for the Flink component.
      */
     public interface FlinkEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedFlinkEndpointBuilder advanced() {
-            return (AdvancedFlinkEndpointBuilder) this;
-        }
         /**
          * Indicates if results should be collected or counted.
          * 
@@ -239,50 +236,6 @@ public interface FlinkEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Flink component.
-     */
-    public interface AdvancedFlinkEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default FlinkEndpointBuilder basic() {
-            return (FlinkEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface FlinkBuilders {
         /**
          * Flink (camel-flink)
@@ -330,7 +283,7 @@ public interface FlinkEndpointBuilderFactory {
     static FlinkEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder, AdvancedFlinkEndpointBuilder {
+        class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder {
             public FlinkEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

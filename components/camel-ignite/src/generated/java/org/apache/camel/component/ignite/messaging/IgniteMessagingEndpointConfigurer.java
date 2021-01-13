@@ -35,7 +35,6 @@ public class IgniteMessagingEndpointConfigurer extends PropertyConfigurerSupport
         case "propagateIncomingBodyIfNoReturnValue": target.setPropagateIncomingBodyIfNoReturnValue(property(camelContext, boolean.class, value)); return true;
         case "sendmode":
         case "sendMode": target.setSendMode(property(camelContext, org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "treatcollectionsascacheobjects":
         case "treatCollectionsAsCacheObjects": target.setTreatCollectionsAsCacheObjects(property(camelContext, boolean.class, value)); return true;
@@ -60,7 +59,6 @@ public class IgniteMessagingEndpointConfigurer extends PropertyConfigurerSupport
         case "propagateIncomingBodyIfNoReturnValue": return boolean.class;
         case "sendmode":
         case "sendMode": return org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode.class;
-        case "synchronous": return boolean.class;
         case "timeout": return java.lang.Long.class;
         case "treatcollectionsascacheobjects":
         case "treatCollectionsAsCacheObjects": return boolean.class;
@@ -86,7 +84,6 @@ public class IgniteMessagingEndpointConfigurer extends PropertyConfigurerSupport
         case "propagateIncomingBodyIfNoReturnValue": return target.isPropagateIncomingBodyIfNoReturnValue();
         case "sendmode":
         case "sendMode": return target.getSendMode();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         case "treatcollectionsascacheobjects":
         case "treatCollectionsAsCacheObjects": return target.isTreatCollectionsAsCacheObjects();

@@ -47,7 +47,6 @@ public class IgniteCacheEndpointConfigurer extends PropertyConfigurerSupport imp
         case "query": target.setQuery(property(camelContext, org.apache.ignite.cache.query.Query.class, value)); return true;
         case "remotefilter":
         case "remoteFilter": target.setRemoteFilter(property(camelContext, org.apache.ignite.cache.CacheEntryEventSerializableFilter.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeinterval":
         case "timeInterval": target.setTimeInterval(property(camelContext, long.class, value)); return true;
         case "treatcollectionsascacheobjects":
@@ -85,7 +84,6 @@ public class IgniteCacheEndpointConfigurer extends PropertyConfigurerSupport imp
         case "query": return org.apache.ignite.cache.query.Query.class;
         case "remotefilter":
         case "remoteFilter": return org.apache.ignite.cache.CacheEntryEventSerializableFilter.class;
-        case "synchronous": return boolean.class;
         case "timeinterval":
         case "timeInterval": return long.class;
         case "treatcollectionsascacheobjects":
@@ -124,7 +122,6 @@ public class IgniteCacheEndpointConfigurer extends PropertyConfigurerSupport imp
         case "query": return target.getQuery();
         case "remotefilter":
         case "remoteFilter": return target.getRemoteFilter();
-        case "synchronous": return target.isSynchronous();
         case "timeinterval":
         case "timeInterval": return target.getTimeInterval();
         case "treatcollectionsascacheobjects":

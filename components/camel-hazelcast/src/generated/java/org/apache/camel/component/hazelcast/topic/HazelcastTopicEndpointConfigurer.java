@@ -36,7 +36,6 @@ public class HazelcastTopicEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "reliable": target.getConfiguration().setReliable(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -59,7 +58,6 @@ public class HazelcastTopicEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "reliable": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -83,7 +81,6 @@ public class HazelcastTopicEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "reliable": return target.getConfiguration().isReliable();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

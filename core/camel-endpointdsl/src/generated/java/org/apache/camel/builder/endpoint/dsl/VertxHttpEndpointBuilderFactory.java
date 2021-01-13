@@ -35,9 +35,6 @@ public interface VertxHttpEndpointBuilderFactory {
      * Builder for endpoint for the Vert.x HTTP Client component.
      */
     public interface VertxHttpEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedVertxHttpEndpointBuilder advanced() {
-            return (AdvancedVertxHttpEndpointBuilder) this;
-        }
         /**
          * The amount of time in milliseconds until a connection is established.
          * A timeout value of zero is interpreted as an infinite timeout.
@@ -682,50 +679,6 @@ public interface VertxHttpEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Vert.x HTTP Client component.
-     */
-    public interface AdvancedVertxHttpEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default VertxHttpEndpointBuilder basic() {
-            return (VertxHttpEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxHttpEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxHttpEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>io.vertx.core.http.HttpMethod</code> enum.
      */
     enum HttpMethod {
@@ -797,7 +750,7 @@ public interface VertxHttpEndpointBuilderFactory {
     static VertxHttpEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class VertxHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxHttpEndpointBuilder, AdvancedVertxHttpEndpointBuilder {
+        class VertxHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxHttpEndpointBuilder {
             public VertxHttpEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

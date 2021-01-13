@@ -36,9 +36,6 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
     public interface MicroProfileMetricsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedMicroProfileMetricsEndpointBuilder advanced() {
-            return (AdvancedMicroProfileMetricsEndpointBuilder) this;
-        }
         /**
          * Action to use when using the timer type.
          * 
@@ -343,52 +340,6 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the MicroProfile Metrics component.
-     */
-    public interface AdvancedMicroProfileMetricsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MicroProfileMetricsEndpointBuilder basic() {
-            return (MicroProfileMetricsEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMicroProfileMetricsEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMicroProfileMetricsEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface MicroProfileMetricsBuilders {
         /**
          * MicroProfile Metrics (camel-microprofile-metrics)
@@ -447,7 +398,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
     static MicroProfileMetricsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder, AdvancedMicroProfileMetricsEndpointBuilder {
+        class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder {
             public MicroProfileMetricsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

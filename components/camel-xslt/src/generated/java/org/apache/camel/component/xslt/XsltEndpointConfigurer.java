@@ -36,7 +36,6 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "output": target.setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
         case "resulthandlerfactory":
         case "resultHandlerFactory": target.setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transformercachesize":
         case "transformerCacheSize": target.setTransformerCacheSize(property(camelContext, int.class, value)); return true;
         case "transformerfactory":
@@ -69,7 +68,6 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "output": return org.apache.camel.component.xslt.XsltOutput.class;
         case "resulthandlerfactory":
         case "resultHandlerFactory": return org.apache.camel.component.xslt.ResultHandlerFactory.class;
-        case "synchronous": return boolean.class;
         case "transformercachesize":
         case "transformerCacheSize": return int.class;
         case "transformerfactory":
@@ -103,7 +101,6 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "output": return target.getOutput();
         case "resulthandlerfactory":
         case "resultHandlerFactory": return target.getResultHandlerFactory();
-        case "synchronous": return target.isSynchronous();
         case "transformercachesize":
         case "transformerCacheSize": return target.getTransformerCacheSize();
         case "transformerfactory":

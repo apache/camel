@@ -153,6 +153,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *wrapped* (producer) | Which kind of operation that CXF endpoint producer will invoke | false | boolean
+| *synchronous* (producer) | Sets whether synchronous processing should be strictly used | false | boolean
 | *allowStreaming* (advanced) | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
 | *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
 | *continuationTimeout* (advanced) | This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport. | 30000 | long
@@ -164,7 +165,6 @@ with the following path and query parameters:
 | *mtomEnabled* (advanced) | To enable MTOM (attachments). This requires to use POJO or PAYLOAD data format mode. | false | boolean
 | *properties* (advanced) | To set additional CXF options using the key/value pairs from the Map. For example to turn on stacktraces in SOAP faults, properties.faultStackTraceEnabled=true |  | Map
 | *skipPayloadMessagePartCheck* (advanced) | Sets whether SOAP message validation should be disabled. | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *loggingFeatureEnabled* (logging) | This option enables CXF Logging Feature which writes inbound and outbound SOAP messages to log. | false | boolean
 | *loggingSizeLimit* (logging) | To limit the total size of number of bytes the logger will output when logging feature has been enabled and -1 for no limit. | 49152 | int
 | *skipFaultLogging* (logging) | This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches. | false | boolean

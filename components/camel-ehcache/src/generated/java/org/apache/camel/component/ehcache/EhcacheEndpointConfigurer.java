@@ -49,7 +49,6 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "keyType": target.getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "valuetype":
         case "valueType": target.getConfiguration().setValueType(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -87,7 +86,6 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "keyType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         case "valuetype":
         case "valueType": return java.lang.String.class;
         default: return null;
@@ -126,7 +124,6 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "keyType": return target.getConfiguration().getKeyType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         case "valuetype":
         case "valueType": return target.getConfiguration().getValueType();
         default: return null;

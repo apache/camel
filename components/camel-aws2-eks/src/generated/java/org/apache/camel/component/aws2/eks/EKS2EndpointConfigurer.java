@@ -39,7 +39,6 @@ public class EKS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -72,7 +71,6 @@ public class EKS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         default: return null;
@@ -101,7 +99,6 @@ public class EKS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
-        case "synchronous": return target.isSynchronous();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         default: return null;

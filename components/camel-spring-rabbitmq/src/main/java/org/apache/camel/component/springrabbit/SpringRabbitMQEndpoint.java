@@ -147,6 +147,9 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
               description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long replyTimeout = 5000;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public SpringRabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
         super(endpointUri, component);
@@ -322,6 +325,14 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         this.replyTimeout = replyTimeout;
     }
 
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer();
@@ -443,8 +454,6 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             return null;
         }
     }
-
-    // TODO: auto-declare for producer only
 
     public void declareElements(AbstractMessageListenerContainer container) {
         AmqpAdmin admin = null;

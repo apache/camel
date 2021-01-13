@@ -43,7 +43,6 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "to": target.getConfiguration().setTo(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
@@ -74,7 +73,6 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "subject": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "to": return java.util.List.class;
         default: return null;
         }
@@ -106,7 +104,6 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "subject": return target.getConfiguration().getSubject();
-        case "synchronous": return target.isSynchronous();
         case "to": return target.getConfiguration().getTo();
         default: return null;
         }

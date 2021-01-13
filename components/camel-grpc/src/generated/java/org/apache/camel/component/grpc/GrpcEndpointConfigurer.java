@@ -70,7 +70,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serviceAccountResource": target.getConfiguration().setServiceAccountResource(property(camelContext, java.lang.String.class, value)); return true;
         case "streamrepliesto":
         case "streamRepliesTo": target.getConfiguration().setStreamRepliesTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustcertcollectionresource":
         case "trustCertCollectionResource": target.getConfiguration().setTrustCertCollectionResource(property(camelContext, java.lang.String.class, value)); return true;
         case "useragent":
@@ -193,7 +193,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "serviceAccountResource": return target.getConfiguration().getServiceAccountResource();
         case "streamrepliesto":
         case "streamRepliesTo": return target.getConfiguration().getStreamRepliesTo();
-        case "synchronous": return target.isSynchronous();
+        case "synchronous": return target.getConfiguration().isSynchronous();
         case "trustcertcollectionresource":
         case "trustCertCollectionResource": return target.getConfiguration().getTrustCertCollectionResource();
         case "useragent":

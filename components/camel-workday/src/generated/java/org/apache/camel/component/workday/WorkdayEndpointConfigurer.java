@@ -32,7 +32,6 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "reportformat":
         case "reportFormat": target.getWorkdayConfiguration().setReportFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tenant": target.getWorkdayConfiguration().setTenant(property(camelContext, java.lang.String.class, value)); return true;
         case "tokenrefresh":
         case "tokenRefresh": target.getWorkdayConfiguration().setTokenRefresh(property(camelContext, java.lang.String.class, value)); return true;
@@ -54,7 +53,6 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return boolean.class;
         case "reportformat":
         case "reportFormat": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tenant": return java.lang.String.class;
         case "tokenrefresh":
         case "tokenRefresh": return java.lang.String.class;
@@ -77,7 +75,6 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "reportformat":
         case "reportFormat": return target.getWorkdayConfiguration().getReportFormat();
-        case "synchronous": return target.isSynchronous();
         case "tenant": return target.getWorkdayConfiguration().getTenant();
         case "tokenrefresh":
         case "tokenRefresh": return target.getWorkdayConfiguration().getTokenRefresh();

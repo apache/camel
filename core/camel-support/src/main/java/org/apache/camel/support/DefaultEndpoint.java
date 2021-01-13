@@ -43,12 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A default endpoint useful for implementation inheritance.
- * <p/>
- * Components which leverages <a href="http://camel.apache.org/asynchronous-routing-engine.html">asynchronous processing
- * model</a> should check the {@link #isSynchronous()} to determine if asynchronous processing is allowed. The
- * <tt>synchronous</tt> option on the endpoint allows Camel end users to dictate whether they want the asynchronous
- * model or not. The option is default <tt>false</tt> which means asynchronous processing is allowed.
+ * Default {@link Endpoint}.
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
@@ -59,6 +54,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private volatile String endpointUri;
     private CamelContext camelContext;
     private Component component;
+
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
                             + " by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component."
@@ -84,11 +80,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
               description = "Sets the exchange pattern when the consumer creates an exchange.")
     // no default value set on @UriParam as the MEP is sometimes InOnly or InOut depending on the component in use
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
-    // option to allow end user to dictate whether async processing should be
-    // used or not (if possible)
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
-    private boolean synchronous;
     // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
     // so lets not expose them in the component docs as it will be included in every component
     private int pollingConsumerQueueSize = 1000;
@@ -255,21 +246,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
-    }
-
-    /**
-     * Returns whether synchronous processing should be strictly used.
-     */
-    public boolean isSynchronous() {
-        return synchronous;
-    }
-
-    /**
-     * Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing
-     * (if supported).
-     */
-    public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
     }
 
     public boolean isAutowiredEnabled() {

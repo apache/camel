@@ -20,14 +20,13 @@ public class MSKEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("autoDiscoverClient");
         props.add("proxyPort");
         props.add("lazyStartProducer");
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("accessKey");
-        props.add("synchronous");
         props.add("label");
         props.add("region");
         props.add("mskClient");

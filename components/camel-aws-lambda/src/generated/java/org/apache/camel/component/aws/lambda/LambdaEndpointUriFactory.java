@@ -20,7 +20,7 @@ public class LambdaEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("autoDiscoverClient");
         props.add("awsLambdaClient");
         props.add("proxyPort");
@@ -28,7 +28,6 @@ public class LambdaEndpointUriFactory extends org.apache.camel.support.component
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("accessKey");
-        props.add("synchronous");
         props.add("function");
         props.add("region");
         props.add("operation");

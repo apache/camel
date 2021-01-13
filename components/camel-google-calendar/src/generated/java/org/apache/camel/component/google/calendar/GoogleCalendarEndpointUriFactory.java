@@ -20,10 +20,9 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(40);
         props.add("backoffMultiplier");
         props.add("apiName");
-        props.add("synchronous");
         props.add("destination");
         props.add("initialDelay");
         props.add("content");

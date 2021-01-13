@@ -20,11 +20,10 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(40);
         props.add("backoffMultiplier");
         props.add("apiName");
         props.add("batchClearValuesRequest");
-        props.add("synchronous");
         props.add("values");
         props.add("batchUpdateValuesRequest");
         props.add("range");

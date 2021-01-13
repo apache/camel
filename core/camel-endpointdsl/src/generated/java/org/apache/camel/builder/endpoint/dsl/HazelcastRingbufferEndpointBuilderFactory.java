@@ -36,9 +36,6 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     public interface HazelcastRingbufferEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedHazelcastRingbufferEndpointBuilder advanced() {
-            return (AdvancedHazelcastRingbufferEndpointBuilder) this;
-        }
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
@@ -176,52 +173,6 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Hazelcast Ringbuffer component.
-     */
-    public interface AdvancedHazelcastRingbufferEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default HazelcastRingbufferEndpointBuilder basic() {
-            return (HazelcastRingbufferEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
      * enum.
@@ -313,7 +264,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     static HazelcastRingbufferEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder, AdvancedHazelcastRingbufferEndpointBuilder {
+        class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder {
             public HazelcastRingbufferEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

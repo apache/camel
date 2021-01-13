@@ -49,22 +49,18 @@ public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
         try {
             threadPool.execute(exchange.getIn().getBody(SoroushMessage.class).getFrom(), () -> {
                 try {
-                    if (endpoint.isSynchronous()) {
-                        getProcessor().process(exchange);
-                    } else {
-                        getAsyncProcessor().process(exchange, doneSync -> {});
-                    }
+                    getProcessor().process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
+                }
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange",
+                            exchange, exchange.getException());
                 }
             });
         } catch (IllegalStateException ex) {
             throw new CongestionException(ex, exchange.getIn().getBody(SoroushMessage.class));
         }
 
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange",
-                    exchange, exchange.getException());
-        }
     }
 }

@@ -20,12 +20,11 @@ public class WorkdayEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(10);
         props.add("path");
         props.add("lazyStartProducer");
         props.add("clientId");
         props.add("tokenRefresh");
-        props.add("synchronous");
         props.add("host");
         props.add("reportFormat");
         props.add("clientSecret");

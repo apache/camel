@@ -118,7 +118,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (52 parameters):
+=== Query Parameters (51 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -155,7 +155,6 @@ with the following path and query parameters:
 | *mapHttpMessageFormUrlEncoded{zwsp}Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
 | *proxyAuthHost* (proxy) | Proxy authentication host |  | String

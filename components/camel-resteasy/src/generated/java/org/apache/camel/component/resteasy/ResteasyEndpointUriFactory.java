@@ -20,9 +20,8 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(41);
         props.add("getWithBody");
-        props.add("synchronous");
         props.add("ignoreResponseBody");
         props.add("mapHttpMessageBody");
         props.add("proxyClientClass");

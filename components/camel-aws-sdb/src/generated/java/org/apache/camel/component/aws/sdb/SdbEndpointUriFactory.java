@@ -20,20 +20,19 @@ public class SdbEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
-        props.add("proxyProtocol");
-        props.add("secretKey");
-        props.add("synchronous");
-        props.add("maxNumberOfDomains");
-        props.add("proxyHost");
+        Set<String> props = new HashSet<>(12);
         props.add("proxyPort");
         props.add("lazyStartProducer");
         props.add("amazonSDBClient");
+        props.add("proxyProtocol");
+        props.add("secretKey");
         props.add("accessKey");
         props.add("domainName");
         props.add("consistentRead");
+        props.add("maxNumberOfDomains");
         props.add("region");
         props.add("operation");
+        props.add("proxyHost");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

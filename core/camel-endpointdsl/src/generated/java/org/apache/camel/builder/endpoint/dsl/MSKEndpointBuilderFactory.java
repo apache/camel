@@ -35,9 +35,6 @@ public interface MSKEndpointBuilderFactory {
      * component.
      */
     public interface MSKEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMSKEndpointBuilder advanced() {
-            return (AdvancedMSKEndpointBuilder) this;
-        }
         /**
          * Setting the autoDiscoverClient mechanism, if true, the component will
          * look for a client instance in the registry automatically otherwise it
@@ -305,51 +302,6 @@ public interface MSKEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Managed Streaming for Apache
-     * Kafka (MSK) component.
-     */
-    public interface AdvancedMSKEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MSKEndpointBuilder basic() {
-            return (MSKEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMSKEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMSKEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.msk.MSKOperations</code> enum.
      */
@@ -411,7 +363,7 @@ public interface MSKEndpointBuilderFactory {
         }
     }
     static MSKEndpointBuilder endpointBuilder(String componentName, String path) {
-        class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder, AdvancedMSKEndpointBuilder {
+        class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder {
             public MSKEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

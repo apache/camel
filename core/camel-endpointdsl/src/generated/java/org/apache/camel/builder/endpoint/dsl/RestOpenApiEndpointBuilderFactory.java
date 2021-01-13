@@ -37,9 +37,6 @@ public interface RestOpenApiEndpointBuilderFactory {
     public interface RestOpenApiEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedRestOpenApiEndpointBuilder advanced() {
-            return (AdvancedRestOpenApiEndpointBuilder) this;
-        }
         /**
          * API basePath, for example /v2. Default is unset, if set overrides the
          * value present in OpenApi specification and in the component
@@ -180,52 +177,6 @@ public interface RestOpenApiEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the REST OpenApi component.
-     */
-    public interface AdvancedRestOpenApiEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default RestOpenApiEndpointBuilder basic() {
-            return (RestOpenApiEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestOpenApiEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface RestOpenApiBuilders {
         /**
          * REST OpenApi (camel-rest-openapi)
@@ -311,7 +262,7 @@ public interface RestOpenApiEndpointBuilderFactory {
     static RestOpenApiEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class RestOpenApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestOpenApiEndpointBuilder, AdvancedRestOpenApiEndpointBuilder {
+        class RestOpenApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestOpenApiEndpointBuilder {
             public RestOpenApiEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -20,10 +20,9 @@ public class IronMQEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffMultiplier");
         props.add("wait");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("timeout");
         props.add("batchDelete");

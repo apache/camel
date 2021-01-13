@@ -30,7 +30,6 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "project": target.setProject(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -48,7 +47,6 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "operation": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "project": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -67,7 +65,6 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "operation": return target.getOperation();
         case "password": return target.getPassword();
         case "project": return target.getProject();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getUsername();
         default: return null;
         }

@@ -136,6 +136,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private CxfRsConfigurer cxfRsConfigurer;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
+    @UriParam(defaultValue = "false", label = "producer,advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public CxfRsEndpoint() {
     }
@@ -855,5 +858,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      */
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

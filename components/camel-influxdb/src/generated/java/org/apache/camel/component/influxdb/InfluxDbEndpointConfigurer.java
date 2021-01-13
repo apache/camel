@@ -30,7 +30,6 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "retentionpolicy":
         case "retentionPolicy": target.setRetentionPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -47,7 +46,6 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "query": return java.lang.String.class;
         case "retentionpolicy":
         case "retentionPolicy": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -65,7 +63,6 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "query": return target.getQuery();
         case "retentionpolicy":
         case "retentionPolicy": return target.getRetentionPolicy();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

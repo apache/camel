@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -108,7 +108,6 @@ with the following path and query parameters:
 | *printerPrefix* (producer) | Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer |  | String
 | *sendToPrinter* (producer) | etting this option to false prevents sending of the print data to the printer | true | boolean
 | *sides* (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API. There are 5 enums and the value can be one of: one-sided, duplex, tumble, two-sided-short-edge, two-sided-long-edge | one-sided | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

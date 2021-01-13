@@ -120,7 +120,6 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverSideEncryptionEnabled": target.getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -235,7 +234,6 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverSideEncryptionEnabled": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -351,7 +349,6 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverSideEncryptionEnabled": return target.getConfiguration().isServerSideEncryptionEnabled();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

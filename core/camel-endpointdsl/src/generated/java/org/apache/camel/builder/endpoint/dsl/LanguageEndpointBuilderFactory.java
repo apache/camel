@@ -34,9 +34,6 @@ public interface LanguageEndpointBuilderFactory {
      * Builder for endpoint for the Language component.
      */
     public interface LanguageEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedLanguageEndpointBuilder advanced() {
-            return (AdvancedLanguageEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -275,50 +272,6 @@ public interface LanguageEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Language component.
-     */
-    public interface AdvancedLanguageEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default LanguageEndpointBuilder basic() {
-            return (LanguageEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface LanguageBuilders {
         /**
          * Language (camel-language)
@@ -382,7 +335,7 @@ public interface LanguageEndpointBuilderFactory {
     static LanguageEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class LanguageEndpointBuilderImpl extends AbstractEndpointBuilder implements LanguageEndpointBuilder, AdvancedLanguageEndpointBuilder {
+        class LanguageEndpointBuilderImpl extends AbstractEndpointBuilder implements LanguageEndpointBuilder {
             public LanguageEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

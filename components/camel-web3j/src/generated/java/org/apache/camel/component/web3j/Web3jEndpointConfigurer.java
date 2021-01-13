@@ -74,7 +74,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "signedTransactionData": target.getConfiguration().setSignedTransactionData(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcecode":
         case "sourceCode": target.getConfiguration().setSourceCode(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "toaddress":
         case "toAddress": target.getConfiguration().setToAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "toblock":
@@ -145,7 +144,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "signedTransactionData": return java.lang.String.class;
         case "sourcecode":
         case "sourceCode": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "toaddress":
         case "toAddress": return java.lang.String.class;
         case "toblock":
@@ -217,7 +215,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "signedTransactionData": return target.getConfiguration().getSignedTransactionData();
         case "sourcecode":
         case "sourceCode": return target.getConfiguration().getSourceCode();
-        case "synchronous": return target.isSynchronous();
         case "toaddress":
         case "toAddress": return target.getConfiguration().getToAddress();
         case "toblock":

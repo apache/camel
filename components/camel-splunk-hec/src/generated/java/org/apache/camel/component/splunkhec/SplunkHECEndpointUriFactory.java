@@ -20,12 +20,11 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(9);
         props.add("lazyStartProducer");
         props.add("splunkURL");
         props.add("sourceType");
         props.add("skipTlsVerify");
-        props.add("synchronous");
         props.add("host");
         props.add("index");
         props.add("source");

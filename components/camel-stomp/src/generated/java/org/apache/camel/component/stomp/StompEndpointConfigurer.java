@@ -40,7 +40,6 @@ public class StompEndpointConfigurer extends PropertyConfigurerSupport implement
         case "passcode": target.getConfiguration().setPasscode(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "version": target.getConfiguration().setVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -68,7 +67,6 @@ public class StompEndpointConfigurer extends PropertyConfigurerSupport implement
         case "passcode": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "version": return java.lang.String.class;
         default: return null;
         }
@@ -97,7 +95,6 @@ public class StompEndpointConfigurer extends PropertyConfigurerSupport implement
         case "passcode": return target.getConfiguration().getPasscode();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "version": return target.getConfiguration().getVersion();
         default: return null;
         }

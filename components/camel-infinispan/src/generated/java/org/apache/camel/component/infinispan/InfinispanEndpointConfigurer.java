@@ -67,7 +67,6 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "securityservername":
         case "securityServerName": target.getConfiguration().setSecurityServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Object.class, value)); return true;
         default: return false;
@@ -128,7 +127,6 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "securityservername":
         case "securityServerName": return java.lang.String.class;
         case "sync": return boolean.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         case "value": return java.lang.Object.class;
         default: return null;
@@ -185,7 +183,6 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "securityservername":
         case "securityServerName": return target.getConfiguration().getSecurityServerName();
         case "sync": return target.getConfiguration().isSync();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
         case "value": return target.getConfiguration().getValue();
         default: return null;

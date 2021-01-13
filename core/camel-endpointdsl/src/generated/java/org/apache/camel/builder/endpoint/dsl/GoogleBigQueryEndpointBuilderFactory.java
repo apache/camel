@@ -36,9 +36,6 @@ public interface GoogleBigQueryEndpointBuilderFactory {
     public interface GoogleBigQueryEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedGoogleBigQueryEndpointBuilder advanced() {
-            return (AdvancedGoogleBigQueryEndpointBuilder) this;
-        }
         /**
          * ConnectionFactory to obtain connection to Bigquery Service. If not
          * provided the default one will be used.
@@ -138,52 +135,6 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Google BigQuery component.
-     */
-    public interface AdvancedGoogleBigQueryEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default GoogleBigQueryEndpointBuilder basic() {
-            return (GoogleBigQueryEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGoogleBigQueryEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGoogleBigQueryEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface GoogleBigQueryBuilders {
         /**
          * Google BigQuery (camel-google-bigquery)
@@ -243,7 +194,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
     static GoogleBigQueryEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GoogleBigQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQueryEndpointBuilder, AdvancedGoogleBigQueryEndpointBuilder {
+        class GoogleBigQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQueryEndpointBuilder {
             public GoogleBigQueryEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

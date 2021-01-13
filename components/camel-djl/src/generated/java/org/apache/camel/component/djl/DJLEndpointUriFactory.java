@@ -20,10 +20,9 @@ public class DJLEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(6);
+        Set<String> props = new HashSet<>(5);
         props.add("lazyStartProducer");
         props.add("application");
-        props.add("synchronous");
         props.add("translator");
         props.add("artifactId");
         props.add("model");

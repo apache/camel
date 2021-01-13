@@ -20,11 +20,10 @@ public class MustacheEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(8);
         props.add("allowTemplateFromHeader");
         props.add("endDelimiter");
         props.add("lazyStartProducer");
-        props.add("synchronous");
         props.add("startDelimiter");
         props.add("contentCache");
         props.add("allowContextMapAll");

@@ -46,7 +46,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "recommendedCipherSuitesOnly": target.setRecommendedCipherSuitesOnly(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustedrpkstore":
         case "trustedRpkStore": target.setTrustedRpkStore(property(camelContext, org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class, value)); return true;
         default: return false;
@@ -81,7 +80,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "recommendedCipherSuitesOnly": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "trustedrpkstore":
         case "trustedRpkStore": return org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class;
         default: return null;
@@ -117,7 +115,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "recommendedCipherSuitesOnly": return target.isRecommendedCipherSuitesOnly();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "trustedrpkstore":
         case "trustedRpkStore": return target.getTrustedRpkStore();
         default: return null;

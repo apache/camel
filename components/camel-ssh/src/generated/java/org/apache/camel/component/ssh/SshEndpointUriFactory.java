@@ -20,11 +20,10 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(36);
+        Set<String> props = new HashSet<>(35);
         props.add("failOnUnknownHost");
         props.add("backoffMultiplier");
         props.add("shellPrompt");
-        props.add("synchronous");
         props.add("certResourcePassword");
         props.add("channelType");
         props.add("initialDelay");

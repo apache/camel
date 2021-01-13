@@ -45,7 +45,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamingQueueSize": target.setStreamingQueueSize(property(camelContext, int.class, value)); return true;
         case "streamingthreadcount":
         case "streamingThreadCount": target.setStreamingThreadCount(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "zkhost":
         case "zkHost": target.setZkHost(property(camelContext, java.lang.String.class, value)); return true;
@@ -80,7 +79,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamingQueueSize": return int.class;
         case "streamingthreadcount":
         case "streamingThreadCount": return int.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         case "zkhost":
         case "zkHost": return java.lang.String.class;
@@ -116,7 +114,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamingQueueSize": return target.getStreamingQueueSize();
         case "streamingthreadcount":
         case "streamingThreadCount": return target.getStreamingThreadCount();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getUsername();
         case "zkhost":
         case "zkHost": return target.getZkHost();

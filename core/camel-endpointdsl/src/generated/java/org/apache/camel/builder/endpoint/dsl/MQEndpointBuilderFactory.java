@@ -34,9 +34,6 @@ public interface MQEndpointBuilderFactory {
      * Builder for endpoint for the AWS MQ component.
      */
     public interface MQEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMQEndpointBuilder advanced() {
-            return (AdvancedMQEndpointBuilder) this;
-        }
         /**
          * Setting the autoDiscoverClient mechanism, if true, the component will
          * look for a client instance in the registry automatically otherwise it
@@ -306,50 +303,6 @@ public interface MQEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS MQ component.
-     */
-    public interface AdvancedMQEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MQEndpointBuilder basic() {
-            return (MQEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMQEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMQEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.mq.MQOperations</code> enum.
      */
@@ -413,7 +366,7 @@ public interface MQEndpointBuilderFactory {
         }
     }
     static MQEndpointBuilder endpointBuilder(String componentName, String path) {
-        class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder, AdvancedMQEndpointBuilder {
+        class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder {
             public MQEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -34,9 +34,6 @@ public interface CinderEndpointBuilderFactory {
      * Builder for endpoint for the OpenStack Cinder component.
      */
     public interface CinderEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedCinderEndpointBuilder advanced() {
-            return (AdvancedCinderEndpointBuilder) this;
-        }
         /**
          * OpenStack API version.
          * 
@@ -221,50 +218,6 @@ public interface CinderEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the OpenStack Cinder component.
-     */
-    public interface AdvancedCinderEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default CinderEndpointBuilder basic() {
-            return (CinderEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCinderEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCinderEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface CinderBuilders {
         /**
          * OpenStack Cinder (camel-openstack)
@@ -312,7 +265,7 @@ public interface CinderEndpointBuilderFactory {
     static CinderEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class CinderEndpointBuilderImpl extends AbstractEndpointBuilder implements CinderEndpointBuilder, AdvancedCinderEndpointBuilder {
+        class CinderEndpointBuilderImpl extends AbstractEndpointBuilder implements CinderEndpointBuilder {
             public CinderEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -36,9 +36,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
     public interface KinesisFirehose2EndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedKinesisFirehose2EndpointBuilder advanced() {
-            return (AdvancedKinesisFirehose2EndpointBuilder) this;
-        }
         /**
          * Amazon Kinesis Firehose client to use for all requests for this
          * endpoint.
@@ -351,52 +348,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Kinesis Firehose component.
-     */
-    public interface AdvancedKinesisFirehose2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KinesisFirehose2EndpointBuilder basic() {
-            return (KinesisFirehose2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesisFirehose2EndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesisFirehose2EndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> enum.
      */
@@ -465,7 +416,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
     static KinesisFirehose2EndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class KinesisFirehose2EndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehose2EndpointBuilder, AdvancedKinesisFirehose2EndpointBuilder {
+        class KinesisFirehose2EndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehose2EndpointBuilder {
             public KinesisFirehose2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

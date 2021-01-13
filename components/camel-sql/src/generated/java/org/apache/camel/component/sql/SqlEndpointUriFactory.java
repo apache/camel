@@ -20,13 +20,12 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(48);
+        Set<String> props = new HashSet<>(47);
         props.add("backoffMultiplier");
         props.add("breakBatchOnConsumeFail");
         props.add("onConsume");
         props.add("onConsumeFailed");
         props.add("useMessageBodyForSql");
-        props.add("synchronous");
         props.add("dataSourceRef");
         props.add("outputType");
         props.add("transacted");

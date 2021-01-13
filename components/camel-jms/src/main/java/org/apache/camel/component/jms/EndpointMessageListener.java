@@ -120,7 +120,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             // (eg to not consume the next message before the previous has been fully processed)
             // but if end user explicit configure consumerAsync=true, then we can process the message
             // asynchronously (unless endpoint has been configured synchronous, or we use transaction)
-            boolean forceSync = endpoint.isSynchronous() || endpoint.isTransacted();
+            boolean forceSync = endpoint.getConfiguration().isSynchronous() || endpoint.isTransacted();
             if (forceSync || !isAsync()) {
                 // must process synchronous if transacted or configured to do so
                 if (LOG.isTraceEnabled()) {

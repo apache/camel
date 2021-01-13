@@ -34,9 +34,6 @@ public interface NovaEndpointBuilderFactory {
      * Builder for endpoint for the OpenStack Nova component.
      */
     public interface NovaEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedNovaEndpointBuilder advanced() {
-            return (AdvancedNovaEndpointBuilder) this;
-        }
         /**
          * OpenStack API version.
          * 
@@ -220,50 +217,6 @@ public interface NovaEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the OpenStack Nova component.
-     */
-    public interface AdvancedNovaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default NovaEndpointBuilder basic() {
-            return (NovaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNovaEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNovaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface NovaBuilders {
         /**
          * OpenStack Nova (camel-openstack)
@@ -309,7 +262,7 @@ public interface NovaEndpointBuilderFactory {
         }
     }
     static NovaEndpointBuilder endpointBuilder(String componentName, String path) {
-        class NovaEndpointBuilderImpl extends AbstractEndpointBuilder implements NovaEndpointBuilder, AdvancedNovaEndpointBuilder {
+        class NovaEndpointBuilderImpl extends AbstractEndpointBuilder implements NovaEndpointBuilder {
             public NovaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

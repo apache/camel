@@ -50,7 +50,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "multiFrameInterval": target.setMultiFrameInterval(property(camelContext, int.class, value)); return true;
         case "sessionheadersenabled":
         case "sessionHeadersEnabled": target.setSessionHeadersEnabled(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
@@ -88,7 +87,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "multiFrameInterval": return int.class;
         case "sessionheadersenabled":
         case "sessionHeadersEnabled": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeout": return int.class;
         default: return null;
         }
@@ -127,7 +125,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "multiFrameInterval": return target.getMultiFrameInterval();
         case "sessionheadersenabled":
         case "sessionHeadersEnabled": return target.isSessionHeadersEnabled();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         default: return null;
         }

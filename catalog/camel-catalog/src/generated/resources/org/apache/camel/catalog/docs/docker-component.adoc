@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (22 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +105,6 @@ with the following path and query parameters:
 | *parameters* (advanced) | Additional configuration parameters as key/value pairs |  | Map
 | *serverAddress* (advanced) | Server address for docker registry. | https://index.docker.io/v1/ | String
 | *socket* (advanced) | Socket connection mode | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *certPath* (security) | Location containing the SSL certificate chain |  | String
 | *password* (security) | Password to authenticate with |  | String
 | *secure* (security) | Use HTTPS communication | false | boolean

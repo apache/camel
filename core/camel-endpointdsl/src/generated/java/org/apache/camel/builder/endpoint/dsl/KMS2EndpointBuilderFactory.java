@@ -35,9 +35,6 @@ public interface KMS2EndpointBuilderFactory {
      * component.
      */
     public interface KMS2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedKMS2EndpointBuilder advanced() {
-            return (AdvancedKMS2EndpointBuilder) this;
-        }
         /**
          * To use a existing configured AWS KMS as client.
          * 
@@ -336,51 +333,6 @@ public interface KMS2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Key Management Service (KMS)
-     * component.
-     */
-    public interface AdvancedKMS2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KMS2EndpointBuilder basic() {
-            return (KMS2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKMS2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKMS2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.kms.KMS2Operations</code> enum.
      */
@@ -444,7 +396,7 @@ public interface KMS2EndpointBuilderFactory {
         }
     }
     static KMS2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class KMS2EndpointBuilderImpl extends AbstractEndpointBuilder implements KMS2EndpointBuilder, AdvancedKMS2EndpointBuilder {
+        class KMS2EndpointBuilderImpl extends AbstractEndpointBuilder implements KMS2EndpointBuilder {
             public KMS2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

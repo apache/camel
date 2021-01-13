@@ -34,9 +34,6 @@ public interface DnsEndpointBuilderFactory {
      * Builder for endpoint for the DNS component.
      */
     public interface DnsEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedDnsEndpointBuilder advanced() {
-            return (AdvancedDnsEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -82,50 +79,6 @@ public interface DnsEndpointBuilderFactory {
          */
         default DnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the DNS component.
-     */
-    public interface AdvancedDnsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default DnsEndpointBuilder basic() {
-            return (DnsEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDnsEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDnsEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -177,7 +130,7 @@ public interface DnsEndpointBuilderFactory {
         }
     }
     static DnsEndpointBuilder endpointBuilder(String componentName, String path) {
-        class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {
+        class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder {
             public DnsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

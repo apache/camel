@@ -34,9 +34,6 @@ public interface Ddb2EndpointBuilderFactory {
      * Builder for endpoint for the AWS 2 DynamoDB component.
      */
     public interface Ddb2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedDdb2EndpointBuilder advanced() {
-            return (AdvancedDdb2EndpointBuilder) this;
-        }
         /**
          * To use the AmazonDynamoDB as the client.
          * 
@@ -430,50 +427,6 @@ public interface Ddb2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 DynamoDB component.
-     */
-    public interface AdvancedDdb2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default Ddb2EndpointBuilder basic() {
-            return (Ddb2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDdb2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDdb2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> enum.
      */
@@ -543,7 +496,7 @@ public interface Ddb2EndpointBuilderFactory {
         }
     }
     static Ddb2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class Ddb2EndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2EndpointBuilder, AdvancedDdb2EndpointBuilder {
+        class Ddb2EndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2EndpointBuilder {
             public Ddb2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -56,7 +56,6 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "scanStream": target.setScanStream(property(camelContext, boolean.class, value)); return true;
         case "scanstreamdelay":
         case "scanStreamDelay": target.setScanStreamDelay(property(camelContext, long.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -99,7 +98,6 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "scanStream": return boolean.class;
         case "scanstreamdelay":
         case "scanStreamDelay": return long.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -143,7 +141,6 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "scanStream": return target.isScanStream();
         case "scanstreamdelay":
         case "scanStreamDelay": return target.getScanStreamDelay();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

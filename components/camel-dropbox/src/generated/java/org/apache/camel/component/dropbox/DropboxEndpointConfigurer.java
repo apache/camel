@@ -41,7 +41,6 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "remotepath":
         case "remotePath": target.getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uploadmode":
         case "uploadMode": target.getConfiguration().setUploadMode(property(camelContext, org.apache.camel.component.dropbox.util.DropboxUploadMode.class, value)); return true;
         default: return false;
@@ -71,7 +70,6 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": return java.lang.String.class;
         case "remotepath":
         case "remotePath": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "uploadmode":
         case "uploadMode": return org.apache.camel.component.dropbox.util.DropboxUploadMode.class;
         default: return null;
@@ -102,7 +100,6 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": return target.getConfiguration().getQuery();
         case "remotepath":
         case "remotePath": return target.getConfiguration().getRemotePath();
-        case "synchronous": return target.isSynchronous();
         case "uploadmode":
         case "uploadMode": return target.getConfiguration().getUploadMode();
         default: return null;

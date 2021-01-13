@@ -67,7 +67,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "startWorkflowOptionsParameters": target.getConfiguration().setStartWorkflowOptionsParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "stateresulttype":
         case "stateResultType": target.getConfiguration().setStateResultType(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskstarttoclosetimeout":
         case "taskStartToCloseTimeout": target.getConfiguration().setTaskStartToCloseTimeout(property(camelContext, java.lang.String.class, value)); return true;
         case "terminationdetails":
@@ -132,7 +131,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "startWorkflowOptionsParameters": return java.util.Map.class;
         case "stateresulttype":
         case "stateResultType": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "taskstarttoclosetimeout":
         case "taskStartToCloseTimeout": return java.lang.String.class;
         case "terminationdetails":
@@ -198,7 +196,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "startWorkflowOptionsParameters": return target.getConfiguration().getStartWorkflowOptionsParameters();
         case "stateresulttype":
         case "stateResultType": return target.getConfiguration().getStateResultType();
-        case "synchronous": return target.isSynchronous();
         case "taskstarttoclosetimeout":
         case "taskStartToCloseTimeout": return target.getConfiguration().getTaskStartToCloseTimeout();
         case "terminationdetails":

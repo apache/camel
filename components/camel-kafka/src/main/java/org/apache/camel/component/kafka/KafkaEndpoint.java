@@ -83,7 +83,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     public Producer createProducer() throws Exception {
         KafkaProducer producer = createProducer(this);
-        if (isSynchronous()) {
+        if (getConfiguration().isSynchronous()) {
             return new SynchronousDelegateProducer(producer);
         } else {
             return producer;

@@ -20,11 +20,10 @@ public class GangliaEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(15);
         props.add("metricName");
         props.add("prefix");
         props.add("tmax");
-        props.add("synchronous");
         props.add("spoofHostname");
         props.add("units");
         props.add("slope");

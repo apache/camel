@@ -34,9 +34,6 @@ public interface AWS2EC2EndpointBuilderFactory {
      * Builder for endpoint for the AWS 2 Elastic Compute Cloud (EC2) component.
      */
     public interface AWS2EC2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedAWS2EC2EndpointBuilder advanced() {
-            return (AdvancedAWS2EC2EndpointBuilder) this;
-        }
         /**
          * Amazon AWS Access Key.
          * 
@@ -343,51 +340,6 @@ public interface AWS2EC2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Elastic Compute Cloud (EC2)
-     * component.
-     */
-    public interface AdvancedAWS2EC2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default AWS2EC2EndpointBuilder basic() {
-            return (AWS2EC2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAWS2EC2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAWS2EC2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Operations</code> enum.
      */
@@ -458,7 +410,7 @@ public interface AWS2EC2EndpointBuilderFactory {
     static AWS2EC2EndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class AWS2EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2EC2EndpointBuilder, AdvancedAWS2EC2EndpointBuilder {
+        class AWS2EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2EC2EndpointBuilder {
             public AWS2EC2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

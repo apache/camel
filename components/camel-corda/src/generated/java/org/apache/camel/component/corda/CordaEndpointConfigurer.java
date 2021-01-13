@@ -44,7 +44,6 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "querycriteria":
         case "queryCriteria": target.getConfiguration().setQueryCriteria(property(camelContext, net.corda.core.node.services.vault.QueryCriteria.class, value)); return true;
         case "sort": target.getConfiguration().setSort(property(camelContext, net.corda.core.node.services.vault.Sort.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -76,7 +75,6 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "querycriteria":
         case "queryCriteria": return net.corda.core.node.services.vault.QueryCriteria.class;
         case "sort": return net.corda.core.node.services.vault.Sort.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -109,7 +107,6 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "querycriteria":
         case "queryCriteria": return target.getConfiguration().getQueryCriteria();
         case "sort": return target.getConfiguration().getSort();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

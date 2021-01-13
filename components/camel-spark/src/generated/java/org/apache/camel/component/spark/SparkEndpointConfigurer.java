@@ -31,7 +31,6 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rdd": target.setRdd(property(camelContext, org.apache.spark.api.java.JavaRDDLike.class, value)); return true;
         case "rddcallback":
         case "rddCallback": target.setRddCallback(property(camelContext, org.apache.camel.component.spark.RddCallback.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,7 +48,6 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rdd": return org.apache.spark.api.java.JavaRDDLike.class;
         case "rddcallback":
         case "rddCallback": return org.apache.camel.component.spark.RddCallback.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -68,7 +66,6 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rdd": return target.getRdd();
         case "rddcallback":
         case "rddCallback": return target.getRddCallback();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

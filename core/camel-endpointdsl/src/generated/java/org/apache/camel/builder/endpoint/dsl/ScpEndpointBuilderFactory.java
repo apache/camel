@@ -659,8 +659,7 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -675,8 +674,7 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

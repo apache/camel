@@ -73,6 +73,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean useRelativePath = true;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -355,5 +358,13 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public boolean isHttpProxy() {
         return "proxy".equals(super.protocol);
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

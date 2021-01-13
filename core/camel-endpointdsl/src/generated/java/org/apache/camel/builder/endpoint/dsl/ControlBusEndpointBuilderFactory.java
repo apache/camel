@@ -37,9 +37,6 @@ public interface ControlBusEndpointBuilderFactory {
     public interface ControlBusEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedControlBusEndpointBuilder advanced() {
-            return (AdvancedControlBusEndpointBuilder) this;
-        }
         /**
          * To denote an action that can be either: start, stop, or status. To
          * either start or stop a route, or to get the status of the route as
@@ -227,51 +224,6 @@ public interface ControlBusEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Control Bus component.
-     */
-    public interface AdvancedControlBusEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ControlBusEndpointBuilder basic() {
-            return (ControlBusEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedControlBusEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedControlBusEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface ControlBusBuilders {
         /**
          * Control Bus (camel-controlbus)
@@ -337,7 +289,7 @@ public interface ControlBusEndpointBuilderFactory {
     static ControlBusEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder, AdvancedControlBusEndpointBuilder {
+        class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder {
             public ControlBusEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

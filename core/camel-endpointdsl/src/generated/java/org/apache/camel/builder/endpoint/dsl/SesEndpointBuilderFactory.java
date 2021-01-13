@@ -35,9 +35,6 @@ public interface SesEndpointBuilderFactory {
      * Builder for endpoint for the AWS Simple Email Service (SES) component.
      */
     public interface SesEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSesEndpointBuilder advanced() {
-            return (AdvancedSesEndpointBuilder) this;
-        }
         /**
          * To use the AmazonSimpleEmailService as the client.
          * 
@@ -368,51 +365,6 @@ public interface SesEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Simple Email Service (SES)
-     * component.
-     */
-    public interface AdvancedSesEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SesEndpointBuilder basic() {
-            return (SesEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSesEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSesEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
@@ -463,7 +415,7 @@ public interface SesEndpointBuilderFactory {
         }
     }
     static SesEndpointBuilder endpointBuilder(String componentName, String path) {
-        class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder, AdvancedSesEndpointBuilder {
+        class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

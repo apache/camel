@@ -36,9 +36,6 @@ public interface FreemarkerEndpointBuilderFactory {
     public interface FreemarkerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedFreemarkerEndpointBuilder advanced() {
-            return (AdvancedFreemarkerEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -279,51 +276,6 @@ public interface FreemarkerEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Freemarker component.
-     */
-    public interface AdvancedFreemarkerEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default FreemarkerEndpointBuilder basic() {
-            return (FreemarkerEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFreemarkerEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFreemarkerEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface FreemarkerBuilders {
         /**
          * Freemarker (camel-freemarker)
@@ -381,7 +333,7 @@ public interface FreemarkerEndpointBuilderFactory {
     static FreemarkerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder, AdvancedFreemarkerEndpointBuilder {
+        class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder {
             public FreemarkerEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

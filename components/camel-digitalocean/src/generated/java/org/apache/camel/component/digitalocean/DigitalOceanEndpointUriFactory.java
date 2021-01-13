@@ -20,12 +20,11 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("lazyStartProducer");
         props.add("oAuthToken");
         props.add("perPage");
         props.add("resource");
-        props.add("synchronous");
         props.add("httpProxyHost");
         props.add("httpProxyPort");
         props.add("page");

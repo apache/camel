@@ -31,7 +31,6 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputtype":
         case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jsonata.JsonataInputOutputType.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,7 +48,6 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return boolean.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.jsonata.JsonataInputOutputType.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -68,7 +66,6 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputtype":
         case "outputType": return target.getOutputType();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

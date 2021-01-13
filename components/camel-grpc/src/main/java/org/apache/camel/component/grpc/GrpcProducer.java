@@ -63,7 +63,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
         this.configuration = configuration;
 
         if (configuration.getProducerStrategy() == GrpcProducerStrategy.STREAMING) {
-            if (endpoint.isSynchronous()) {
+            if (configuration.isSynchronous()) {
                 throw new IllegalStateException("Cannot use synchronous processing in streaming mode");
             } else if (configuration.getStreamRepliesTo() == null) {
                 throw new IllegalStateException("The streamReplyTo property is mandatory when using the STREAMING mode");
@@ -113,7 +113,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
                 callCreds = new JwtCallCredentials(jwtToken);
             }
 
-            if (endpoint.isSynchronous()) {
+            if (configuration.isSynchronous()) {
                 LOG.debug("Getting synchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel,
                         callCreds, endpoint.getCamelContext());

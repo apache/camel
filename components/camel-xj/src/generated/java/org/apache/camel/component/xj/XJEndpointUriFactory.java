@@ -20,10 +20,9 @@ public class XJEndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(18);
         props.add("transformDirection");
         props.add("saxonConfiguration");
-        props.add("synchronous");
         props.add("contentCache");
         props.add("resourceUri");
         props.add("allowStAX");

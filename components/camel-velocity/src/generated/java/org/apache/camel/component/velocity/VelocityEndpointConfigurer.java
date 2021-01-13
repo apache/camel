@@ -34,7 +34,6 @@ public class VelocityEndpointConfigurer extends PropertyConfigurerSupport implem
         case "loaderCache": target.setLoaderCache(property(camelContext, boolean.class, value)); return true;
         case "propertiesfile":
         case "propertiesFile": target.setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -55,7 +54,6 @@ public class VelocityEndpointConfigurer extends PropertyConfigurerSupport implem
         case "loaderCache": return boolean.class;
         case "propertiesfile":
         case "propertiesFile": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -77,7 +75,6 @@ public class VelocityEndpointConfigurer extends PropertyConfigurerSupport implem
         case "loaderCache": return target.isLoaderCache();
         case "propertiesfile":
         case "propertiesFile": return target.getPropertiesFile();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

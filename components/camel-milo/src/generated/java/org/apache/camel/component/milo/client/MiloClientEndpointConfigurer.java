@@ -75,7 +75,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": target.getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -137,7 +136,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return java.lang.Long.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -200,7 +198,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return target.getConfiguration().getSessionName();
         case "sessiontimeout":
         case "sessionTimeout": return target.getConfiguration().getSessionTimeout();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

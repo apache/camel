@@ -36,7 +36,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "marginTop": target.getPdfConfiguration().setMarginTop(property(camelContext, int.class, value)); return true;
         case "pagesize":
         case "pageSize": target.getPdfConfiguration().setPageSize(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "textprocessingfactory":
         case "textProcessingFactory": target.getPdfConfiguration().setTextProcessingFactory(property(camelContext, org.apache.camel.component.pdf.TextProcessingFactory.class, value)); return true;
         default: return false;
@@ -61,7 +60,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "marginTop": return int.class;
         case "pagesize":
         case "pageSize": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "textprocessingfactory":
         case "textProcessingFactory": return org.apache.camel.component.pdf.TextProcessingFactory.class;
         default: return null;
@@ -87,7 +85,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "marginTop": return target.getPdfConfiguration().getMarginTop();
         case "pagesize":
         case "pageSize": return target.getPdfConfiguration().getPageSize();
-        case "synchronous": return target.isSynchronous();
         case "textprocessingfactory":
         case "textProcessingFactory": return target.getPdfConfiguration().getTextProcessingFactory();
         default: return null;

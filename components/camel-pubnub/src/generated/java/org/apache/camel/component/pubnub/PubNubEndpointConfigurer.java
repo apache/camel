@@ -42,7 +42,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
         case "subscribekey":
         case "subscribeKey": target.getConfiguration().setSubscribeKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uuid": target.getConfiguration().setUuid(property(camelContext, java.lang.String.class, value)); return true;
         case "withpresence":
         case "withPresence": target.getConfiguration().setWithPresence(property(camelContext, boolean.class, value)); return true;
@@ -74,7 +73,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secure": return boolean.class;
         case "subscribekey":
         case "subscribeKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "uuid": return java.lang.String.class;
         case "withpresence":
         case "withPresence": return boolean.class;
@@ -107,7 +105,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secure": return target.getConfiguration().isSecure();
         case "subscribekey":
         case "subscribeKey": return target.getConfiguration().getSubscribeKey();
-        case "synchronous": return target.isSynchronous();
         case "uuid": return target.getConfiguration().getUuid();
         case "withpresence":
         case "withPresence": return target.getConfiguration().isWithPresence();

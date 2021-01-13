@@ -20,9 +20,8 @@ public class CryptoCmsEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(17);
         props.add("toBase64");
-        props.add("synchronous");
         props.add("fromBase64");
         props.add("cryptoOperation");
         props.add("keyStoreParameters");

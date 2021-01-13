@@ -20,12 +20,11 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(10);
         props.add("async");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("threadPoolSize");
-        props.add("synchronous");
         props.add("configFile");
         props.add("exchangePattern");
         props.add("useSolverManager");

@@ -28,7 +28,6 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mark": target.setMark(property(camelContext, java.lang.Long.class, value)); return true;
         case "subject": target.setSubject(property(camelContext, java.lang.Object.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
@@ -44,7 +43,6 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return boolean.class;
         case "mark": return java.lang.Long.class;
         case "subject": return java.lang.Object.class;
-        case "synchronous": return boolean.class;
         case "value": return java.lang.Long.class;
         default: return null;
         }
@@ -61,7 +59,6 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mark": return target.getMark();
         case "subject": return target.getSubject();
-        case "synchronous": return target.isSynchronous();
         case "value": return target.getValue();
         default: return null;
         }

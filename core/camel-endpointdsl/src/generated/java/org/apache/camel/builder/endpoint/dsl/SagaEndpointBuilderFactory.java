@@ -34,9 +34,6 @@ public interface SagaEndpointBuilderFactory {
      * Builder for endpoint for the Saga component.
      */
     public interface SagaEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSagaEndpointBuilder advanced() {
-            return (AdvancedSagaEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -86,50 +83,6 @@ public interface SagaEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Saga component.
-     */
-    public interface AdvancedSagaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SagaEndpointBuilder basic() {
-            return (SagaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSagaEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSagaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface SagaBuilders {
         /**
          * Saga (camel-saga)
@@ -175,7 +128,7 @@ public interface SagaEndpointBuilderFactory {
         }
     }
     static SagaEndpointBuilder endpointBuilder(String componentName, String path) {
-        class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder, AdvancedSagaEndpointBuilder {
+        class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder {
             public SagaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

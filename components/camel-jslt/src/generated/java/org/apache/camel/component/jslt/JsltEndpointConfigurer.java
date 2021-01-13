@@ -31,7 +31,6 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,7 +48,6 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -68,7 +66,6 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "prettyprint":
         case "prettyPrint": return target.isPrettyPrint();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

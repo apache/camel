@@ -167,7 +167,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcestructversion":
         case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
@@ -335,7 +334,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "sourcestructversion":
         case "sourceStructVersion": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tableblacklist":
         case "tableBlacklist": return java.lang.String.class;
         case "tableexcludelist":
@@ -504,7 +502,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": return target.getConfiguration().getSnapshotSelectStatementOverrides();
         case "sourcestructversion":
         case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
-        case "synchronous": return target.isSynchronous();
         case "tableblacklist":
         case "tableBlacklist": return target.getConfiguration().getTableBlacklist();
         case "tableexcludelist":

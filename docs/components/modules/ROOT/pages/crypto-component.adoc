@@ -143,7 +143,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -167,7 +167,6 @@ with the following path and query parameters:
 | *keyStoreParameters* (advanced) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStoreParameters
 | *publicKey* (advanced) | Set the PublicKey that should be used to verify the signature in the exchange. |  | PublicKey
 | *secureRandom* (advanced) | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // endpoint options: END

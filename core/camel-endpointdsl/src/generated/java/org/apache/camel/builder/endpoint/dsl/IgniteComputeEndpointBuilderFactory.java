@@ -36,9 +36,6 @@ public interface IgniteComputeEndpointBuilderFactory {
     public interface IgniteComputeEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedIgniteComputeEndpointBuilder advanced() {
-            return (AdvancedIgniteComputeEndpointBuilder) this;
-        }
         /**
          * An expression that returns the Cluster Group for the IgniteCompute
          * instance.
@@ -293,52 +290,6 @@ public interface IgniteComputeEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Ignite Compute component.
-     */
-    public interface AdvancedIgniteComputeEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IgniteComputeEndpointBuilder basic() {
-            return (IgniteComputeEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteComputeEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteComputeEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> enum.
      */
@@ -399,7 +350,7 @@ public interface IgniteComputeEndpointBuilderFactory {
     static IgniteComputeEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder, AdvancedIgniteComputeEndpointBuilder {
+        class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder {
             public IgniteComputeEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

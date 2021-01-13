@@ -106,7 +106,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (32 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -137,7 +137,6 @@ with the following path and query parameters:
 | *client* (advanced) | To use an existing mqtt client |  | MqttClient
 | *customWebSocketHeaders* (advanced) | Sets the Custom WebSocket Headers for the WebSocket Connection. |  | Properties
 | *executorServiceTimeout* (advanced) | Set the time in seconds that the executor service should wait when terminating before forcefully terminating. It is not recommended to change this value unless you are absolutely sure that you need to. | 1 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *httpsHostnameVerification{zwsp}Enabled* (security) | Whether SSL HostnameVerifier is enabled or not. The default value is true. | true | boolean
 | *password* (security) | Password to be used for authentication against the MQTT broker |  | String
 | *socketFactory* (security) | Sets the SocketFactory to use. This allows an application to apply its own policies around the creation of network sockets. If using an SSL connection, an SSLSocketFactory can be used to supply application-specific security settings. |  | SocketFactory

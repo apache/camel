@@ -82,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (18 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +105,6 @@ with the following path and query parameters:
 | *readConsistency* (advanced) | The read consistency level. There are 4 enums and the value can be one of: ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL |  | ReadConsistency
 | *resourceConfigs* (advanced) | Cluster wide resources configuration. |  | Map
 | *resourceOptions* (advanced) | Local resources configurations |  | Map
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

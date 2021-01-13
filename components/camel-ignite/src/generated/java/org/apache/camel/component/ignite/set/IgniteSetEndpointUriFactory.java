@@ -20,12 +20,11 @@ public class IgniteSetEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("lazyStartProducer");
         props.add("propagateIncomingBodyIfNoReturnValue");
         props.add("configuration");
         props.add("treatCollectionsAsCacheObjects");
-        props.add("synchronous");
         props.add("name");
         props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

@@ -35,7 +35,6 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "queryfile":
         case "queryFile": target.setQueryFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "variables": target.setVariables(property(camelContext, org.apache.camel.util.json.JsonObject.class, value)); return true;
         default: return false;
@@ -59,7 +58,6 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": return java.lang.String.class;
         case "queryfile":
         case "queryFile": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         case "variables": return org.apache.camel.util.json.JsonObject.class;
         default: return null;
@@ -84,7 +82,6 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "query": return target.getQuery();
         case "queryfile":
         case "queryFile": return target.getQueryFile();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getUsername();
         case "variables": return target.getVariables();
         default: return null;

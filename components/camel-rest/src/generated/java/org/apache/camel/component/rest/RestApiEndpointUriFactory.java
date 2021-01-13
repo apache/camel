@@ -20,13 +20,12 @@ public class RestApiEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(7);
         props.add("path");
         props.add("apiComponentName");
         props.add("bridgeErrorHandler");
         props.add("consumerComponentName");
         props.add("contextIdPattern");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

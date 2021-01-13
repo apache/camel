@@ -44,7 +44,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("sessionCookie", java.lang.String.class);
         map.put("socketTimeout", java.lang.Integer.class);
         map.put("summary", java.lang.String.class);
-        map.put("synchronous", boolean.class);
         map.put("validationMode", java.lang.String.class);
         map.put("proxyHost", java.lang.String.class);
         map.put("proxyPassword", java.lang.String.class);
@@ -145,7 +144,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "summary": target.getConfiguration().setSummary(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -236,7 +234,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "summary": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -323,7 +320,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "summary": return target.getConfiguration().getSummary();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

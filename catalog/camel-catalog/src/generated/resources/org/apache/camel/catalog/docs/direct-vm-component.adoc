@@ -90,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (10 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +105,6 @@ with the following path and query parameters:
 | *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
 | *headerFilterStrategy* (producer) | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none. |  | HeaderFilterStrategy
 | *propagateProperties* (advanced) | Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true. | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
