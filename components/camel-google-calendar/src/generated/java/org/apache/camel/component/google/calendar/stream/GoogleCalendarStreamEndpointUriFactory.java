@@ -20,7 +20,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(43);
         props.add("backoffMultiplier");
         props.add("synchronous");
         props.add("destination");
@@ -52,6 +52,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("schedulerProperties");
         props.add("exchangePattern");
         props.add("index");
+        props.add("syncFlow");
         props.add("accessToken");
         props.add("backoffIdleThreshold");
         props.add("contentChannel");
