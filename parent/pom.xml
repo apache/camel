@@ -346,7 +346,7 @@
         <jsoup-version>1.13.1</jsoup-version>
         <jt400-version>10.4</jt400-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
-        <junit-version>4.13</junit-version>
+        <junit-version>4.13.1</junit-version>
         <junit-jupiter-version>5.7.0</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.5.3</jython-version>
