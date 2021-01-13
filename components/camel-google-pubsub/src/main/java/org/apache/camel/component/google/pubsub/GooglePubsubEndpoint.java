@@ -72,6 +72,15 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
               description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
 
+    @UriParam(defaultValue = "false",
+              description = "Should message ordering be enabled",
+              label = "producer,advanced")
+    private boolean messageOrderingEnabled;
+
+    @UriParam(description = "Pub/Sub endpoint to use when message ordering is enabled. Sending messages to the same region ensures they are received in order even when multiple publishers are used",
+              label = "producer,advanced")
+    private String pubsubEndpoint;
+
     @UriParam(name = "serializer",
               description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer",
               label = "producer,advanced")
@@ -197,5 +206,21 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void setSerializer(GooglePubsubSerializer serializer) {
         this.serializer = serializer;
+    }
+
+    public boolean isMessageOrderingEnabled() {
+        return this.messageOrderingEnabled;
+    }
+
+    public void setMessageOrderingEnabled(boolean messageOrderingEnabled) {
+        this.messageOrderingEnabled = messageOrderingEnabled;
+    }
+
+    public String getPubsubEndpoint() {
+        return this.pubsubEndpoint;
+    }
+
+    public void setPubsubEndpoint(String pubsubEndpoint) {
+        this.pubsubEndpoint = pubsubEndpoint;
     }
 }

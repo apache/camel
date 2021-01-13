@@ -37,6 +37,10 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": target.setLoggerId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "messageorderingenabled":
+        case "messageOrderingEnabled": target.setMessageOrderingEnabled(property(camelContext, boolean.class, value)); return true;
+        case "pubsubendpoint":
+        case "pubsubEndpoint": target.setPubsubEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "serializer": target.setSerializer(property(camelContext, org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "synchronouspull":
@@ -69,6 +73,10 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return java.lang.String.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return java.lang.Integer.class;
+        case "messageorderingenabled":
+        case "messageOrderingEnabled": return boolean.class;
+        case "pubsubendpoint":
+        case "pubsubEndpoint": return java.lang.String.class;
         case "serializer": return org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class;
         case "synchronous": return boolean.class;
         case "synchronouspull":
@@ -97,6 +105,10 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return target.getLoggerId();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "messageorderingenabled":
+        case "messageOrderingEnabled": return target.isMessageOrderingEnabled();
+        case "pubsubendpoint":
+        case "pubsubEndpoint": return target.getPubsubEndpoint();
         case "serializer": return target.getSerializer();
         case "synchronous": return target.isSynchronous();
         case "synchronouspull":

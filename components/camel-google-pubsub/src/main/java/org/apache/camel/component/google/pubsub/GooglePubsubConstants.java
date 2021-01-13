@@ -22,6 +22,7 @@ public final class GooglePubsubConstants {
     public static final String ACK_ID = "CamelGooglePubsub.MsgAckId";
     public static final String PUBLISH_TIME = "CamelGooglePubsub.PublishTime";
     public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
+    public static final String ORDERING_KEY = "CamelGooglePubsub.OrderingKey";
     public static final String RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX = "goog";
 
     public enum AckMode {
