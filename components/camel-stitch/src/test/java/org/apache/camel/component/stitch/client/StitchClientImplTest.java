@@ -5,8 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.camel.component.stitch.client.models.StitchException;
 import org.apache.camel.component.stitch.client.models.StitchMessage;
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
+import org.apache.camel.component.stitch.client.models.StitchResponse;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.junit.jupiter.api.Test;
 import reactor.netty.http.client.HttpClient;
@@ -17,7 +19,7 @@ class StitchClientImplTest {
 
     @Test
     void initialTest() throws JsonProcessingException {
-        final StitchClient client = new StitchClientImpl(HttpClient.create(), "https://api.eu-central-1.stitchdata.com", "");
+        final StitchClient client = new StitchClientImpl(HttpClient.create(), "https://api.eu-central-1.stitchdata.com", "36eb3b936e2cb9faba618ccbaa8f8a386d747db8e4201432080a42f762756eb7");
 
         final StitchMessage message1 = StitchMessage.builder()
                 .withData("id", 2)
@@ -47,7 +49,11 @@ class StitchClientImplTest {
                 .withSchema(schema)
                 .withKeyNames("id")
                 .build();
-
-        client.batch(body);
+        try {
+            StitchResponse response = client.batch(body).block();
+            System.out.println();
+        } catch (Exception ex) {
+            System.out.println();
+        }
     }
 }

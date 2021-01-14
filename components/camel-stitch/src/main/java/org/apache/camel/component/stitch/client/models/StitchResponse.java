@@ -27,6 +27,10 @@ public class StitchResponse {
         return message;
     }
 
+    public Map<String, Object> getHeaders() {
+        return headers;
+    }
+
     /**
      * Returns true if the request succeeded.
      *
