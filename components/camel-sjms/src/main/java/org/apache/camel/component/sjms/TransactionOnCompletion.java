@@ -59,6 +59,10 @@ class TransactionOnCompletion extends SynchronizationAdapter {
 
     @Override
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+
         TransactionOnCompletion that = (TransactionOnCompletion) o;
         return session == that.session && message == that.message;
     }
