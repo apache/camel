@@ -21,6 +21,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.User;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
         mockResultEndpoint.expectedMessageCount(2);
         RepositoryCommit commit1 = commitService.addRepositoryCommit();
         RepositoryCommit commit2 = commitService.addRepositoryCommit();
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commit1, commit2);
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commit1.getCommit().getMessage(), commit2.getCommit().getMessage());
 
         Thread.sleep(1 * 1000);
 
@@ -55,11 +56,11 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            RepositoryCommit commit = (RepositoryCommit) in.getBody();
-            User author = commit.getAuthor();
+            String author = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, String.class);
+            String sha = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_SHA, String.class);
             if (log.isDebugEnabled()) {
-                log.debug("Got commit with author: " + author.getLogin() + ": " + author.getHtmlUrl() + " SHA "
-                          + commit.getSha());
+                log.debug("Got commit with author: " + author + ": SHA "
+                          + sha);
             }
         }
     }
