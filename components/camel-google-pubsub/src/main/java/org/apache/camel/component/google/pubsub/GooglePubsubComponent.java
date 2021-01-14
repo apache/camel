@@ -134,11 +134,12 @@ public class GooglePubsubComponent extends DefaultComponent {
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
             builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
         }
+        if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) != null) {
+            builder.setEndpoint(googlePubsubEndpoint.getPubsubEndpoint());
+        }
         if (googlePubsubEndpoint.isMessageOrderingEnabled()) {
             builder.setEnableMessageOrdering(true);
-            if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) != null) {
-                builder.setEndpoint(googlePubsubEndpoint.getPubsubEndpoint());
-            } else {
+            if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) == null) {
                 LOG.warn("In conjunction with enabeling message ordering the pubsubEndpoint should be set. "
                          + "Message ordering is only guaranteed when send to the same region.");
             }

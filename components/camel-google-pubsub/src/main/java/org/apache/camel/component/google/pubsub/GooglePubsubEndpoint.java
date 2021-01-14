@@ -77,7 +77,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
               label = "producer,advanced")
     private boolean messageOrderingEnabled;
 
-    @UriParam(description = "Pub/Sub endpoint to use when message ordering is enabled. Sending messages to the same region ensures they are received in order even when multiple publishers are used",
+    @UriParam(description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used",
               label = "producer,advanced")
     private String pubsubEndpoint;
 
