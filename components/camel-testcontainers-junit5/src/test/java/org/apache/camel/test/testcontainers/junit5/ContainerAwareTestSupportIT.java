@@ -20,6 +20,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 
+@SuppressWarnings("deprecation")
 public class ContainerAwareTestSupportIT extends ContainerAwareTestSupport {
     @Test
     public void testPropertyPlaceholders() {
