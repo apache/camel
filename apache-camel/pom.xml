@@ -2700,23 +2700,6 @@
         <version>${maven-assembly-plugin-version}</version>
         <executions>
           <execution>
-            <id>bin</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/descriptors/unix-bin.xml</descriptor>
-                <descriptor>src/main/descriptors/windows-bin.xml</descriptor>
-              </descriptors>
-              <finalName>${project.artifactId}-${project.version}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-              <tarLongFileMode>gnu</tarLongFileMode>
-              <recompressZippedFiles>false</recompressZippedFiles>
-            </configuration>
-          </execution>
-          <execution>
             <id>src</id>
             <phase>package</phase>
             <goals>
