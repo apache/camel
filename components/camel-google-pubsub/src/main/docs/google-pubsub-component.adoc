@@ -144,6 +144,9 @@ Google PubSub expects the payload to be byte[] array, Producer endpoints will se
 * Everything else will be serialised into byte[] array
 
 A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as PubSub attributes.
+
+A String set as message header `GooglePubsubConstants.ORDERING_KEY` will be set as the PubSub orderingKey.
+ 
 Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
 the header `GooglePubsubConstants.MESSAGE_ID`.
 
