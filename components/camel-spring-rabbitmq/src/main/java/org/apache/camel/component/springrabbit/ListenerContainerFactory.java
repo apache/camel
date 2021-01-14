@@ -29,5 +29,5 @@ public interface ListenerContainerFactory {
      * @param  endpoint the endpoint
      * @return          the created and configured listener container
      */
-    AbstractMessageListenerContainer createListenerContainer(RabbitMQEndpoint endpoint);
+    AbstractMessageListenerContainer createListenerContainer(SpringRabbitMQEndpoint endpoint);
 }

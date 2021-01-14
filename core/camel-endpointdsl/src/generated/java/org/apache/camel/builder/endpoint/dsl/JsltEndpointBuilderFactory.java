@@ -34,9 +34,6 @@ public interface JsltEndpointBuilderFactory {
      * Builder for endpoint for the JSLT component.
      */
     public interface JsltEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedJsltEndpointBuilder advanced() {
-            return (AdvancedJsltEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -229,50 +226,6 @@ public interface JsltEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the JSLT component.
-     */
-    public interface AdvancedJsltEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default JsltEndpointBuilder basic() {
-            return (JsltEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJsltEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJsltEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface JsltBuilders {
         /**
          * JSLT (camel-jslt)
@@ -326,7 +279,7 @@ public interface JsltEndpointBuilderFactory {
         }
     }
     static JsltEndpointBuilder endpointBuilder(String componentName, String path) {
-        class JsltEndpointBuilderImpl extends AbstractEndpointBuilder implements JsltEndpointBuilder, AdvancedJsltEndpointBuilder {
+        class JsltEndpointBuilderImpl extends AbstractEndpointBuilder implements JsltEndpointBuilder {
             public JsltEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

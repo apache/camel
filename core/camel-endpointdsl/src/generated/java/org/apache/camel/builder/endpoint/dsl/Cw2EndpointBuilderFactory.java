@@ -35,9 +35,6 @@ public interface Cw2EndpointBuilderFactory {
      * Builder for endpoint for the AWS 2 CloudWatch component.
      */
     public interface Cw2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedCw2EndpointBuilder advanced() {
-            return (AdvancedCw2EndpointBuilder) this;
-        }
         /**
          * To use the AmazonCloudWatch as the client.
          * 
@@ -359,50 +356,6 @@ public interface Cw2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 CloudWatch component.
-     */
-    public interface AdvancedCw2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default Cw2EndpointBuilder basic() {
-            return (Cw2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCw2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCw2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
@@ -453,7 +406,7 @@ public interface Cw2EndpointBuilderFactory {
         }
     }
     static Cw2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class Cw2EndpointBuilderImpl extends AbstractEndpointBuilder implements Cw2EndpointBuilder, AdvancedCw2EndpointBuilder {
+        class Cw2EndpointBuilderImpl extends AbstractEndpointBuilder implements Cw2EndpointBuilder {
             public Cw2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

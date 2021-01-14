@@ -20,10 +20,9 @@ public class FopEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(4);
         props.add("lazyStartProducer");
         props.add("fopFactory");
-        props.add("synchronous");
         props.add("outputType");
         props.add("userConfigURL");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

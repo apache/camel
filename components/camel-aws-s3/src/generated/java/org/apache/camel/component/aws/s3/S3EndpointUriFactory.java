@@ -20,13 +20,12 @@ public class S3EndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(59);
+        Set<String> props = new HashSet<>(58);
         props.add("useIAMCredentials");
         props.add("fileName");
         props.add("serverSideEncryption");
         props.add("bucketNameOrArn");
         props.add("prefix");
-        props.add("synchronous");
         props.add("useAwsKMS");
         props.add("initialDelay");
         props.add("proxyPort");

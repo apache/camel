@@ -36,9 +36,6 @@ public interface Translate2EndpointBuilderFactory {
     public interface Translate2EndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedTranslate2EndpointBuilder advanced() {
-            return (AdvancedTranslate2EndpointBuilder) this;
-        }
         /**
          * Being able to autodetect the source language.
          * 
@@ -403,51 +400,6 @@ public interface Translate2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Translate component.
-     */
-    public interface AdvancedTranslate2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default Translate2EndpointBuilder basic() {
-            return (Translate2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTranslate2EndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTranslate2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> enum.
      */
@@ -510,7 +462,7 @@ public interface Translate2EndpointBuilderFactory {
     static Translate2EndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class Translate2EndpointBuilderImpl extends AbstractEndpointBuilder implements Translate2EndpointBuilder, AdvancedTranslate2EndpointBuilder {
+        class Translate2EndpointBuilderImpl extends AbstractEndpointBuilder implements Translate2EndpointBuilder {
             public Translate2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

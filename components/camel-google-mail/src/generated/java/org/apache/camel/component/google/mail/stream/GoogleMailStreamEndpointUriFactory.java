@@ -20,9 +20,8 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(38);
+        Set<String> props = new HashSet<>(37);
         props.add("backoffMultiplier");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("content");
         props.add("markAsRead");

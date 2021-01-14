@@ -25,7 +25,6 @@ public class JingEndpointConfigurer extends PropertyConfigurerSupport implements
         case "compactSyntax": target.setCompactSyntax(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -37,7 +36,6 @@ public class JingEndpointConfigurer extends PropertyConfigurerSupport implements
         case "compactSyntax": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -50,7 +48,6 @@ public class JingEndpointConfigurer extends PropertyConfigurerSupport implements
         case "compactSyntax": return target.isCompactSyntax();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

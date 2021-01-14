@@ -42,7 +42,6 @@ public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sslvalidation":
         case "sslValidation": target.getConfiguration().setSslValidation(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uri": target.getConfiguration().setUri(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -72,7 +71,6 @@ public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return java.lang.String.class;
         case "sslvalidation":
         case "sslValidation": return boolean.class;
-        case "synchronous": return boolean.class;
         case "uri": return java.lang.String.class;
         default: return null;
         }
@@ -103,7 +101,6 @@ public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implement
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "sslvalidation":
         case "sslValidation": return target.getConfiguration().isSslValidation();
-        case "synchronous": return target.isSynchronous();
         case "uri": return target.getConfiguration().getUri();
         default: return null;
         }

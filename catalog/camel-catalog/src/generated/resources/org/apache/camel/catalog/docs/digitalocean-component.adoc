@@ -71,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +82,6 @@ with the following path and query parameters:
 | *perPage* (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
 | *resource* (producer) | *Required* The DigitalOcean resource type on which perform the operation. There are 11 enums and the value can be one of: account, actions, blockStorages, droplets, mages, snapshots, keys, regions, sizes, floatingIPs, tags |  | DigitalOceanResources
 | *digitalOceanClient* (advanced) | To use a existing configured DigitalOceanClient as client |  | DigitalOceanClient
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *httpProxyHost* (proxy) | Set a proxy host if needed |  | String
 | *httpProxyPassword* (proxy) | Set a proxy password if needed |  | String
 | *httpProxyPort* (proxy) | Set a proxy port if needed |  | Integer

@@ -42,7 +42,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signeddataheaderbase64":
         case "signedDataHeaderBase64": target.getVerifyConfig().setSignedDataHeaderBase64(property(camelContext, boolean.class, value)); return true;
         case "signer": target.getSignConfig().setSigner(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tobase64":
         case "toBase64": target.getSignConfig().setToBase64(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "unprotectedattributesgeneratorprovider":
@@ -77,7 +76,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signeddataheaderbase64":
         case "signedDataHeaderBase64": return boolean.class;
         case "signer": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tobase64":
         case "toBase64": return java.lang.Boolean.class;
         case "unprotectedattributesgeneratorprovider":
@@ -113,7 +111,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signeddataheaderbase64":
         case "signedDataHeaderBase64": return target.getVerifyConfig().isSignedDataHeaderBase64();
         case "signer": return target.getSignConfig().getSigner();
-        case "synchronous": return target.isSynchronous();
         case "tobase64":
         case "toBase64": return target.getSignConfig().getToBase64();
         case "unprotectedattributesgeneratorprovider":

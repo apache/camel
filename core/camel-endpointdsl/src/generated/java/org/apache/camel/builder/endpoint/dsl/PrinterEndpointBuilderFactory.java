@@ -34,9 +34,6 @@ public interface PrinterEndpointBuilderFactory {
      * Builder for endpoint for the Printer component.
      */
     public interface PrinterEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedPrinterEndpointBuilder advanced() {
-            return (AdvancedPrinterEndpointBuilder) this;
-        }
         /**
          * Number of copies to print.
          * 
@@ -287,50 +284,6 @@ public interface PrinterEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Printer component.
-     */
-    public interface AdvancedPrinterEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default PrinterEndpointBuilder basic() {
-            return (PrinterEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedPrinterEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedPrinterEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface PrinterBuilders {
         /**
          * Printer (camel-printer)
@@ -388,7 +341,7 @@ public interface PrinterEndpointBuilderFactory {
     static PrinterEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class PrinterEndpointBuilderImpl extends AbstractEndpointBuilder implements PrinterEndpointBuilder, AdvancedPrinterEndpointBuilder {
+        class PrinterEndpointBuilderImpl extends AbstractEndpointBuilder implements PrinterEndpointBuilder {
             public PrinterEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

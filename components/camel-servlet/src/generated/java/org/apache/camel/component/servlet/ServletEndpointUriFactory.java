@@ -20,12 +20,11 @@ public class ServletEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(23);
         props.add("muteException");
         props.add("httpMethodRestrict");
         props.add("eagerCheckContentAvailable");
         props.add("httpBinding");
-        props.add("synchronous");
         props.add("matchOnUriPrefix");
         props.add("attachmentMultipartBinding");
         props.add("contextPath");

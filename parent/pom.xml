@@ -78,7 +78,7 @@
         <avro-ipc-netty-version>1.10.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.15.62</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.15.64</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -346,7 +346,7 @@
         <jsoup-version>1.13.1</jsoup-version>
         <jt400-version>10.4</jt400-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
-        <junit-version>4.13</junit-version>
+        <junit-version>4.13.1</junit-version>
         <junit-jupiter-version>5.7.0</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.5.3</jython-version>
@@ -424,7 +424,7 @@
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
-        <netty-version>4.1.56.Final</netty-version>
+        <netty-version>4.1.57.Final</netty-version>
         <netty-reactive-streams-version>2.0.4</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.45</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
@@ -532,7 +532,7 @@
         <tika-version>1.25</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.2.0.Final</undertow-version>
+        <undertow-version>2.2.3.Final</undertow-version>
         <univocity-parsers-version>2.9.0</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
@@ -737,6 +737,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-xml-jaxb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-xml-jaxp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2586,11 +2591,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-xj</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-xml-jaxp</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

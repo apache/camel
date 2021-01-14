@@ -28,7 +28,6 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": target.getConfiguration().setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "processname":
         case "processName": target.getConfiguration().setProcessName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -44,7 +43,6 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": return java.lang.String.class;
         case "processname":
         case "processName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -61,7 +59,6 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": return target.getConfiguration().getPort();
         case "processname":
         case "processName": return target.getConfiguration().getProcessName();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

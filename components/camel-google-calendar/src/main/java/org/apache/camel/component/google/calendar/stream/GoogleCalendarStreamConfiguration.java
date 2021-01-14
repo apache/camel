@@ -64,6 +64,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private boolean consumeFromNow = true;
     @UriParam
     private boolean considerLastUpdate;
+    @UriParam
+    private boolean syncFlow;
 
     public String getClientId() {
         return clientId;
@@ -226,6 +228,19 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
+     * Sync events, see https://developers.google.com/calendar/v3/sync
+     *
+     * Note: not compatible with: 'query' and 'considerLastUpdate' parameters
+     */
+    public void setSyncFlow(boolean syncFlow) {
+        this.syncFlow = syncFlow;
+    }
+
+    public boolean isSyncFlow() {
+        return syncFlow;
+    }
+
+    /**
      * Take into account the lastUpdate of the last event polled as start date for the next poll
      */
     public void setConsiderLastUpdate(boolean considerLastUpdate) {
@@ -242,5 +257,4 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

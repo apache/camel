@@ -118,7 +118,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (64 parameters):
+=== Query Parameters (63 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -171,7 +171,6 @@ with the following path and query parameters:
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
 | *storageClass* (producer) | The storage class to set in the request. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int

@@ -26,7 +26,7 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 public class DefaultListenerContainerFactory implements ListenerContainerFactory {
 
     @Override
-    public AbstractMessageListenerContainer createListenerContainer(RabbitMQEndpoint endpoint) {
+    public AbstractMessageListenerContainer createListenerContainer(SpringRabbitMQEndpoint endpoint) {
         DefaultMessageListenerContainer listener = new DefaultMessageListenerContainer(endpoint.getConnectionFactory());
         if (endpoint.getQueues() != null) {
             listener.setQueueNames(endpoint.getQueues().split(","));

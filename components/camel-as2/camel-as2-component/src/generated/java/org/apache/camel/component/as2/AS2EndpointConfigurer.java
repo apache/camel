@@ -52,7 +52,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -111,7 +110,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signingprivatekey":
         case "signingPrivateKey": target.getConfiguration().setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targethostname":
         case "targetHostname": target.getConfiguration().setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "targetportnumber":
@@ -181,7 +179,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signingprivatekey":
         case "signingPrivateKey": return java.security.PrivateKey.class;
         case "subject": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "targethostname":
         case "targetHostname": return java.lang.String.class;
         case "targetportnumber":
@@ -247,7 +244,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signingprivatekey":
         case "signingPrivateKey": return target.getConfiguration().getSigningPrivateKey();
         case "subject": return target.getConfiguration().getSubject();
-        case "synchronous": return target.isSynchronous();
         case "targethostname":
         case "targetHostname": return target.getConfiguration().getTargetHostname();
         case "targetportnumber":

@@ -50,8 +50,9 @@ public class PulsarEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String topic;
-    @UriParam(defaultValue = "true", label = "advanced")
-    private boolean synchronous = true;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
@@ -127,19 +128,10 @@ public class PulsarEndpoint extends DefaultEndpoint {
         this.topic = topic;
     }
 
-    /**
-     * Returns whether synchronous processing should be strictly used.
-     */
-    @Override
     public boolean isSynchronous() {
         return synchronous;
     }
 
-    /**
-     * Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing
-     * (if supported).
-     */
-    @Override
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
     }

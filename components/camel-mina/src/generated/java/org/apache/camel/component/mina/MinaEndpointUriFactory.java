@@ -20,10 +20,9 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(30);
         props.add("disconnect");
         props.add("lazySessionCreation");
-        props.add("synchronous");
         props.add("disconnectOnNoReply");
         props.add("encoderMaxLineLength");
         props.add("sslContextParameters");

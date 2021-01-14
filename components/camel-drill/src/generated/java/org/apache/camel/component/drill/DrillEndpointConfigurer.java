@@ -28,7 +28,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mode": target.setMode(property(camelContext, org.apache.camel.component.drill.DrillConnectionMode.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -43,7 +42,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "mode": return org.apache.camel.component.drill.DrillConnectionMode.class;
         case "port": return java.lang.Integer.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -59,7 +57,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mode": return target.getMode();
         case "port": return target.getPort();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

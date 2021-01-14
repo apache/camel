@@ -34,9 +34,6 @@ public interface GangliaEndpointBuilderFactory {
      * Builder for endpoint for the Ganglia component.
      */
     public interface GangliaEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedGangliaEndpointBuilder advanced() {
-            return (AdvancedGangliaEndpointBuilder) this;
-        }
         /**
          * Minumum time in seconds before Ganglia will purge the metric value if
          * it expires. Set to 0 and the value will remain in Ganglia
@@ -392,50 +389,6 @@ public interface GangliaEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Ganglia component.
-     */
-    public interface AdvancedGangliaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default GangliaEndpointBuilder basic() {
-            return (GangliaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGangliaEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGangliaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>info.ganglia.gmetric4j.gmetric.GMetric$UDPAddressingMode</code>
      * enum.
@@ -527,7 +480,7 @@ public interface GangliaEndpointBuilderFactory {
     static GangliaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder, AdvancedGangliaEndpointBuilder {
+        class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder {
             public GangliaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

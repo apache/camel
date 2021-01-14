@@ -34,9 +34,6 @@ public interface TranslateEndpointBuilderFactory {
      * Builder for endpoint for the AWS Translate component.
      */
     public interface TranslateEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedTranslateEndpointBuilder advanced() {
-            return (AdvancedTranslateEndpointBuilder) this;
-        }
         /**
          * Setting the autoDiscoverClient mechanism, if true, the component will
          * look for a client instance in the registry automatically otherwise it
@@ -371,50 +368,6 @@ public interface TranslateEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Translate component.
-     */
-    public interface AdvancedTranslateEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default TranslateEndpointBuilder basic() {
-            return (TranslateEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTranslateEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTranslateEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.translate.TranslateOperations</code>
      * enum.
@@ -478,7 +431,7 @@ public interface TranslateEndpointBuilderFactory {
     static TranslateEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class TranslateEndpointBuilderImpl extends AbstractEndpointBuilder implements TranslateEndpointBuilder, AdvancedTranslateEndpointBuilder {
+        class TranslateEndpointBuilderImpl extends AbstractEndpointBuilder implements TranslateEndpointBuilder {
             public TranslateEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

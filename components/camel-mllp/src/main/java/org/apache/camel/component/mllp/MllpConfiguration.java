@@ -42,9 +42,6 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "consumer,advanced", defaultValue = "InOut")
     ExchangePattern exchangePattern = ExchangePattern.InOut;
 
-    @UriParam(label = "advanced", defaultValue = "true")
-    boolean synchronous = true;
-
     // camel-mllp specific URI parameters
     @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
     Integer backlog = 5;
@@ -134,7 +131,6 @@ public class MllpConfiguration implements Cloneable {
         } else {
             target.bridgeErrorHandler = source.bridgeErrorHandler;
             target.exchangePattern = source.exchangePattern;
-            target.synchronous = source.synchronous;
 
             target.backlog = source.backlog;
             target.bindTimeout = source.bindTimeout;
@@ -201,19 +197,6 @@ public class MllpConfiguration implements Cloneable {
      */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
-    }
-
-    public boolean isSynchronous() {
-        return synchronous;
-    }
-
-    /**
-     * Sets whether synchronous processing should be strictly used (this component only supports synchronous
-     * operations).
-     *
-     * @param synchronous
-     */
-    public void setSynchronous(boolean synchronous) {
     }
 
     public boolean hasCharsetName() {
@@ -712,7 +695,6 @@ public class MllpConfiguration implements Cloneable {
     public int hashCode() {
         return Objects.hash(bridgeErrorHandler,
                 exchangePattern,
-                synchronous,
                 backlog,
                 bindTimeout,
                 bindRetryInterval,
@@ -751,7 +733,6 @@ public class MllpConfiguration implements Cloneable {
 
         return bridgeErrorHandler == rhs.bridgeErrorHandler
                 && exchangePattern == rhs.exchangePattern
-                && synchronous == rhs.synchronous
                 && bindTimeout == rhs.bindTimeout
                 && bindRetryInterval == rhs.bindRetryInterval
                 && acceptTimeout == rhs.acceptTimeout
@@ -781,7 +762,6 @@ public class MllpConfiguration implements Cloneable {
         return "MllpConfiguration{"
                + "bridgeErrorHandler=" + bridgeErrorHandler
                + ", exchangePattern=" + exchangePattern
-               + ", synchronous=" + synchronous
                + ", backlog=" + backlog
                + ", bindTimeout=" + bindTimeout
                + ", bindRetryInterval=" + bindRetryInterval

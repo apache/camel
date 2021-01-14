@@ -20,10 +20,9 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(82);
+        Set<String> props = new HashSet<>(81);
         props.add("apiName");
         props.add("throwError");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("type");
         props.add("respondToUri");

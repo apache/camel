@@ -30,7 +30,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messageinterpolator":
         case "messageInterpolator": target.setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "traversableresolver":
         case "traversableResolver": target.setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
         case "validationproviderresolver":
@@ -53,7 +52,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return boolean.class;
         case "messageinterpolator":
         case "messageInterpolator": return javax.validation.MessageInterpolator.class;
-        case "synchronous": return boolean.class;
         case "traversableresolver":
         case "traversableResolver": return javax.validation.TraversableResolver.class;
         case "validationproviderresolver":
@@ -77,7 +75,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messageinterpolator":
         case "messageInterpolator": return target.getMessageInterpolator();
-        case "synchronous": return target.isSynchronous();
         case "traversableresolver":
         case "traversableResolver": return target.getTraversableResolver();
         case "validationproviderresolver":

@@ -81,7 +81,11 @@ with the following path and query parameters:
 |===
 
 
+<<<<<<< HEAD
 === Query Parameters (13 parameters):
+=======
+=== Query Parameters (10 parameters):
+>>>>>>> upstream/master
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -99,7 +103,6 @@ with the following path and query parameters:
 | *messageOrderingEnabled* (producer) | Should message ordering be enabled | false | boolean
 | *pubsubEndpoint* (producer) | Pub/Sub endpoint to use when message ordering is enabled. Sending messages to the same region ensures they are received in order even when multiple publishers are used |  | String
 | *serializer* (producer) | *Autowired* A custom GooglePubsubSerializer to use for serializing message payloads in the producer |  | GooglePubsubSerializer
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

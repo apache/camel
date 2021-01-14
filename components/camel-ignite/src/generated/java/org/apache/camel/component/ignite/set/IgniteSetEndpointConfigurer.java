@@ -27,7 +27,6 @@ public class IgniteSetEndpointConfigurer extends PropertyConfigurerSupport imple
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.ignite.set.IgniteSetOperation.class, value)); return true;
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": target.setPropagateIncomingBodyIfNoReturnValue(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "treatcollectionsascacheobjects":
         case "treatCollectionsAsCacheObjects": target.setTreatCollectionsAsCacheObjects(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -43,7 +42,6 @@ public class IgniteSetEndpointConfigurer extends PropertyConfigurerSupport imple
         case "operation": return org.apache.camel.component.ignite.set.IgniteSetOperation.class;
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": return boolean.class;
-        case "synchronous": return boolean.class;
         case "treatcollectionsascacheobjects":
         case "treatCollectionsAsCacheObjects": return boolean.class;
         default: return null;
@@ -60,7 +58,6 @@ public class IgniteSetEndpointConfigurer extends PropertyConfigurerSupport imple
         case "operation": return target.getOperation();
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": return target.isPropagateIncomingBodyIfNoReturnValue();
-        case "synchronous": return target.isSynchronous();
         case "treatcollectionsascacheobjects":
         case "treatCollectionsAsCacheObjects": return target.isTreatCollectionsAsCacheObjects();
         default: return null;

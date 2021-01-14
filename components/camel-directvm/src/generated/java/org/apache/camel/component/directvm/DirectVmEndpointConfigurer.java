@@ -36,7 +36,6 @@ public class DirectVmEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "propagateproperties":
         case "propagateProperties": target.setPropagateProperties(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
@@ -60,7 +59,6 @@ public class DirectVmEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "propagateproperties":
         case "propagateProperties": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeout": return long.class;
         default: return null;
         }
@@ -85,7 +83,6 @@ public class DirectVmEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "propagateproperties":
         case "propagateProperties": return target.isPropagateProperties();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         default: return null;
         }

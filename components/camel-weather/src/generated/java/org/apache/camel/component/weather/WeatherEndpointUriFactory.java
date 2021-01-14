@@ -20,11 +20,10 @@ public class WeatherEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(41);
         props.add("backoffMultiplier");
         props.add("weatherApi");
         props.add("geolocationAccessKey");
-        props.add("synchronous");
         props.add("topLat");
         props.add("language");
         props.add("lon");

@@ -35,9 +35,6 @@ public interface ECSEndpointBuilderFactory {
      * component.
      */
     public interface ECSEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedECSEndpointBuilder advanced() {
-            return (AdvancedECSEndpointBuilder) this;
-        }
         /**
          * Setting the autoDiscoverClient mechanism, if true, the component will
          * look for a client instance in the registry automatically otherwise it
@@ -305,51 +302,6 @@ public interface ECSEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Elastic Container Service (ECS)
-     * component.
-     */
-    public interface AdvancedECSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ECSEndpointBuilder basic() {
-            return (ECSEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedECSEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedECSEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> enum.
      */
@@ -411,7 +363,7 @@ public interface ECSEndpointBuilderFactory {
         }
     }
     static ECSEndpointBuilder endpointBuilder(String componentName, String path) {
-        class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder, AdvancedECSEndpointBuilder {
+        class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder {
             public ECSEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

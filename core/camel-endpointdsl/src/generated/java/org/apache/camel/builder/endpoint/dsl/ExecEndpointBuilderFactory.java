@@ -35,9 +35,6 @@ public interface ExecEndpointBuilderFactory {
      * Builder for endpoint for the Exec component.
      */
     public interface ExecEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedExecEndpointBuilder advanced() {
-            return (AdvancedExecEndpointBuilder) this;
-        }
         /**
          * The arguments may be one or many whitespace-separated tokens.
          * 
@@ -305,50 +302,6 @@ public interface ExecEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Exec component.
-     */
-    public interface AdvancedExecEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ExecEndpointBuilder basic() {
-            return (ExecEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedExecEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface ExecBuilders {
         /**
          * Exec (camel-exec)
@@ -394,7 +347,7 @@ public interface ExecEndpointBuilderFactory {
         }
     }
     static ExecEndpointBuilder endpointBuilder(String componentName, String path) {
-        class ExecEndpointBuilderImpl extends AbstractEndpointBuilder implements ExecEndpointBuilder, AdvancedExecEndpointBuilder {
+        class ExecEndpointBuilderImpl extends AbstractEndpointBuilder implements ExecEndpointBuilder {
             public ExecEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

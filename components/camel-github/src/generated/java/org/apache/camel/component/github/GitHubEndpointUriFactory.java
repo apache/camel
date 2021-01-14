@@ -20,10 +20,9 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(29);
         props.add("backoffMultiplier");
         props.add("eventFetchStrategy");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("type");
         props.add("scheduler");

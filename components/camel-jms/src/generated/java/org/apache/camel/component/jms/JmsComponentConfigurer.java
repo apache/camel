@@ -188,6 +188,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "subscriptionName": getOrCreateConfiguration(target).setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptionshared":
         case "subscriptionShared": getOrCreateConfiguration(target).setSubscriptionShared(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskexecutor":
         case "taskExecutor": getOrCreateConfiguration(target).setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
         case "testconnectiononstartup":
@@ -381,6 +382,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "subscriptionName": return java.lang.String.class;
         case "subscriptionshared":
         case "subscriptionShared": return boolean.class;
+        case "synchronous": return boolean.class;
         case "taskexecutor":
         case "taskExecutor": return org.springframework.core.task.TaskExecutor.class;
         case "testconnectiononstartup":
@@ -575,6 +577,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "subscriptionName": return getOrCreateConfiguration(target).getSubscriptionName();
         case "subscriptionshared":
         case "subscriptionShared": return getOrCreateConfiguration(target).isSubscriptionShared();
+        case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "taskexecutor":
         case "taskExecutor": return getOrCreateConfiguration(target).getTaskExecutor();
         case "testconnectiononstartup":

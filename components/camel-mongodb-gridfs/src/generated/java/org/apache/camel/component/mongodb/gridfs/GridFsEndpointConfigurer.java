@@ -46,7 +46,6 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "queryStrategy": target.setQueryStrategy(property(camelContext, org.apache.camel.component.mongodb.gridfs.QueryStrategy.class, value)); return true;
         case "readpreference":
         case "readPreference": target.setReadPreference(property(camelContext, com.mongodb.ReadPreference.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "writeconcern":
         case "writeConcern": target.setWriteConcern(property(camelContext, com.mongodb.WriteConcern.class, value)); return true;
         default: return false;
@@ -81,7 +80,6 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "queryStrategy": return org.apache.camel.component.mongodb.gridfs.QueryStrategy.class;
         case "readpreference":
         case "readPreference": return com.mongodb.ReadPreference.class;
-        case "synchronous": return boolean.class;
         case "writeconcern":
         case "writeConcern": return com.mongodb.WriteConcern.class;
         default: return null;
@@ -117,7 +115,6 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "queryStrategy": return target.getQueryStrategy();
         case "readpreference":
         case "readPreference": return target.getReadPreference();
-        case "synchronous": return target.isSynchronous();
         case "writeconcern":
         case "writeConcern": return target.getWriteConcern();
         default: return null;

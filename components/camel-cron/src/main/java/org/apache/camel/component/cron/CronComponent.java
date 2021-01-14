@@ -62,7 +62,6 @@ public class CronComponent extends DefaultComponent {
             de.setBridgeErrorHandler(answer.isBridgeErrorHandler());
             de.setExceptionHandler(answer.getExceptionHandler());
             de.setExchangePattern(answer.getExchangePattern());
-            de.setSynchronous(answer.isSynchronous());
         }
 
         return answer;

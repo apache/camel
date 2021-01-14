@@ -82,7 +82,7 @@ public class GrpcMethodHandler {
     }
 
     private void invokeRoute(GrpcEndpoint endpoint, Exchange exchange) throws Exception {
-        if (endpoint.isSynchronous()) {
+        if (endpoint.getConfiguration().isSynchronous()) {
             consumer.getProcessor().process(exchange);
         } else {
             consumer.getAsyncProcessor().process(exchange);

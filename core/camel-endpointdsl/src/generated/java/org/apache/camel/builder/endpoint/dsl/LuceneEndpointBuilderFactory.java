@@ -35,9 +35,6 @@ public interface LuceneEndpointBuilderFactory {
      * Builder for endpoint for the Lucene component.
      */
     public interface LuceneEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedLuceneEndpointBuilder advanced() {
-            return (AdvancedLuceneEndpointBuilder) this;
-        }
         /**
          * An Analyzer builds TokenStreams, which analyze text. It thus
          * represents a policy for extracting index terms from text. The value
@@ -216,50 +213,6 @@ public interface LuceneEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Lucene component.
-     */
-    public interface AdvancedLuceneEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default LuceneEndpointBuilder basic() {
-            return (LuceneEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLuceneEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface LuceneBuilders {
         /**
          * Lucene (camel-lucene)
@@ -313,7 +266,7 @@ public interface LuceneEndpointBuilderFactory {
     static LuceneEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder, AdvancedLuceneEndpointBuilder {
+        class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder {
             public LuceneEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

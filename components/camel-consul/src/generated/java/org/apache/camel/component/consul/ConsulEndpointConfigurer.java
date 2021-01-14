@@ -60,7 +60,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "url": target.getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
@@ -117,7 +116,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "recursive": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "tags": return java.lang.String.class;
         case "url": return java.lang.String.class;
         case "username":
@@ -175,7 +173,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "recursive": return target.getConfiguration().isRecursive();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "tags": return target.getConfiguration().getTags();
         case "url": return target.getConfiguration().getUrl();
         case "username":

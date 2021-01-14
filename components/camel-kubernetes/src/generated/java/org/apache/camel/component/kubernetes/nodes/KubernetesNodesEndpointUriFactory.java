@@ -20,11 +20,10 @@ public class KubernetesNodesEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(34);
         props.add("crdScope");
         props.add("crdVersion");
         props.add("portProtocol");
-        props.add("synchronous");
         props.add("caCertData");
         props.add("portName");
         props.add("dnsDomain");

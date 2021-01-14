@@ -20,12 +20,11 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(17);
         props.add("proxyAuthMethod");
         props.add("address");
         props.add("clientId");
         props.add("apiKey");
-        props.add("synchronous");
         props.add("language");
         props.add("proxyAuthUsername");
         props.add("type");

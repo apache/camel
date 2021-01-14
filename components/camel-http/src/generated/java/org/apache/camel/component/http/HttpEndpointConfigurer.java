@@ -114,7 +114,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": target.setProxyPort(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "transferexception":
@@ -223,7 +222,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": return int.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return boolean.class;
         case "transferexception":
@@ -333,7 +331,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": return target.getProxyPort();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         case "transferexception":

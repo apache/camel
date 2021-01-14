@@ -1577,6 +1577,21 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets whether synchronous processing should be strictly used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a javax.jms.ObjectMessage. If the client
@@ -1980,6 +1995,7 @@ public interface JmsComponentBuilderFactory {
             case "receiveTimeout": getOrCreateConfiguration((JmsComponent) component).setReceiveTimeout((long) value); return true;
             case "recoveryInterval": getOrCreateConfiguration((JmsComponent) component).setRecoveryInterval((long) value); return true;
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((JmsComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "synchronous": getOrCreateConfiguration((JmsComponent) component).setSynchronous((boolean) value); return true;
             case "transferException": getOrCreateConfiguration((JmsComponent) component).setTransferException((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((JmsComponent) component).setTransferExchange((boolean) value); return true;
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((JmsComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;

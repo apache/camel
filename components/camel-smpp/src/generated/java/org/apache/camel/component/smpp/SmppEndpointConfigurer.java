@@ -84,7 +84,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sourceAddrTon": target.getConfiguration().setSourceAddrTon(property(camelContext, byte.class, value)); return true;
         case "splittingpolicy":
         case "splittingPolicy": target.getConfiguration().setSplittingPolicy(property(camelContext, org.apache.camel.component.smpp.SmppSplittingPolicy.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "systemid":
         case "systemId": target.getConfiguration().setSystemId(property(camelContext, java.lang.String.class, value)); return true;
         case "systemtype":
@@ -165,7 +164,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sourceAddrTon": return byte.class;
         case "splittingpolicy":
         case "splittingPolicy": return org.apache.camel.component.smpp.SmppSplittingPolicy.class;
-        case "synchronous": return boolean.class;
         case "systemid":
         case "systemId": return java.lang.String.class;
         case "systemtype":
@@ -247,7 +245,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sourceAddrTon": return target.getConfiguration().getSourceAddrTon();
         case "splittingpolicy":
         case "splittingPolicy": return target.getConfiguration().getSplittingPolicy();
-        case "synchronous": return target.isSynchronous();
         case "systemid":
         case "systemId": return target.getConfiguration().getSystemId();
         case "systemtype":

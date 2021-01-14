@@ -213,7 +213,7 @@ with the following path and query parameters:
 | *receiveBufferSize* (advanced) | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes. | 65536 | int
 | *receiveBufferSizePredictor* (advanced) | Configures the buffer size predictor. See details at Jetty documentation and this mail thread. |  | int
 | *sendBufferSize* (advanced) | The TCP/UDP buffer sizes to be used during outbound communication. Size is bytes. | 65536 | int
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
 | *transferExchange* (advanced) | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *udpByteArrayCodec* (advanced) | For UDP only. If enabled the using byte array codec instead of Java serialization protocol. | false | boolean
 | *workerCount* (advanced) | When netty works on nio mode, it uses default workerCount parameter from Netty (which is cpu_core_threads x 2). User can use this option to override the default workerCount from Netty. |  | int

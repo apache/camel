@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,7 +100,6 @@ with the following path and query parameters:
 | *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. There are 18 enums and the value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | LambdaOperations
 | *region* (producer) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
 | *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
 | *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol

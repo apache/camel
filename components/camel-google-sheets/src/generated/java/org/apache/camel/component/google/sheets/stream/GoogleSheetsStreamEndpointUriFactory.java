@@ -20,12 +20,11 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(43);
+        Set<String> props = new HashSet<>(42);
         props.add("backoffMultiplier");
         props.add("apiName");
         props.add("majorDimension");
         props.add("batchClearValuesRequest");
-        props.add("synchronous");
         props.add("values");
         props.add("batchUpdateValuesRequest");
         props.add("range");

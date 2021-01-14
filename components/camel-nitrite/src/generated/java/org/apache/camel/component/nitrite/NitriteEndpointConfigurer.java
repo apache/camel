@@ -35,7 +35,6 @@ public class NitriteEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "repositoryClass": target.setRepositoryClass(property(camelContext, java.lang.Class.class, value)); return true;
         case "repositoryname":
         case "repositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -58,7 +57,6 @@ public class NitriteEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "repositoryClass": return java.lang.Class.class;
         case "repositoryname":
         case "repositoryName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -82,7 +80,6 @@ public class NitriteEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "repositoryClass": return target.getRepositoryClass();
         case "repositoryname":
         case "repositoryName": return target.getRepositoryName();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getUsername();
         default: return null;
         }

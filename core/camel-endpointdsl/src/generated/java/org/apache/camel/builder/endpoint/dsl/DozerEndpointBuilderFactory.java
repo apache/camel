@@ -34,9 +34,6 @@ public interface DozerEndpointBuilderFactory {
      * Builder for endpoint for the Dozer component.
      */
     public interface DozerEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedDozerEndpointBuilder advanced() {
-            return (AdvancedDozerEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -206,50 +203,6 @@ public interface DozerEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Dozer component.
-     */
-    public interface AdvancedDozerEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default DozerEndpointBuilder basic() {
-            return (DozerEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDozerEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface DozerBuilders {
         /**
          * Dozer (camel-dozer)
@@ -295,7 +248,7 @@ public interface DozerEndpointBuilderFactory {
     static DozerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class DozerEndpointBuilderImpl extends AbstractEndpointBuilder implements DozerEndpointBuilder, AdvancedDozerEndpointBuilder {
+        class DozerEndpointBuilderImpl extends AbstractEndpointBuilder implements DozerEndpointBuilder {
             public DozerEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

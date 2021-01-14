@@ -35,9 +35,6 @@ public interface KuduEndpointBuilderFactory {
      * Builder for endpoint for the Kudu component.
      */
     public interface KuduEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedKuduEndpointBuilder advanced() {
-            return (AdvancedKuduEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -118,50 +115,6 @@ public interface KuduEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Kudu component.
-     */
-    public interface AdvancedKuduEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KuduEndpointBuilder basic() {
-            return (KuduEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKuduEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKuduEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.kudu.KuduOperations</code> enum.
      */
@@ -228,7 +181,7 @@ public interface KuduEndpointBuilderFactory {
         }
     }
     static KuduEndpointBuilder endpointBuilder(String componentName, String path) {
-        class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {
+        class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder {
             public KuduEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

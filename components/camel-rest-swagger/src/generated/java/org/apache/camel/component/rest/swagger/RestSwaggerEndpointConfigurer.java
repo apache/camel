@@ -32,7 +32,6 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -51,7 +50,6 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "produces": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -71,7 +69,6 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "produces": return target.getProduces();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

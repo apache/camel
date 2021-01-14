@@ -35,9 +35,6 @@ public interface EKS2EndpointBuilderFactory {
      * component.
      */
     public interface EKS2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedEKS2EndpointBuilder advanced() {
-            return (AdvancedEKS2EndpointBuilder) this;
-        }
         /**
          * To use a existing configured AWS EKS as client.
          * 
@@ -336,51 +333,6 @@ public interface EKS2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Elastic Kubernetes Service
-     * (EKS) component.
-     */
-    public interface AdvancedEKS2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default EKS2EndpointBuilder basic() {
-            return (EKS2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedEKS2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedEKS2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.eks.EKS2Operations</code> enum.
      */
@@ -442,7 +394,7 @@ public interface EKS2EndpointBuilderFactory {
         }
     }
     static EKS2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class EKS2EndpointBuilderImpl extends AbstractEndpointBuilder implements EKS2EndpointBuilder, AdvancedEKS2EndpointBuilder {
+        class EKS2EndpointBuilderImpl extends AbstractEndpointBuilder implements EKS2EndpointBuilder {
             public EKS2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

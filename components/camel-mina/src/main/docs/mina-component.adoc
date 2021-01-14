@@ -142,7 +142,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (28 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -164,7 +164,6 @@ with the following path and query parameters:
 | *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
 | *maximumPoolSize* (advanced) | Number of worker threads in the worker pool for TCP and UDP | 16 | int
 | *orderedThreadPoolExecutor* (advanced) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *transferExchange* (advanced) | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *allowDefaultCodec* (codec) | The mina component installs a default codec if both, codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain, like the SSL filter. | true | boolean
 | *codec* (codec) | To use a custom minda codec implementation. |  | ProtocolCodecFactory

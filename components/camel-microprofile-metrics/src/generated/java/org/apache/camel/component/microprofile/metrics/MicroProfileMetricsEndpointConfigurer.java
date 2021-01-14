@@ -38,7 +38,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         case "mark": target.setMark(property(camelContext, java.lang.Long.class, value)); return true;
         case "metricunit":
         case "metricUnit": target.setMetricUnit(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
@@ -65,7 +64,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         case "mark": return java.lang.Long.class;
         case "metricunit":
         case "metricUnit": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tags": return java.lang.String.class;
         case "value": return java.lang.Long.class;
         default: return null;
@@ -93,7 +91,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         case "mark": return target.getMark();
         case "metricunit":
         case "metricUnit": return target.getMetricUnit();
-        case "synchronous": return target.isSynchronous();
         case "tags": return target.getTags();
         case "value": return target.getValue();
         default: return null;

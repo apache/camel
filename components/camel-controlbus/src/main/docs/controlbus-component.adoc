@@ -97,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +109,6 @@ with the following path and query parameters:
 | *loggingLevel* (producer) | Logging level used for logging when task is done, or if any exceptions occurred during processing the task. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | INFO | LoggingLevel
 | *restartDelay* (producer) | The delay in millis to use when restarting a route. | 1000 | int
 | *routeId* (producer) | To specify a route by its id. The special keyword current indicates the current route. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

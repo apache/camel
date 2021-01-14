@@ -35,9 +35,6 @@ public interface STS2EndpointBuilderFactory {
      * component.
      */
     public interface STS2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSTS2EndpointBuilder advanced() {
-            return (AdvancedSTS2EndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -339,51 +336,6 @@ public interface STS2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Security Token Service (STS)
-     * component.
-     */
-    public interface AdvancedSTS2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default STS2EndpointBuilder basic() {
-            return (STS2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSTS2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSTS2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> enum.
      */
@@ -444,7 +396,7 @@ public interface STS2EndpointBuilderFactory {
         }
     }
     static STS2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class STS2EndpointBuilderImpl extends AbstractEndpointBuilder implements STS2EndpointBuilder, AdvancedSTS2EndpointBuilder {
+        class STS2EndpointBuilderImpl extends AbstractEndpointBuilder implements STS2EndpointBuilder {
             public STS2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

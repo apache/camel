@@ -31,7 +31,6 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "extension": target.setExtension(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "themefolder":
         case "themeFolder": target.setThemeFolder(property(camelContext, java.lang.String.class, value)); return true;
         case "themelayer":
@@ -55,7 +54,6 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "extension": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         case "themefolder":
         case "themeFolder": return java.lang.String.class;
         case "themelayer":
@@ -80,7 +78,6 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "extension": return target.getExtension();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         case "themefolder":
         case "themeFolder": return target.getThemeFolder();
         case "themelayer":

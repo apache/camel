@@ -48,7 +48,6 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "roomPassword": target.setRoomPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "servicename":
         case "serviceName": target.setServiceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
@@ -86,7 +85,6 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "roomPassword": return java.lang.String.class;
         case "servicename":
         case "serviceName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
         case "user": return java.lang.String.class;
@@ -125,7 +123,6 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "roomPassword": return target.getRoomPassword();
         case "servicename":
         case "serviceName": return target.getServiceName();
-        case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
         case "user": return target.getUser();

@@ -27,7 +27,6 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "resetchat":
         case "resetChat": target.setResetChat(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -41,7 +40,6 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return boolean.class;
         case "resetchat":
         case "resetChat": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -56,7 +54,6 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "resetchat":
         case "resetChat": return target.isResetChat();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

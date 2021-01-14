@@ -73,7 +73,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "regex": target.getConfiguration().setRegex(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
@@ -134,7 +133,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "regex": return java.lang.String.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
-        case "synchronous": return boolean.class;
         case "timeout": return java.time.Duration.class;
         default: return null;
         }
@@ -196,7 +194,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "regex": return target.getConfiguration().getRegex();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getConfiguration().getTimeout();
         default: return null;
         }

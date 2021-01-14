@@ -77,7 +77,6 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "snmpVersion": target.setSnmpVersion(property(camelContext, int.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, int.class, value)); return true;
@@ -149,7 +148,6 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "snmpVersion": return int.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "timeout": return int.class;
@@ -222,7 +220,6 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "snmpVersion": return target.getSnmpVersion();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "timeout": return target.getTimeout();

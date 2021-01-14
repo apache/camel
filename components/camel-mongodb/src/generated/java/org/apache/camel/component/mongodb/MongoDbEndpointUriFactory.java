@@ -20,9 +20,8 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(25);
         props.add("connectionBean");
-        props.add("synchronous");
         props.add("outputType");
         props.add("writeConcern");
         props.add("database");

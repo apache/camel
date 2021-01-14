@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (31 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,7 +112,6 @@ with the following path and query parameters:
 | *baseUri* (advanced) | Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API |  | String
 | *bufferSize* (advanced) | The initial in-memory buffer size used when transferring data between Camel and AHC Client. | 4096 | int
 | *clientConfig* (advanced) | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. |  | AsyncHttpClientConfig
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyHost* (proxy) | HTTP proxy host which could be used when sending out the message. |  | String
 | *proxyPort* (proxy) | HTTP proxy port which could be used when sending out the message. |  | Integer
 | *proxyType* (proxy) | HTTP proxy type which could be used when sending out the message. There are 3 enums and the value can be one of: HTTP, SOCKS4, SOCKS5 | HTTP | TelegramProxyType

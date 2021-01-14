@@ -51,7 +51,6 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "purgeWhenStopping": target.setPurgeWhenStopping(property(camelContext, boolean.class, value)); return true;
         case "queue": target.setQueue(property(camelContext, java.util.concurrent.BlockingQueue.class, value)); return true;
         case "size": target.setSize(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": target.setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
@@ -92,7 +91,6 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "purgeWhenStopping": return boolean.class;
         case "queue": return java.util.concurrent.BlockingQueue.class;
         case "size": return int.class;
-        case "synchronous": return boolean.class;
         case "timeout": return long.class;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": return org.apache.camel.WaitForTaskToComplete.class;
@@ -134,7 +132,6 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "purgeWhenStopping": return target.isPurgeWhenStopping();
         case "queue": return target.getQueue();
         case "size": return target.getSize();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": return target.getWaitForTaskToComplete();

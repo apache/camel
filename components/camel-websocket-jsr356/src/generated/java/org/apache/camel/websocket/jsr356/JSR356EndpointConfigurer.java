@@ -31,7 +31,6 @@ public class JSR356EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "sessioncount":
         case "sessionCount": target.setSessionCount(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,7 +48,6 @@ public class JSR356EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return boolean.class;
         case "sessioncount":
         case "sessionCount": return int.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -68,7 +66,6 @@ public class JSR356EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "sessioncount":
         case "sessionCount": return target.getSessionCount();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -20,9 +20,8 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(33);
         props.add("enableMultipartFilter");
-        props.add("synchronous");
         props.add("sslContextParameters");
         props.add("enableJmx");
         props.add("mapHttpMessageBody");

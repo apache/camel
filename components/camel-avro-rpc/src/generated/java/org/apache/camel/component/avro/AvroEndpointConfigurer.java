@@ -38,7 +38,6 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reflectionProtocol": target.getConfiguration().setReflectionProtocol(property(camelContext, boolean.class, value)); return true;
         case "singleparameter":
         case "singleParameter": target.getConfiguration().setSingleParameter(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uriauthority":
         case "uriAuthority": target.getConfiguration().setUriAuthority(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -65,7 +64,6 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reflectionProtocol": return boolean.class;
         case "singleparameter":
         case "singleParameter": return boolean.class;
-        case "synchronous": return boolean.class;
         case "uriauthority":
         case "uriAuthority": return java.lang.String.class;
         default: return null;
@@ -93,7 +91,6 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reflectionProtocol": return target.getConfiguration().isReflectionProtocol();
         case "singleparameter":
         case "singleParameter": return target.getConfiguration().isSingleParameter();
-        case "synchronous": return target.isSynchronous();
         case "uriauthority":
         case "uriAuthority": return target.getConfiguration().getUriAuthority();
         default: return null;

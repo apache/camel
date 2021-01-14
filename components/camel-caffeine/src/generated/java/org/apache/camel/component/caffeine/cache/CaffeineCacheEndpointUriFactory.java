@@ -20,11 +20,10 @@ public class CaffeineCacheEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(17);
+        Set<String> props = new HashSet<>(16);
         props.add("expireAfterWriteTime");
         props.add("expireAfterAccessTime");
         props.add("statsCounter");
-        props.add("synchronous");
         props.add("initialCapacity");
         props.add("cacheLoader");
         props.add("statsEnabled");

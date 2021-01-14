@@ -35,9 +35,6 @@ public interface JingEndpointBuilderFactory {
      * Builder for endpoint for the Jing component.
      */
     public interface JingEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedJingEndpointBuilder advanced() {
-            return (AdvancedJingEndpointBuilder) this;
-        }
         /**
          * Whether to validate using RelaxNG compact syntax or not. By default
          * this is false for using RelaxNG XML Syntax (rng) And true is for
@@ -122,50 +119,6 @@ public interface JingEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Jing component.
-     */
-    public interface AdvancedJingEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default JingEndpointBuilder basic() {
-            return (JingEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJingEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJingEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface JingBuilders {
         /**
          * Jing (camel-jing)
@@ -215,7 +168,7 @@ public interface JingEndpointBuilderFactory {
         }
     }
     static JingEndpointBuilder endpointBuilder(String componentName, String path) {
-        class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder, AdvancedJingEndpointBuilder {
+        class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder {
             public JingEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

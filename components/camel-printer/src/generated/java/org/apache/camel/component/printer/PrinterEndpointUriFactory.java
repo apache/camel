@@ -20,10 +20,9 @@ public class PrinterEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(14);
         props.add("orientation");
         props.add("sendToPrinter");
-        props.add("synchronous");
         props.add("mimeType");
         props.add("mediaTray");
         props.add("docFlavor");

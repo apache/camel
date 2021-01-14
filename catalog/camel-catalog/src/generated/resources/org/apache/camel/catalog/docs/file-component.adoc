@@ -144,7 +144,7 @@ with the following path and query parameters:
 | *bufferSize* (advanced) | Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading files). | 131072 | int
 | *copyAndDeleteOnRenameFail* (advanced) | Whether to fallback and do a copy and delete file, in case the file could not be renamed directly. This option is not available for the FTP component. | true | boolean
 | *renameUsingCopy* (advanced) | Perform rename operations using a copy and delete strategy. This is primarily used in environments where the regular rename operation is unreliable (e.g. across different file systems or networks). This option takes precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy, but only after additional delays. | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
 | *antExclude* (filter) | Ant style filter exclusion. If both antInclude and antExclude are used, antExclude takes precedence over antInclude. Multiple exclusions may be specified in comma-delimited format. |  | String
 | *antFilterCaseSensitive* (filter) | Sets case sensitive flag on ant filter. | true | boolean
 | *antInclude* (filter) | Ant style filter inclusion. Multiple inclusions may be specified in comma-delimited format. |  | String

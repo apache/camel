@@ -37,7 +37,6 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "servicePath": target.getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
@@ -65,7 +64,6 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "servicePath": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "timeout": return java.lang.Long.class;
         case "uris": return java.lang.String.class;
         case "username":
@@ -94,7 +92,6 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "servicePath": return target.getConfiguration().getServicePath();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getConfiguration().getTimeout();
         case "uris": return target.getConfiguration().getUris();
         case "username":

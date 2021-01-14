@@ -34,9 +34,6 @@ public interface GraphqlEndpointBuilderFactory {
      * Builder for endpoint for the GraphQL component.
      */
     public interface GraphqlEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedGraphqlEndpointBuilder advanced() {
-            return (AdvancedGraphqlEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -232,50 +229,6 @@ public interface GraphqlEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the GraphQL component.
-     */
-    public interface AdvancedGraphqlEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default GraphqlEndpointBuilder basic() {
-            return (GraphqlEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGraphqlEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGraphqlEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface GraphqlBuilders {
         /**
          * GraphQL (camel-graphql)
@@ -321,7 +274,7 @@ public interface GraphqlEndpointBuilderFactory {
     static GraphqlEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GraphqlEndpointBuilderImpl extends AbstractEndpointBuilder implements GraphqlEndpointBuilder, AdvancedGraphqlEndpointBuilder {
+        class GraphqlEndpointBuilderImpl extends AbstractEndpointBuilder implements GraphqlEndpointBuilder {
             public GraphqlEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

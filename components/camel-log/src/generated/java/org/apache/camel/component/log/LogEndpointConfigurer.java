@@ -69,7 +69,6 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": target.setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
         case "style": target.setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -125,7 +124,6 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": return boolean.class;
         case "style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -182,7 +180,6 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": return target.isSkipBodyLineSeparator();
         case "style": return target.getStyle();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

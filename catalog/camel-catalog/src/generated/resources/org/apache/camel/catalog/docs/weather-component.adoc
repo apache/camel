@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (41 parameters):
+=== Query Parameters (40 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,7 +112,6 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *geoLocationProvider* (advanced) | A custum geolocation provider to determine the longitude and latitude to use when no location information is set. The default implementaion uses the ipstack API and requires geolocationAccessKey and geolocationRequestHostIP |  | GeoLocationProvider
 | *httpClient* (advanced) | To use an existing configured http client (for example with http proxy) |  | CloseableHttpClient
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *cnt* (filter) | Number of results to be found |  | Integer
 | *ids* (filter) | List of id's of city/stations. You can separate multiple ids by comma. |  | String
 | *lat* (filter) | Latitude of location. You can use lat and lon options instead of location. For boxed queries this is the bottom latitude. |  | String

@@ -56,7 +56,6 @@ public class SnsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": target.getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -99,7 +98,6 @@ public class SnsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subject": return java.lang.String.class;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -143,7 +141,6 @@ public class SnsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subject": return target.getConfiguration().getSubject();
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return target.getConfiguration().isSubscribeSNStoSQS();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

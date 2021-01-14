@@ -48,7 +48,6 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "resourceOptions": target.getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "resultheader":
         case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transportclassname":
         case "transportClassName": target.getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -85,7 +84,6 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "resourceOptions": return java.util.Map.class;
         case "resultheader":
         case "resultHeader": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "transportclassname":
         case "transportClassName": return java.lang.String.class;
         default: return null;
@@ -123,7 +121,6 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "resourceOptions": return target.getConfiguration().getResourceOptions();
         case "resultheader":
         case "resultHeader": return target.getConfiguration().getResultHeader();
-        case "synchronous": return target.isSynchronous();
         case "transportclassname":
         case "transportClassName": return target.getConfiguration().getTransportClassName();
         default: return null;

@@ -29,7 +29,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
         case "jobRegistry": target.setJobRegistry(property(camelContext, org.springframework.batch.core.configuration.JobRegistry.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,7 +44,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
         case "jobRegistry": return org.springframework.batch.core.configuration.JobRegistry.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -62,7 +60,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
         case "jobRegistry": return target.getJobRegistry();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -115,7 +115,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "suites": target.getConfiguration().setSuites(property(camelContext, java.lang.String.class, value)); return true;
         case "summarytitle":
         case "summaryTitle": target.getConfiguration().setSummaryTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tagdocs":
         case "tagDocs": target.getConfiguration().setTagDocs(property(camelContext, java.lang.String.class, value)); return true;
         case "tagstatexcludes":
@@ -240,7 +239,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "suites": return java.lang.String.class;
         case "summarytitle":
         case "summaryTitle": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tagdocs":
         case "tagDocs": return java.lang.String.class;
         case "tagstatexcludes":
@@ -366,7 +364,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "suites": return target.getConfiguration().getSuites();
         case "summarytitle":
         case "summaryTitle": return target.getConfiguration().getSummaryTitle();
-        case "synchronous": return target.isSynchronous();
         case "tagdocs":
         case "tagDocs": return target.getConfiguration().getTagDocs();
         case "tagstatexcludes":

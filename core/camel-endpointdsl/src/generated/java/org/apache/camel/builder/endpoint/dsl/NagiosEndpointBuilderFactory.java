@@ -34,9 +34,6 @@ public interface NagiosEndpointBuilderFactory {
      * Builder for endpoint for the Nagios component.
      */
     public interface NagiosEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedNagiosEndpointBuilder advanced() {
-            return (AdvancedNagiosEndpointBuilder) this;
-        }
         /**
          * Connection timeout in millis.
          * 
@@ -227,50 +224,6 @@ public interface NagiosEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Nagios component.
-     */
-    public interface AdvancedNagiosEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default NagiosEndpointBuilder basic() {
-            return (NagiosEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNagiosEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>com.googlecode.jsendnsca.encryption.Encryption</code> enum.
      */
@@ -335,7 +288,7 @@ public interface NagiosEndpointBuilderFactory {
     static NagiosEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class NagiosEndpointBuilderImpl extends AbstractEndpointBuilder implements NagiosEndpointBuilder, AdvancedNagiosEndpointBuilder {
+        class NagiosEndpointBuilderImpl extends AbstractEndpointBuilder implements NagiosEndpointBuilder {
             public NagiosEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

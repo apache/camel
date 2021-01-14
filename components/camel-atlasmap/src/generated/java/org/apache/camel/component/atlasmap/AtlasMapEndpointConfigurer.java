@@ -31,7 +31,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "propertiesFile": target.setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcemapname":
         case "sourceMapName": target.setSourceMapName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targetmapmode":
         case "targetMapMode": target.setTargetMapMode(property(camelContext, org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode.class, value)); return true;
         case "targetmapname":
@@ -53,7 +52,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "propertiesFile": return java.lang.String.class;
         case "sourcemapname":
         case "sourceMapName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "targetmapmode":
         case "targetMapMode": return org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode.class;
         case "targetmapname":
@@ -76,7 +74,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "propertiesFile": return target.getPropertiesFile();
         case "sourcemapname":
         case "sourceMapName": return target.getSourceMapName();
-        case "synchronous": return target.isSynchronous();
         case "targetmapmode":
         case "targetMapMode": return target.getTargetMapMode();
         case "targetmapname":

@@ -75,7 +75,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "staticQueryContext": target.setStaticQueryContext(property(camelContext, net.sf.saxon.query.StaticQueryContext.class, value)); return true;
         case "stripsallwhitespace":
         case "stripsAllWhiteSpace": target.setStripsAllWhiteSpace(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -141,7 +140,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "staticQueryContext": return net.sf.saxon.query.StaticQueryContext.class;
         case "stripsallwhitespace":
         case "stripsAllWhiteSpace": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -208,7 +206,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "staticQueryContext": return target.getStaticQueryContext();
         case "stripsallwhitespace":
         case "stripsAllWhiteSpace": return target.isStripsAllWhiteSpace();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

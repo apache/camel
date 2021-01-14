@@ -29,7 +29,6 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputheader":
         case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,7 +44,6 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return boolean.class;
         case "outputheader":
         case "outputHeader": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -62,7 +60,6 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputheader":
         case "outputHeader": return target.getOutputHeader();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

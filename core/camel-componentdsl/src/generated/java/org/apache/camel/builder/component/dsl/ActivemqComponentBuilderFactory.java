@@ -1649,6 +1649,21 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets whether synchronous processing should be strictly used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a javax.jms.ObjectMessage. If the client
@@ -2077,6 +2092,7 @@ public interface ActivemqComponentBuilderFactory {
             case "receiveTimeout": getOrCreateConfiguration((ActiveMQComponent) component).setReceiveTimeout((long) value); return true;
             case "recoveryInterval": getOrCreateConfiguration((ActiveMQComponent) component).setRecoveryInterval((long) value); return true;
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((ActiveMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "synchronous": getOrCreateConfiguration((ActiveMQComponent) component).setSynchronous((boolean) value); return true;
             case "transferException": getOrCreateConfiguration((ActiveMQComponent) component).setTransferException((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((ActiveMQComponent) component).setTransferExchange((boolean) value); return true;
             case "trustAllPackages": ((ActiveMQComponent) component).setTrustAllPackages((boolean) value); return true;

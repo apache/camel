@@ -428,6 +428,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                             + "the file on completion process where the consumer does either a commit or rollback. The default "
                             + "implementation will log any exception at WARN level and ignore.")
     protected ExceptionHandler onCompletionExceptionHandler;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     private Pattern includePattern;
     private Pattern excludePattern;
@@ -1496,6 +1499,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
         this.onCompletionExceptionHandler = onCompletionExceptionHandler;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     /**

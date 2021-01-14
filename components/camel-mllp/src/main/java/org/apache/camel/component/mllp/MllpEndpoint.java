@@ -88,7 +88,6 @@ public class MllpEndpoint extends DefaultEndpoint {
 
         super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
         super.setExchangePattern(configuration.getExchangePattern());
-        super.setSynchronous(configuration.isSynchronous());
     }
 
     @Override
@@ -102,12 +101,6 @@ public class MllpEndpoint extends DefaultEndpoint {
     public void setExchangePattern(ExchangePattern exchangePattern) {
         configuration.setExchangePattern(exchangePattern);
         super.setExchangePattern(configuration.getExchangePattern());
-    }
-
-    @Override
-    public void setSynchronous(boolean synchronous) {
-        configuration.setSynchronous(synchronous);
-        super.setSynchronous(configuration.isSynchronous());
     }
 
     @Override

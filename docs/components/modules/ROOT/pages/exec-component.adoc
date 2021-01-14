@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (10 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,6 @@ with the following path and query parameters:
 | *timeout* (producer) | The timeout, in milliseconds, after which the executable should be terminated. If execution has not completed within the timeout, the component will send a termination request. |  | long
 | *useStderrOnEmptyStdout* (producer) | A boolean indicating that when stdout is empty, this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default. | false | boolean
 | *workingDir* (producer) | The directory in which the command should be executed. If null, the working directory of the current process will be used. |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

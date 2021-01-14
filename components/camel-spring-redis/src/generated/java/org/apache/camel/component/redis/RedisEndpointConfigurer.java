@@ -38,7 +38,6 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         case "redistemplate":
         case "redisTemplate": target.getConfiguration().setRedisTemplate(property(camelContext, org.springframework.data.redis.core.RedisTemplate.class, value)); return true;
         case "serializer": target.getConfiguration().setSerializer(property(camelContext, org.springframework.data.redis.serializer.RedisSerializer.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -63,7 +62,6 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         case "redistemplate":
         case "redisTemplate": return org.springframework.data.redis.core.RedisTemplate.class;
         case "serializer": return org.springframework.data.redis.serializer.RedisSerializer.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -89,7 +87,6 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         case "redistemplate":
         case "redisTemplate": return target.getConfiguration().getRedisTemplate();
         case "serializer": return target.getConfiguration().getSerializer();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

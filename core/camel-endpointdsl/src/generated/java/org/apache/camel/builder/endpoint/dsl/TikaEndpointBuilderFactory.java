@@ -34,9 +34,6 @@ public interface TikaEndpointBuilderFactory {
      * Builder for endpoint for the Tika component.
      */
     public interface TikaEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedTikaEndpointBuilder advanced() {
-            return (AdvancedTikaEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -186,50 +183,6 @@ public interface TikaEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Tika component.
-     */
-    public interface AdvancedTikaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default TikaEndpointBuilder basic() {
-            return (TikaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTikaEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTikaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code> enum.
      */
@@ -285,7 +238,7 @@ public interface TikaEndpointBuilderFactory {
         }
     }
     static TikaEndpointBuilder endpointBuilder(String componentName, String path) {
-        class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {
+        class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder {
             public TikaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

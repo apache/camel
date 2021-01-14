@@ -34,9 +34,6 @@ public interface SdbEndpointBuilderFactory {
      * Builder for endpoint for the AWS SimpleDB component.
      */
     public interface SdbEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSdbEndpointBuilder advanced() {
-            return (AdvancedSdbEndpointBuilder) this;
-        }
         /**
          * Amazon AWS Access Key.
          * 
@@ -333,50 +330,6 @@ public interface SdbEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS SimpleDB component.
-     */
-    public interface AdvancedSdbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SdbEndpointBuilder basic() {
-            return (SdbEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> enum.
      */
@@ -443,7 +396,7 @@ public interface SdbEndpointBuilderFactory {
         }
     }
     static SdbEndpointBuilder endpointBuilder(String componentName, String path) {
-        class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {
+        class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder {
             public SdbEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

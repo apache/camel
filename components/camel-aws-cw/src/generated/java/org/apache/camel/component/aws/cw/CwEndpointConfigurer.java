@@ -39,7 +39,6 @@ public class CwEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timestamp": target.getConfiguration().setTimestamp(property(camelContext, java.util.Date.class, value)); return true;
         case "unit": target.getConfiguration().setUnit(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Double.class, value)); return true;
@@ -68,7 +67,6 @@ public class CwEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "timestamp": return java.util.Date.class;
         case "unit": return java.lang.String.class;
         case "value": return java.lang.Double.class;
@@ -98,7 +96,6 @@ public class CwEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
-        case "synchronous": return target.isSynchronous();
         case "timestamp": return target.getConfiguration().getTimestamp();
         case "unit": return target.getConfiguration().getUnit();
         case "value": return target.getConfiguration().getValue();

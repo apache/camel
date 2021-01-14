@@ -53,7 +53,6 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startKey": target.getConfiguration().setStartKey(property(camelContext, java.lang.Object.class, value)); return true;
         case "starttime":
         case "startTime": target.getConfiguration().setStartTime(property(camelContext, long.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timerangefrom":
         case "timeRangeFrom": target.getConfiguration().setTimeRangeFrom(property(camelContext, long.class, value)); return true;
         case "timerangeto":
@@ -100,7 +99,6 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startKey": return java.lang.Object.class;
         case "starttime":
         case "startTime": return long.class;
-        case "synchronous": return boolean.class;
         case "timerangefrom":
         case "timeRangeFrom": return long.class;
         case "timerangeto":
@@ -148,7 +146,6 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startKey": return target.getConfiguration().getStartKey();
         case "starttime":
         case "startTime": return target.getConfiguration().getStartTime();
-        case "synchronous": return target.isSynchronous();
         case "timerangefrom":
         case "timeRangeFrom": return target.getConfiguration().getTimeRangeFrom();
         case "timerangeto":

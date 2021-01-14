@@ -20,8 +20,7 @@ public class HazelcastSedaEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(14);
-        props.add("synchronous");
+        Set<String> props = new HashSet<>(13);
         props.add("exchangePattern");
         props.add("defaultOperation");
         props.add("pollTimeout");

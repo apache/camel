@@ -34,9 +34,6 @@ public interface MQ2EndpointBuilderFactory {
      * Builder for endpoint for the AWS 2 MQ component.
      */
     public interface MQ2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMQ2EndpointBuilder advanced() {
-            return (AdvancedMQ2EndpointBuilder) this;
-        }
         /**
          * To use a existing configured AmazonMQClient as client.
          * 
@@ -339,50 +336,6 @@ public interface MQ2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 MQ component.
-     */
-    public interface AdvancedMQ2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MQ2EndpointBuilder basic() {
-            return (MQ2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMQ2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMQ2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.mq.MQ2Operations</code> enum.
      */
@@ -446,7 +399,7 @@ public interface MQ2EndpointBuilderFactory {
         }
     }
     static MQ2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class MQ2EndpointBuilderImpl extends AbstractEndpointBuilder implements MQ2EndpointBuilder, AdvancedMQ2EndpointBuilder {
+        class MQ2EndpointBuilderImpl extends AbstractEndpointBuilder implements MQ2EndpointBuilder {
             public MQ2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

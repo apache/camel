@@ -38,7 +38,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "readSize": target.setReadSize(property(camelContext, int.class, value)); return true;
         case "resetautocommit":
         case "resetAutoCommit": target.setResetAutoCommit(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
         case "usegetbytesforblob":
         case "useGetBytesForBlob": target.setUseGetBytesForBlob(property(camelContext, boolean.class, value)); return true;
@@ -70,7 +69,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "readSize": return int.class;
         case "resetautocommit":
         case "resetAutoCommit": return boolean.class;
-        case "synchronous": return boolean.class;
         case "transacted": return boolean.class;
         case "usegetbytesforblob":
         case "useGetBytesForBlob": return boolean.class;
@@ -103,7 +101,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "readSize": return target.getReadSize();
         case "resetautocommit":
         case "resetAutoCommit": return target.isResetAutoCommit();
-        case "synchronous": return target.isSynchronous();
         case "transacted": return target.isTransacted();
         case "usegetbytesforblob":
         case "useGetBytesForBlob": return target.isUseGetBytesForBlob();

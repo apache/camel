@@ -35,9 +35,6 @@ public interface GrapeEndpointBuilderFactory {
      * Builder for endpoint for the Grape component.
      */
     public interface GrapeEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedGrapeEndpointBuilder advanced() {
-            return (AdvancedGrapeEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -83,50 +80,6 @@ public interface GrapeEndpointBuilderFactory {
          */
         default GrapeEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Grape component.
-     */
-    public interface AdvancedGrapeEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default GrapeEndpointBuilder basic() {
-            return (GrapeEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGrapeEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGrapeEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -180,7 +133,7 @@ public interface GrapeEndpointBuilderFactory {
     static GrapeEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {
+        class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder {
             public GrapeEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -55,7 +55,6 @@ public class ServerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxUnacknowledged": target.getConnectionOptions().setMaxUnacknowledged(property(camelContext, short.class, value)); return true;
         case "protocoloptions":
         case "protocolOptions": target.getConnectionOptions().setProtocolOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timezone":
         case "timeZone": target.getConnectionOptions().setTimeZone(property(camelContext, java.util.TimeZone.class, value)); return true;
         case "timeout1": target.getConnectionOptions().setTimeout1(property(camelContext, int.class, value)); return true;
@@ -102,7 +101,6 @@ public class ServerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxUnacknowledged": return short.class;
         case "protocoloptions":
         case "protocolOptions": return org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class;
-        case "synchronous": return boolean.class;
         case "timezone":
         case "timeZone": return java.util.TimeZone.class;
         case "timeout1": return int.class;
@@ -150,7 +148,6 @@ public class ServerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxUnacknowledged": return target.getConnectionOptions().getMaxUnacknowledged();
         case "protocoloptions":
         case "protocolOptions": return target.getConnectionOptions().getProtocolOptions();
-        case "synchronous": return target.isSynchronous();
         case "timezone":
         case "timeZone": return target.getConnectionOptions().getTimeZone();
         case "timeout1": return target.getConnectionOptions().getTimeout1();

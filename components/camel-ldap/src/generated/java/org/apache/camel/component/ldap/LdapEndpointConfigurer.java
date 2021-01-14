@@ -29,7 +29,6 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
         case "returnedattributes":
         case "returnedAttributes": target.setReturnedAttributes(property(camelContext, java.lang.String.class, value)); return true;
         case "scope": target.setScope(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,7 +44,6 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
         case "returnedattributes":
         case "returnedAttributes": return java.lang.String.class;
         case "scope": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -62,7 +60,6 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
         case "returnedattributes":
         case "returnedAttributes": return target.getReturnedAttributes();
         case "scope": return target.getScope();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

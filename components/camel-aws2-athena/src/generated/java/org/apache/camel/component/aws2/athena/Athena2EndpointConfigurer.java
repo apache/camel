@@ -66,7 +66,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "retry": target.getConfiguration().setRetry(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "waittimeout":
         case "waitTimeout": target.getConfiguration().setWaitTimeout(property(camelContext, long.class, value)); return true;
         case "workgroup":
@@ -128,7 +127,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "retry": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "waittimeout":
         case "waitTimeout": return long.class;
         case "workgroup":
@@ -186,7 +184,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "retry": return target.getConfiguration().getRetry();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
-        case "synchronous": return target.isSynchronous();
         case "waittimeout":
         case "waitTimeout": return target.getConfiguration().getWaitTimeout();
         case "workgroup":

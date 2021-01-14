@@ -34,9 +34,6 @@ public interface NetWeaverEndpointBuilderFactory {
      * Builder for endpoint for the SAP NetWeaver component.
      */
     public interface NetWeaverEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedNetWeaverEndpointBuilder advanced() {
-            return (AdvancedNetWeaverEndpointBuilder) this;
-        }
         /**
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
@@ -215,50 +212,6 @@ public interface NetWeaverEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the SAP NetWeaver component.
-     */
-    public interface AdvancedNetWeaverEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default NetWeaverEndpointBuilder basic() {
-            return (NetWeaverEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface NetWeaverBuilders {
         /**
          * SAP NetWeaver (camel-sap-netweaver)
@@ -306,7 +259,7 @@ public interface NetWeaverEndpointBuilderFactory {
     static NetWeaverEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class NetWeaverEndpointBuilderImpl extends AbstractEndpointBuilder implements NetWeaverEndpointBuilder, AdvancedNetWeaverEndpointBuilder {
+        class NetWeaverEndpointBuilderImpl extends AbstractEndpointBuilder implements NetWeaverEndpointBuilder {
             public NetWeaverEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

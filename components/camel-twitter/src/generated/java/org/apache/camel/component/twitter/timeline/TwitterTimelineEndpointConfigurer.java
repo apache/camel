@@ -88,7 +88,6 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         case "sortById": target.getProperties().setSortById(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "type": target.getProperties().setType(property(camelContext, org.apache.camel.component.twitter.data.EndpointType.class, value)); return true;
@@ -171,7 +170,6 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         case "sortById": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "type": return org.apache.camel.component.twitter.data.EndpointType.class;
@@ -255,7 +253,6 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         case "sortById": return target.getProperties().isSortById();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "type": return target.getProperties().getType();

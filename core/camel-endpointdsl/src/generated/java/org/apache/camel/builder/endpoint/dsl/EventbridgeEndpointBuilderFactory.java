@@ -36,9 +36,6 @@ public interface EventbridgeEndpointBuilderFactory {
     public interface EventbridgeEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedEventbridgeEndpointBuilder advanced() {
-            return (AdvancedEventbridgeEndpointBuilder) this;
-        }
         /**
          * To use a existing configured AWS Eventbridge as client.
          * 
@@ -359,52 +356,6 @@ public interface EventbridgeEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Eventbridge component.
-     */
-    public interface AdvancedEventbridgeEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default EventbridgeEndpointBuilder basic() {
-            return (EventbridgeEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedEventbridgeEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedEventbridgeEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeOperations</code> enum.
      */
@@ -476,7 +427,7 @@ public interface EventbridgeEndpointBuilderFactory {
     static EventbridgeEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class EventbridgeEndpointBuilderImpl extends AbstractEndpointBuilder implements EventbridgeEndpointBuilder, AdvancedEventbridgeEndpointBuilder {
+        class EventbridgeEndpointBuilderImpl extends AbstractEndpointBuilder implements EventbridgeEndpointBuilder {
             public EventbridgeEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

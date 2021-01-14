@@ -36,9 +36,6 @@ public interface ElasticsearchEndpointBuilderFactory {
     public interface ElasticsearchEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedElasticsearchEndpointBuilder advanced() {
-            return (AdvancedElasticsearchEndpointBuilder) this;
-        }
         /**
          * The time in ms to wait before connection will timeout.
          * 
@@ -564,52 +561,6 @@ public interface ElasticsearchEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Elasticsearch Rest component.
-     */
-    public interface AdvancedElasticsearchEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ElasticsearchEndpointBuilder basic() {
-            return (ElasticsearchEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedElasticsearchEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedElasticsearchEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> enum.
      */
@@ -675,7 +626,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     static ElasticsearchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
+        class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

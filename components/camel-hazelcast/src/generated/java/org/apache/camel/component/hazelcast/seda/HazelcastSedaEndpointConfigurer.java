@@ -41,7 +41,6 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         case "onErrorDelay": target.getConfiguration().setOnErrorDelay(property(camelContext, int.class, value)); return true;
         case "polltimeout":
         case "pollTimeout": target.getConfiguration().setPollTimeout(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transacted": target.getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
         case "transferexchange":
         case "transferExchange": target.getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
@@ -72,7 +71,6 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         case "onErrorDelay": return int.class;
         case "polltimeout":
         case "pollTimeout": return int.class;
-        case "synchronous": return boolean.class;
         case "transacted": return boolean.class;
         case "transferexchange":
         case "transferExchange": return boolean.class;
@@ -104,7 +102,6 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         case "onErrorDelay": return target.getConfiguration().getOnErrorDelay();
         case "polltimeout":
         case "pollTimeout": return target.getConfiguration().getPollTimeout();
-        case "synchronous": return target.isSynchronous();
         case "transacted": return target.getConfiguration().isTransacted();
         case "transferexchange":
         case "transferExchange": return target.getConfiguration().isTransferExchange();

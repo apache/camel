@@ -59,7 +59,6 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "statusinterval":
         case "statusInterval": target.setStatusInterval(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -110,7 +109,6 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
         case "startScheduler": return boolean.class;
         case "statusinterval":
         case "statusInterval": return java.lang.Integer.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -162,7 +160,6 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
         case "startScheduler": return target.isStartScheduler();
         case "statusinterval":
         case "statusInterval": return target.getStatusInterval();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

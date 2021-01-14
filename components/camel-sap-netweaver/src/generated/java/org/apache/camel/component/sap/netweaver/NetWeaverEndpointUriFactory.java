@@ -20,11 +20,10 @@ public class NetWeaverEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(7);
         props.add("flatternMap");
         props.add("lazyStartProducer");
         props.add("password");
-        props.add("synchronous");
         props.add("json");
         props.add("jsonAsMap");
         props.add("url");

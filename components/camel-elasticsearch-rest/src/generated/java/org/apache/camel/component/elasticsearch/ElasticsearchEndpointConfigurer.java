@@ -47,7 +47,6 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "snifferInterval": target.getConfiguration().setSnifferInterval(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usescroll":
         case "useScroll": target.getConfiguration().setUseScroll(property(camelContext, boolean.class, value)); return true;
         case "waitforactiveshards":
@@ -85,7 +84,6 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "snifferInterval": return int.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
-        case "synchronous": return boolean.class;
         case "usescroll":
         case "useScroll": return boolean.class;
         case "waitforactiveshards":
@@ -124,7 +122,6 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "snifferInterval": return target.getConfiguration().getSnifferInterval();
         case "sockettimeout":
         case "socketTimeout": return target.getConfiguration().getSocketTimeout();
-        case "synchronous": return target.isSynchronous();
         case "usescroll":
         case "useScroll": return target.getConfiguration().isUseScroll();
         case "waitforactiveshards":

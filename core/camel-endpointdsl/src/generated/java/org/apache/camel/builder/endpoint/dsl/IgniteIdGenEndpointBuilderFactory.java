@@ -36,9 +36,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
     public interface IgniteIdGenEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedIgniteIdGenEndpointBuilder advanced() {
-            return (AdvancedIgniteIdGenEndpointBuilder) this;
-        }
         /**
          * The batch size.
          * 
@@ -258,52 +255,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Ignite ID Generator component.
-     */
-    public interface AdvancedIgniteIdGenEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IgniteIdGenEndpointBuilder basic() {
-            return (IgniteIdGenEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteIdGenEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteIdGenEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code>
      * enum.
@@ -363,7 +314,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
     static IgniteIdGenEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder, AdvancedIgniteIdGenEndpointBuilder {
+        class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder {
             public IgniteIdGenEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -50,7 +50,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         GrpcProducer producer = new GrpcProducer(this, configuration);
-        if (isSynchronous()) {
+        if (configuration.isSynchronous()) {
             return new SynchronousDelegateProducer(producer);
         } else {
             return producer;
