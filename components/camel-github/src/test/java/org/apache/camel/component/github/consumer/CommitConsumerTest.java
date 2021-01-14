@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.RepositoryCommit;
-import org.eclipse.egit.github.core.User;
 import org.junit.jupiter.api.Test;
 
 public class CommitConsumerTest extends GitHubComponentTestBase {
