@@ -34,10 +34,8 @@ import com.google.cloud.pubsub.v1.stub.SubscriberStubSettings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
