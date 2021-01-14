@@ -17,9 +17,7 @@
 package org.apache.camel.component.minio;
 
 import java.util.Map;
-import java.util.Set;
 
-import io.minio.MinioClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -58,7 +56,6 @@ public class MinioComponent extends DefaultComponent {
         configuration.setBucketName(remaining);
         MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration, endpoint);
 
         return endpoint;
     }
@@ -72,22 +69,5 @@ public class MinioComponent extends DefaultComponent {
      */
     public void setConfiguration(MinioConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(MinioConfiguration configuration, MinioEndpoint endpoint) {
-        if (isEmpty(endpoint.getConfiguration().getMinioClient())) {
-            LOG.debug("Looking for an MinioClient instance in the registry");
-            Set<MinioClient> clients = getCamelContext().getRegistry().findByType(MinioClient.class);
-            if (clients.size() > 1) {
-                LOG.debug("Found more than one MinioClient instance in the registry");
-            } else if (clients.size() == 1) {
-                LOG.debug("Found exactly one MinioClient instance in the registry");
-                configuration.setMinioClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No MinioClient instance in the registry");
-            }
-        } else {
-            LOG.debug("MinioClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
