@@ -59,6 +59,8 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "syncflow":
+        case "syncFlow": getOrCreateConfiguration(target).setSyncFlow(property(camelContext, boolean.class, value)); return true;
         case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -98,6 +100,8 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
+        case "syncflow":
+        case "syncFlow": return boolean.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -138,6 +142,8 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
+        case "syncflow":
+        case "syncFlow": return getOrCreateConfiguration(target).isSyncFlow();
         case "user": return getOrCreateConfiguration(target).getUser();
         default: return null;
         }

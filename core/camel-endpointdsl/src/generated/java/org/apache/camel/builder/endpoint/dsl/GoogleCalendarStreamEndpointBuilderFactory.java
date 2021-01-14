@@ -319,6 +319,39 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sync events, see https://developers.google.com/calendar/v3/sync Note:
+         * not compatible with: 'query' and 'considerLastUpdate' parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param syncFlow the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamEndpointBuilder syncFlow(boolean syncFlow) {
+            doSetProperty("syncFlow", syncFlow);
+            return this;
+        }
+        /**
+         * Sync events, see https://developers.google.com/calendar/v3/sync Note:
+         * not compatible with: 'query' and 'considerLastUpdate' parameters.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param syncFlow the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamEndpointBuilder syncFlow(String syncFlow) {
+            doSetProperty("syncFlow", syncFlow);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 

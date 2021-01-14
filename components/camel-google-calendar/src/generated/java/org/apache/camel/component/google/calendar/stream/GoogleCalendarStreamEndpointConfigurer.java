@@ -76,6 +76,12 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+<<<<<<< HEAD
+=======
+        case "syncflow":
+        case "syncFlow": target.getConfiguration().setSyncFlow(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+>>>>>>> dca8b31... CAMEL-15961: Extend configuration with 'syncFlow' parameter
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -143,6 +149,12 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
+<<<<<<< HEAD
+=======
+        case "syncflow":
+        case "syncFlow": return boolean.class;
+        case "synchronous": return boolean.class;
+>>>>>>> dca8b31... CAMEL-15961: Extend configuration with 'syncFlow' parameter
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -211,6 +223,12 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
+<<<<<<< HEAD
+=======
+        case "syncflow":
+        case "syncFlow": return target.getConfiguration().isSyncFlow();
+        case "synchronous": return target.isSynchronous();
+>>>>>>> dca8b31... CAMEL-15961: Extend configuration with 'syncFlow' parameter
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
