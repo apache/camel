@@ -38,7 +38,6 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
         case "repeat": target.getConfiguration().setRepeat(property(camelContext, boolean.class, value)); return true;
         case "sendemptymessageondelete":
         case "sendEmptyMessageOnDelete": target.getConfiguration().setSendEmptyMessageOnDelete(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
@@ -64,7 +63,6 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
         case "repeat": return boolean.class;
         case "sendemptymessageondelete":
         case "sendEmptyMessageOnDelete": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeout": return int.class;
         default: return null;
         }
@@ -91,7 +89,6 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
         case "repeat": return target.getConfiguration().isRepeat();
         case "sendemptymessageondelete":
         case "sendEmptyMessageOnDelete": return target.getConfiguration().isSendEmptyMessageOnDelete();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getConfiguration().getTimeout();
         default: return null;
         }

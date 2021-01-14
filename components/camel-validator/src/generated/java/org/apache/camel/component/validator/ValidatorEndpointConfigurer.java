@@ -39,7 +39,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "schemaFactory": target.setSchemaFactory(property(camelContext, javax.xml.validation.SchemaFactory.class, value)); return true;
         case "schemalanguage":
         case "schemaLanguage": target.setSchemaLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usesharedschema":
         case "useSharedSchema": target.setUseSharedSchema(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -67,7 +66,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "schemaFactory": return javax.xml.validation.SchemaFactory.class;
         case "schemalanguage":
         case "schemaLanguage": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "usesharedschema":
         case "useSharedSchema": return boolean.class;
         default: return null;
@@ -96,7 +94,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "schemaFactory": return target.getSchemaFactory();
         case "schemalanguage":
         case "schemaLanguage": return target.getSchemaLanguage();
-        case "synchronous": return target.isSynchronous();
         case "usesharedschema":
         case "useSharedSchema": return target.isUseSharedSchema();
         default: return null;

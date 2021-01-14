@@ -32,3 +32,16 @@ The policy option now expects a file, since the policy are going to be complex. 
 
 The policy option now expects a file, since the policy are going to be complex. It can be from classpath:, http: or file: etc.
 
+=== Camel-Github
+
+The Camel Github Commit consumer has been changed a bit.
+
+For each exchange now in the body you'll get the commit full message as a String and not the Commit Object like before.
+
+Other information has been stored in headers declared in GitConstants class:
+
+* GITHUB_COMMIT_AUTHOR - "CamelGitHubCommitAuthor" - The commit Author
+* GITHUB_COMMIT_COMMITTER - "CamelGitHubCommitCommitter" - The committer name
+* GITHUB_COMMIT_SHA - "CamelGitHubCommitSha" - The commit sha
+* GITHUB_COMMIT_URL - "CamelGitHubCommitUrl" - The commit url
+

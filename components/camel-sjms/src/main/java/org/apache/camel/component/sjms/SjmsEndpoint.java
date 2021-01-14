@@ -258,6 +258,9 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction"
                             + "  must be executed synchronously (Camel 3.0 may support async transactions).")
     private boolean asyncConsumer;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -792,5 +795,13 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public void setAsyncConsumer(boolean asyncConsumer) {
         this.asyncConsumer = asyncConsumer;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

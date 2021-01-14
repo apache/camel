@@ -33,7 +33,6 @@ public class GuavaEventBusEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "listenerinterface":
         case "listenerInterface": target.setListenerInterface(property(camelContext, java.lang.Class.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -53,7 +52,6 @@ public class GuavaEventBusEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return boolean.class;
         case "listenerinterface":
         case "listenerInterface": return java.lang.Class.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -74,7 +72,6 @@ public class GuavaEventBusEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "listenerinterface":
         case "listenerInterface": return target.getListenerInterface();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -34,9 +34,6 @@ public interface IgniteSetEndpointBuilderFactory {
      * Builder for endpoint for the Ignite Sets component.
      */
     public interface IgniteSetEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedIgniteSetEndpointBuilder advanced() {
-            return (AdvancedIgniteSetEndpointBuilder) this;
-        }
         /**
          * The collection configuration. Default: empty configuration. You can
          * also conveniently set inner properties by using configuration.xyz=123
@@ -229,50 +226,6 @@ public interface IgniteSetEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Ignite Sets component.
-     */
-    public interface AdvancedIgniteSetEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IgniteSetEndpointBuilder basic() {
-            return (IgniteSetEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteSetEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteSetEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
      * enum.
@@ -335,7 +288,7 @@ public interface IgniteSetEndpointBuilderFactory {
     static IgniteSetEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class IgniteSetEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteSetEndpointBuilder, AdvancedIgniteSetEndpointBuilder {
+        class IgniteSetEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteSetEndpointBuilder {
             public IgniteSetEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

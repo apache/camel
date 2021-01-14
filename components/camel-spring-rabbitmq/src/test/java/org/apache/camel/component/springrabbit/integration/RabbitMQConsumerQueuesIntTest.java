@@ -18,6 +18,7 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,7 @@ public class RabbitMQConsumerQueuesIntTest extends AbstractRabbitMQIntTest {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
+        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
 
         template.sendBody("direct:start", body);
 

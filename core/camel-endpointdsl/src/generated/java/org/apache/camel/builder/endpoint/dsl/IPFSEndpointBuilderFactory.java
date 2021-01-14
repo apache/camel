@@ -34,9 +34,6 @@ public interface IPFSEndpointBuilderFactory {
      * Builder for endpoint for the IPFS component.
      */
     public interface IPFSEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedIPFSEndpointBuilder advanced() {
-            return (AdvancedIPFSEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -100,50 +97,6 @@ public interface IPFSEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the IPFS component.
-     */
-    public interface AdvancedIPFSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IPFSEndpointBuilder basic() {
-            return (IPFSEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface IPFSBuilders {
         /**
          * IPFS (camel-ipfs)
@@ -189,7 +142,7 @@ public interface IPFSEndpointBuilderFactory {
         }
     }
     static IPFSEndpointBuilder endpointBuilder(String componentName, String path) {
-        class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {
+        class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

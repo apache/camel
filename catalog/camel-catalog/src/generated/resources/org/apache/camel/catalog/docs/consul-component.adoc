@@ -108,7 +108,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (29 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -135,7 +135,6 @@ with the following path and query parameters:
 | *datacenter* (advanced) | The data center |  | String
 | *nearNode* (advanced) | The near node to use for queries. |  | String
 | *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
 | *password* (security) | Sets the password to be used for basic authentication |  | String
 | *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters

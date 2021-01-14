@@ -20,10 +20,9 @@ public class DockerEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(22);
         props.add("followRedirectFilter");
         props.add("cmdExecFactory");
-        props.add("synchronous");
         props.add("tlsVerify");
         props.add("exchangePattern");
         props.add("maxTotalConnections");

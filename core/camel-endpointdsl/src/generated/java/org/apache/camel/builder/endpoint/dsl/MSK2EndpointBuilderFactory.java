@@ -35,9 +35,6 @@ public interface MSK2EndpointBuilderFactory {
      * (MSK) component.
      */
     public interface MSK2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMSK2EndpointBuilder advanced() {
-            return (AdvancedMSK2EndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -336,51 +333,6 @@ public interface MSK2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Managed Streaming for Apache
-     * Kafka (MSK) component.
-     */
-    public interface AdvancedMSK2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MSK2EndpointBuilder basic() {
-            return (MSK2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMSK2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMSK2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.msk.MSK2Operations</code> enum.
      */
@@ -442,7 +394,7 @@ public interface MSK2EndpointBuilderFactory {
         }
     }
     static MSK2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class MSK2EndpointBuilderImpl extends AbstractEndpointBuilder implements MSK2EndpointBuilder, AdvancedMSK2EndpointBuilder {
+        class MSK2EndpointBuilderImpl extends AbstractEndpointBuilder implements MSK2EndpointBuilder {
             public MSK2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

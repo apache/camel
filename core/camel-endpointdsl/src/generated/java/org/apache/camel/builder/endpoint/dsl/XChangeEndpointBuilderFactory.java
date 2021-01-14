@@ -34,9 +34,6 @@ public interface XChangeEndpointBuilderFactory {
      * Builder for endpoint for the XChange component.
      */
     public interface XChangeEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedXChangeEndpointBuilder advanced() {
-            return (AdvancedXChangeEndpointBuilder) this;
-        }
         /**
          * The currency.
          * 
@@ -197,50 +194,6 @@ public interface XChangeEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the XChange component.
-     */
-    public interface AdvancedXChangeEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default XChangeEndpointBuilder basic() {
-            return (XChangeEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedXChangeEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> enum.
      */
@@ -310,7 +263,7 @@ public interface XChangeEndpointBuilderFactory {
     static XChangeEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {
+        class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder {
             public XChangeEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

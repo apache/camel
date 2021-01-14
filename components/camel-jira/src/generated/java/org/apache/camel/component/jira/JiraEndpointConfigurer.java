@@ -44,7 +44,6 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sendonlyupdatedfield":
         case "sendOnlyUpdatedField": target.setSendOnlyUpdatedField(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "verificationcode":
         case "verificationCode": target.getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
@@ -80,7 +79,6 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "privateKey": return java.lang.String.class;
         case "sendonlyupdatedfield":
         case "sendOnlyUpdatedField": return boolean.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         case "verificationcode":
         case "verificationCode": return java.lang.String.class;
@@ -117,7 +115,6 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "privateKey": return target.getConfiguration().getPrivateKey();
         case "sendonlyupdatedfield":
         case "sendOnlyUpdatedField": return target.isSendOnlyUpdatedField();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
         case "verificationcode":
         case "verificationCode": return target.getConfiguration().getVerificationCode();

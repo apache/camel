@@ -34,9 +34,6 @@ public interface StAXEndpointBuilderFactory {
      * Builder for endpoint for the StAX component.
      */
     public interface StAXEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedStAXEndpointBuilder advanced() {
-            return (AdvancedStAXEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -86,50 +83,6 @@ public interface StAXEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the StAX component.
-     */
-    public interface AdvancedStAXEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default StAXEndpointBuilder basic() {
-            return (StAXEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStAXEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStAXEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface StAXBuilders {
         /**
          * StAX (camel-stax)
@@ -173,7 +126,7 @@ public interface StAXEndpointBuilderFactory {
         }
     }
     static StAXEndpointBuilder endpointBuilder(String componentName, String path) {
-        class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder, AdvancedStAXEndpointBuilder {
+        class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder {
             public StAXEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -27,7 +27,6 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
         case "method": target.setMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "scope": target.setScope(property(camelContext, org.apache.camel.BeanScope.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -41,7 +40,6 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
         case "method": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "scope": return org.apache.camel.BeanScope.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -56,7 +54,6 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
         case "method": return target.getMethod();
         case "parameters": return target.getParameters();
         case "scope": return target.getScope();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

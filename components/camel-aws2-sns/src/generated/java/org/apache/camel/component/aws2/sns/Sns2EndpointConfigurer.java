@@ -56,7 +56,6 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": target.getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "usedefaultcredentialsprovider":
@@ -108,7 +107,6 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subject": return java.lang.String.class;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return boolean.class;
-        case "synchronous": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "usedefaultcredentialsprovider":
@@ -156,7 +154,6 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subject": return target.getConfiguration().getSubject();
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": return target.getConfiguration().isSubscribeSNStoSQS();
-        case "synchronous": return target.isSynchronous();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "usedefaultcredentialsprovider":

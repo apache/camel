@@ -48,7 +48,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "serverurl":
         case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "type": target.setType(property(camelContext, org.apache.camel.component.geocoder.GeoCoderType.class, value)); return true;
         default: return false;
         }
@@ -84,7 +83,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         case "proxyPort": return java.lang.Integer.class;
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "type": return org.apache.camel.component.geocoder.GeoCoderType.class;
         default: return null;
         }
@@ -121,7 +119,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         case "proxyPort": return target.getProxyPort();
         case "serverurl":
         case "serverUrl": return target.getServerUrl();
-        case "synchronous": return target.isSynchronous();
         case "type": return target.getType();
         default: return null;
         }

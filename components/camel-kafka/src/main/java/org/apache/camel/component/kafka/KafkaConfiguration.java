@@ -323,6 +323,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common", defaultValue = "30000")
     private int shutdownTimeout = 30000;
 
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
+
     public KafkaConfiguration() {
     }
 
@@ -1712,5 +1716,13 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     public Map<String, Object> getAdditionalProperties() {
         return additionalProperties;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

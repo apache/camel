@@ -20,9 +20,8 @@ public class QueueServiceEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(14);
         props.add("credentials");
-        props.add("synchronous");
         props.add("azureQueueClient");
         props.add("exchangePattern");
         props.add("credentialsAccountKey");

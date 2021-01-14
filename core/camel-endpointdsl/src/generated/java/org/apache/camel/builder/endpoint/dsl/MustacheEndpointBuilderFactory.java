@@ -34,9 +34,6 @@ public interface MustacheEndpointBuilderFactory {
      * Builder for endpoint for the Mustache component.
      */
     public interface MustacheEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMustacheEndpointBuilder advanced() {
-            return (AdvancedMustacheEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -245,50 +242,6 @@ public interface MustacheEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Mustache component.
-     */
-    public interface AdvancedMustacheEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MustacheEndpointBuilder basic() {
-            return (MustacheEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMustacheEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMustacheEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface MustacheBuilders {
         /**
          * Mustache (camel-mustache)
@@ -346,7 +299,7 @@ public interface MustacheEndpointBuilderFactory {
     static MustacheEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MustacheEndpointBuilderImpl extends AbstractEndpointBuilder implements MustacheEndpointBuilder, AdvancedMustacheEndpointBuilder {
+        class MustacheEndpointBuilderImpl extends AbstractEndpointBuilder implements MustacheEndpointBuilder {
             public MustacheEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

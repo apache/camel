@@ -60,7 +60,6 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "textline": target.getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
         case "textlinedelimiter":
         case "textlineDelimiter": target.getConfiguration().setTextlineDelimiter(property(camelContext, org.apache.camel.component.mina.MinaTextLineDelimiter.class, value)); return true;
@@ -115,7 +114,6 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "sync": return boolean.class;
-        case "synchronous": return boolean.class;
         case "textline": return boolean.class;
         case "textlinedelimiter":
         case "textlineDelimiter": return org.apache.camel.component.mina.MinaTextLineDelimiter.class;
@@ -171,7 +169,6 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "sync": return target.getConfiguration().isSync();
-        case "synchronous": return target.isSynchronous();
         case "textline": return target.getConfiguration().isTextline();
         case "textlinedelimiter":
         case "textlineDelimiter": return target.getConfiguration().getTextlineDelimiter();

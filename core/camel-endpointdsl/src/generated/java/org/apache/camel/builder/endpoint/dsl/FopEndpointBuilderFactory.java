@@ -34,9 +34,6 @@ public interface FopEndpointBuilderFactory {
      * Builder for endpoint for the FOP component.
      */
     public interface FopEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedFopEndpointBuilder advanced() {
-            return (AdvancedFopEndpointBuilder) this;
-        }
         /**
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
@@ -133,50 +130,6 @@ public interface FopEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the FOP component.
-     */
-    public interface AdvancedFopEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default FopEndpointBuilder basic() {
-            return (FopEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFopEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface FopBuilders {
         /**
          * FOP (camel-fop)
@@ -228,7 +181,7 @@ public interface FopEndpointBuilderFactory {
         }
     }
     static FopEndpointBuilder endpointBuilder(String componentName, String path) {
-        class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {
+        class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder {
             public FopEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

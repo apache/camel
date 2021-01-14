@@ -39,7 +39,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "remoteName": target.setRemoteName(property(camelContext, java.lang.String.class, value)); return true;
         case "remotepath":
         case "remotePath": target.setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tagname":
         case "tagName": target.setTagName(property(camelContext, java.lang.String.class, value)); return true;
         case "type": target.setType(property(camelContext, org.apache.camel.component.git.consumer.GitType.class, value)); return true;
@@ -69,7 +68,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "remoteName": return java.lang.String.class;
         case "remotepath":
         case "remotePath": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tagname":
         case "tagName": return java.lang.String.class;
         case "type": return org.apache.camel.component.git.consumer.GitType.class;
@@ -100,7 +98,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "remoteName": return target.getRemoteName();
         case "remotepath":
         case "remotePath": return target.getRemotePath();
-        case "synchronous": return target.isSynchronous();
         case "tagname":
         case "tagName": return target.getTagName();
         case "type": return target.getType();

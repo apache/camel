@@ -54,7 +54,7 @@ google-calendar-stream://index?[options]
 
 
 // component options: START
-The Google Calendar Stream component supports 18 options, which are listed below.
+The Google Calendar Stream component supports 19 options, which are listed below.
 
 
 
@@ -71,6 +71,7 @@ The Google Calendar Stream component supports 18 options, which are listed below
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String
 | *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
+| *syncFlow* (consumer) | Sync events, see \https://developers.google.com/calendar/v3/sync Note: not compatible with: 'query' and 'considerLastUpdate' parameters | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientFactory* (advanced) | The client Factory |  | GoogleCalendarClientFactory
 | *accessToken* (security) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String

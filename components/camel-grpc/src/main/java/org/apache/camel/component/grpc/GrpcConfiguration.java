@@ -116,6 +116,10 @@ public class GrpcConfiguration {
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoDiscoverClientInterceptors = true;
 
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
+
     /**
      * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
      */
@@ -422,6 +426,14 @@ public class GrpcConfiguration {
      */
     public void setAutoDiscoverClientInterceptors(boolean autoDiscoverClientInterceptors) {
         this.autoDiscoverClientInterceptors = autoDiscoverClientInterceptors;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public void parseURI(URI uri) {

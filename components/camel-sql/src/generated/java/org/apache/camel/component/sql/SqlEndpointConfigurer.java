@@ -92,7 +92,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "separator": target.setSeparator(property(camelContext, char.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "templateoptions":
         case "templateOptions": target.setTemplateOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "timeunit":
@@ -184,7 +183,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "separator": return char.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "templateoptions":
         case "templateOptions": return java.util.Map.class;
         case "timeunit":
@@ -277,7 +275,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "separator": return target.getSeparator();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "templateoptions":
         case "templateOptions": return target.getTemplateOptions();
         case "timeunit":

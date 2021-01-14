@@ -20,10 +20,9 @@ public class ZooKeeperEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(13);
         props.add("backoff");
         props.add("createMode");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("serverUrls");
         props.add("timeout");

@@ -62,7 +62,6 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -119,7 +118,6 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serverUrl": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "token": return java.lang.String.class;
@@ -177,7 +175,6 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serverUrl": return target.getServerUrl();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "token": return target.getToken();

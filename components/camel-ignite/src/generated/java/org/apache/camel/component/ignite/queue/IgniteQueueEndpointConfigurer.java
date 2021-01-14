@@ -28,7 +28,6 @@ public class IgniteQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.ignite.queue.IgniteQueueOperation.class, value)); return true;
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": target.setPropagateIncomingBodyIfNoReturnValue(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeoutmillis":
         case "timeoutMillis": target.setTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "treatcollectionsascacheobjects":
@@ -47,7 +46,6 @@ public class IgniteQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "operation": return org.apache.camel.component.ignite.queue.IgniteQueueOperation.class;
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeoutmillis":
         case "timeoutMillis": return java.lang.Long.class;
         case "treatcollectionsascacheobjects":
@@ -67,7 +65,6 @@ public class IgniteQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "operation": return target.getOperation();
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": return target.isPropagateIncomingBodyIfNoReturnValue();
-        case "synchronous": return target.isSynchronous();
         case "timeoutmillis":
         case "timeoutMillis": return target.getTimeoutMillis();
         case "treatcollectionsascacheobjects":

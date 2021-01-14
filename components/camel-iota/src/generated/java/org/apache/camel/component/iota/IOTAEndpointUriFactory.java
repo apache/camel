@@ -20,11 +20,10 @@ public class IOTAEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(8);
         props.add("securityLevel");
         props.add("lazyStartProducer");
         props.add("depth");
-        props.add("synchronous");
         props.add("name");
         props.add("tag");
         props.add("minWeightMagnitude");

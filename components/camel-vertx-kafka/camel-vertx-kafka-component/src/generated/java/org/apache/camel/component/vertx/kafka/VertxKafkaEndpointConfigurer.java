@@ -213,7 +213,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sslTruststorePassword": target.getConfiguration().setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststoretype":
         case "sslTruststoreType": target.getConfiguration().setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transactiontimeoutms":
         case "transactionTimeoutMs": target.getConfiguration().setTransactionTimeoutMs(property(camelContext, int.class, value)); return true;
         case "transactionalid":
@@ -421,7 +420,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sslTruststorePassword": return java.lang.String.class;
         case "ssltruststoretype":
         case "sslTruststoreType": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "transactiontimeoutms":
         case "transactionTimeoutMs": return int.class;
         case "transactionalid":
@@ -630,7 +628,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sslTruststorePassword": return target.getConfiguration().getSslTruststorePassword();
         case "ssltruststoretype":
         case "sslTruststoreType": return target.getConfiguration().getSslTruststoreType();
-        case "synchronous": return target.isSynchronous();
         case "transactiontimeoutms":
         case "transactionTimeoutMs": return target.getConfiguration().getTransactionTimeoutMs();
         case "transactionalid":

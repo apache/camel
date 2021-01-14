@@ -31,7 +31,6 @@ public class IgniteComputeEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": target.setPropagateIncomingBodyIfNoReturnValue(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskname":
         case "taskName": target.setTaskName(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutmillis":
@@ -55,7 +54,6 @@ public class IgniteComputeEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return boolean.class;
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": return boolean.class;
-        case "synchronous": return boolean.class;
         case "taskname":
         case "taskName": return java.lang.String.class;
         case "timeoutmillis":
@@ -80,7 +78,6 @@ public class IgniteComputeEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "propagateincomingbodyifnoreturnvalue":
         case "propagateIncomingBodyIfNoReturnValue": return target.isPropagateIncomingBodyIfNoReturnValue();
-        case "synchronous": return target.isSynchronous();
         case "taskname":
         case "taskName": return target.getTaskName();
         case "timeoutmillis":

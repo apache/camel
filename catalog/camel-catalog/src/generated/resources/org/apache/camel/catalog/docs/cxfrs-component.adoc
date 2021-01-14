@@ -123,6 +123,7 @@ with the following path and query parameters:
 | *httpClientAPI* (producer) | If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service | true | boolean
 | *ignoreDeleteMethodMessageBody* (producer) | This option is used to tell CxfRsProducer to ignore the message body of the DELETE method when using HTTP API. | false | boolean
 | *maxClientCacheSize* (producer) | This option allows you to configure the maximum size of the cache. The implementation caches CXF clients or ClientFactoryBean in CxfProvider and CxfRsProvider. | 10 | int
+| *synchronous* (producer) | Sets whether synchronous processing should be strictly used | false | boolean
 | *binding* (advanced) | To use a custom CxfBinding to control the binding between Camel Message and CXF Message. |  | CxfRsBinding
 | *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
 | *continuationTimeout* (advanced) | This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport. | 30000 | long
@@ -131,7 +132,6 @@ with the following path and query parameters:
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *performInvocation* (advanced) | When the option is true, Camel will perform the invocation of the resource class instance and put the response object into the exchange for further processing. | false | boolean
 | *propagateContexts* (advanced) | When the option is true, JAXRS UriInfo, HttpHeaders, Request and SecurityContext contexts will be available to custom CXFRS processors as typed Camel exchange properties. These contexts can be used to analyze the current requests using JAX-RS API. | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

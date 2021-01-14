@@ -20,10 +20,9 @@ public class CMISEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(14);
         props.add("queryMode");
         props.add("cmsUrl");
-        props.add("synchronous");
         props.add("readContent");
         props.add("query");
         props.add("exchangePattern");

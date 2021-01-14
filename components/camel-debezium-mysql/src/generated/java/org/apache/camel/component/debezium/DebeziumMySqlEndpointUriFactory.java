@@ -20,11 +20,10 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(82);
+        Set<String> props = new HashSet<>(81);
         props.add("databaseJdbcDriver");
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
-        props.add("synchronous");
         props.add("snapshotDelayMs");
         props.add("offsetStorageTopic");
         props.add("databaseSslMode");

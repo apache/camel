@@ -34,7 +34,6 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "problemId": target.getConfiguration().setProblemId(property(camelContext, java.lang.Long.class, value)); return true;
         case "solverid":
         case "solverId": target.getConfiguration().setSolverId(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "threadpoolsize":
         case "threadPoolSize": target.getConfiguration().setThreadPoolSize(property(camelContext, int.class, value)); return true;
         case "usesolvermanager":
@@ -59,7 +58,6 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "problemId": return java.lang.Long.class;
         case "solverid":
         case "solverId": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "threadpoolsize":
         case "threadPoolSize": return int.class;
         case "usesolvermanager":
@@ -85,7 +83,6 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "problemId": return target.getConfiguration().getProblemId();
         case "solverid":
         case "solverId": return target.getConfiguration().getSolverId();
-        case "synchronous": return target.isSynchronous();
         case "threadpoolsize":
         case "threadPoolSize": return target.getConfiguration().getThreadPoolSize();
         case "usesolvermanager":

@@ -20,9 +20,8 @@ public class TwitterDirectMessageEndpointUriFactory extends org.apache.camel.sup
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(44);
+        Set<String> props = new HashSet<>(43);
         props.add("backoffMultiplier");
-        props.add("synchronous");
         props.add("latitude");
         props.add("httpProxyHost");
         props.add("initialDelay");

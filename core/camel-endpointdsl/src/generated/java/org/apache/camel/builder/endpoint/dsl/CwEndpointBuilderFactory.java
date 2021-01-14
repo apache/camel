@@ -35,9 +35,6 @@ public interface CwEndpointBuilderFactory {
      * Builder for endpoint for the AWS CloudWatch component.
      */
     public interface CwEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedCwEndpointBuilder advanced() {
-            return (AdvancedCwEndpointBuilder) this;
-        }
         /**
          * To use the AmazonCloudWatch as the client.
          * 
@@ -359,50 +356,6 @@ public interface CwEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS CloudWatch component.
-     */
-    public interface AdvancedCwEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default CwEndpointBuilder basic() {
-            return (CwEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCwEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
@@ -453,7 +406,7 @@ public interface CwEndpointBuilderFactory {
         }
     }
     static CwEndpointBuilder endpointBuilder(String componentName, String path) {
-        class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder, AdvancedCwEndpointBuilder {
+        class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder {
             public CwEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

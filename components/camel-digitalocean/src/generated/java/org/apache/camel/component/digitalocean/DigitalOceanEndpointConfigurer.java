@@ -39,7 +39,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
         case "perpage":
         case "perPage": target.getConfiguration().setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "resource": target.getConfiguration().setResource(property(camelContext, org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -65,7 +64,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
         case "perpage":
         case "perPage": return java.lang.Integer.class;
         case "resource": return org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -92,7 +90,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
         case "perpage":
         case "perPage": return target.getConfiguration().getPerPage();
         case "resource": return target.getConfiguration().getResource();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

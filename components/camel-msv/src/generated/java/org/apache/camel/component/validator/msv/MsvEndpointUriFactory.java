@@ -20,13 +20,12 @@ public class MsvEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("lazyStartProducer");
         props.add("headerName");
         props.add("resourceResolver");
         props.add("schemaFactory");
         props.add("failOnNullHeader");
-        props.add("synchronous");
         props.add("useSharedSchema");
         props.add("failOnNullBody");
         props.add("errorHandler");

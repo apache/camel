@@ -36,9 +36,6 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Builder for endpoint for the Crypto CMS component.
      */
     public interface CryptoCmsEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedCryptoCmsEndpointBuilder advanced() {
-            return (AdvancedCryptoCmsEndpointBuilder) this;
-        }
         /**
          * Keystore which contains signer private keys, verifier public keys,
          * encryptor public keys, decryptor private keys depending on the
@@ -559,50 +556,6 @@ public interface CryptoCmsEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Crypto CMS component.
-     */
-    public interface AdvancedCryptoCmsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default CryptoCmsEndpointBuilder basic() {
-            return (CryptoCmsEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCryptoCmsEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface CryptoCmsBuilders {
         /**
          * Crypto CMS (camel-crypto-cms)
@@ -671,7 +624,7 @@ public interface CryptoCmsEndpointBuilderFactory {
     static CryptoCmsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {
+        class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder {
             public CryptoCmsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

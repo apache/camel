@@ -20,8 +20,7 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
-        props.add("synchronous");
+        Set<String> props = new HashSet<>(14);
         props.add("contentCache");
         props.add("resourceUri");
         props.add("deleteOutputFile");

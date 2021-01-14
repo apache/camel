@@ -33,7 +33,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "saveto":
         case "saveTo": target.getConfiguration().setSaveTo(property(camelContext, java.lang.String.class, value)); return true;
         case "seed": target.getConfiguration().setSeed(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "xval": target.getConfiguration().setXval(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -54,7 +53,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "saveto":
         case "saveTo": return java.lang.String.class;
         case "seed": return int.class;
-        case "synchronous": return boolean.class;
         case "xval": return boolean.class;
         default: return null;
         }
@@ -76,7 +74,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "saveto":
         case "saveTo": return target.getConfiguration().getSaveTo();
         case "seed": return target.getConfiguration().getSeed();
-        case "synchronous": return target.isSynchronous();
         case "xval": return target.getConfiguration().isXval();
         default: return null;
         }

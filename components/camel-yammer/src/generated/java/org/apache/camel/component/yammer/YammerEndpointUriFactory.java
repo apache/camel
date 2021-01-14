@@ -20,10 +20,9 @@ public class YammerEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(31);
         props.add("backoffMultiplier");
         props.add("newerThan");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("scheduler");
         props.add("consumerSecret");

@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (41 parameters):
+=== Query Parameters (40 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,6 @@ with the following path and query parameters:
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *setHttpResponseDuring{zwsp}Processing* (advanced) | Sets the flag to use the endpoint where you can either populate camel exchange from servlet response or use request itself which may be thought as if it is a proxy. |  | Boolean
 | *skipServletProcessing* (advanced) | Sets the flag to use skip servlet processing and let camel take over processing |  | Boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
 | *proxyClientClass* (proxy) | Sets the resteasy proxyClientClass |  | String
 | *password* (security) | Sets the password |  | String

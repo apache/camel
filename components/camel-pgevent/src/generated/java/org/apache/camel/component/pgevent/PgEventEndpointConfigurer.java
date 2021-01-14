@@ -31,7 +31,6 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pass": target.setPass(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -50,7 +49,6 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "pass": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -70,7 +68,6 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pass": return target.getPass();
-        case "synchronous": return target.isSynchronous();
         case "user": return target.getUser();
         default: return null;
         }

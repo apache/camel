@@ -176,7 +176,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subscriptionName": target.getConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptionshared":
         case "subscriptionShared": target.getConfiguration().setSubscriptionShared(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskexecutor":
         case "taskExecutor": target.getConfiguration().setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
         case "testconnectiononstartup":
@@ -555,7 +555,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subscriptionName": return target.getConfiguration().getSubscriptionName();
         case "subscriptionshared":
         case "subscriptionShared": return target.getConfiguration().isSubscriptionShared();
-        case "synchronous": return target.isSynchronous();
+        case "synchronous": return target.getConfiguration().isSynchronous();
         case "taskexecutor":
         case "taskExecutor": return target.getConfiguration().getTaskExecutor();
         case "testconnectiononstartup":

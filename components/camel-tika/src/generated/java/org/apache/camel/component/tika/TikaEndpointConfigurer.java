@@ -23,7 +23,6 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tikaconfig":
         case "tikaConfig": target.getTikaConfiguration().setTikaConfig(property(camelContext, org.apache.tika.config.TikaConfig.class, value)); return true;
         case "tikaconfiguri":
@@ -41,7 +40,6 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         case "tikaconfig":
         case "tikaConfig": return org.apache.tika.config.TikaConfig.class;
         case "tikaconfiguri":
@@ -60,7 +58,6 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         case "tikaconfig":
         case "tikaConfig": return target.getTikaConfiguration().getTikaConfig();
         case "tikaconfiguri":

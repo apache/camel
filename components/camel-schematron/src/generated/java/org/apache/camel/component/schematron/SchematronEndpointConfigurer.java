@@ -25,7 +25,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "rules": target.setRules(property(camelContext, javax.xml.transform.Templates.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uriresolver":
         case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
         default: return false;
@@ -39,7 +38,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "rules": return javax.xml.transform.Templates.class;
-        case "synchronous": return boolean.class;
         case "uriresolver":
         case "uriResolver": return javax.xml.transform.URIResolver.class;
         default: return null;
@@ -54,7 +52,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "rules": return target.getRules();
-        case "synchronous": return target.isSynchronous();
         case "uriresolver":
         case "uriResolver": return target.getUriResolver();
         default: return null;

@@ -566,12 +566,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         dslClass.setName(getComponentNameFromType(componentClassName) + "Builders");
         dslClass.setClass(false);
 
+        String adv = hasAdvanced ? ", Advanced" + builderName : "";
         Method method = javaClass.addMethod().setStatic().setName("endpointBuilder")
                 .addParameter(String.class, "componentName")
                 .addParameter(String.class, "path")
                 .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName
-                         + ", Advanced" + builderName + " {",
+                .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName + adv + " {",
                         "    public " + builderName + "Impl(String path) {", "        super(componentName, path);", "    }",
                         "}",
                         "return new " + builderName + "Impl(path);", "");

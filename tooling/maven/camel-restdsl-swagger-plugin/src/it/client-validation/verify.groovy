@@ -14,15 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.springrabbit;
 
-public final class RabbitMQHelper {
+def File restdsl = new File(basedir, "target/classes/generated/com/example/MyRestRoute.java")
 
-    private RabbitMQHelper() {
-    }
+assert restdsl.exists()
 
-    public static boolean isDefaultExchange(String exchangeName) {
-        return exchangeName == null || exchangeName.isEmpty()
-                || exchangeName.equalsIgnoreCase(RabbitMQConstants.DEFAULT_EXCHANGE_NAME);
-    }
-}
+def String data = restdsl.text
+
+assert data.contains('restConfiguration().component("servlet").apiContextPath("/api-docs").clientRequestValidation(true);')

@@ -20,13 +20,12 @@ public class IgniteEventsEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(8);
         props.add("clusterGroupExpression");
         props.add("bridgeErrorHandler");
         props.add("propagateIncomingBodyIfNoReturnValue");
         props.add("treatCollectionsAsCacheObjects");
         props.add("endpointId");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("exceptionHandler");
         props.add("events");

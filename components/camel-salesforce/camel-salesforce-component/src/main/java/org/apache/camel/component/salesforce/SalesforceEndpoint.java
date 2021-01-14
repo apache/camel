@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.SynchronousDelegateProducer;
 import org.eclipse.jetty.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,12 +72,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(String.format("Invalid Operation %s", topicName));
         }
 
-        SalesforceProducer producer = new SalesforceProducer(this);
-        if (isSynchronous()) {
-            return new SynchronousDelegateProducer(producer);
-        } else {
-            return producer;
-        }
+        return new SalesforceProducer(this);
     }
 
     @Override

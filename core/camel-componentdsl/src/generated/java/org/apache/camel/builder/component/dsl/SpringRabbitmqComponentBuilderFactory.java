@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.springrabbit.RabbitMQComponent;
+import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 
 /**
  * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
@@ -49,7 +49,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
      */
     interface SpringRabbitmqComponentBuilder
             extends
-                ComponentBuilder<RabbitMQComponent> {
+                ComponentBuilder<SpringRabbitMQComponent> {
         /**
          * Optional AMQP Admin service to use for auto declaring elements
          * (queues, exchanges, bindings).
@@ -409,12 +409,12 @@ public interface SpringRabbitmqComponentBuilderFactory {
 
     class SpringRabbitmqComponentBuilderImpl
             extends
-                AbstractComponentBuilder<RabbitMQComponent>
+                AbstractComponentBuilder<SpringRabbitMQComponent>
             implements
                 SpringRabbitmqComponentBuilder {
         @Override
-        protected RabbitMQComponent buildConcreteComponent() {
-            return new RabbitMQComponent();
+        protected SpringRabbitMQComponent buildConcreteComponent() {
+            return new SpringRabbitMQComponent();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -422,26 +422,26 @@ public interface SpringRabbitmqComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "amqpAdmin": ((RabbitMQComponent) component).setAmqpAdmin((org.springframework.amqp.core.AmqpAdmin) value); return true;
-            case "connectionFactory": ((RabbitMQComponent) component).setConnectionFactory((org.springframework.amqp.rabbit.connection.ConnectionFactory) value); return true;
-            case "testConnectionOnStartup": ((RabbitMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
-            case "autoDeclare": ((RabbitMQComponent) component).setAutoDeclare((boolean) value); return true;
-            case "autoStartup": ((RabbitMQComponent) component).setAutoStartup((boolean) value); return true;
-            case "bridgeErrorHandler": ((RabbitMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "deadLetterExchange": ((RabbitMQComponent) component).setDeadLetterExchange((java.lang.String) value); return true;
-            case "deadLetterExchangeType": ((RabbitMQComponent) component).setDeadLetterExchangeType((java.lang.String) value); return true;
-            case "deadLetterQueue": ((RabbitMQComponent) component).setDeadLetterQueue((java.lang.String) value); return true;
-            case "deadLetterRoutingKey": ((RabbitMQComponent) component).setDeadLetterRoutingKey((java.lang.String) value); return true;
-            case "errorHandler": ((RabbitMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
-            case "listenerContainerFactory": ((RabbitMQComponent) component).setListenerContainerFactory((org.apache.camel.component.springrabbit.ListenerContainerFactory) value); return true;
-            case "prefetchCount": ((RabbitMQComponent) component).setPrefetchCount((int) value); return true;
-            case "shutdownTimeout": ((RabbitMQComponent) component).setShutdownTimeout((long) value); return true;
-            case "lazyStartProducer": ((RabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "autowiredEnabled": ((RabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "ignoreDeclarationExceptions": ((RabbitMQComponent) component).setIgnoreDeclarationExceptions((boolean) value); return true;
-            case "messageConverter": ((RabbitMQComponent) component).setMessageConverter((org.springframework.amqp.support.converter.MessageConverter) value); return true;
-            case "messagePropertiesConverter": ((RabbitMQComponent) component).setMessagePropertiesConverter((org.apache.camel.component.springrabbit.MessagePropertiesConverter) value); return true;
-            case "headerFilterStrategy": ((RabbitMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "amqpAdmin": ((SpringRabbitMQComponent) component).setAmqpAdmin((org.springframework.amqp.core.AmqpAdmin) value); return true;
+            case "connectionFactory": ((SpringRabbitMQComponent) component).setConnectionFactory((org.springframework.amqp.rabbit.connection.ConnectionFactory) value); return true;
+            case "testConnectionOnStartup": ((SpringRabbitMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "autoDeclare": ((SpringRabbitMQComponent) component).setAutoDeclare((boolean) value); return true;
+            case "autoStartup": ((SpringRabbitMQComponent) component).setAutoStartup((boolean) value); return true;
+            case "bridgeErrorHandler": ((SpringRabbitMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "deadLetterExchange": ((SpringRabbitMQComponent) component).setDeadLetterExchange((java.lang.String) value); return true;
+            case "deadLetterExchangeType": ((SpringRabbitMQComponent) component).setDeadLetterExchangeType((java.lang.String) value); return true;
+            case "deadLetterQueue": ((SpringRabbitMQComponent) component).setDeadLetterQueue((java.lang.String) value); return true;
+            case "deadLetterRoutingKey": ((SpringRabbitMQComponent) component).setDeadLetterRoutingKey((java.lang.String) value); return true;
+            case "errorHandler": ((SpringRabbitMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "listenerContainerFactory": ((SpringRabbitMQComponent) component).setListenerContainerFactory((org.apache.camel.component.springrabbit.ListenerContainerFactory) value); return true;
+            case "prefetchCount": ((SpringRabbitMQComponent) component).setPrefetchCount((int) value); return true;
+            case "shutdownTimeout": ((SpringRabbitMQComponent) component).setShutdownTimeout((long) value); return true;
+            case "lazyStartProducer": ((SpringRabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autowiredEnabled": ((SpringRabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "ignoreDeclarationExceptions": ((SpringRabbitMQComponent) component).setIgnoreDeclarationExceptions((boolean) value); return true;
+            case "messageConverter": ((SpringRabbitMQComponent) component).setMessageConverter((org.springframework.amqp.support.converter.MessageConverter) value); return true;
+            case "messagePropertiesConverter": ((SpringRabbitMQComponent) component).setMessagePropertiesConverter((org.apache.camel.component.springrabbit.MessagePropertiesConverter) value); return true;
+            case "headerFilterStrategy": ((SpringRabbitMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }

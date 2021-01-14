@@ -75,7 +75,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "sessionSupport": target.setSessionSupport(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "traceenabled":
         case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
         case "transferexception":
@@ -143,7 +142,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "sessionSupport": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "traceenabled":
         case "traceEnabled": return boolean.class;
         case "transferexception":
@@ -212,7 +210,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "sessionSupport": return target.isSessionSupport();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "traceenabled":
         case "traceEnabled": return target.isTraceEnabled();
         case "transferexception":

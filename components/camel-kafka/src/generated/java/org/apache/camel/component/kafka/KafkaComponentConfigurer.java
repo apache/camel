@@ -203,6 +203,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslTruststorePassword": getOrCreateConfiguration(target).setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststoretype":
         case "sslTruststoreType": getOrCreateConfiguration(target).setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -399,6 +400,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslTruststorePassword": return java.lang.String.class;
         case "ssltruststoretype":
         case "sslTruststoreType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
         case "useglobalsslcontextparameters":
@@ -596,6 +598,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslTruststorePassword": return getOrCreateConfiguration(target).getSslTruststorePassword();
         case "ssltruststoretype":
         case "sslTruststoreType": return getOrCreateConfiguration(target).getSslTruststoreType();
+        case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();
         case "useglobalsslcontextparameters":

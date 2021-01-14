@@ -30,7 +30,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxHits": target.getConfig().setMaxHits(property(camelContext, int.class, value)); return true;
         case "srcdir":
         case "srcDir": target.getConfig().setSrcDir(property(camelContext, java.io.File.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -47,7 +46,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxHits": return int.class;
         case "srcdir":
         case "srcDir": return java.io.File.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -65,7 +63,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxHits": return target.getConfig().getMaxHits();
         case "srcdir":
         case "srcDir": return target.getConfig().getSrcDir();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

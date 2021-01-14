@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.springrabbit;
 
-public final class RabbitMQConstants {
+public final class SpringRabbitMQConstants {
 
     public static final String DEFAULT_EXCHANGE_NAME = "default";
 
@@ -34,7 +34,7 @@ public final class RabbitMQConstants {
     public static final String EXPIRES = "x-expires";
     public static final String SINGLE_ACTIVE_CONSUMER = "x-single-active-consumer";
 
-    private RabbitMQConstants() {
+    private SpringRabbitMQConstants() {
         // Constants class
     }
 }

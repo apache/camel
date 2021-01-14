@@ -20,10 +20,9 @@ public class SpringLdapEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(4);
         props.add("lazyStartProducer");
         props.add("templateName");
-        props.add("synchronous");
         props.add("scope");
         props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

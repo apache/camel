@@ -37,9 +37,6 @@ public interface RestSwaggerEndpointBuilderFactory {
     public interface RestSwaggerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedRestSwaggerEndpointBuilder advanced() {
-            return (AdvancedRestSwaggerEndpointBuilder) this;
-        }
         /**
          * API basePath, for example /v2. Default is unset, if set overrides the
          * value present in Swagger specification and in the component
@@ -212,52 +209,6 @@ public interface RestSwaggerEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the REST Swagger component.
-     */
-    public interface AdvancedRestSwaggerEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default RestSwaggerEndpointBuilder basic() {
-            return (RestSwaggerEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestSwaggerEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedRestSwaggerEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface RestSwaggerBuilders {
         /**
          * REST Swagger (camel-rest-swagger)
@@ -343,7 +294,7 @@ public interface RestSwaggerEndpointBuilderFactory {
     static RestSwaggerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class RestSwaggerEndpointBuilderImpl extends AbstractEndpointBuilder implements RestSwaggerEndpointBuilder, AdvancedRestSwaggerEndpointBuilder {
+        class RestSwaggerEndpointBuilderImpl extends AbstractEndpointBuilder implements RestSwaggerEndpointBuilder {
             public RestSwaggerEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

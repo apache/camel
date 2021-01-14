@@ -64,7 +64,6 @@ public class EtcdStatsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
         case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, java.lang.Integer.class, value)); return true;
         case "timeunit":
@@ -125,7 +124,6 @@ public class EtcdStatsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timetolive":
         case "timeToLive": return java.lang.Integer.class;
         case "timeunit":
@@ -187,7 +185,6 @@ public class EtcdStatsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timetolive":
         case "timeToLive": return target.getConfiguration().getTimeToLive();
         case "timeunit":

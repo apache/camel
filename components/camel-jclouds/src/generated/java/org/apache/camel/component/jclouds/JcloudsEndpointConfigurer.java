@@ -45,7 +45,6 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "nodestate":
         case "nodeState": target.getConfiguration().setNodeState(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -78,7 +77,6 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "nodestate":
         case "nodeState": return java.lang.String.class;
         case "operation": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -112,7 +110,6 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "nodestate":
         case "nodeState": return target.getConfiguration().getNodeState();
         case "operation": return target.getConfiguration().getOperation();
-        case "synchronous": return target.isSynchronous();
         case "user": return target.getConfiguration().getUser();
         default: return null;
         }

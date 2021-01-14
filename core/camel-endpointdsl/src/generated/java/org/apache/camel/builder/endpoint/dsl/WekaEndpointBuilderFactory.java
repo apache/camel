@@ -34,9 +34,6 @@ public interface WekaEndpointBuilderFactory {
      * Builder for endpoint for the Weka component.
      */
     public interface WekaEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedWekaEndpointBuilder advanced() {
-            return (AdvancedWekaEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -261,50 +258,6 @@ public interface WekaEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Weka component.
-     */
-    public interface AdvancedWekaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default WekaEndpointBuilder basic() {
-            return (WekaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedWekaEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedWekaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface WekaBuilders {
         /**
          * Weka (camel-weka)
@@ -352,7 +305,7 @@ public interface WekaEndpointBuilderFactory {
         }
     }
     static WekaEndpointBuilder endpointBuilder(String componentName, String path) {
-        class WekaEndpointBuilderImpl extends AbstractEndpointBuilder implements WekaEndpointBuilder, AdvancedWekaEndpointBuilder {
+        class WekaEndpointBuilderImpl extends AbstractEndpointBuilder implements WekaEndpointBuilder {
             public WekaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -34,9 +34,6 @@ public interface SqlStoredEndpointBuilderFactory {
      * Builder for endpoint for the SQL Stored Procedure component.
      */
     public interface SqlStoredEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSqlStoredEndpointBuilder advanced() {
-            return (AdvancedSqlStoredEndpointBuilder) this;
-        }
         /**
          * Enables or disables batch mode.
          * 
@@ -268,50 +265,6 @@ public interface SqlStoredEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the SQL Stored Procedure component.
-     */
-    public interface AdvancedSqlStoredEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SqlStoredEndpointBuilder basic() {
-            return (SqlStoredEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSqlStoredEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSqlStoredEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface SqlStoredBuilders {
         /**
          * SQL Stored Procedure (camel-sql)
@@ -359,7 +312,7 @@ public interface SqlStoredEndpointBuilderFactory {
     static SqlStoredEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder, AdvancedSqlStoredEndpointBuilder {
+        class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder {
             public SqlStoredEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

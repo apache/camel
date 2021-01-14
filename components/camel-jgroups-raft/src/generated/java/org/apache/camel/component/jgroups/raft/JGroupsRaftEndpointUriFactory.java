@@ -20,11 +20,10 @@ public class JGroupsRaftEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("enableRoleChangeEvents");
-        props.add("synchronous");
         props.add("clusterName");
         props.add("exchangePattern");
         props.add("exceptionHandler");

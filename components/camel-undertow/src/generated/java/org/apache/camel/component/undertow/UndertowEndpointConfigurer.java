@@ -67,7 +67,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "sendToAll": target.setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tcpnodelay":
         case "tcpNoDelay": target.setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "throwexceptiononfailure":
@@ -131,7 +130,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "sendToAll": return java.lang.Boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "tcpnodelay":
         case "tcpNoDelay": return java.lang.Boolean.class;
         case "throwexceptiononfailure":
@@ -196,7 +194,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "sendToAll": return target.getSendToAll();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "tcpnodelay":
         case "tcpNoDelay": return target.getTcpNoDelay();
         case "throwexceptiononfailure":

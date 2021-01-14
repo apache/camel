@@ -36,9 +36,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     public interface KinesisFirehoseEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedKinesisFirehoseEndpointBuilder advanced() {
-            return (AdvancedKinesisFirehoseEndpointBuilder) this;
-        }
         /**
          * Amazon Kinesis Firehose client to use for all requests for this
          * endpoint.
@@ -289,52 +286,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Kinesis Firehose component.
-     */
-    public interface AdvancedKinesisFirehoseEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KinesisFirehoseEndpointBuilder basic() {
-            return (KinesisFirehoseEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesisFirehoseEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesisFirehoseEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
@@ -389,7 +340,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     static KinesisFirehoseEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder, AdvancedKinesisFirehoseEndpointBuilder {
+        class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder {
             public KinesisFirehoseEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

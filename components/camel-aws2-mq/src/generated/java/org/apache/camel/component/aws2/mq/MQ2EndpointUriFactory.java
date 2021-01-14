@@ -20,20 +20,19 @@ public class MQ2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(12);
         props.add("amazonMqClient");
+        props.add("proxyPort");
+        props.add("lazyStartProducer");
         props.add("proxyProtocol");
         props.add("secretKey");
-        props.add("synchronous");
+        props.add("accessKey");
         props.add("label");
+        props.add("region");
+        props.add("operation");
         props.add("pojoRequest");
         props.add("proxyHost");
         props.add("trustAllCertificates");
-        props.add("proxyPort");
-        props.add("lazyStartProducer");
-        props.add("accessKey");
-        props.add("region");
-        props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("secretKey");

@@ -20,10 +20,9 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(29);
         props.add("productUri");
         props.add("keyAlias");
-        props.add("synchronous");
         props.add("channelLifetime");
         props.add("discoveryEndpointSuffix");
         props.add("defaultAwaitWrites");

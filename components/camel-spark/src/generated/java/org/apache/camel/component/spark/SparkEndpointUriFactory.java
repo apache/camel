@@ -20,12 +20,11 @@ public class SparkEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(7);
         props.add("lazyStartProducer");
         props.add("endpointType");
         props.add("rdd");
         props.add("dataFrame");
-        props.add("synchronous");
         props.add("collect");
         props.add("rddCallback");
         props.add("dataFrameCallback");

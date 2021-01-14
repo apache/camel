@@ -59,7 +59,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "servletname":
         case "servletName": target.setServletName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "traceenabled":
         case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
         case "transferexception":
@@ -109,7 +108,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "responseBufferSize": return java.lang.Integer.class;
         case "servletname":
         case "servletName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "traceenabled":
         case "traceEnabled": return boolean.class;
         case "transferexception":
@@ -160,7 +158,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "responseBufferSize": return target.getResponseBufferSize();
         case "servletname":
         case "servletName": return target.getServletName();
-        case "synchronous": return target.isSynchronous();
         case "traceenabled":
         case "traceEnabled": return target.isTraceEnabled();
         case "transferexception":

@@ -21,7 +21,7 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(45);
         props.add("addressFactory");
         props.add("messageFactory");
         props.add("contentTypeHeader");
@@ -30,7 +30,6 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("fromUser");
         props.add("eventHeader");
         props.add("viaHeaders");
-        props.add("synchronous");
         props.add("stackName");
         props.add("receiveTimeoutMillis");
         props.add("sipUri");

@@ -28,7 +28,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "method": target.getConfiguration().setMethod(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class, value)); return true;
         case "service": target.getConfiguration().setService(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -43,7 +42,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return boolean.class;
         case "method": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class;
         case "service": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -59,7 +57,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "method": return target.getConfiguration().getMethod();
         case "service": return target.getConfiguration().getService();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

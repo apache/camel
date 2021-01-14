@@ -37,9 +37,6 @@ public interface MicrometerEndpointBuilderFactory {
     public interface MicrometerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedMicrometerEndpointBuilder advanced() {
-            return (AdvancedMicrometerEndpointBuilder) this;
-        }
         /**
          * Action expression when using timer type.
          * 
@@ -147,51 +144,6 @@ public interface MicrometerEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Micrometer component.
-     */
-    public interface AdvancedMicrometerEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MicrometerEndpointBuilder basic() {
-            return (MicrometerEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMicrometerEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMicrometerEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface MicrometerBuilders {
         /**
          * Micrometer (camel-micrometer)
@@ -257,7 +209,7 @@ public interface MicrometerEndpointBuilderFactory {
     static MicrometerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder, AdvancedMicrometerEndpointBuilder {
+        class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder {
             public MicrometerEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

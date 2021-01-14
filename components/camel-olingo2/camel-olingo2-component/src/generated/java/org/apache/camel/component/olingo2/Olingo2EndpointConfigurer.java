@@ -41,7 +41,6 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("lazyStartProducer", boolean.class);
         map.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
         map.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        map.put("synchronous", boolean.class);
         map.put("backoffErrorThreshold", int.class);
         map.put("backoffIdleThreshold", int.class);
         map.put("backoffMultiplier", int.class);
@@ -124,7 +123,6 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -201,7 +199,6 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -274,7 +271,6 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

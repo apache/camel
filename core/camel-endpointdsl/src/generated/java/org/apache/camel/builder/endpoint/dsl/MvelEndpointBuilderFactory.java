@@ -34,9 +34,6 @@ public interface MvelEndpointBuilderFactory {
      * Builder for endpoint for the MVEL component.
      */
     public interface MvelEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMvelEndpointBuilder advanced() {
-            return (AdvancedMvelEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -212,50 +209,6 @@ public interface MvelEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the MVEL component.
-     */
-    public interface AdvancedMvelEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MvelEndpointBuilder basic() {
-            return (MvelEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMvelEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMvelEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface MvelBuilders {
         /**
          * MVEL (camel-mvel)
@@ -309,7 +262,7 @@ public interface MvelEndpointBuilderFactory {
         }
     }
     static MvelEndpointBuilder endpointBuilder(String componentName, String path) {
-        class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder, AdvancedMvelEndpointBuilder {
+        class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder {
             public MvelEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

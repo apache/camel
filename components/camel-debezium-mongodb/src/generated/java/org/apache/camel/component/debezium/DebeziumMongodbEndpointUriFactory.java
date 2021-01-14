@@ -20,11 +20,10 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(59);
+        Set<String> props = new HashSet<>(58);
         props.add("mongodbServerSelectionTimeoutMs");
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
-        props.add("synchronous");
         props.add("snapshotDelayMs");
         props.add("mongodbSslEnabled");
         props.add("offsetStorageTopic");

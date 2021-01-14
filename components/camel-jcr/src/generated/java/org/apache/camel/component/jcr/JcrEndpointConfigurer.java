@@ -41,7 +41,6 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sessionLiveCheckInterval": target.setSessionLiveCheckInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sessionlivecheckintervalonstart":
         case "sessionLiveCheckIntervalOnStart": target.setSessionLiveCheckIntervalOnStart(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "uuids": target.setUuids(property(camelContext, java.lang.String.class, value)); return true;
         case "workspacename":
@@ -73,7 +72,6 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sessionLiveCheckInterval": return long.class;
         case "sessionlivecheckintervalonstart":
         case "sessionLiveCheckIntervalOnStart": return long.class;
-        case "synchronous": return boolean.class;
         case "username": return java.lang.String.class;
         case "uuids": return java.lang.String.class;
         case "workspacename":
@@ -106,7 +104,6 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sessionLiveCheckInterval": return target.getSessionLiveCheckInterval();
         case "sessionlivecheckintervalonstart":
         case "sessionLiveCheckIntervalOnStart": return target.getSessionLiveCheckIntervalOnStart();
-        case "synchronous": return target.isSynchronous();
         case "username": return target.getUsername();
         case "uuids": return target.getUuids();
         case "workspacename":

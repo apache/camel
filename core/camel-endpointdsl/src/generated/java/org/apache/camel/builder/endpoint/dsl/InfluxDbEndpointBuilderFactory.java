@@ -34,9 +34,6 @@ public interface InfluxDbEndpointBuilderFactory {
      * Builder for endpoint for the InfluxDB component.
      */
     public interface InfluxDbEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedInfluxDbEndpointBuilder advanced() {
-            return (AdvancedInfluxDbEndpointBuilder) this;
-        }
         /**
          * Define if this operation is a batch operation or not.
          * 
@@ -178,50 +175,6 @@ public interface InfluxDbEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the InfluxDB component.
-     */
-    public interface AdvancedInfluxDbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default InfluxDbEndpointBuilder basic() {
-            return (InfluxDbEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface InfluxDbBuilders {
         /**
          * InfluxDB (camel-influxdb)
@@ -269,7 +222,7 @@ public interface InfluxDbEndpointBuilderFactory {
     static InfluxDbEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder, AdvancedInfluxDbEndpointBuilder {
+        class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder {
             public InfluxDbEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -29,7 +29,6 @@ public class ZendeskEndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("synchronous", boolean.class);
         map.put("backoffErrorThreshold", int.class);
         map.put("backoffIdleThreshold", int.class);
         map.put("backoffMultiplier", int.class);
@@ -95,7 +94,6 @@ public class ZendeskEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "serverUrl": target.getConfiguration().setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -154,7 +152,6 @@ public class ZendeskEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "serverUrl": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "token": return java.lang.String.class;
@@ -209,7 +206,6 @@ public class ZendeskEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "serverUrl": return target.getConfiguration().getServerUrl();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "token": return target.getConfiguration().getToken();

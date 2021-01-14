@@ -517,6 +517,9 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "-1", label = "producer", description = "Sets delivery delay to use for send calls for JMS. "
                                                                      + "This option requires JMS 2.0 compliant broker.")
     private long deliveryDelay = -1;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public JmsConfiguration() {
     }
@@ -2279,5 +2282,13 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
         this.artemisStreamingEnabled = artemisStreamingEnabled;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

@@ -33,7 +33,6 @@ public class HazelcastInstanceEndpointConfigurer extends PropertyConfigurerSuppo
         case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "hazelcastinstancename":
         case "hazelcastInstanceName": target.setHazelcastInstanceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -53,7 +52,6 @@ public class HazelcastInstanceEndpointConfigurer extends PropertyConfigurerSuppo
         case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
         case "hazelcastinstancename":
         case "hazelcastInstanceName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -74,7 +72,6 @@ public class HazelcastInstanceEndpointConfigurer extends PropertyConfigurerSuppo
         case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastinstancename":
         case "hazelcastInstanceName": return target.getHazelcastInstanceName();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

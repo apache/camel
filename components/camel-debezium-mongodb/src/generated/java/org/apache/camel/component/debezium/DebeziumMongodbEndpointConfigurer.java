@@ -132,7 +132,6 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcestructversion":
         case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -253,7 +252,6 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotMode": return java.lang.String.class;
         case "sourcestructversion":
         case "sourceStructVersion": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
         default: return null;
@@ -375,7 +373,6 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "sourcestructversion":
         case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
-        case "synchronous": return target.isSynchronous();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
         default: return null;

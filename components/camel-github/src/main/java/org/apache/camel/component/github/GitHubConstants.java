@@ -37,4 +37,12 @@ public interface GitHubConstants {
     String GITHUB_ISSUE_TITLE = "GitHubIssueTitle";
 
     String GITHUB_EVENT_SERVICE = "GitHubEventService";
+
+    String GITHUB_COMMIT_AUTHOR = "CamelGitHubCommitAuthor";
+
+    String GITHUB_COMMIT_COMMITTER = "CamelGitHubCommitCommitter";
+
+    String GITHUB_COMMIT_SHA = "CamelGitHubCommitSha";
+
+    String GITHUB_COMMIT_URL = "CamelGitHubCommitUrl";
 }

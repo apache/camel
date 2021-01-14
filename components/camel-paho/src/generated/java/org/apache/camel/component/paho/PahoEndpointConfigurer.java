@@ -68,7 +68,6 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslClientProps": target.getConfiguration().setSslClientProps(property(camelContext, java.util.Properties.class, value)); return true;
         case "sslhostnameverifier":
         case "sslHostnameVerifier": target.getConfiguration().setSslHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username":
         case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "willpayload":
@@ -133,7 +132,6 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslClientProps": return java.util.Properties.class;
         case "sslhostnameverifier":
         case "sslHostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
-        case "synchronous": return boolean.class;
         case "username":
         case "userName": return java.lang.String.class;
         case "willpayload":
@@ -199,7 +197,6 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslClientProps": return target.getConfiguration().getSslClientProps();
         case "sslhostnameverifier":
         case "sslHostnameVerifier": return target.getConfiguration().getSslHostnameVerifier();
-        case "synchronous": return target.isSynchronous();
         case "username":
         case "userName": return target.getConfiguration().getUserName();
         case "willpayload":

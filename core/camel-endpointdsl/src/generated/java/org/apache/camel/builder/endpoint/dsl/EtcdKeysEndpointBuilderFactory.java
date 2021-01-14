@@ -34,9 +34,6 @@ public interface EtcdKeysEndpointBuilderFactory {
      * Builder for endpoint for the Etcd Keys component.
      */
     public interface EtcdKeysEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedEtcdKeysEndpointBuilder advanced() {
-            return (AdvancedEtcdKeysEndpointBuilder) this;
-        }
         /**
          * To apply an action recursively.
          * 
@@ -267,50 +264,6 @@ public interface EtcdKeysEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Etcd Keys component.
-     */
-    public interface AdvancedEtcdKeysEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default EtcdKeysEndpointBuilder basic() {
-            return (EtcdKeysEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedEtcdKeysEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedEtcdKeysEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface EtcdKeysBuilders {
         /**
          * Etcd Keys (camel-etcd)
@@ -358,7 +311,7 @@ public interface EtcdKeysEndpointBuilderFactory {
     static EtcdKeysEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class EtcdKeysEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdKeysEndpointBuilder, AdvancedEtcdKeysEndpointBuilder {
+        class EtcdKeysEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdKeysEndpointBuilder {
             public EtcdKeysEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

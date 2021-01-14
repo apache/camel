@@ -37,7 +37,6 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "searchcriteria":
         case "searchCriteria": target.getConfiguration().setSearchCriteria(property(camelContext, org.apache.camel.component.wordpress.api.model.SearchCriteria.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "url": target.getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -63,7 +62,6 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
         case "password": return java.lang.String.class;
         case "searchcriteria":
         case "searchCriteria": return org.apache.camel.component.wordpress.api.model.SearchCriteria.class;
-        case "synchronous": return boolean.class;
         case "url": return java.lang.String.class;
         case "user": return java.lang.String.class;
         default: return null;
@@ -90,7 +88,6 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
         case "password": return target.getConfiguration().getPassword();
         case "searchcriteria":
         case "searchCriteria": return target.getConfiguration().getSearchCriteria();
-        case "synchronous": return target.isSynchronous();
         case "url": return target.getConfiguration().getUrl();
         case "user": return target.getConfiguration().getUser();
         default: return null;

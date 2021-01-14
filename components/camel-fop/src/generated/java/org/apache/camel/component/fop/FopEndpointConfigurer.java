@@ -25,7 +25,6 @@ public class FopEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "fopFactory": target.setFopFactory(property(camelContext, org.apache.fop.apps.FopFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "userconfigurl":
         case "userConfigURL": target.setUserConfigURL(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -39,7 +38,6 @@ public class FopEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "fopFactory": return org.apache.fop.apps.FopFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         case "userconfigurl":
         case "userConfigURL": return java.lang.String.class;
         default: return null;
@@ -54,7 +52,6 @@ public class FopEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "fopFactory": return target.getFopFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         case "userconfigurl":
         case "userConfigURL": return target.getUserConfigURL();
         default: return null;

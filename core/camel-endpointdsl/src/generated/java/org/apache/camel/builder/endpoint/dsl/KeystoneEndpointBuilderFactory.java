@@ -35,9 +35,6 @@ public interface KeystoneEndpointBuilderFactory {
      * Builder for endpoint for the OpenStack Keystone component.
      */
     public interface KeystoneEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedKeystoneEndpointBuilder advanced() {
-            return (AdvancedKeystoneEndpointBuilder) this;
-        }
         /**
          * OpenStack configuration.
          * 
@@ -208,50 +205,6 @@ public interface KeystoneEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the OpenStack Keystone component.
-     */
-    public interface AdvancedKeystoneEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KeystoneEndpointBuilder basic() {
-            return (KeystoneEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeystoneEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeystoneEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface KeystoneBuilders {
         /**
          * OpenStack Keystone (camel-openstack)
@@ -301,7 +254,7 @@ public interface KeystoneEndpointBuilderFactory {
     static KeystoneEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class KeystoneEndpointBuilderImpl extends AbstractEndpointBuilder implements KeystoneEndpointBuilder, AdvancedKeystoneEndpointBuilder {
+        class KeystoneEndpointBuilderImpl extends AbstractEndpointBuilder implements KeystoneEndpointBuilder {
             public KeystoneEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -49,7 +49,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startdelayedseconds":
         case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
         case "stateful": target.setStateful(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "triggerparameters":
         case "triggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "triggerstartdelay":
@@ -91,7 +90,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startdelayedseconds":
         case "startDelayedSeconds": return int.class;
         case "stateful": return boolean.class;
-        case "synchronous": return boolean.class;
         case "triggerparameters":
         case "triggerParameters": return java.util.Map.class;
         case "triggerstartdelay":
@@ -134,7 +132,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startdelayedseconds":
         case "startDelayedSeconds": return target.getStartDelayedSeconds();
         case "stateful": return target.isStateful();
-        case "synchronous": return target.isSynchronous();
         case "triggerparameters":
         case "triggerParameters": return target.getTriggerParameters();
         case "triggerstartdelay":

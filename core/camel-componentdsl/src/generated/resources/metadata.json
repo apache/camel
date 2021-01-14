@@ -6973,7 +6973,7 @@
     "deprecated": false,
     "firstVersion": "3.8.0",
     "label": "messaging",
-    "javaType": "org.apache.camel.component.springrabbit.RabbitMQComponent",
+    "javaType": "org.apache.camel.component.springrabbit.SpringRabbitMQComponent",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-rabbitmq",

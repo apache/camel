@@ -20,11 +20,10 @@ public class SpringBatchEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(6);
+        Set<String> props = new HashSet<>(5);
         props.add("jobName");
         props.add("jobFromHeader");
         props.add("lazyStartProducer");
-        props.add("synchronous");
         props.add("jobRegistry");
         props.add("jobLauncher");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

@@ -32,7 +32,6 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.arangodb.ArangoDbOperation.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "vertexcollection":
         case "vertexCollection": target.getConfiguration().setVertexCollection(property(camelContext, java.lang.String.class, value)); return true;
@@ -54,7 +53,6 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": return org.apache.camel.component.arangodb.ArangoDbOperation.class;
         case "password": return java.lang.String.class;
         case "port": return int.class;
-        case "synchronous": return boolean.class;
         case "user": return java.lang.String.class;
         case "vertexcollection":
         case "vertexCollection": return java.lang.String.class;
@@ -77,7 +75,6 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": return target.getConfiguration().getOperation();
         case "password": return target.getConfiguration().getPassword();
         case "port": return target.getConfiguration().getPort();
-        case "synchronous": return target.isSynchronous();
         case "user": return target.getConfiguration().getUser();
         case "vertexcollection":
         case "vertexCollection": return target.getConfiguration().getVertexCollection();

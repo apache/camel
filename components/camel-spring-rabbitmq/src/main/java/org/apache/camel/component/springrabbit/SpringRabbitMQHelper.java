@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.springrabbit;
 
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
+public final class SpringRabbitMQHelper {
 
-public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-
-    public RabbitMQHeaderFilterStrategy() {
-        initialize();
+    private SpringRabbitMQHelper() {
     }
 
-    protected void initialize() {
-        setOutFilterPattern("CamelRabbitmq.*");
-        setInFilterPattern("CamelRabbitmq.*");
+    public static boolean isDefaultExchange(String exchangeName) {
+        return exchangeName == null || exchangeName.isEmpty()
+                || exchangeName.equalsIgnoreCase(SpringRabbitMQConstants.DEFAULT_EXCHANGE_NAME);
     }
-
 }

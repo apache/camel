@@ -66,7 +66,6 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "reconnectOnConnectionFailure": target.setReconnectOnConnectionFailure(property(camelContext, boolean.class, value)); return true;
         case "stringtocompare":
         case "stringToCompare": target.setStringToCompare(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         case "thresholdhigh":
@@ -126,7 +125,6 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "reconnectOnConnectionFailure": return boolean.class;
         case "stringtocompare":
         case "stringToCompare": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
         case "thresholdhigh":
@@ -187,7 +185,6 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "reconnectOnConnectionFailure": return target.isReconnectOnConnectionFailure();
         case "stringtocompare":
         case "stringToCompare": return target.getStringToCompare();
-        case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
         case "thresholdhigh":

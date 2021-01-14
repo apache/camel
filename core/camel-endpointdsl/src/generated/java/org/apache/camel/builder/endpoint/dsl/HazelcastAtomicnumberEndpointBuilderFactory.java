@@ -36,9 +36,6 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     public interface HazelcastAtomicnumberEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedHazelcastAtomicnumberEndpointBuilder advanced() {
-            return (AdvancedHazelcastAtomicnumberEndpointBuilder) this;
-        }
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
@@ -176,52 +173,6 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Hazelcast Atomic Number component.
-     */
-    public interface AdvancedHazelcastAtomicnumberEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default HazelcastAtomicnumberEndpointBuilder basic() {
-            return (HazelcastAtomicnumberEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
      * enum.
@@ -315,7 +266,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     static HazelcastAtomicnumberEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class HazelcastAtomicnumberEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastAtomicnumberEndpointBuilder, AdvancedHazelcastAtomicnumberEndpointBuilder {
+        class HazelcastAtomicnumberEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastAtomicnumberEndpointBuilder {
             public HazelcastAtomicnumberEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -20,11 +20,10 @@ public class StreamEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(20);
         props.add("groupLines");
         props.add("fileName");
         props.add("kind");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("fileWatcher");
         props.add("closeOnDone");

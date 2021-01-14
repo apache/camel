@@ -20,7 +20,7 @@ public class WekaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("xval");
         props.add("path");
         props.add("lazyStartProducer");
@@ -29,7 +29,6 @@ public class WekaEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("seed");
         props.add("apply");
         props.add("build");
-        props.add("synchronous");
         props.add("dsname");
         props.add("loadFrom");
         props.add("command");

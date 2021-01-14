@@ -20,9 +20,8 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(14);
         props.add("clientOptions");
-        props.add("synchronous");
         props.add("sendToAll");
         props.add("exchangePattern");
         props.add("sslContextParameters");

@@ -41,7 +41,6 @@ public class HazelcastQueueEndpointConfigurer extends PropertyConfigurerSupport 
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
         case "queueconsumermode":
         case "queueConsumerMode": target.getConfiguration().setQueueConsumerMode(property(camelContext, org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -69,7 +68,6 @@ public class HazelcastQueueEndpointConfigurer extends PropertyConfigurerSupport 
         case "poolSize": return int.class;
         case "queueconsumermode":
         case "queueConsumerMode": return org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -98,7 +96,6 @@ public class HazelcastQueueEndpointConfigurer extends PropertyConfigurerSupport 
         case "poolSize": return target.getConfiguration().getPoolSize();
         case "queueconsumermode":
         case "queueConsumerMode": return target.getConfiguration().getQueueConsumerMode();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

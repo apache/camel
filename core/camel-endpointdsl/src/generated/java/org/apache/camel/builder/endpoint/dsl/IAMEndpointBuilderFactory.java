@@ -35,9 +35,6 @@ public interface IAMEndpointBuilderFactory {
      * component.
      */
     public interface IAMEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedIAMEndpointBuilder advanced() {
-            return (AdvancedIAMEndpointBuilder) this;
-        }
         /**
          * Setting the autoDiscoverClient mechanism, if true, the component will
          * look for a client instance in the registry automatically otherwise it
@@ -305,51 +302,6 @@ public interface IAMEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Identity and Access Management
-     * (IAM) component.
-     */
-    public interface AdvancedIAMEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IAMEndpointBuilder basic() {
-            return (IAMEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAMEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAMEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.iam.IAMOperations</code> enum.
      */
@@ -420,7 +372,7 @@ public interface IAMEndpointBuilderFactory {
         }
     }
     static IAMEndpointBuilder endpointBuilder(String componentName, String path) {
-        class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {
+        class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder {
             public IAMEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

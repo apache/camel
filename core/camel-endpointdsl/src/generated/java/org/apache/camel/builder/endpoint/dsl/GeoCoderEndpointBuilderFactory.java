@@ -35,9 +35,6 @@ public interface GeoCoderEndpointBuilderFactory {
      * Builder for endpoint for the Geocoder component.
      */
     public interface GeoCoderEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedGeoCoderEndpointBuilder advanced() {
-            return (AdvancedGeoCoderEndpointBuilder) this;
-        }
         /**
          * Whether to only enrich the Exchange with headers, and leave the body
          * as-is.
@@ -339,50 +336,6 @@ public interface GeoCoderEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Geocoder component.
-     */
-    public interface AdvancedGeoCoderEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default GeoCoderEndpointBuilder basic() {
-            return (GeoCoderEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGeoCoderEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGeoCoderEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.geocoder.GeoCoderType</code> enum.
      */
@@ -446,7 +399,7 @@ public interface GeoCoderEndpointBuilderFactory {
     static GeoCoderEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder, AdvancedGeoCoderEndpointBuilder {
+        class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder {
             public GeoCoderEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

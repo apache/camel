@@ -38,7 +38,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -63,7 +62,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -89,7 +87,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

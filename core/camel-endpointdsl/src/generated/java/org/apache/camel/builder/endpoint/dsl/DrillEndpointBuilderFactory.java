@@ -34,9 +34,6 @@ public interface DrillEndpointBuilderFactory {
      * Builder for endpoint for the Drill component.
      */
     public interface DrillEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedDrillEndpointBuilder advanced() {
-            return (AdvancedDrillEndpointBuilder) this;
-        }
         /**
          * Cluster ID
          * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id.
@@ -181,50 +178,6 @@ public interface DrillEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Drill component.
-     */
-    public interface AdvancedDrillEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default DrillEndpointBuilder basic() {
-            return (DrillEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDrillEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDrillEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.drill.DrillConnectionMode</code> enum.
      */
@@ -278,7 +231,7 @@ public interface DrillEndpointBuilderFactory {
     static DrillEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder, AdvancedDrillEndpointBuilder {
+        class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder {
             public DrillEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

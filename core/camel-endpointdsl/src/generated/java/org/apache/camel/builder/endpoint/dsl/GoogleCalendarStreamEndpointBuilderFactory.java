@@ -319,6 +319,39 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sync events, see https://developers.google.com/calendar/v3/sync Note:
+         * not compatible with: 'query' and 'considerLastUpdate' parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param syncFlow the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamEndpointBuilder syncFlow(boolean syncFlow) {
+            doSetProperty("syncFlow", syncFlow);
+            return this;
+        }
+        /**
+         * Sync events, see https://developers.google.com/calendar/v3/sync Note:
+         * not compatible with: 'query' and 'considerLastUpdate' parameters.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param syncFlow the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamEndpointBuilder syncFlow(String syncFlow) {
+            doSetProperty("syncFlow", syncFlow);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -1010,41 +1043,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         default AdvancedGoogleCalendarStreamEndpointBuilder pollStrategy(
                 String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

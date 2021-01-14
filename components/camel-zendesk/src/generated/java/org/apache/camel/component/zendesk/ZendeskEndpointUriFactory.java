@@ -20,12 +20,11 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(141);
+        Set<String> props = new HashSet<>(140);
         props.add("includeArchived");
         props.add("fileName");
         props.add("userIdThatWillRemain");
         props.add("upload");
-        props.add("synchronous");
         props.add("ticketId0");
         props.add("type");
         props.add("organizationId");

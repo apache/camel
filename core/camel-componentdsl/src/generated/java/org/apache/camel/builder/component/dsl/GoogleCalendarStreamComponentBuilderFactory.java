@@ -217,6 +217,22 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Sync events, see https://developers.google.com/calendar/v3/sync Note:
+         * not compatible with: 'query' and 'considerLastUpdate' parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param syncFlow the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder syncFlow(boolean syncFlow) {
+            doSetProperty("syncFlow", syncFlow);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -381,6 +397,7 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "maxResults": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setMaxResults((int) value); return true;
             case "query": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setQuery((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.util.List) value); return true;
+            case "syncFlow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setSyncFlow((boolean) value); return true;
             case "autowiredEnabled": ((GoogleCalendarStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;

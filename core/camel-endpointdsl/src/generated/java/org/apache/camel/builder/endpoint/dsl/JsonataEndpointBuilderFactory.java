@@ -34,9 +34,6 @@ public interface JsonataEndpointBuilderFactory {
      * Builder for endpoint for the JSONata component.
      */
     public interface JsonataEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedJsonataEndpointBuilder advanced() {
-            return (AdvancedJsonataEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -227,50 +224,6 @@ public interface JsonataEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the JSONata component.
-     */
-    public interface AdvancedJsonataEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default JsonataEndpointBuilder basic() {
-            return (JsonataEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJsonataEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedJsonataEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code>
      * enum.
@@ -335,7 +288,7 @@ public interface JsonataEndpointBuilderFactory {
     static JsonataEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class JsonataEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonataEndpointBuilder, AdvancedJsonataEndpointBuilder {
+        class JsonataEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonataEndpointBuilder {
             public JsonataEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

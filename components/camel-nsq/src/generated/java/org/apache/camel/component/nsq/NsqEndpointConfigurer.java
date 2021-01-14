@@ -49,7 +49,6 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "servers": target.getConfiguration().setServers(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "useragent":
         case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -87,7 +86,6 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "servers": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
         default: return null;
@@ -126,7 +124,6 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "servers": return target.getConfiguration().getServers();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "useragent":
         case "userAgent": return target.getConfiguration().getUserAgent();
         default: return null;

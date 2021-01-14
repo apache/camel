@@ -34,9 +34,6 @@ public interface PdfEndpointBuilderFactory {
      * Builder for endpoint for the PDF component.
      */
     public interface PdfEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedPdfEndpointBuilder advanced() {
-            return (AdvancedPdfEndpointBuilder) this;
-        }
         /**
          * Font.
          * 
@@ -314,50 +311,6 @@ public interface PdfEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the PDF component.
-     */
-    public interface AdvancedPdfEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default PdfEndpointBuilder basic() {
-            return (PdfEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedPdfEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedPdfEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.pdf.TextProcessingFactory</code> enum.
      */
@@ -413,7 +366,7 @@ public interface PdfEndpointBuilderFactory {
         }
     }
     static PdfEndpointBuilder endpointBuilder(String componentName, String path) {
-        class PdfEndpointBuilderImpl extends AbstractEndpointBuilder implements PdfEndpointBuilder, AdvancedPdfEndpointBuilder {
+        class PdfEndpointBuilderImpl extends AbstractEndpointBuilder implements PdfEndpointBuilder {
             public PdfEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

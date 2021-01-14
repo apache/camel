@@ -59,7 +59,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("seda:foo?synchronous=true&exceptionHandler=#myHandler").routeId("foo").to("mock:foo").to("direct:bar")
+                from("seda:foo?exceptionHandler=#myHandler").routeId("foo").to("mock:foo").to("direct:bar")
                         .to("mock:result");
 
                 from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).maximumRedeliveries(3)

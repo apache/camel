@@ -42,8 +42,8 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     }
 
     @Override
-    public RabbitMQEndpoint getEndpoint() {
-        return (RabbitMQEndpoint) super.getEndpoint();
+    public SpringRabbitMQEndpoint getEndpoint() {
+        return (SpringRabbitMQEndpoint) super.getEndpoint();
     }
 
     public EndpointMessageListener getEndpointMessageListener() {
@@ -53,7 +53,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         return messageListener;
     }
 
-    protected void createMessageListener(RabbitMQEndpoint endpoint, Processor processor) {
+    protected void createMessageListener(SpringRabbitMQEndpoint endpoint, Processor processor) {
         messageListener = new EndpointMessageListener(endpoint, processor);
         endpoint.configureMessageListener(messageListener);
     }

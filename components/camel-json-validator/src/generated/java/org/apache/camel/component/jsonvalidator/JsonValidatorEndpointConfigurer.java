@@ -37,7 +37,6 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "schemaloader":
         case "schemaLoader": target.setSchemaLoader(property(camelContext, org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -61,7 +60,6 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return boolean.class;
         case "schemaloader":
         case "schemaLoader": return org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -86,7 +84,6 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "schemaloader":
         case "schemaLoader": return target.getSchemaLoader();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

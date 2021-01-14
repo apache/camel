@@ -34,9 +34,6 @@ public interface SwiftEndpointBuilderFactory {
      * Builder for endpoint for the OpenStack Swift component.
      */
     public interface SwiftEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSwiftEndpointBuilder advanced() {
-            return (AdvancedSwiftEndpointBuilder) this;
-        }
         /**
          * OpenStack API version.
          * 
@@ -220,50 +217,6 @@ public interface SwiftEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the OpenStack Swift component.
-     */
-    public interface AdvancedSwiftEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SwiftEndpointBuilder basic() {
-            return (SwiftEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSwiftEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSwiftEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface SwiftBuilders {
         /**
          * OpenStack Swift (camel-openstack)
@@ -311,7 +264,7 @@ public interface SwiftEndpointBuilderFactory {
     static SwiftEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder, AdvancedSwiftEndpointBuilder {
+        class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder {
             public SwiftEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

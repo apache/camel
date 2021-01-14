@@ -20,13 +20,12 @@ public class IgniteMessagingEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(10);
         props.add("clusterGroupExpression");
         props.add("lazyStartProducer");
         props.add("propagateIncomingBodyIfNoReturnValue");
         props.add("bridgeErrorHandler");
         props.add("treatCollectionsAsCacheObjects");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("topic");
         props.add("sendMode");

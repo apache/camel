@@ -39,7 +39,6 @@ public class STS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "stsclient":
         case "stsClient": target.getConfiguration().setStsClient(property(camelContext, software.amazon.awssdk.services.sts.StsClient.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -72,7 +71,6 @@ public class STS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "secretKey": return java.lang.String.class;
         case "stsclient":
         case "stsClient": return software.amazon.awssdk.services.sts.StsClient.class;
-        case "synchronous": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         default: return null;
@@ -101,7 +99,6 @@ public class STS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "stsclient":
         case "stsClient": return target.getConfiguration().getStsClient();
-        case "synchronous": return target.isSynchronous();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         default: return null;

@@ -47,7 +47,6 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         case "statsCounter": target.getConfiguration().setStatsCounter(property(camelContext, com.github.benmanes.caffeine.cache.stats.StatsCounter.class, value)); return true;
         case "statsenabled":
         case "statsEnabled": target.getConfiguration().setStatsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "valuetype":
         case "valueType": target.getConfiguration().setValueType(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -83,7 +82,6 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         case "statsCounter": return com.github.benmanes.caffeine.cache.stats.StatsCounter.class;
         case "statsenabled":
         case "statsEnabled": return boolean.class;
-        case "synchronous": return boolean.class;
         case "valuetype":
         case "valueType": return java.lang.String.class;
         default: return null;
@@ -120,7 +118,6 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         case "statsCounter": return target.getConfiguration().getStatsCounter();
         case "statsenabled":
         case "statsEnabled": return target.getConfiguration().isStatsEnabled();
-        case "synchronous": return target.isSynchronous();
         case "valuetype":
         case "valueType": return target.getConfiguration().getValueType();
         default: return null;

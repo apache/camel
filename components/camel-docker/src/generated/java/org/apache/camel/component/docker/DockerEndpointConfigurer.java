@@ -52,7 +52,6 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "serveraddress":
         case "serverAddress": target.getConfiguration().setServerAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "socket": target.getConfiguration().setSocket(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tlsverify":
         case "tlsVerify": target.getConfiguration().setTlsVerify(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -94,7 +93,6 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "serveraddress":
         case "serverAddress": return java.lang.String.class;
         case "socket": return boolean.class;
-        case "synchronous": return boolean.class;
         case "tlsverify":
         case "tlsVerify": return boolean.class;
         case "username": return java.lang.String.class;
@@ -137,7 +135,6 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "serveraddress":
         case "serverAddress": return target.getConfiguration().getServerAddress();
         case "socket": return target.getConfiguration().isSocket();
-        case "synchronous": return target.isSynchronous();
         case "tlsverify":
         case "tlsVerify": return target.getConfiguration().isTlsVerify();
         case "username": return target.getConfiguration().getUsername();

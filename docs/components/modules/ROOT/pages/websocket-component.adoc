@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (19 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,7 +113,6 @@ with the following path and query parameters:
 | *maxIdleTime* (advanced) | Set the time in ms that the websocket created by the websocketServlet may be idle before closing. (default is 300000) | 300000 | Integer
 | *maxTextMessageSize* (advanced) | Can be used to set the size in characters that the websocket created by the websocketServlet may be accept before closing. |  | Integer
 | *minVersion* (advanced) | Can be used to set the minimum protocol version accepted for the websocketServlet. (Default 13 - the RFC6455 version) | 13 | Integer
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *allowedOrigins* (cors) | The CORS allowed origins. Use to allow all. |  | String
 | *crossOriginFilterOn* (cors) | Whether to enable CORS | false | boolean
 | *filterPath* (cors) | Context path for filtering CORS |  | String

@@ -25,7 +25,6 @@ import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuartzCronMappingTest extends BaseQuartzTest {
 
@@ -55,21 +54,6 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
         });
         context.start();
         assertEquals("0/2 * * * * ?", getQuartzEndpoint(context.getRoute("cron")).getCron());
-    }
-
-    @Test
-    public void testAdditionalProperties() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("cron://myName?schedule=0/2+*+*+*+*+?&synchronous=true")
-                        .id("cron")
-                        .to("mock:result");
-            }
-        });
-        context.start();
-        assertEquals("0/2 * * * * ?", getQuartzEndpoint(context.getRoute("cron")).getCron());
-        assertTrue(getQuartzEndpoint(context.getRoute("cron")).isSynchronous());
     }
 
     private QuartzEndpoint getQuartzEndpoint(Route route) {

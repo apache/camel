@@ -30,11 +30,11 @@ import org.apache.camel.util.URISupport;
 /**
  * RabbitMQ based {@link org.apache.camel.spi.SendDynamicAware} which allows to optimise RabbitMQ components with the
  * toD (dynamic to) DSL in Camel. This implementation optimises by allowing to provide dynamic parameters via
- * {@link RabbitMQConstants#EXCHANGE_OVERRIDE_NAME} header instead of the endpoint uri. That allows to use a static
- * endpoint and its producer to service dynamic requests.
+ * {@link SpringRabbitMQConstants#EXCHANGE_OVERRIDE_NAME} header instead of the endpoint uri. That allows to use a
+ * static endpoint and its producer to service dynamic requests.
  */
 @SendDynamic("spring-rabbitmq")
-public class RabbitMQSendDynamicAware extends ServiceSupport implements SendDynamicAware {
+public class SpringRabbitMQSendDynamicAware extends ServiceSupport implements SendDynamicAware {
 
     private CamelContext camelContext;
     private String scheme;
@@ -105,20 +105,20 @@ public class RabbitMQSendDynamicAware extends ServiceSupport implements SendDyna
     @Override
     public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
         // preserve existing headers if they are already there
-        String s = exchange.getMessage().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, String.class);
+        String s = exchange.getMessage().getHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME, String.class);
         final String destinationName = s != null ? s : parseExchangeName(entry.getUri());
 
-        s = exchange.getMessage().getHeader(RabbitMQConstants.ROUTING_OVERRIDE_KEY, String.class);
+        s = exchange.getMessage().getHeader(SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY, String.class);
         final String routingKey = s != null ? s : parseRoutingKey(entry.getUri());
 
         return new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 if (destinationName != null) {
-                    exchange.getMessage().setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, destinationName);
+                    exchange.getMessage().setHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME, destinationName);
                 }
                 if (routingKey != null) {
-                    exchange.getMessage().setHeader(RabbitMQConstants.ROUTING_OVERRIDE_KEY, routingKey);
+                    exchange.getMessage().setHeader(SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY, routingKey);
                 }
             }
         };

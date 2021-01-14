@@ -35,9 +35,6 @@ public interface IAM2EndpointBuilderFactory {
      * component.
      */
     public interface IAM2EndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedIAM2EndpointBuilder advanced() {
-            return (AdvancedIAM2EndpointBuilder) this;
-        }
         /**
          * To use a existing configured AWS IAM as client.
          * 
@@ -339,51 +336,6 @@ public interface IAM2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 Identity and Access
-     * Management (IAM) component.
-     */
-    public interface AdvancedIAM2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IAM2EndpointBuilder basic() {
-            return (IAM2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAM2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIAM2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws2.iam.IAM2Operations</code> enum.
      */
@@ -454,7 +406,7 @@ public interface IAM2EndpointBuilderFactory {
         }
     }
     static IAM2EndpointBuilder endpointBuilder(String componentName, String path) {
-        class IAM2EndpointBuilderImpl extends AbstractEndpointBuilder implements IAM2EndpointBuilder, AdvancedIAM2EndpointBuilder {
+        class IAM2EndpointBuilderImpl extends AbstractEndpointBuilder implements IAM2EndpointBuilder {
             public IAM2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

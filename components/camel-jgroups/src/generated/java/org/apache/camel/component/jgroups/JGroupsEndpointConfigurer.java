@@ -33,7 +33,6 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -53,7 +52,6 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -74,7 +72,6 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

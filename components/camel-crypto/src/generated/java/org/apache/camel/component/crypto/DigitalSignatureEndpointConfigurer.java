@@ -53,7 +53,6 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         case "secureRandomName": target.getConfiguration().setSecureRandomName(property(camelContext, java.lang.String.class, value)); return true;
         case "signatureheadername":
         case "signatureHeaderName": target.getConfiguration().setSignatureHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -93,7 +92,6 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         case "secureRandomName": return java.lang.String.class;
         case "signatureheadername":
         case "signatureHeaderName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -134,7 +132,6 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         case "secureRandomName": return target.getConfiguration().getSecureRandomName();
         case "signatureheadername":
         case "signatureHeaderName": return target.getConfiguration().getSignatureHeaderName();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }
