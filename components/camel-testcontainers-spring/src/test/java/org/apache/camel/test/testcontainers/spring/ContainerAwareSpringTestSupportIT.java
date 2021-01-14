@@ -23,6 +23,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
+@SuppressWarnings("deprecation")
 public class ContainerAwareSpringTestSupportIT extends ContainerAwareSpringTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {

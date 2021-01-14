@@ -29,6 +29,11 @@ import org.testcontainers.containers.wait.strategy.AbstractWaitStrategy;
 import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.utility.LogUtils;
 
+/**
+ * Tests using this component should switch the test-infra. Please check the test-infra module for details and
+ * conversion procedures.
+ */
+@Deprecated
 public class Wait extends org.testcontainers.containers.wait.strategy.Wait {
     /**
      * Convenience method to return a WaitStrategy for log messages using a predicate.
