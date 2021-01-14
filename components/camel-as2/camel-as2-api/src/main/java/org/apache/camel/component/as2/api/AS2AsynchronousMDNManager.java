@@ -121,9 +121,9 @@ public class AS2AsynchronousMDNManager {
 
         String requestUri = buildRequestURI(uri);
 
-        DefaultBHttpClientConnection httpConnection = new DefaultBHttpClientConnection(8 * 1024);
+        int buffSize = 8 * 1024;
 
-        try {
+        try (DefaultBHttpClientConnection httpConnection = new DefaultBHttpClientConnection(buffSize)) {
 
             HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
 
@@ -154,13 +154,6 @@ public class AS2AsynchronousMDNManager {
             return httpContext;
         } catch (Exception e) {
             throw new HttpException("failed to send MDN", e);
-        } finally {
-            try {
-                httpConnection.flush();
-                httpConnection.close();
-            } catch (IOException e) {
-                // Ignore.
-            }
         }
     }
 
