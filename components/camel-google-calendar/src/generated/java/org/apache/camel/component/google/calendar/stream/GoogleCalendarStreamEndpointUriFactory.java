@@ -20,11 +20,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-<<<<<<< HEAD
-        Set<String> props = new HashSet<>(41);
-=======
-        Set<String> props = new HashSet<>(43);
->>>>>>> dca8b31... CAMEL-15961: Extend configuration with 'syncFlow' parameter
+        Set<String> props = new HashSet<>(42);
         props.add("backoffMultiplier");
         props.add("destination");
         props.add("initialDelay");
