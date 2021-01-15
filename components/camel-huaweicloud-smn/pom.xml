@@ -117,47 +117,6 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-
-      <!-- generate camel meta-data -->
-      <!--<plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-component-maven-plugin</artifactId>
-        <version>3.4.0</version>
-        <executions>
-          <execution>
-            <id>generate</id>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-        </executions>
-      </plugin>-->
-      <!--<plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>add-source</goal>
-              <goal>add-resource</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/generated/java</source>
-              </sources>
-              <resources>
-                <resource>
-                  <directory>src/generated/resources</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
--->
     </plugins>
   </build>
 
