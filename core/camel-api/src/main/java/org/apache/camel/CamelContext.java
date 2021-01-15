@@ -863,7 +863,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
 
     /**
-     * Resolve a data format given its name
+     * Resolve an existing data format, or creates a new by the given its name
      *
      * @param  name the data format name or a reference to it in the {@link Registry}
      * @return      the resolved data format, or <tt>null</tt> if not found
@@ -871,10 +871,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     DataFormat resolveDataFormat(String name);
 
     /**
-     * Creates the given data format given its name.
+     * Creates a new instance of the given data format given its name.
      *
      * @param  name the data format name or a reference to a data format factory in the {@link Registry}
-     * @return      the resolved data format, or <tt>null</tt> if not found
+     * @return      the created data format, or <tt>null</tt> if not found
      */
     DataFormat createDataFormat(String name);
 
