@@ -90,8 +90,8 @@ public class RestBindingReifier extends AbstractReifier {
             }
             // this will create a new instance as the name was not already
             // pre-created
-            json = camelContext.resolveDataFormat(name);
-            outJson = camelContext.resolveDataFormat(name);
+            json = camelContext.createDataFormat(name);
+            outJson = camelContext.createDataFormat(name);
 
             if (json != null) {
                 setupJson(
@@ -119,8 +119,8 @@ public class RestBindingReifier extends AbstractReifier {
             }
             // this will create a new instance as the name was not already
             // pre-created
-            jaxb = camelContext.resolveDataFormat(name);
-            outJaxb = camelContext.resolveDataFormat(name);
+            jaxb = camelContext.createDataFormat(name);
+            outJaxb = camelContext.createDataFormat(name);
 
             // is xml binding required?
             if (mode.contains("xml") && jaxb == null) {
