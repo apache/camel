@@ -45,6 +45,6 @@ public interface GitHubConstants {
     String GITHUB_COMMIT_SHA = "CamelGitHubCommitSha";
 
     String GITHUB_COMMIT_URL = "CamelGitHubCommitUrl";
-    
+
     String GITHUB_EVENT_PAYLOAD = "CamelGitHubEventPayload";
 }

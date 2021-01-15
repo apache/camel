@@ -50,19 +50,22 @@ public class EventConsumerWithStrategyTest extends GitHubComponentTestBase {
         Event watchEvent = new Event();
         watchEvent.setId("1");
         watchEvent.setPayload(new WatchPayload());
+        watchEvent.setType("watchEvent");
         eventService.addEvent(watchEvent);
 
         Event pushEvent = new Event();
         pushEvent.setId("2");
         pushEvent.setPayload(new PushPayload());
+        pushEvent.setType("pushEvent");
         eventService.addEvent(pushEvent);
 
         Event issueCommentEvent = new Event();
         issueCommentEvent.setId("3");
         issueCommentEvent.setPayload(new IssueCommentPayload());
+        issueCommentEvent.setType("issueCommentEvent");
         eventService.addEvent(issueCommentEvent);
 
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(watchEvent, pushEvent, issueCommentEvent);
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder("watchEvent", "pushEvent", "issueCommentEvent");
 
         latch.await(5, TimeUnit.SECONDS);
 
