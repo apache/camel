@@ -45,3 +45,11 @@ Other information has been stored in headers declared in GitConstants class:
 * GITHUB_COMMIT_SHA - "CamelGitHubCommitSha" - The commit sha
 * GITHUB_COMMIT_URL - "CamelGitHubCommitUrl" - The commit url
 
+The Camel Github Events consumer has been changed a bit.
+
+For each exchange now in the body you'll get the event type as a String and not the Event Object like before.
+
+Other information has been stored in headers declared in GithubConstants class:
+
+* GITHUB_EVENT_PAYLOAD - "CamelGitHubEventPayload" - The event payload
+
