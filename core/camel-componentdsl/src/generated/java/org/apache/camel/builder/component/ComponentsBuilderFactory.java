@@ -3517,6 +3517,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PahoComponentBuilderFactory.paho();
     }
     /**
+     * Paho MQTT 5 (camel-paho-mqtt5)
+     * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+     * 
+     * Category: messaging,iot
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-paho-mqtt5
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.PahoMqtt5ComponentBuilderFactory.PahoMqtt5ComponentBuilder pahoMqtt5() {
+        return org.apache.camel.builder.component.dsl.PahoMqtt5ComponentBuilderFactory.pahoMqtt5();
+    }
+    /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
      * 

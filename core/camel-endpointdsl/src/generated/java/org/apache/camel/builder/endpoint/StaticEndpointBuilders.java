@@ -12071,6 +12071,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Paho MQTT 5 (camel-paho-mqtt5)
+     * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+     * 
+     * Category: messaging,iot
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-paho-mqtt5
+     * 
+     * Syntax: <code>paho-mqtt5:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.endpointBuilder("paho-mqtt5", path);
+    }
+    /**
+     * Paho MQTT 5 (camel-paho-mqtt5)
+     * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+     * 
+     * Category: messaging,iot
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-paho-mqtt5
+     * 
+     * Syntax: <code>paho-mqtt5:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
      * 

@@ -14,43 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.paho;
+package org.apache.camel.component.paho.mqtt5;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PathToDSendDynamicTest extends CamelTestSupport {
-
-    BrokerService broker;
-
-    int mqttPort = AvailablePortFinder.getNextAvailable();
-
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("mqtt://localhost:" + mqttPort);
-        broker.start();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        broker.stop();
-    }
+public class PahoMqtt5ToDSendDynamicTest extends PahoMqtt5TestSupport {
 
     @Test
     public void testToD() throws Exception {
@@ -58,13 +29,13 @@ public class PathToDSendDynamicTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one paho endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("paho:")).count();
+        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("paho-mqtt5:")).count();
         assertEquals(1, count, "There should only be 1 paho endpoint");
 
         // and the messages should be in the queues
-        String out = consumer.receiveBody("paho:bar", 2000, String.class);
+        String out = consumer.receiveBody("paho-mqtt5:bar", 2000, String.class);
         assertEquals("Hello bar", out);
-        out = consumer.receiveBody("paho:beer", 2000, String.class);
+        out = consumer.receiveBody("paho-mqtt5:beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
 
@@ -73,11 +44,11 @@ public class PathToDSendDynamicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                PahoComponent paho = context.getComponent("paho", PahoComponent.class);
+                PahoMqtt5Component paho = context.getComponent("paho-mqtt5", PahoMqtt5Component.class);
                 paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 
                 // route message dynamic using toD
-                from("direct:start").toD("paho:${header.where}?retained=true");
+                from("direct:start").toD("paho-mqtt5:${header.where}?retained=true");
             }
         };
     }

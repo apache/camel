@@ -69,5 +69,6 @@
         <module>camel-test-infra-couchdb</module>
         <module>camel-test-infra-ftp</module>
         <module>camel-test-infra-fhir</module>
+        <module>camel-test-infra-mosquitto</module>
     </modules>
 </project>

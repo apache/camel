@@ -5802,6 +5802,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "PahoMqtt5ComponentBuilderFactory": {
+    "kind": "component",
+    "name": "paho-mqtt5",
+    "title": "Paho MQTT 5",
+    "description": "Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.",
+    "deprecated": false,
+    "firstVersion": "3.8.0",
+    "label": "messaging,iot",
+    "javaType": "org.apache.camel.component.paho.mqtt5.PahoMqtt5Component",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-paho-mqtt5",
+    "version": "3.8.0-SNAPSHOT",
+    "scheme": "paho-mqtt5",
+    "extendsScheme": "",
+    "syntax": "paho-mqtt5:topic",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "PdfComponentBuilderFactory": {
     "kind": "component",
     "name": "pdf",
