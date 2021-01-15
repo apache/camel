@@ -537,6 +537,56 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointProducerBuilder) this;
         }
         /**
+         * Should message ordering be enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param messageOrderingEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder messageOrderingEnabled(
+                boolean messageOrderingEnabled) {
+            doSetProperty("messageOrderingEnabled", messageOrderingEnabled);
+            return this;
+        }
+        /**
+         * Should message ordering be enabled.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param messageOrderingEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder messageOrderingEnabled(
+                String messageOrderingEnabled) {
+            doSetProperty("messageOrderingEnabled", messageOrderingEnabled);
+            return this;
+        }
+        /**
+         * Pub/Sub endpoint to use. Required when using message ordering, and
+         * ensures that messages are received in order even when multiple
+         * publishers are used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param pubsubEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder pubsubEndpoint(
+                String pubsubEndpoint) {
+            doSetProperty("pubsubEndpoint", pubsubEndpoint);
+            return this;
+        }
+        /**
          * A custom GooglePubsubSerializer to use for serializing message
          * payloads in the producer.
          * 
