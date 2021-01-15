@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -3781,25 +3782,24 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public DataFormat resolveDataFormat(String name) {
-        final DataFormat answer = dataformats.computeIfAbsent(name, new Function<String, DataFormat>() {
-            @Override
-            public DataFormat apply(String s) {
-                DataFormat df = ResolverHelper.lookupDataFormatInRegistryWithFallback(getCamelContextReference(), name);
+        final DataFormat answer = dataformats.computeIfAbsent(name, s -> {
+            DataFormat df = Optional
+                    .ofNullable(ResolverHelper.lookupDataFormatInRegistryWithFallback(getCamelContextReference(), name))
+                    .orElseGet(() -> getDataFormatResolver().createDataFormat(name, getCamelContextReference()));
 
-                if (df != null) {
-                    // inject CamelContext if aware
-                    CamelContextAware.trySetCamelContext(df, getCamelContextReference());
+            if (df != null) {
+                // inject CamelContext if aware
+                CamelContextAware.trySetCamelContext(df, getCamelContextReference());
 
-                    for (LifecycleStrategy strategy : lifecycleStrategies) {
-                        strategy.onDataFormatCreated(name, df);
-                    }
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onDataFormatCreated(name, df);
                 }
-
-                return df;
             }
+
+            return df;
         });
 
-        return answer != null ? answer : createDataFormat(name);
+        return answer;
     }
 
     @Override
