@@ -38,7 +38,7 @@ The Camel Github Commit consumer has been changed a bit.
 
 For each exchange now in the body you'll get the commit full message as a String and not the Commit Object like before.
 
-Other information has been stored in headers declared in GitConstants class:
+Other information has been stored in headers declared in GithubConstants class:
 
 * GITHUB_COMMIT_AUTHOR - "CamelGitHubCommitAuthor" - The commit Author
 * GITHUB_COMMIT_COMMITTER - "CamelGitHubCommitCommitter" - The committer name
