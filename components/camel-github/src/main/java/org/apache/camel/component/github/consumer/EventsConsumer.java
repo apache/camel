@@ -79,7 +79,8 @@ public class EventsConsumer extends AbstractGitHubConsumer {
 
             for (Event event : newEvents) {
                 Exchange exchange = getEndpoint().createExchange();
-                exchange.getMessage().setBody(event);
+                exchange.getMessage().setBody(event.getType());
+                exchange.getMessage().setHeader(GitHubConstants.GITHUB_EVENT_PAYLOAD, event.getPayload());
                 getProcessor().process(exchange);
             }
         }
