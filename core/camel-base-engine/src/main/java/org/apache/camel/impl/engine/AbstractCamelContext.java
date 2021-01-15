@@ -2727,6 +2727,27 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
+        // log startup summary
+        logStartSummary();
+
+        // now Camel has been started/bootstrap is complete, then run cleanup to help free up memory etc
+        for (BootstrapCloseable bootstrap : bootstraps) {
+            try {
+                bootstrap.close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
+            }
+        }
+        bootstraps.clear();
+
+        if (isLightweight()) {
+            LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
+            ReifierStrategy.clearReifiers();
+            adapt(ExtendedCamelContext.class).disposeModel();
+        }
+    }
+
+    protected void logStartSummary() {
         // output how many instances of the same component class are in use, as multiple instances is potential a mistake
         if (LOG.isInfoEnabled()) {
             Map<Class<?>, Set<String>> counters = new LinkedHashMap<>();
@@ -2773,24 +2794,9 @@ public abstract class AbstractCamelContext extends BaseService
                         getRoutes().size(), started, controlledRoutes.size(),
                         getRouteController().getClass().getName());
             }
-            LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
-
-            // now Camel has been started/bootstrap is complete, then run cleanup to help free up memory etc
-            for (BootstrapCloseable bootstrap : bootstraps) {
-                try {
-                    bootstrap.close();
-                } catch (Exception e) {
-                    LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
-                }
-            }
-            bootstraps.clear();
-
-            if (isLightweight()) {
-                LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
-                ReifierStrategy.clearReifiers();
-                adapt(ExtendedCamelContext.class).disposeModel();
-            }
         }
+
+        LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
     }
 
     protected void doStartCamel() throws Exception {
