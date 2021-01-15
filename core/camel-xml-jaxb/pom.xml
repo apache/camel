@@ -33,10 +33,13 @@
 
     <properties>
         <camel.osgi.import>
+            org.apache.camel.model;${camel.osgi.import.camel.version},
             org.apache.camel.model.cloud;${camel.osgi.import.camel.version},
             org.apache.camel.model.config;${camel.osgi.import.camel.version},
             org.apache.camel.model.dataformat;${camel.osgi.import.camel.version},
+            org.apache.camel.model.language;${camel.osgi.import.camel.version},
             org.apache.camel.model.loadbalancer;${camel.osgi.import.camel.version},
+            org.apache.camel.model.rest;${camel.osgi.import.camel.version},
             org.apache.camel.model.transformer;${camel.osgi.import.camel.version},
             org.apache.camel.model.validator;${camel.osgi.import.camel.version},
             javax.xml.bind.*;version="[2.2,3.0)",
