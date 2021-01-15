@@ -307,6 +307,7 @@
         <module>camel-opentelemetry</module>
         <module>camel-optaplanner</module>
         <module>camel-paho</module>
+        <module>camel-paho-mqtt5</module>
         <module>camel-pdf</module>
         <module>camel-pg-replication-slot</module>
         <module>camel-pgevent</module>
