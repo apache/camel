@@ -49,6 +49,10 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
 
+        // extract the endpoint additional properties map
+        final Map<String, Object> endpointAdditionalProperties
+                = PropertiesHelper.extractProperties(parameters, "additionalProperties.");
+
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
 
         KafkaConfiguration copy = getConfiguration().copy();
@@ -61,13 +65,9 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
             endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        // extract the additional properties map
-        if (PropertiesHelper.hasProperties(parameters, "additionalProperties.")) {
-            final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
-
-            // add and overwrite additional properties from endpoint to
-            // pre-configured properties
-            additionalProperties.putAll(PropertiesHelper.extractProperties(parameters, "additionalProperties."));
+        // overwrite the additional properties from the endpoint
+        if (!endpointAdditionalProperties.isEmpty()) {
+            endpoint.getConfiguration().getAdditionalProperties().putAll(endpointAdditionalProperties);
         }
 
         return endpoint;
