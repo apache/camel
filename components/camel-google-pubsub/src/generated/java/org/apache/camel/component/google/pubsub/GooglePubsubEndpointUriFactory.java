@@ -20,18 +20,20 @@ public class GooglePubsubEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
-        props.add("lazyStartProducer");
-        props.add("bridgeErrorHandler");
-        props.add("destinationName");
-        props.add("ackMode");
+        Set<String> props = new HashSet<>(14);
         props.add("exchangePattern");
         props.add("serializer");
-        props.add("maxMessagesPerPoll");
         props.add("synchronousPull");
+        props.add("concurrentConsumers");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("pubsubEndpoint");
+        props.add("messageOrderingEnabled");
+        props.add("destinationName");
+        props.add("ackMode");
+        props.add("maxMessagesPerPoll");
         props.add("loggerId");
         props.add("projectId");
-        props.add("concurrentConsumers");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

@@ -29,6 +29,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ATTRIBUTES;
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
 import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX;
 
 /**
@@ -82,7 +84,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
 
-        Publisher publisher = endpoint.getComponent().getPublisher(topicName);
+        Publisher publisher = endpoint.getComponent().getPublisher(topicName, endpoint);
 
         Object body = exchange.getIn().getBody();
         ByteString byteString;
@@ -96,7 +98,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
-        Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
+        Map<String, String> attributes = exchange.getIn().getHeader(ATTRIBUTES, Map.class);
         if (attributes != null) {
             for (Map.Entry<String, String> attribute : attributes.entrySet()) {
                 if (!attribute.getKey().startsWith(RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX)) {
@@ -104,6 +106,11 @@ public class GooglePubsubProducer extends DefaultProducer {
                 }
             }
         }
+        String orderingKey = exchange.getIn().getHeader(ORDERING_KEY, String.class);
+        if (orderingKey != null) {
+            messageBuilder.setOrderingKey(orderingKey);
+        }
+
         PubsubMessage message = messageBuilder.build();
 
         ApiFuture<String> messageIdFuture = publisher.publish(message);
