@@ -144,7 +144,13 @@ Google PubSub expects the payload to be byte[] array, Producer endpoints will se
 
 A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as PubSub attributes.
 
-A String set as message header `GooglePubsubConstants.ORDERING_KEY` will be set as the PubSub orderingKey.
+Google PubSub supports ordered message delivery.
+
+To enable this set set the options messageOrderingEnabled to true, and the pubsubEndpoint to a GCP region.
+
+When producing messages set the message header `GooglePubsubConstants.ORDERING_KEY` . This will be set as the PubSub orderingKey for the message.
+
+More information in https://cloud.google.com/pubsub/docs/ordering[Ordering messages].
  
 Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
 the header `GooglePubsubConstants.MESSAGE_ID`.

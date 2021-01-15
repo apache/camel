@@ -90,14 +90,13 @@ class MessageOrderingTest extends PubsubTestSupport {
     @Test
     void orderedMessageDeliveryTest() throws Exception {
         List<String> bodyList = Arrays.asList("1", "2", "3", "4", "5", "6");
+        inputMock.expectedMessageCount(6);
+        outputMock.expectedMessageCount(6);
         for (String string : bodyList) {
             producer.sendBody(string);
         }
-        inputMock.expectedMessageCount(6);
         inputMock.assertIsSatisfied();
-
         context.getRouteController().startRoute("subscriptionRoute");
-        outputMock.expectedMessageCount(6);
         outputMock.expectedBodiesReceived(bodyList);
         outputMock.assertIsSatisfied();
     }
