@@ -123,7 +123,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>${basedir}/src/test/resources/config.properties</file>
+                                <file>${project.basedir}/src/test/resources/config.properties</file>
                             </files>
                         </configuration>
                     </execution>
