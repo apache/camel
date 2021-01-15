@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
@@ -2723,6 +2724,34 @@ public abstract class AbstractCamelContext extends BaseService
             } else {
                 LOG.error("Error starting CamelContext (" + getName() + ") due to exception thrown: " + e.getMessage(), e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        // output how many instances of the same component class are in use, as multiple instances is potential a mistake
+        if (LOG.isInfoEnabled()) {
+            Map<Class<?>, Set<String>> counters = new LinkedHashMap<>();
+            List<String> cnames = getComponentNames();
+            Collections.sort(cnames);
+            for (String sourceName : cnames) {
+                Class<?> source = getComponent(sourceName).getClass();
+                if (!counters.containsKey(source)) {
+                    for (String targetName : cnames) {
+                        Class<?> target = getComponent(targetName).getClass();
+                        if (source == target) {
+                            Set<String> names = counters.computeIfAbsent(source, k -> new TreeSet<>());
+                            names.add(targetName);
+                        }
+                    }
+                }
+            }
+            for (Map.Entry<Class<?>, Set<String>> entry : counters.entrySet()) {
+                int count = entry.getValue().size();
+                if (count > 1) {
+                    String fqn = entry.getKey().getName();
+                    String names = String.join(", ", entry.getValue());
+                    LOG.info("Using {} instances of same component class: {} with names: {}", count,
+                            fqn, names);
+                }
             }
         }
 
