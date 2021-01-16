@@ -23,6 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -339,6 +340,13 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         RabbitMQConsumer consumer = new RabbitMQConsumer(this, processor, listenerContainer);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        SpringRabbitPollingConsumer answer = new SpringRabbitPollingConsumer(this, createInOnlyTemplate());
+        configurePollingConsumer(answer);
+        return answer;
     }
 
     @Override
