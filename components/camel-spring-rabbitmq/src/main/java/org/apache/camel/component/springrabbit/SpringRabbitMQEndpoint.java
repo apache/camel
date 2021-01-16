@@ -147,6 +147,9 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
               description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long replyTimeout = 5000;
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Use a separate connection for publishers and consumers")
+    private boolean usePublisherConnection;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
@@ -325,6 +328,14 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         this.replyTimeout = replyTimeout;
     }
 
+    public boolean isUsePublisherConnection() {
+        return usePublisherConnection;
+    }
+
+    public void setUsePublisherConnection(boolean usePublisherConnection) {
+        this.usePublisherConnection = usePublisherConnection;
+    }
+
     public boolean isSynchronous() {
         return synchronous;
     }
@@ -409,6 +420,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     public RabbitTemplate createInOnlyTemplate() {
         RabbitTemplate template = new RabbitTemplate(getConnectionFactory());
         template.setRoutingKey(getRoutingKey());
+        template.setUsePublisherConnection(usePublisherConnection);
         return template;
     }
 
@@ -419,6 +431,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         RabbitTemplate template = new RabbitTemplate(getConnectionFactory());
         template.setRoutingKey(routingKey);
         template.setReplyTimeout(replyTimeout);
+        template.setUsePublisherConnection(usePublisherConnection);
         return new AsyncRabbitTemplate(template);
     }
 
