@@ -67,6 +67,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
+        case "usepublisherconnection":
+        case "usePublisherConnection": target.setUsePublisherConnection(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -120,6 +122,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
+        case "usepublisherconnection":
+        case "usePublisherConnection": return boolean.class;
         default: return null;
         }
     }
@@ -174,6 +178,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
+        case "usepublisherconnection":
+        case "usePublisherConnection": return target.isUsePublisherConnection();
         default: return null;
         }
     }

@@ -1020,6 +1020,39 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             doSetProperty("replyTimeout", replyTimeout);
             return this;
         }
+        /**
+         * Use a separate connection for publishers and consumers.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param usePublisherConnection the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder usePublisherConnection(
+                boolean usePublisherConnection) {
+            doSetProperty("usePublisherConnection", usePublisherConnection);
+            return this;
+        }
+        /**
+         * Use a separate connection for publishers and consumers.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param usePublisherConnection the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder usePublisherConnection(
+                String usePublisherConnection) {
+            doSetProperty("usePublisherConnection", usePublisherConnection);
+            return this;
+        }
     }
 
     /**
