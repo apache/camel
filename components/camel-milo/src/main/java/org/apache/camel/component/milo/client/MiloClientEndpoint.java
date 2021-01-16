@@ -73,6 +73,12 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     @UriParam
     private boolean defaultAwaitWrites;
 
+    @UriParam
+    private MonitorFilterConfiguration monitorFilterConfiguration;
+
+    @UriParam
+    private MonitorFilterType monitorFilterType;
+
     private final MiloClientComponent component;
     private MiloClientConnection connection;
 
@@ -84,6 +90,7 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
         this.endpointUri = endpointUri;
         this.component = component;
+        this.setMonitorFilterConfiguration(new MonitorFilterConfiguration());
     }
 
     public void setConfiguration(MiloClientConfiguration configuration) {
@@ -92,6 +99,14 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     public MiloClientConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public MonitorFilterConfiguration getMonitorFilterConfiguration() {
+        return monitorFilterConfiguration;
+    }
+
+    public void setMonitorFilterConfiguration(MonitorFilterConfiguration monitorFilterConfiguration) {
+        this.monitorFilterConfiguration = monitorFilterConfiguration;
     }
 
     @Override
