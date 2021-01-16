@@ -20,6 +20,7 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
@@ -78,13 +79,16 @@ public class SjmsTemplate {
         this.explicitQosEnabled = explicitQosEnabled;
     }
 
-    public void execute(SessionCallback sessionCallback) throws Exception {
+    public Object execute(SessionCallback sessionCallback, boolean startConnection) throws Exception {
         Connection con = null;
         Session session = null;
         try {
             con = createConnection();
+            if (startConnection) {
+                con.start();
+            }
             session = createSession(con);
-            sessionCallback.doInJms(session);
+            return sessionCallback.doInJms(session);
         } finally {
             sessionCallback.onClose(con, session);
         }
@@ -92,7 +96,7 @@ public class SjmsTemplate {
 
     public void execute(Session session, SessionCallback sessionCallback) throws Exception {
         if (session == null) {
-            execute(sessionCallback);
+            execute(sessionCallback, false);
         } else {
             try {
                 sessionCallback.doInJms(session);
@@ -111,7 +115,7 @@ public class SjmsTemplate {
             private volatile boolean transacted;
 
             @Override
-            public void doInJms(Session session) throws Exception {
+            public Object doInJms(Session session) throws Exception {
                 this.transacted = isTransactionOrClientAcknowledgeMode(session);
 
                 if (transacted) {
@@ -127,6 +131,8 @@ public class SjmsTemplate {
                 } finally {
                     closeProducer(producer);
                 }
+
+                return null;
             }
 
             @Override
@@ -149,7 +155,7 @@ public class SjmsTemplate {
             }
         };
 
-        execute(callback);
+        execute(callback, false);
     }
 
     public void send(MessageProducer producer, Message message) throws Exception {
@@ -158,6 +164,29 @@ public class SjmsTemplate {
         } else {
             producer.send(message);
         }
+    }
+
+    public Message receive(String destinationName, boolean isTopic, long timeout) throws Exception {
+        Object obj = execute(sc -> {
+            Destination dest = destinationCreationStrategy.createDestination(sc, destinationName, isTopic);
+            MessageConsumer consumer = sc.createConsumer(dest);
+            Message message = null;
+            try {
+                if (timeout < 0) {
+                    message = consumer.receiveNoWait();
+                } else if (timeout == 0) {
+                    message = consumer.receive();
+                } else {
+                    message = consumer.receive(timeout);
+                }
+            } finally {
+                // success then commit if we need to
+                commitIfNeeded(sc, message);
+                closeConsumer(consumer);
+            }
+            return message;
+        }, true);
+        return (Message) obj;
     }
 
     public Connection createConnection() throws Exception {

@@ -261,7 +261,7 @@ public class EndpointMessageListener implements SessionMessageListener {
         try {
             SessionCallback callback = new SessionCallback() {
                 @Override
-                public void doInJms(Session session) throws Exception {
+                public Object doInJms(Session session) throws Exception {
                     MessageProducer producer = null;
                     try {
                         Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
@@ -277,6 +277,8 @@ public class EndpointMessageListener implements SessionMessageListener {
                     } finally {
                         close(producer);
                     }
+
+                    return null;
                 }
 
                 @Override
@@ -303,7 +305,7 @@ public class EndpointMessageListener implements SessionMessageListener {
         try {
             SessionCallback callback = new SessionCallback() {
                 @Override
-                public void doInJms(Session session) throws Exception {
+                public Object doInJms(Session session) throws Exception {
                     MessageProducer producer = null;
                     try {
                         Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
@@ -319,6 +321,8 @@ public class EndpointMessageListener implements SessionMessageListener {
                     } finally {
                         close(producer);
                     }
+
+                    return null;
                 }
 
                 @Override

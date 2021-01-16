@@ -31,6 +31,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
@@ -326,6 +327,13 @@ public class SjmsEndpoint extends DefaultEndpoint
         SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        SjmsPollingConsumer answer = new SjmsPollingConsumer(this, createInOnlyTemplate());
+        configurePollingConsumer(answer);
+        return answer;
     }
 
     public void configureMessageListener(EndpointMessageListener listener) {

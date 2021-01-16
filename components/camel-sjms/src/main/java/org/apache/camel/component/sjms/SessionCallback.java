@@ -24,7 +24,7 @@ import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
 
 public interface SessionCallback {
 
-    void doInJms(Session session) throws Exception;
+    Object doInJms(Session session) throws Exception;
 
     default void onClose(Connection connection, Session session) {
         closeSession(session);
