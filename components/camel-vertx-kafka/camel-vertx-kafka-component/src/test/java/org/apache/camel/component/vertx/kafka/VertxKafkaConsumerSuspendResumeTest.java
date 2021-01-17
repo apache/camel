@@ -34,9 +34,9 @@ public class VertxKafkaConsumerSuspendResumeTest extends BaseEmbeddedKafkaTest {
     public static final String TOPIC = "test";
 
     @EndpointInject("vertx-kafka:" + TOPIC
-            + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-            + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000")
+                    + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                    + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
