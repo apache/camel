@@ -20,7 +20,7 @@ public class SpringRabbitMQEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(27);
         props.add("asyncConsumer");
         props.add("synchronous");
         props.add("messageConverter");
@@ -44,6 +44,7 @@ public class SpringRabbitMQEndpointUriFactory extends org.apache.camel.support.c
         props.add("queues");
         props.add("exchangeName");
         props.add("replyTimeout");
+        props.add("usePublisherConnection");
         props.add("exceptionHandler");
         props.add("routingKey");
         props.add("autoDeclare");
