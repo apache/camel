@@ -128,17 +128,21 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (28 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
+| *dataChangeFilterDeadbandType* (common) | Deadband type for MonitorFilterType DataChangeFilter. | 0 | UInteger
+| *dataChangeFilterDeadbandValue* (common) | Deadband value for MonitorFilterType DataChangeFilter. | 0.0 | Double
+| *dataChangeFilterTrigger* (common) | Daata change trigger for data change monitor filter type. There are 3 enums and the value can be one of: Status, StatusValue, StatusValueTimestamp |  | DataChangeTrigger
 | *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
 | *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
 | *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
 | *method* (common) | The method definition (see Method ID) |  | String
+| *monitorFilterType* (common) | Monitor Filter Type for MonitoredItems. There are 1 enums and the value can be one of: dataChangeFilter |  | MonitorFilterType
 | *node* (common) | The node definition (see Node ID) |  | String
 | *samplingInterval* (common) | The sampling interval in milliseconds | 0.0 | Double
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean

@@ -59,6 +59,105 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Deadband type for MonitorFilterType DataChangeFilter.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(
+                Object dataChangeFilterDeadbandType) {
+            doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
+            return this;
+        }
+        /**
+         * Deadband type for MonitorFilterType DataChangeFilter.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandType(
+                String dataChangeFilterDeadbandType) {
+            doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
+            return this;
+        }
+        /**
+         * Deadband value for MonitorFilterType DataChangeFilter.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Default: 0.0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandValue the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandValue(
+                Double dataChangeFilterDeadbandValue) {
+            doSetProperty("dataChangeFilterDeadbandValue", dataChangeFilterDeadbandValue);
+            return this;
+        }
+        /**
+         * Deadband value for MonitorFilterType DataChangeFilter.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Default: 0.0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandValue the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder dataChangeFilterDeadbandValue(
+                String dataChangeFilterDeadbandValue) {
+            doSetProperty("dataChangeFilterDeadbandValue", dataChangeFilterDeadbandValue);
+            return this;
+        }
+        /**
+         * Daata change trigger for data change monitor filter type.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dataChangeFilterTrigger the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder dataChangeFilterTrigger(
+                DataChangeTrigger dataChangeFilterTrigger) {
+            doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
+            return this;
+        }
+        /**
+         * Daata change trigger for data change monitor filter type.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dataChangeFilterTrigger the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder dataChangeFilterTrigger(
+                String dataChangeFilterTrigger) {
+            doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
+            return this;
+        }
+        /**
          * Default await setting for writes.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -133,6 +232,38 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointConsumerBuilder method(String method) {
             doSetProperty("method", method);
+            return this;
+        }
+        /**
+         * Monitor Filter Type for MonitoredItems.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.milo.client.MonitorFilterType&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param monitorFilterType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder monitorFilterType(
+                MonitorFilterType monitorFilterType) {
+            doSetProperty("monitorFilterType", monitorFilterType);
+            return this;
+        }
+        /**
+         * Monitor Filter Type for MonitoredItems.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.milo.client.MonitorFilterType&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param monitorFilterType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder monitorFilterType(
+                String monitorFilterType) {
+            doSetProperty("monitorFilterType", monitorFilterType);
             return this;
         }
         /**
@@ -725,6 +856,105 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Deadband type for MonitorFilterType DataChangeFilter.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(
+                Object dataChangeFilterDeadbandType) {
+            doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
+            return this;
+        }
+        /**
+         * Deadband type for MonitorFilterType DataChangeFilter.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandType(
+                String dataChangeFilterDeadbandType) {
+            doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
+            return this;
+        }
+        /**
+         * Deadband value for MonitorFilterType DataChangeFilter.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Default: 0.0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandValue the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandValue(
+                Double dataChangeFilterDeadbandValue) {
+            doSetProperty("dataChangeFilterDeadbandValue", dataChangeFilterDeadbandValue);
+            return this;
+        }
+        /**
+         * Deadband value for MonitorFilterType DataChangeFilter.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Default: 0.0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandValue the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder dataChangeFilterDeadbandValue(
+                String dataChangeFilterDeadbandValue) {
+            doSetProperty("dataChangeFilterDeadbandValue", dataChangeFilterDeadbandValue);
+            return this;
+        }
+        /**
+         * Daata change trigger for data change monitor filter type.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dataChangeFilterTrigger the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder dataChangeFilterTrigger(
+                DataChangeTrigger dataChangeFilterTrigger) {
+            doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
+            return this;
+        }
+        /**
+         * Daata change trigger for data change monitor filter type.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dataChangeFilterTrigger the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder dataChangeFilterTrigger(
+                String dataChangeFilterTrigger) {
+            doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
+            return this;
+        }
+        /**
          * Default await setting for writes.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -799,6 +1029,38 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointProducerBuilder method(String method) {
             doSetProperty("method", method);
+            return this;
+        }
+        /**
+         * Monitor Filter Type for MonitoredItems.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.milo.client.MonitorFilterType&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param monitorFilterType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder monitorFilterType(
+                MonitorFilterType monitorFilterType) {
+            doSetProperty("monitorFilterType", monitorFilterType);
+            return this;
+        }
+        /**
+         * Monitor Filter Type for MonitoredItems.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.milo.client.MonitorFilterType&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param monitorFilterType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder monitorFilterType(
+                String monitorFilterType) {
+            doSetProperty("monitorFilterType", monitorFilterType);
             return this;
         }
         /**
@@ -1326,6 +1588,105 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Deadband type for MonitorFilterType DataChangeFilter.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder dataChangeFilterDeadbandType(
+                Object dataChangeFilterDeadbandType) {
+            doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
+            return this;
+        }
+        /**
+         * Deadband type for MonitorFilterType DataChangeFilter.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder dataChangeFilterDeadbandType(
+                String dataChangeFilterDeadbandType) {
+            doSetProperty("dataChangeFilterDeadbandType", dataChangeFilterDeadbandType);
+            return this;
+        }
+        /**
+         * Deadband value for MonitorFilterType DataChangeFilter.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Default: 0.0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandValue the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder dataChangeFilterDeadbandValue(
+                Double dataChangeFilterDeadbandValue) {
+            doSetProperty("dataChangeFilterDeadbandValue", dataChangeFilterDeadbandValue);
+            return this;
+        }
+        /**
+         * Deadband value for MonitorFilterType DataChangeFilter.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Default: 0.0
+         * Group: common
+         * 
+         * @param dataChangeFilterDeadbandValue the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder dataChangeFilterDeadbandValue(
+                String dataChangeFilterDeadbandValue) {
+            doSetProperty("dataChangeFilterDeadbandValue", dataChangeFilterDeadbandValue);
+            return this;
+        }
+        /**
+         * Daata change trigger for data change monitor filter type.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dataChangeFilterTrigger the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder dataChangeFilterTrigger(
+                DataChangeTrigger dataChangeFilterTrigger) {
+            doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
+            return this;
+        }
+        /**
+         * Daata change trigger for data change monitor filter type.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dataChangeFilterTrigger the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder dataChangeFilterTrigger(
+                String dataChangeFilterTrigger) {
+            doSetProperty("dataChangeFilterTrigger", dataChangeFilterTrigger);
+            return this;
+        }
+        /**
          * Default await setting for writes.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1400,6 +1761,38 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointBuilder method(String method) {
             doSetProperty("method", method);
+            return this;
+        }
+        /**
+         * Monitor Filter Type for MonitoredItems.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.milo.client.MonitorFilterType&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param monitorFilterType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder monitorFilterType(
+                MonitorFilterType monitorFilterType) {
+            doSetProperty("monitorFilterType", monitorFilterType);
+            return this;
+        }
+        /**
+         * Monitor Filter Type for MonitoredItems.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.milo.client.MonitorFilterType&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param monitorFilterType the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder monitorFilterType(
+                String monitorFilterType) {
+            doSetProperty("monitorFilterType", monitorFilterType);
             return this;
         }
         /**
@@ -1840,6 +2233,25 @@ public interface MiloClientEndpointBuilderFactory {
         default MiloClientEndpointBuilder basic() {
             return (MiloClientEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger</code> enum.
+     */
+    enum DataChangeTrigger {
+        Status,
+        StatusValue,
+        StatusValueTimestamp;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.milo.client.MonitorFilterType</code>
+     * enum.
+     */
+    enum MonitorFilterType {
+        dataChangeFilter;
     }
 
     public interface MiloClientBuilders {
