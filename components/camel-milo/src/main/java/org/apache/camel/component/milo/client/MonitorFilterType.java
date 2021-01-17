@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.milo.client;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType
-@XmlEnum
 public enum MonitorFilterType {
     dataChangeFilter;
 }
