@@ -20,12 +20,14 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(33);
         props.add("productUri");
+        props.add("monitorFilterType");
         props.add("keyAlias");
         props.add("channelLifetime");
         props.add("discoveryEndpointSuffix");
         props.add("defaultAwaitWrites");
+        props.add("dataChangeFilterDeadbandValue");
         props.add("samplingInterval");
         props.add("keyStoreUrl");
         props.add("maxPendingPublishRequests");
@@ -39,8 +41,10 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
         props.add("clientId");
         props.add("method");
         props.add("keyStorePassword");
+        props.add("dataChangeFilterTrigger");
         props.add("sessionName");
         props.add("exchangePattern");
+        props.add("dataChangeFilterDeadbandType");
         props.add("node");
         props.add("lazyStartProducer");
         props.add("overrideHost");
