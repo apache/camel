@@ -12,7 +12,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-sm
 
 *{component-header}*
 
-Huawei Cloud SMN component allowes you to integrate with Simple notification services[https://www.huaweicloud.com/en-us/product/smn.html] provided Huawei cloud.
+Huawei Cloud SMN component allowes you to integrate with Simple notification services[https://www.huaweicloud.com/en-us/product/smn.html] provided by Huawei cloud.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *operation* (producer) | *Required* The actual operation to invoke under the mentioned service |  | String
-| *serviceKeys* (advanced) | Configuration object of class org.apache.camel.component.huaweicloud.smn.models.ServiceKeys containing connectivity parameters like AK, SK, ProjectID and region | null | String
+| *serviceKeys* (advanced) | Configuration object of class org.apache.camel.component.huaweicloud.smn.models.ServiceKeys containing connectivity parameters like AK, SK, ProjectID and region | null | ServiceKeys
 | *authKey* | *Required* Authentication Key (AK) can be generated from your cloud account user settings | null | String
 | *secretKey* | *Required* Secret Key (AK) can be generated from your cloud account user settings |  | String
 | *projectId* | *Required* Project ID for your specific region. Refer your cloud account settings |  | String
