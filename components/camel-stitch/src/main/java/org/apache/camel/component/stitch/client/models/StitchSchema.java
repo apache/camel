@@ -29,8 +29,8 @@ public class StitchSchema {
         }
 
         /**
-         * The JSON schema that records in the data property must conform to.
-         * Refer to the JSON schema docs for more info about JSON schemas.
+         * The JSON schema that records in the data property must conform to. Refer to the JSON schema docs for more
+         * info about JSON schemas.
          */
         public Builder addKeywords(final Map<String, Object> keywords) {
             this.keywords.putAll(keywords);

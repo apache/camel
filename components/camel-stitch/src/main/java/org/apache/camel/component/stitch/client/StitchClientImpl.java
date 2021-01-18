@@ -63,8 +63,7 @@ public class StitchClientImpl implements StitchClient {
     private String convertBodyToJson(final Map<String, Object> bodyAsMap) {
         try {
             return new ObjectMapper().writeValueAsString(bodyAsMap);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Error occurred writing data map to JSON.", e);
         }
     }
@@ -102,7 +101,8 @@ public class StitchClientImpl implements StitchClient {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private StitchResponse getStitchResponse(final int code, final Map<String, Object> headers, final Map<String, Object> bodyMap) {
+    private StitchResponse getStitchResponse(
+            final int code, final Map<String, Object> headers, final Map<String, Object> bodyMap) {
         final String status = (String) bodyMap.getOrDefault("status", "");
         final String message = (String) bodyMap.getOrDefault("message", "");
 

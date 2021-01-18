@@ -74,9 +74,10 @@ public class StitchMessage {
         }
 
         /**
-         * An integer that tells the Import API the order in which data points in the request body should be considered for loading. This data will be stored in the destination table in the _sdc_sequence column.
-         * In other Stitch integrations, Stitch uses a Unix epoch (in milliseconds) as the value for this property.
-         * Note: This value cannot exceed the maximum of 9223372036854775807.
+         * An integer that tells the Import API the order in which data points in the request body should be considered
+         * for loading. This data will be stored in the destination table in the _sdc_sequence column. In other Stitch
+         * integrations, Stitch uses a Unix epoch (in milliseconds) as the value for this property. Note: This value
+         * cannot exceed the maximum of 9223372036854775807.
          *
          * Default: System.currentTimeMillis();
          *
@@ -88,7 +89,8 @@ public class StitchMessage {
         }
 
         /**
-         * The record to be upserted into a table. The record data must conform to the JSON schema contained in the request’s Schema object.
+         * The record to be upserted into a table. The record data must conform to the JSON schema contained in the
+         * request’s Schema object.
          *
          * @param data
          */

@@ -23,9 +23,10 @@ public final class JsonUtils {
 
     public static Map<String, Object> convertJsonToMap(final String jsonString) {
         try {
-            return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+            return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
+            });
         } catch (JsonProcessingException exception) {
-        throw new RuntimeException("Error occurred writing JSON to Map.", exception);
-    }
+            throw new RuntimeException("Error occurred writing JSON to Map.", exception);
+        }
     }
 }

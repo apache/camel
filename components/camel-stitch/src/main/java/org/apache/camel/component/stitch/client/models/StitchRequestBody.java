@@ -68,8 +68,8 @@ public class StitchRequestBody {
         }
 
         /**
-         * The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur.
-         * REQUIRED
+         * The name of the destination table the data is being pushed to. Table names must be unique in each destination
+         * schema, or loading issues will occur. REQUIRED
          *
          * @param tableName
          */
@@ -80,8 +80,7 @@ public class StitchRequestBody {
 
         /**
          * A Schema object containing the JSON schema describing the record(s) in the Message object’s data property.
-         * Records must conform to this schema or an error will be returned when the request is sent.
-         * REQUIRED
+         * Records must conform to this schema or an error will be returned when the request is sent. REQUIRED
          *
          * @param schema
          */
@@ -91,8 +90,7 @@ public class StitchRequestBody {
         }
 
         /**
-         * An array of Message objects, each representing a record to be upserted into the table.
-         * REQUIRED
+         * An array of Message objects, each representing a record to be upserted into the table. REQUIRED
          *
          * @param messages
          */
@@ -107,13 +105,13 @@ public class StitchRequestBody {
         }
 
         /**
-         * An array of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading. If not provided, the table will be loaded in an append-only manner.
-         * Note: If included, a value must be provided. However, it may be an empty list to indicate that the source table doesn’t have a Primary Key.
-         * If fields are provided, they must adhere to the following:
-         * 1. Each field in the list must be the name of a top-level property defined in the Schema object. Primary Key fields cannot be contained in an object or an array.
-         * 2. Fields in the list may not be null in the source.
-         * 3. If a field is a string, its value must be less than 256 characters.
-         * OPTIONAL
+         * An array of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to
+         * de-dupe data during loading. If not provided, the table will be loaded in an append-only manner. Note: If
+         * included, a value must be provided. However, it may be an empty list to indicate that the source table
+         * doesn’t have a Primary Key. If fields are provided, they must adhere to the following: 1. Each field in the
+         * list must be the name of a top-level property defined in the Schema object. Primary Key fields cannot be
+         * contained in an object or an array. 2. Fields in the list may not be null in the source. 3. If a field is a
+         * string, its value must be less than 256 characters. OPTIONAL
          *
          * @param keyNames
          */
@@ -126,7 +124,8 @@ public class StitchRequestBody {
 
         public StitchRequestBody build() {
             if (ObjectHelper.isEmpty(tableName) || ObjectHelper.isEmpty(schema) || ObjectHelper.isEmpty(messages)) {
-                throw new IllegalArgumentException("One of the required arguments 'tableName', 'schema' or 'messages' is not set.");
+                throw new IllegalArgumentException(
+                        "One of the required arguments 'tableName', 'schema' or 'messages' is not set.");
             }
             return new StitchRequestBody(tableName, schema, messages, keyNames);
         }

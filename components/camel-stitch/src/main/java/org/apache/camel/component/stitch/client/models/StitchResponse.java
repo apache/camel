@@ -34,9 +34,10 @@ public class StitchResponse {
     /**
      * Returns true if the request succeeded.
      *
-     * @return <ul>
-     *           <li>true - if the request succeeded</li>
-     *           <li>false - if the request failed</li>
+     * @return
+     *         <ul>
+     *         <li>true - if the request succeeded</li>
+     *         <li>false - if the request failed</li>
      *         </ul>
      */
     public boolean isOk() {
@@ -44,7 +45,8 @@ public class StitchResponse {
     }
 
     public String toString() {
-        final String result = "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: " + message;
+        final String result
+                = "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: " + message;
 
         return result;
     }

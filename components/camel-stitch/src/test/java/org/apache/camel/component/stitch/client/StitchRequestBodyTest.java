@@ -58,10 +58,11 @@ class StitchRequestBodyTest {
                 .withKeyNames("id")
                 .build();
 
-        final String expectedJson = "{\"table_name\":\"customers\",\"schema\":{\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\""
-                + "has_magic\":{\"type\":\"boolean\"},\"modified_at\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"messages\":[{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
-                + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}},{\"action\":\"upsert\",\"sequence\":1565838645,\"data\":{\"id\":3,"
-                + "\"name\":\"Bubblegum\",\"age\":17,\"has_magic\":true,\"modified_at\":\"2020-01-14T13:34:25+0000\"}}],\"key_names\":[\"id\"]}";
+        final String expectedJson
+                = "{\"table_name\":\"customers\",\"schema\":{\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\""
+                  + "has_magic\":{\"type\":\"boolean\"},\"modified_at\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"messages\":[{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
+                  + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}},{\"action\":\"upsert\",\"sequence\":1565838645,\"data\":{\"id\":3,"
+                  + "\"name\":\"Bubblegum\",\"age\":17,\"has_magic\":true,\"modified_at\":\"2020-01-14T13:34:25+0000\"}}],\"key_names\":[\"id\"]}";
 
         assertEquals(expectedJson, new ObjectMapper().writeValueAsString(body.toMap()));
     }
