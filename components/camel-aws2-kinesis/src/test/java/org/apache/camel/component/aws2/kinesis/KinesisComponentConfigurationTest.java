@@ -22,6 +22,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KinesisComponentConfigurationTest extends CamelTestSupport {
 
@@ -79,5 +80,18 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+    
+    @Test
+    public void createEndpointWithEndpointOverride() throws Exception {
+        Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxx&secretKey=yyy&region=eu-west-1&overrideEndpoint=true" +
+        "&uriEndpointOverride=http://localhost:4567");
+
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:4567", endpoint.getConfiguration().getUriEndpointOverride());
     }
 }
