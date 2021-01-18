@@ -1,0 +1,136 @@
+[[hwcloud-smn-component]]
+= Huawei Cloud Smn Component
+:docTitle: Huawei Cloud SMN (Simple notification services)
+:artifactId: camel-huaweicloud-smn
+:description: Send message to simple notification services
+:since: 3.8.0
+:supportLevel: Stable
+:component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-smn.adoc[opts=optional]
+
+*Since Camel {since}*
+
+*{component-header}*
+
+Huawei Cloud SMN component allowes you to integrate with Simple notification services[https://www.huaweicloud.com/en-us/product/smn.html] provided Huawei cloud.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-huaweicloud-smn</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+To send a notification.
+
+[source,java]
+------------------------
+hwcloud-smn:service[?options]
+------------------------
+
+
+== Options
+
+// component options: START
+The SMN component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The SMN endpoint is configured using URI syntax:
+
+----
+hwcloud-smn:service
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *service* | *Required* name of the available services in SMN |  | String
+|===
+
+
+=== Query Parameters (28 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* (producer) | *Required* The actual operation to invoke under the mentioned service |  | String
+| *serviceKeys* (advanced) | Configuration object of class org.apache.camel.component.huaweicloud.smn.models.ServiceKeys containing connectivity parameters like AK, SK, ProjectID and region | null | String
+| *authKey* | *Required* Authentication Key (AK) can be generated from your cloud account user settings | null | String
+| *secretKey* | *Required* Secret Key (AK) can be generated from your cloud account user settings |  | String
+| *projectId* | *Required* Project ID for your specific region. Refer your cloud account settings |  | String
+| *proxyHost* | *Optional* IP/Hostname of the proxy server to access the public cloud from your deployment landscape |  | String
+| *proxyPort* | *Optional* Port number of the proxy service on proxy host |  | String
+| *proxyUser* | *Optional* Proxy user id (if applicable) |  | String
+| *proxyPassword* | *Optional* Proxy user password (if applicable)  |  | String
+| *region*| *Required* Region where your SMN service is hosted |  | String
+| *messageTtl* | *Optional* Time-to-live parameter for each message published to the topic. The subcriptions which are added to the topic within this timeout value will receive the notification | 3600 | String
+| *ignoreSslVerification* | *Optional* whether to ignore SSL verification while connecting to huawei cloud services. It's not recommended in production environment  | false | Boolean
+|===
+// endpoint options: END
+
+== Usage
+
+=== Message properties evaluated by the SMN producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudSmnSubject` |`String` |Subject tag for the outgoing notification
+
+|`CamelHwCloudSmnTopic` |`String` |Smn topic into which the message is to be posted
+
+|`CamelHwCloudSmnMessageTtl` |`Integer` | Validity of the posted notification message
+
+|`CamelHwCloudSmnTemplateTags` |`Map<String, String>` | Contains K,V pairs of tags and values when using operation `publishAsTemplatedMessage`
+
+|`CamelHwCloudSmnTemplateName` |`String` |Name of the template to use while using operation `publishAsTemplatedMessage`
+
+
+|=======================================================================
+
+== Supported smn services
+
+- publishMessageService
+
+
+== Supported smn operations
+
+- publishAsTextMessage
+- publishAsTemplatedMessage
+
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:triggerRoute")
+.setProperty("CamelHwCloudSmnSubject", constant("This is my subjectline"))
+.setProperty("CamelHwCloudSmnTopic", constant("reji-test"))
+.setProperty("CamelHwCloudSmnMessageTtl", constant(60))
+.setProperty("CamelHwCloudSmnTemplateTags", constant(tags))
+.setProperty("CamelHwCloudSmnTemplateName", constant("hello-template"))
+.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
+--------------------------------------------------------------------------------
