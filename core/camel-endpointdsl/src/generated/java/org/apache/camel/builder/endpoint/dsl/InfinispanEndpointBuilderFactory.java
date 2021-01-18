@@ -1767,7 +1767,9 @@ public interface InfinispanEndpointBuilderFactory {
         SKIP_SIZE_OPTIMIZATION,
         IGNORE_TRANSACTION,
         IRAC_UPDATE,
-        IRAC_STATE;
+        IRAC_STATE,
+        ALREADY_HAS_LOCK,
+        BACKUP_WRITE;
     }
 
     public interface InfinispanBuilders {
