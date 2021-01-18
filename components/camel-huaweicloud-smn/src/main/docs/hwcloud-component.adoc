@@ -113,6 +113,18 @@ with the following path and query parameters:
 
 |=======================================================================
 
+=== Message properties set by the SMN producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelSmnMesssageId` |`String` | Unique message id returned by simple message notification server after processing the request
+
+|`CamelSmnRequestId` |`String` | Unique request id returned by simple message notification server after processing the request
+
+|=======================================================================
+
 == Supported smn services
 
 - publishMessageService
