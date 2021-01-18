@@ -111,6 +111,41 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -237,6 +272,22 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointConsumerBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -1156,6 +1207,41 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1282,6 +1368,22 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointProducerBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -1448,6 +1550,40 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1572,6 +1708,22 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
