@@ -58,7 +58,9 @@ public interface CamelEvent {
         StepFailed,
         RouteAdded,
         RouteRemoved,
+        RouteStarting,
         RouteStarted,
+        RouteStopping,
         RouteStopped,
         ServiceStartupFailure,
         ServiceStopFailure,
@@ -345,10 +347,24 @@ public interface CamelEvent {
         }
     }
 
+    interface RouteStartingEvent extends RouteEvent {
+        @Override
+        default Type getType() {
+            return Type.RouteStarting;
+        }
+    }
+
     interface RouteStartedEvent extends RouteEvent {
         @Override
         default Type getType() {
             return Type.RouteStarted;
+        }
+    }
+
+    interface RouteStoppingEvent extends RouteEvent {
+        @Override
+        default Type getType() {
+            return Type.RouteStopping;
         }
     }
 

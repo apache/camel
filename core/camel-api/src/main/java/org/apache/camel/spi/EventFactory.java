@@ -148,12 +148,28 @@ public interface EventFactory {
     CamelEvent createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause);
 
     /**
+     * Creates an {@link CamelEvent} for {@link Route} is starting.
+     *
+     * @param  route the route
+     * @return       the created event
+     */
+    CamelEvent createRouteStartingEvent(Route route);
+
+    /**
      * Creates an {@link CamelEvent} for {@link Route} has been started successfully.
      *
      * @param  route the route
      * @return       the created event
      */
     CamelEvent createRouteStartedEvent(Route route);
+
+    /**
+     * Creates an {@link CamelEvent} for {@link Route} is stopping.
+     *
+     * @param  route the route
+     * @return       the created event
+     */
+    CamelEvent createRouteStoppingEvent(Route route);
 
     /**
      * Creates an {@link CamelEvent} for {@link Route} has been stopped successfully.
