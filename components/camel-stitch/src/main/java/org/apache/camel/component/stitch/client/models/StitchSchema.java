@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#schema-object
  */
-public class StitchSchema {
+public class StitchSchema implements StitchModel {
 
     private final Map<String, Object> keywords;
 
@@ -20,6 +20,11 @@ public class StitchSchema {
 
     public Map<String, Object> getKeywords() {
         return keywords;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        return getKeywords();
     }
 
     public static final class Builder {

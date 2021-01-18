@@ -1,13 +1,11 @@
 package org.apache.camel.component.stitch.client;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -39,6 +37,11 @@ public class StitchClientImpl implements StitchClient {
         return sendBatch(convertMapToByteBuf(requestBody.toMap()));
     }
 
+    @Override
+    public Mono<StitchResponse> batch(Map<String, Object> requestBody) {
+        return sendBatch(convertMapToByteBuf(requestBody));
+    }
+
     private Mono<StitchResponse> sendBatch(final ByteBufMono bodyAsByte) {
         return httpClient
                 .headers(applyHeaders())
@@ -57,15 +60,7 @@ public class StitchClientImpl implements StitchClient {
     }
 
     private ByteBufMono convertMapToByteBuf(final Map<String, Object> bodyAsMap) {
-        return ByteBufMono.fromString(Mono.just(convertBodyToJson(bodyAsMap)));
-    }
-
-    private String convertBodyToJson(final Map<String, Object> bodyAsMap) {
-        try {
-            return new ObjectMapper().writeValueAsString(bodyAsMap);
-        } catch (IOException e) {
-            throw new RuntimeException("Error occurred writing data map to JSON.", e);
-        }
+        return ByteBufMono.fromString(Mono.just(JsonUtils.convertMapToJson(bodyAsMap)));
     }
 
     private Mono<StitchResponse> generateStitchResponse(final HttpClientResponse clientResponse, final ByteBufMono bufMono) {
@@ -85,7 +80,7 @@ public class StitchClientImpl implements StitchClient {
 
                         sink.error(new StitchException(stitchResponse, stitchError));
                     } else {
-                        sink.next(getStitchResponse(code, headers, bodyMap));
+                        sink.next(stitchResponse);
                     }
                 });
     }

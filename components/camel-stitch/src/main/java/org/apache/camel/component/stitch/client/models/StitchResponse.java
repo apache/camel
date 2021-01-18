@@ -1,8 +1,9 @@
 package org.apache.camel.component.stitch.client.models;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class StitchResponse {
+public class StitchResponse implements StitchModel {
     private final int httpStatusCode;
     private final Map<String, Object> headers;
     private final String status;
@@ -49,5 +50,17 @@ public class StitchResponse {
                 = "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: " + message;
 
         return result;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        final Map<String, Object> resultAsMap = new LinkedHashMap<>();
+
+        resultAsMap.put("code", httpStatusCode);
+        resultAsMap.put("headers", headers);
+        resultAsMap.put("status", status);
+        resultAsMap.put("message", message);
+
+        return resultAsMap;
     }
 }

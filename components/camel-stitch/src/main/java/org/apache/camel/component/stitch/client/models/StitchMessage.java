@@ -8,7 +8,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#message-object
  */
-public class StitchMessage {
+public class StitchMessage implements StitchModel {
     public enum Action {
         UPSERT
     };
@@ -39,10 +39,7 @@ public class StitchMessage {
         return data;
     }
 
-    public String toJson() {
-        return "";
-    }
-
+    @Override
     public Map<String, Object> toMap() {
         final Map<String, Object> resultAsMap = new LinkedHashMap<>();
 

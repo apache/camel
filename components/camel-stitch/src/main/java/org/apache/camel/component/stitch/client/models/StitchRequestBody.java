@@ -14,7 +14,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#batch-data--arguments
  */
-public class StitchRequestBody {
+public class StitchRequestBody implements StitchModel {
     private final String tableName;
     private final StitchSchema schema;
     private final List<StitchMessage> messages;
@@ -47,11 +47,12 @@ public class StitchRequestBody {
         return keyNames;
     }
 
+    @Override
     public Map<String, Object> toMap() {
         final Map<String, Object> resultAsMap = new LinkedHashMap<>();
 
         resultAsMap.put("table_name", tableName);
-        resultAsMap.put("schema", schema.getKeywords());
+        resultAsMap.put("schema", schema.toMap());
         resultAsMap.put("messages", messages.stream().map(StitchMessage::toMap).collect(Collectors.toList()));
         resultAsMap.put("key_names", keyNames);
 

@@ -1,6 +1,7 @@
 package org.apache.camel.component.stitch.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.Map;
+
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchResponse;
 import reactor.core.publisher.Mono;
@@ -21,5 +22,7 @@ public interface StitchClient {
      *
      * @param requestBody the required arguments as StitchRequestBody
      */
-    Mono<StitchResponse> batch(final StitchRequestBody requestBody) throws JsonProcessingException;
+    Mono<StitchResponse> batch(StitchRequestBody requestBody);
+
+    Mono<StitchResponse> batch(Map<String, Object> requestBody);
 }
