@@ -84,12 +84,15 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                 while (isRunAllowed()) {
                     try {
                         final Object body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
-                        Exchange exchange = getEndpoint().createExchange();
-                        exchange.getIn().setBody(body);
-                        try {
-                            processor.process(exchange);
-                        } catch (Exception e) {
-                            getExceptionHandler().handleException("Error during processing", exchange, e);
+                        // CAMEL-16035 - If the polling timeout is exceeded with nothing to poll from the queue, the queue.poll() method return NULL
+                        if (body != null) {
+                            Exchange exchange = getEndpoint().createExchange();
+                            exchange.getIn().setBody(body);
+                            try {
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                getExceptionHandler().handleException("Error during processing", exchange, e);
+                            }
                         }
                     } catch (InterruptedException e) {
                         // ignore
