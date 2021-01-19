@@ -20,19 +20,21 @@ public class KinesisFirehose2EndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
-        props.add("proxyPort");
-        props.add("lazyStartProducer");
+        Set<String> props = new HashSet<>(14);
         props.add("amazonKinesisFirehoseClient");
         props.add("proxyProtocol");
         props.add("secretKey");
-        props.add("accessKey");
-        props.add("cborEnabled");
-        props.add("region");
+        props.add("uriEndpointOverride");
         props.add("streamName");
-        props.add("operation");
         props.add("proxyHost");
         props.add("trustAllCertificates");
+        props.add("proxyPort");
+        props.add("lazyStartProducer");
+        props.add("accessKey");
+        props.add("cborEnabled");
+        props.add("overrideEndpoint");
+        props.add("region");
+        props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("secretKey");

@@ -40,7 +40,8 @@ public class KinesisFirehose2Configuration implements Cloneable {
     @UriParam(description = "Amazon Kinesis Firehose client to use for all requests for this endpoint")
     @Metadata(autowired = true)
     private FirehoseClient amazonKinesisFirehoseClient;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(description = "To define a proxy host when instantiating the Kinesis Firehose client")
     private String proxyHost;
@@ -50,12 +51,15 @@ public class KinesisFirehose2Configuration implements Cloneable {
     private KinesisFirehose2Operations operation;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true", description = "This option will set the CBOR_ENABLED property during the execution")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "This option will set the CBOR_ENABLED property during the execution")
     private boolean cborEnabled = true;
-    @UriParam(label = "common", defaultValue = "false", description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride"
-                                                                      + " option")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride"
+                            + " option")
     private boolean overrideEndpoint;
-    @UriParam(label = "common", description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
+    @UriParam(label = "common",
+              description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
 
     public void setAmazonKinesisFirehoseClient(FirehoseClient client) {
@@ -145,7 +149,7 @@ public class KinesisFirehose2Configuration implements Cloneable {
     public void setCborEnabled(boolean cborEnabled) {
         this.cborEnabled = cborEnabled;
     }
-    
+
     public boolean isOverrideEndpoint() {
         return overrideEndpoint;
     }
@@ -168,7 +172,7 @@ public class KinesisFirehose2Configuration implements Cloneable {
 
     public KinesisFirehose2Configuration copy() {
         try {
-            return (KinesisFirehose2Configuration)super.clone();
+            return (KinesisFirehose2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

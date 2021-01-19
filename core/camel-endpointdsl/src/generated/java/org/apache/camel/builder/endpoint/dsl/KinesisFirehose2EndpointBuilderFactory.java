@@ -102,6 +102,41 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -315,6 +350,22 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         default KinesisFirehose2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
