@@ -14,16 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch.client.models;
+package org.apache.camel.component.stitch.client;
 
-import java.util.Map;
+public enum StitchRegion {
+    NORTH_AMERICA("api.stitchdata.com"),
+    EUROPE("api.eu-central-1.stitchdata.com");
 
-public interface StitchModel {
+    private final String url;
 
-    /**
-     * Create a map representation of the model which is essentially the JSON representation of the model.
-     *
-     * @return {@link Map<String,Object>}
-     */
-    Map<String, Object> toMap();
+    StitchRegion(final String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public static StitchRegion fromString(final String regionAsText) {
+        for (StitchRegion stitchRegion : StitchRegion.values()) {
+            if (regionAsText.equalsIgnoreCase(stitchRegion.toString())) {
+                return stitchRegion;
+            }
+        }
+        throw new IllegalArgumentException(String.format("'%s' does not exist!", regionAsText));
+    }
 }

@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch.client.models;
+package org.apache.camel.component.stitch.client;
 
-import java.util.Map;
+import org.junit.jupiter.api.Test;
 
-public interface StitchModel {
+import static org.junit.jupiter.api.Assertions.*;
 
-    /**
-     * Create a map representation of the model which is essentially the JSON representation of the model.
-     *
-     * @return {@link Map<String,Object>}
-     */
-    Map<String, Object> toMap();
+class StitchRegionTest {
+
+    @Test
+    void testCreateRegion() {
+        assertEquals(StitchRegion.EUROPE, StitchRegion.fromString("europe"));
+        assertEquals(StitchRegion.EUROPE, StitchRegion.fromString("eurOpe"));
+        assertEquals(StitchRegion.NORTH_AMERICA, StitchRegion.fromString("north_america"));
+        assertEquals(StitchRegion.NORTH_AMERICA, StitchRegion.fromString("NORTH_AMERICA"));
+    }
 }

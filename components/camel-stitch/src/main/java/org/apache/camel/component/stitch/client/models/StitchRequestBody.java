@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.Arrays;
@@ -15,6 +31,12 @@ import org.apache.camel.util.ObjectHelper;
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#batch-data--arguments
  */
 public class StitchRequestBody implements StitchModel {
+    // property names
+    public static final String TABLE_NAME = "table_name";
+    public static final String SCHEMA = "schema";
+    public static final String MESSAGES = "messages";
+    public static final String KEY_NAMES = "key_names";
+
     private final String tableName;
     private final StitchSchema schema;
     private final List<StitchMessage> messages;
@@ -51,10 +73,10 @@ public class StitchRequestBody implements StitchModel {
     public Map<String, Object> toMap() {
         final Map<String, Object> resultAsMap = new LinkedHashMap<>();
 
-        resultAsMap.put("table_name", tableName);
-        resultAsMap.put("schema", schema.toMap());
-        resultAsMap.put("messages", messages.stream().map(StitchMessage::toMap).collect(Collectors.toList()));
-        resultAsMap.put("key_names", keyNames);
+        resultAsMap.put(TABLE_NAME, tableName);
+        resultAsMap.put(SCHEMA, schema.toMap());
+        resultAsMap.put(MESSAGES, messages.stream().map(StitchMessage::toMap).collect(Collectors.toList()));
+        resultAsMap.put(KEY_NAMES, keyNames);
 
         return resultAsMap;
     }

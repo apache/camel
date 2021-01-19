@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch.client.models;
+package org.apache.camel.component.stitch;
 
-import java.util.Map;
+import java.util.Properties;
 
-public interface StitchModel {
+public final class StitchTestUtils {
 
-    /**
-     * Create a map representation of the model which is essentially the JSON representation of the model.
-     *
-     * @return {@link Map<String,Object>}
-     */
-    Map<String, Object> toMap();
+    private StitchTestUtils() {
+    }
+
+    public static Properties loadStitchTokenFromJvmEnv() throws Exception {
+        final Properties properties = new Properties();
+        if (System.getProperty("token") == null) {
+            throw new Exception(
+                    "Make sure to supply Stitch token, e.g:  mvn verify -PfullTests -Dtoken=mytoken");
+        }
+        properties.setProperty("token", System.getProperty("token"));
+
+        return properties;
+    }
+
 }

@@ -16,37 +16,28 @@
  */
 package org.apache.camel.component.stitch.client.models;
 
-public class StitchException extends RuntimeException {
-    private final StitchResponse response;
-    private StitchError error;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-    public StitchException(StitchResponse response, Throwable cause) {
-        super(cause);
-        this.response = response;
-    }
+import org.apache.camel.component.stitch.client.JsonUtils;
+import org.junit.jupiter.api.Test;
 
-    public StitchException(StitchResponse response) {
-        super();
-        this.response = response;
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    public StitchException(StitchResponse response, StitchError error, Throwable cause) {
-        super(cause);
-        this.response = response;
-        this.error = error;
-    }
+class StitchResponseTest {
 
-    public StitchException(StitchResponse response, StitchError error) {
-        super();
-        this.response = response;
-        this.error = error;
-    }
+    @Test
+    void testIfCreateStitchResponse() {
+        final Map<String, Object> headers = new LinkedHashMap<>();
+        headers.put("test_header_1", "test1");
+        headers.put("test_header_2", "test2");
 
-    public StitchResponse getResponse() {
-        return response;
-    }
+        final StitchResponse response = new StitchResponse(200, headers, "test", "testing");
 
-    public StitchError getError() {
-        return error;
+        final String responseAsJson = JsonUtils.convertMapToJson(response.toMap());
+
+        assertEquals("{\"code\":200,\"headers\":{\"test_header_1\":\"test1\",\"test_header_2\":\"test2\"},"
+                     + "\"status\":\"test\",\"message\":\"testing\"}",
+                responseAsJson);
     }
 }
