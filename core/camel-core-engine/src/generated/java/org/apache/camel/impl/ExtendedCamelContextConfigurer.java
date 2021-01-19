@@ -147,6 +147,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": target.setShutdownRunningTask(property(camelContext, org.apache.camel.ShutdownRunningTask.class, value)); return true;
         case "shutdownstrategy":
         case "ShutdownStrategy": target.setShutdownStrategy(property(camelContext, org.apache.camel.spi.ShutdownStrategy.class, value)); return true;
+        case "startupsteprecorder":
+        case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "streamcaching":
         case "StreamCaching": target.setStreamCaching(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "streamcachingstrategy":
@@ -308,6 +310,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": return org.apache.camel.ShutdownRunningTask.class;
         case "shutdownstrategy":
         case "ShutdownStrategy": return org.apache.camel.spi.ShutdownStrategy.class;
+        case "startupsteprecorder":
+        case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "streamcaching":
         case "StreamCaching": return java.lang.Boolean.class;
         case "streamcachingstrategy":
@@ -470,6 +474,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ShutdownRunningTask": return target.getShutdownRunningTask();
         case "shutdownstrategy":
         case "ShutdownStrategy": return target.getShutdownStrategy();
+        case "startupsteprecorder":
+        case "StartupStepRecorder": return target.getStartupStepRecorder();
         case "streamcaching":
         case "StreamCaching": return target.isStreamCaching();
         case "streamcachingstrategy":

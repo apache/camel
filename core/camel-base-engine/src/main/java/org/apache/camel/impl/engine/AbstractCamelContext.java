@@ -69,6 +69,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
+import org.apache.camel.StartupStep;
 import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
@@ -140,6 +141,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
@@ -152,6 +154,7 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultStartupStepRecorder;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -305,12 +308,14 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile boolean eventNotificationApplicable;
     private volatile TransformerRegistry<TransformerKey> transformerRegistry;
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
+    private volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     private EndpointRegistry<EndpointKey> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
     private long startDate;
+    private long bootDate;
 
     private SSLContextParameters sslContextParameters;
 
@@ -576,7 +581,9 @@ public abstract class AbstractCamelContext extends BaseService
             if (component != null && created.get() && autoStart && (isStarted() || isStarting())) {
                 // If the component is looked up after the context is started,
                 // lets start it up.
+                StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Starting component");
                 startService(component);
+                startupStepRecorder.endStep(step);
             }
 
             return component;
@@ -594,6 +601,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Component initComponent(String name, boolean autoCreateComponents) {
         Component component = null;
         if (autoCreateComponents) {
+            StartupStep step = startupStepRecorder.beginStep(Component.class, name, "Resolving component");
             try {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
@@ -647,6 +655,7 @@ public abstract class AbstractCamelContext extends BaseService
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot auto create component: " + name, e);
             }
+            startupStepRecorder.endStep(step);
         }
         return component;
     }
@@ -794,7 +803,17 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Endpoint getEndpoint(String uri) {
-        return doGetEndpoint(uri, null, false, false);
+        StartupStep step = null;
+        // only record startup step during startup (not started)
+        if (!isStarted() && startupStepRecorder.isEnabled()) {
+            String u = URISupport.sanitizeUri(uri);
+            step = startupStepRecorder.beginStep(Endpoint.class, u, "Getting endpoint");
+        }
+        Endpoint answer = doGetEndpoint(uri, null, false, false);
+        if (step != null) {
+            startupStepRecorder.endStep(step);
+        }
+        return answer;
     }
 
     @Override
@@ -2507,25 +2526,35 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doBuild() throws Exception {
+        bootDate = System.currentTimeMillis();
+        startupStepRecorder.start();
+        StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Building context");
+
         // Initialize LRUCacheFactory as eager as possible,
         // to let it warm up concurrently while Camel is startup up
         if (initialization != Initialization.Lazy) {
+            StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, null, "Setting up LRUCacheFactory");
             LRUCacheFactory.init();
+            startupStepRecorder.endStep(step2);
         }
 
         // Setup management first since end users may use it to add event
         // notifiers using the management strategy before the CamelContext has been started
+        StartupStep step3 = startupStepRecorder.beginStep(CamelContext.class, null, "Setting up Management");
         setupManagement(null);
+        startupStepRecorder.endStep(step3);
 
         // setup health-check registry as its needed this early phase for 3rd party to register custom repositories
         HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
         if (hcr == null) {
+            StartupStep step4 = startupStepRecorder.beginStep(CamelContext.class, null, "Setting up HealthCheckRegistry");
             hcr = createHealthCheckRegistry();
             if (hcr != null) {
                 // install health-check registry if it was discovered from classpath (camel-health)
                 hcr.setCamelContext(this);
                 setExtension(HealthCheckRegistry.class, hcr);
             }
+            startupStepRecorder.endStep(step4);
         }
 
         // Call all registered trackers with this context
@@ -2534,15 +2563,20 @@ public abstract class AbstractCamelContext extends BaseService
 
         // Setup type converter eager as its highly in use and should not be lazy initialized
         if (eagerCreateTypeConverter()) {
+            StartupStep step5 = startupStepRecorder.beginStep(CamelContext.class, null, "Setting up TypeConverter");
             getOrCreateTypeConverter();
+            startupStepRecorder.endStep(step5);
         }
+
+        startupStepRecorder.endStep(step);
     }
 
     @Override
     public void doInit() throws Exception {
-        // start the route controller
+        StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Initializing context");
+
+        // init the route controller
         this.routeController = getRouteController();
-        ServiceHelper.initService(this.routeController);
 
         // optimize - before starting routes lets check if event notifications is possible
         eventNotificationApplicable = EventHelper.eventsApplicable(this);
@@ -2655,7 +2689,9 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // start the route definitions before the routes is started
+        StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, getName(), "Initializing routes");
         startRouteDefinitions();
+        startupStepRecorder.endStep(step2);
 
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
@@ -2673,10 +2709,14 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         EventHelper.notifyCamelContextInitialized(this);
+
+        startupStepRecorder.endStep(step);
     }
 
     @Override
     protected void doStart() throws Exception {
+        StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Starting context");
+
         try {
             doStartContext();
         } catch (Exception e) {
@@ -2684,6 +2724,12 @@ public abstract class AbstractCamelContext extends BaseService
             EventHelper.notifyCamelContextStartupFailed(AbstractCamelContext.this, e);
             // rethrow cause
             throw e;
+        }
+
+        startupStepRecorder.endStep(step);
+
+        if (startupStepRecorder.isDisableAfterStarted()) {
+            startupStepRecorder.stop();
         }
     }
 
@@ -2797,7 +2843,9 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+        String start = TimeUtils.printDuration(stopWatch.taken());
+        String boot = TimeUtils.printDuration(new StopWatch(bootDate).taken());
+        LOG.info("Apache Camel {} ({}) started in {} (incl boot {})", getVersion(), getName(), start, boot);
     }
 
     protected void doStartCamel() throws Exception {
@@ -2935,9 +2983,11 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // invoke this logic to warmup the routes and if possible also start the routes
+        StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, getName(), "Starting routes");
         EventHelper.notifyCamelContextRoutesStarting(this);
         internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
         EventHelper.notifyCamelContextRoutesStarted(this);
+        startupStepRecorder.endStep(step2);
 
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
@@ -3082,6 +3132,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // and clear start date
         startDate = 0;
+        bootDate = 0;
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -4497,6 +4548,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public EndpointUriFactory getEndpointUriFactory(String scheme) {
         return getUriFactoryResolver().resolveFactory(scheme, this);
+    }
+
+    @Override
+    public StartupStepRecorder getStartupStepRecorder() {
+        return startupStepRecorder;
+    }
+
+    @Override
+    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
+        this.startupStepRecorder = startupStepRecorder;
     }
 
     @Deprecated

@@ -124,6 +124,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
@@ -1535,6 +1536,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public boolean isLightweight() {
         return getExtendedCamelContext().isLightweight();
+    }
+
+    @Override
+    public StartupStepRecorder getStartupStepRecorder() {
+        return getExtendedCamelContext().getStartupStepRecorder();
+    }
+
+    @Override
+    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
+        getExtendedCamelContext().setStartupStepRecorder(startupStepRecorder);
     }
 
     //
