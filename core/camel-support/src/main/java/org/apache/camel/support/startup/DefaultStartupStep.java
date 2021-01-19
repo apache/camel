@@ -74,7 +74,7 @@ public class DefaultStartupStep implements StartupStep {
     }
 
     @Override
-    public void end() {
+    public void endStep() {
         // noop
     }
 

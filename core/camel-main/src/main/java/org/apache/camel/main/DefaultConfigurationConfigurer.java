@@ -68,7 +68,6 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
-import org.apache.camel.support.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,11 +92,15 @@ public final class DefaultConfigurationConfigurer {
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
-        if (config.getStartupRecorder() != null && !"false".equals(config.getStartupRecorder())) {
-            if ("logging".equals(config.getStartupRecorder())) {
+        if (config.getStartupRecorder() != null) {
+            if ("false".equals(config.getStartupRecorder())) {
+                ecc.getStartupStepRecorder().setEnabled(false);
+            } else if ("logging".equals(config.getStartupRecorder())) {
                 ecc.setStartupStepRecorder(new LoggingStartupStepRecorder());
             } else if ("java-flight-recorder".equals(config.getStartupRecorder())) {
-                ecc.setStartupStepRecorder(new FlightRecorderStartupStepRecorder());
+                if (!ecc.getStartupStepRecorder().getClass().getName().startsWith("org.apache.camel.startup.jfr"))
+                    throw new IllegalArgumentException(
+                            "Cannot find Camel Java Flight Recorder on classpath. Add camel-jfr to classpath.");
             }
         }
         ecc.getStartupStepRecorder().setMaxDepth(config.getStartupRecorderMaxDepth());

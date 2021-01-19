@@ -14,14 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support.startup.jfr;
+package org.apache.camel.startup.jfr;
 
 import org.apache.camel.StartupStep;
+import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 
 /**
  * To capture startup steps to be emitted to Java Flight Recorder.
  */
+@JdkService(StartupStepRecorder.FACTORY)
 public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorder {
 
     public FlightRecorderStartupStepRecorder() {
@@ -30,7 +33,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
 
     @Override
     public StartupStep createStartupStep(String type, String name, String description, int id, int parentId, int level) {
-        return new FlightRecorderStartupStep(name, id, parentId);
+        return new FlightRecorderStartupStep(name, id, parentId, level, type, description);
     }
 
     @Override

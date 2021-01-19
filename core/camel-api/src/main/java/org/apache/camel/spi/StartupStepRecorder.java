@@ -26,6 +26,11 @@ import org.apache.camel.StaticService;
 public interface StartupStepRecorder extends StaticService {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "startup-step-recorder";
+
+    /**
      * Whether recording is enabled
      */
     boolean isEnabled();
@@ -59,7 +64,7 @@ public interface StartupStepRecorder extends StaticService {
 
     /**
      * Beings a new step.
-     *
+     * <p>
      * Important must call {@link #endStep(StartupStep)} to end the step.
      *
      * @param type        the source

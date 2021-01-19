@@ -245,6 +245,7 @@
         <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
+        <module>camel-jfr</module>
         <module>camel-jgroups-raft</module>
         <module>camel-jgroups</module>
         <module>camel-jing</module>

@@ -2527,9 +2527,17 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void doBuild() throws Exception {
         bootDate = System.currentTimeMillis();
-        if (!(startupStepRecorder instanceof DefaultStartupStepRecorder)) {
-            LOG.info("Using startup recorder: {}", startupStepRecorder);
+
+        // auto-detect step recorder from classpath if not explicit configured
+        if (startupStepRecorder instanceof DefaultStartupStepRecorder) {
+            StartupStepRecorder fr = getBootstrapFactoryFinder()
+                    .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
+            if (fr != null) {
+                LOG.debug("Discovered startup recorder: {} from classpath", fr);
+                startupStepRecorder = fr;
+            }
         }
+
         startupStepRecorder.start();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Building context");
 
@@ -2718,6 +2726,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     protected void doStart() throws Exception {
+        if (!"DefaultStartupStepRecorder".equals(startupStepRecorder.getClass().getSimpleName())) {
+            LOG.info("Using startup recorder: {}", startupStepRecorder);
+        }
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Starting context");
 
         try {

@@ -55,7 +55,7 @@ public interface StartupStep {
     /**
      * Ends the step.
      */
-    void end();
+    void endStep();
 
     /**
      * Gets the begin time (optional).

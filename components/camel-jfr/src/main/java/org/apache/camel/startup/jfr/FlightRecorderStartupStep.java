@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support.startup.jfr;
+package org.apache.camel.startup.jfr;
 
 import jdk.jfr.Category;
 import jdk.jfr.Description;
@@ -33,21 +33,27 @@ public class FlightRecorderStartupStep extends Event implements StartupStep {
 
     public static final String NAME = "org.apache.camel.spi.CamelEvent";
 
-    @Label("Event Name")
+    @Label("Event Source")
     public final String name;
     @Label("Event Id")
     public final int id;
     @Label("Event Parent Id")
     public final int parentId;
+    @Label("Event Depth")
+    public final int depth;
     @Label("Event Type")
-    public String type;
+    public final String type;
     @Label("Event Description")
-    public String description;
+    public final String description;
 
-    public FlightRecorderStartupStep(String name, int id, int parentId) {
+    public FlightRecorderStartupStep(String name, int id, int parentId, int depth, String type, String description) {
         this.name = name;
         this.id = id;
         this.parentId = parentId;
+        this.depth = depth;
+        this.type = type;
+        this.description = description;
+        begin();
     }
 
     @Override
@@ -67,8 +73,7 @@ public class FlightRecorderStartupStep extends Event implements StartupStep {
 
     @Override
     public int getLevel() {
-        // not used by jfr
-        return 0;
+        return depth;
     }
 
     @Override
@@ -85,5 +90,11 @@ public class FlightRecorderStartupStep extends Event implements StartupStep {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public void endStep() {
+        end();
+        commit();
     }
 }

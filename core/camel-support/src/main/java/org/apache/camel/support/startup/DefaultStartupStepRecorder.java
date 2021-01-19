@@ -63,7 +63,7 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
         }
 
         @Override
-        public void end() {
+        public void endStep() {
             // noop
         }
 
@@ -140,7 +140,7 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
     public void endStep(StartupStep step) {
         if (step != DISABLED_STEP) {
             currentSteps.pollFirst();
-            step.end();
+            step.endStep();
             onEndStep(step);
         }
     }

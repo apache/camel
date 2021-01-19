@@ -12,6 +12,7 @@
 ** xref:headersmap.adoc[Headersmap]
 ** xref:hystrix.adoc[Hystrix]
 ** xref:jasypt.adoc[Jasypt]
+** xref:jfr.adoc[Jfr]
 ** xref:jta.adoc[JTA]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:leveldb-legacy.adoc[LevelDB-legacy]
