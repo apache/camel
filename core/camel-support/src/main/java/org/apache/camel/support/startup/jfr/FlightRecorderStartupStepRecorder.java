@@ -14,52 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.support.startup.jfr;
+
+import org.apache.camel.StartupStep;
+import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 
 /**
- * Recording state of steps during startup to capture execution time, and being able to emit events to diagnostic tools
- * such as Java Flight Recorder.
+ * To capture startup steps to be emitted to Java Flight Recorder.
  */
-public interface StartupStep {
+public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorder {
 
-    /**
-     * The source class type of the step
-     */
-    String getType();
+    public FlightRecorderStartupStepRecorder() {
+        setEnabled(true);
+    }
 
-    /**
-     * Name of the step
-     */
-    String getName();
+    @Override
+    public StartupStep createStartupStep(String type, String name, String description, int id, int parentId, int level) {
+        return new FlightRecorderStartupStep(name, id, parentId);
+    }
 
-    /**
-     * Description of the step
-     */
-    String getDescription();
-
-    /**
-     * The id of the step
-     */
-    int getId();
-
-    /**
-     * The id of the parent step
-     */
-    int getParentId();
-
-    /**
-     * The step level (sub step of previous steps)
-     */
-    int getLevel();
-
-    /**
-     * Ends the step.
-     */
-    void end();
-
-    /**
-     * Gets the begin time (optional).
-     */
-    long getBeginTime();
-
+    @Override
+    public String toString() {
+        return "java-flight-recorder";
+    }
 }

@@ -14,27 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.support.startup;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.StartupStep;
 import org.apache.camel.spi.StartupStepRecorder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link StartupStepRecorder} that outputs to log.
+ * Default {@link StartupStepRecorder} that is always disabled.
  */
 public class DefaultStartupStepRecorder implements StartupStepRecorder {
-
-    private static final Logger LOG = LoggerFactory.getLogger(StartupStepRecorder.class);
-
-    // TODO: jfr implementation
-    // TODO: spring-boot implementation
 
     private final AtomicInteger stepCounter = new AtomicInteger();
     private final Deque<Integer> currentSteps = new ArrayDeque<>();
@@ -80,13 +72,10 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
             return 0;
         }
 
-        @Override
-        public void addTag(String key, String value) {
-            // noop
-        }
     };
 
     public DefaultStartupStepRecorder() {
+        currentSteps.offerFirst(0);
     }
 
     private boolean enabled;
@@ -165,25 +154,7 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
     }
 
     protected void onEndStep(StartupStep step) {
-        if (LOG.isInfoEnabled()) {
-            long delta = System.currentTimeMillis() - step.getBeginTime();
-            String pad = padString(step.getLevel());
-            String out = String.format("%s", pad + step.getType());
-            String out2 = String.format("%6s ms", delta);
-            String out3 = String.format("%s(%s)", step.getDescription(), step.getName());
-            LOG.info("{} : {} - {}", out2, out, out3);
-        }
-    }
-
-    public static String padString(int level) {
-        if (level == 0) {
-            return "";
-        } else {
-            byte[] arr = new byte[level * 2];
-            byte space = ' ';
-            Arrays.fill(arr, space);
-            return new String(arr);
-        }
+        // noop
     }
 
 }

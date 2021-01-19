@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.support.startup;
 
 import org.apache.camel.StartupStep;
 
@@ -78,8 +78,4 @@ public class DefaultStartupStep implements StartupStep {
         // noop
     }
 
-    @Override
-    public void addTag(String key, String value) {
-
-    }
 }

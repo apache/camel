@@ -143,6 +143,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": target.setShutdownSuppressLoggingOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdowntimeout":
         case "ShutdownTimeout": target.setShutdownTimeout(property(camelContext, int.class, value)); return true;
+        case "startuprecorder":
+        case "StartupRecorder": target.setStartupRecorder(property(camelContext, java.lang.String.class, value)); return true;
+        case "startuprecordermaxdepth":
+        case "StartupRecorderMaxDepth": target.setStartupRecorderMaxDepth(property(camelContext, int.class, value)); return true;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": target.setStreamCachingAnySpoolRules(property(camelContext, boolean.class, value)); return true;
         case "streamcachingbuffersize":
@@ -310,6 +314,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": return boolean.class;
         case "shutdowntimeout":
         case "ShutdownTimeout": return int.class;
+        case "startuprecorder":
+        case "StartupRecorder": return java.lang.String.class;
+        case "startuprecordermaxdepth":
+        case "StartupRecorderMaxDepth": return int.class;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return boolean.class;
         case "streamcachingbuffersize":
@@ -478,6 +486,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": return target.isShutdownSuppressLoggingOnTimeout();
         case "shutdowntimeout":
         case "ShutdownTimeout": return target.getShutdownTimeout();
+        case "startuprecorder":
+        case "StartupRecorder": return target.getStartupRecorder();
+        case "startuprecordermaxdepth":
+        case "StartupRecorderMaxDepth": return target.getStartupRecorderMaxDepth();
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return target.isStreamCachingAnySpoolRules();
         case "streamcachingbuffersize":

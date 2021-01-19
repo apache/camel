@@ -59,6 +59,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
@@ -66,6 +67,8 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.startup.LoggingStartupStepRecorder;
+import org.apache.camel.support.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +92,16 @@ public final class DefaultConfigurationConfigurer {
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+
+        if (config.getStartupRecorder() != null && !"false".equals(config.getStartupRecorder())) {
+            if ("logging".equals(config.getStartupRecorder())) {
+                ecc.setStartupStepRecorder(new LoggingStartupStepRecorder());
+            } else if ("java-flight-recorder".equals(config.getStartupRecorder())) {
+                ecc.setStartupStepRecorder(new FlightRecorderStartupStepRecorder());
+            }
+        }
+        ecc.getStartupStepRecorder().setMaxDepth(config.getStartupRecorderMaxDepth());
+
         ecc.setLightweight(config.isLightweight());
         ecc.getBeanPostProcessor().setEnabled(config.isBeanPostProcessorEnabled());
         ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
@@ -239,6 +252,10 @@ public final class DefaultConfigurationConfigurer {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
+        StartupStepRecorder ssr = getSingleBeanOfType(registry, StartupStepRecorder.class);
+        if (ssr != null) {
+            ecc.setStartupStepRecorder(ssr);
+        }
         PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
         if (pc != null) {
             ecc.setPropertiesComponent(pc);

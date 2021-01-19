@@ -36,14 +36,14 @@ public interface StartupStepRecorder extends StaticService {
     void setEnabled(boolean enabled);
 
     /**
-     * Whether to automatic disable this recorder after Camel has been started.
-     * This is done by default to remove any overhead after the startup process is done.
+     * Whether to automatic disable this recorder after Camel has been started. This is done by default to remove any
+     * overhead after the startup process is done.
      */
     boolean isDisableAfterStarted();
 
     /**
-     * Whether to automatic disable this recorder after Camel has been started.
-     * This is done by default to remove any overhead after the startup process is done.
+     * Whether to automatic disable this recorder after Camel has been started. This is done by default to remove any
+     * overhead after the startup process is done.
      */
     void setDisableAfterStarted(boolean disableAfterStarted);
 

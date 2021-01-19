@@ -154,7 +154,6 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultStartupStepRecorder;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -165,6 +164,7 @@ import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -2527,6 +2527,9 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void doBuild() throws Exception {
         bootDate = System.currentTimeMillis();
+        if (!(startupStepRecorder instanceof DefaultStartupStepRecorder)) {
+            LOG.info("Using startup recorder: {}", startupStepRecorder);
+        }
         startupStepRecorder.start();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Building context");
 
@@ -3249,6 +3252,8 @@ public abstract class AbstractCamelContext extends BaseService
                 // start the route service
                 routeServices.put(routeService.getId(), routeService);
                 if (shouldStartRoutes()) {
+                    StartupStep step
+                            = startupStepRecorder.beginStep(Route.class, routeService.getId(), "Starting route services");
                     // this method will log the routes being started
                     internalRouteStartupManager.safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
                     // start route services if it was configured to auto startup
@@ -3259,6 +3264,7 @@ public abstract class AbstractCamelContext extends BaseService
                         // starting a route (not adding new routes)
                         routeService.start();
                     }
+                    startupStepRecorder.endStep(step);
                 }
             }
         } finally {

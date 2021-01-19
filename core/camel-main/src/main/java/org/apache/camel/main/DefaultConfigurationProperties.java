@@ -100,6 +100,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
     private boolean routeControllerUnhealthyOnExhausted;
+    private String startupRecorder;
+    private int startupRecorderMaxDepth = -1;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -1096,6 +1098,35 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeControllerUnhealthyOnExhausted = routeControllerUnhealthyOnExhausted;
     }
 
+    public String getStartupRecorder() {
+        return startupRecorder;
+    }
+
+    /**
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
+     * logging, java-flight-recorder
+     *
+     * The default is false.
+     */
+    public void setStartupRecorder(String startupRecorder) {
+        this.startupRecorder = startupRecorder;
+    }
+
+    public int getStartupRecorderMaxDepth() {
+        return startupRecorderMaxDepth;
+    }
+
+    /**
+     * To filter our sub steps at a maximum depth.
+     *
+     * Use -1 for no maximum. Use 0 for no sub steps. Use 1 for max 1 sub step, and so forth.
+     *
+     * The default is -1.
+     */
+    public void setStartupRecorderMaxDepth(int startupRecorderMaxDepth) {
+        this.startupRecorderMaxDepth = startupRecorderMaxDepth;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1844,6 +1875,29 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
         this.routeControllerUnhealthyOnExhausted = unhealthyOnExhausted;
+        return (T) this;
+    }
+
+    /**
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
+     * logging, java-flight-recorder
+     *
+     * The default is false.
+     */
+    public T withStartupRecorder(String startupRecorder) {
+        this.startupRecorder = startupRecorder;
+        return (T) this;
+    }
+
+    /**
+     * To filter our sub steps at a maximum depth.
+     *
+     * Use -1 for no maximum. Use 0 for no sub steps. Use 1 for max 1 sub step, and so forth.
+     *
+     * The default is -1.
+     */
+    public T withStartupRecorderMaxDepth(int startupRecorderMaxDepth) {
+        this.startupRecorderMaxDepth = startupRecorderMaxDepth;
         return (T) this;
     }
 
