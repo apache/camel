@@ -82,12 +82,13 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
-    
+
     @Test
     public void createEndpointWithOverride() throws Exception {
         KinesisFirehose2Component component = context.getComponent("aws2-kinesis-firehose", KinesisFirehose2Component.class);
         KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) component
-                .createEndpoint("aws2-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:4567");
+                .createEndpoint(
+                        "aws2-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:4567");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
