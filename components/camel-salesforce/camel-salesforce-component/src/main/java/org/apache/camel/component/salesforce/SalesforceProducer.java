@@ -25,6 +25,7 @@ import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.processor.AnalyticsApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor;
+import org.apache.camel.component.salesforce.internal.processor.BulkApiV2Processor;
 import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
@@ -53,6 +54,8 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         final OperationName operationName = endpoint.getOperationName();
         if (isBulkOperation(operationName)) {
             processor = new BulkApiProcessor(endpoint);
+        } else if (isBulkV2Operation(operationName)) {
+            processor = new BulkApiV2Processor(endpoint);
         } else if (isAnalyticsOperation(operationName)) {
             processor = new AnalyticsApiProcessor(endpoint);
         } else if (isCompositeOperation(operationName)) {
@@ -65,6 +68,30 @@ public class SalesforceProducer extends DefaultAsyncProducer {
             } else {
                 processor = new XmlRestProcessor(endpoint);
             }
+        }
+    }
+
+    private boolean isBulkV2Operation(OperationName operationName) {
+        switch (operationName) {
+            case BULK2_CREATE_JOB:
+            case BULK2_CREATE_BATCH:
+            case BULK2_CLOSE_JOB:
+            case BULK2_GET_JOB:
+            case BULK2_ABORT_JOB:
+            case BULK2_DELETE_JOB:
+            case BULK2_GET_SUCCESSFUL_RESULTS:
+            case BULK2_GET_FAILED_RESULTS:
+            case BULK2_GET_UNPROCESSED_RECORDS:
+            case BULK2_GET_ALL_JOBS:
+            case BULK2_CREATE_QUERY_JOB:
+            case BULK2_GET_QUERY_JOB:
+            case BULK2_GET_QUERY_JOB_RESULTS:
+            case BULK2_ABORT_QUERY_JOB:
+            case BULK2_DELETE_QUERY_JOB:
+            case BULK2_GET_ALL_QUERY_JOBS:
+                return true;
+            default:
+                return false;
         }
     }
 

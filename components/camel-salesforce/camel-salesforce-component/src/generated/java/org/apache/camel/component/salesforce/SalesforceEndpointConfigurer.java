@@ -77,6 +77,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
         case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "querylocator":
+        case "queryLocator": target.getConfiguration().setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": target.getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
         case "replayid":
@@ -170,6 +172,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
         case "objectmapper":
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "querylocator":
+        case "queryLocator": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
         case "replayid":
@@ -264,6 +268,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": return target.getConfiguration().getNotifyForOperations();
         case "objectmapper":
         case "objectMapper": return target.getConfiguration().getObjectMapper();
+        case "querylocator":
+        case "queryLocator": return target.getConfiguration().getQueryLocator();
         case "rawpayload":
         case "rawPayload": return target.getConfiguration().isRawPayload();
         case "replayid":

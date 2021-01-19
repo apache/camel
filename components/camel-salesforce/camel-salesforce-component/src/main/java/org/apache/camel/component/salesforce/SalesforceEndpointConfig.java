@@ -72,6 +72,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String JOB_ID = "jobId";
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
+    public static final String QUERY_LOCATOR = "queryLocator";
 
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
@@ -142,6 +143,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String batchId;
     @UriParam
     private String resultId;
+    @UriParam
+    private String queryLocator;
 
     // Streaming API properties
     @UriParam
@@ -450,6 +453,18 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public boolean isUpdateTopic() {
         return updateTopic;
+    }
+
+    public String getQueryLocator() {
+        return queryLocator;
+    }
+
+    /**
+     * Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a
+     * single call. Use this value in a subsequent call to retrieve additional records.
+     */
+    public void setQueryLocator(String queryLocator) {
+        this.queryLocator = queryLocator;
     }
 
     /**

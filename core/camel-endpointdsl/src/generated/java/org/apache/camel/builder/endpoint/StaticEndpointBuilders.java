@@ -13170,7 +13170,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * There are 43 enums and the value can be one of: getVersions,
+     * There are 59 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -13179,7 +13179,12 @@ public class StaticEndpointBuilders {
      * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
      * getReportDescription, executeSyncReport, executeAsyncReport,
      * getReportInstances, getReportResults, limits, approval, approvals,
-     * composite-tree, composite-batch, composite
+     * composite-tree, composite-batch, composite, bulk2GetAllJobs,
+     * bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob,
+     * bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults,
+     * bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob,
+     * bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults,
+     * bulk2AbortQueryJob, bulk2DeleteQueryJob
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
@@ -13203,7 +13208,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * There are 43 enums and the value can be one of: getVersions,
+     * There are 59 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -13212,7 +13217,12 @@ public class StaticEndpointBuilders {
      * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
      * getReportDescription, executeSyncReport, executeAsyncReport,
      * getReportInstances, getReportResults, limits, approval, approvals,
-     * composite-tree, composite-batch, composite
+     * composite-tree, composite-batch, composite, bulk2GetAllJobs,
+     * bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob,
+     * bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults,
+     * bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob,
+     * bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults,
+     * bulk2AbortQueryJob, bulk2DeleteQueryJob
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
