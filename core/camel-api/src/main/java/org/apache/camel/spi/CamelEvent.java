@@ -41,10 +41,6 @@ public interface CamelEvent {
         CamelContextStopping,
         CamelContextSuspended,
         CamelContextSuspending,
-        CamelContextRoutesStarting,
-        CamelContextRoutesStarted,
-        CamelContextRoutesStopping,
-        CamelContextRoutesStopped,
         ExchangeCompleted,
         ExchangeCreated,
         ExchangeFailed,
@@ -53,9 +49,10 @@ public interface CamelEvent {
         ExchangeRedelivery,
         ExchangeSending,
         ExchangeSent,
-        StepStarted,
-        StepCompleted,
-        StepFailed,
+        RoutesStarting,
+        RoutesStarted,
+        RoutesStopping,
+        RoutesStopped,
         RouteAdded,
         RouteRemoved,
         RouteStarting,
@@ -64,6 +61,9 @@ public interface CamelEvent {
         RouteStopped,
         ServiceStartupFailure,
         ServiceStopFailure,
+        StepStarted,
+        StepCompleted,
+        StepFailed,
         Custom
     }
 
@@ -186,28 +186,28 @@ public interface CamelEvent {
     interface CamelContextRoutesStartingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
-            return Type.CamelContextRoutesStarting;
+            return Type.RoutesStarting;
         }
     }
 
     interface CamelContextRoutesStartedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
-            return Type.CamelContextRoutesStarted;
+            return Type.RoutesStarted;
         }
     }
 
     interface CamelContextRoutesStoppingEvent extends CamelContextEvent {
         @Override
         default Type getType() {
-            return Type.CamelContextRoutesStopping;
+            return Type.RoutesStopping;
         }
     }
 
     interface CamelContextRoutesStoppedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
-            return Type.CamelContextRoutesStopped;
+            return Type.RoutesStopped;
         }
     }
 

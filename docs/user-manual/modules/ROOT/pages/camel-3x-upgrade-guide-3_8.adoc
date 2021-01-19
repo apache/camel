@@ -6,10 +6,18 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.7 to 3.8
 
+=== API changes in Camel events
+
+The following type names are renamed in `CamelEvent.Type` enum:
+
+- `CamelContextRoutesStarting` to `RoutesStarting`
+- `CamelContextRoutesStarted` to `RoutesStarted`
+- `CamelContextRoutesStopping` to `RoutesStopping`
+- `CamelContextRoutesStopped` to `RoutesStopped`
+
 === OnCompletion EIP
 
 The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
-
 
 === camel-activemq and camel-jms
 
