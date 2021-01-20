@@ -66,7 +66,7 @@ public interface StitchComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.stitch.StitchConfiguration&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param configuration the value to set
          * @return the dsl builder
@@ -74,28 +74,6 @@ public interface StitchComponentBuilderFactory {
         default StitchComponentBuilder configuration(
                 org.apache.camel.component.stitch.StitchConfiguration configuration) {
             doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default StitchComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -123,6 +101,60 @@ public interface StitchComponentBuilderFactory {
             return this;
         }
         /**
+         * Stitch account region, e.g: europe.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchRegion&lt;/code&gt; type.
+         * 
+         * Default: europe
+         * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder region(
+                org.apache.camel.component.stitch.client.StitchRegion region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * ConnectionProvider contain configuration for the HttpClient like
+         * Maximum connection limit .. etc, you can inject this
+         * ConnectionProvider and the StitchClient will initialize HttpClient
+         * with this ConnectionProvider.
+         * 
+         * The option is a:
+         * &lt;code&gt;reactor.netty.resources.ConnectionProvider&lt;/code&gt;
+         * type.
+         * 
+         * Group: advance
+         * 
+         * @param connectionProvider the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder connectionProvider(
+                reactor.netty.resources.ConnectionProvider connectionProvider) {
+            doSetProperty("connectionProvider", connectionProvider);
+            return this;
+        }
+        /**
+         * Reactor Netty HttpClient, you can injected it if you want to have
+         * custom HttpClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;reactor.netty.http.client.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advance
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder httpClient(
+                reactor.netty.http.client.HttpClient httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -142,6 +174,20 @@ public interface StitchComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * Stitch access token for the Stitch Import API.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder token(java.lang.String token) {
+            doSetProperty("token", token);
+            return this;
+        }
     }
 
     class StitchComponentBuilderImpl
@@ -153,6 +199,13 @@ public interface StitchComponentBuilderFactory {
         protected StitchComponent buildConcreteComponent() {
             return new StitchComponent();
         }
+        private org.apache.camel.component.stitch.StitchConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.stitch.StitchComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.stitch.StitchConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -160,9 +213,12 @@ public interface StitchComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((StitchComponent) component).setConfiguration((org.apache.camel.component.stitch.StitchConfiguration) value); return true;
-            case "bridgeErrorHandler": ((StitchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((StitchComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": getOrCreateConfiguration((StitchComponent) component).setRegion((org.apache.camel.component.stitch.client.StitchRegion) value); return true;
+            case "connectionProvider": getOrCreateConfiguration((StitchComponent) component).setConnectionProvider((reactor.netty.resources.ConnectionProvider) value); return true;
+            case "httpClient": getOrCreateConfiguration((StitchComponent) component).setHttpClient((reactor.netty.http.client.HttpClient) value); return true;
             case "autowiredEnabled": ((StitchComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "token": getOrCreateConfiguration((StitchComponent) component).setToken((java.lang.String) value); return true;
             default: return false;
             }
         }

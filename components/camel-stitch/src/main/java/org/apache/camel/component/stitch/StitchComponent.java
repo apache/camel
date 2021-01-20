@@ -22,16 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Stitch component
  */
 @Component("stitch")
 public class StitchComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(StitchComponent.class);
 
     @Metadata
     private StitchConfiguration configuration = new StitchConfiguration();
@@ -42,11 +39,19 @@ public class StitchComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Table name must be configured on endpoint using syntax stitch:tableName");
+        }
+
         final StitchConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new StitchConfiguration();
 
+        configuration.setTableName(remaining);
+
         final StitchEndpoint endpoint = new StitchEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -60,5 +65,11 @@ public class StitchComponent extends DefaultComponent {
 
     public void setConfiguration(StitchConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    private void validateConfigurations(final StitchConfiguration configuration) {
+        if (ObjectHelper.isEmpty(configuration.getToken())) {
+            throw new IllegalArgumentException("Token must be configured in 'token' option.");
+        }
     }
 }

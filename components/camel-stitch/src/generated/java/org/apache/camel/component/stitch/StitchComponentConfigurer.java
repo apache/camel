@@ -17,19 +17,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class StitchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.stitch.StitchConfiguration getOrCreateConfiguration(StitchComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.stitch.StitchConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         StitchComponent target = (StitchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.stitch.StitchConfiguration.class, value)); return true;
+        case "connectionprovider":
+        case "connectionProvider": getOrCreateConfiguration(target).setConnectionProvider(property(camelContext, reactor.netty.resources.ConnectionProvider.class, value)); return true;
+        case "httpclient":
+        case "httpClient": getOrCreateConfiguration(target).setHttpClient(property(camelContext, reactor.netty.http.client.HttpClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, org.apache.camel.component.stitch.client.StitchRegion.class, value)); return true;
+        case "token": getOrCreateConfiguration(target).setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"connectionProvider","httpClient"};
     }
 
     @Override
@@ -37,11 +53,15 @@ public class StitchComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.stitch.StitchConfiguration.class;
+        case "connectionprovider":
+        case "connectionProvider": return reactor.netty.resources.ConnectionProvider.class;
+        case "httpclient":
+        case "httpClient": return reactor.netty.http.client.HttpClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "region": return org.apache.camel.component.stitch.client.StitchRegion.class;
+        case "token": return java.lang.String.class;
         default: return null;
         }
     }
@@ -52,11 +72,15 @@ public class StitchComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
+        case "connectionprovider":
+        case "connectionProvider": return getOrCreateConfiguration(target).getConnectionProvider();
+        case "httpclient":
+        case "httpClient": return getOrCreateConfiguration(target).getHttpClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "region": return getOrCreateConfiguration(target).getRegion();
+        case "token": return getOrCreateConfiguration(target).getToken();
         default: return null;
         }
     }

@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Camel Stitch Component uses to produce the data to Stitch ETL.
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "stitch", title = "Stitch",
-             syntax = "stitch:namespace/eventHubName", category = {
+             syntax = "stitch:tableName", producerOnly = true, category = {
                      Category.CLOUD, Category.API, Category.COMPUTE, Category.BIGDATA })
 public class StitchEndpoint extends DefaultEndpoint {
 
@@ -51,10 +51,7 @@ public class StitchEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        final Consumer eventHubConsumer = new StitchConsumer(this, processor);
-        configureConsumer(eventHubConsumer);
-
-        return eventHubConsumer;
+        throw new UnsupportedOperationException("Stitch component does not support consumer operations.");
     }
 
     /**

@@ -7135,11 +7135,11 @@
     "version": "3.8.0-SNAPSHOT",
     "scheme": "stitch",
     "extendsScheme": "",
-    "syntax": "stitch:namespace\/eventHubName",
+    "syntax": "stitch:tableName",
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "StompComponentBuilderFactory": {

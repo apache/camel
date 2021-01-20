@@ -15,19 +15,22 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class StitchEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":namespace/eventHubName";
+    private static final String BASE = ":tableName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(6);
+        props.add("httpClient");
         props.add("lazyStartProducer");
-        props.add("bridgeErrorHandler");
-        props.add("test");
-        props.add("exchangePattern");
-        props.add("exceptionHandler");
+        props.add("connectionProvider");
+        props.add("region");
+        props.add("tableName");
+        props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("token");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class StitchEndpointUriFactory extends org.apache.camel.support.component
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "test", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "tableName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

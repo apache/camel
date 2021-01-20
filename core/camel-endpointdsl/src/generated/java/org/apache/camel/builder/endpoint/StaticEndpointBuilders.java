@@ -14704,12 +14704,15 @@ public class StaticEndpointBuilders {
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-stitch
      * 
-     * Syntax: <code>stitch:namespace/eventHubName</code>
+     * Syntax: <code>stitch:tableName</code>
      * 
-     * Path parameter: test
-     * test
+     * Path parameter: tableName (required)
+     * The name of the destination table the data is being pushed to. Table
+     * names must be unique in each destination schema, or loading issues will
+     * occur. Note: The number of characters in the table name should be within
+     * the destinations allowed limits or data will rejected.
      * 
-     * @param path namespace/eventHubName
+     * @param path tableName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(
@@ -14729,14 +14732,17 @@ public class StaticEndpointBuilders {
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-stitch
      * 
-     * Syntax: <code>stitch:namespace/eventHubName</code>
+     * Syntax: <code>stitch:tableName</code>
      * 
-     * Path parameter: test
-     * test
+     * Path parameter: tableName (required)
+     * The name of the destination table the data is being pushed to. Table
+     * names must be unique in each destination schema, or loading issues will
+     * occur. Note: The number of characters in the table name should be within
+     * the destinations allowed limits or data will rejected.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path namespace/eventHubName
+     * @param path tableName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(

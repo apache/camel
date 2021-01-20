@@ -17,11 +17,9 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Stitch is a cloud ETL service, developer-focused platform for rapidly moving
@@ -38,151 +36,9 @@ public interface StitchEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Stitch component.
+     * Builder for endpoint for the Stitch component.
      */
-    public interface StitchEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedStitchEndpointConsumerBuilder advanced() {
-            return (AdvancedStitchEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default StitchEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default StitchEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Stitch component.
-     */
-    public interface AdvancedStitchEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default StitchEndpointConsumerBuilder basic() {
-            return (StitchEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStitchEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStitchEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStitchEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedStitchEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Stitch component.
-     */
-    public interface StitchEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedStitchEndpointProducerBuilder advanced() {
-            return (AdvancedStitchEndpointProducerBuilder) this;
-        }
+    public interface StitchEndpointBuilder extends EndpointProducerBuilder {
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -202,7 +58,7 @@ public interface StitchEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default StitchEndpointProducerBuilder lazyStartProducer(
+        default StitchEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -227,46 +83,138 @@ public interface StitchEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default StitchEndpointProducerBuilder lazyStartProducer(
-                String lazyStartProducer) {
+        default StitchEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Stitch account region, e.g: europe.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchRegion&lt;/code&gt; type.
+         * 
+         * Default: europe
+         * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder region(StitchRegion region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Stitch account region, e.g: europe.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchRegion&lt;/code&gt; type.
+         * 
+         * Default: europe
+         * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder region(String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * ConnectionProvider contain configuration for the HttpClient like
+         * Maximum connection limit .. etc, you can inject this
+         * ConnectionProvider and the StitchClient will initialize HttpClient
+         * with this ConnectionProvider.
+         * 
+         * The option is a:
+         * &lt;code&gt;reactor.netty.resources.ConnectionProvider&lt;/code&gt;
+         * type.
+         * 
+         * Group: advance
+         * 
+         * @param connectionProvider the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder connectionProvider(
+                Object connectionProvider) {
+            doSetProperty("connectionProvider", connectionProvider);
+            return this;
+        }
+        /**
+         * ConnectionProvider contain configuration for the HttpClient like
+         * Maximum connection limit .. etc, you can inject this
+         * ConnectionProvider and the StitchClient will initialize HttpClient
+         * with this ConnectionProvider.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;reactor.netty.resources.ConnectionProvider&lt;/code&gt;
+         * type.
+         * 
+         * Group: advance
+         * 
+         * @param connectionProvider the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder connectionProvider(
+                String connectionProvider) {
+            doSetProperty("connectionProvider", connectionProvider);
+            return this;
+        }
+        /**
+         * Reactor Netty HttpClient, you can injected it if you want to have
+         * custom HttpClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;reactor.netty.http.client.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advance
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder httpClient(Object httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
+         * Reactor Netty HttpClient, you can injected it if you want to have
+         * custom HttpClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;reactor.netty.http.client.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advance
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder httpClient(String httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
+         * Stitch access token for the Stitch Import API.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder token(String token) {
+            doSetProperty("token", token);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint producers for the Stitch component.
+     * Proxy enum for
+     * <code>org.apache.camel.component.stitch.client.StitchRegion</code> enum.
      */
-    public interface AdvancedStitchEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default StitchEndpointProducerBuilder basic() {
-            return (StitchEndpointProducerBuilder) this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the Stitch component.
-     */
-    public interface StitchEndpointBuilder
-            extends
-                StitchEndpointConsumerBuilder,
-                StitchEndpointProducerBuilder {
-        default AdvancedStitchEndpointBuilder advanced() {
-            return (AdvancedStitchEndpointBuilder) this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Stitch component.
-     */
-    public interface AdvancedStitchEndpointBuilder
-            extends
-                AdvancedStitchEndpointConsumerBuilder,
-                AdvancedStitchEndpointProducerBuilder {
-        default StitchEndpointBuilder basic() {
-            return (StitchEndpointBuilder) this;
-        }
+    enum StitchRegion {
+        NORTH_AMERICA,
+        EUROPE;
     }
 
     public interface StitchBuilders {
@@ -284,12 +232,15 @@ public interface StitchEndpointBuilderFactory {
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-stitch
          * 
-         * Syntax: <code>stitch:namespace/eventHubName</code>
+         * Syntax: <code>stitch:tableName</code>
          * 
-         * Path parameter: test
-         * test
+         * Path parameter: tableName (required)
+         * The name of the destination table the data is being pushed to. Table
+         * names must be unique in each destination schema, or loading issues
+         * will occur. Note: The number of characters in the table name should
+         * be within the destinations allowed limits or data will rejected.
          * 
-         * @param path namespace/eventHubName
+         * @param path tableName
          * @return the dsl builder
          */
         default StitchEndpointBuilder stitch(String path) {
@@ -309,14 +260,17 @@ public interface StitchEndpointBuilderFactory {
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-stitch
          * 
-         * Syntax: <code>stitch:namespace/eventHubName</code>
+         * Syntax: <code>stitch:tableName</code>
          * 
-         * Path parameter: test
-         * test
+         * Path parameter: tableName (required)
+         * The name of the destination table the data is being pushed to. Table
+         * names must be unique in each destination schema, or loading issues
+         * will occur. Note: The number of characters in the table name should
+         * be within the destinations allowed limits or data will rejected.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path namespace/eventHubName
+         * @param path tableName
          * @return the dsl builder
          */
         default StitchEndpointBuilder stitch(String componentName, String path) {
@@ -326,7 +280,7 @@ public interface StitchEndpointBuilderFactory {
     static StitchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class StitchEndpointBuilderImpl extends AbstractEndpointBuilder implements StitchEndpointBuilder, AdvancedStitchEndpointBuilder {
+        class StitchEndpointBuilderImpl extends AbstractEndpointBuilder implements StitchEndpointBuilder {
             public StitchEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

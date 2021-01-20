@@ -21,29 +21,34 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         StitchEndpoint target = (StitchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "connectionprovider":
+        case "connectionProvider": target.getConfiguration().setConnectionProvider(property(camelContext, reactor.netty.resources.ConnectionProvider.class, value)); return true;
+        case "httpclient":
+        case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, reactor.netty.http.client.HttpClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, org.apache.camel.component.stitch.client.StitchRegion.class, value)); return true;
+        case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"connectionProvider","httpClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
-        case "exceptionhandler":
-        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "exchangepattern":
-        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "connectionprovider":
+        case "connectionProvider": return reactor.netty.resources.ConnectionProvider.class;
+        case "httpclient":
+        case "httpClient": return reactor.netty.http.client.HttpClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "region": return org.apache.camel.component.stitch.client.StitchRegion.class;
+        case "token": return java.lang.String.class;
         default: return null;
         }
     }
@@ -52,14 +57,14 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         StitchEndpoint target = (StitchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "exceptionhandler":
-        case "exceptionHandler": return target.getExceptionHandler();
-        case "exchangepattern":
-        case "exchangePattern": return target.getExchangePattern();
+        case "connectionprovider":
+        case "connectionProvider": return target.getConfiguration().getConnectionProvider();
+        case "httpclient":
+        case "httpClient": return target.getConfiguration().getHttpClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "region": return target.getConfiguration().getRegion();
+        case "token": return target.getConfiguration().getToken();
         default: return null;
         }
     }

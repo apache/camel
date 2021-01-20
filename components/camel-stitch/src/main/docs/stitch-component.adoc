@@ -5,7 +5,7 @@
 :description: Stitch is a cloud ETL service, developer-focused platform for rapidly moving and replicates data from more than 90 applications and databases. It integrates various data sources into a central data warehouse. Stitch has integrations for many enterprise software data sources, and can receive data via WebHooks and an API (Stitch Import API) which Camel Stitch Component uses to produce the data to Stitch ETL.
 :since: 3.8
 :supportLevel: Preview
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stitch.adoc[opts=optional]
 
 *Since Camel {since}*
@@ -25,7 +25,7 @@ For more info, feel free to visit their website: https://www.stitchdata.com/
 The Stitch endpoint is configured using URI syntax:
 
 ----
-stitch:namespace/eventHubName
+stitch:tableName
 ----
 
 with the following path and query parameters:
@@ -36,35 +36,39 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *test* | test |  | String
+| *tableName* | *Required* The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destinations allowed limits or data will rejected. |  | String
 |===
 
 
-=== Query Parameters (4 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
+| *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
+| *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
+| *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
 |===
 // endpoint options: END
 
 == Component Options
 // component options: START
-The Stitch component supports 4 options, which are listed below.
+The Stitch component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (common) | The component configurations |  | StitchConfiguration
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *configuration* (producer) | The component configurations |  | StitchConfiguration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
+| *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
+| *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
 |===
 // component options: END
