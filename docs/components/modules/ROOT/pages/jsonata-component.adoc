@@ -92,7 +92,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
-| *inputType* (producer) | Specifies if the output should be Jackson JsonNode or a JSON String. There are 2 enums and the value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
+| *inputType* (producer) | Specifies if the input should be Jackson JsonNode or a JSON String. There are 2 enums and the value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *outputType* (producer) | Specifies if the output should be Jackson JsonNode or a JSON String. There are 2 enums and the value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
 |===

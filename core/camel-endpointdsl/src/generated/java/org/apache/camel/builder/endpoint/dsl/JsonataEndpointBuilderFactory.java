@@ -107,7 +107,7 @@ public interface JsonataEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies if the output should be Jackson JsonNode or a JSON String.
+         * Specifies if the input should be Jackson JsonNode or a JSON String.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
@@ -124,7 +124,7 @@ public interface JsonataEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies if the output should be Jackson JsonNode or a JSON String.
+         * Specifies if the input should be Jackson JsonNode or a JSON String.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
