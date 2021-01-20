@@ -31,6 +31,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.StartupStep;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -797,16 +798,21 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected Processor createProcessor(ProcessorDefinition<?> output) throws Exception {
+        // ensure node has id assigned
+        String outputId = output.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        StartupStep step = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().beginStep(ProcessorReifier.class, outputId, "Create processor");
+
         Processor processor = null;
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
             processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, output);
         }
-        // fallback to default implementation if factory did not create the
-        // processor
+        // fallback to default implementation if factory did not create the processor
         if (processor == null) {
             processor = reifier(route, output).createProcessor();
         }
+
+        camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().endStep(step);
         return processor;
     }
 

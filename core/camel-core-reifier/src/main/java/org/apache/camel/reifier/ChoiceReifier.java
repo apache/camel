@@ -63,7 +63,6 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                         whenClause.setExpression((ExpressionDefinition) model);
                     }
                 }
-                exp = whenClause.getExpression();
             }
 
             FilterProcessor filter = (FilterProcessor) createProcessor(whenClause);
