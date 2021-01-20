@@ -20,11 +20,10 @@ public class NsqEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(18);
         props.add("customNSQLookup");
         props.add("requeueInterval");
         props.add("lookupInterval");
-        props.add("synchronous");
         props.add("autoFinish");
         props.add("poolSize");
         props.add("channel");

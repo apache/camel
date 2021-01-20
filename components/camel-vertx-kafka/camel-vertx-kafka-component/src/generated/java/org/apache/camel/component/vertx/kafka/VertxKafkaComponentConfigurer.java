@@ -177,6 +177,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sendBufferBytes": getOrCreateConfiguration(target).setSendBufferBytes(property(camelContext, int.class, value)); return true;
         case "sessiontimeoutms":
         case "sessionTimeoutMs": getOrCreateConfiguration(target).setSessionTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "socketconnectionsetuptimeoutmaxms":
+        case "socketConnectionSetupTimeoutMaxMs": getOrCreateConfiguration(target).setSocketConnectionSetupTimeoutMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "socketconnectionsetuptimeoutms":
+        case "socketConnectionSetupTimeoutMs": getOrCreateConfiguration(target).setSocketConnectionSetupTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sslciphersuites":
         case "sslCipherSuites": getOrCreateConfiguration(target).setSslCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
         case "sslenabledprotocols":
@@ -189,6 +193,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sslKeyPassword": getOrCreateConfiguration(target).setSslKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "sslkeymanageralgorithm":
         case "sslKeymanagerAlgorithm": getOrCreateConfiguration(target).setSslKeymanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystorecertificatechain":
+        case "sslKeystoreCertificateChain": getOrCreateConfiguration(target).setSslKeystoreCertificateChain(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystorekey":
+        case "sslKeystoreKey": getOrCreateConfiguration(target).setSslKeystoreKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sslkeystorelocation":
         case "sslKeystoreLocation": getOrCreateConfiguration(target).setSslKeystoreLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "sslkeystorepassword":
@@ -203,6 +211,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sslSecureRandomImplementation": getOrCreateConfiguration(target).setSslSecureRandomImplementation(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltrustmanageralgorithm":
         case "sslTrustmanagerAlgorithm": getOrCreateConfiguration(target).setSslTrustmanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststorecertificates":
+        case "sslTruststoreCertificates": getOrCreateConfiguration(target).setSslTruststoreCertificates(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststorelocation":
         case "sslTruststoreLocation": getOrCreateConfiguration(target).setSslTruststoreLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststorepassword":
@@ -381,6 +391,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sendBufferBytes": return int.class;
         case "sessiontimeoutms":
         case "sessionTimeoutMs": return int.class;
+        case "socketconnectionsetuptimeoutmaxms":
+        case "socketConnectionSetupTimeoutMaxMs": return long.class;
+        case "socketconnectionsetuptimeoutms":
+        case "socketConnectionSetupTimeoutMs": return long.class;
         case "sslciphersuites":
         case "sslCipherSuites": return java.lang.String.class;
         case "sslenabledprotocols":
@@ -393,6 +407,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sslKeyPassword": return java.lang.String.class;
         case "sslkeymanageralgorithm":
         case "sslKeymanagerAlgorithm": return java.lang.String.class;
+        case "sslkeystorecertificatechain":
+        case "sslKeystoreCertificateChain": return java.lang.String.class;
+        case "sslkeystorekey":
+        case "sslKeystoreKey": return java.lang.String.class;
         case "sslkeystorelocation":
         case "sslKeystoreLocation": return java.lang.String.class;
         case "sslkeystorepassword":
@@ -407,6 +425,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sslSecureRandomImplementation": return java.lang.String.class;
         case "ssltrustmanageralgorithm":
         case "sslTrustmanagerAlgorithm": return java.lang.String.class;
+        case "ssltruststorecertificates":
+        case "sslTruststoreCertificates": return java.lang.String.class;
         case "ssltruststorelocation":
         case "sslTruststoreLocation": return java.lang.String.class;
         case "ssltruststorepassword":
@@ -581,6 +601,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sendBufferBytes": return getOrCreateConfiguration(target).getSendBufferBytes();
         case "sessiontimeoutms":
         case "sessionTimeoutMs": return getOrCreateConfiguration(target).getSessionTimeoutMs();
+        case "socketconnectionsetuptimeoutmaxms":
+        case "socketConnectionSetupTimeoutMaxMs": return getOrCreateConfiguration(target).getSocketConnectionSetupTimeoutMaxMs();
+        case "socketconnectionsetuptimeoutms":
+        case "socketConnectionSetupTimeoutMs": return getOrCreateConfiguration(target).getSocketConnectionSetupTimeoutMs();
         case "sslciphersuites":
         case "sslCipherSuites": return getOrCreateConfiguration(target).getSslCipherSuites();
         case "sslenabledprotocols":
@@ -593,6 +617,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sslKeyPassword": return getOrCreateConfiguration(target).getSslKeyPassword();
         case "sslkeymanageralgorithm":
         case "sslKeymanagerAlgorithm": return getOrCreateConfiguration(target).getSslKeymanagerAlgorithm();
+        case "sslkeystorecertificatechain":
+        case "sslKeystoreCertificateChain": return getOrCreateConfiguration(target).getSslKeystoreCertificateChain();
+        case "sslkeystorekey":
+        case "sslKeystoreKey": return getOrCreateConfiguration(target).getSslKeystoreKey();
         case "sslkeystorelocation":
         case "sslKeystoreLocation": return getOrCreateConfiguration(target).getSslKeystoreLocation();
         case "sslkeystorepassword":
@@ -607,6 +635,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "sslSecureRandomImplementation": return getOrCreateConfiguration(target).getSslSecureRandomImplementation();
         case "ssltrustmanageralgorithm":
         case "sslTrustmanagerAlgorithm": return getOrCreateConfiguration(target).getSslTrustmanagerAlgorithm();
+        case "ssltruststorecertificates":
+        case "sslTruststoreCertificates": return getOrCreateConfiguration(target).getSslTruststoreCertificates();
         case "ssltruststorelocation":
         case "sslTruststoreLocation": return getOrCreateConfiguration(target).getSslTruststoreLocation();
         case "ssltruststorepassword":

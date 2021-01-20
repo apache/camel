@@ -33,7 +33,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "slope": target.getConfiguration().setSlope(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricSlope.class, value)); return true;
         case "spoofhostname":
         case "spoofHostname": target.getConfiguration().setSpoofHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tmax": target.getConfiguration().setTmax(property(camelContext, int.class, value)); return true;
         case "ttl": target.getConfiguration().setTtl(property(camelContext, int.class, value)); return true;
         case "type": target.getConfiguration().setType(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricType.class, value)); return true;
@@ -59,7 +58,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "slope": return info.ganglia.gmetric4j.gmetric.GMetricSlope.class;
         case "spoofhostname":
         case "spoofHostname": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tmax": return int.class;
         case "ttl": return int.class;
         case "type": return info.ganglia.gmetric4j.gmetric.GMetricType.class;
@@ -86,7 +84,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "slope": return target.getConfiguration().getSlope();
         case "spoofhostname":
         case "spoofHostname": return target.getConfiguration().getSpoofHostname();
-        case "synchronous": return target.isSynchronous();
         case "tmax": return target.getConfiguration().getTmax();
         case "ttl": return target.getConfiguration().getTtl();
         case "type": return target.getConfiguration().getType();

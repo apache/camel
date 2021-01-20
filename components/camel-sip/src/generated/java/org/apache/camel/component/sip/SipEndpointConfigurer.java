@@ -94,7 +94,6 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sipUri": target.getConfiguration().setSipUri(property(camelContext, javax.sip.address.SipURI.class, value)); return true;
         case "stackname":
         case "stackName": target.getConfiguration().setStackName(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "toheader":
         case "toHeader": target.getConfiguration().setToHeader(property(camelContext, javax.sip.header.ToHeader.class, value)); return true;
         case "tohost":
@@ -188,7 +187,6 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sipUri": return javax.sip.address.SipURI.class;
         case "stackname":
         case "stackName": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "toheader":
         case "toHeader": return javax.sip.header.ToHeader.class;
         case "tohost":
@@ -283,7 +281,6 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sipUri": return target.getConfiguration().getSipUri();
         case "stackname":
         case "stackName": return target.getConfiguration().getStackName();
-        case "synchronous": return target.isSynchronous();
         case "toheader":
         case "toHeader": return target.getConfiguration().getToHeader();
         case "tohost":

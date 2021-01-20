@@ -35,9 +35,6 @@ public interface ArangoDbEndpointBuilderFactory {
      * Builder for endpoint for the ArangoDb component.
      */
     public interface ArangoDbEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedArangoDbEndpointBuilder advanced() {
-            return (AdvancedArangoDbEndpointBuilder) this;
-        }
         /**
          * Collection name, when using ArangoDb as a Document Database. Set the
          * documentCollection name when using the CRUD operation on the document
@@ -264,50 +261,6 @@ public interface ArangoDbEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the ArangoDb component.
-     */
-    public interface AdvancedArangoDbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ArangoDbEndpointBuilder basic() {
-            return (ArangoDbEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedArangoDbEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedArangoDbEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code> enum.
      */
@@ -376,7 +329,7 @@ public interface ArangoDbEndpointBuilderFactory {
     static ArangoDbEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ArangoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements ArangoDbEndpointBuilder, AdvancedArangoDbEndpointBuilder {
+        class ArangoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements ArangoDbEndpointBuilder {
             public ArangoDbEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

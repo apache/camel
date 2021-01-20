@@ -68,7 +68,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signatureAlgorithm": target.getConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signatureid":
         case "signatureId": target.getConfiguration().setSignatureId(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transformmethods":
         case "transformMethods": target.getConfiguration().setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
         case "uridereferencer":
@@ -129,7 +128,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signatureAlgorithm": return java.lang.String.class;
         case "signatureid":
         case "signatureId": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "transformmethods":
         case "transformMethods": return java.util.List.class;
         case "uridereferencer":
@@ -191,7 +189,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signatureAlgorithm": return target.getConfiguration().getSignatureAlgorithm();
         case "signatureid":
         case "signatureId": return target.getConfiguration().getSignatureId();
-        case "synchronous": return target.isSynchronous();
         case "transformmethods":
         case "transformMethods": return target.getConfiguration().getTransformMethods();
         case "uridereferencer":

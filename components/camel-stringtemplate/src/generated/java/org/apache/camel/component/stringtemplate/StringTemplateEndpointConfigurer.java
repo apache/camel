@@ -33,7 +33,6 @@ public class StringTemplateEndpointConfigurer extends PropertyConfigurerSupport 
         case "delimiterStop": target.setDelimiterStop(property(camelContext, char.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -53,7 +52,6 @@ public class StringTemplateEndpointConfigurer extends PropertyConfigurerSupport 
         case "delimiterStop": return char.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -74,7 +72,6 @@ public class StringTemplateEndpointConfigurer extends PropertyConfigurerSupport 
         case "delimiterStop": return target.getDelimiterStop();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

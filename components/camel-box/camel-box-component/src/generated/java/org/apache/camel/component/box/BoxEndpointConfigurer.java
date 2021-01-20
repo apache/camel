@@ -30,7 +30,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("httpParams", java.util.Map.class);
-        map.put("synchronous", boolean.class);
         map.put("authenticationType", java.lang.String.class);
         map.put("accessTokenCache", com.box.sdk.IAccessTokenCache.class);
         map.put("clientSecret", java.lang.String.class);
@@ -81,7 +80,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "publicKeyId": target.getConfiguration().setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "userid":
         case "userId": target.getConfiguration().setUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
@@ -132,7 +130,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "publicKeyId": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "userid":
         case "userId": return java.lang.String.class;
         case "username":
@@ -179,7 +176,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "publicKeyId": return target.getConfiguration().getPublicKeyId();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "userid":
         case "userId": return target.getConfiguration().getUserId();
         case "username":

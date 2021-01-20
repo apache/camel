@@ -32,7 +32,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStreamCallback": target.setDataStreamCallback(property(camelContext, org.apache.camel.component.flink.DataStreamCallback.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -51,7 +50,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStreamCallback": return org.apache.camel.component.flink.DataStreamCallback.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -71,7 +69,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStreamCallback": return target.getDataStreamCallback();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

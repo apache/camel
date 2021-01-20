@@ -27,7 +27,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("lazyStartProducer", boolean.class);
         map.put("merchantId", java.lang.String.class);
         map.put("httpReadTimeout", java.lang.Integer.class);
-        map.put("synchronous", boolean.class);
         map.put("httpLogLevel", java.lang.String.class);
         map.put("httpLogName", java.lang.String.class);
         map.put("logHandlerEnabled", boolean.class);
@@ -68,7 +67,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "publickey":
         case "publicKey": target.getConfiguration().setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -106,7 +104,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyPort": return java.lang.Integer.class;
         case "publickey":
         case "publicKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -140,7 +137,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyPort": return target.getConfiguration().getProxyPort();
         case "publickey":
         case "publicKey": return target.getConfiguration().getPublicKey();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -41,12 +41,15 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
  */
 @Component("google-pubsub")
 public class GooglePubsubComponent extends DefaultComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubComponent.class);
 
     @Metadata(
               label = "common",
@@ -116,11 +119,11 @@ public class GooglePubsubComponent extends DefaultComponent {
         super.doShutdown();
     }
 
-    public Publisher getPublisher(String topicName) throws ExecutionException {
-        return cachedPublishers.get(topicName, () -> buildPublisher(topicName));
+    public Publisher getPublisher(String topicName, GooglePubsubEndpoint googlePubsubEndpoint) throws ExecutionException {
+        return cachedPublishers.get(topicName, () -> buildPublisher(topicName, googlePubsubEndpoint));
     }
 
-    private Publisher buildPublisher(String topicName) throws IOException {
+    private Publisher buildPublisher(String topicName, GooglePubsubEndpoint googlePubsubEndpoint) throws IOException {
         Publisher.Builder builder = Publisher.newBuilder(topicName);
         if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
@@ -128,6 +131,16 @@ public class GooglePubsubComponent extends DefaultComponent {
                     = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
             builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) != null) {
+            builder.setEndpoint(googlePubsubEndpoint.getPubsubEndpoint());
+        }
+        if (googlePubsubEndpoint.isMessageOrderingEnabled()) {
+            builder.setEnableMessageOrdering(true);
+            if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) == null) {
+                LOG.warn("In conjunction with enabeling message ordering the pubsubEndpoint should be set. "
+                         + "Message ordering is only guaranteed when send to the same region.");
+            }
         }
         return builder.build();
     }

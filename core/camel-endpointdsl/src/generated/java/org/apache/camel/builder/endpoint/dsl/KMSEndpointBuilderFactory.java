@@ -34,9 +34,6 @@ public interface KMSEndpointBuilderFactory {
      * Builder for endpoint for the AWS Key Management Service (KMS) component.
      */
     public interface KMSEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedKMSEndpointBuilder advanced() {
-            return (AdvancedKMSEndpointBuilder) this;
-        }
         /**
          * Setting the autoDiscoverClient mechanism, if true, the component will
          * look for a client instance in the registry automatically otherwise it
@@ -304,51 +301,6 @@ public interface KMSEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Key Management Service (KMS)
-     * component.
-     */
-    public interface AdvancedKMSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KMSEndpointBuilder basic() {
-            return (KMSEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKMSEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKMSEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.aws.kms.KMSOperations</code> enum.
      */
@@ -412,7 +364,7 @@ public interface KMSEndpointBuilderFactory {
         }
     }
     static KMSEndpointBuilder endpointBuilder(String componentName, String path) {
-        class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder, AdvancedKMSEndpointBuilder {
+        class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder {
             public KMSEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

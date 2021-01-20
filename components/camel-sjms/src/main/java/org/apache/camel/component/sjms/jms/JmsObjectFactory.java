@@ -26,6 +26,8 @@ import org.apache.camel.Endpoint;
 public interface JmsObjectFactory {
     MessageConsumer createMessageConsumer(Session session, Endpoint endpoint) throws Exception;
 
+    MessageConsumer createQueueMessageConsumer(Session session, Destination destination) throws Exception;
+
     MessageConsumer createMessageConsumer(
             Session session, Destination destination,
             String messageSelector, boolean topic, String subscriptionId, boolean durable,
@@ -39,6 +41,10 @@ public interface JmsObjectFactory {
             throws Exception;
 
     MessageProducer createMessageProducer(Session session, Endpoint endpoint) throws Exception;
+
+    MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName) throws Exception;
+
+    MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception;
 
     MessageProducer createMessageProducer(
             Session session, Destination destination,

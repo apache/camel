@@ -111,6 +111,41 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -237,6 +272,22 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointConsumerBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -1081,41 +1132,6 @@ public interface Kinesis2EndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesis2EndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesis2EndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
     }
 
     /**
@@ -1188,6 +1204,41 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointProducerBuilder cborEnabled(String cborEnabled) {
             doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -1320,6 +1371,22 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1407,41 +1474,6 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointProducerBuilder basic() {
             return (Kinesis2EndpointProducerBuilder) this;
         }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesis2EndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesis2EndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
     }
 
     /**
@@ -1515,6 +1547,40 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointBuilder cborEnabled(String cborEnabled) {
             doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -1645,6 +1711,22 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1683,39 +1765,6 @@ public interface Kinesis2EndpointBuilderFactory {
                 AdvancedKinesis2EndpointProducerBuilder {
         default Kinesis2EndpointBuilder basic() {
             return (Kinesis2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesis2EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesis2EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
         }
     }
 

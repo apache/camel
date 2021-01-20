@@ -35,11 +35,6 @@ public class InOnlyQueueProducerTest extends Jms2TestSupport {
     public InOnlyQueueProducerTest() {
     }
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testInOnlyQueueProducer() throws Exception {
         MessageConsumer mc = createQueueConsumer(TEST_DESTINATION_NAME);
@@ -66,12 +61,6 @@ public class InOnlyQueueProducerTest extends Jms2TestSupport {
 
     }
 
-    /**
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

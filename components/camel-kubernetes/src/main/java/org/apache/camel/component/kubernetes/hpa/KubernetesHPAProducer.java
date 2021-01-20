@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.hpa;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.autoscaling.v1.DoneableHorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerList;
@@ -100,7 +99,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get HPA by labels require specify a labels set");
         }
 
-        MixedOperation<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, DoneableHorizontalPodAutoscaler, Resource<HorizontalPodAutoscaler, DoneableHorizontalPodAutoscaler>> hpas
+        MixedOperation<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Resource<HorizontalPodAutoscaler>> hpas
                 = getEndpoint()
                         .getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers();
         for (Map.Entry<String, String> entry : labels.entrySet()) {

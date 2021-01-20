@@ -9085,8 +9085,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
@@ -9109,8 +9109,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder("jsonata", path);
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
@@ -12120,6 +12120,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Paho MQTT 5 (camel-paho-mqtt5)
+     * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+     * 
+     * Category: messaging,iot
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-paho-mqtt5
+     * 
+     * Syntax: <code>paho-mqtt5:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.endpointBuilder("paho-mqtt5", path);
+    }
+    /**
+     * Paho MQTT 5 (camel-paho-mqtt5)
+     * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+     * 
+     * Category: messaging,iot
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-paho-mqtt5
+     * 
+     * Syntax: <code>paho-mqtt5:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.PahoMqtt5EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
      * 
@@ -13814,53 +13857,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     * 
-     * @param path destinationName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder("sjms-batch", path);
-    }
-    /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destinationName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
      * 
@@ -14417,6 +14413,55 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * Syntax: <code>spring-rabbitmq:exchangeName</code>
+     * 
+     * Path parameter: exchangeName (required)
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to. Note: to use default exchange
+     * then do not use empty name, but use default instead.
+     * 
+     * @param path exchangeName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.endpointBuilder("spring-rabbitmq", path);
+    }
+    /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * Syntax: <code>spring-rabbitmq:exchangeName</code>
+     * 
+     * Path parameter: exchangeName (required)
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to. Note: to use default exchange
+     * then do not use empty name, but use default instead.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path exchangeName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spring Redis (camel-spring-redis)

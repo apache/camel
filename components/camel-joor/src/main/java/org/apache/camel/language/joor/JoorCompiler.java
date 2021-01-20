@@ -91,7 +91,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         String code = evalCode(camelContext, className, script, singleQuotes);
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Compiling code:\n\n" + code + "\n");
+                LOG.debug("Compiling code:\n\n{}\n", code);
             }
             Reflect ref = Reflect.compile(className, code);
             Class<?> clazz = ref.type();

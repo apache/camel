@@ -109,6 +109,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean snapshotEventsAsInserts = true;
     @UriParam(label = LABEL_NAME, defaultValue = "long")
     private String bigintUnsignedHandlingMode = "long";
     @UriParam(label = LABEL_NAME)
@@ -817,6 +819,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+     * disabled, the standard functionality of emitting these records as reads
+     * (op 'r') will be used.
+     */
+    public void setSnapshotEventsAsInserts(boolean snapshotEventsAsInserts) {
+        this.snapshotEventsAsInserts = snapshotEventsAsInserts;
+    }
+
+    public boolean isSnapshotEventsAsInserts() {
+        return snapshotEventsAsInserts;
+    }
+
+    /**
      * Specify how BIGINT UNSIGNED columns should be represented in change
      * events, including:'precise' uses java.math.BigDecimal to represent
      * values, which are encoded in the change events using a binary
@@ -1112,6 +1127,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.history.skip.unparseable.ddl", databaseHistorySkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
+        addPropertyIfNotNull(configBuilder, "snapshot.events.as.inserts", snapshotEventsAsInserts);
         addPropertyIfNotNull(configBuilder, "bigint.unsigned.handling.mode", bigintUnsignedHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.server.id", databaseServerId);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);

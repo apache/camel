@@ -246,6 +246,7 @@
         <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
+        <module>camel-jfr</module>
         <module>camel-jgroups-raft</module>
         <module>camel-jgroups</module>
         <module>camel-jing</module>
@@ -308,6 +309,7 @@
         <module>camel-opentelemetry</module>
         <module>camel-optaplanner</module>
         <module>camel-paho</module>
+        <module>camel-paho-mqtt5</module>
         <module>camel-pdf</module>
         <module>camel-pg-replication-slot</module>
         <module>camel-pgevent</module>
@@ -357,6 +359,7 @@
         <module>camel-spring-integration</module>
         <module>camel-spring-javaconfig</module>
         <module>camel-spring-ldap</module>
+        <module>camel-spring-rabbitmq</module>
         <module>camel-spring-redis</module>
         <module>camel-spring-security</module>
         <module>camel-spring-ws</module>

@@ -47,7 +47,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
         assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
-        String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500",
+        String endpoint = String.format("sjms:queue:%s?timeToLive=1000&exchangePattern=InOut&requestTimeout=500",
                 TEST_INOUT_DESTINATION_NAME);
 
         try {
@@ -71,7 +71,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
         assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
-        String endpoint = String.format("sjms:queue:%s?ttl=1000", TEST_INONLY_DESTINATION_NAME);
+        String endpoint = String.format("sjms:queue:%s?timeToLive=1000", TEST_INONLY_DESTINATION_NAME);
         template.sendBody(endpoint, "test message");
 
         assertMockEndpointsSatisfied();
@@ -108,6 +108,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
             public void configure() throws Exception {
                 from("sjms:topic:ActiveMQ.Advisory.Expired.Queue.>")
                         .routeId(EXPIRED_MESSAGE_ROUTE_ID)
+                        .log("Expired message")
                         .to(MOCK_EXPIRED_ADVISORY);
             }
         };

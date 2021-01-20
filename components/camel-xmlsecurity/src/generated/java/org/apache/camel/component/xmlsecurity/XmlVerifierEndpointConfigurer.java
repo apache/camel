@@ -47,7 +47,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         case "schemaResourceUri": target.getConfiguration().setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "securevalidation":
         case "secureValidation": target.getConfiguration().setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uridereferencer":
         case "uriDereferencer": target.getConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
         case "validationfailedhandler":
@@ -89,7 +88,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         case "schemaResourceUri": return java.lang.String.class;
         case "securevalidation":
         case "secureValidation": return java.lang.Boolean.class;
-        case "synchronous": return boolean.class;
         case "uridereferencer":
         case "uriDereferencer": return javax.xml.crypto.URIDereferencer.class;
         case "validationfailedhandler":
@@ -132,7 +130,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         case "schemaResourceUri": return target.getConfiguration().getSchemaResourceUri();
         case "securevalidation":
         case "secureValidation": return target.getConfiguration().getSecureValidation();
-        case "synchronous": return target.isSynchronous();
         case "uridereferencer":
         case "uriDereferencer": return target.getConfiguration().getUriDereferencer();
         case "validationfailedhandler":

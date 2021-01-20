@@ -647,6 +647,84 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder socketConnectionSetupTimeoutMaxMs(
+                long socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder socketConnectionSetupTimeoutMaxMs(
+                String socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder socketConnectionSetupTimeoutMs(
+                long socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder socketConnectionSetupTimeoutMs(
+                String socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
          * Allow automatic topic creation on the broker when subscribing to or
          * assigning a topic. A topic being subscribed to will be automatically
          * created only if the broker allows for it using
@@ -2006,8 +2084,9 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password of the private key in the key store file. This is
-         * optional for client.
+         * The password of the private key in the key store file orthe PEM key
+         * specified in ssl.keystore.key'. This is required for clients only if
+         * two-way authentication is configured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2019,6 +2098,41 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointConsumerBuilder sslKeyPassword(
                 String sslKeyPassword) {
             doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * Certificate chain in the format specified by 'ssl.keystore.type'.
+         * Default SSL engine factory supports only PEM format with a list of
+         * X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder sslKeystoreCertificateChain(
+                String sslKeystoreCertificateChain) {
+            doSetProperty("sslKeystoreCertificateChain", sslKeystoreCertificateChain);
+            return this;
+        }
+        /**
+         * Private key in the format specified by 'ssl.keystore.type'. Default
+         * SSL engine factory supports only PEM format with PKCS#8 keys. If the
+         * key is encrypted, key password must be specified using
+         * 'ssl.key.password'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreKey the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder sslKeystoreKey(
+                String sslKeystoreKey) {
+            doSetProperty("sslKeystoreKey", sslKeystoreKey);
             return this;
         }
         /**
@@ -2039,7 +2153,8 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The store password for the key store file. This is optional for
-         * client and only needed if ssl.keystore.location is configured.
+         * client and only needed if 'ssl.keystore.location' is configured. Key
+         * store password is not supported for PEM format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2144,6 +2259,23 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Trusted certificates in the format specified by
+         * 'ssl.truststore.type'. Default SSL engine factory supports only PEM
+         * format with X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreCertificates the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder sslTruststoreCertificates(
+                String sslTruststoreCertificates) {
+            doSetProperty("sslTruststoreCertificates", sslTruststoreCertificates);
+            return this;
+        }
+        /**
          * The location of the trust store file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2159,9 +2291,10 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password for the trust store file. If a password is not set
-         * access to the truststore is still available, but integrity checking
-         * is disabled.
+         * The password for the trust store file. If a password is not set,
+         * trust store file configured will still be used, but integrity
+         * checking is disabled. Trust store password is not supported for PEM
+         * format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2270,41 +2403,6 @@ public interface VertxKafkaEndpointBuilderFactory {
         default AdvancedVertxKafkaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2921,6 +3019,84 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder socketConnectionSetupTimeoutMaxMs(
+                long socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder socketConnectionSetupTimeoutMaxMs(
+                String socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder socketConnectionSetupTimeoutMs(
+                long socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder socketConnectionSetupTimeoutMs(
+                String socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
@@ -3300,11 +3476,16 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The configuration controls how long KafkaProducer.send() and
-         * KafkaProducer.partitionsFor() will block.These methods can be blocked
-         * either because the buffer is full or metadata unavailable.Blocking in
-         * the user-supplied serializers or partitioner will not be counted
-         * against this timeout.
+         * The configuration controls how long the KafkaProducer's send(),
+         * partitionsFor(), initTransactions(), sendOffsetsToTransaction(),
+         * commitTransaction() and abortTransaction() methods will block. For
+         * send() this timeout bounds the total time waiting for both metadata
+         * fetch and buffer allocation (blocking in the user-supplied
+         * serializers or partitioner is not counted against this timeout). For
+         * partitionsFor() this timeout bounds the time spent waiting for
+         * metadata if it is unavailable. The transaction-related methods always
+         * block, but may timeout if the transaction coordinator could not be
+         * discovered or did not respond within the timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -3319,11 +3500,16 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The configuration controls how long KafkaProducer.send() and
-         * KafkaProducer.partitionsFor() will block.These methods can be blocked
-         * either because the buffer is full or metadata unavailable.Blocking in
-         * the user-supplied serializers or partitioner will not be counted
-         * against this timeout.
+         * The configuration controls how long the KafkaProducer's send(),
+         * partitionsFor(), initTransactions(), sendOffsetsToTransaction(),
+         * commitTransaction() and abortTransaction() methods will block. For
+         * send() this timeout bounds the total time waiting for both metadata
+         * fetch and buffer allocation (blocking in the user-supplied
+         * serializers or partitioner is not counted against this timeout). For
+         * partitionsFor() this timeout bounds the time spent waiting for
+         * metadata if it is unavailable. The transaction-related methods always
+         * block, but may timeout if the transaction coordinator could not be
+         * discovered or did not respond within the timeout.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -3558,7 +3744,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * will wait for a transaction status update from the producer before
          * proactively aborting the ongoing transaction.If this value is larger
          * than the transaction.max.timeout.ms setting in the broker, the
-         * request will fail with a InvalidTransactionTimeout error.
+         * request will fail with a InvalidTxnTimeoutException error.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -3578,7 +3764,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * will wait for a transaction status update from the producer before
          * proactively aborting the ongoing transaction.If this value is larger
          * than the transaction.max.timeout.ms setting in the broker, the
-         * request will fail with a InvalidTransactionTimeout error.
+         * request will fail with a InvalidTxnTimeoutException error.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -4140,8 +4326,9 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password of the private key in the key store file. This is
-         * optional for client.
+         * The password of the private key in the key store file orthe PEM key
+         * specified in ssl.keystore.key'. This is required for clients only if
+         * two-way authentication is configured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4153,6 +4340,41 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointProducerBuilder sslKeyPassword(
                 String sslKeyPassword) {
             doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * Certificate chain in the format specified by 'ssl.keystore.type'.
+         * Default SSL engine factory supports only PEM format with a list of
+         * X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder sslKeystoreCertificateChain(
+                String sslKeystoreCertificateChain) {
+            doSetProperty("sslKeystoreCertificateChain", sslKeystoreCertificateChain);
+            return this;
+        }
+        /**
+         * Private key in the format specified by 'ssl.keystore.type'. Default
+         * SSL engine factory supports only PEM format with PKCS#8 keys. If the
+         * key is encrypted, key password must be specified using
+         * 'ssl.key.password'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreKey the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder sslKeystoreKey(
+                String sslKeystoreKey) {
+            doSetProperty("sslKeystoreKey", sslKeystoreKey);
             return this;
         }
         /**
@@ -4173,7 +4395,8 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The store password for the key store file. This is optional for
-         * client and only needed if ssl.keystore.location is configured.
+         * client and only needed if 'ssl.keystore.location' is configured. Key
+         * store password is not supported for PEM format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4278,6 +4501,23 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Trusted certificates in the format specified by
+         * 'ssl.truststore.type'. Default SSL engine factory supports only PEM
+         * format with X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreCertificates the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointProducerBuilder sslTruststoreCertificates(
+                String sslTruststoreCertificates) {
+            doSetProperty("sslTruststoreCertificates", sslTruststoreCertificates);
+            return this;
+        }
+        /**
          * The location of the trust store file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -4293,9 +4533,10 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password for the trust store file. If a password is not set
-         * access to the truststore is still available, but integrity checking
-         * is disabled.
+         * The password for the trust store file. If a password is not set,
+         * trust store file configured will still be used, but integrity
+         * checking is disabled. Trust store password is not supported for PEM
+         * format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4335,41 +4576,6 @@ public interface VertxKafkaEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default VertxKafkaEndpointProducerBuilder basic() {
             return (VertxKafkaEndpointProducerBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
         }
     }
 
@@ -4976,6 +5182,84 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder socketConnectionSetupTimeoutMaxMs(
+                long socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder socketConnectionSetupTimeoutMaxMs(
+                String socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder socketConnectionSetupTimeoutMs(
+                long socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder socketConnectionSetupTimeoutMs(
+                String socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
          * The fully qualified name of a SASL client callback handler class that
          * implements the AuthenticateCallbackHandler interface.
          * 
@@ -5501,8 +5785,9 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password of the private key in the key store file. This is
-         * optional for client.
+         * The password of the private key in the key store file orthe PEM key
+         * specified in ssl.keystore.key'. This is required for clients only if
+         * two-way authentication is configured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -5513,6 +5798,40 @@ public interface VertxKafkaEndpointBuilderFactory {
          */
         default VertxKafkaEndpointBuilder sslKeyPassword(String sslKeyPassword) {
             doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * Certificate chain in the format specified by 'ssl.keystore.type'.
+         * Default SSL engine factory supports only PEM format with a list of
+         * X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder sslKeystoreCertificateChain(
+                String sslKeystoreCertificateChain) {
+            doSetProperty("sslKeystoreCertificateChain", sslKeystoreCertificateChain);
+            return this;
+        }
+        /**
+         * Private key in the format specified by 'ssl.keystore.type'. Default
+         * SSL engine factory supports only PEM format with PKCS#8 keys. If the
+         * key is encrypted, key password must be specified using
+         * 'ssl.key.password'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreKey the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder sslKeystoreKey(String sslKeystoreKey) {
+            doSetProperty("sslKeystoreKey", sslKeystoreKey);
             return this;
         }
         /**
@@ -5533,7 +5852,8 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The store password for the key store file. This is optional for
-         * client and only needed if ssl.keystore.location is configured.
+         * client and only needed if 'ssl.keystore.location' is configured. Key
+         * store password is not supported for PEM format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -5637,6 +5957,23 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Trusted certificates in the format specified by
+         * 'ssl.truststore.type'. Default SSL engine factory supports only PEM
+         * format with X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreCertificates the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointBuilder sslTruststoreCertificates(
+                String sslTruststoreCertificates) {
+            doSetProperty("sslTruststoreCertificates", sslTruststoreCertificates);
+            return this;
+        }
+        /**
          * The location of the trust store file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -5652,9 +5989,10 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password for the trust store file. If a password is not set
-         * access to the truststore is still available, but integrity checking
-         * is disabled.
+         * The password for the trust store file. If a password is not set,
+         * trust store file configured will still be used, but integrity
+         * checking is disabled. Trust store password is not supported for PEM
+         * format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -5695,40 +6033,6 @@ public interface VertxKafkaEndpointBuilderFactory {
                 AdvancedVertxKafkaEndpointProducerBuilder {
         default VertxKafkaEndpointBuilder basic() {
             return (VertxKafkaEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
         }
     }
 

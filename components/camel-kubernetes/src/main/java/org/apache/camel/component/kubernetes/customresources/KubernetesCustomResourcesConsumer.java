@@ -18,9 +18,9 @@ package org.apache.camel.component.kubernetes.customresources;
 
 import java.util.concurrent.ExecutorService;
 
-import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.dsl.internal.RawCustomResourceOperationsImpl;
 import org.apache.camel.Exchange;
@@ -110,7 +110,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
                     }
 
                     @Override
-                    public void onClose(KubernetesClientException cause) {
+                    public void onClose(WatcherException cause) {
                         if (cause != null) {
                             LOG.error(cause.getMessage(), cause);
                         }

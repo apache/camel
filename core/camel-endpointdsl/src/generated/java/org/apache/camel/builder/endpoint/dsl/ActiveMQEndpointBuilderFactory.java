@@ -2180,8 +2180,7 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2197,8 +2196,7 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -3051,7 +3049,7 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Values greater than 1 specify the message priority when sending
-         * (where 0 is the lowest priority and 9 is the highest). The
+         * (where 1 is the lowest priority and 9 is the highest). The
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 
@@ -3069,7 +3067,7 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Values greater than 1 specify the message priority when sending
-         * (where 0 is the lowest priority and 9 is the highest). The
+         * (where 1 is the lowest priority and 9 is the highest). The
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 
@@ -4675,8 +4673,7 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -4692,8 +4689,7 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -6282,8 +6278,7 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -6298,8 +6293,7 @@ public interface ActiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
+         * Sets whether synchronous processing should be strictly used.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

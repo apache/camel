@@ -57,7 +57,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "soapAction": target.getConfiguration().setSoapAction(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         case "webservicetemplate":
         case "webServiceTemplate": target.getConfiguration().setWebServiceTemplate(property(camelContext, org.springframework.ws.client.core.WebServiceTemplate.class, value)); return true;
@@ -106,7 +105,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "soapAction": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "timeout": return int.class;
         case "webservicetemplate":
         case "webServiceTemplate": return org.springframework.ws.client.core.WebServiceTemplate.class;
@@ -156,7 +154,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "soapAction": return target.getConfiguration().getSoapAction();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getConfiguration().getTimeout();
         case "webservicetemplate":
         case "webServiceTemplate": return target.getConfiguration().getWebServiceTemplate();

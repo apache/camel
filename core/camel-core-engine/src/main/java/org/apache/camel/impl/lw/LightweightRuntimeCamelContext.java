@@ -121,6 +121,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
@@ -1960,6 +1961,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public EndpointUriFactory getEndpointUriFactory(String scheme) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public StartupStepRecorder getStartupStepRecorder() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
         throw new UnsupportedOperationException();
     }
 

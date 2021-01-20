@@ -177,7 +177,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "size": target.getConfiguration().setSize(property(camelContext, facebook4j.PictureSize.class, value)); return true;
         case "source": target.getConfiguration().setSource(property(camelContext, facebook4j.Media.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tabid":
         case "tabId": target.getConfiguration().setTabId(property(camelContext, java.lang.String.class, value)); return true;
         case "tagupdate":
@@ -372,7 +371,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "size": return facebook4j.PictureSize.class;
         case "source": return facebook4j.Media.class;
         case "subject": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tabid":
         case "tabId": return java.lang.String.class;
         case "tagupdate":
@@ -568,7 +566,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "size": return target.getConfiguration().getSize();
         case "source": return target.getConfiguration().getSource();
         case "subject": return target.getConfiguration().getSubject();
-        case "synchronous": return target.isSynchronous();
         case "tabid":
         case "tabId": return target.getConfiguration().getTabId();
         case "tagupdate":

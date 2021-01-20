@@ -199,6 +199,11 @@ public class RouteService extends ChildServiceSupport {
 
     @Override
     protected void doStart() {
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            // fire event
+            EventHelper.notifyRouteStarting(camelContext, route);
+        }
+
         try {
             warmUp();
         } catch (FailedToStartRouteException e) {
@@ -219,6 +224,10 @@ public class RouteService extends ChildServiceSupport {
 
     @Override
     protected void doStop() {
+        try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
+            // fire event
+            EventHelper.notifyRouteStopping(camelContext, route);
+        }
 
         // if we are stopping CamelContext then we are shutting down
         boolean isShutdownCamelContext = camelContext.isStopping();

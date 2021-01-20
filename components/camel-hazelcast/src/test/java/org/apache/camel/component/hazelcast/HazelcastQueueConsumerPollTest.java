@@ -67,6 +67,17 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         this.checkHeadersAbsence(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
 
+    @Test
+    public void pollTimeout() throws InterruptedException {
+        // if nothing to poll after timeout the queue.poll returns NULL, the consumer shouldn't send this NULL message
+        when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn(null);
+
+        MockEndpoint out = getMockEndpoint("mock:result");
+        out.expectedMessageCount(0);
+
+        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

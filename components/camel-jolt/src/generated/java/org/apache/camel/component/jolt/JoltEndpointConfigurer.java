@@ -33,7 +33,6 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputtype":
         case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transformdsl":
         case "transformDsl": target.setTransformDsl(property(camelContext, org.apache.camel.component.jolt.JoltTransformType.class, value)); return true;
         default: return false;
@@ -55,7 +54,6 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.jolt.JoltInputOutputType.class;
-        case "synchronous": return boolean.class;
         case "transformdsl":
         case "transformDsl": return org.apache.camel.component.jolt.JoltTransformType.class;
         default: return null;
@@ -78,7 +76,6 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputtype":
         case "outputType": return target.getOutputType();
-        case "synchronous": return target.isSynchronous();
         case "transformdsl":
         case "transformDsl": return target.getTransformDsl();
         default: return null;

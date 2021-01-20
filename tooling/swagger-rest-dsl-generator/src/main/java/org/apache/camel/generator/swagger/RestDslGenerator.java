@@ -38,6 +38,7 @@ public abstract class RestDslGenerator<G> {
     String restComponent;
     String restContextPath;
     String apiContextPath;
+    boolean clientRequestValidation;
     boolean springComponent;
     boolean springBootProject;
 
@@ -97,6 +98,15 @@ public abstract class RestDslGenerator<G> {
 
     public G withApiContextPath(String contextPath) {
         this.apiContextPath = contextPath;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G withClientRequestValidation() {
+        this.clientRequestValidation = true;
 
         @SuppressWarnings("unchecked")
         final G that = (G) this;

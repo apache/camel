@@ -27,30 +27,25 @@ import org.testcontainers.containers.Network;
 public class StrimziService implements KafkaService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziService.class);
 
-    private static ZookeeperContainer zookeeperContainer;
-    private static StrimziContainer strimziContainer;
-    private static String zookeeperInstanceName;
-    private static String strimziInstanceName;
+    private final ZookeeperContainer zookeeperContainer;
+    private final StrimziContainer strimziContainer;
 
     public StrimziService() {
+        Network network = Network.newNetwork();
 
-        if (zookeeperContainer == null && strimziContainer == null) {
+        String zookeeperInstanceName = "zookeeper-" + TestUtils.randomWithRange(1, 100);
+        zookeeperContainer = new ZookeeperContainer(network, zookeeperInstanceName);
 
-            Network network = Network.newNetwork();
-
-            if (zookeeperContainer == null) {
-                zookeeperInstanceName = "zookeeper-" + TestUtils.randomWithRange(1, 100);
-                zookeeperContainer = new ZookeeperContainer(network, zookeeperInstanceName);
-            }
-
-            if (strimziContainer == null) {
-                strimziInstanceName = "strimzi-" + TestUtils.randomWithRange(1, 100);
-                strimziContainer = new StrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
-            }
-        }
+        String strimziInstanceName = "strimzi-" + TestUtils.randomWithRange(1, 100);
+        strimziContainer = new StrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
     }
 
-    private Integer getKafkaPort() {
+    public StrimziService(ZookeeperContainer zookeeperContainer, StrimziContainer strimziContainer) {
+        this.zookeeperContainer = zookeeperContainer;
+        this.strimziContainer = strimziContainer;
+    }
+
+    protected Integer getKafkaPort() {
         return strimziContainer.getKafkaPort();
     }
 
@@ -66,36 +61,15 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
 
     @Override
     public void initialize() {
-        if (!zookeeperContainer.isRunning()) {
-            /*
-             When running multiple tests at once, this throttles the startup to give
-             time for docker to fully shutdown previously running instances (which
-             happens asynchronously). This prevents problems with false positive errors
-             such as docker complaining of multiple containers with the same name or
-             trying to reuse port numbers too quickly.
-             */
-            throttle();
-            zookeeperContainer.start();
-        }
+        zookeeperContainer.start();
 
-        String zookeeperConnect = zookeeperInstanceName + ":" + zookeeperContainer.getZookeeperPort();
+        String zookeeperConnect = zookeeperContainer.getContainerIpAddress() + ":" + zookeeperContainer.getZookeeperPort();
         LOG.info("Apache Zookeeper running at address {}", zookeeperConnect);
 
-        if (!strimziContainer.isRunning()) {
-            strimziContainer.start();
-        }
+        strimziContainer.start();
 
         registerProperties();
         LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
-    }
-
-    private void throttle() {
-        try {
-            String throttleDelay = System.getProperty("itest.strimzi.throttle.delay", "10000");
-            Thread.sleep(Integer.parseInt(throttleDelay));
-        } catch (InterruptedException e) {
-            LOG.warn("Strimzi startup interrupted");
-        }
     }
 
     private boolean stopped() {
@@ -118,5 +92,9 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     @Override
     public StrimziContainer getContainer() {
         return strimziContainer;
+    }
+
+    protected ZookeeperContainer getZookeeperContainer() {
+        return zookeeperContainer;
     }
 }

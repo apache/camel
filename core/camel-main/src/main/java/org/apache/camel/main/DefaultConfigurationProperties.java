@@ -66,7 +66,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
-    private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
     private boolean beanPostProcessorEnabled = true;
@@ -101,6 +100,12 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
     private boolean routeControllerUnhealthyOnExhausted;
+    private String startupRecorder;
+    private int startupRecorderMaxDepth = -1;
+    private boolean startupRecorderRecording = true;
+    private String startupRecorderProfile = "default";
+    private long startupRecorderDuration;
+    private String startupRecorderDir;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -621,20 +626,6 @@ public abstract class DefaultConfigurationProperties<T> {
         this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
     }
 
-    public boolean isEndpointBasicPropertyBinding() {
-        return endpointBasicPropertyBinding;
-    }
-
-    /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     *
-     * The default value is false.
-     */
-    public void setEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
-        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
-    }
-
     public boolean isUseDataType() {
         return useDataType;
     }
@@ -1111,6 +1102,93 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeControllerUnhealthyOnExhausted = routeControllerUnhealthyOnExhausted;
     }
 
+    public String getStartupRecorder() {
+        return startupRecorder;
+    }
+
+    /**
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
+     * logging, java-flight-recorder
+     *
+     * The default is false.
+     */
+    public void setStartupRecorder(String startupRecorder) {
+        this.startupRecorder = startupRecorder;
+    }
+
+    public int getStartupRecorderMaxDepth() {
+        return startupRecorderMaxDepth;
+    }
+
+    /**
+     * To filter our sub steps at a maximum depth.
+     *
+     * Use -1 for no maximum. Use 0 for no sub steps. Use 1 for max 1 sub step, and so forth.
+     *
+     * The default is -1.
+     */
+    public void setStartupRecorderMaxDepth(int startupRecorderMaxDepth) {
+        this.startupRecorderMaxDepth = startupRecorderMaxDepth;
+    }
+
+    public boolean isStartupRecorderRecording() {
+        return startupRecorderRecording;
+    }
+
+    /**
+     * To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is
+     * complete.
+     *
+     * This requires that camel-jfr is on the classpath.
+     *
+     * The default is true.
+     */
+    public void setStartupRecorderRecording(boolean startupRecorderRecording) {
+        this.startupRecorderRecording = startupRecorderRecording;
+    }
+
+    public String getStartupRecorderProfile() {
+        return startupRecorderProfile;
+    }
+
+    /**
+     * To use a specific Java Flight Recorder profile configuration, such as default or profile.
+     *
+     * The default is default.
+     */
+    public void setStartupRecorderProfile(String startupRecorderProfile) {
+        this.startupRecorderProfile = startupRecorderProfile;
+    }
+
+    public long getStartupRecorderDuration() {
+        return startupRecorderDuration;
+    }
+
+    /**
+     * How long time to run the startup recorder.
+     *
+     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until the
+     * JVM is being stopped. A positive value is to run the recorder for N seconds.
+     *
+     * When the recorder is stopped then the recording is auto saved to disk (note: save to disk can be disabled by
+     * setting startupRecorderDir to false)
+     */
+    public void setStartupRecorderDuration(long startupRecorderDuration) {
+        this.startupRecorderDuration = startupRecorderDuration;
+    }
+
+    public String getStartupRecorderDir() {
+        return startupRecorderDir;
+    }
+
+    /**
+     * Directory to store the recording. By default the user home directory will be used. Use false to turn off saving
+     * recording to disk.
+     */
+    public void setStartupRecorderDir(String startupRecorderDir) {
+        this.startupRecorderDir = startupRecorderDir;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1492,17 +1570,6 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     *
-     * The default value is false.
-     */
-    public T withEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
-        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
-        return (T) this;
-    }
-
-    /**
      * Whether to enable using data type on Camel messages.
      *
      * Data type are automatic turned on if one ore more routes has been explicit configured with input and output
@@ -1870,6 +1937,74 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
         this.routeControllerUnhealthyOnExhausted = unhealthyOnExhausted;
+        return (T) this;
+    }
+
+    /**
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
+     * logging, java-flight-recorder
+     *
+     * The default is false.
+     */
+    public T withStartupRecorder(String startupRecorder) {
+        this.startupRecorder = startupRecorder;
+        return (T) this;
+    }
+
+    /**
+     * To filter our sub steps at a maximum depth.
+     *
+     * Use -1 for no maximum. Use 0 for no sub steps. Use 1 for max 1 sub step, and so forth.
+     *
+     * The default is -1.
+     */
+    public T withStartupRecorderMaxDepth(int startupRecorderMaxDepth) {
+        this.startupRecorderMaxDepth = startupRecorderMaxDepth;
+        return (T) this;
+    }
+
+    /**
+     * To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is
+     * complete.
+     *
+     * This requires that camel-jfr is in use.
+     *
+     * The default is false.
+     */
+    public T withStartupRecorderRecording(boolean startupRecorderRecording) {
+        this.startupRecorderRecording = startupRecorderRecording;
+        return (T) this;
+    }
+
+    /**
+     * To use a specific Java Flight Recorder profile configuration, such as default or profile.
+     *
+     * The default is default.
+     */
+    public T withStartupRecorderProfile(String startupRecorderProfile) {
+        this.startupRecorderProfile = startupRecorderProfile;
+        return (T) this;
+    }
+
+    /**
+     * How long time to run the startup recorder.
+     *
+     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until the
+     * JVM is being stopped. A positive value is to run the recorder for N seconds.
+     *
+     * When the recorder is stopped then the recording is auto saved to disk (note: save to disk can be disabled by
+     * setting startupRecorderDir to false)
+     */
+    public T withStartupRecorderDuration(long startupRecorderDuration) {
+        this.startupRecorderDuration = startupRecorderDuration;
+        return (T) this;
+    }
+
+    /**
+     * Directory to store the recording. By default the user home directory will be used.
+     */
+    public T withStartupRecorderDir(String startupRecorderDir) {
+        this.startupRecorderDir = startupRecorderDir;
         return (T) this;
     }
 

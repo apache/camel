@@ -121,7 +121,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         // if we are in asynchronous mode we need a worker pool
-        if (!endpoint.isSynchronous() && workerPool == null) {
+        if (!endpoint.getConfiguration().isSynchronous() && workerPool == null) {
             workerPool = endpoint.createProducerExecutor();
             // we create a thread pool so we should also shut it down
             shutdownWorkerPool = true;

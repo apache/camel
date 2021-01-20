@@ -31,7 +31,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outfile":
         case "outFile": target.setOutFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "usestderronemptystdout":
         case "useStderrOnEmptyStdout": target.setUseStderrOnEmptyStdout(property(camelContext, boolean.class, value)); return true;
@@ -54,7 +53,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "outfile":
         case "outFile": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "timeout": return long.class;
         case "usestderronemptystdout":
         case "useStderrOnEmptyStdout": return boolean.class;
@@ -78,7 +76,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outfile":
         case "outFile": return target.getOutFile();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         case "usestderronemptystdout":
         case "useStderrOnEmptyStdout": return target.isUseStderrOnEmptyStdout();

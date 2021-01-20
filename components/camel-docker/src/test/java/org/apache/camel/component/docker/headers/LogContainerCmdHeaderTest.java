@@ -18,8 +18,9 @@ package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
 
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.LogContainerCmd;
-import com.github.dockerjava.core.command.LogContainerResultCallback;
+import com.github.dockerjava.api.model.Frame;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
     private LogContainerCmd mockObject;
 
     @Mock
-    private LogContainerResultCallback callback;
+    private ResultCallback.Adapter<Frame> callback;
 
     @Test
     void logContainerHeaderTest() {

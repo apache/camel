@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,16 +29,17 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
             = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
 
     @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     @Test
     public void testRestartWithStopStart() throws Exception {
-        SjmsComponent sjmsComponent = new SjmsComponent();
-        sjmsComponent.setConnectionFactory((ConnectionFactory) context.getRegistry().lookupByName("activemqCF"));
-        context.addComponent("sjms", sjmsComponent);
-
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
@@ -58,8 +57,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         // restart
         context.stop();
 
-        // must add our custom component back again
-        context.addComponent("sjms", sjmsComponent);
+        resetMocks();
 
         context.start();
 
@@ -75,10 +73,6 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
 
     @Test
     public void testRestartWithSuspendResume() throws Exception {
-        SjmsComponent sjmsComponent = new SjmsComponent();
-        sjmsComponent.setConnectionFactory((ConnectionFactory) context.getRegistry().lookupByName("activemqCF"));
-        context.addComponent("sjms", sjmsComponent);
-
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
@@ -96,6 +90,8 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         // restart
         context.suspend();
         context.resume();
+
+        resetMocks();
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
 

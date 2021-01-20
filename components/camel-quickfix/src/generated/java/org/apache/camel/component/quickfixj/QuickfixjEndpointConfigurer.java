@@ -33,7 +33,6 @@ public class QuickfixjEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "sessionid":
         case "sessionID": target.setSessionID(property(camelContext, quickfix.SessionID.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -53,7 +52,6 @@ public class QuickfixjEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return boolean.class;
         case "sessionid":
         case "sessionID": return quickfix.SessionID.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -74,7 +72,6 @@ public class QuickfixjEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "sessionid":
         case "sessionID": return target.getSessionID();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

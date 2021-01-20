@@ -115,4 +115,11 @@ public interface Component extends CamelContextAware, Service {
         return object;
     }
 
+    /**
+     * Gets the default name of the component.
+     */
+    default String getDefaultName() {
+        return null;
+    }
+
 }

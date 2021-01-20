@@ -24,7 +24,6 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("databaseJdbcDriver");
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
-        props.add("synchronous");
         props.add("snapshotDelayMs");
         props.add("offsetStorageTopic");
         props.add("databaseSslMode");
@@ -51,6 +50,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("databaseServerId");
         props.add("snapshotSelectStatementOverrides");
         props.add("databaseIncludeList");
+        props.add("snapshotEventsAsInserts");
         props.add("gtidSourceFilterDmlEvents");
         props.add("offsetFlushIntervalMs");
         props.add("offsetStorageFileName");

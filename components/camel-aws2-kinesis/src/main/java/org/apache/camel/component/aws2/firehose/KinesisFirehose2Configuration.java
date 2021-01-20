@@ -54,6 +54,13 @@ public class KinesisFirehose2Configuration implements Cloneable {
     @UriParam(label = "common", defaultValue = "true",
               description = "This option will set the CBOR_ENABLED property during the execution")
     private boolean cborEnabled = true;
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride"
+                            + " option")
+    private boolean overrideEndpoint;
+    @UriParam(label = "common",
+              description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
+    private String uriEndpointOverride;
 
     public void setAmazonKinesisFirehoseClient(FirehoseClient client) {
         this.amazonKinesisFirehoseClient = client;
@@ -141,6 +148,22 @@ public class KinesisFirehose2Configuration implements Cloneable {
 
     public void setCborEnabled(boolean cborEnabled) {
         this.cborEnabled = cborEnabled;
+    }
+
+    public boolean isOverrideEndpoint() {
+        return overrideEndpoint;
+    }
+
+    public void setOverrideEndpoint(boolean overrideEndpoint) {
+        this.overrideEndpoint = overrideEndpoint;
+    }
+
+    public String getUriEndpointOverride() {
+        return uriEndpointOverride;
+    }
+
+    public void setUriEndpointOverride(String uriEndpointOverride) {
+        this.uriEndpointOverride = uriEndpointOverride;
     }
 
     // *************************************************

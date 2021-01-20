@@ -228,6 +228,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                        + ""
                                                        + "endpoint uris</a>")
     protected String exclude;
+    @UriParam(label = "consumer,filter",
+              description = "Is used to include files matching file extension name (case insensitive). For example to include txt files, then use includeExt=txt."
+                            + " Multiple extensions can be separated by comma, for example to include txt and xml files, use includeExt=txt,xml")
+    protected String includeExt;
+    @UriParam(label = "consumer,filter",
+              description = "Is used to exclude files matching file extension name (case insensitive). For example to exclude bak files, then use excludeExt=bak."
+                            + " Multiple extensions can be separated by comma, for example to exclude bak and dat files, use excludeExt=bak,dat.")
+    protected String excludeExt;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String", description = "Expression (such as Simple "
                                                                                       + "Language) used to dynamically set the filename when moving it after processing. To move files into "
                                                                                       + "a .done subdirectory just enter .done.")
@@ -420,6 +428,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                             + "the file on completion process where the consumer does either a commit or rollback. The default "
                             + "implementation will log any exception at WARN level and ignore.")
     protected ExceptionHandler onCompletionExceptionHandler;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     private Pattern includePattern;
     private Pattern excludePattern;
@@ -597,6 +608,32 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public GenericFileFilter<T> getAntFilter() {
         return antFilter;
+    }
+
+    public String getIncludeExt() {
+        return includeExt;
+    }
+
+    /**
+     * Is used to include files matching file extension name (case insensitive). For example to include txt files, then
+     * use includeExt=txt. Multiple extensions can be separated by comma, for example to include txt and xml files, use
+     * includeExt=txt,xml
+     */
+    public void setIncludeExt(String includeExt) {
+        this.includeExt = includeExt;
+    }
+
+    public String getExcludeExt() {
+        return excludeExt;
+    }
+
+    /**
+     * Is used to exclude files matching file extension name (case insensitive). For example to exclude bak files, then
+     * use excludeExt=bak. Multiple extensions can be separated by comma, for example to exclude bak and dat files, use
+     * excludeExt=bak,dat.
+     */
+    public void setExcludeExt(String excludeExt) {
+        this.excludeExt = excludeExt;
     }
 
     public boolean isPreSort() {
@@ -1462,6 +1499,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setOnCompletionExceptionHandler(ExceptionHandler onCompletionExceptionHandler) {
         this.onCompletionExceptionHandler = onCompletionExceptionHandler;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     /**

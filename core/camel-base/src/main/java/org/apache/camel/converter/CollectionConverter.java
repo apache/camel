@@ -115,18 +115,23 @@ public final class CollectionConverter {
     }
 
     @Converter(order = 9)
+    public static <K, V> Collection<Map.Entry<K, V>> toCollection(Map<K, V> map) {
+        return map.entrySet();
+    }
+
+    @Converter(order = 10)
     public static Properties toProperties(Map<Object, Object> map) {
         Properties answer = new Properties();
         answer.putAll(map);
         return answer;
     }
 
-    @Converter(order = 10)
+    @Converter(order = 11)
     public static <K, V> Hashtable<K, V> toHashtable(Map<? extends K, ? extends V> map) {
         return new Hashtable<>(map);
     }
 
-    @Converter(order = 11)
+    @Converter(order = 12)
     public static <K, V> HashMap<K, V> toHashMap(Map<? extends K, ? extends V> map) {
         return new HashMap<>(map);
     }
@@ -134,7 +139,7 @@ public final class CollectionConverter {
     /**
      * Converts an {@link Iterable} into a {@link List}
      */
-    @Converter(order = 12)
+    @Converter(order = 13)
     public static <T> List<T> toList(Iterable<T> iterable) {
         if (iterable instanceof List) {
             return (List<T>) iterable;
@@ -149,7 +154,7 @@ public final class CollectionConverter {
     /**
      * Converts an {@link Iterator} into a {@link List}
      */
-    @Converter(order = 13)
+    @Converter(order = 14)
     public static <T> List<T> toList(Iterator<T> it) {
         if (it instanceof List) {
             return (List<T>) it;

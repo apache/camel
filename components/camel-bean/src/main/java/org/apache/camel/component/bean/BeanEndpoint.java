@@ -148,7 +148,7 @@ public class BeanEndpoint extends DefaultEndpoint {
 
     @Deprecated
     public void setCache(Boolean cache) {
-        if (cache) {
+        if (Boolean.TRUE.equals(cache)) {
             scope = BeanScope.Singleton;
         } else {
             scope = BeanScope.Prototype;

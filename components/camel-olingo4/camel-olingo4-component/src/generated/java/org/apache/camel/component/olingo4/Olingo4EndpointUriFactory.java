@@ -20,13 +20,12 @@ public class Olingo4EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(40);
         props.add("backoffMultiplier");
         props.add("apiName");
         props.add("data");
         props.add("serviceUri");
         props.add("queryParams");
-        props.add("synchronous");
         props.add("resourcePath");
         props.add("sslContextParameters");
         props.add("splitResult");

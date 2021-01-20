@@ -71,7 +71,9 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
         testBody(clause, DataValue.class, valueConsumer);
     }
 
-    public static <T> void testBody(final AssertionClause clause, final Class<T> bodyClass, final Consumer<T> valueConsumer) {
+    public static <T> void testBody(
+            final AssertionClause clause, final Class<T> bodyClass,
+            final Consumer<T> valueConsumer) {
         clause.predicate(exchange -> {
             final T body = exchange.getIn().getBody(bodyClass);
             valueConsumer.accept(body);
@@ -141,7 +143,9 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
             if (dot != -1) {
                 version = version.substring(0, dot);
             }
-            if (Integer.parseInt(version) >= requiredVersion) {
+            if (version.equalsIgnoreCase("16-ea")) {
+                return true;
+            } else if (Integer.parseInt(version) >= requiredVersion) {
                 return true;
             }
         }

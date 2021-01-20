@@ -20,20 +20,19 @@ public class Lambda2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
-        props.add("proxyProtocol");
-        props.add("secretKey");
-        props.add("synchronous");
-        props.add("pojoRequest");
-        props.add("proxyHost");
-        props.add("trustAllCertificates");
+        Set<String> props = new HashSet<>(12);
         props.add("awsLambdaClient");
         props.add("proxyPort");
         props.add("lazyStartProducer");
+        props.add("proxyProtocol");
+        props.add("secretKey");
         props.add("accessKey");
         props.add("function");
         props.add("region");
         props.add("operation");
+        props.add("pojoRequest");
+        props.add("proxyHost");
+        props.add("trustAllCertificates");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("secretKey");

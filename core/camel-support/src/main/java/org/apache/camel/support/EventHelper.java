@@ -224,6 +224,45 @@ public final class EventHelper {
         return answer;
     }
 
+    public static boolean notifyRouteStarting(CamelContext context, Route route) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createRouteStartingEvent(route);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
     public static boolean notifyRouteStarted(CamelContext context, Route route) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
@@ -253,6 +292,45 @@ public final class EventHelper {
             if (event == null) {
                 // only create event once
                 event = factory.createRouteStartedEvent(route);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    public static boolean notifyRouteStopping(CamelContext context, Route route) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createRouteStoppingEvent(route);
                 if (event == null) {
                     // factory could not create event so exit
                     return false;

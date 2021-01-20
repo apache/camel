@@ -39,7 +39,6 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sendtoprinter":
         case "sendToPrinter": target.getConfig().setSendToPrinter(property(camelContext, boolean.class, value)); return true;
         case "sides": target.getConfig().setSides(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -65,7 +64,6 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sendtoprinter":
         case "sendToPrinter": return boolean.class;
         case "sides": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -92,7 +90,6 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sendtoprinter":
         case "sendToPrinter": return target.getConfig().isSendToPrinter();
         case "sides": return target.getConfig().getSides();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

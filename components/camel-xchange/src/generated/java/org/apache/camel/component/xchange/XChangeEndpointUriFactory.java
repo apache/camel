@@ -20,12 +20,11 @@ public class XChangeEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("currencyPair");
         props.add("lazyStartProducer");
         props.add("method");
         props.add("service");
-        props.add("synchronous");
         props.add("name");
         props.add("currency");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

@@ -35,9 +35,6 @@ public interface SplunkHECEndpointBuilderFactory {
      * Builder for endpoint for the Splunk HEC component.
      */
     public interface SplunkHECEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSplunkHECEndpointBuilder advanced() {
-            return (AdvancedSplunkHECEndpointBuilder) this;
-        }
         /**
          * Splunk host.
          * 
@@ -210,50 +207,6 @@ public interface SplunkHECEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Splunk HEC component.
-     */
-    public interface AdvancedSplunkHECEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SplunkHECEndpointBuilder basic() {
-            return (SplunkHECEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSplunkHECEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSplunkHECEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface SplunkHECBuilders {
         /**
          * Splunk HEC (camel-splunk-hec)
@@ -309,7 +262,7 @@ public interface SplunkHECEndpointBuilderFactory {
     static SplunkHECEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SplunkHECEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkHECEndpointBuilder, AdvancedSplunkHECEndpointBuilder {
+        class SplunkHECEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkHECEndpointBuilder {
             public SplunkHECEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

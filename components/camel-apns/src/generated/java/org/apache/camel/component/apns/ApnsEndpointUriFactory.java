@@ -20,9 +20,8 @@ public class ApnsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(22);
         props.add("backoffMultiplier");
-        props.add("synchronous");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
         props.add("exchangePattern");

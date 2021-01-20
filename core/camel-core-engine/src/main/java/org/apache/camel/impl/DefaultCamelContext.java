@@ -24,10 +24,12 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.StartupStep;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -43,6 +45,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
@@ -59,6 +62,7 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
@@ -588,6 +592,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     Properties prop = new Properties();
                     prop.putAll(routeDefinition.getTemplateParameters());
                     pc.setLocalProperties(prop);
+
+                    // need to reset auto assigned ids, so there is no clash when creating routes
+                    ProcessorDefinitionHelper.resetAllAutoAssignedNodeIds(routeDefinition);
                 }
 
                 // must ensure route is prepared, before we can start it
@@ -596,7 +603,12 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     routeDefinition.markPrepared();
                 }
 
+                StartupStepRecorder recorder
+                        = getCamelContextReference().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+                StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Creating route");
                 Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
+                recorder.endStep(step);
+
                 RouteService routeService = new RouteService(route);
                 startRouteService(routeService, true);
 

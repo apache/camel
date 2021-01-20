@@ -20,10 +20,9 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(30);
         props.add("backoffMultiplier");
         props.add("metadataPrefix");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("ssl");
         props.add("scheduler");

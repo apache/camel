@@ -31,6 +31,7 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
     private String reply;
     private long delay = 25;
     private int failFirstAttempts;
+    private boolean synchronous;
 
     public MyAsyncEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -79,5 +80,13 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
 
     public void setFailFirstAttempts(int failFirstAttempts) {
         this.failFirstAttempts = failFirstAttempts;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

@@ -25,6 +25,7 @@ import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms2.Sjms2Endpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -47,6 +48,11 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
                 sjms2Endpoint.getSubscriptionId(),
                 sjms2Endpoint.isDurable(),
                 sjms2Endpoint.isShared());
+    }
+
+    @Override
+    public MessageConsumer createQueueMessageConsumer(Session session, Destination destination) throws Exception {
+        return createMessageConsumer(session, destination, null, false, null, false, false);
     }
 
     @Override
@@ -171,14 +177,36 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
         }
     }
 
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint) throws Exception {
+        Sjms2Endpoint sjms2Endpoint = (Sjms2Endpoint) endpoint;
+        return createMessageProducer(session, endpoint, sjms2Endpoint.getDestinationName());
+    }
+
     @Override
-    public MessageProducer createMessageProducer(Session session, Endpoint endpoint)
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName)
             throws Exception {
         Sjms2Endpoint sjms2Endpoint = (Sjms2Endpoint) endpoint;
         Destination destination = sjms2Endpoint.getDestinationCreationStrategy().createDestination(session,
-                sjms2Endpoint.getDestinationName(), sjms2Endpoint.isTopic());
+                destinationName, sjms2Endpoint.isTopic());
 
-        return createMessageProducer(session, destination, sjms2Endpoint.isPersistent(), sjms2Endpoint.getTtl());
+        boolean persistent = sjms2Endpoint.isDeliveryPersistent();
+        if (sjms2Endpoint.getDeliveryMode() != null) {
+            persistent = DeliveryMode.PERSISTENT == sjms2Endpoint.getDeliveryMode();
+        }
+
+        return createMessageProducer(session, destination, persistent, sjms2Endpoint.getTimeToLive());
+    }
+
+    @Override
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception {
+        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
+
+        boolean persistent = sjmsEndpoint.isDeliveryPersistent();
+        if (sjmsEndpoint.getDeliveryMode() != null) {
+            persistent = DeliveryMode.PERSISTENT == sjmsEndpoint.getDeliveryMode();
+        }
+
+        return createMessageProducer(session, destination, persistent, sjmsEndpoint.getTimeToLive());
     }
 
     @Override

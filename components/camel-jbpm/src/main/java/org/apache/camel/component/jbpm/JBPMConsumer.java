@@ -142,13 +142,11 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
     @Override
     public void onActivate(DeploymentEvent event) {
         // no-op
-
     }
 
     @Override
     public void onDeactivate(DeploymentEvent event) {
         // no-op
-
     }
 
     protected void configure(InternalRuntimeManager manager, JBPMConsumer consumer) {
@@ -200,7 +198,6 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
 
         LOGGER.debug("Adding consumer {} on {}", consumer, consumerAware);
         consumerAware.addConsumer(consumer);
-
     }
 
     @Override

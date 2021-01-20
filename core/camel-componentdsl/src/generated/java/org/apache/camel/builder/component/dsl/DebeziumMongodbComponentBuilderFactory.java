@@ -543,23 +543,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of threads used to perform an initial sync of the
-         * collections in a replica set. Defaults to 1.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: mongodb
-         * 
-         * @param initialSyncMaxThreads the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder initialSyncMaxThreads(
-                int initialSyncMaxThreads) {
-            doSetProperty("initialSyncMaxThreads", initialSyncMaxThreads);
-            return this;
-        }
-        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -589,6 +572,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder maxQueueSize(int maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
+            return this;
+        }
+        /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder maxQueueSizeInBytes(
+                long maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
             return this;
         }
         /**
@@ -889,6 +890,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * This property contains a comma-separated list of ., for which the
+         * initial snapshot may be a subset of data present in the data source.
+         * The subset would be defined by mongodb filter query specified as
+         * value for property snapshot.collection.filter.override..
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotCollectionFilterOverrides the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotCollectionFilterOverrides(
+                java.lang.String snapshotCollectionFilterOverrides) {
+            doSetProperty("snapshotCollectionFilterOverrides", snapshotCollectionFilterOverrides);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -918,6 +937,39 @@ public interface DebeziumMongodbComponentBuilderFactory {
         default DebeziumMongodbComponentBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
             doSetProperty("snapshotFetchSize", snapshotFetchSize);
+            return this;
+        }
+        /**
+         * this setting must be set to specify a list of tables/collections
+         * whose snapshot must be taken on creating or restarting the connector.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotIncludeCollectionList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotIncludeCollectionList(
+                java.lang.String snapshotIncludeCollectionList) {
+            doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: mongodb
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder snapshotMaxThreads(
+                int snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
             return this;
         }
         /**
@@ -1028,9 +1080,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
-            case "initialSyncMaxThreads": getOrCreateConfiguration((DebeziumMongodbComponent) component).setInitialSyncMaxThreads((int) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
+            case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "mongodbAuthsource": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbAuthsource((java.lang.String) value); return true;
             case "mongodbConnectTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectTimeoutMs((int) value); return true;
             case "mongodbHosts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHosts((java.lang.String) value); return true;
@@ -1049,8 +1101,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSanitizeFieldNames((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
+            case "snapshotCollectionFilterOverrides": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotCollectionFilterOverrides((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotFetchSize((int) value); return true;
+            case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
+            case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSourceStructVersion((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTombstonesOnDelete((boolean) value); return true;

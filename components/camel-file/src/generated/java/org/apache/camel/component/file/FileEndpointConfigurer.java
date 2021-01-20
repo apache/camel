@@ -64,6 +64,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "exclude": target.setExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "excludeext":
+        case "excludeExt": target.setExcludeExt(property(camelContext, java.lang.String.class, value)); return true;
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": target.setExclusiveReadLockStrategy(property(camelContext, org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class, value)); return true;
         case "extendedattributes":
@@ -89,6 +91,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "inprogressrepository":
         case "inProgressRepository": target.setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeext":
+        case "includeExt": target.setIncludeExt(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "jailstartingdirectory":
@@ -236,6 +240,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "exclude": return java.lang.String.class;
+        case "excludeext":
+        case "excludeExt": return java.lang.String.class;
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class;
         case "extendedattributes":
@@ -261,6 +267,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "inprogressrepository":
         case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "include": return java.lang.String.class;
+        case "includeext":
+        case "includeExt": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "jailstartingdirectory":
@@ -409,6 +417,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "exclude": return target.getExclude();
+        case "excludeext":
+        case "excludeExt": return target.getExcludeExt();
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return target.getExclusiveReadLockStrategy();
         case "extendedattributes":
@@ -434,6 +444,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "inprogressrepository":
         case "inProgressRepository": return target.getInProgressRepository();
         case "include": return target.getInclude();
+        case "includeext":
+        case "includeExt": return target.getIncludeExt();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "jailstartingdirectory":

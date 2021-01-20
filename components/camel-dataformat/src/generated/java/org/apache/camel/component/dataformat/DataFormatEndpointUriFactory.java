@@ -20,9 +20,8 @@ public class DataFormatEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(4);
+        Set<String> props = new HashSet<>(3);
         props.add("lazyStartProducer");
-        props.add("synchronous");
         props.add("name");
         props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

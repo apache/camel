@@ -33,6 +33,12 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "channelLifetime": target.getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "datachangefilterdeadbandtype":
+        case "dataChangeFilterDeadbandType": target.getMonitorFilterConfiguration().setDataChangeFilterDeadbandType(property(camelContext, org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger.class, value)); return true;
+        case "datachangefilterdeadbandvalue":
+        case "dataChangeFilterDeadbandValue": target.getMonitorFilterConfiguration().setDataChangeFilterDeadbandValue(property(camelContext, java.lang.Double.class, value)); return true;
+        case "datachangefiltertrigger":
+        case "dataChangeFilterTrigger": target.getMonitorFilterConfiguration().setDataChangeFilterTrigger(property(camelContext, org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger.class, value)); return true;
         case "defaultawaitwrites":
         case "defaultAwaitWrites": target.setDefaultAwaitWrites(property(camelContext, boolean.class, value)); return true;
         case "discoveryendpointsuffix":
@@ -60,6 +66,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": target.getConfiguration().setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "method": target.setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "monitorfiltertype":
+        case "monitorFilterType": target.getMonitorFilterConfiguration().setMonitorFilterType(property(camelContext, org.apache.camel.component.milo.client.MonitorFilterType.class, value)); return true;
         case "node": target.setNode(property(camelContext, java.lang.String.class, value)); return true;
         case "overridehost":
         case "overrideHost": target.getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
@@ -75,7 +83,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": target.getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -95,6 +102,12 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "channelLifetime": return java.lang.Long.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
+        case "datachangefilterdeadbandtype":
+        case "dataChangeFilterDeadbandType": return org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger.class;
+        case "datachangefilterdeadbandvalue":
+        case "dataChangeFilterDeadbandValue": return java.lang.Double.class;
+        case "datachangefiltertrigger":
+        case "dataChangeFilterTrigger": return org.eclipse.milo.opcua.stack.core.types.enumerated.DataChangeTrigger.class;
         case "defaultawaitwrites":
         case "defaultAwaitWrites": return boolean.class;
         case "discoveryendpointsuffix":
@@ -122,6 +135,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": return java.lang.Long.class;
         case "method": return java.lang.String.class;
+        case "monitorfiltertype":
+        case "monitorFilterType": return org.apache.camel.component.milo.client.MonitorFilterType.class;
         case "node": return java.lang.String.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
@@ -137,7 +152,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return java.lang.Long.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -158,6 +172,12 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "channelLifetime": return target.getConfiguration().getChannelLifetime();
         case "clientid":
         case "clientId": return target.getConfiguration().getClientId();
+        case "datachangefilterdeadbandtype":
+        case "dataChangeFilterDeadbandType": return target.getMonitorFilterConfiguration().getDataChangeFilterDeadbandType();
+        case "datachangefilterdeadbandvalue":
+        case "dataChangeFilterDeadbandValue": return target.getMonitorFilterConfiguration().getDataChangeFilterDeadbandValue();
+        case "datachangefiltertrigger":
+        case "dataChangeFilterTrigger": return target.getMonitorFilterConfiguration().getDataChangeFilterTrigger();
         case "defaultawaitwrites":
         case "defaultAwaitWrites": return target.isDefaultAwaitWrites();
         case "discoveryendpointsuffix":
@@ -185,6 +205,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": return target.getConfiguration().getMaxResponseMessageSize();
         case "method": return target.getMethod();
+        case "monitorfiltertype":
+        case "monitorFilterType": return target.getMonitorFilterConfiguration().getMonitorFilterType();
         case "node": return target.getNode();
         case "overridehost":
         case "overrideHost": return target.getConfiguration().isOverrideHost();
@@ -200,7 +222,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return target.getConfiguration().getSessionName();
         case "sessiontimeout":
         case "sessionTimeout": return target.getConfiguration().getSessionTimeout();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

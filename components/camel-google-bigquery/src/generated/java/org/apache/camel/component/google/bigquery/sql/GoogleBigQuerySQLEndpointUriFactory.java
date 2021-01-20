@@ -20,10 +20,9 @@ public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(4);
         props.add("lazyStartProducer");
         props.add("connectionFactory");
-        props.add("synchronous");
         props.add("query");
         props.add("projectId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

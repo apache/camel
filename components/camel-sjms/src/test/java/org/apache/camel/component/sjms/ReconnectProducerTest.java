@@ -20,7 +20,6 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -87,7 +86,7 @@ public class ReconnectProducerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("sjms:queue:" + TEST_DESTINATION_NAME + "?consumerCount=10");
+                        .to("sjms:queue:" + TEST_DESTINATION_NAME + "?concurrentConsumers=10");
 
                 from("direct:finish")
                         .to("log:test.log.1?showBody=true", "mock:result");
@@ -95,10 +94,4 @@ public class ReconnectProducerTest extends JmsTestSupport {
         };
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getComponent("sjms", SjmsComponent.class).setConnectionTestOnBorrow(true);
-        return camelContext;
-    }
 }

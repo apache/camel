@@ -20,7 +20,7 @@ public class FtpEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(112);
+        Set<String> props = new HashSet<>(114);
         props.add("disconnect");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
@@ -49,6 +49,7 @@ public class FtpEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("maximumReconnectAttempts");
         props.add("stepwise");
         props.add("autoCreate");
+        props.add("includeExt");
         props.add("recursive");
         props.add("antExclude");
         props.add("keepLastModified");
@@ -72,6 +73,7 @@ public class FtpEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("filterFile");
         props.add("pollStrategy");
         props.add("shuffle");
+        props.add("excludeExt");
         props.add("antInclude");
         props.add("moveExisting");
         props.add("throwExceptionOnConnectFailed");

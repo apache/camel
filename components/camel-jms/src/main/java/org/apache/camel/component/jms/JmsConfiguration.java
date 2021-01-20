@@ -247,7 +247,7 @@ public class JmsConfiguration implements Cloneable {
                             + "the timestamp must be set to its normal value.")
     private boolean messageTimestampEnabled = true;
     @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
-              description = "Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest)."
+              description = "Values greater than 1 specify the message priority when sending (where 1 is the lowest priority and 9 is the highest)."
                             + " The explicitQosEnabled option must also be enabled in order for this option to have any effect.")
     private int priority = Message.DEFAULT_PRIORITY;
     // Transaction related configuration
@@ -517,6 +517,9 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "-1", label = "producer", description = "Sets delivery delay to use for send calls for JMS. "
                                                                      + "This option requires JMS 2.0 compliant broker.")
     private long deliveryDelay = -1;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public JmsConfiguration() {
     }
@@ -2279,5 +2282,13 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
         this.artemisStreamingEnabled = artemisStreamingEnabled;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

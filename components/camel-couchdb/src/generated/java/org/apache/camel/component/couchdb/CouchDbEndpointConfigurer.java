@@ -36,7 +36,6 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "since": target.setSince(property(camelContext, java.lang.String.class, value)); return true;
         case "style": target.setStyle(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "updates": target.setUpdates(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -61,7 +60,6 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "password": return java.lang.String.class;
         case "since": return java.lang.String.class;
         case "style": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "updates": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
@@ -87,7 +85,6 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "password": return target.getPassword();
         case "since": return target.getSince();
         case "style": return target.getStyle();
-        case "synchronous": return target.isSynchronous();
         case "updates": return target.isUpdates();
         case "username": return target.getUsername();
         default: return null;

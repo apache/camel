@@ -101,7 +101,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (19 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -119,7 +119,6 @@ with the following path and query parameters:
 | *customCalendar* (advanced) | Specifies a custom calendar to avoid specific range of date |  | Calendar
 | *jobParameters* (advanced) | To configure additional options on the job. |  | Map
 | *prefixJobNameWithEndpointId* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *triggerParameters* (advanced) | To configure additional options on the trigger. |  | Map
 | *usingFixedCamelContextName* (advanced) | If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext, if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time. | false | boolean
 | *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. | true | boolean

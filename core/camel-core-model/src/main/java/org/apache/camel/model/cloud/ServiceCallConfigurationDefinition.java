@@ -93,7 +93,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
             @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
-    @XmlElements({ @XmlElement(name = "expression", type = ServiceCallExpressionConfiguration.class) })
+    @XmlElement(name = "expression")
     private ServiceCallExpressionConfiguration expressionConfiguration;
 
     public ServiceCallConfigurationDefinition() {

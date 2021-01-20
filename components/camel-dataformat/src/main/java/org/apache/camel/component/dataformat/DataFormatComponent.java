@@ -37,23 +37,21 @@ public class DataFormatComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String name = StringHelper.before(remaining, ":");
-
-        // try to lookup data format in the registry or create it from resource
-        DataFormat df = getCamelContext().resolveDataFormat(name);
-        if (df == null) {
-            // if not, try to find a factory in the registry
-            df = getCamelContext().createDataFormat(name);
-        }
-        if (df == null) {
-            throw new IllegalArgumentException("Cannot find data format with name: " + name);
-        }
-
         String operation = StringHelper.after(remaining, ":");
         if (!"marshal".equals(operation) && !"unmarshal".equals(operation)) {
             throw new IllegalArgumentException("Operation must be either marshal or unmarshal, was: " + operation);
         }
 
+        // create new data format as it is configured from the given parameters
+        String name = StringHelper.before(remaining, ":");
+        DataFormat df = getCamelContext().createDataFormat(name);
+        if (df == null) {
+            // if not, try to lookup existing data format
+            df = getCamelContext().resolveDataFormat(name);
+        }
+        if (df == null) {
+            throw new IllegalArgumentException("Cannot find data format with name: " + name);
+        }
         PropertyBindingSupport.bindProperties(getCamelContext(), df, parameters);
 
         DataFormatEndpoint endpoint = new DataFormatEndpoint(uri, this, df);

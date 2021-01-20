@@ -781,6 +781,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder maxQueueSizeInBytes(
+                long maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
+            return this;
+        }
+        /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
          * match the pattern ':',where the table names could be defined as
@@ -936,6 +954,22 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * this setting must be set to specify a list of tables/collections
+         * whose snapshot must be taken on creating or restarting the connector.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param snapshotIncludeCollectionList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder snapshotIncludeCollectionList(
+                java.lang.String snapshotIncludeCollectionList) {
+            doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
          * Controls which transaction isolation level is used and how long the
          * connector locks the monitored tables. The default is
          * 'repeatable_read', which means that repeatable read isolation level
@@ -982,6 +1016,23 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder snapshotLockTimeoutMs(
                 long snapshotLockTimeoutMs) {
             doSetProperty("snapshotLockTimeoutMs", snapshotLockTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: sqlserver
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder snapshotMaxThreads(
+                int snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
             return this;
         }
         /**
@@ -1257,6 +1308,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncludeSchemaChanges((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxQueueSize((int) value); return true;
+            case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setProvideTransactionMetadata((boolean) value); return true;
@@ -1266,8 +1318,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "skippedOperations": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotFetchSize((int) value); return true;
+            case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
             case "snapshotIsolationMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotIsolationMode((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
+            case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceStructVersion((java.lang.String) value); return true;

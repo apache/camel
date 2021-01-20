@@ -87,7 +87,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
             // subscriber (or their subscription is cancelled)
             AtomicInteger counter = new AtomicInteger(subs.size());
             // Use just the first exception in the callback when multiple exceptions are thrown
-            AtomicReference<Throwable> thrown = new AtomicReference<>(null);
+            AtomicReference<Throwable> thrown = new AtomicReference<>();
 
             callback = ReactiveStreamsHelper.attachCallback(data, (exchange, error) -> {
                 thrown.compareAndSet(null, error);

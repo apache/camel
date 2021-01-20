@@ -59,8 +59,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": target.setDurationMaxMessages(property(camelContext, int.class, value)); return true;
         case "durationmaxseconds":
         case "DurationMaxSeconds": target.setDurationMaxSeconds(property(camelContext, int.class, value)); return true;
-        case "endpointbasicpropertybinding":
-        case "EndpointBasicPropertyBinding": target.setEndpointBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": target.setEndpointBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointlazystartproducer":
@@ -145,6 +143,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": target.setShutdownSuppressLoggingOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdowntimeout":
         case "ShutdownTimeout": target.setShutdownTimeout(property(camelContext, int.class, value)); return true;
+        case "startuprecorder":
+        case "StartupRecorder": target.setStartupRecorder(property(camelContext, java.lang.String.class, value)); return true;
+        case "startuprecorderdir":
+        case "StartupRecorderDir": target.setStartupRecorderDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "startuprecorderduration":
+        case "StartupRecorderDuration": target.setStartupRecorderDuration(property(camelContext, long.class, value)); return true;
+        case "startuprecordermaxdepth":
+        case "StartupRecorderMaxDepth": target.setStartupRecorderMaxDepth(property(camelContext, int.class, value)); return true;
+        case "startuprecorderprofile":
+        case "StartupRecorderProfile": target.setStartupRecorderProfile(property(camelContext, java.lang.String.class, value)); return true;
+        case "startuprecorderrecording":
+        case "StartupRecorderRecording": target.setStartupRecorderRecording(property(camelContext, boolean.class, value)); return true;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": target.setStreamCachingAnySpoolRules(property(camelContext, boolean.class, value)); return true;
         case "streamcachingbuffersize":
@@ -228,8 +238,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return int.class;
         case "durationmaxseconds":
         case "DurationMaxSeconds": return int.class;
-        case "endpointbasicpropertybinding":
-        case "EndpointBasicPropertyBinding": return boolean.class;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return boolean.class;
         case "endpointlazystartproducer":
@@ -314,6 +322,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": return boolean.class;
         case "shutdowntimeout":
         case "ShutdownTimeout": return int.class;
+        case "startuprecorder":
+        case "StartupRecorder": return java.lang.String.class;
+        case "startuprecorderdir":
+        case "StartupRecorderDir": return java.lang.String.class;
+        case "startuprecorderduration":
+        case "StartupRecorderDuration": return long.class;
+        case "startuprecordermaxdepth":
+        case "StartupRecorderMaxDepth": return int.class;
+        case "startuprecorderprofile":
+        case "StartupRecorderProfile": return java.lang.String.class;
+        case "startuprecorderrecording":
+        case "StartupRecorderRecording": return boolean.class;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return boolean.class;
         case "streamcachingbuffersize":
@@ -398,8 +418,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return target.getDurationMaxMessages();
         case "durationmaxseconds":
         case "DurationMaxSeconds": return target.getDurationMaxSeconds();
-        case "endpointbasicpropertybinding":
-        case "EndpointBasicPropertyBinding": return target.isEndpointBasicPropertyBinding();
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return target.isEndpointBridgeErrorHandler();
         case "endpointlazystartproducer":
@@ -484,6 +502,18 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ShutdownSuppressLoggingOnTimeout": return target.isShutdownSuppressLoggingOnTimeout();
         case "shutdowntimeout":
         case "ShutdownTimeout": return target.getShutdownTimeout();
+        case "startuprecorder":
+        case "StartupRecorder": return target.getStartupRecorder();
+        case "startuprecorderdir":
+        case "StartupRecorderDir": return target.getStartupRecorderDir();
+        case "startuprecorderduration":
+        case "StartupRecorderDuration": return target.getStartupRecorderDuration();
+        case "startuprecordermaxdepth":
+        case "StartupRecorderMaxDepth": return target.getStartupRecorderMaxDepth();
+        case "startuprecorderprofile":
+        case "StartupRecorderProfile": return target.getStartupRecorderProfile();
+        case "startuprecorderrecording":
+        case "StartupRecorderRecording": return target.isStartupRecorderRecording();
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return target.isStreamCachingAnySpoolRules();
         case "streamcachingbuffersize":

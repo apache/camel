@@ -64,7 +64,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "state": target.setState(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targeturl":
         case "targetUrl": target.setTargetUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "timeunit":
@@ -121,7 +120,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "state": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "targeturl":
         case "targetUrl": return java.lang.String.class;
         case "timeunit":
@@ -179,7 +177,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "state": return target.getState();
-        case "synchronous": return target.isSynchronous();
         case "targeturl":
         case "targetUrl": return target.getTargetUrl();
         case "timeunit":

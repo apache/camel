@@ -38,7 +38,6 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "producertype":
         case "producerType": target.setProducerType(property(camelContext, org.apache.camel.component.disruptor.DisruptorProducerType.class, value)); return true;
         case "size": target.setSize(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": target.setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
@@ -68,7 +67,6 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "producertype":
         case "producerType": return org.apache.camel.component.disruptor.DisruptorProducerType.class;
         case "size": return int.class;
-        case "synchronous": return boolean.class;
         case "timeout": return long.class;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": return org.apache.camel.WaitForTaskToComplete.class;
@@ -99,7 +97,6 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "producertype":
         case "producerType": return target.getProducerType();
         case "size": return target.getSize();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": return target.getWaitForTaskToComplete();

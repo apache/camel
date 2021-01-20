@@ -91,7 +91,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "suppressAutoSysField": target.getConfiguration().setSuppressAutoSysField(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "suppresspaginationheader":
         case "suppressPaginationHeader": target.getConfiguration().setSuppressPaginationHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "table": target.getConfiguration().setTable(property(camelContext, java.lang.String.class, value)); return true;
         case "target": target.getConfiguration().setTarget(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "timeformat":
@@ -177,7 +176,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "suppressAutoSysField": return java.lang.Boolean.class;
         case "suppresspaginationheader":
         case "suppressPaginationHeader": return java.lang.Boolean.class;
-        case "synchronous": return boolean.class;
         case "table": return java.lang.String.class;
         case "target": return java.lang.Boolean.class;
         case "timeformat":
@@ -264,7 +262,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "suppressAutoSysField": return target.getConfiguration().getSuppressAutoSysField();
         case "suppresspaginationheader":
         case "suppressPaginationHeader": return target.getConfiguration().getSuppressPaginationHeader();
-        case "synchronous": return target.isSynchronous();
         case "table": return target.getConfiguration().getTable();
         case "target": return target.getConfiguration().getTarget();
         case "timeformat":

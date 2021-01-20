@@ -97,7 +97,6 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "streamdownload":
         case "streamDownload": target.getConfig().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -187,7 +186,6 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startScheduler": return boolean.class;
         case "streamdownload":
         case "streamDownload": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -278,7 +276,6 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startScheduler": return target.isStartScheduler();
         case "streamdownload":
         case "streamDownload": return target.getConfig().isStreamDownload();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

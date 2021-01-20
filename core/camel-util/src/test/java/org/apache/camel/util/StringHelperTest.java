@@ -18,8 +18,7 @@ package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.util.StringHelper.camelCaseToDash;
-import static org.apache.camel.util.StringHelper.splitWords;
+import static org.apache.camel.util.StringHelper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringHelperTest {
@@ -66,5 +65,13 @@ public class StringHelperTest {
         arr = splitWords("hello");
         assertEquals(1, arr.length);
         assertEquals("hello", arr[0]);
+    }
+
+    @Test
+    public void testReplaceFirst() throws Exception {
+        assertEquals("jms:queue:bar", replaceFirst("jms:queue:bar", "foo", "bar"));
+        assertEquals("jms:queue:bar", replaceFirst("jms:queue:foo", "foo", "bar"));
+        assertEquals("jms:queue:bar?blah=123", replaceFirst("jms:queue:foo?blah=123", "foo", "bar"));
+        assertEquals("jms:queue:bar?blah=foo", replaceFirst("jms:queue:foo?blah=foo", "foo", "bar"));
     }
 }

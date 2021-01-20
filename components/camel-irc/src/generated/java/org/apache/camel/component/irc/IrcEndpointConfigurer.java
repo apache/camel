@@ -64,7 +64,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "realname": target.getConfiguration().setRealname(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustmanager":
         case "trustManager": target.getConfiguration().setTrustManager(property(camelContext, org.schwering.irc.lib.ssl.SSLTrustManager.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -118,7 +117,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "realname": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "trustmanager":
         case "trustManager": return org.schwering.irc.lib.ssl.SSLTrustManager.class;
         case "username": return java.lang.String.class;
@@ -173,7 +171,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "realname": return target.getConfiguration().getRealname();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "trustmanager":
         case "trustManager": return target.getConfiguration().getTrustManager();
         case "username": return target.getConfiguration().getUsername();

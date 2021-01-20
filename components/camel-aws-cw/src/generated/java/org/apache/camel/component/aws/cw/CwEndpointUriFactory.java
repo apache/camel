@@ -20,11 +20,10 @@ public class CwEndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(14);
         props.add("autoDiscoverClient");
         props.add("proxyProtocol");
         props.add("secretKey");
-        props.add("synchronous");
         props.add("amazonCwClient");
         props.add("proxyHost");
         props.add("proxyPort");

@@ -20,11 +20,10 @@ public class DrillEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("mode");
         props.add("lazyStartProducer");
         props.add("port");
-        props.add("synchronous");
         props.add("host");
         props.add("clusterId");
         props.add("directory");

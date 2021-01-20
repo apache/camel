@@ -36,9 +36,6 @@ public interface SpringLdapEndpointBuilderFactory {
     public interface SpringLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedSpringLdapEndpointBuilder advanced() {
-            return (AdvancedSpringLdapEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -138,51 +135,6 @@ public interface SpringLdapEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Spring LDAP component.
-     */
-    public interface AdvancedSpringLdapEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SpringLdapEndpointBuilder basic() {
-            return (SpringLdapEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSpringLdapEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.springldap.LdapOperation</code> enum.
      */
@@ -244,7 +196,7 @@ public interface SpringLdapEndpointBuilderFactory {
     static SpringLdapEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SpringLdapEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringLdapEndpointBuilder, AdvancedSpringLdapEndpointBuilder {
+        class SpringLdapEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringLdapEndpointBuilder {
             public SpringLdapEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,7 +96,6 @@ with the following path and query parameters:
 | *clientSubProtocols* (producer) | Comma separated list of WebSocket subprotocols that the client should use for the Sec-WebSocket-Protocol header |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *sendToAll* (producer) | To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the VertxWebsocketConstants.SEND_TO_ALL header on the message. | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END

@@ -29,7 +29,6 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "securitylevel":
         case "securityLevel": target.setSecurityLevel(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tag": target.setTag(property(camelContext, java.lang.String.class, value)); return true;
         case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -47,7 +46,6 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
         case "operation": return java.lang.String.class;
         case "securitylevel":
         case "securityLevel": return java.lang.Integer.class;
-        case "synchronous": return boolean.class;
         case "tag": return java.lang.String.class;
         case "url": return java.lang.String.class;
         default: return null;
@@ -66,7 +64,6 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
         case "operation": return target.getOperation();
         case "securitylevel":
         case "securityLevel": return target.getSecurityLevel();
-        case "synchronous": return target.isSynchronous();
         case "tag": return target.getTag();
         case "url": return target.getUrl();
         default: return null;

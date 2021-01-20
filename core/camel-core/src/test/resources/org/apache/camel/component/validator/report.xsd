@@ -19,16 +19,15 @@
 -->
 <xs:schema elementFormDefault="qualified" version="1.0"
            targetNamespace="http://foo.com/report"
-           xmlns:tns="http://foo.com/report"
            xmlns:rb="http://foo.com/report-base"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://foo.com/report-base" schemaLocation="http://foo.com/report-base.xsd" /> 
+  <xs:import namespace="http://foo.com/report-base" schemaLocation="http://foo.com/report-base.xsd" />
 
   <xs:element name="report">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="author" type="rb:person" maxOccurs="unbounded" />                
+        <xs:element name="author" type="rb:person" maxOccurs="unbounded" />
 		<xs:element name="content" type="rb:content" />
         <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>

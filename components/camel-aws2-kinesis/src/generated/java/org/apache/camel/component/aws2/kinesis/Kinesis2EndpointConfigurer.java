@@ -49,6 +49,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "proxyhost":
@@ -79,11 +81,12 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "shardId": target.getConfiguration().setShardId(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -126,6 +129,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "proxyhost":
@@ -156,11 +161,12 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "shardId": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         default: return null;
@@ -199,6 +205,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "proxyhost":
@@ -229,11 +237,12 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "shardId": return target.getConfiguration().getShardId();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;

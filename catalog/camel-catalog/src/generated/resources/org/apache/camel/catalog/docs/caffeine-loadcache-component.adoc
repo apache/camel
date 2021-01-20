@@ -90,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (16 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +110,6 @@ with the following path and query parameters:
 | *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter
 | *statsEnabled* (producer) | To enable stats on the cache | false | boolean
 | *keyType* (advanced) | The cache key type, default java.lang.Object |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // endpoint options: END

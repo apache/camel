@@ -30,6 +30,8 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -39,9 +41,10 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -63,6 +66,8 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -72,9 +77,10 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         default: return null;
         }
     }
@@ -92,6 +98,8 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -101,9 +109,10 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();
-        case "synchronous": return target.isSynchronous();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         default: return null;
         }
     }

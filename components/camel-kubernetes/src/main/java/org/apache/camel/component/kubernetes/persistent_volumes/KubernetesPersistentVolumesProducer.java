@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.persistent_volumes;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneablePersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeList;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
@@ -86,8 +85,8 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         PersistentVolumeList pvList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
-        NonNamespaceOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, Resource<PersistentVolume, DoneablePersistentVolume>> pvs;
-        pvs = getEndpoint().getKubernetesClient().persistentVolumes();
+        NonNamespaceOperation<PersistentVolume, PersistentVolumeList, Resource<PersistentVolume>> pvs
+                = getEndpoint().getKubernetesClient().persistentVolumes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pvs.withLabel(entry.getKey(), entry.getValue());
         }

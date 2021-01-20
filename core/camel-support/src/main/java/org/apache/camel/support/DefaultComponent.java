@@ -62,6 +62,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private volatile PropertyConfigurer componentPropertyConfigurer;
     private volatile PropertyConfigurer endpointPropertyConfigurer;
+    private volatile String defaultName;
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
 
@@ -354,19 +355,28 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     @Override
+    public String getDefaultName() {
+        return defaultName;
+    }
+
+    @Override
     protected void doBuild() throws Exception {
-        org.apache.camel.spi.annotations.Component ann
-                = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
-        if (ann != null) {
-            String name = ann.value();
-            // just grab first scheme name if the component has scheme alias (eg http,https)
-            if (name.contains(",")) {
-                name = StringHelper.before(name, ",");
+        if (defaultName == null) {
+            org.apache.camel.spi.annotations.Component ann
+                    = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
+            if (ann != null) {
+                defaultName = ann.value();
+                // just grab first scheme name if the component has scheme alias (eg http,https)
+                if (defaultName.contains(",")) {
+                    defaultName = StringHelper.before(defaultName, ",");
+                }
             }
-            final String componentConfigurerName = name + "-component-configurer";
+        }
+        if (defaultName != null) {
+            final String componentConfigurerName = defaultName + "-component-configurer";
             componentPropertyConfigurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
                     .resolvePropertyConfigurer(componentConfigurerName, getCamelContext());
-            final String endpointConfigurerName = name + "-endpoint-configurer";
+            final String endpointConfigurerName = defaultName + "-endpoint-configurer";
             endpointPropertyConfigurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
                     .resolvePropertyConfigurer(endpointConfigurerName, getCamelContext());
         }

@@ -127,11 +127,11 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     }
 
     private void poll(Exchange exchange) {
-        exchange.getOut().setBody(this.queue.poll());
+        exchange.getMessage().setBody(this.queue.poll());
     }
 
     private void peek(Exchange exchange) {
-        exchange.getOut().setBody(this.queue.peek());
+        exchange.getMessage().setBody(this.queue.peek());
     }
 
     private void offer(Exchange exchange) {
@@ -149,12 +149,12 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     }
 
     private void remainingCapacity(Exchange exchange) {
-        exchange.getOut().setBody(this.queue.remainingCapacity());
+        exchange.getMessage().setBody(this.queue.remainingCapacity());
     }
 
     private void drainTo(Collection c, Exchange exchange) {
-        exchange.getOut().setBody(this.queue.drainTo(c));
-        exchange.getOut().setHeader(HazelcastConstants.DRAIN_TO_COLLECTION, c);
+        exchange.getMessage().setBody(this.queue.drainTo(c));
+        exchange.getMessage().setHeader(HazelcastConstants.DRAIN_TO_COLLECTION, c);
     }
 
     private void removeAll(Exchange exchange) {
@@ -164,11 +164,11 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
 
     private void removeIf(Exchange exchange) {
         Predicate filter = exchange.getIn().getBody(Predicate.class);
-        exchange.getOut().setBody(this.queue.removeIf(filter));
+        exchange.getMessage().setBody(this.queue.removeIf(filter));
     }
 
     private void take(Exchange exchange) throws InterruptedException {
-        exchange.getOut().setBody(this.queue.take());
+        exchange.getMessage().setBody(this.queue.take());
     }
 
     private void retainAll(Exchange exchange) {

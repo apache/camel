@@ -20,11 +20,10 @@ public class EhcacheEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(18);
         props.add("eventOrdering");
         props.add("configuration");
         props.add("configurations");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("cacheManagerConfiguration");
         props.add("eventTypes");

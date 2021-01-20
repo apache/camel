@@ -24,10 +24,12 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
@@ -38,32 +40,36 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 /**
  * The processor which sends messages in a loop.
  */
-public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 
     private String id;
     private String routeId;
+    private LoopState state;
+    private boolean shutdownPending;
     private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final Expression expression;
     private final Predicate predicate;
     private final boolean copy;
+    private final boolean breakOnShutdown;
 
     public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate,
-                         boolean copy) {
+                         boolean copy, boolean breakOnShutdown) {
         super(processor);
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.expression = expression;
         this.predicate = predicate;
         this.copy = copy;
+        this.breakOnShutdown = breakOnShutdown;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            LoopState state = new LoopState(exchange, callback);
+            state = new LoopState(exchange, callback);
 
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleSync(state);
@@ -76,6 +82,21 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             callback.done(true);
             return true;
         }
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        return !breakOnShutdown;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return state.getPendingSize();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        shutdownPending = true;
     }
 
     /**
@@ -111,9 +132,10 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 boolean cont = continueProcessing(current, "so breaking out of loop", LOG);
                 boolean doWhile = predicate == null || predicate.matches(current);
                 boolean doLoop = expression == null || index < count;
+                boolean isStopping = shutdownPending && breakOnShutdown;
 
                 // iterate
-                if (cont && doWhile && doLoop) {
+                if (cont && doWhile && doLoop && !isStopping) {
                     // and prepare for next iteration
                     current = prepareExchange(exchange, index);
 
@@ -141,6 +163,10 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 exchange.setException(e);
                 callback.done(false);
             }
+        }
+
+        public int getPendingSize() {
+            return Math.max(count - index, 0);
         }
 
         @Override

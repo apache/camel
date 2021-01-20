@@ -66,7 +66,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected static int maxTasks = 20;
     protected static int maxServerTasks = 1;
     protected static int maxCalls = 5;
-    protected static AtomicBoolean inited = new AtomicBoolean(false);
+    protected static AtomicBoolean inited = new AtomicBoolean();
     protected static Map<String, ContextBuilder> contextBuilders = new HashMap<>();
     protected static Map<String, RouteBuilder> routeBuilders = new HashMap<>();
 

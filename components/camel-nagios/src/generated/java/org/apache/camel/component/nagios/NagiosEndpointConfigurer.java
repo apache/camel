@@ -29,7 +29,6 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "sendsync":
         case "sendSync": target.setSendSync(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
@@ -46,7 +45,6 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "password": return java.lang.String.class;
         case "sendsync":
         case "sendSync": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeout": return int.class;
         default: return null;
         }
@@ -64,7 +62,6 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "password": return target.getConfiguration().getPassword();
         case "sendsync":
         case "sendSync": return target.isSendSync();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getConfiguration().getTimeout();
         default: return null;
         }

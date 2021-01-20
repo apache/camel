@@ -95,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,6 @@ with the following path and query parameters:
 | *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
 | *accessLogReceiver* (advanced) | Which Undertow AccessLogReceiver should be used Will use JBossLoggingAccessLogReceiver if not specified |  | AccessLogReceiver
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *undertowHttpBinding* (advanced) | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow. |  | UndertowHttpBinding
 | *allowedRoles* (security) | Configuration used by UndertowSecurityProvider. Comma separated list of allowed roles. |  | String
 | *securityConfiguration* (security) | OConfiguration used by UndertowSecurityProvider. Security configuration object for use from UndertowSecurityProvider. Configuration is UndertowSecurityProvider specific. Each provider decides whether accepts configuration. |  | Object

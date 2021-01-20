@@ -20,14 +20,13 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("database");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("port");
         props.add("pass");
         props.add("datasource");
-        props.add("synchronous");
         props.add("host");
         props.add("channel");
         props.add("exchangePattern");

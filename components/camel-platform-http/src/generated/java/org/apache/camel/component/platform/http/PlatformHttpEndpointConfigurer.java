@@ -39,7 +39,6 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": target.setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -65,7 +64,6 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
         case "produces": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -92,7 +90,6 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": return target.getPlatformHttpEngine();
         case "produces": return target.getProduces();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

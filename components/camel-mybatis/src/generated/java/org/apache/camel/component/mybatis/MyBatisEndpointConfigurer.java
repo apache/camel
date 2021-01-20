@@ -70,7 +70,6 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "statementtype":
         case "statementType": target.setStatementType(property(camelContext, org.apache.camel.component.mybatis.StatementType.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
@@ -134,7 +133,6 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "startScheduler": return boolean.class;
         case "statementtype":
         case "statementType": return org.apache.camel.component.mybatis.StatementType.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "transacted": return boolean.class;
@@ -199,7 +197,6 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "startScheduler": return target.isStartScheduler();
         case "statementtype":
         case "statementType": return target.getStatementType();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "transacted": return target.isTransacted();

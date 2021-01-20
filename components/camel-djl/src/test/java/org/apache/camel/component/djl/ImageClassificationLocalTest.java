@@ -33,7 +33,6 @@ import ai.djl.modality.Classifications;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.transform.ToTensor;
 import ai.djl.modality.cv.translator.ImageClassificationTranslator;
-import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -86,7 +85,7 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
         };
     }
 
-    private void loadLocalModel() throws IOException, MalformedModelException, TranslateException {
+    private void loadLocalModel() throws IOException, MalformedModelException {
         // create deep learning model
         Model model = Model.newInstance(MODEL_NAME);
         model.setBlock(new Mlp(28 * 28, 10, new int[] { 128, 64 }));

@@ -29,6 +29,11 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Tests using this component should switch the test-infra. Please check the test-infra module for details and
+ * conversion procedures.
+ */
+@Deprecated
 public final class Containers {
     private static final Logger LOGGER = LoggerFactory.getLogger(Containers.class);
 

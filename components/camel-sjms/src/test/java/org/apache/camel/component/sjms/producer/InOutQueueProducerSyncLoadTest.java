@@ -75,8 +75,6 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
 
     /**
      * Test to verify that when using the consumer listener for the InOut producer we get the correct message back.
-     * 
-     * @throws Exception
      */
     @Test
     public void testInOutQueueProducer() throws Exception {
@@ -96,7 +94,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
                         assertNotNull(response);
                         assertEquals(responseText, response);
                     } catch (Exception e) {
-                        log.error("TODO Auto-generated catch block", e);
+                        log.warn("Error", e);
                     }
                 }
             };
@@ -111,22 +109,15 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
         }
     }
 
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     * 
-     * @return
-     * 
-     * @throws Exception
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
-                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
                                                    + TEST_DESTINATION_NAME
-                                                   + ".response&consumerCount=20&producerCount=40&synchronous=true")
+                                                   + ".response&concurrentConsumers=20")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
             }
         };

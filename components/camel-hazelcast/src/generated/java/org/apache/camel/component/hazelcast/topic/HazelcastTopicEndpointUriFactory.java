@@ -20,13 +20,12 @@ public class HazelcastTopicEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(9);
         props.add("reliable");
         props.add("lazyStartProducer");
         props.add("cacheName");
         props.add("bridgeErrorHandler");
         props.add("hazelcastInstance");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("defaultOperation");
         props.add("hazelcastInstanceName");

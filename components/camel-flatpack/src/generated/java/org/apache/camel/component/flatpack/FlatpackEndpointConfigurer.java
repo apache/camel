@@ -63,7 +63,6 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         case "splitRows": target.setSplitRows(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "textqualifier":
         case "textQualifier": target.setTextQualifier(property(camelContext, char.class, value)); return true;
         case "timeunit":
@@ -119,7 +118,6 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         case "splitRows": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "textqualifier":
         case "textQualifier": return char.class;
         case "timeunit":
@@ -176,7 +174,6 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         case "splitRows": return target.isSplitRows();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "textqualifier":
         case "textQualifier": return target.getTextQualifier();
         case "timeunit":

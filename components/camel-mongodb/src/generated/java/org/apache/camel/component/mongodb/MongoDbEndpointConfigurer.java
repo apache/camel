@@ -53,7 +53,6 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "readPreference": target.setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
         case "streamfilter":
         case "streamFilter": target.setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tailtrackcollection":
         case "tailTrackCollection": target.setTailTrackCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackdb":
@@ -105,7 +104,6 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "readPreference": return java.lang.String.class;
         case "streamfilter":
         case "streamFilter": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tailtrackcollection":
         case "tailTrackCollection": return java.lang.String.class;
         case "tailtrackdb":
@@ -158,7 +156,6 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "readPreference": return target.getReadPreference();
         case "streamfilter":
         case "streamFilter": return target.getStreamFilter();
-        case "synchronous": return target.isSynchronous();
         case "tailtrackcollection":
         case "tailTrackCollection": return target.getTailTrackCollection();
         case "tailtrackdb":

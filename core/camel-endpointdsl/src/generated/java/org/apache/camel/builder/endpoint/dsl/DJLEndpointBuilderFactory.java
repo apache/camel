@@ -35,9 +35,6 @@ public interface DJLEndpointBuilderFactory {
      * Builder for endpoint for the Deep Java Library component.
      */
     public interface DJLEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedDJLEndpointBuilder advanced() {
-            return (AdvancedDJLEndpointBuilder) this;
-        }
         /**
          * Model Artifact.
          * 
@@ -129,50 +126,6 @@ public interface DJLEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Deep Java Library component.
-     */
-    public interface AdvancedDJLEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default DJLEndpointBuilder basic() {
-            return (DJLEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDJLEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDJLEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface DJLBuilders {
         /**
          * Deep Java Library (camel-djl)
@@ -218,7 +171,7 @@ public interface DJLEndpointBuilderFactory {
         }
     }
     static DJLEndpointBuilder endpointBuilder(String componentName, String path) {
-        class DJLEndpointBuilderImpl extends AbstractEndpointBuilder implements DJLEndpointBuilder, AdvancedDJLEndpointBuilder {
+        class DJLEndpointBuilderImpl extends AbstractEndpointBuilder implements DJLEndpointBuilder {
             public DJLEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

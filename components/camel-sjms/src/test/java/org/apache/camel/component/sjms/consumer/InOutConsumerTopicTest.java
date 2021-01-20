@@ -43,7 +43,7 @@ public class InOutConsumerTopicTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("sjms:topic:start").to("log:request")
-                        .to("sjms:topic:in.out.topic?exchangePattern=InOut&namedReplyTo=in.out.topic.response")
+                        .to("sjms:topic:in.out.topic?exchangePattern=InOut&replyTo=in.out.topic.response")
                         .to("log:response").to("mock:result");
 
                 from("sjms:topic:in.out.topic?exchangePattern=InOut").process(new Processor() {

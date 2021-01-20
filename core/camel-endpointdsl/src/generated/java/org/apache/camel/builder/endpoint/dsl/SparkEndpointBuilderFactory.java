@@ -34,9 +34,6 @@ public interface SparkEndpointBuilderFactory {
      * Builder for endpoint for the Spark component.
      */
     public interface SparkEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSparkEndpointBuilder advanced() {
-            return (AdvancedSparkEndpointBuilder) this;
-        }
         /**
          * Indicates if results should be collected or counted.
          * 
@@ -239,50 +236,6 @@ public interface SparkEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Spark component.
-     */
-    public interface AdvancedSparkEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SparkEndpointBuilder basic() {
-            return (SparkEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSparkEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSparkEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface SparkBuilders {
         /**
          * Spark (camel-spark)
@@ -330,7 +283,7 @@ public interface SparkEndpointBuilderFactory {
     static SparkEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {
+        class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder {
             public SparkEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

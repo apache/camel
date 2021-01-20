@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.consumer;
 
+import com.github.dockerjava.api.async.ResultCallbackTemplate;
 import com.github.dockerjava.api.command.StatsCmd;
 import com.github.dockerjava.api.model.Statistics;
-import com.github.dockerjava.core.async.ResultCallbackTemplate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

@@ -101,8 +101,18 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
+    public CamelEvent createRouteStartingEvent(Route route) {
+        return new RouteStartingEvent(route);
+    }
+
+    @Override
     public CamelEvent createRouteStartedEvent(Route route) {
         return new RouteStartedEvent(route);
+    }
+
+    @Override
+    public CamelEvent createRouteStoppingEvent(Route route) {
+        return new RouteStoppingEvent(route);
     }
 
     @Override

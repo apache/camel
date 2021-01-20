@@ -159,11 +159,12 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends OptionalIdentifiedDefinition> ElementHandler<T> optionalIdentifiedDefinitionElementHandler() {
         return (def, key) -> {
-            if ("description".equals(key)) {
-                def.setDescription(doParseDescriptionDefinition());
-                return true;
+            switch (key) {
+                case "description": def.setDescription(doParseDescriptionDefinition()); break;
+                case "generatedId": def.setGeneratedId(doParseText()); break;
+                default: return false;
             }
-            return false;
+            return true;
         };
     }
     protected DescriptionDefinition doParseDescriptionDefinition() throws IOException, XmlPullParserException {
@@ -573,6 +574,7 @@ public class ModelParser extends BaseParser {
     protected LoopDefinition doParseLoopDefinition() throws IOException, XmlPullParserException {
         return doParse(new LoopDefinition(), (def, key, val) -> {
             switch (key) {
+                case "breakOnShutdown": def.setBreakOnShutdown(val); break;
                 case "copy": def.setCopy(val); break;
                 case "doWhile": def.setDoWhile(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -1552,7 +1554,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "expression": def.setExpressionConfiguration(doParseServiceCallExpressionConfiguration()); break;
                 case "ribbonLoadBalancer": def.setLoadBalancerConfiguration(doParseRibbonServiceCallServiceLoadBalancerConfiguration()); break;
                 case "defaultLoadBalancer": def.setLoadBalancerConfiguration(doParseDefaultServiceCallServiceLoadBalancerConfiguration()); break;
                 case "cachingServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCachingServiceCallServiceDiscoveryConfiguration()); break;
@@ -1568,6 +1569,7 @@ public class ModelParser extends BaseParser {
                 case "customServiceFilter": def.setServiceFilterConfiguration(doParseCustomServiceCallServiceFilterConfiguration()); break;
                 case "healthyServiceFilter": def.setServiceFilterConfiguration(doParseHealthyServiceCallServiceFilterConfiguration()); break;
                 case "passThroughServiceFilter": def.setServiceFilterConfiguration(doParsePassThroughServiceCallServiceFilterConfiguration()); break;
+                case "expression": def.setExpressionConfiguration(doParseServiceCallExpressionConfiguration()); break;
                 default: return false;
             }
             return true;
@@ -1608,7 +1610,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "expressionConfiguration": def.setExpressionConfiguration(doParseServiceCallExpressionConfiguration()); break;
                 case "ribbonLoadBalancer": def.setLoadBalancerConfiguration(doParseRibbonServiceCallServiceLoadBalancerConfiguration()); break;
                 case "defaultLoadBalancer": def.setLoadBalancerConfiguration(doParseDefaultServiceCallServiceLoadBalancerConfiguration()); break;
                 case "cachingServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCachingServiceCallServiceDiscoveryConfiguration()); break;
@@ -1624,6 +1625,7 @@ public class ModelParser extends BaseParser {
                 case "customServiceFilter": def.setServiceFilterConfiguration(doParseCustomServiceCallServiceFilterConfiguration()); break;
                 case "healthyServiceFilter": def.setServiceFilterConfiguration(doParseHealthyServiceCallServiceFilterConfiguration()); break;
                 case "passThroughServiceFilter": def.setServiceFilterConfiguration(doParsePassThroughServiceCallServiceFilterConfiguration()); break;
+                case "expression": def.setExpressionConfiguration(doParseServiceCallExpressionConfiguration()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;

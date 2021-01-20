@@ -30,6 +30,7 @@ public class InOutConsumerQueueTest extends JmsTestSupport {
 
         template.sendBody("sjms:start", "Hello Camel");
         template.sendBody("sjms:start", "Hello World");
+
         assertMockEndpointsSatisfied();
     }
 
@@ -38,10 +39,10 @@ public class InOutConsumerQueueTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("sjms:queue:start").to("log:request")
-                        .to("sjms:queue:in.out.queue?exchangePattern=InOut&namedReplyTo=in.out.queue.response")
+                        .to("sjms:queue:in.out.queue?exchangePattern=InOut&replyTo=in.out.queue.response")
                         .to("log:response").to("mock:result");
 
-                from("sjms:queue:in.out.queue?exchangePattern=InOut").process(new Processor() {
+                from("sjms:queue:in.out.queue").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = (String) exchange.getIn().getBody();
                         if (body.contains("Camel")) {

@@ -20,8 +20,7 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(28);
-        props.add("synchronous");
+        Set<String> props = new HashSet<>(27);
         props.add("sendToAll");
         props.add("attachmentMultipartBinding");
         props.add("mapHttpMessageBody");

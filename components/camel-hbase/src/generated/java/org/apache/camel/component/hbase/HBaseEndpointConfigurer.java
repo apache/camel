@@ -48,7 +48,6 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rowMapping": target.setRowMapping(property(camelContext, java.util.Map.class, value)); return true;
         case "rowmodel":
         case "rowModel": target.setRowModel(property(camelContext, org.apache.camel.component.hbase.model.HBaseRow.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usergroupinformation":
         case "userGroupInformation": target.setUserGroupInformation(property(camelContext, org.apache.hadoop.security.UserGroupInformation.class, value)); return true;
         default: return false;
@@ -85,7 +84,6 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rowMapping": return java.util.Map.class;
         case "rowmodel":
         case "rowModel": return org.apache.camel.component.hbase.model.HBaseRow.class;
-        case "synchronous": return boolean.class;
         case "usergroupinformation":
         case "userGroupInformation": return org.apache.hadoop.security.UserGroupInformation.class;
         default: return null;
@@ -123,7 +121,6 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rowMapping": return target.getRowMapping();
         case "rowmodel":
         case "rowModel": return target.getRowModel();
-        case "synchronous": return target.isSynchronous();
         case "usergroupinformation":
         case "userGroupInformation": return target.getUserGroupInformation();
         default: return null;

@@ -54,7 +54,7 @@ public class SignedDataCreator extends CryptoCmsMarshallerAbstract {
 
     @Override
     protected void setBodyAndHeader(Message out, Object encodedSignedData) {
-        if (config.getIncludeContent()) {
+        if (Boolean.TRUE.equals(config.getIncludeContent())) {
             /*
              * The encodedSignedData object contains the signer infos including
              * the message content.

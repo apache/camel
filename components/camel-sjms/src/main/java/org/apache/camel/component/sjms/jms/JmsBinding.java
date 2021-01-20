@@ -90,18 +90,6 @@ public class JmsBinding {
      */
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
-
-            // TODO: new options to support
-
-            // is a custom message converter configured on endpoint then use it instead of doing the extraction
-            // based on message type
-            /*            if (endpoint != null && endpoint.getMessageConverter() != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
-                }
-                return endpoint.getMessageConverter().fromMessage(message);
-            }
-            */
             // if we are configured to not map the jms message then return it as body
             if (!mapJmsMessage) {
                 LOG.trace("Option map JMS message is false so using JMS message as body: {}", message);
@@ -218,30 +206,13 @@ public class JmsBinding {
      * Creates a JMS message from the Camel exchange and message
      *
      * @param  exchange     the current exchange
-     * @param  session      the JMS session used to create the message
-     * @return              a newly created JMS Message instance containing the
-     * @throws JMSException if the message could not be created
-     */
-    public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
-        Message answer = makeJmsMessage(exchange, exchange.getIn().getBody(), exchange.getIn().getHeaders(), session, null);
-        if (answer != null && messageCreatedStrategy != null) {
-            messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
-        }
-        return answer;
-    }
-
-    /**
-     * Creates a JMS message from the Camel exchange and message
-     *
-     * @param  exchange     the current exchange
-     * @param  body         the message body
-     * @param  headers      the message headers
+     * @param  camelMessage the body to make a javax.jms.Message as
      * @param  session      the JMS session used to create the message
      * @param  cause        optional exception occurred that should be sent as reply instead of a regular body
      * @return              a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, Object body, Map headers, Session session, Exception cause)
+    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause)
             throws JMSException {
         Message answer = null;
 
@@ -283,8 +254,9 @@ public class JmsBinding {
                 answer = createJmsMessage(cause, session);
             } else {
                 // create regular jms message using the camel message body
-                answer = createJmsMessage(exchange, body, headers, session, exchange.getContext());
-                appendJmsProperties(answer, exchange, headers);
+                answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session,
+                        exchange.getContext());
+                appendJmsProperties(answer, exchange, camelMessage.getHeaders());
             }
         }
 
@@ -434,37 +406,7 @@ public class JmsBinding {
             throws JMSException {
         JmsMessageType type = null;
 
-        // TODO: support some of these options?
-
-        /*        // special for transferExchange
-        if (endpoint != null && endpoint.isTransferExchange()) {
-            log.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            Serializable holder = DefaultExchangeHolder.marshal(exchange);
-            Message answer = session.createObjectMessage(holder);
-            // ensure default delivery mode is used by default
-            answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
-            return answer;
-        }
-        
-        // use a custom message converter
-        if (endpoint != null && endpoint.getMessageConverter() != null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
-            }
-            return endpoint.getMessageConverter().toMessage(body, session);
-        }
-        */
-        // check if header have a type set, if so we force to use it
-        /*
-        if (headers.containsKey(JmsConstants.JMS_MESSAGE_TYPE)) {
-            type = context.getTypeConverter().convertTo(JmsMessageType.class, headers.get(JmsConstants.JMS_MESSAGE_TYPE));
-        } else if (endpoint != null && endpoint.getConfiguration().getJmsMessageType() != null) {
-            // force a specific type from the endpoint configuration
-            type = endpoint.getConfiguration().getJmsMessageType();
-        } else {
-        */
         type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
-        //}
 
         // create the JmsMessage based on the type
         if (type != null) {

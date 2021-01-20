@@ -38,6 +38,23 @@
     </route>
 
     <route>
+      <from uri="direct:start.with.timeout.enabled"/>
+      <circuitBreaker>
+        <resilience4jConfiguration>
+          <timeoutEnabled>true</timeoutEnabled>
+          <timeoutDuration>2000</timeoutDuration>
+        </resilience4jConfiguration>
+        <to uri="direct:foo"/>
+        <onFallback>
+          <transform>
+            <constant>Fallback message</constant>
+          </transform>
+        </onFallback>
+      </circuitBreaker>
+      <to uri="mock:result"/>
+    </route>
+
+    <route>
       <from uri="direct:foo"/>
       <transform>
         <constant>Bye World</constant>

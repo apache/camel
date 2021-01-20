@@ -29,6 +29,12 @@ import org.apache.camel.test.testcontainers.junit5.Containers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 
+/**
+ * Tests using this component should switch the test-infra. Please check the test-infra module for details and
+ * conversion procedures.
+ */
+@Deprecated
+@SuppressWarnings("deprecation")
 public abstract class ContainerAwareSpringTestSupport extends CamelSpringTestSupport {
     private List<GenericContainer<?>> containers = new CopyOnWriteArrayList<>();
 

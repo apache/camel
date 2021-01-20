@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +37,7 @@ import java.util.function.Predicate;
 
 import com.google.common.base.Strings;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
+import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
@@ -53,6 +55,7 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExtensionObject;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
@@ -66,6 +69,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodRequest;
 import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodResult;
 import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateRequest;
+import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringFilter;
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
@@ -116,11 +120,14 @@ public class SubscriptionManager {
         private final Double samplingInterval;
 
         private final Consumer<DataValue> valueConsumer;
+        private MonitorFilterConfiguration monitorFilterConfiguration;
 
-        Subscription(ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer) {
+        Subscription(ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer,
+                     final MonitorFilterConfiguration monitorFilterConfiguration) {
             this.nodeId = nodeId;
             this.samplingInterval = samplingInterval;
             this.valueConsumer = valueConsumer;
+            this.monitorFilterConfiguration = monitorFilterConfiguration;
         }
 
         public ExpandedNodeId getNodeId() {
@@ -133,6 +140,15 @@ public class SubscriptionManager {
 
         public Consumer<DataValue> getValueConsumer() {
             return this.valueConsumer;
+        }
+
+        public ExtensionObject createMonitoringFilter(OpcUaClient client) {
+            if (Objects.isNull(this.monitorFilterConfiguration)
+                    || Objects.isNull(this.monitorFilterConfiguration.getMonitorFilterType())) {
+                return null;
+            }
+            final MonitoringFilter monitorFilter = this.monitorFilterConfiguration.createMonitoringFilter();
+            return ExtensionObject.encode(client.getSerializationContext(), monitorFilter);
         }
     }
 
@@ -171,8 +187,10 @@ public class SubscriptionManager {
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     Double samplingInterval = s.getSamplingInterval();
+
                     final MonitoringParameters parameters
-                            = new MonitoringParameters(entry.getKey(), samplingInterval, null, null, null);
+                            = new MonitoringParameters(
+                                    entry.getKey(), samplingInterval, s.createMonitoringFilter(client), null, null);
                     items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
                 }
             }
@@ -628,10 +646,11 @@ public class SubscriptionManager {
     }
 
     public UInteger registerItem(
-            final ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer) {
+            final ExpandedNodeId nodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer,
+            final MonitorFilterConfiguration monitorFilterConfiguration) {
 
         final UInteger clientHandle = Unsigned.uint(this.clientHandleCounter.incrementAndGet());
-        final Subscription subscription = new Subscription(nodeId, samplingInterval, valueConsumer);
+        final Subscription subscription = new Subscription(nodeId, samplingInterval, valueConsumer, monitorFilterConfiguration);
 
         synchronized (this) {
             this.subscriptions.put(clientHandle, subscription);

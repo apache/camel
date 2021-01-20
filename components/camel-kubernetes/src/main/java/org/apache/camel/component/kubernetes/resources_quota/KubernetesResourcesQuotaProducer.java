@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.resources_quota;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneableResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
 import io.fabric8.kubernetes.api.model.ResourceQuotaList;
@@ -99,15 +98,15 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota;
-            resQuota = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName);
+            NonNamespaceOperation<ResourceQuota, ResourceQuotaList, Resource<ResourceQuota>> resQuota
+                    = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 resQuota.withLabel(entry.getKey(), entry.getValue());
             }
             resList = resQuota.list();
         } else {
-            MixedOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota;
-            resQuota = getEndpoint().getKubernetesClient().resourceQuotas();
+            MixedOperation<ResourceQuota, ResourceQuotaList, Resource<ResourceQuota>> resQuota
+                    = getEndpoint().getKubernetesClient().resourceQuotas();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 resQuota.withLabel(entry.getKey(), entry.getValue());
             }

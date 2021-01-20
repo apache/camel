@@ -59,7 +59,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
      * The license header file.
      */
     @Parameter(defaultValue = "${basedir}/../../etc/apache-header.xml")
-    protected File licenceHeader;
+    protected File licenseHeader;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -89,7 +89,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
             // add license header in top
             String text = IOHelper.loadText(new FileInputStream(targetPom));
-            String text2 = IOHelper.loadText(new FileInputStream(licenceHeader));
+            String text2 = IOHelper.loadText(new FileInputStream(licenseHeader));
             StringBuffer sb = new StringBuffer(text);
             int pos = sb.indexOf("<project");
             sb.insert(pos, text2);

@@ -41,7 +41,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "queuesize":
         case "queueSize": target.setQueueSize(property(camelContext, int.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usefilehashing":
         case "useFileHashing": target.setUseFileHashing(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -71,7 +70,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "queuesize":
         case "queueSize": return int.class;
         case "recursive": return boolean.class;
-        case "synchronous": return boolean.class;
         case "usefilehashing":
         case "useFileHashing": return boolean.class;
         default: return null;
@@ -102,7 +100,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "queuesize":
         case "queueSize": return target.getQueueSize();
         case "recursive": return target.isRecursive();
-        case "synchronous": return target.isSynchronous();
         case "usefilehashing":
         case "useFileHashing": return target.isUseFileHashing();
         default: return null;

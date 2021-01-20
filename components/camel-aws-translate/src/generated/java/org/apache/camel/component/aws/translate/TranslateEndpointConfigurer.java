@@ -41,7 +41,6 @@ public class TranslateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcelanguage":
         case "sourceLanguage": target.getConfiguration().setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targetlanguage":
         case "targetLanguage": target.getConfiguration().setTargetLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "translateclient":
@@ -73,7 +72,6 @@ public class TranslateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": return java.lang.String.class;
         case "sourcelanguage":
         case "sourceLanguage": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "targetlanguage":
         case "targetLanguage": return java.lang.String.class;
         case "translateclient":
@@ -106,7 +104,6 @@ public class TranslateEndpointConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "sourcelanguage":
         case "sourceLanguage": return target.getConfiguration().getSourceLanguage();
-        case "synchronous": return target.isSynchronous();
         case "targetlanguage":
         case "targetLanguage": return target.getConfiguration().getTargetLanguage();
         case "translateclient":

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class LumberjackMultiThreadTest extends CamelTestSupport {
 
@@ -92,7 +93,7 @@ public class LumberjackMultiThreadTest extends CamelTestSupport {
             try {
                 this.responses = LumberjackUtil.sendMessages(port, null, Arrays.asList(15, 10));
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                fail(e);
             }
         }
 

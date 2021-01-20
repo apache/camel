@@ -195,7 +195,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sslTruststorePassword": target.getConfiguration().setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststoretype":
         case "sslTruststoreType": target.getConfiguration().setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": target.getConfiguration().setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
         case "valuedeserializer":
@@ -584,7 +584,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sslTruststorePassword": return target.getConfiguration().getSslTruststorePassword();
         case "ssltruststoretype":
         case "sslTruststoreType": return target.getConfiguration().getSslTruststoreType();
-        case "synchronous": return target.isSynchronous();
+        case "synchronous": return target.getConfiguration().isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return target.getConfiguration().isTopicIsPattern();
         case "valuedeserializer":

@@ -59,18 +59,6 @@ public class JBPMProducer extends DefaultProducer {
         this.kieServicesClient = kieServicesClient;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        LOGGER.trace("starting producer");
-        super.doStart();
-        LOGGER.trace("started producer");
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
     public void process(Exchange exchange) throws Exception {
         getOperation(exchange).execute(kieServicesClient, configuration, exchange);
     }

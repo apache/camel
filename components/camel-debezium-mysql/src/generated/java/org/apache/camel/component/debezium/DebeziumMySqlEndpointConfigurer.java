@@ -153,6 +153,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "snapshoteventsasinserts":
+        case "snapshotEventsAsInserts": target.getConfiguration().setSnapshotEventsAsInserts(property(camelContext, boolean.class, value)); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotlockingmode":
@@ -165,7 +167,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcestructversion":
         case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
@@ -319,6 +320,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
+        case "snapshoteventsasinserts":
+        case "snapshotEventsAsInserts": return boolean.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
         case "snapshotlockingmode":
@@ -331,7 +334,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "sourcestructversion":
         case "sourceStructVersion": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "tableblacklist":
         case "tableBlacklist": return java.lang.String.class;
         case "tableexcludelist":
@@ -486,6 +488,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
+        case "snapshoteventsasinserts":
+        case "snapshotEventsAsInserts": return target.getConfiguration().isSnapshotEventsAsInserts();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
         case "snapshotlockingmode":
@@ -498,7 +502,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": return target.getConfiguration().getSnapshotSelectStatementOverrides();
         case "sourcestructversion":
         case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
-        case "synchronous": return target.isSynchronous();
         case "tableblacklist":
         case "tableBlacklist": return target.getConfiguration().getTableBlacklist();
         case "tableexcludelist":

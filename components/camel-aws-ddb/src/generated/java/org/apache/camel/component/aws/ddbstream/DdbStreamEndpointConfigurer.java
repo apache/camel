@@ -73,7 +73,6 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sequenceNumberProvider": target.getConfiguration().setSequenceNumberProvider(property(camelContext, org.apache.camel.component.aws.ddbstream.SequenceNumberProvider.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -137,7 +136,6 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sequenceNumberProvider": return org.apache.camel.component.aws.ddbstream.SequenceNumberProvider.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -202,7 +200,6 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sequenceNumberProvider": return target.getConfiguration().getSequenceNumberProvider();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

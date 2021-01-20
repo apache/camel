@@ -18,11 +18,10 @@
 
 -->
 <xsl:stylesheet version="1.0"
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform"           
- xmlns:date="http://xml.apache.org/xalan/java/java.util.Date"
- xmlns:rt="http://xml.apache.org/xalan/java/java.lang.Runtime"
- xmlns:str="http://xml.apache.org/xalan/java/java.lang.String"
- exclude-result-prefixes="date">
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:date="http://xml.apache.org/xalan/java/java.util.Date"
+                xmlns:rt="http://xml.apache.org/xalan/java/java.lang.Runtime"
+                exclude-result-prefixes="date">
         <xsl:output method="text"/>
         <xsl:template match="/">
                 <xsl:variable name="cmd"><![CDATA[/usr/bin/test]]></xsl:variable>

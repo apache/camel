@@ -22,6 +22,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport {
 
@@ -80,5 +81,19 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+
+    @Test
+    public void createEndpointWithOverride() throws Exception {
+        KinesisFirehose2Component component = context.getComponent("aws2-kinesis-firehose", KinesisFirehose2Component.class);
+        KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) component
+                .createEndpoint(
+                        "aws2-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:4567");
+
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("http://localhost:4567", endpoint.getConfiguration().getUriEndpointOverride());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
     }
 }

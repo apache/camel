@@ -100,6 +100,23 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -177,6 +194,22 @@ public interface Aws2KinesisComponentBuilderFactory {
         default Aws2KinesisComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -386,11 +419,13 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
             case "cborEnabled": getOrCreateConfiguration((Kinesis2Component) component).setCborEnabled((boolean) value); return true;
             case "configuration": ((Kinesis2Component) component).setConfiguration((org.apache.camel.component.aws2.kinesis.Kinesis2Configuration) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Kinesis2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Kinesis2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Kinesis2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Kinesis2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Kinesis2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Kinesis2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Kinesis2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Kinesis2Component) component).setMaxResultsPerRequest((int) value); return true;

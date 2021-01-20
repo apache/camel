@@ -45,7 +45,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "popReceipt": target.getConfiguration().setPopReceipt(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.queue.QueueServiceClient.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
         case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, java.time.Duration.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
@@ -82,7 +81,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "popReceipt": return java.lang.String.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.queue.QueueServiceClient.class;
-        case "synchronous": return boolean.class;
         case "timetolive":
         case "timeToLive": return java.time.Duration.class;
         case "timeout": return java.time.Duration.class;
@@ -120,7 +118,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "popReceipt": return target.getConfiguration().getPopReceipt();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
-        case "synchronous": return target.isSynchronous();
         case "timetolive":
         case "timeToLive": return target.getConfiguration().getTimeToLive();
         case "timeout": return target.getConfiguration().getTimeout();

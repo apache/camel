@@ -28,21 +28,18 @@ public class TransactedConcurrentConsumersTest extends TransactedConsumerSupport
     /**
      * We want to verify that when consuming from a single destination with multiple routes that we are thread safe and
      * behave accordingly.
-     * 
-     * @throws Exception
      */
     @Test
     public void testRoute() throws Exception {
         final String destinationName = "sjms:queue:one.consumer.one.route.test";
         int routeCount = 1;
-        int consumerCount = 2;
-        int batchCount = 1;
+        int concurrentConsumers = 2;
         int messageCount = 20;
         int maxAttemptsCount = 10;
         int totalRedeliverdFalse = 20;
         int totalRedeliveredTrue = 1;
-        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue, batchCount,
-                consumerCount, maxAttemptsCount);
+        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue,
+                concurrentConsumers, maxAttemptsCount);
     }
 
     @Override

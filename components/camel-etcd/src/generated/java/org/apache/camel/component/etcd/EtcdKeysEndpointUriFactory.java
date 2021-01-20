@@ -20,13 +20,12 @@ public class EtcdKeysEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(10);
         props.add("path");
         props.add("uris");
         props.add("timeToLive");
         props.add("lazyStartProducer");
         props.add("password");
-        props.add("synchronous");
         props.add("servicePath");
         props.add("sslContextParameters");
         props.add("userName");

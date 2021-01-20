@@ -43,7 +43,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "retainLast": target.setRetainLast(property(camelContext, int.class, value)); return true;
         case "sleepforemptytest":
         case "sleepForEmptyTest": target.setSleepForEmptyTest(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -73,7 +72,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "retainLast": return int.class;
         case "sleepforemptytest":
         case "sleepForEmptyTest": return long.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -104,7 +102,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "retainLast": return target.getRetainLast();
         case "sleepforemptytest":
         case "sleepForEmptyTest": return target.getSleepForEmptyTest();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

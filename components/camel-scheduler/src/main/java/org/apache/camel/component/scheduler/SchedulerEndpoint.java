@@ -43,6 +43,9 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
     private String name;
     @UriParam(defaultValue = "1", label = "scheduler")
     private int concurrentTasks = 1;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public SchedulerEndpoint(String uri, SchedulerComponent component, String remaining) {
         super(uri, component);
@@ -88,6 +91,14 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
      */
     public void setConcurrentTasks(int concurrentTasks) {
         this.concurrentTasks = concurrentTasks;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public void onConsumerStart(SchedulerConsumer consumer) {

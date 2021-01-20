@@ -23,6 +23,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.testcontainers.containers.GenericContainer;
 
+/**
+ * Tests using this component should switch the test-infra. Please check the test-infra module for details and
+ * conversion procedures.
+ */
+@Deprecated
 public class ContainerPropertiesFunction implements PropertiesFunction {
     private final List<GenericContainer<?>> containers;
 

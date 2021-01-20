@@ -31,7 +31,6 @@ public class VertxEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pubsub":
         case "pubSub": target.setPubSub(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,7 +48,6 @@ public class VertxEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "pubsub":
         case "pubSub": return java.lang.Boolean.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -68,7 +66,6 @@ public class VertxEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pubsub":
         case "pubSub": return target.getPubSub();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

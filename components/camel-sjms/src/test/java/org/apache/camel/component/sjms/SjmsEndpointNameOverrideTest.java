@@ -69,7 +69,6 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
-        component.setConnectionCount(1);
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent(BEAN_NAME, component);
 

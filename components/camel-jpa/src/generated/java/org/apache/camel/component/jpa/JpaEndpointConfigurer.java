@@ -91,7 +91,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipLockedEntity": target.setSkipLockedEntity(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
@@ -180,7 +179,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipLockedEntity": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "transacted": return boolean.class;
@@ -270,7 +268,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipLockedEntity": return target.isSkipLockedEntity();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "transacted": return target.isTransacted();

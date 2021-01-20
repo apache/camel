@@ -286,7 +286,8 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * The policy for this queue
+     * The policy for this queue. It can be loaded by default from classpath, but you can prefix with "classpath:",
+     * "file:", or "http:" to load the resource from different systems.
      */
     public void setPolicy(String policy) {
         this.policy = policy;

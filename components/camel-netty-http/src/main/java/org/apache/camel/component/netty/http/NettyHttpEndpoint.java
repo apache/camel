@@ -108,7 +108,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     @Override
     public Producer createProducer() throws Exception {
         Producer answer = new NettyHttpProducer(this, getConfiguration());
-        if (isSynchronous()) {
+        if (getConfiguration().isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
         } else {
             return answer;

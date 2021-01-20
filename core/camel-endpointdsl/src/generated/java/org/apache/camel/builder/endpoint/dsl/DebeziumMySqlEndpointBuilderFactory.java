@@ -1679,6 +1679,43 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+         * disabled, the standard functionality of emitting these records as
+         * reads (op 'r') will be used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: mysql
+         * 
+         * @param snapshotEventsAsInserts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotEventsAsInserts(
+                boolean snapshotEventsAsInserts) {
+            doSetProperty("snapshotEventsAsInserts", snapshotEventsAsInserts);
+            return this;
+        }
+        /**
+         * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+         * disabled, the standard functionality of emitting these records as
+         * reads (op 'r') will be used.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: mysql
+         * 
+         * @param snapshotEventsAsInserts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotEventsAsInserts(
+                String snapshotEventsAsInserts) {
+            doSetProperty("snapshotEventsAsInserts", snapshotEventsAsInserts);
+            return this;
+        }
+        /**
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
@@ -2076,41 +2113,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default AdvancedDebeziumMySqlEndpointBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDebeziumMySqlEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDebeziumMySqlEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

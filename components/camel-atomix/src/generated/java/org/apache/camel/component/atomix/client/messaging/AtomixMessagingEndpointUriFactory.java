@@ -20,8 +20,7 @@ public class AtomixMessagingEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(21);
-        props.add("synchronous");
+        Set<String> props = new HashSet<>(20);
         props.add("exchangePattern");
         props.add("memberName");
         props.add("ephemeral");

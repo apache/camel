@@ -36,9 +36,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
     public interface KinesisFirehose2EndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedKinesisFirehose2EndpointBuilder advanced() {
-            return (AdvancedKinesisFirehose2EndpointBuilder) this;
-        }
         /**
          * Amazon Kinesis Firehose client to use for all requests for this
          * endpoint.
@@ -102,6 +99,41 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          */
         default KinesisFirehose2EndpointBuilder cborEnabled(String cborEnabled) {
             doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -321,6 +353,22 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -346,52 +394,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          */
         default KinesisFirehose2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the AWS 2 Kinesis Firehose component.
-     */
-    public interface AdvancedKinesisFirehose2EndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default KinesisFirehose2EndpointBuilder basic() {
-            return (KinesisFirehose2EndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesisFirehose2EndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKinesisFirehose2EndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -465,7 +467,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
     static KinesisFirehose2EndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class KinesisFirehose2EndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehose2EndpointBuilder, AdvancedKinesisFirehose2EndpointBuilder {
+        class KinesisFirehose2EndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehose2EndpointBuilder {
             public KinesisFirehose2EndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

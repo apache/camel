@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<svg version="1.1" viewBox="0 0 130.21 130.01" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg version="1.1" viewBox="0 0 130.21 130.01" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <linearGradient id="c" x1="333.48" x2="477" y1="702.6" y2="563.73" gradientTransform="matrix(.99206 0 0 .99206 94.038 276.06)" gradientUnits="userSpaceOnUse">
 <stop stop-color="#F69923" offset="0"/>

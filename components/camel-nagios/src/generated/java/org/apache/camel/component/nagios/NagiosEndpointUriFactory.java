@@ -20,12 +20,11 @@ public class NagiosEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(8);
         props.add("lazyStartProducer");
         props.add("password");
         props.add("encryption");
         props.add("port");
-        props.add("synchronous");
         props.add("host");
         props.add("sendSync");
         props.add("connectionTimeout");

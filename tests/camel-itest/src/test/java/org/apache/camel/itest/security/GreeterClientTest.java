@@ -44,13 +44,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class GreeterClientTest {
     private static final java.net.URL WSDL_LOC;
     static {
-        java.net.URL tmp = null;
-        try {
-            tmp = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        WSDL_LOC = tmp;
+        WSDL_LOC = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
     }
     private static final QName SERVICE_QNAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
 

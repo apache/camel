@@ -40,6 +40,9 @@ public class LoopDefinition extends OutputExpressionNode {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String doWhile;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String breakOnShutdown;
 
     public LoopDefinition() {
     }
@@ -90,6 +93,25 @@ public class LoopDefinition extends OutputExpressionNode {
      */
     public void setCopy(String copy) {
         this.copy = copy;
+    }
+
+    public LoopDefinition breakOnShutdown() {
+        setBreakOnShutdown(Boolean.toString(true));
+        return this;
+    }
+
+    /**
+     * If the breakOnShutdown attribute is true, then the loop will not iterate until it reaches the end when Camel is
+     * shut down.
+     *
+     * @param breakOnShutdown a Boolean-parsable String
+     */
+    public void setBreakOnShutdown(String breakOnShutdown) {
+        this.breakOnShutdown = breakOnShutdown;
+    }
+
+    public String getBreakOnShutdown() {
+        return breakOnShutdown;
     }
 
     @Override

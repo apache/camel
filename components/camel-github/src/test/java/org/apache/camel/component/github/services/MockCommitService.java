@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.egit.github.core.Commit;
 import org.eclipse.egit.github.core.CommitStatus;
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
 import org.eclipse.egit.github.core.RepositoryCommit;
@@ -47,6 +48,10 @@ public class MockCommitService extends CommitService {
         RepositoryCommit rc = new RepositoryCommit();
         rc.setAuthor(author);
         rc.setSha(fakeSha.incrementAndGet() + "");
+        rc.setCommitter(author);
+        Commit commit = new Commit();
+        commit.setMessage("Test");
+        rc.setCommit(commit);
         LOG.debug("In MockCommitService added commit with sha " + rc.getSha());
         commitsList.add(rc);
 

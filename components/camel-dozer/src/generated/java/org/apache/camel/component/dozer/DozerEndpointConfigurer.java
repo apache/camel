@@ -31,7 +31,6 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "marshalId": target.getConfiguration().setMarshalId(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcemodel":
         case "sourceModel": target.getConfiguration().setSourceModel(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targetmodel":
         case "targetModel": target.getConfiguration().setTargetModel(property(camelContext, java.lang.String.class, value)); return true;
         case "unmarshalid":
@@ -53,7 +52,6 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "marshalId": return java.lang.String.class;
         case "sourcemodel":
         case "sourceModel": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "targetmodel":
         case "targetModel": return java.lang.String.class;
         case "unmarshalid":
@@ -76,7 +74,6 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "marshalId": return target.getConfiguration().getMarshalId();
         case "sourcemodel":
         case "sourceModel": return target.getConfiguration().getSourceModel();
-        case "synchronous": return target.isSynchronous();
         case "targetmodel":
         case "targetModel": return target.getConfiguration().getTargetModel();
         case "unmarshalid":

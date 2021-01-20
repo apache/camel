@@ -54,7 +54,6 @@ public class ApnsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "tokens": target.setTokens(property(camelContext, java.lang.String.class, value)); return true;
@@ -100,7 +99,6 @@ public class ApnsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "tokens": return java.lang.String.class;
@@ -147,7 +145,6 @@ public class ApnsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "tokens": return target.getTokens();

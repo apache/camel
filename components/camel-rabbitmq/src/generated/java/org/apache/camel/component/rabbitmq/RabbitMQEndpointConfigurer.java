@@ -128,7 +128,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "skipQueueDeclare": target.setSkipQueueDeclare(property(camelContext, boolean.class, value)); return true;
         case "sslprotocol":
         case "sslProtocol": target.setSslProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "threadpoolsize":
         case "threadPoolSize": target.setThreadPoolSize(property(camelContext, int.class, value)); return true;
         case "topologyrecoveryenabled":
@@ -253,7 +252,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "skipQueueDeclare": return boolean.class;
         case "sslprotocol":
         case "sslProtocol": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "threadpoolsize":
         case "threadPoolSize": return int.class;
         case "topologyrecoveryenabled":
@@ -379,7 +377,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "skipQueueDeclare": return target.isSkipQueueDeclare();
         case "sslprotocol":
         case "sslProtocol": return target.getSslProtocol();
-        case "synchronous": return target.isSynchronous();
         case "threadpoolsize":
         case "threadPoolSize": return target.getThreadPoolSize();
         case "topologyrecoveryenabled":

@@ -50,11 +50,12 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
             PlainTextDictionary words = new PlainTextDictionary(reader);
 
             // use in-memory lucene spell checker to make the suggestions
-            ByteBuffersDirectory dir = new ByteBuffersDirectory();
-            checker = new SpellChecker(dir);
-            checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
+            try (ByteBuffersDirectory dir = new ByteBuffersDirectory()) {
+                checker = new SpellChecker(dir);
+                checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
 
-            return checker.suggestSimilar(unknownOption, maxSuggestions);
+                return checker.suggestSimilar(unknownOption, maxSuggestions);
+            }
         } catch (Exception e) {
             // ignore
         }

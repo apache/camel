@@ -32,6 +32,7 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
+import org.apache.camel.StartupStep;
 import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.CamelLogger;
@@ -264,12 +265,15 @@ class InternalRouteStartupManager {
             // will then be prepared in time before we start inputs which will
             // consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
+            StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
+                    "Warming up route");
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
                 setupRoute.set(routeService.getRoute());
                 routeService.warmUp();
             } finally {
                 setupRoute.remove();
+                abstractCamelContext.getStartupStepRecorder().endStep(step);
             }
         }
     }
@@ -305,6 +309,9 @@ class InternalRouteStartupManager {
                         getRouteLoggerLogLevel());
                 continue;
             }
+
+            StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, route.getRouteId(),
+                    "Starting route");
 
             // start the service
             for (Consumer consumer : routeService.getInputs().values()) {
@@ -404,6 +411,8 @@ class InternalRouteStartupManager {
                     throw e;
                 }
             }
+
+            abstractCamelContext.getStartupStepRecorder().endStep(step);
         }
     }
 

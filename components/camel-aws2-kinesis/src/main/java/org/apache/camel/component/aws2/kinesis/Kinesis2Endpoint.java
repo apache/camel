@@ -149,6 +149,9 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
         }
+        if (configuration.isOverrideEndpoint()) {
+            clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
+        }
         if (configuration.isTrustAllCertificates()) {
             SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
                     .builder()

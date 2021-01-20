@@ -423,6 +423,45 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum amount of time the client will wait for the socket
+         * connection to be established. The connection setup timeout will
+         * increase exponentially for each consecutive connection failure up to
+         * this maximum. To avoid connection storms, a randomization factor of
+         * 0.2 will be applied to the timeout resulting in a random range
+         * between 20% below and 20% above the computed value.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2m7s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMaxMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder socketConnectionSetupTimeoutMaxMs(
+                long socketConnectionSetupTimeoutMaxMs) {
+            doSetProperty("socketConnectionSetupTimeoutMaxMs", socketConnectionSetupTimeoutMaxMs);
+            return this;
+        }
+        /**
+         * The amount of time the client will wait for the socket connection to
+         * be established. If the connection is not built before the timeout
+         * elapses, clients will close the socket channel.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: common
+         * 
+         * @param socketConnectionSetupTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder socketConnectionSetupTimeoutMs(
+                long socketConnectionSetupTimeoutMs) {
+            doSetProperty("socketConnectionSetupTimeoutMs", socketConnectionSetupTimeoutMs);
+            return this;
+        }
+        /**
          * Allow automatic topic creation on the broker when subscribing to or
          * assigning a topic. A topic being subscribed to will be automatically
          * created only if the broker allows for it using
@@ -1145,11 +1184,16 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * The configuration controls how long KafkaProducer.send() and
-         * KafkaProducer.partitionsFor() will block.These methods can be blocked
-         * either because the buffer is full or metadata unavailable.Blocking in
-         * the user-supplied serializers or partitioner will not be counted
-         * against this timeout.
+         * The configuration controls how long the KafkaProducer's send(),
+         * partitionsFor(), initTransactions(), sendOffsetsToTransaction(),
+         * commitTransaction() and abortTransaction() methods will block. For
+         * send() this timeout bounds the total time waiting for both metadata
+         * fetch and buffer allocation (blocking in the user-supplied
+         * serializers or partitioner is not counted against this timeout). For
+         * partitionsFor() this timeout bounds the time spent waiting for
+         * metadata if it is unavailable. The transaction-related methods always
+         * block, but may timeout if the transaction coordinator could not be
+         * discovered or did not respond within the timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1297,7 +1341,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * will wait for a transaction status update from the producer before
          * proactively aborting the ongoing transaction.If this value is larger
          * than the transaction.max.timeout.ms setting in the broker, the
-         * request will fail with a InvalidTransactionTimeout error.
+         * request will fail with a InvalidTxnTimeoutException error.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1769,8 +1813,9 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * The password of the private key in the key store file. This is
-         * optional for client.
+         * The password of the private key in the key store file orthe PEM key
+         * specified in ssl.keystore.key'. This is required for clients only if
+         * two-way authentication is configured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1782,6 +1827,41 @@ public interface VertxKafkaComponentBuilderFactory {
         default VertxKafkaComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
             doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * Certificate chain in the format specified by 'ssl.keystore.type'.
+         * Default SSL engine factory supports only PEM format with a list of
+         * X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder sslKeystoreCertificateChain(
+                java.lang.String sslKeystoreCertificateChain) {
+            doSetProperty("sslKeystoreCertificateChain", sslKeystoreCertificateChain);
+            return this;
+        }
+        /**
+         * Private key in the format specified by 'ssl.keystore.type'. Default
+         * SSL engine factory supports only PEM format with PKCS#8 keys. If the
+         * key is encrypted, key password must be specified using
+         * 'ssl.key.password'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreKey the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder sslKeystoreKey(
+                java.lang.String sslKeystoreKey) {
+            doSetProperty("sslKeystoreKey", sslKeystoreKey);
             return this;
         }
         /**
@@ -1802,7 +1882,8 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * The store password for the key store file. This is optional for
-         * client and only needed if ssl.keystore.location is configured.
+         * client and only needed if 'ssl.keystore.location' is configured. Key
+         * store password is not supported for PEM format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1909,6 +1990,23 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Trusted certificates in the format specified by
+         * 'ssl.truststore.type'. Default SSL engine factory supports only PEM
+         * format with X.509 certificates.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreCertificates the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder sslTruststoreCertificates(
+                java.lang.String sslTruststoreCertificates) {
+            doSetProperty("sslTruststoreCertificates", sslTruststoreCertificates);
+            return this;
+        }
+        /**
          * The location of the trust store file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1924,9 +2022,10 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * The password for the trust store file. If a password is not set
-         * access to the truststore is still available, but integrity checking
-         * is disabled.
+         * The password for the trust store file. If a password is not set,
+         * trust store file configured will still be used, but integrity
+         * checking is disabled. Trust store password is not supported for PEM
+         * format.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2000,6 +2099,8 @@ public interface VertxKafkaComponentBuilderFactory {
             case "requestTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setRequestTimeoutMs((int) value); return true;
             case "retryBackoffMs": getOrCreateConfiguration((VertxKafkaComponent) component).setRetryBackoffMs((long) value); return true;
             case "sendBufferBytes": getOrCreateConfiguration((VertxKafkaComponent) component).setSendBufferBytes((int) value); return true;
+            case "socketConnectionSetupTimeoutMaxMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSocketConnectionSetupTimeoutMaxMs((long) value); return true;
+            case "socketConnectionSetupTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSocketConnectionSetupTimeoutMs((long) value); return true;
             case "allowAutoCreateTopics": getOrCreateConfiguration((VertxKafkaComponent) component).setAllowAutoCreateTopics((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((VertxKafkaComponent) component).setAutoCommitIntervalMs((int) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((VertxKafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
@@ -2068,6 +2169,8 @@ public interface VertxKafkaComponentBuilderFactory {
             case "sslEngineFactoryClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSslEngineFactoryClass((java.lang.String) value); return true;
             case "sslKeymanagerAlgorithm": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeymanagerAlgorithm((java.lang.String) value); return true;
             case "sslKeyPassword": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslKeystoreCertificateChain": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeystoreCertificateChain((java.lang.String) value); return true;
+            case "sslKeystoreKey": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeystoreKey((java.lang.String) value); return true;
             case "sslKeystoreLocation": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeystoreLocation((java.lang.String) value); return true;
             case "sslKeystorePassword": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeystorePassword((java.lang.String) value); return true;
             case "sslKeystoreType": getOrCreateConfiguration((VertxKafkaComponent) component).setSslKeystoreType((java.lang.String) value); return true;
@@ -2075,6 +2178,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "sslProvider": getOrCreateConfiguration((VertxKafkaComponent) component).setSslProvider((java.lang.String) value); return true;
             case "sslSecureRandomImplementation": getOrCreateConfiguration((VertxKafkaComponent) component).setSslSecureRandomImplementation((java.lang.String) value); return true;
             case "sslTrustmanagerAlgorithm": getOrCreateConfiguration((VertxKafkaComponent) component).setSslTrustmanagerAlgorithm((java.lang.String) value); return true;
+            case "sslTruststoreCertificates": getOrCreateConfiguration((VertxKafkaComponent) component).setSslTruststoreCertificates((java.lang.String) value); return true;
             case "sslTruststoreLocation": getOrCreateConfiguration((VertxKafkaComponent) component).setSslTruststoreLocation((java.lang.String) value); return true;
             case "sslTruststorePassword": getOrCreateConfiguration((VertxKafkaComponent) component).setSslTruststorePassword((java.lang.String) value); return true;
             case "sslTruststoreType": getOrCreateConfiguration((VertxKafkaComponent) component).setSslTruststoreType((java.lang.String) value); return true;

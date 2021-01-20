@@ -51,25 +51,8 @@ public interface Sjms2ComponentBuilderFactory {
      */
     interface Sjms2ComponentBuilder extends ComponentBuilder<Sjms2Component> {
         /**
-         * The maximum number of connections available to endpoints started
-         * under this component.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionCount(
-                java.lang.Integer connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * A ConnectionFactory is required to enable the SjmsComponent. It can
-         * be set directly or set set as part of a ConnectionResource.
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
          * type.
@@ -104,36 +87,6 @@ public interface Sjms2ComponentBuilderFactory {
         default Sjms2ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Backoff in millis on consumer pool reconnection attempts.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5000
-         * Group: consumer
-         * 
-         * @param reconnectBackOff the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder reconnectBackOff(long reconnectBackOff) {
-            doSetProperty("reconnectBackOff", reconnectBackOff);
-            return this;
-        }
-        /**
-         * Try to apply reconnection logic on consumer pool.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param reconnectOnError the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder reconnectOnError(boolean reconnectOnError) {
-            doSetProperty("reconnectOnError", reconnectOnError);
             return this;
         }
         /**
@@ -178,77 +131,6 @@ public interface Sjms2ComponentBuilderFactory {
          */
         default Sjms2ComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
-            return this;
-        }
-        /**
-         * The client ID to use when creating javax.jms.Connection when using
-         * the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionClientId the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionClientId(
-                java.lang.String connectionClientId) {
-            doSetProperty("connectionClientId", connectionClientId);
-            return this;
-        }
-        /**
-         * The max wait time in millis to block and wait on free connection when
-         * the pool is exhausted when using the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5000
-         * Group: advanced
-         * 
-         * @param connectionMaxWait the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionMaxWait(long connectionMaxWait) {
-            doSetProperty("connectionMaxWait", connectionMaxWait);
-            return this;
-        }
-        /**
-         * A ConnectionResource is an interface that allows for customization
-         * and container control of the ConnectionFactory. See Plugable
-         * Connection Resource Management for further details.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionResource(
-                org.apache.camel.component.sjms.jms.ConnectionResource connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * When using the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then
-         * should each javax.jms.Connection be tested (calling start) before
-         * returned from the pool.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param connectionTestOnBorrow the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionTestOnBorrow(
-                boolean connectionTestOnBorrow) {
-            doSetProperty("connectionTestOnBorrow", connectionTestOnBorrow);
             return this;
         }
         /**
@@ -309,19 +191,57 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom TimedTaskManager.
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.taskmanager.TimedTaskManager&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
+         * Default: 5000
          * Group: advanced
          * 
-         * @param timedTaskManager the value to set
+         * @param recoveryInterval the value to set
          * @return the dsl builder
          */
-        default Sjms2ComponentBuilder timedTaskManager(
-                org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
-            doSetProperty("timedTaskManager", timedTaskManager);
+        default Sjms2ComponentBuilder recoveryInterval(long recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of concurrent consumers for continue
+         * routing when timeout occurred when using request/reply over JMS.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param replyToOnTimeoutMaxConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default Sjms2ComponentBuilder replyToOnTimeoutMaxConcurrentConsumers(
+                int replyToOnTimeoutMaxConcurrentConsumers) {
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Configures how often Camel should check for timed out Exchanges when
+         * doing request/reply over JMS. By default Camel checks once per
+         * second. But if you must react faster when a timeout occurs, then you
+         * can lower this interval, to check more frequently. The timeout is
+         * determined by the option requestTimeout.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
+         */
+        default Sjms2ComponentBuilder requestTimeoutCheckerInterval(
+                long requestTimeoutCheckerInterval) {
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -342,57 +262,6 @@ public interface Sjms2ComponentBuilderFactory {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
-        /**
-         * The password to use when creating javax.jms.Connection when using the
-         * default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param connectionPassword the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionPassword(
-                java.lang.String connectionPassword) {
-            doSetProperty("connectionPassword", connectionPassword);
-            return this;
-        }
-        /**
-         * The username to use when creating javax.jms.Connection when using the
-         * default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param connectionUsername the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionUsername(
-                java.lang.String connectionUsername) {
-            doSetProperty("connectionUsername", connectionUsername);
-            return this;
-        }
-        /**
-         * To configure which kind of commit strategy to use. Camel provides two
-         * implementations out of the box, default and batch.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder transactionCommitStrategy(
-                org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
     }
 
     class Sjms2ComponentBuilderImpl
@@ -410,25 +279,17 @@ public interface Sjms2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionCount": ((Sjms2Component) component).setConnectionCount((java.lang.Integer) value); return true;
             case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((Sjms2Component) component).setBridgeErrorHandler((boolean) value); return true;
-            case "reconnectBackOff": ((Sjms2Component) component).setReconnectBackOff((long) value); return true;
-            case "reconnectOnError": ((Sjms2Component) component).setReconnectOnError((boolean) value); return true;
             case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((Sjms2Component) component).setAutowiredEnabled((boolean) value); return true;
-            case "connectionClientId": ((Sjms2Component) component).setConnectionClientId((java.lang.String) value); return true;
-            case "connectionMaxWait": ((Sjms2Component) component).setConnectionMaxWait((long) value); return true;
-            case "connectionResource": ((Sjms2Component) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
-            case "connectionTestOnBorrow": ((Sjms2Component) component).setConnectionTestOnBorrow((boolean) value); return true;
             case "destinationCreationStrategy": ((Sjms2Component) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
             case "jmsKeyFormatStrategy": ((Sjms2Component) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((Sjms2Component) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
-            case "timedTaskManager": ((Sjms2Component) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
+            case "recoveryInterval": ((Sjms2Component) component).setRecoveryInterval((long) value); return true;
+            case "replyToOnTimeoutMaxConcurrentConsumers": ((Sjms2Component) component).setReplyToOnTimeoutMaxConcurrentConsumers((int) value); return true;
+            case "requestTimeoutCheckerInterval": ((Sjms2Component) component).setRequestTimeoutCheckerInterval((long) value); return true;
             case "headerFilterStrategy": ((Sjms2Component) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "connectionPassword": ((Sjms2Component) component).setConnectionPassword((java.lang.String) value); return true;
-            case "connectionUsername": ((Sjms2Component) component).setConnectionUsername((java.lang.String) value); return true;
-            case "transactionCommitStrategy": ((Sjms2Component) component).setTransactionCommitStrategy((org.apache.camel.component.sjms.TransactionCommitStrategy) value); return true;
             default: return false;
             }
         }

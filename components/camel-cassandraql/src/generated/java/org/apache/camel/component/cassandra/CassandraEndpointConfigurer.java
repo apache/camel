@@ -68,7 +68,6 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "session": target.setSession(property(camelContext, com.datastax.oss.driver.api.core.CqlSession.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -128,7 +127,6 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "session": return com.datastax.oss.driver.api.core.CqlSession.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -189,7 +187,6 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "session": return target.getSession();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":

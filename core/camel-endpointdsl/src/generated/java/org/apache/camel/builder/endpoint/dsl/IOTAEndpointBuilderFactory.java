@@ -34,9 +34,6 @@ public interface IOTAEndpointBuilderFactory {
      * Builder for endpoint for the IOTA component.
      */
     public interface IOTAEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedIOTAEndpointBuilder advanced() {
-            return (AdvancedIOTAEndpointBuilder) this;
-        }
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
@@ -231,50 +228,6 @@ public interface IOTAEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the IOTA component.
-     */
-    public interface AdvancedIOTAEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IOTAEndpointBuilder basic() {
-            return (IOTAEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIOTAEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIOTAEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface IOTABuilders {
         /**
          * IOTA (camel-iota)
@@ -318,7 +271,7 @@ public interface IOTAEndpointBuilderFactory {
         }
     }
     static IOTAEndpointBuilder endpointBuilder(String componentName, String path) {
-        class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder, AdvancedIOTAEndpointBuilder {
+        class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder {
             public IOTAEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

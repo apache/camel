@@ -53,6 +53,15 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     boolean isOnlyDynamicQueryParameters();
 
     /**
+     * Whether to traverses the given parameters, and resolve any parameter values which uses the RAW token syntax:
+     * <tt>key=RAW(value)</tt>. And then remove the RAW tokens, and replace the content of the value, with just the
+     * value.
+     */
+    default boolean resolveRawParameterValues() {
+        return true;
+    }
+
+    /**
      * Whether the endpoint is lenient or not.
      *
      * @see Endpoint#isLenientProperties()

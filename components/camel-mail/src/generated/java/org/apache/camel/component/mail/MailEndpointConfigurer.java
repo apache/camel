@@ -127,7 +127,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "to": target.getConfiguration().setTo(property(camelContext, java.lang.String.class, value)); return true;
@@ -250,7 +249,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "subject": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "to": return java.lang.String.class;
@@ -374,7 +372,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "subject": return target.getConfiguration().getSubject();
-        case "synchronous": return target.isSynchronous();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "to": return target.getConfiguration().getTo();

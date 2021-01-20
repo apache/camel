@@ -111,22 +111,15 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
         }
     }
 
-    /**
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     * 
-     * @return
-     * 
-     * @throws Exception
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
-                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
                                                    + TEST_DESTINATION_NAME
-                                                   + ".response&consumerCount=10&producerCount=20&synchronous=false")
+                                                   + ".response&concurrentConsumers=10")
                         .threads(20)
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
             }

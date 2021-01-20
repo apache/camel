@@ -36,9 +36,6 @@ public interface ChatScriptEndpointBuilderFactory {
     public interface ChatScriptEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedChatScriptEndpointBuilder advanced() {
-            return (AdvancedChatScriptEndpointBuilder) this;
-        }
         /**
          * Username who initializes the CS conversation. To be set when chat is
          * initialized from camel route.
@@ -136,51 +133,6 @@ public interface ChatScriptEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the ChatScript component.
-     */
-    public interface AdvancedChatScriptEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ChatScriptEndpointBuilder basic() {
-            return (ChatScriptEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedChatScriptEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface ChatScriptBuilders {
         /**
          * ChatScript (camel-chatscript)
@@ -242,7 +194,7 @@ public interface ChatScriptEndpointBuilderFactory {
     static ChatScriptEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {
+        class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder {
             public ChatScriptEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

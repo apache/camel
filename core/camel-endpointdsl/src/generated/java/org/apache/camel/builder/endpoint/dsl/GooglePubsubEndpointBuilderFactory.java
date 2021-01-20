@@ -316,41 +316,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
     }
 
     /**
@@ -572,6 +537,56 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointProducerBuilder) this;
         }
         /**
+         * Should message ordering be enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param messageOrderingEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder messageOrderingEnabled(
+                boolean messageOrderingEnabled) {
+            doSetProperty("messageOrderingEnabled", messageOrderingEnabled);
+            return this;
+        }
+        /**
+         * Should message ordering be enabled.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param messageOrderingEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder messageOrderingEnabled(
+                String messageOrderingEnabled) {
+            doSetProperty("messageOrderingEnabled", messageOrderingEnabled);
+            return this;
+        }
+        /**
+         * Pub/Sub endpoint to use. Required when using message ordering, and
+         * ensures that messages are received in order even when multiple
+         * publishers are used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param pubsubEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder pubsubEndpoint(
+                String pubsubEndpoint) {
+            doSetProperty("pubsubEndpoint", pubsubEndpoint);
+            return this;
+        }
+        /**
          * A custom GooglePubsubSerializer to use for serializing message
          * payloads in the producer.
          * 
@@ -603,41 +618,6 @@ public interface GooglePubsubEndpointBuilderFactory {
         default AdvancedGooglePubsubEndpointProducerBuilder serializer(
                 String serializer) {
             doSetProperty("serializer", serializer);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -812,41 +792,6 @@ public interface GooglePubsubEndpointBuilderFactory {
                 AdvancedGooglePubsubEndpointProducerBuilder {
         default GooglePubsubEndpointBuilder basic() {
             return (GooglePubsubEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGooglePubsubEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedGooglePubsubEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
         }
     }
 

@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -52,16 +51,19 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
+import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,9 +88,6 @@ public abstract class BaseMainSupport extends BaseService {
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
-
-    private static final String SENSITIVE_KEYS
-            = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
     protected volatile CamelContext camelContext;
 
@@ -434,14 +433,76 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary:");
             autoConfiguredProperties.forEach((k, v) -> {
-                boolean sensitive
-                        = Arrays.stream(SENSITIVE_KEYS.split("\\|")).anyMatch(s -> k.toLowerCase(Locale.ENGLISH).contains(s));
-                if (sensitive) {
+                if (SensitiveUtils.containsSensitive(k)) {
                     LOG.info("\t{}=xxxxxx", k);
                 } else {
                     LOG.info("\t{}={}", k, v);
                 }
             });
+        }
+    }
+
+    protected void configureStartupRecorder(CamelContext camelContext) {
+        // we need to load these configurations early as they control the startup recorder when using camel-jfr
+        // and we want to start jfr recording as early as possible to also capture details during bootstrapping Camel
+
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
+
+        Object value = prop.remove("camel.main.startupRecorder");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorder(value.toString());
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderRecording");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-recording");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderProfile");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-profile");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderProfile(
+                        CamelContextHelper.parseText(camelContext, value.toString()));
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderDuration");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-duration");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderMaxDepth");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-max-depth");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
+            }
+        }
+
+        if ("false".equals(mainConfigurationProperties.getStartupRecorder())) {
+            camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setEnabled(false);
+        } else if ("logging".equals(mainConfigurationProperties.getStartupRecorder())) {
+            camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(new LoggingStartupStepRecorder());
+        } else if ("java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
+                || mainConfigurationProperties.getStartupRecorder() == null) {
+            // try to auto discover camel-jfr to use
+            StartupStepRecorder fr = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                    .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
+            if (fr != null) {
+                LOG.debug("Discovered startup recorder: {} from classpath", fr);
+                fr.setRecording(mainConfigurationProperties.isStartupRecorderRecording());
+                fr.setStartupRecorderDuration(mainConfigurationProperties.getStartupRecorderDuration());
+                fr.setRecordingProfile(mainConfigurationProperties.getStartupRecorderProfile());
+                fr.setMaxDepth(mainConfigurationProperties.getStartupRecorderMaxDepth());
+                camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(fr);
+            }
         }
     }
 
@@ -455,14 +516,17 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // setup properties
+        configurePropertiesService(camelContext);
+        // setup startup recorder before building context
+        configureStartupRecorder(camelContext);
+
         // ensure camel is initialized
         camelContext.build();
 
         for (MainListener listener : listeners) {
             listener.beforeInitialize(this);
         }
-
-        configurePropertiesService(camelContext);
 
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
@@ -1201,8 +1265,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
                 LOG.info("Auto-configuration component {} summary:", name);
                 autoConfiguredProperties.forEach((k, v) -> {
-                    boolean sensitive = SENSITIVE_KEYS.contains(k.toLowerCase(Locale.ENGLISH));
-                    if (sensitive) {
+                    if (SensitiveUtils.containsSensitive(k)) {
                         LOG.info("\t{}=xxxxxx", k);
                     } else {
                         LOG.info("\t{}={}", k, v);

@@ -2704,8 +2704,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JsonValidatorComponentBuilderFactory.jsonValidator();
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
@@ -3530,6 +3530,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PahoComponentBuilderFactory.paho();
     }
     /**
+     * Paho MQTT 5 (camel-paho-mqtt5)
+     * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+     * 
+     * Category: messaging,iot
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-paho-mqtt5
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.PahoMqtt5ComponentBuilderFactory.PahoMqtt5ComponentBuilder pahoMqtt5() {
+        return org.apache.camel.builder.component.dsl.PahoMqtt5ComponentBuilderFactory.pahoMqtt5();
+    }
+    /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
      * 
@@ -3988,20 +4001,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SjmsComponentBuilderFactory.sjms();
     }
     /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SjmsBatchComponentBuilderFactory.SjmsBatchComponentBuilder sjmsBatch() {
-        return org.apache.camel.builder.component.dsl.SjmsBatchComponentBuilderFactory.sjmsBatch();
-    }
-    /**
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 2.x API.
@@ -4239,6 +4238,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SpringLdapComponentBuilderFactory.SpringLdapComponentBuilder springLdap() {
         return org.apache.camel.builder.component.dsl.SpringLdapComponentBuilderFactory.springLdap();
+    }
+    /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SpringRabbitmqComponentBuilderFactory.SpringRabbitmqComponentBuilder springRabbitmq() {
+        return org.apache.camel.builder.component.dsl.SpringRabbitmqComponentBuilderFactory.springRabbitmq();
     }
     /**
      * Spring Redis (camel-spring-redis)

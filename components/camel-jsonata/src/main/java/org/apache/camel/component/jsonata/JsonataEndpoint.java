@@ -35,9 +35,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * JSON to JSON transformation using JSONATA.
+ * Transforms JSON payload using JSONata transformation.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONATA", syntax = "jsonata:resourceUri", producerOnly = true,
+@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri", producerOnly = true,
              category = { Category.TRANSFORMATION })
 public class JsonataEndpoint extends ResourceEndpoint {
 
@@ -82,7 +82,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the output should be Jackson JsonNode or a JSON String.
+     * Specifies if the input should be Jackson JsonNode or a JSON String.
      */
     public void setInputType(JsonataInputOutputType inputType) {
         this.inputType = inputType;
@@ -112,7 +112,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
         output = expressions.evaluate(input);
 
         // now lets output the results to the exchange 
-        Message out = exchange.getOut(); // getOut() is depricated
+        Message out = exchange.getMessage();
         if (getOutputType() == JsonataInputOutputType.JsonString) {
             out.setBody(output.toString());
         } else {

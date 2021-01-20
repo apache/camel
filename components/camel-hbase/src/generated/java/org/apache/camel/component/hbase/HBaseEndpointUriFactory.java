@@ -20,9 +20,8 @@ public class HBaseEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(17);
         props.add("rowMapping");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("filters");
         props.add("removeHandler");

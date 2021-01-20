@@ -31,7 +31,6 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "script": target.setScript(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transform": target.setTransform(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -50,7 +49,6 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "script": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "transform": return boolean.class;
         default: return null;
         }
@@ -70,7 +68,6 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "script": return target.getScript();
-        case "synchronous": return target.isSynchronous();
         case "transform": return target.isTransform();
         default: return null;
         }

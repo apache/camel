@@ -530,7 +530,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     @Test
     public void testReporter() throws Exception {
-        final AtomicBoolean reported = new AtomicBoolean(false);
+        final AtomicBoolean reported = new AtomicBoolean();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.setExpectedMessageCount(1);

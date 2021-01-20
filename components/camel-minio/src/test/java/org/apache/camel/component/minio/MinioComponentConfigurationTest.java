@@ -23,6 +23,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class MinioComponentConfigurationTest extends CamelTestSupport {
@@ -54,5 +55,23 @@ class MinioComponentConfigurationTest extends CamelTestSupport {
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(client, endpoint.getConfiguration().getMinioClient());
+    }
+
+    @Test
+    void createEndpoinWthAutowiredDisabledAndClientExistInRegistry() throws Exception {
+        final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
+
+        context.setAutowiredEnabled(false);
+        MinioClient client = MinioClient.builder()
+                .endpoint(properties.getProperty("endpoint"))
+                .build();
+        context.getRegistry().bind("minioClient", client);
+        MinioComponent component = context.getComponent("minio", MinioComponent.class);
+        MinioEndpoint endpoint = (MinioEndpoint) component
+                .createEndpoint(
+                        "minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&endpoint=https://play.min.io");
+        context.setAutowiredEnabled(true);
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertNull(endpoint.getConfiguration().getMinioClient());
     }
 }

@@ -61,7 +61,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "retryLinearIncrement": target.setRetryLinearIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retrywaitingtime":
         case "retryWaitingTime": target.setRetryWaitingTime(property(camelContext, long.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -109,7 +108,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "retryLinearIncrement": return long.class;
         case "retrywaitingtime":
         case "retryWaitingTime": return long.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -158,7 +156,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "retryLinearIncrement": return target.getRetryLinearIncrement();
         case "retrywaitingtime":
         case "retryWaitingTime": return target.getRetryWaitingTime();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

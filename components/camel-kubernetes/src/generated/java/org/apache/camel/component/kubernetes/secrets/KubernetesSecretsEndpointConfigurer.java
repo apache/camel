@@ -55,7 +55,6 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
         case "portName": target.getConfiguration().setPortName(property(camelContext, java.lang.String.class, value)); return true;
         case "portprotocol":
         case "portProtocol": target.getConfiguration().setPortProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustcerts":
         case "trustCerts": target.getConfiguration().setTrustCerts(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -100,7 +99,6 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
         case "portName": return java.lang.String.class;
         case "portprotocol":
         case "portProtocol": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "trustcerts":
         case "trustCerts": return java.lang.Boolean.class;
         case "username": return java.lang.String.class;
@@ -146,7 +144,6 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
         case "portName": return target.getConfiguration().getPortName();
         case "portprotocol":
         case "portProtocol": return target.getConfiguration().getPortProtocol();
-        case "synchronous": return target.isSynchronous();
         case "trustcerts":
         case "trustCerts": return target.getConfiguration().getTrustCerts();
         case "username": return target.getConfiguration().getUsername();

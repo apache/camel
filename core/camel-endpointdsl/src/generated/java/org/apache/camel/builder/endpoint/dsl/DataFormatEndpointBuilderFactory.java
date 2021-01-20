@@ -36,9 +36,6 @@ public interface DataFormatEndpointBuilderFactory {
     public interface DataFormatEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedDataFormatEndpointBuilder advanced() {
-            return (AdvancedDataFormatEndpointBuilder) this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -86,51 +83,6 @@ public interface DataFormatEndpointBuilderFactory {
         default DataFormatEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Data Format component.
-     */
-    public interface AdvancedDataFormatEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default DataFormatEndpointBuilder basic() {
-            return (DataFormatEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDataFormatEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDataFormatEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -190,7 +142,7 @@ public interface DataFormatEndpointBuilderFactory {
     static DataFormatEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder, AdvancedDataFormatEndpointBuilder {
+        class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder {
             public DataFormatEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

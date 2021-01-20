@@ -18,12 +18,10 @@ package org.apache.camel.component.kubernetes.services;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneableService;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ServiceResource;
@@ -104,14 +102,14 @@ public class KubernetesServicesProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> services;
-            services = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName);
+            NonNamespaceOperation<Service, ServiceList, ServiceResource<Service>> services
+                    = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
             }
             servicesList = services.list();
         } else {
-            FilterWatchListMultiDeletable<Service, ServiceList, Boolean, Watch> services
+            FilterWatchListMultiDeletable<Service, ServiceList> services
                     = getEndpoint().getKubernetesClient().services().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());

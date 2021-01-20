@@ -33,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StartupStep;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -224,7 +225,17 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
         for (ProcessorDefinition<?> output : list) {
             try {
-                ProcessorReifier.reifier(route, output).addRoutes();
+                ProcessorReifier reifier = ProcessorReifier.reifier(route, output);
+
+                // ensure node has id assigned
+                String outputId = output.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                String eip = reifier.getClass().getSimpleName().replace("Reifier", "");
+                StartupStep step = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder()
+                        .beginStep(Processor.class, outputId, "Creating " + eip + " processor");
+
+                reifier.addRoutes();
+
+                camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().endStep(step);
             } catch (Exception e) {
                 throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
             }

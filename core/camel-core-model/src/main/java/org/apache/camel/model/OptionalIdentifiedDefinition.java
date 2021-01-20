@@ -49,9 +49,15 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      */
     @XmlAttribute
     @Metadata(description = "The id of this node")
-    public void setId(String value) {
-        this.id = value;
+    public void setId(String id) {
+        this.id = id;
         customId = true;
+    }
+
+    @Override
+    public void setGeneratedId(String id) {
+        this.id = id;
+        customId = null;
     }
 
     public DescriptionDefinition getDescription() {
@@ -142,7 +148,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      */
     public String idOrCreate(NodeIdFactory factory) {
         if (id == null) {
-            id = factory.createId(this);
+            setGeneratedId(factory.createId(this));
         }
         return id;
     }

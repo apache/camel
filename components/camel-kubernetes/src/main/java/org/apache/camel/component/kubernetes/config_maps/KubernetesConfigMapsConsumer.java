@@ -20,9 +20,9 @@ import java.util.concurrent.ExecutorService;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
-import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListDeletable;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -90,7 +90,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
         @Override
         public void run() {
 
-            FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch> w = null;
+            FilterWatchListDeletable<ConfigMap, ConfigMapList> w = null;
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                     && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w = getEndpoint().getKubernetesClient().configMaps().withLabel(
@@ -98,7 +98,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                         getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch>) getEndpoint()
+                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList>) getEndpoint()
                         .getKubernetesClient().configMaps()
                         .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
             }
@@ -122,11 +122,10 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                 }
 
                 @Override
-                public void onClose(KubernetesClientException cause) {
+                public void onClose(WatcherException cause) {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }
-
                 }
             });
         }

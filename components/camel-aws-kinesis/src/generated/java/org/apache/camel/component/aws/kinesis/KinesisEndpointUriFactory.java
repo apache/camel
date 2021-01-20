@@ -20,9 +20,8 @@ public class KinesisEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(34);
         props.add("backoffMultiplier");
-        props.add("synchronous");
         props.add("initialDelay");
         props.add("scheduler");
         props.add("proxyPort");

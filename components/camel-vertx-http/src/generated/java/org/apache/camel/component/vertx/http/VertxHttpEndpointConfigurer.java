@@ -53,7 +53,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sessionManagement": target.getConfiguration().setSessionManagement(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": target.getConfiguration().setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, long.class, value)); return true;
@@ -104,7 +103,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sessionManagement": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return boolean.class;
         case "timeout": return long.class;
@@ -156,7 +154,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sessionManagement": return target.getConfiguration().isSessionManagement();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return target.getConfiguration().isThrowExceptionOnFailure();
         case "timeout": return target.getConfiguration().getTimeout();

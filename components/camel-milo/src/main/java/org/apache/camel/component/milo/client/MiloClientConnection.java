@@ -38,11 +38,15 @@ public class MiloClientConnection implements AutoCloseable {
 
     private boolean initialized;
 
-    public MiloClientConnection(final MiloClientConfiguration configuration) {
+    private MonitorFilterConfiguration monitorFilterConfiguration;
+
+    public MiloClientConnection(final MiloClientConfiguration configuration,
+                                final MonitorFilterConfiguration monitorFilterConfiguration) {
         requireNonNull(configuration);
 
         // make a copy since the configuration is mutable
         this.configuration = configuration.clone();
+        this.monitorFilterConfiguration = monitorFilterConfiguration;
     }
 
     public MiloClientConfiguration getConfiguration() {
@@ -87,7 +91,8 @@ public class MiloClientConnection implements AutoCloseable {
 
         checkInit();
 
-        final UInteger handle = this.manager.registerItem(nodeId, samplingInterval, valueConsumer);
+        final UInteger handle
+                = this.manager.registerItem(nodeId, samplingInterval, valueConsumer, this.monitorFilterConfiguration);
 
         return () -> MiloClientConnection.this.manager.unregisterItem(handle);
     }

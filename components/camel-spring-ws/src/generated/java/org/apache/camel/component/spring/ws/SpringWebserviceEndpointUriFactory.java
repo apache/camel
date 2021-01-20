@@ -20,10 +20,9 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(25);
         props.add("messageFactory");
         props.add("outputAction");
-        props.add("synchronous");
         props.add("messageSender");
         props.add("webServiceTemplate");
         props.add("sslContextParameters");

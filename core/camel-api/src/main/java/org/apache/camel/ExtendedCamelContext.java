@@ -59,6 +59,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
@@ -661,6 +662,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Gets the {@link EndpointUriFactory} for the given component name.
      */
     EndpointUriFactory getEndpointUriFactory(String scheme);
+
+    /**
+     * Gets the {@link StartupStepRecorder} to use.
+     */
+    StartupStepRecorder getStartupStepRecorder();
+
+    /**
+     * Sets the {@link StartupStepRecorder} to use.
+     */
+    void setStartupStepRecorder(StartupStepRecorder startupStepRecorder);
 
     /**
      * Internal API for adding routes. Do not use this as end user.

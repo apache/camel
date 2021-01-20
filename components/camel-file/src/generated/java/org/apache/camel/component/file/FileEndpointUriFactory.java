@@ -20,7 +20,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(92);
+        Set<String> props = new HashSet<>(94);
         props.add("renameUsingCopy");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
@@ -74,6 +74,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("startingDirectoryMustExist");
         props.add("directoryMustExist");
         props.add("autoCreate");
+        props.add("includeExt");
         props.add("readLockIdempotentReleaseAsyncPoolSize");
         props.add("delete");
         props.add("readLockMinAge");
@@ -110,6 +111,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("forceWrites");
         props.add("antFilterCaseSensitive");
         props.add("shuffle");
+        props.add("excludeExt");
         props.add("chmodDirectory");
         props.add("bufferSize");
         props.add("filterDirectory");

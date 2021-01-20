@@ -20,12 +20,11 @@ public class CMEndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("productToken");
         props.add("lazyStartProducer");
         props.add("defaultFrom");
         props.add("testConnectionOnStartup");
-        props.add("synchronous");
         props.add("host");
         props.add("defaultMaxNumberOfParts");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

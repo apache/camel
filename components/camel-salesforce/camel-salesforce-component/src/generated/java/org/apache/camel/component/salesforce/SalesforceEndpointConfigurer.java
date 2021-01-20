@@ -105,7 +105,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": target.getConfiguration().setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectsearch":
         case "sObjectSearch": target.getConfiguration().setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -199,7 +198,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": return java.lang.String.class;
         case "sobjectsearch":
         case "sObjectSearch": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "updatetopic":
         case "updateTopic": return boolean.class;
         default: return null;
@@ -294,7 +292,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": return target.getConfiguration().getSObjectQuery();
         case "sobjectsearch":
         case "sObjectSearch": return target.getConfiguration().getSObjectSearch();
-        case "synchronous": return target.isSynchronous();
         case "updatetopic":
         case "updateTopic": return target.getConfiguration().isUpdateTopic();
         default: return null;

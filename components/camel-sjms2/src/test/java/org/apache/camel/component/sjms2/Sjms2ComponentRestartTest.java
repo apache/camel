@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms2;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,10 +35,6 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
     @Test
     public void testRestartWithStopStart() throws Exception {
-        Sjms2Component sjms2Component = new Sjms2Component();
-        sjms2Component.setConnectionFactory((ConnectionFactory) context.getRegistry().lookupByName("activemqCF"));
-        context.addComponent("sjms2", sjms2Component);
-
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
@@ -58,8 +52,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
         // restart
         context.stop();
 
-        // must add our custom component back again
-        context.addComponent("sjms2", sjms2Component);
+        resetMocks();
 
         context.start();
 
@@ -75,10 +68,6 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
     @Test
     public void testRestartWithSuspendResume() throws Exception {
-        Sjms2Component sjms2Component = new Sjms2Component();
-        sjms2Component.setConnectionFactory((ConnectionFactory) context.getRegistry().lookupByName("activemqCF"));
-        context.addComponent("sjms2", sjms2Component);
-
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
@@ -95,6 +84,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
         // restart
         context.suspend();
+        resetMocks();
         context.resume();
 
         getMockEndpoint("mock:test").expectedMessageCount(1);

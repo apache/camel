@@ -34,9 +34,6 @@ public interface LdapEndpointBuilderFactory {
      * Builder for endpoint for the LDAP component.
      */
     public interface LdapEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedLdapEndpointBuilder advanced() {
-            return (AdvancedLdapEndpointBuilder) this;
-        }
         /**
          * The base DN for searches.
          * 
@@ -169,50 +166,6 @@ public interface LdapEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the LDAP component.
-     */
-    public interface AdvancedLdapEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default LdapEndpointBuilder basic() {
-            return (LdapEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLdapEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface LdapBuilders {
         /**
          * LDAP (camel-ldap)
@@ -272,7 +225,7 @@ public interface LdapEndpointBuilderFactory {
         }
     }
     static LdapEndpointBuilder endpointBuilder(String componentName, String path) {
-        class LdapEndpointBuilderImpl extends AbstractEndpointBuilder implements LdapEndpointBuilder, AdvancedLdapEndpointBuilder {
+        class LdapEndpointBuilderImpl extends AbstractEndpointBuilder implements LdapEndpointBuilder {
             public LdapEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

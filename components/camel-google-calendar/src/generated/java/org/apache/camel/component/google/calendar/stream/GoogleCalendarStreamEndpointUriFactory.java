@@ -22,7 +22,6 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
     static {
         Set<String> props = new HashSet<>(42);
         props.add("backoffMultiplier");
-        props.add("synchronous");
         props.add("destination");
         props.add("initialDelay");
         props.add("consumeFromNow");
@@ -52,6 +51,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("schedulerProperties");
         props.add("exchangePattern");
         props.add("index");
+        props.add("syncFlow");
         props.add("accessToken");
         props.add("backoffIdleThreshold");
         props.add("contentChannel");

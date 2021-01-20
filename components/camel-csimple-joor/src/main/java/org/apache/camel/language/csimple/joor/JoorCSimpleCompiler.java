@@ -98,7 +98,7 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
         }
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Compiling code:\n\n" + code.getCode() + "\n");
+                LOG.debug("Compiling code:\n\n{}\n", code.getCode());
             }
             Reflect ref = Reflect.compile(code.getFqn(), code.getCode());
             Class<?> clazz = ref.type();

@@ -116,7 +116,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (45 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -144,7 +144,6 @@ with the following path and query parameters:
 | *sessionCookie* (advanced) | HTTP session cookie to add to every request |  | String
 | *socketTimeout* (advanced) | How long to block for individual read/write operations (in ms) | 10000 | Integer
 | *summary* (advanced) | Request that the server modify the response using the _summary param. There are 5 enums and the value can be one of: COUNT, TEXT, DATA, TRUE, FALSE |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *validationMode* (advanced) | When should Camel validate the FHIR Server's conformance statement. There are 2 enums and the value can be one of: NEVER, ONCE | ONCE | String
 | *proxyHost* (proxy) | The proxy host |  | String
 | *proxyPassword* (proxy) | The proxy password |  | String
@@ -244,7 +243,7 @@ The capabilities API method(s) has the following set of parameters listed in the
 | ofType | *type* |  The model type | Class
 |===
 
-In addition to the parameters above, the capabilities API can also use from the 45 endpoint query option
+In addition to the parameters above, the capabilities API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -299,7 +298,7 @@ The create API method(s) has the following set of parameters listed in the table
 | resource | *url* | *Optional*  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null | String
 |===
 
-In addition to the parameters above, the create API can also use from the 45 endpoint query option
+In addition to the parameters above, the create API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -363,7 +362,7 @@ The delete API method(s) has the following set of parameters listed in the table
 | resourceConditionalByUrl | *url* |  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
 |===
 
-In addition to the parameters above, the delete API can also use from the 45 endpoint query option
+In addition to the parameters above, the delete API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -434,7 +433,7 @@ The history API method(s) has the following set of parameters listed in the tabl
 | onType | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
 |===
 
-In addition to the parameters above, the history API can also use from the 45 endpoint query option
+In addition to the parameters above, the history API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -495,7 +494,7 @@ The load-page API method(s) has the following set of parameters listed in the ta
 | previous | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 |===
 
-In addition to the parameters above, the load-page API can also use from the 45 endpoint query option
+In addition to the parameters above, the load-page API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -569,7 +568,7 @@ The meta API method(s) has the following set of parameters listed in the table b
 | getFromType | *resourceType* |  The resource type e.g Patient | String
 |===
 
-In addition to the parameters above, the meta API can also use from the 45 endpoint query option
+In addition to the parameters above, the meta API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -661,7 +660,7 @@ The operation API method(s) has the following set of parameters listed in the ta
 | processMessage | *responseClass* |  The response class | Class
 |===
 
-In addition to the parameters above, the operation API can also use from the 45 endpoint query option
+In addition to the parameters above, the operation API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -723,7 +722,7 @@ The patch API method(s) has the following set of parameters listed in the table 
 | patchByUrl | *url* |  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
 |===
 
-In addition to the parameters above, the patch API can also use from the 45 endpoint query option
+In addition to the parameters above, the patch API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -810,7 +809,7 @@ The read API method(s) has the following set of parameters listed in the table b
 | resourceByUrl | *url* |   | String
 |===
 
-In addition to the parameters above, the read API can also use from the 45 endpoint query option
+In addition to the parameters above, the read API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -860,7 +859,7 @@ The search API method(s) has the following set of parameters listed in the table
 | searchByUrl | *url* |  The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. | String
 |===
 
-In addition to the parameters above, the search API can also use from the 45 endpoint query option
+In addition to the parameters above, the search API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -918,7 +917,7 @@ The transaction API method(s) has the following set of parameters listed in the 
 | withResources | *resources* |  Resources to use in the transaction | List
 |===
 
-In addition to the parameters above, the transaction API can also use from the 45 endpoint query option
+In addition to the parameters above, the transaction API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -988,7 +987,7 @@ The update API method(s) has the following set of parameters listed in the table
 | resourceBySearchUrl | *url* |   | String
 |===
 
-In addition to the parameters above, the update API can also use from the 45 endpoint query option
+In addition to the parameters above, the update API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1041,7 +1040,7 @@ The validate API method(s) has the following set of parameters listed in the tab
 | resource | *resourceAsString* |   | String
 |===
 
-In addition to the parameters above, the validate API can also use from the 45 endpoint query option
+In addition to the parameters above, the validate API can also use from the 44 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

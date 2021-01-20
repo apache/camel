@@ -20,7 +20,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(123);
+        Set<String> props = new HashSet<>(125);
         props.add("disconnect");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
@@ -56,6 +56,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("maximumReconnectAttempts");
         props.add("stepwise");
         props.add("autoCreate");
+        props.add("includeExt");
         props.add("recursive");
         props.add("antExclude");
         props.add("keepLastModified");
@@ -77,6 +78,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("filterFile");
         props.add("pollStrategy");
         props.add("shuffle");
+        props.add("excludeExt");
         props.add("knownHostsFile");
         props.add("antInclude");
         props.add("moveExisting");

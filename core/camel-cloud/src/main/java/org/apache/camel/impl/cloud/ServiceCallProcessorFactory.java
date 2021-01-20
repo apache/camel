@@ -368,7 +368,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
                                 ServiceLoadBalancer.class))
                 .orElseGet(
                         // Default
-                        () -> new DefaultServiceLoadBalancer());
+                        DefaultServiceLoadBalancer::new);
     }
 
     // ******************************************

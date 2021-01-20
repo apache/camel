@@ -63,10 +63,13 @@
         <module>camel-test-infra-nats</module>
         <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
+        <module>camel-test-infra-redis</module>
         <module>camel-test-infra-xmpp</module>
         <module>camel-test-infra-zookeeper</module>
         <module>camel-test-infra-postgres</module>
         <module>camel-test-infra-couchdb</module>
         <module>camel-test-infra-ftp</module>
+        <module>camel-test-infra-fhir</module>
+        <module>camel-test-infra-mosquitto</module>
     </modules>
 </project>

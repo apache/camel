@@ -30,7 +30,6 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": target.setNoop(property(camelContext, boolean.class, value)); return true;
         case "outputheader":
         case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": target.setUseMessageBodyForTemplate(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -49,7 +48,6 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": return boolean.class;
         case "outputheader":
         case "outputHeader": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": return boolean.class;
         default: return null;
@@ -69,7 +67,6 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": return target.isNoop();
         case "outputheader":
         case "outputHeader": return target.getOutputHeader();
-        case "synchronous": return target.isSynchronous();
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": return target.isUseMessageBodyForTemplate();
         default: return null;

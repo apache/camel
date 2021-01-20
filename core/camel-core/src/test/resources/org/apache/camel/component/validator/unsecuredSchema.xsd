@@ -19,9 +19,7 @@
 -->
 <xs:schema elementFormDefault="qualified" version="1.0"
            targetNamespace="http://foo.com/bar"
-           xmlns:tns="http://foo.com/bar"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
 
   <xs:element name="mail">
     <xs:complexType>

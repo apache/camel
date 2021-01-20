@@ -36,9 +36,6 @@ public interface IgniteQueueEndpointBuilderFactory {
     public interface IgniteQueueEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedIgniteQueueEndpointBuilder advanced() {
-            return (AdvancedIgniteQueueEndpointBuilder) this;
-        }
         /**
          * The queue capacity. Default: non-bounded.
          * 
@@ -289,52 +286,6 @@ public interface IgniteQueueEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Ignite Queues component.
-     */
-    public interface AdvancedIgniteQueueEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default IgniteQueueEndpointBuilder basic() {
-            return (IgniteQueueEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteQueueEndpointBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIgniteQueueEndpointBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code>
      * enum.
@@ -404,7 +355,7 @@ public interface IgniteQueueEndpointBuilderFactory {
     static IgniteQueueEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class IgniteQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteQueueEndpointBuilder, AdvancedIgniteQueueEndpointBuilder {
+        class IgniteQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteQueueEndpointBuilder {
             public IgniteQueueEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -24,7 +24,6 @@ public class KuduEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.kudu.KuduOperations.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -35,7 +34,6 @@ public class KuduEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.kudu.KuduOperations.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -47,7 +45,6 @@ public class KuduEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getOperation();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

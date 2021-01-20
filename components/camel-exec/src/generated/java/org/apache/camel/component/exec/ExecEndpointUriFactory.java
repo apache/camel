@@ -20,12 +20,11 @@ public class ExecEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(10);
         props.add("args");
         props.add("lazyStartProducer");
         props.add("useStderrOnEmptyStdout");
         props.add("outFile");
-        props.add("synchronous");
         props.add("workingDir");
         props.add("binding");
         props.add("commandLogLevel");

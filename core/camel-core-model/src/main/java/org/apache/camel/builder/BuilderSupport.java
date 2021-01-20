@@ -123,6 +123,14 @@ public abstract class BuilderSupport {
 
     /**
      * Returns a JSonPath expression value builder
+     */
+    public ValueBuilder jsonpath(String value) {
+        JsonPathExpression exp = new JsonPathExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JSonPath expression value builder
      *
      * @param value      The JSonPath expression
      * @param resultType The result type that the JSonPath expression will return.

@@ -35,7 +35,6 @@ public class SpringIntegrationEndpointConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputchannel":
         case "outputChannel": target.setOutputChannel(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -57,7 +56,6 @@ public class SpringIntegrationEndpointConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": return boolean.class;
         case "outputchannel":
         case "outputChannel": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -80,7 +78,6 @@ public class SpringIntegrationEndpointConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputchannel":
         case "outputChannel": return target.getOutputChannel();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

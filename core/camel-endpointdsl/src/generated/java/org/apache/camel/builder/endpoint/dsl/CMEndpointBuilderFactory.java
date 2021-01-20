@@ -34,9 +34,6 @@ public interface CMEndpointBuilderFactory {
      * Builder for endpoint for the CM SMS Gateway component.
      */
     public interface CMEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedCMEndpointBuilder advanced() {
-            return (AdvancedCMEndpointBuilder) this;
-        }
         /**
          * This is the sender name. The maximum length is 11 characters.
          * 
@@ -187,50 +184,6 @@ public interface CMEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the CM SMS Gateway component.
-     */
-    public interface AdvancedCMEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default CMEndpointBuilder basic() {
-            return (CMEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCMEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
     public interface CMBuilders {
         /**
          * CM SMS Gateway (camel-cm-sms)
@@ -274,7 +227,7 @@ public interface CMEndpointBuilderFactory {
         }
     }
     static CMEndpointBuilder endpointBuilder(String componentName, String path) {
-        class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder, AdvancedCMEndpointBuilder {
+        class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder {
             public CMEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

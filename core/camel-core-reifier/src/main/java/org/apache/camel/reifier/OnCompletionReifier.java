@@ -72,7 +72,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
         OnCompletionProcessor answer = new OnCompletionProcessor(
                 camelContext, target, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
-                original, afterConsumer);
+                original, afterConsumer, definition.isRouteScoped());
         return answer;
     }
 

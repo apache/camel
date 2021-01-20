@@ -18,13 +18,11 @@ package org.apache.camel.component.openshift.build_configs;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigList;
-import io.fabric8.openshift.api.model.DoneableBuildConfig;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.dsl.BuildConfigResource;
 import org.apache.camel.Exchange;
@@ -90,15 +88,15 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, BuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs;
-            buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
-                    .inNamespace(namespaceName);
+            NonNamespaceOperation<BuildConfig, BuildConfigList, BuildConfigResource<BuildConfig, Void, Build>> buildConfigs
+                    = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
+                            .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 buildConfigs.withLabel(entry.getKey(), entry.getValue());
             }
             buildConfigsList = buildConfigs.list();
         } else {
-            FilterWatchListMultiDeletable<BuildConfig, BuildConfigList, Boolean, Watch> buildConfigs
+            FilterWatchListMultiDeletable<BuildConfig, BuildConfigList> buildConfigs
                     = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 buildConfigs.withLabel(entry.getKey(), entry.getValue());

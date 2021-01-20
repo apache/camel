@@ -20,13 +20,12 @@ public class BlobServiceEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(23);
         props.add("containerOrBlobUri");
         props.add("blobMetadata");
         props.add("credentials");
         props.add("streamReadSize");
         props.add("dataLength");
-        props.add("synchronous");
         props.add("exchangePattern");
         props.add("credentialsAccountKey");
         props.add("publicForRead");

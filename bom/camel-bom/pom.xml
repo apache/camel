@@ -1054,6 +1054,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jfr</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jgroups</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1440,6 +1445,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-paho-mqtt5</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-pdf</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1741,6 +1751,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-main</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-rabbitmq</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

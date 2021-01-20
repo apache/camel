@@ -122,6 +122,10 @@ public class XPathTransformTest extends ContextTestSupport {
                 version = version.substring(0, dot);
             }
         }
-        return Integer.parseInt(version);
+        if (version.equalsIgnoreCase("16-ea")) {
+            return 16;
+        } else {
+            return Integer.parseInt(version);
+        }
     }
 }

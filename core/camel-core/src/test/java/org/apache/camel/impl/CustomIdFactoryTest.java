@@ -23,7 +23,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.processor.DelegateProcessor;
@@ -90,7 +89,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should take the when path (first to)
-        assertEquals("#choice7##to2#", ids);
+        assertEquals("#choice2##to4#", ids);
     }
 
     /**
@@ -105,7 +104,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should take the otherwise path
-        assertEquals("#choice7##log4##to6#", ids);
+        assertEquals("#choice2##log6##to7#", ids);
     }
 
     private static class MyDebuggerCheckingId implements InterceptStrategy {
@@ -114,11 +113,6 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         public Processor wrapProcessorInInterceptors(
                 final CamelContext context, final NamedNode definition, Processor target, Processor nextTarget)
                 throws Exception {
-
-            // MUST DO THIS
-            // force id creation as sub nodes have lazy assigned ids
-            ((OptionalIdentifiedDefinition<?>) definition)
-                    .idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
             return new DelegateProcessor(target) {
                 @Override

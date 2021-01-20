@@ -33,6 +33,9 @@ import org.apache.camel.support.SynchronousDelegateProducer;
 public class ThriftEndpoint extends DefaultEndpoint {
     @UriParam
     private ThriftConfiguration configuration;
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     private String serviceName;
     private String servicePackage;
@@ -73,5 +76,13 @@ public class ThriftEndpoint extends DefaultEndpoint {
 
     public String getServicePackage() {
         return servicePackage;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }

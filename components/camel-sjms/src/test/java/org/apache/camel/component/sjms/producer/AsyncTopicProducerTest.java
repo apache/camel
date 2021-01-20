@@ -89,7 +89,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("sjms:topic:foo?synchronous=false");
+                        .to("sjms:topic:foo");
 
                 from("sjms:topic:foo")
                         .to("mock:after")

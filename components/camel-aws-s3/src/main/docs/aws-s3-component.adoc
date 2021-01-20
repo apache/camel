@@ -125,7 +125,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (58 parameters):
+=== Query Parameters (57 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -172,7 +172,6 @@ with the following path and query parameters:
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
 | *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
 | *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int

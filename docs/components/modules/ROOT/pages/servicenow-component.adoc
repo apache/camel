@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (45 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -158,7 +158,6 @@ with the following path and query parameters:
 | *mapper* (advanced) | Sets Jackson's ObjectMapper to use for request/reply |  | ObjectMapper
 | *proxyAuthorizationPolicy* (advanced) | To configure proxy authentication |  | ProxyAuthorizationPolicy
 | *retrieveTargetRecordOnImport* (advanced) | Set this parameter to true to retrieve the target record when using import set api. The import set result is then replaced by the target record | false | Boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *timeFormat* (advanced) | The time format used for Json serialization/deserialization | HH:mm:ss | String
 | *proxyHost* (proxy) | The proxy host name |  | String
 | *proxyPort* (proxy) | The proxy port number |  | Integer

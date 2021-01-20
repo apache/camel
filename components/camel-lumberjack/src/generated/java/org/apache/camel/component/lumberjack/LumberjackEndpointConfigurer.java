@@ -29,7 +29,6 @@ public class LumberjackEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -45,7 +44,6 @@ public class LumberjackEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -62,7 +60,6 @@ public class LumberjackEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return target.getExchangePattern();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

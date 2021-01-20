@@ -35,9 +35,6 @@ public interface MetricsEndpointBuilderFactory {
      * Builder for endpoint for the Metrics component.
      */
     public interface MetricsEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedMetricsEndpointBuilder advanced() {
-            return (AdvancedMetricsEndpointBuilder) this;
-        }
         /**
          * Action when using timer type.
          * 
@@ -265,50 +262,6 @@ public interface MetricsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Metrics component.
-     */
-    public interface AdvancedMetricsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default MetricsEndpointBuilder basic() {
-            return (MetricsEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedMetricsEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.metrics.MetricsTimerAction</code> enum.
      */
@@ -374,7 +327,7 @@ public interface MetricsEndpointBuilderFactory {
     static MetricsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MetricsEndpointBuilder, AdvancedMetricsEndpointBuilder {
+        class MetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MetricsEndpointBuilder {
             public MetricsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -31,7 +31,6 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "restartDelay": target.setRestartDelay(property(camelContext, int.class, value)); return true;
         case "routeid":
         case "routeId": target.setRouteId(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -49,7 +48,6 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "restartDelay": return int.class;
         case "routeid":
         case "routeId": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         default: return null;
         }
     }
@@ -68,7 +66,6 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "restartDelay": return target.getRestartDelay();
         case "routeid":
         case "routeId": return target.getRouteId();
-        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

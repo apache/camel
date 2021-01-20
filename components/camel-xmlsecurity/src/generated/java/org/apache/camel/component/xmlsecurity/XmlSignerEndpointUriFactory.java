@@ -20,11 +20,10 @@ public class XmlSignerEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(28);
         props.add("canonicalizationMethod");
         props.add("omitXmlDeclaration");
         props.add("clearHeaders");
-        props.add("synchronous");
         props.add("outputXmlEncoding");
         props.add("contentObjectId");
         props.add("parentNamespace");

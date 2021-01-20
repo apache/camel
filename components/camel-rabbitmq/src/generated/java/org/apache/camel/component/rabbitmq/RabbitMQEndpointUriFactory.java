@@ -20,14 +20,13 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(66);
         props.add("prefetchCount");
         props.add("publisherAcknowledgementsTimeout");
         props.add("addresses");
         props.add("declare");
         props.add("requestTimeoutCheckerInterval");
         props.add("prefetchGlobal");
-        props.add("synchronous");
         props.add("portNumber");
         props.add("consumerTag");
         props.add("hostname");

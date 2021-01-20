@@ -20,14 +20,13 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(39);
         props.add("blockHash");
         props.add("addresses");
         props.add("toBlock");
         props.add("headerPowHash");
         props.add("data");
         props.add("databaseName");
-        props.add("synchronous");
         props.add("signedTransactionData");
         props.add("hashrate");
         props.add("toAddress");

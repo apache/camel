@@ -136,6 +136,23 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-fhir</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -322,13 +339,51 @@
     </build>
 
     <profiles>
+        <!-- activate test if the docker socket file is accessible -->
         <profile>
-            <id>it-fhir</id>
+            <id>fhir-tests-docker-file</id>
+            <activation>
+                <file>
+                    <exists>/var/run/docker.sock</exists>
+                </file>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- activate test if the DOCKER_HOST env var is set -->
+        <profile>
+            <id>fhir-tests-docker-env</id>
+            <activation>
+                <property>
+                    <name>env.DOCKER_HOST</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>

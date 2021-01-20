@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -320,6 +321,17 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     // find out if the component can be optimised for send-dynamic
                     SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
                     dynamicAware = resolver.resolve(camelContext, scheme);
+                    if (dynamicAware == null) {
+                        // okay fallback and try with default component name
+                        Component comp = camelContext.getComponent(scheme, false, isAutoStartupComponents());
+                        if (comp != null) {
+                            String defaultScheme = comp.getDefaultName();
+                            if (!scheme.equals(defaultScheme)) {
+                                dynamicAware = resolver.resolve(camelContext, defaultScheme);
+                                dynamicAware.setScheme(scheme);
+                            }
+                        }
+                    }
                     if (dynamicAware != null) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme,

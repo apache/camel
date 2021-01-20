@@ -36,9 +36,6 @@ public interface SnsEndpointBuilderFactory {
      * component.
      */
     public interface SnsEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedSnsEndpointBuilder advanced() {
-            return (AdvancedSnsEndpointBuilder) this;
-        }
         /**
          * To use the AmazonSNS as the client.
          * 
@@ -507,51 +504,6 @@ public interface SnsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Simple Notification System
-     * (SNS) component.
-     */
-    public interface AdvancedSnsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default SnsEndpointBuilder basic() {
-            return (SnsEndpointBuilder) this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
@@ -602,7 +554,7 @@ public interface SnsEndpointBuilderFactory {
         }
     }
     static SnsEndpointBuilder endpointBuilder(String componentName, String path) {
-        class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {
+        class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }
