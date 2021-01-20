@@ -53,6 +53,14 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             Configuration config = Configuration.getConfiguration(getRecordingProfile());
             rec = new Recording(config);
             rec.setName("Camel Recording");
+            if (getStartupRecorderDuration() < 0) {
+                Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
+                Path file = Files.createTempFile(dir, "camel-recording", ".jfr");
+                rec.setDumpOnExit(true);
+                rec.setDestination(file);
+                LOG.info("Java flight recorder will be saved to file on JVM exit: {}", file);
+            }
+
             if (getStartupRecorderDuration() > 0) {
                 rec.setDuration(Duration.ofSeconds(getStartupRecorderDuration()));
                 LOG.info("Starting Java flight recorder with profile: {} and duration: {} seconds", getRecordingProfile(),
@@ -80,7 +88,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     public void doStop() throws Exception {
         super.doStop();
 
-        if (rec != null) {
+        if (rec != null && getStartupRecorderDuration() >= 0) {
             dumpRecording();
         }
     }

@@ -1167,10 +1167,11 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * How long time to run the startup recorder.
      *
-     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until
-     * Camel is being stopped. A positive value is to run the recorder for N seconds.
+     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until the
+     * JVM is being stopped. A positive value is to run the recorder for N seconds.
      *
-     * When the recorder is stopped then the recording is auto saved to disk
+     * When the recorder is stopped then the recording is auto saved to disk (note: save to disk can be disabled by
+     * setting startupRecorderDir to false)
      */
     public void setStartupRecorderDuration(long startupRecorderDuration) {
         this.startupRecorderDuration = startupRecorderDuration;
@@ -1988,8 +1989,11 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * How long time to run the startup recorder.
      *
-     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until
-     * Camel is being stopped. A positive value is to run the recorder for N seconds.
+     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until the
+     * JVM is being stopped. A positive value is to run the recorder for N seconds.
+     *
+     * When the recorder is stopped then the recording is auto saved to disk (note: save to disk can be disabled by
+     * setting startupRecorderDir to false)
      */
     public T withStartupRecorderDuration(long startupRecorderDuration) {
         this.startupRecorderDuration = startupRecorderDuration;
