@@ -82,7 +82,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
     }
 
     /**
-     * Specifies if the output should be Jackson JsonNode or a JSON String.
+     * Specifies if the input should be Jackson JsonNode or a JSON String.
      */
     public void setInputType(JsonataInputOutputType inputType) {
         this.inputType = inputType;
