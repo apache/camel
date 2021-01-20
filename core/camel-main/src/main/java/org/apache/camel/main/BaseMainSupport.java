@@ -51,11 +51,13 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
+import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -440,6 +442,70 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    protected void configureStartupRecorder(CamelContext camelContext) {
+        // we need to load these configurations early as they control the startup recorder when using camel-jfr
+        // and we want to start jfr recording as early as possible to also capture details during bootstrapping Camel
+
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
+
+        Object value = prop.remove("camel.main.startupRecorder");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorder(value.toString());
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderRecording");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-recording");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderProfile");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-profile");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderProfile(
+                        CamelContextHelper.parseText(camelContext, value.toString()));
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderDuration");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-duration");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
+            }
+        }
+        value = prop.remove("camel.main.startupRecorderMaxDepth");
+        if (value == null) {
+            value = prop.remove("camel.main.startup-recorder-max-depth");
+            if (value != null) {
+                mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
+            }
+        }
+
+        if ("false".equals(mainConfigurationProperties.getStartupRecorder())) {
+            camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setEnabled(false);
+        } else if ("logging".equals(mainConfigurationProperties.getStartupRecorder())) {
+            camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(new LoggingStartupStepRecorder());
+        } else if ("java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
+                || mainConfigurationProperties.getStartupRecorder() == null) {
+            // try to auto discover camel-jfr to use
+            StartupStepRecorder fr = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                    .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
+            if (fr != null) {
+                LOG.debug("Discovered startup recorder: {} from classpath", fr);
+                fr.setRecording(mainConfigurationProperties.isStartupRecorderRecording());
+                fr.setStartupRecorderDuration(mainConfigurationProperties.getStartupRecorderDuration());
+                fr.setRecordingProfile(mainConfigurationProperties.getStartupRecorderProfile());
+                fr.setMaxDepth(mainConfigurationProperties.getStartupRecorderMaxDepth());
+                camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(fr);
+            }
+        }
+    }
+
     protected void configureRoutes(CamelContext camelContext) throws Exception {
         // try to load the route builders
         loadRouteBuilders(camelContext);
@@ -450,14 +516,17 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // setup properties
+        configurePropertiesService(camelContext);
+        // setup startup recorder before building context
+        configureStartupRecorder(camelContext);
+
         // ensure camel is initialized
         camelContext.build();
 
         for (MainListener listener : listeners) {
             listener.beforeInitialize(this);
         }
-
-        configurePropertiesService(camelContext);
 
         // allow to do configuration before its started
         for (MainListener listener : listeners) {

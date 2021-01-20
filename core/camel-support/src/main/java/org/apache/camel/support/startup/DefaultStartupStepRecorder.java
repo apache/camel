@@ -22,11 +22,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.StartupStep;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Default {@link StartupStepRecorder} that is always disabled.
  */
-public class DefaultStartupStepRecorder implements StartupStepRecorder {
+public class DefaultStartupStepRecorder extends ServiceSupport implements StartupStepRecorder {
 
     private final AtomicInteger stepCounter = new AtomicInteger();
     private final Deque<Integer> currentSteps = new ArrayDeque<>();
@@ -74,13 +75,12 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
 
     };
 
-    public DefaultStartupStepRecorder() {
-        currentSteps.offerFirst(0);
-    }
-
     private boolean enabled;
-    private boolean disableAfterStarted = true;
     private int maxDepth = -1;
+    private long startupRecorderDuration;
+    private boolean recording;
+    private String recordingDir;
+    private String recordingProfile = "default";
 
     public boolean isEnabled() {
         return enabled;
@@ -91,12 +91,13 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
     }
 
     @Override
-    public boolean isDisableAfterStarted() {
-        return disableAfterStarted;
+    public long getStartupRecorderDuration() {
+        return startupRecorderDuration;
     }
 
-    public void setDisableAfterStarted(boolean disableAfterStarted) {
-        this.disableAfterStarted = disableAfterStarted;
+    @Override
+    public void setStartupRecorderDuration(long startupRecorderDuration) {
+        this.startupRecorderDuration = startupRecorderDuration;
     }
 
     @Override
@@ -109,12 +110,42 @@ public class DefaultStartupStepRecorder implements StartupStepRecorder {
     }
 
     @Override
-    public void start() {
+    public boolean isRecording() {
+        return recording;
+    }
+
+    @Override
+    public void setRecording(boolean recording) {
+        this.recording = recording;
+    }
+
+    @Override
+    public String getRecordingDir() {
+        return recordingDir;
+    }
+
+    @Override
+    public void setRecordingDir(String recordingDir) {
+        this.recordingDir = recordingDir;
+    }
+
+    @Override
+    public String getRecordingProfile() {
+        return recordingProfile;
+    }
+
+    @Override
+    public void setRecordingProfile(String recordingProfile) {
+        this.recordingProfile = recordingProfile;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         currentSteps.offerFirst(0);
     }
 
     @Override
-    public void stop() {
+    public void doStop() throws Exception {
         enabled = false;
         currentSteps.clear();
     }

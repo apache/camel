@@ -96,7 +96,9 @@ public final class DefaultConfigurationConfigurer {
             if ("false".equals(config.getStartupRecorder())) {
                 ecc.getStartupStepRecorder().setEnabled(false);
             } else if ("logging".equals(config.getStartupRecorder())) {
-                ecc.setStartupStepRecorder(new LoggingStartupStepRecorder());
+                if (!(ecc.getStartupStepRecorder() instanceof LoggingStartupStepRecorder)) {
+                    ecc.setStartupStepRecorder(new LoggingStartupStepRecorder());
+                }
             } else if ("java-flight-recorder".equals(config.getStartupRecorder())) {
                 if (!ecc.getStartupStepRecorder().getClass().getName().startsWith("org.apache.camel.startup.jfr"))
                     throw new IllegalArgumentException(
@@ -104,6 +106,10 @@ public final class DefaultConfigurationConfigurer {
             }
         }
         ecc.getStartupStepRecorder().setMaxDepth(config.getStartupRecorderMaxDepth());
+        ecc.getStartupStepRecorder().setRecording(config.isStartupRecorderRecording());
+        ecc.getStartupStepRecorder().setStartupRecorderDuration(config.getStartupRecorderDuration());
+        ecc.getStartupStepRecorder().setRecordingDir(config.getStartupRecorderDir());
+        ecc.getStartupStepRecorder().setRecordingProfile(config.getStartupRecorderProfile());
 
         ecc.setLightweight(config.isLightweight());
         ecc.getBeanPostProcessor().setEnabled(config.isBeanPostProcessorEnabled());

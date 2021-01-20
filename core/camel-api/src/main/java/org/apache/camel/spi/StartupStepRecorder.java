@@ -41,16 +41,36 @@ public interface StartupStepRecorder extends StaticService {
     void setEnabled(boolean enabled);
 
     /**
-     * Whether to automatic disable this recorder after Camel has been started. This is done by default to remove any
-     * overhead after the startup process is done.
+     * How long time to run the startup recorder.
+     *
+     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until
+     * Camel is being stopped. A positive value is to run the recorder for N seconds.
      */
-    boolean isDisableAfterStarted();
+    long getStartupRecorderDuration();
 
     /**
-     * Whether to automatic disable this recorder after Camel has been started. This is done by default to remove any
-     * overhead after the startup process is done.
+     * How long time to run the startup recorder.
+     *
+     * Use 0 (default) to stop the recorder after Camel has been started. Use -1 to keep the recorder running until
+     * Camel is being stopped. A positive value is to run the recorder for N seconds.
      */
-    void setDisableAfterStarted(boolean disableAfterStarted);
+    void setStartupRecorderDuration(long startupRecorderDuration);
+
+    String getRecordingDir();
+
+    /**
+     * Directory to store the recording. By default the user home directory will be used.
+     */
+    void setRecordingDir(String recordingDir);
+
+    String getRecordingProfile();
+
+    /**
+     * To use a specific Java Flight Recorder profile configuration, such as default or profile.
+     *
+     * The default is default.
+     */
+    void setRecordingProfile(String profile);
 
     /**
      * To filter our sub steps at a maximum depth
@@ -61,6 +81,16 @@ public interface StartupStepRecorder extends StaticService {
      * To filter our sub steps at a maximum depth
      */
     int getMaxDepth();
+
+    /**
+     * Whether to start flight recorder recording. This is only in use if camel-jfr is being used.
+     */
+    void setRecording(boolean recording);
+
+    /**
+     * Whether to start flight recorder recording. This is only in use if camel-jfr is being used.
+     */
+    boolean isRecording();
 
     /**
      * Beings a new step.

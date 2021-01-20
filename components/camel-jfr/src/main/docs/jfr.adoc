@@ -17,20 +17,8 @@ The camel-jfr component emits lifecycle events for startup to JFR.
 This can for example be used to pin-point which Camel routes may be slow to startup.
 
 [[jfr-Options]]
-== Options
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-|Option
-|Default
-|Description
-
-|enabled
-|true
-|Whether Camel flight recorder is enabled globally
-
-|===
-
+See the __startupRecorder__ options from xref:components:others:main.adoc[Camel Main]
 
 [[jfr-Example]]
 == Example

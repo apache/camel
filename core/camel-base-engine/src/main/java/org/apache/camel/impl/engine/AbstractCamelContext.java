@@ -2528,8 +2528,8 @@ public abstract class AbstractCamelContext extends BaseService
     public void doBuild() throws Exception {
         bootDate = System.currentTimeMillis();
 
-        // auto-detect step recorder from classpath if not explicit configured
-        if (startupStepRecorder instanceof DefaultStartupStepRecorder) {
+        // auto-detect step recorder from classpath if none has been explicit configured
+        if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
             StartupStepRecorder fr = getBootstrapFactoryFinder()
                     .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
             if (fr != null) {
@@ -2742,7 +2742,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         startupStepRecorder.endStep(step);
 
-        if (startupStepRecorder.isDisableAfterStarted()) {
+        if (startupStepRecorder.getStartupRecorderDuration() == 0) {
             startupStepRecorder.stop();
         }
     }
@@ -3143,6 +3143,9 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(),
                     TimeUtils.printDuration(stopWatch.taken()));
         }
+
+        // ensure any recorder is stopped in case it was kept running
+        startupStepRecorder.stop();
 
         // and clear start date
         startDate = 0;
