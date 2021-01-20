@@ -160,14 +160,10 @@ Consult the xref:components::index.adoc[components] documentation.
 
 === JDK Requirements
 
-* Camel 2.6 or older requires JDK 1.5 or better.
-
-* Camel 2.7 onwards requires JDK 1.6 or JDK 1.7.
-
-* Camel 2.14 onwards requires JDK 1.7 or better.
-
-* Camel 2.18 onwards requires JDK 1.8
-
+- Camel 2.x supports JDK 8
+- Camel 3.0 - 3.4 supports JDK 8 and 11
+- Camel 3.5 or higher supports JDK 8, 11 and 14
+Note: Camel 3.8 (when released), in case of JDK 8's usage, will need at least the 8.0.275 version
 
 == Developers
 
