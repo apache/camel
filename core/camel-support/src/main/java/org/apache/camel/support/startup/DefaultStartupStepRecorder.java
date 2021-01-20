@@ -82,6 +82,10 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
     private String recordingDir;
     private String recordingProfile = "default";
 
+    public DefaultStartupStepRecorder() {
+        currentSteps.offerFirst(0);
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -141,7 +145,7 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
 
     @Override
     protected void doStart() throws Exception {
-        currentSteps.offerFirst(0);
+        // noop
     }
 
     @Override
