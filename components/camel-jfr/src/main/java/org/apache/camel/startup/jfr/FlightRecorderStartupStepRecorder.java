@@ -53,7 +53,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             Configuration config = Configuration.getConfiguration(getRecordingProfile());
             rec = new Recording(config);
             rec.setName("Camel Recording");
-            if (getStartupRecorderDuration() < 0) {
+            if (getStartupRecorderDuration() == 0) {
                 Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
                 Path file = Files.createTempFile(dir, "camel-recording", ".jfr");
                 rec.setDumpOnExit(true);
@@ -88,7 +88,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     public void doStop() throws Exception {
         super.doStop();
 
-        if (rec != null && getStartupRecorderDuration() >= 0) {
+        if (rec != null && getStartupRecorderDuration() != 0) {
             dumpRecording();
         }
     }
@@ -97,7 +97,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
         if (!"false".equals(getRecordingDir())) {
             try {
                 Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
-                Path file = Files.createTempFile(dir, "camel-recording", ".jfr");
+                Path file = Files.createTempFile(dir, "camel-recording-", ".jfr");
                 if (rec.getState().equals(RecordingState.RUNNING)) {
                     // need to do GC to capture details to the recording (specially when its short running)
                     LOG.info("Stopping Java flight recorder");
