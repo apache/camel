@@ -48,7 +48,7 @@ public class Any23DataFormatHTTPTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("http://dbpedia.org/page/Ecuador").unmarshal().any23(baseURI).to("mock:result");
+                from("direct:start").to("http://live.dbpedia.org/page/Ecuador").unmarshal().any23(baseURI).to("mock:result");
             }
         };
     }
