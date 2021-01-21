@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.client;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -105,6 +106,12 @@ public class MiloClientConnection implements AutoCloseable {
         checkInit();
 
         return this.manager.write(nodeId, mapWriteValue(value));
+    }
+
+    public CompletableFuture<?> readValues(final List<ExpandedNodeId> nodeIds) {
+        checkInit();
+
+        return this.manager.readValues(nodeIds);
     }
 
     public CompletableFuture<CallMethodResult> call(
