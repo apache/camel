@@ -254,16 +254,20 @@ public class MethodInfo {
         }
     }
 
-    public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {
-        final Object[] arguments;
+    private Object[] initializeArguments(boolean hasParameters, Exchange exchange) {
         if (hasParameters) {
             if (parametersExpression != null) {
                 parametersExpression.init(camelContext);
+
+                return parametersExpression.evaluate(exchange, Object[].class);
             }
-            arguments = parametersExpression.evaluate(exchange, Object[].class);
-        } else {
-            arguments = null;
         }
+
+        return null;
+    }
+
+    public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {
+        final Object[] arguments = initializeArguments(hasParameters, exchange);
 
         return new MethodInvocation() {
             public Method getMethod() {
