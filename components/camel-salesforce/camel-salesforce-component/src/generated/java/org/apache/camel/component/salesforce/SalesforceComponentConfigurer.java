@@ -134,6 +134,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": getOrCreateConfig(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "packages": target.setPackages(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "querylocator":
+        case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": getOrCreateConfig(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
@@ -283,6 +285,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
         case "packages": return java.lang.String.class;
         case "password": return java.lang.String.class;
+        case "querylocator":
+        case "queryLocator": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
         case "refreshtoken":
@@ -433,6 +437,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": return getOrCreateConfig(target).getObjectMapper();
         case "packages": return target.getPackages();
         case "password": return target.getPassword();
+        case "querylocator":
+        case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
         case "rawpayload":
         case "rawPayload": return getOrCreateConfig(target).isRawPayload();
         case "refreshtoken":

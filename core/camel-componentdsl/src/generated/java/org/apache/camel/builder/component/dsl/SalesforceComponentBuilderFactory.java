@@ -501,6 +501,23 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Query Locator provided by salesforce for use when a query results in
+         * more records than can be retrieved in a single call. Use this value
+         * in a subsequent call to retrieve additional records.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryLocator the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder queryLocator(
+                java.lang.String queryLocator) {
+            doSetProperty("queryLocator", queryLocator);
+            return this;
+        }
+        /**
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
@@ -1314,6 +1331,7 @@ public interface SalesforceComponentBuilderFactory {
             case "notifyForOperationUpdate": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUpdate((java.lang.Boolean) value); return true;
             case "objectMapper": getOrCreateConfiguration((SalesforceComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
             case "packages": ((SalesforceComponent) component).setPackages((java.lang.String) value); return true;
+            case "queryLocator": getOrCreateConfiguration((SalesforceComponent) component).setQueryLocator((java.lang.String) value); return true;
             case "rawPayload": getOrCreateConfiguration((SalesforceComponent) component).setRawPayload((boolean) value); return true;
             case "reportId": getOrCreateConfiguration((SalesforceComponent) component).setReportId((java.lang.String) value); return true;
             case "reportMetadata": getOrCreateConfiguration((SalesforceComponent) component).setReportMetadata((org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata) value); return true;

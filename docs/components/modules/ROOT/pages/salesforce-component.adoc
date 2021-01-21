@@ -178,7 +178,42 @@ list of errors while creating the new object.
 ...to("salesforce:upsertSObject?sObjectIdName=Name")...
 ----
 
-=== Rest Bulk API
+=== Bulk 2.0 API
+
+The Bulk 2.0 API has a simplified model over the original Bulk API. Use it to quickly load a large
+amount of data into salesforce, or query a large amount of data out of salesforce. Data must be
+provided in CSV format. The minimum API version for Bulk 2.0 is v41.0. The minimum API version for
+Bulk Queries is v47.0. DTO classes mentioned below are from the
+`org.apache.camel.component.salesforce.api.dto.bulkv2` package. The following operations are supported:
+
+* *bulk2CreateJob* - Create a bulk job. Supply an instance of `Job` in the message body.
+* *bulk2GetJob* - Get an existing Job. `jobId` parameter is required.
+* *bulk2CreateBatch* - Add a Batch of CSV records to a job. Supply CSV data in the message body.
+The first row must contain headers. `jobId` parameter is required.
+* *bulk2CloseJob* - Close a job. You must close the job in order for it to be processed or
+aborted/deleted. `jobId` parameter is required.
+* *bulk2AbortJob* - Abort a job. `jobId` parameter is required.
+* *bulk2DeleteJob* - Delete a job. `jobId` parameter is required.
+* *bulk2GetSuccessfulResults* - Get successful results for a job. Returned message body will contain
+an InputStream of CSV data. `jobId` parameter is required.
+* *bulk2GetFailedResults* - Get failed results for a job. Returned message body will contain an
+InputStream of CSV data. `jobId` parameter is required.
+* *bulk2GetUnprocessedRecords* - Get unprocessed records for a job. Returned message body will
+contain an InputStream of CSV data. `jobId` parameter is required.
+* *bulk2GetAllJobs* - Get all jobs. Response body is an instance of `Jobs`. If the `done` property
+is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
+to be set in the `queryLocator` parameter on subsequent calls.
+* *bulk2CreateQueryJob* - Create a bulk query job. Supply an instance of `QueryJob` in the message
+body.
+* *bulk2GetQueryJob* - Get a bulk query job. `jobId` parameter is required.
+* *bulk2GetQueryJobResults* - Get bulk query job results. `jobId` parameter is required.
+* *bulk2AbortQueryJob* - Abort a bulk query job. `jobId` parameter is required.
+* *bulk2DeleteQueryJob* - Delete a bulk query job. `jobId` parameter is required.
+* *bulk2GetAllQueryJobs* - Get all jobs. Response body is an instance of `QueryJobs`. If the `done`
+property is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains
+the value to be set in the `queryLocator` parameter on subsequent calls.
+
+=== Rest Bulk (original) API
 
 Producer endpoints can use the following APIs. All Job data formats,
 i.e. xml, csv, zip/xml, and zip/csv are supported.  +
@@ -685,7 +720,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 74 options, which are listed below.
+The Salesforce component supports 75 options, which are listed below.
 
 
 
@@ -720,6 +755,7 @@ The Salesforce component supports 74 options, which are listed below.
 | *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
 | *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. This must be set if using the XML format. Also, set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. Multiple packages can be separated by comma. |  | String
+| *queryLocator* (common) | Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a single call. Use this value in a subsequent call to retrieve additional records. |  | String
 | *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
 | *reportId* (common) | Salesforce1 Analytics report Id |  | String
 | *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
@@ -793,12 +829,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operationName* | The operation to use. There are 43 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite |  | OperationName
+| *operationName* | The operation to use. There are 59 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob |  | OperationName
 | *topicName* | The name of the topic/channel to use |  | String
 |===
 
 
-=== Query Parameters (44 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -827,6 +863,7 @@ with the following path and query parameters:
 | *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
+| *queryLocator* (common) | Query Locator provided by salesforce for use when a query results in more records than can be retrieved in a single call. Use this value in a subsequent call to retrieve additional records. |  | String
 | *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
 | *reportId* (common) | Salesforce1 Analytics report Id |  | String
 | *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata

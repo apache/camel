@@ -58,6 +58,24 @@ public enum OperationName {
     GET_QUERY_RESULT_IDS("getQueryResultIds"),
     GET_QUERY_RESULT("getQueryResult"),
 
+    // Bulk API 2.0
+    BULK2_CREATE_JOB("bulk2CreateJob"),
+    BULK2_GET_JOB("bulk2GetJob"),
+    BULK2_CREATE_BATCH("bulk2CreateBatch"),
+    BULK2_CLOSE_JOB("bulk2CloseJob"),
+    BULK2_ABORT_JOB("bulk2AbortJob"),
+    BULK2_DELETE_JOB("bulk2DeleteJob"),
+    BULK2_GET_SUCCESSFUL_RESULTS("bulk2GetSuccessfulResults"),
+    BULK2_GET_FAILED_RESULTS("bulk2GetFailedResults"),
+    BULK2_GET_UNPROCESSED_RECORDS("bulk2GetUnprocessedRecords"),
+    BULK2_GET_ALL_JOBS("bulk2GetAllJobs"),
+    BULK2_CREATE_QUERY_JOB("bulk2CreateQueryJob"),
+    BULK2_GET_QUERY_JOB("bulk2GetQueryJob"),
+    BULK2_GET_ALL_QUERY_JOBS("bulk2GetAllQueryJobs"),
+    BULK2_GET_QUERY_JOB_RESULTS("bulk2GetQueryJobResults"),
+    BULK2_ABORT_QUERY_JOB("bulk2AbortQueryJob"),
+    BULK2_DELETE_QUERY_JOB("bulk2DeleteQueryJob"),
+
     // analytics API
     GET_RECENT_REPORTS("getRecentReports"),
     GET_REPORT_DESCRIPTION("getReportDescription"),
