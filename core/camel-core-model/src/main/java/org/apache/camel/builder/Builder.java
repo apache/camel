@@ -17,9 +17,12 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
+import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.JoorExpression;
+import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -49,9 +52,11 @@ public final class Builder {
      *
      * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
      * @return               the builder
+     * @deprecated use {@link #method(Object)}
      */
+    @Deprecated
     public static ValueBuilder bean(final Object beanOrBeanRef) {
-        return bean(beanOrBeanRef, null);
+        return method(beanOrBeanRef, null);
     }
 
     /**
@@ -62,8 +67,48 @@ public final class Builder {
      * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
      * @param  method        the method name
      * @return               the builder
+     * @deprecated use {@link #method(Class, String)} (Object, String)}
      */
+    @Deprecated
     public static ValueBuilder bean(Object beanOrBeanRef, String method) {
+        return method(beanOrBeanRef, method);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder
+     *
+     * @param  beanType the bean class which will be invoked
+     * @param  method   name of method to invoke
+     * @return          the builder
+     * @deprecated use {@link #method(Class, String)}
+     */
+    @Deprecated
+    public static ValueBuilder bean(Class<?> beanType, String method) {
+        return method(beanType, method);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder.
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     *
+     * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @return               the builder
+     */
+    public static ValueBuilder method(final Object beanOrBeanRef) {
+        return method(beanOrBeanRef, null);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder.
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
+     *
+     * @param  beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param  method        the method name
+     * @return               the builder
+     */
+    public static ValueBuilder method(Object beanOrBeanRef, String method) {
         Expression exp;
         if (beanOrBeanRef instanceof String) {
             exp = new MethodCallExpression((String) beanOrBeanRef, method);
@@ -74,13 +119,13 @@ public final class Builder {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder
+     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder
      *
      * @param  beanType the bean class which will be invoked
      * @param  method   name of method to invoke
      * @return          the builder
      */
-    public static ValueBuilder bean(Class<?> beanType, String method) {
+    public static ValueBuilder method(Class<?> beanType, String method) {
         Expression exp = new MethodCallExpression(beanType, method);
         return new ValueBuilder(exp);
     }
@@ -107,6 +152,23 @@ public final class Builder {
     }
 
     /**
+     * Returns a csimple expression
+     */
+    public static ValueBuilder csimple(String value) {
+        Expression exp = new CSimpleExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a csimple expression
+     */
+    public static ValueBuilder csimple(String value, Class<?> resultType) {
+        CSimpleExpression exp = new CSimpleExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
      * Returns a simple expression
      */
     public static ValueBuilder simple(String value) {
@@ -119,6 +181,43 @@ public final class Builder {
      */
     public static ValueBuilder simple(String value, Class<?> resultType) {
         SimpleExpression exp = new SimpleExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JOOR expression value builder
+     */
+    public static ValueBuilder joor(String value) {
+        JoorExpression exp = new JoorExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JOOR expression value builder
+     */
+    public static ValueBuilder joor(String value, Class<?> resultType) {
+        JoorExpression exp = new JoorExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JSonPath expression value builder
+     */
+    public static ValueBuilder jsonpath(String value) {
+        JsonPathExpression exp = new JsonPathExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JSonPath expression value builder
+     *
+     * @param value      The JSonPath expression
+     * @param resultType The result type that the JSonPath expression will return.
+     */
+    public static ValueBuilder jsonpath(String value, Class<?> resultType) {
+        JsonPathExpression exp = new JsonPathExpression(value);
         exp.setResultType(resultType);
         return new ValueBuilder(exp);
     }

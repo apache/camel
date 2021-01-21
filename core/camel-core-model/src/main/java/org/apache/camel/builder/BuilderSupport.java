@@ -108,25 +108,21 @@ public abstract class BuilderSupport {
      * Returns a JOOR expression value builder
      */
     public ValueBuilder joor(String value) {
-        JoorExpression exp = new JoorExpression(value);
-        return new ValueBuilder(exp);
+        return Builder.joor(value);
     }
 
     /**
      * Returns a JOOR expression value builder
      */
     public ValueBuilder joor(String value, Class<?> resultType) {
-        JoorExpression exp = new JoorExpression(value);
-        exp.setResultType(resultType);
-        return new ValueBuilder(exp);
+        return Builder.joor(value, resultType);
     }
 
     /**
      * Returns a JSonPath expression value builder
      */
     public ValueBuilder jsonpath(String value) {
-        JsonPathExpression exp = new JsonPathExpression(value);
-        return new ValueBuilder(exp);
+        return Builder.jsonpath(value);
     }
 
     /**
@@ -136,26 +132,21 @@ public abstract class BuilderSupport {
      * @param resultType The result type that the JSonPath expression will return.
      */
     public ValueBuilder jsonpath(String value, Class<?> resultType) {
-        JsonPathExpression exp = new JsonPathExpression(value);
-        exp.setResultType(resultType);
-        return new ValueBuilder(exp);
+        return Builder.jsonpath(value, resultType);
     }
 
     /**
      * Returns a compiled simple expression value builder
      */
     public ValueBuilder csimple(String value) {
-        CSimpleExpression exp = new CSimpleExpression(value);
-        return new ValueBuilder(exp);
+        return Builder.csimple(value);
     }
 
     /**
      * Returns a compiled simple expression value builder
      */
     public ValueBuilder csimple(String value, Class<?> resultType) {
-        CSimpleExpression exp = new CSimpleExpression(value);
-        exp.setResultType(resultType);
-        return new ValueBuilder(exp);
+        return Builder.csimple(value, resultType);
     }
 
     /**
@@ -298,7 +289,7 @@ public abstract class BuilderSupport {
      * @return               the builder
      */
     public ValueBuilder method(Object beanOrBeanRef, String method) {
-        return Builder.bean(beanOrBeanRef, method);
+        return Builder.method(beanOrBeanRef, method);
     }
 
     /**
@@ -308,7 +299,7 @@ public abstract class BuilderSupport {
      * @return          the builder
      */
     public ValueBuilder method(Class<?> beanType) {
-        return Builder.bean(beanType);
+        return Builder.method(beanType);
     }
 
     /**
