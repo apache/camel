@@ -56,7 +56,6 @@ public class JmsSendDynamicAware extends ServiceSupport implements SendDynamicAw
         this.camelContext = camelContext;
     }
 
-
     @Override
     public boolean isLenientProperties() {
         return false;
