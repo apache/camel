@@ -109,19 +109,23 @@ public class BeanstalkProducer extends DefaultAsyncProducer {
         @Override
         public void run() {
             try {
-                try {
-                    command.act(client, exchange);
-                } catch (BeanstalkException e) {
-                    /* Retry one time */
-                    resetClient();
-                    command.act(client, exchange);
-                }
+                doRun();
             } catch (Throwable t) {
                 exchange.setException(t);
             } finally {
                 if (callback != null) {
                     callback.done(false);
                 }
+            }
+        }
+
+        private void doRun() throws Exception {
+            try {
+                command.act(client, exchange);
+            } catch (BeanstalkException e) {
+                /* Retry one time */
+                resetClient();
+                command.act(client, exchange);
             }
         }
     }

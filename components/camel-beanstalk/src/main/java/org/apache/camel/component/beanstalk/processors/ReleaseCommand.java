@@ -42,11 +42,10 @@ public class ReleaseCommand extends DefaultCommand {
         final int delay = BeanstalkExchangeHelper.getDelay(endpoint, in);
 
         final boolean result = client.release(jobId, priority, delay);
-        if (!result && LOG.isWarnEnabled()) {
-            LOG.warn(String.format("Failed to release job %d (priority %d, delay %d)", jobId, priority, delay));
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Job %d released with priority %d, delay %d seconds. Result is %b", jobId, priority, delay,
-                    result));
+        if (!result) {
+            LOG.warn("Failed to release job {} (priority {}, delay {})", jobId, priority, delay);
+        } else {
+            LOG.debug("Job {} released with priority {}, delay {} seconds. Result is {}", jobId, priority, delay, result);
         }
 
         answerWith(exchange, Headers.RESULT, result);

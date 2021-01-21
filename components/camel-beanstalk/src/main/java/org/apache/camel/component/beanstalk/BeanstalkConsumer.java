@@ -225,7 +225,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(successCommand, exchange)).get();
             } catch (Exception e) {
-                LOG.error(String.format("Could not run completion of exchange %s", exchange), e);
+                LOG.error("Could not run completion of exchange {}", exchange, e);
             }
         }
 
@@ -234,9 +234,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(failureCommand, exchange)).get();
             } catch (Exception e) {
-                LOG.error(
-                        String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange),
-                        e);
+                LOG.error("{} could not run failure of exchange {}", failureCommand.getClass().getName(), exchange, e);
             }
         }
 
@@ -252,18 +250,21 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             @Override
             public void run() {
                 try {
-                    try {
-                        command.act(client, exchange);
-                    } catch (BeanstalkException e) {
-                        LOG.warn(String.format("Post-processing %s of exchange %s failed, retrying.",
-                                command.getClass().getName(), exchange), e);
-                        resetClient();
-                        command.act(client, exchange);
-                    }
+                    doPostProcess();
                 } catch (final Exception e) {
-                    LOG.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange),
-                            e);
+                    LOG.error("{} could not post-process exchange {}", command.getClass().getName(), exchange, e);
                     exchange.setException(e);
+                }
+            }
+
+            private void doPostProcess() throws Exception {
+                try {
+                    command.act(client, exchange);
+                } catch (BeanstalkException e) {
+                    LOG.warn("Post-processing {} of exchange {} failed, retrying.", command.getClass().getName(),
+                            exchange, e);
+                    resetClient();
+                    command.act(client, exchange);
                 }
             }
         }
