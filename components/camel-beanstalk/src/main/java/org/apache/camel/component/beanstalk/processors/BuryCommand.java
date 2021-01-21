@@ -39,9 +39,9 @@ public class BuryCommand extends DefaultCommand {
         final boolean result = client.bury(jobId, priority);
 
         if (!result && LOG.isWarnEnabled()) {
-            LOG.warn(String.format("Failed to bury job %d (with priority %d)", jobId, priority));
+            LOG.warn("Failed to bury job {} (with priority {})", jobId, priority);
         } else if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Job %d buried with priority %d. Result is %b", jobId, priority, result));
+            LOG.debug("Job {} buried with priority {}. Result is {}", jobId, priority, result);
         }
 
         answerWith(exchange, Headers.RESULT, result);

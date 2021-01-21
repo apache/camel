@@ -36,10 +36,10 @@ public class TouchCommand extends DefaultCommand {
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException {
         final Long jobId = ExchangeHelper.getMandatoryHeader(exchange, Headers.JOB_ID, Long.class);
         final boolean result = client.touch(jobId);
-        if (!result && LOG.isWarnEnabled()) {
-            LOG.warn(String.format("Failed to touch job %d", jobId));
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Job %d touched. Result is %b", jobId, result));
+        if (!result) {
+            LOG.warn("Failed to touch job {}", jobId);
+        } else {
+            LOG.debug("Job {} touched. Result is {}", jobId, result);
         }
 
         answerWith(exchange, Headers.RESULT, result);
