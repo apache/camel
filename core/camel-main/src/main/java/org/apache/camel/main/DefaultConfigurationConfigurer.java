@@ -100,9 +100,10 @@ public final class DefaultConfigurationConfigurer {
                     ecc.setStartupStepRecorder(new LoggingStartupStepRecorder());
                 }
             } else if ("java-flight-recorder".equals(config.getStartupRecorder())) {
-                if (!ecc.getStartupStepRecorder().getClass().getName().startsWith("org.apache.camel.startup.jfr"))
+                if (!ecc.getStartupStepRecorder().getClass().getName().startsWith("org.apache.camel.startup.jfr")) {
                     throw new IllegalArgumentException(
                             "Cannot find Camel Java Flight Recorder on classpath. Add camel-jfr to classpath.");
+                }
             }
         }
         ecc.getStartupStepRecorder().setMaxDepth(config.getStartupRecorderMaxDepth());
