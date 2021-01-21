@@ -138,7 +138,7 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + Arrays.toString(doGetProcessors());
+        return getClass().getSimpleName();
     }
 
 }
