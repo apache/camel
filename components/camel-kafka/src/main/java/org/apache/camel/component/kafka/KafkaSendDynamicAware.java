@@ -56,10 +56,6 @@ public class KafkaSendDynamicAware extends ServiceSupport implements SendDynamic
         this.camelContext = camelContext;
     }
 
-    @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return true;
-    }
 
     @Override
     public boolean isLenientProperties() {

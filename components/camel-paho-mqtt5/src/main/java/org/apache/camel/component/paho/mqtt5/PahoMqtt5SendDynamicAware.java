@@ -57,11 +57,6 @@ public class PahoMqtt5SendDynamicAware extends ServiceSupport implements SendDyn
     }
 
     @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return false;
     }

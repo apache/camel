@@ -60,11 +60,6 @@ public class SpringRabbitMQSendDynamicAware extends ServiceSupport implements Se
     }
 
     @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return false;
     }

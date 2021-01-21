@@ -26,11 +26,6 @@ import org.apache.camel.util.URISupport;
 public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSupport {
 
     @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return false;
     }

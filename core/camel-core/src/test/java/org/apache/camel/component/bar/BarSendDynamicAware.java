@@ -42,11 +42,6 @@ public class BarSendDynamicAware extends SendDynamicAwareSupport {
     }
 
     @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return false;
-    }
-
-    @Override
     public boolean resolveRawParameterValues() {
         return true;
     }

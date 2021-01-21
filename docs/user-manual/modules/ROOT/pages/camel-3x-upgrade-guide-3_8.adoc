@@ -6,7 +6,7 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.7 to 3.8
 
-=== API changes in Camel events
+=== API changes
 
 The following type names are renamed in `CamelEvent.Type` enum:
 
@@ -14,6 +14,9 @@ The following type names are renamed in `CamelEvent.Type` enum:
 - `CamelContextRoutesStarted` to `RoutesStarted`
 - `CamelContextRoutesStopping` to `RoutesStopping`
 - `CamelContextRoutesStopped` to `RoutesStopped`
+
+The method `isOnlyDynamicQueryParameters` is removed from `org.apache.camel.spi.SendDynamicAware` and
+`org.apache.camel.support.component.SendDynamicAwareSupport` classes.
 
 === OnCompletion EIP
 

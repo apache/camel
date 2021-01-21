@@ -56,10 +56,6 @@ public class JmsSendDynamicAware extends ServiceSupport implements SendDynamicAw
         this.camelContext = camelContext;
     }
 
-    @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return true;
-    }
 
     @Override
     public boolean isLenientProperties() {

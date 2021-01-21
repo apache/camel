@@ -23,7 +23,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.service.ServiceSupport;
@@ -36,7 +35,6 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     private CamelContext camelContext;
     private Set<String> knownProperties;
-    private RuntimeCamelCatalog catalog;
     private String scheme;
 
     @Override
@@ -66,86 +64,74 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     @Override
     protected void doInit() throws Exception {
-        if (isOnlyDynamicQueryParameters()) {
+        if (knownProperties == null) {
             // optimize to eager load the list of known properties
             EndpointUriFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(getScheme());
             if (factory == null) {
                 throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
             }
             knownProperties = factory.propertyNames();
-        } else {
-            catalog = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
         }
     }
 
     public Map<String, Object> endpointProperties(Exchange exchange, String uri) throws Exception {
         Map<String, Object> properties;
-        if (isOnlyDynamicQueryParameters()) {
-            // optimize as we know its only query parameters that can be dynamic
-            Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
-            if (map != null && !map.isEmpty() && isLenientProperties()) {
-                if (resolveRawParameterValues()) {
-                    // parameters using raw syntax: RAW(value)
-                    // should have the token removed, so its only the value we have in parameters, as we are about to create
-                    // an endpoint and want to have the parameter values without the RAW tokens
-                    URISupport.resolveRawParameterValues(map);
-                }
-                // okay so only add the known properties as they are the non lenient properties
-                properties = new LinkedHashMap<>();
-                map.forEach((k, v) -> {
-                    if (knownProperties.contains(k)) {
-                        properties.put(k, v);
-                    }
-                });
-            } else {
-                properties = map;
+        // optimize as we know its only query parameters that can be dynamic
+        Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
+        if (map != null && !map.isEmpty() && isLenientProperties()) {
+            if (resolveRawParameterValues()) {
+                // parameters using raw syntax: RAW(value)
+                // should have the token removed, so its only the value we have in parameters, as we are about to create
+                // an endpoint and want to have the parameter values without the RAW tokens
+                URISupport.resolveRawParameterValues(map);
             }
+            // okay so only add the known properties as they are the non lenient properties
+            properties = new LinkedHashMap<>();
+            map.forEach((k, v) -> {
+                if (knownProperties.contains(k)) {
+                    properties.put(k, v);
+                }
+            });
         } else {
-            properties = new LinkedHashMap<>(catalog.endpointProperties(uri));
+            properties = map;
         }
+
         return properties;
     }
 
     public Map<String, Object> endpointLenientProperties(Exchange exchange, String uri) throws Exception {
         Map<String, Object> properties;
-        if (isOnlyDynamicQueryParameters()) {
-            // optimize as we know its only query parameters that can be dynamic
-            Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
-            if (map != null && !map.isEmpty()) {
-                if (resolveRawParameterValues()) {
-                    // parameters using raw syntax: RAW(value)
-                    // should have the token removed, so its only the value we have in parameters, as we are about to create
-                    // an endpoint and want to have the parameter values without the RAW tokens
-                    URISupport.resolveRawParameterValues(map);
-                }
-                properties = new LinkedHashMap<>();
-                map.forEach((k, v) -> {
-                    if (!knownProperties.contains(k)) {
-                        properties.put(k, v.toString());
-                    }
-                });
-            } else {
-                properties = map;
+        // optimize as we know its only query parameters that can be dynamic
+        Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
+        if (map != null && !map.isEmpty()) {
+            if (resolveRawParameterValues()) {
+                // parameters using raw syntax: RAW(value)
+                // should have the token removed, so its only the value we have in parameters, as we are about to create
+                // an endpoint and want to have the parameter values without the RAW tokens
+                URISupport.resolveRawParameterValues(map);
             }
+            properties = new LinkedHashMap<>();
+            map.forEach((k, v) -> {
+                if (!knownProperties.contains(k)) {
+                    properties.put(k, v.toString());
+                }
+            });
         } else {
-            properties = new LinkedHashMap<>(catalog.endpointLenientProperties(uri));
+            properties = map;
         }
         return properties;
     }
 
     public String asEndpointUri(Exchange exchange, String uri, Map<String, Object> properties) throws Exception {
-        if (isOnlyDynamicQueryParameters()) {
-            String answer;
-            String query = URISupport.createQueryString(properties, false);
-            int pos = uri.indexOf('?');
-            if (pos != -1) {
-                answer = uri.substring(0, pos) + "?" + query;
-            } else {
-                answer = uri + "?" + query;
-            }
-            return answer;
+        String answer;
+        String query = URISupport.createQueryString(properties, false);
+        int pos = uri.indexOf('?');
+        if (pos != -1) {
+            answer = uri.substring(0, pos) + "?" + query;
         } else {
-            return catalog.asEndpointUri(getScheme(), new LinkedHashMap(properties), false);
+            answer = uri + "?" + query;
         }
+        return answer;
     }
+
 }

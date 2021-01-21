@@ -56,7 +56,8 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedSimple() throws Exception {
         AdviceWith.adviceWith(context, null, a -> {
-            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(a.simple("Hello ${body}")).to("log:foo").to("mock:advised");
+            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(a.simple("Hello ${body}"))
+                    .to("log:foo").to("mock:advised");
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);

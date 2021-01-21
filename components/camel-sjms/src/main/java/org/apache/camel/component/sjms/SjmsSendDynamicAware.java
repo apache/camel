@@ -57,11 +57,6 @@ public class SjmsSendDynamicAware extends ServiceSupport implements SendDynamicA
     }
 
     @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return false;
     }

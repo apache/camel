@@ -39,12 +39,6 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
     private final Processor postProcessor = new HttpSendDynamicPostProcessor();
 
     @Override
-    public boolean isOnlyDynamicQueryParameters() {
-        // we compute our own host:port/path so its okay so say true here
-        return true;
-    }
-
-    @Override
     public boolean isLenientProperties() {
         return true;
     }

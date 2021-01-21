@@ -16,15 +16,29 @@
  */
 package org.apache.camel.processor;
 
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bar.BarComponent;
 import org.apache.camel.component.bar.BarConstants;
+import org.apache.camel.support.component.EndpointUriFactorySupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("myFactory", new BarEndpointUriFactory());
+        return context;
+    }
 
     @Test
     public void testToDynamic() throws Exception {
@@ -52,5 +66,37 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
                 from("direct:start").toD("bar:order?drink=${header.drink}").to("mock:bar");
             }
         };
+    }
+
+    private class BarEndpointUriFactory extends EndpointUriFactorySupport {
+
+        @Override
+        public boolean isEnabled(String scheme) {
+            return "bar".equals(scheme);
+        }
+
+        @Override
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
+            // not in use for this test
+            return null;
+        }
+
+        @Override
+        public Set<String> propertyNames() {
+            Set<String> answer = new HashSet<>();
+            answer.add("name");
+            answer.add("drink");
+            return answer;
+        }
+
+        @Override
+        public Set<String> secretPropertyNames() {
+            return null;
+        }
+
+        @Override
+        public boolean isLenientProperties() {
+            return false;
+        }
     }
 }
