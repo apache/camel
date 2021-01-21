@@ -31,13 +31,13 @@ import org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedComponen
 public interface InfinispanEmbeddedComponentBuilderFactory {
 
     /**
-     * Infinispan Embedded (camel-infinispan)
+     * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-infinispan
+     * Maven coordinates: org.apache.camel:camel-infinispan-embedded
      * 
      * @return the dsl builder
      */
@@ -119,23 +119,6 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
         default InfinispanEmbeddedComponentBuilder clusteredListener(
                 boolean clusteredListener) {
             doSetProperty("clusteredListener", clusteredListener);
-            return this;
-        }
-        /**
-         * The operation to perform.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: PUT
-         * Group: consumer
-         * 
-         * @param command the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default InfinispanEmbeddedComponentBuilder command(
-                java.lang.String command) {
-            doSetProperty("command", command);
             return this;
         }
         /**
@@ -444,7 +427,6 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
             case "queryBuilder": getOrCreateConfiguration((InfinispanEmbeddedComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
             case "bridgeErrorHandler": ((InfinispanEmbeddedComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clusteredListener": getOrCreateConfiguration((InfinispanEmbeddedComponent) component).setClusteredListener((boolean) value); return true;
-            case "command": getOrCreateConfiguration((InfinispanEmbeddedComponent) component).setCommand((java.lang.String) value); return true;
             case "customListener": getOrCreateConfiguration((InfinispanEmbeddedComponent) component).setCustomListener((org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener) value); return true;
             case "eventTypes": getOrCreateConfiguration((InfinispanEmbeddedComponent) component).setEventTypes((java.lang.String) value); return true;
             case "sync": getOrCreateConfiguration((InfinispanEmbeddedComponent) component).setSync((boolean) value); return true;

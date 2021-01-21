@@ -2402,13 +2402,13 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.InfinispanComponentBuilderFactory.infinispan();
     }
     /**
-     * Infinispan Embedded (camel-infinispan)
+     * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-infinispan
+     * Maven coordinates: org.apache.camel:camel-infinispan-embedded
      * 
      * @return the dsl builder
      */

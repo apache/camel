@@ -153,22 +153,6 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: PUT
-         * Group: consumer
-         * 
-         * @param command the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default InfinispanEmbeddedEndpointConsumerBuilder command(String command) {
-            doSetProperty("command", command);
-            return this;
-        }
-        /**
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:
@@ -1252,13 +1236,13 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
 
     public interface InfinispanEmbeddedBuilders {
         /**
-         * Infinispan Embedded (camel-infinispan)
+         * Infinispan Embedded (camel-infinispan-embedded)
          * Read and write from/to Infinispan distributed key/value store and
          * data grid.
          * 
          * Category: cache,datagrid,clustering
          * Since: 2.13
-         * Maven coordinates: org.apache.camel:camel-infinispan
+         * Maven coordinates: org.apache.camel:camel-infinispan-embedded
          * 
          * Syntax: <code>infinispan-embedded:cacheName</code>
          * 
@@ -1274,13 +1258,13 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
             return InfinispanEmbeddedEndpointBuilderFactory.endpointBuilder("infinispan-embedded", path);
         }
         /**
-         * Infinispan Embedded (camel-infinispan)
+         * Infinispan Embedded (camel-infinispan-embedded)
          * Read and write from/to Infinispan distributed key/value store and
          * data grid.
          * 
          * Category: cache,datagrid,clustering
          * Since: 2.13
-         * Maven coordinates: org.apache.camel:camel-infinispan
+         * Maven coordinates: org.apache.camel:camel-infinispan-embedded
          * 
          * Syntax: <code>infinispan-embedded:cacheName</code>
          * 

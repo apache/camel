@@ -166,22 +166,6 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: PUT
-         * Group: consumer
-         * 
-         * @param command the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default InfinispanRemoteEndpointConsumerBuilder command(String command) {
-            doSetProperty("command", command);
-            return this;
-        }
-        /**
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:

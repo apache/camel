@@ -135,22 +135,6 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: PUT
-         * Group: consumer
-         * 
-         * @param command the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default InfinispanComponentBuilder command(java.lang.String command) {
-            doSetProperty("command", command);
-            return this;
-        }
-        /**
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:
@@ -526,7 +510,6 @@ public interface InfinispanComponentBuilderFactory {
             case "queryBuilder": getOrCreateConfiguration((InfinispanRemoteComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
             case "secure": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecure((boolean) value); return true;
             case "bridgeErrorHandler": ((InfinispanRemoteComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "command": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCommand((java.lang.String) value); return true;
             case "customListener": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCustomListener((org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener) value); return true;
             case "eventTypes": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEventTypes((java.lang.String) value); return true;
             case "defaultValue": getOrCreateConfiguration((InfinispanRemoteComponent) component).setDefaultValue((java.lang.Object) value); return true;
