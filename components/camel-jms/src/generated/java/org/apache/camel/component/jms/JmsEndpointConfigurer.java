@@ -35,6 +35,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowSerializedHeaders": target.getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "alwayscopymessage":
         case "alwaysCopyMessage": target.getConfiguration().setAlwaysCopyMessage(property(camelContext, boolean.class, value)); return true;
+        case "artemisconsumerpriority":
+        case "artemisConsumerPriority": target.getConfiguration().setArtemisConsumerPriority(property(camelContext, int.class, value)); return true;
         case "artemisstreamingenabled":
         case "artemisStreamingEnabled": target.getConfiguration().setArtemisStreamingEnabled(property(camelContext, boolean.class, value)); return true;
         case "asyncconsumer":
@@ -224,6 +226,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowSerializedHeaders": return boolean.class;
         case "alwayscopymessage":
         case "alwaysCopyMessage": return boolean.class;
+        case "artemisconsumerpriority":
+        case "artemisConsumerPriority": return int.class;
         case "artemisstreamingenabled":
         case "artemisStreamingEnabled": return boolean.class;
         case "asyncconsumer":
@@ -414,6 +418,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowSerializedHeaders": return target.getConfiguration().isAllowSerializedHeaders();
         case "alwayscopymessage":
         case "alwaysCopyMessage": return target.getConfiguration().isAlwaysCopyMessage();
+        case "artemisconsumerpriority":
+        case "artemisConsumerPriority": return target.getConfiguration().getArtemisConsumerPriority();
         case "artemisstreamingenabled":
         case "artemisStreamingEnabled": return target.getConfiguration().isArtemisStreamingEnabled();
         case "asyncconsumer":

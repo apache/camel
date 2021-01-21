@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import java.util.Collections;
 import java.util.List;
 
-import javax.jms.JMSException;
 import javax.jms.Queue;
 
 import org.apache.camel.Exchange;
@@ -35,12 +34,6 @@ import org.springframework.jms.core.JmsOperations;
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
-
-    public JmsQueueEndpoint(Queue destination) throws JMSException {
-        this("jms:queue:" + destination.getQueueName(), null);
-        setDestinationType("queue");
-        setDestination(destination);
-    }
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
                             JmsConfiguration configuration) {

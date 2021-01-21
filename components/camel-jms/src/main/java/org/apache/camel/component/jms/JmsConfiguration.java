@@ -478,8 +478,16 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "producer",
               description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
     private boolean formatDateHeadersToIso8601;
-    @UriParam(defaultValue = "true", label = "advanced", description = "Whether optimizing for Apache Artemis streaming mode.")
+    @UriParam(label = "advanced", defaultValue = "true", description = "Whether optimizing for Apache Artemis streaming mode.")
     private boolean artemisStreamingEnabled = true;
+    @UriParam(label = "consumer", description = "Consumer priorities allow you to ensure that high priority consumers"
+                                                + " receive messages while they are active. Normally, active consumers connected to a queue receive messages"
+                                                + " from it in a round-robin fashion. When consumer priorities are in use, messages are delivered round-robin"
+                                                + " if multiple active consumers exist with the same high priority. Messages will only going to lower priority"
+                                                + " consumers when the high priority consumers do not have credit available to consume the message, or those"
+                                                + " high priority consumers have declined to accept the message (for instance because it does not meet the"
+                                                + " criteria of any selectors associated with the consumer).")
+    private int artemisConsumerPriority;
 
     // JMS 2.0 API
     @UriParam(label = "consumer", description = "Set the name of a subscription to create. To be applied in case"
@@ -520,15 +528,6 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
-
-    @UriParam(label = "consumer", description = "Consumer priorities allow you to ensure that high priority consumers"
-        + " receive messages while they are active. Normally, active consumers connected to a queue receive messages"
-        + " from it in a round-robin fashion. When consumer priorities are in use, messages are delivered round-robin"
-        + " if multiple active consumers exist with the same high priority. Messages will only going to lower priority"
-        + " consumers when the high priority consumers do not have credit available to consume the message, or those"
-        + " high priority consumers have declined to accept the message (for instance because it does not meet the"
-        + " criteria of any selectors associated with the consumer).")
-    private int consumerPriority;
 
     public JmsConfiguration() {
     }
@@ -2293,20 +2292,20 @@ public class JmsConfiguration implements Cloneable {
         this.artemisStreamingEnabled = artemisStreamingEnabled;
     }
 
+    public void setArtemisConsumerPriority(int priority) {
+        this.artemisConsumerPriority = priority;
+    }
+
+    public int getArtemisConsumerPriority() {
+        return artemisConsumerPriority;
+    }
+
     public boolean isSynchronous() {
         return synchronous;
     }
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
-    }
-
-    public void setConsumerPriority(int priority) {
-        this.consumerPriority = priority;
-    }
-
-    public int getConsumerPriority() {
-        return consumerPriority;
     }
 
 }

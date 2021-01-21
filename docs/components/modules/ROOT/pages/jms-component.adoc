@@ -189,7 +189,7 @@ about these properties by consulting the relevant Spring documentation.
 
 
 // component options: START
-The JMS component supports 97 options, which are listed below.
+The JMS component supports 98 options, which are listed below.
 
 
 
@@ -204,6 +204,7 @@ The JMS component supports 97 options, which are listed below.
 | *replyTo* (common) | Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer). |  | String
 | *testConnectionOnStartup* (common) | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | boolean
 | *acknowledgementModeName* (consumer) | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE. There are 4 enums and the value can be one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ACKNOWLEDGE | String
+| *artemisConsumerPriority* (consumer) | Consumer priorities allow you to ensure that high priority consumers receive messages while they are active. Normally, active consumers connected to a queue receive messages from it in a round-robin fashion. When consumer priorities are in use, messages are delivered round-robin if multiple active consumers exist with the same high priority. Messages will only going to lower priority consumers when the high priority consumers do not have credit available to consume the message, or those high priority consumers have declined to accept the message (for instance because it does not meet the criteria of any selectors associated with the consumer). |  | int
 | *asyncConsumer* (consumer) | Whether the JmsConsumer processes the Exchange asynchronously. If enabled then the JmsConsumer may pickup the next message from the JMS queue, while the previous message is being processed asynchronously (by the Asynchronous Routing Engine). This means that messages may be processed not 100% strictly in order. If disabled (as default) then the Exchange is fully processed before the JmsConsumer will pickup the next message from the JMS queue. Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction must be executed synchronously (Camel 3.0 may support async transactions). | false | boolean
 | *autoStartup* (consumer) | Specifies whether the consumer container should auto-startup. | true | boolean
 | *cacheLevel* (consumer) | Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details. |  | int
@@ -333,7 +334,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (94 parameters):
+=== Query Parameters (95 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -347,6 +348,7 @@ with the following path and query parameters:
 | *replyTo* (common) | Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer). |  | String
 | *testConnectionOnStartup* (common) | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | boolean
 | *acknowledgementModeName* (consumer) | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE. There are 4 enums and the value can be one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ACKNOWLEDGE | String
+| *artemisConsumerPriority* (consumer) | Consumer priorities allow you to ensure that high priority consumers receive messages while they are active. Normally, active consumers connected to a queue receive messages from it in a round-robin fashion. When consumer priorities are in use, messages are delivered round-robin if multiple active consumers exist with the same high priority. Messages will only going to lower priority consumers when the high priority consumers do not have credit available to consume the message, or those high priority consumers have declined to accept the message (for instance because it does not meet the criteria of any selectors associated with the consumer). |  | int
 | *asyncConsumer* (consumer) | Whether the JmsConsumer processes the Exchange asynchronously. If enabled then the JmsConsumer may pickup the next message from the JMS queue, while the previous message is being processed asynchronously (by the Asynchronous Routing Engine). This means that messages may be processed not 100% strictly in order. If disabled (as default) then the Exchange is fully processed before the JmsConsumer will pickup the next message from the JMS queue. Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction must be executed synchronously (Camel 3.0 may support async transactions). | false | boolean
 | *autoStartup* (consumer) | Specifies whether the consumer container should auto-startup. | true | boolean
 | *cacheLevel* (consumer) | Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details. |  | int

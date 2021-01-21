@@ -319,7 +319,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getConnectionFactory());
         assertEquals(1, endpoint.getConcurrentConsumers());
         assertNull(endpoint.getDeliveryMode());
-        assertNull(endpoint.getDestination());
         assertEquals("Foo", endpoint.getDestinationName());
         assertNull(endpoint.getDestinationResolver());
         assertNull(endpoint.getDurableSubscriptionName());

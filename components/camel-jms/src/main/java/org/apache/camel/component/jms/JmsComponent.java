@@ -1021,6 +1021,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setArtemisStreamingEnabled(artemisStreamingEnabled);
     }
 
+    public void setArtemisConsumerPriority(int priority) {
+        configuration.setArtemisConsumerPriority(priority);
+    }
+
+    public int getArtemisConsumerPriority() {
+        return configuration.getArtemisConsumerPriority();
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 

@@ -194,6 +194,30 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Consumer priorities allow you to ensure that high priority consumers
+         * receive messages while they are active. Normally, active consumers
+         * connected to a queue receive messages from it in a round-robin
+         * fashion. When consumer priorities are in use, messages are delivered
+         * round-robin if multiple active consumers exist with the same high
+         * priority. Messages will only going to lower priority consumers when
+         * the high priority consumers do not have credit available to consume
+         * the message, or those high priority consumers have declined to accept
+         * the message (for instance because it does not meet the criteria of
+         * any selectors associated with the consumer).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param artemisConsumerPriority the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder artemisConsumerPriority(
+                int artemisConsumerPriority) {
+            doSetProperty("artemisConsumerPriority", artemisConsumerPriority);
+            return this;
+        }
+        /**
          * Whether the JmsConsumer processes the Exchange asynchronously. If
          * enabled then the JmsConsumer may pickup the next message from the JMS
          * queue, while the previous message is being processed asynchronously
@@ -1923,6 +1947,7 @@ public interface JmsComponentBuilderFactory {
             case "replyTo": getOrCreateConfiguration((JmsComponent) component).setReplyTo((java.lang.String) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((JmsComponent) component).setTestConnectionOnStartup((boolean) value); return true;
             case "acknowledgementModeName": getOrCreateConfiguration((JmsComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "artemisConsumerPriority": getOrCreateConfiguration((JmsComponent) component).setArtemisConsumerPriority((int) value); return true;
             case "asyncConsumer": getOrCreateConfiguration((JmsComponent) component).setAsyncConsumer((boolean) value); return true;
             case "autoStartup": getOrCreateConfiguration((JmsComponent) component).setAutoStartup((boolean) value); return true;
             case "cacheLevel": getOrCreateConfiguration((JmsComponent) component).setCacheLevel((int) value); return true;
