@@ -72,4 +72,22 @@ public class LambdaRouteBuilderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testLambdaSimple() throws Exception {
+        assertEquals(0, context.getRoutesSize());
+
+        RouteBuilder.addRoutes(context, rb -> rb.from("direct:start").transform(rb.simple("Hello ${body}")).to("mock:result"));
+
+        context.start();
+
+        assertEquals(1, context.getRoutesSize());
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
 }

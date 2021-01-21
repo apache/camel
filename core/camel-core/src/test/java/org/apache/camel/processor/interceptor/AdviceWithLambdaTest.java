@@ -54,6 +54,21 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     // END SNIPPET: e1
 
     @Test
+    public void testAdvisedSimple() throws Exception {
+        AdviceWith.adviceWith(context, null, a -> {
+            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(a.simple("Hello ${body}")).to("log:foo").to("mock:advised");
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
+        getMockEndpoint("mock:advised").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testAdvisedNoLog() throws Exception {
         AdviceWith.adviceWith(context, null, false, a -> {
             a.weaveByToUri("mock:result").remove();
