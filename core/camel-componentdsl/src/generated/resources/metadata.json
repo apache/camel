@@ -3980,7 +3980,7 @@
     "javaType": "org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-infinispan",
+    "artifactId": "camel-infinispan-embedded",
     "version": "3.8.0-SNAPSHOT",
     "scheme": "infinispan-embedded",
     "extendsScheme": "",

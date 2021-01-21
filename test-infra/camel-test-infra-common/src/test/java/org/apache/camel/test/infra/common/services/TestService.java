@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.common.services;
 
-public interface TestService {
+public interface TestService extends AutoCloseable {
 
     /**
      * Register service properties (such as using System.setProperties) so that they can be resolved at distance (ie.:
@@ -35,4 +35,9 @@ public interface TestService {
      * Shuts down the service after the test has completed
      */
     void shutdown();
+
+    @Override
+    default void close() {
+        shutdown();
+    }
 }

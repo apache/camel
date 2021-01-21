@@ -8090,13 +8090,13 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Infinispan Embedded (camel-infinispan)
+     * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-infinispan
+     * Maven coordinates: org.apache.camel:camel-infinispan-embedded
      * 
      * Syntax: <code>infinispan-embedded:cacheName</code>
      * 
@@ -8113,13 +8113,13 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.InfinispanEmbeddedEndpointBuilderFactory.endpointBuilder("infinispan-embedded", path);
     }
     /**
-     * Infinispan Embedded (camel-infinispan)
+     * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-infinispan
+     * Maven coordinates: org.apache.camel:camel-infinispan-embedded
      * 
      * Syntax: <code>infinispan-embedded:cacheName</code>
      * 
