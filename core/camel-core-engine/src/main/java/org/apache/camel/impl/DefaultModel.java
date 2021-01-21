@@ -94,18 +94,28 @@ public class DefaultModel implements Model {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;
         }
-        List<RouteDefinition> list = new ArrayList<>();
-        routeDefinitions.forEach(r -> {
-            if (routeFilter == null || routeFilter.apply(r)) {
-                list.add(r);
+
+        List<RouteDefinition> list;
+        if (routeFilter == null) {
+            list = new ArrayList<>(routeDefinitions);
+        } else {
+            list = new ArrayList<>();
+            for (RouteDefinition r : routeDefinitions) {
+                if (routeFilter.apply(r)) {
+                    list.add(r);
+                }
             }
-        });
+        }
 
         removeRouteDefinitions(list);
-        list.forEach(r -> {
-            modelLifecycleStrategies.forEach(s -> s.onAddRouteDefinition(r));
+
+        for (RouteDefinition r : list) {
+            for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+                s.onAddRouteDefinition(r);
+            }
             this.routeDefinitions.add(r);
-        });
+        }
+
         if (shouldStartRoutes()) {
             getCamelContext().adapt(ModelCamelContext.class).startRouteDefinitions(list);
         }
@@ -174,10 +184,13 @@ public class DefaultModel implements Model {
         if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
             return;
         }
-        routeTemplateDefinitions.forEach(r -> {
-            modelLifecycleStrategies.forEach(s -> s.onAddRouteTemplateDefinition(r));
+
+        for (RouteTemplateDefinition r : routeTemplateDefinitions) {
+            for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+                s.onAddRouteTemplateDefinition(r);
+            }
             this.routeTemplateDefinitions.add(r);
-        });
+        }
     }
 
     @Override
