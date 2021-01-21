@@ -100,7 +100,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
             LOGGER.debug("Processing workflow signalReceived");
 
             swfWorkflowConsumer.signalReceived(parameters);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throwWorkflowException(dataConverter, e);
             throw new IllegalStateException("Unreacheable");
         }
@@ -113,7 +113,7 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
 
             Object result = swfWorkflowConsumer.getWorkflowState(null);
             return dataConverter.toData(result);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throwWorkflowException(dataConverter, e);
             throw new IllegalStateException("Unreachable");
         }

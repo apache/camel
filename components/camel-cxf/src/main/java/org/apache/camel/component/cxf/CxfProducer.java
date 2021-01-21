@@ -119,7 +119,7 @@ public class CxfProducer extends DefaultAsyncProducer {
             if (boi.getOperationInfo().isOneWay()) {
                 callback.done(false);
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             // error occurred before we had a chance to go async
             // so set exception and invoke callback true
             camelExchange.setException(ex);

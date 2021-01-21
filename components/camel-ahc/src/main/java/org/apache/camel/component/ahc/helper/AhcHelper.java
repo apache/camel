@@ -143,7 +143,7 @@ public final class AhcHelper {
                                 "Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI",
                                 exchange);
                     }
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     throw new RuntimeExchangeException(
                             "Cannot analyze the Exchange.HTTP_PATH header, due to: " + t.getMessage(), exchange, t);
                 }

@@ -964,7 +964,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     private static String getXMLString(Element el) {
         try {
             return StaxUtils.toString(el);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //ignore
         }
         return "unknown content";

@@ -91,14 +91,14 @@ public class DirectVmProducer extends DefaultAsyncProducer {
                     if (endpoint.isPropagateProperties()) {
                         exchange.getProperties().putAll(submitted.getProperties());
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     exchange.setException(e);
                 } finally {
                     callback.done(done);
                 }
             });
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
 

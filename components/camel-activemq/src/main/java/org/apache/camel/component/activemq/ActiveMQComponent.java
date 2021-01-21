@@ -225,7 +225,7 @@ public class ActiveMQComponent extends JmsComponent {
         for (Service s : pooledConnectionFactoryServiceList) {
             try {
                 s.stop();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -234,7 +234,7 @@ public class ActiveMQComponent extends JmsComponent {
         for (SingleConnectionFactory s : singleConnectionFactoryList) {
             try {
                 s.destroy();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }

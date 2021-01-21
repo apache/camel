@@ -123,7 +123,7 @@ public final class DefaultBeanProcessorFactory extends ServiceSupport
                     try {
                         LOG.debug("Attempting to create new bean instance from class: {} via auto-wiring enabled", clazz);
                         bean = CamelContextHelper.newInstance(camelContext, clazz);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         LOG.debug("Error creating new bean instance from class: {}. This exception is ignored", clazz, e);
                     }
                 }

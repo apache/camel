@@ -578,7 +578,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         try {
             Object sf = factoryBean.getClass().getMethod("getServiceFactory").invoke(factoryBean);
             sf.getClass().getMethod("setWrapped", Boolean.TYPE).invoke(sf, wrapped);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw new RuntimeException(t);
         }
     }
@@ -1017,7 +1017,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 PropertyBindingSupport.bindProperties(getCamelContext(),
                         this,
                         this.properties);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // TODO: Why dont't we rethrown this exception
                 LOG.warn("Error setting CamelContext. This exception will be ignored.", e);
             }
@@ -1039,7 +1039,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 PropertyBindingSupport.bindProperties(getCamelContext(),
                         this,
                         this.properties);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // TODO: Why dont't we rethrown this exception
                 LOG.warn("Error setting properties. This exception will be ignored.", e);
             }

@@ -91,7 +91,7 @@ public class ConsulRegistry implements Registry {
         }
         try {
             return type.cast(object);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: " + object.getClass().getName()
                          + "expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);

@@ -196,7 +196,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                     IOHelper.close(s3Object);
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
             // ensure all previous gathered s3 objects are closed
             // if there was an exception creating the exchanges in this batch

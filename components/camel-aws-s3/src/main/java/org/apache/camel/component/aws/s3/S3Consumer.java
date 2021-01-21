@@ -130,7 +130,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 Exchange exchange = getEndpoint().createExchange(s3Object);
                 answer.add(exchange);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
             // ensure all previous gathered s3 objects are closed
             // if there was an exception creating the exchanges in this batch
