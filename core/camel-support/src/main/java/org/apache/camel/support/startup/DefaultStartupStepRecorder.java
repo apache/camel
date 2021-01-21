@@ -29,9 +29,6 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public class DefaultStartupStepRecorder extends ServiceSupport implements StartupStepRecorder {
 
-    private final AtomicInteger stepCounter = new AtomicInteger();
-    private final Deque<Integer> currentSteps = new ArrayDeque<>();
-
     private static final StartupStep DISABLED_STEP = new StartupStep() {
         @Override
         public String getType() {
@@ -64,16 +61,19 @@ public class DefaultStartupStepRecorder extends ServiceSupport implements Startu
         }
 
         @Override
-        public void endStep() {
-            // noop
-        }
-
-        @Override
         public long getBeginTime() {
             return 0;
         }
 
+        @Override
+        public void endStep() {
+            // noop
+        }
+
     };
+
+    private final AtomicInteger stepCounter = new AtomicInteger();
+    private final Deque<Integer> currentSteps = new ArrayDeque<>();
 
     private boolean enabled;
     private int maxDepth = -1;
