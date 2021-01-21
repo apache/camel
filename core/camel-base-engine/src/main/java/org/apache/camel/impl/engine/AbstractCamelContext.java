@@ -2742,7 +2742,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         startupStepRecorder.endStep(step);
 
-        if (startupStepRecorder.getStartupRecorderDuration() == 0) {
+        // if we should only record the startup process then stop it right after started
+        if (startupStepRecorder.getStartupRecorderDuration() < 0) {
             startupStepRecorder.stop();
         }
     }

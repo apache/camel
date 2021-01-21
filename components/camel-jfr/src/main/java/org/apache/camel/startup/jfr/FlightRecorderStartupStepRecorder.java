@@ -53,15 +53,21 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             Configuration config = Configuration.getConfiguration(getRecordingProfile());
             rec = new Recording(config);
             rec.setName("Camel Recording");
-            if (getStartupRecorderDuration() == 0) {
+
+            if (!"false".equals(getRecordingDir())) {
+                // recording to disk can be turned off by setting to false
                 Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
                 Path file = Files.createTempFile(dir, "camel-recording", ".jfr");
-                rec.setDumpOnExit(true);
+                // when stopping then the recording is automatic dumped by flight recorder
                 rec.setDestination(file);
-                LOG.info("Java flight recorder will be saved to file on JVM exit: {}", file);
             }
 
-            if (getStartupRecorderDuration() > 0) {
+            if (getStartupRecorderDuration() == 0) {
+                if (rec.getDestination() != null) {
+                    rec.setDumpOnExit(true);
+                    LOG.info("Java flight recorder will be saved to file on JVM exit: {}", rec.getDestination());
+                }
+            } else if (getStartupRecorderDuration() > 0) {
                 rec.setDuration(Duration.ofSeconds(getStartupRecorderDuration()));
                 LOG.info("Starting Java flight recorder with profile: {} and duration: {} seconds", getRecordingProfile(),
                         getStartupRecorderDuration());
@@ -71,8 +77,8 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
                     @Override
                     public void recordingStateChanged(Recording recording) {
                         if (recording == rec && recording.getState().equals(RecordingState.STOPPED)) {
-                            LOG.info("Stopping Java flight recorder after {} seconds elapsed", getStartupRecorderDuration());
-                            dumpRecording();
+                            LOG.info("Java flight recorder stopped after {} seconds and saved to file: {}",
+                                    getStartupRecorderDuration(), rec.getDestination());
                         }
                     }
                 };
@@ -88,37 +94,22 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     public void doStop() throws Exception {
         super.doStop();
 
-        if (rec != null && getStartupRecorderDuration() != 0) {
-            dumpRecording();
-        }
-    }
-
-    protected void dumpRecording() {
-        if (!"false".equals(getRecordingDir())) {
-            try {
-                Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
-                Path file = Files.createTempFile(dir, "camel-recording-", ".jfr");
-                if (rec.getState().equals(RecordingState.RUNNING)) {
-                    // need to do GC to capture details to the recording (specially when its short running)
-                    LOG.info("Stopping Java flight recorder");
-                    System.gc();
-                    rec.stop();
-                }
-                if (rec.getState().equals(RecordingState.STOPPED)) {
-                    rec.dump(file);
-                    LOG.info("Java flight recorder saved to file: {}", file);
-                }
-            } catch (Exception e) {
-                LOG.warn("Error saving Java flight recorder recording to file", e);
+        if (rec != null) {
+            // if < 0 then manual stop the recording
+            if (getStartupRecorderDuration() < 0) {
+                LOG.debug("Stopping Java flight recorder");
+                // do GC before stopping to force flushing data into the recording
+                System.gc();
+                rec.stop();
+                LOG.info("Java flight recorder stopped and saved to file: {}", rec.getDestination());
             }
+            FlightRecorder.unregister(FlightRecorderStartupStep.class);
+            if (frl != null) {
+                FlightRecorder.removeListener(frl);
+            }
+            rec = null;
+            frl = null;
         }
-        FlightRecorder.unregister(FlightRecorderStartupStep.class);
-        if (frl != null) {
-            FlightRecorder.removeListener(frl);
-        }
-
-        rec = null;
-        frl = null;
     }
 
     public FlightRecorderStartupStepRecorder() {
