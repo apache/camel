@@ -266,7 +266,7 @@ class InternalRouteStartupManager {
             // consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
             StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
-                    "Warming up route");
+                    "Warming up Route");
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
                 setupRoute.set(routeService.getRoute());
@@ -311,7 +311,7 @@ class InternalRouteStartupManager {
             }
 
             StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, route.getRouteId(),
-                    "Starting route");
+                    "Starting Route");
 
             // start the service
             for (Consumer consumer : routeService.getInputs().values()) {

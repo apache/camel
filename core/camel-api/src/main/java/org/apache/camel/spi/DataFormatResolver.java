@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
  * Represents a resolver of data formats.
  */
 public interface DataFormatResolver {
+
     /**
      * Creates the given data format given its name.
      *

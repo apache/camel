@@ -231,7 +231,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 String outputId = output.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
                 String eip = reifier.getClass().getSimpleName().replace("Reifier", "");
                 StartupStep step = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder()
-                        .beginStep(Processor.class, outputId, "Creating " + eip + " processor");
+                        .beginStep(Processor.class, outputId, "Creating " + eip + " Processor");
 
                 reifier.addRoutes();
 

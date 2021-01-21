@@ -505,11 +505,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected void doStartStandardServices() {
-        super.doStartStandardServices();
-    }
-
-    @Override
     protected void bindDataFormats() throws Exception {
         // eager lookup data formats and bind to registry so the dataformats can
         // be looked up and used
@@ -605,7 +600,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
                 StartupStepRecorder recorder
                         = getCamelContextReference().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-                StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Creating route");
+                StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Creating Route");
                 Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
                 recorder.endStep(step);
 
