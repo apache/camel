@@ -25,9 +25,13 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "connectionProvider": target.getConfiguration().setConnectionProvider(property(camelContext, reactor.netty.resources.ConnectionProvider.class, value)); return true;
         case "httpclient":
         case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, reactor.netty.http.client.HttpClient.class, value)); return true;
+        case "keynames":
+        case "keyNames": target.getConfiguration().setKeyNames(property(camelContext, java.util.Collection.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, org.apache.camel.component.stitch.client.StitchRegion.class, value)); return true;
+        case "stitchschema":
+        case "stitchSchema": target.getConfiguration().setStitchSchema(property(camelContext, org.apache.camel.component.stitch.client.models.StitchSchema.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -35,7 +39,7 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"connectionProvider","httpClient"};
+        return new String[]{"connectionProvider","httpClient","stitchSchema"};
     }
 
     @Override
@@ -45,9 +49,13 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "connectionProvider": return reactor.netty.resources.ConnectionProvider.class;
         case "httpclient":
         case "httpClient": return reactor.netty.http.client.HttpClient.class;
+        case "keynames":
+        case "keyNames": return java.util.Collection.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "region": return org.apache.camel.component.stitch.client.StitchRegion.class;
+        case "stitchschema":
+        case "stitchSchema": return org.apache.camel.component.stitch.client.models.StitchSchema.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -61,10 +69,23 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "connectionProvider": return target.getConfiguration().getConnectionProvider();
         case "httpclient":
         case "httpClient": return target.getConfiguration().getHttpClient();
+        case "keynames":
+        case "keyNames": return target.getConfiguration().getKeyNames();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "region": return target.getConfiguration().getRegion();
+        case "stitchschema":
+        case "stitchSchema": return target.getConfiguration().getStitchSchema();
         case "token": return target.getConfiguration().getToken();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "keynames":
+        case "keyNames": return java.lang.String.class;
         default: return null;
         }
     }

@@ -39,10 +39,6 @@ public class StitchComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("Table name must be configured on endpoint using syntax stitch:tableName");
-        }
-
         final StitchConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new StitchConfiguration();
 

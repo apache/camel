@@ -77,6 +77,25 @@ public interface StitchComponentBuilderFactory {
             return this;
         }
         /**
+         * A collection of strings representing the Primary Key fields in the
+         * source table. Stitch use these Primary Keys to de-dupe data during
+         * loading If not provided, the table will be loaded in an append-only
+         * manner.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param keyNames the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder keyNames(
+                java.util.Collection<java.lang.String> keyNames) {
+            doSetProperty("keyNames", keyNames);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -115,6 +134,22 @@ public interface StitchComponentBuilderFactory {
         default StitchComponentBuilder region(
                 org.apache.camel.component.stitch.client.StitchRegion region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * A schema that describes the record(s).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.stitch.client.models.StitchSchema&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param stitchSchema the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder stitchSchema(
+                org.apache.camel.component.stitch.client.models.StitchSchema stitchSchema) {
+            doSetProperty("stitchSchema", stitchSchema);
             return this;
         }
         /**
@@ -213,8 +248,10 @@ public interface StitchComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((StitchComponent) component).setConfiguration((org.apache.camel.component.stitch.StitchConfiguration) value); return true;
+            case "keyNames": getOrCreateConfiguration((StitchComponent) component).setKeyNames((java.util.Collection) value); return true;
             case "lazyStartProducer": ((StitchComponent) component).setLazyStartProducer((boolean) value); return true;
             case "region": getOrCreateConfiguration((StitchComponent) component).setRegion((org.apache.camel.component.stitch.client.StitchRegion) value); return true;
+            case "stitchSchema": getOrCreateConfiguration((StitchComponent) component).setStitchSchema((org.apache.camel.component.stitch.client.models.StitchSchema) value); return true;
             case "connectionProvider": getOrCreateConfiguration((StitchComponent) component).setConnectionProvider((reactor.netty.resources.ConnectionProvider) value); return true;
             case "httpClient": getOrCreateConfiguration((StitchComponent) component).setHttpClient((reactor.netty.http.client.HttpClient) value); return true;
             case "autowiredEnabled": ((StitchComponent) component).setAutowiredEnabled((boolean) value); return true;

@@ -18,9 +18,10 @@ package org.apache.camel.component.stitch;
 
 public final class StitchConstants {
     private static final String HEADER_PREFIX = "CamelStitch";
-    // common headers, set by consumer and evaluated by producer
-
-    // headers set by the consumer only
+    // headers evaluated by producer
+    public static final String TABLE_NAME = HEADER_PREFIX + "TableName";
+    public static final String SCHEMA = HEADER_PREFIX + "Schema";
+    public static final String KEY_NAMES = HEADER_PREFIX + "KeyNames";
 
     private StitchConstants() {
     }

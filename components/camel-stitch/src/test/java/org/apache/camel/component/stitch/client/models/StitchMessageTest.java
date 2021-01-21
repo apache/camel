@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.stitch.client.models;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.component.stitch.client.JsonUtils;
 import org.junit.jupiter.api.Test;
 
@@ -40,5 +43,36 @@ class StitchMessageTest {
         assertEquals("{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
                      + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}}",
                 messageAsJson);
+    }
+
+    @Test
+    void testIfNotCreateFromMapFromInvalidData() {
+        final Map<String, Object> data = new LinkedHashMap<>();
+        data.put(StitchMessage.ACTION, "upsert");
+        data.put(StitchMessage.DATA, 1);
+        data.put(StitchMessage.SEQUENCE, 1122544L);
+
+        assertThrows(IllegalArgumentException.class, () -> StitchMessage
+                .fromMap(data)
+                .build());
+    }
+
+    @Test
+    void testIfCreateMap() {
+        final Map<String, Object> data = new LinkedHashMap<>();
+        data.put("id", 2);
+        data.put("name", "Jake");
+
+        final Map<String, Object> message = new LinkedHashMap<>();
+        message.put(StitchMessage.SEQUENCE, 123456L);
+        message.put(StitchMessage.DATA, data);
+
+        final StitchMessage stitchMessage = StitchMessage
+                .fromMap(message)
+                .build();
+
+        assertEquals(StitchMessage.Action.UPSERT, stitchMessage.getAction());
+        assertEquals(data, stitchMessage.getData());
+        assertEquals(123456L, stitchMessage.getSequence());
     }
 }

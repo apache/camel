@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Collection;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -39,6 +40,42 @@ public interface StitchEndpointBuilderFactory {
      * Builder for endpoint for the Stitch component.
      */
     public interface StitchEndpointBuilder extends EndpointProducerBuilder {
+        /**
+         * A collection of strings representing the Primary Key fields in the
+         * source table. Stitch use these Primary Keys to de-dupe data during
+         * loading If not provided, the table will be loaded in an append-only
+         * manner.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param keyNames the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder keyNames(Collection<String> keyNames) {
+            doSetProperty("keyNames", keyNames);
+            return this;
+        }
+        /**
+         * A collection of strings representing the Primary Key fields in the
+         * source table. Stitch use these Primary Keys to de-dupe data during
+         * loading If not provided, the table will be loaded in an append-only
+         * manner.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param keyNames the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder keyNames(String keyNames) {
+            doSetProperty("keyNames", keyNames);
+            return this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -117,6 +154,36 @@ public interface StitchEndpointBuilderFactory {
          */
         default StitchEndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * A schema that describes the record(s).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.stitch.client.models.StitchSchema&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param stitchSchema the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder stitchSchema(Object stitchSchema) {
+            doSetProperty("stitchSchema", stitchSchema);
+            return this;
+        }
+        /**
+         * A schema that describes the record(s).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.stitch.client.models.StitchSchema&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param stitchSchema the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder stitchSchema(String stitchSchema) {
+            doSetProperty("stitchSchema", stitchSchema);
             return this;
         }
         /**
@@ -234,7 +301,7 @@ public interface StitchEndpointBuilderFactory {
          * 
          * Syntax: <code>stitch:tableName</code>
          * 
-         * Path parameter: tableName (required)
+         * Path parameter: tableName
          * The name of the destination table the data is being pushed to. Table
          * names must be unique in each destination schema, or loading issues
          * will occur. Note: The number of characters in the table name should
@@ -262,7 +329,7 @@ public interface StitchEndpointBuilderFactory {
          * 
          * Syntax: <code>stitch:tableName</code>
          * 
-         * Path parameter: tableName (required)
+         * Path parameter: tableName
          * The name of the destination table the data is being pushed to. Table
          * names must be unique in each destination schema, or loading issues
          * will occur. Note: The number of characters in the table name should

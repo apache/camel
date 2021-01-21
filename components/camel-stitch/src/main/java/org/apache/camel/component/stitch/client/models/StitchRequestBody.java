@@ -17,12 +17,12 @@
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.util.ObjectHelper;
@@ -39,10 +39,11 @@ public class StitchRequestBody implements StitchModel {
 
     private final String tableName;
     private final StitchSchema schema;
-    private final List<StitchMessage> messages;
-    private final Set<String> keyNames;
+    private final Collection<StitchMessage> messages;
+    private final Collection<String> keyNames;
 
-    private StitchRequestBody(String tableName, StitchSchema schema, List<StitchMessage> messages, Set<String> keyNames) {
+    private StitchRequestBody(String tableName, StitchSchema schema, Collection<StitchMessage> messages,
+                              Collection<String> keyNames) {
         this.tableName = tableName;
         this.schema = schema;
         this.messages = messages;
@@ -53,6 +54,39 @@ public class StitchRequestBody implements StitchModel {
         return new Builder();
     }
 
+    public static Builder fromStitchRequestBody(final StitchRequestBody body) {
+        return new Builder()
+                .withSchema(body.getSchema())
+                .withTableName(body.getTableName())
+                .withKeyNames(body.getKeyNames())
+                .addMessages(body.getMessages());
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Builder fromMap(final Map<String, Object> data) {
+        final String tableName = ObjectHelper.cast(String.class, data.get(TABLE_NAME));
+        final StitchSchema schema = StitchSchema.builder()
+                .addKeywords(ObjectHelper.cast(Map.class, data.getOrDefault(SCHEMA, Collections.emptyMap())))
+                .build();
+        final Collection<StitchMessage> messages = (Collection<StitchMessage>) ObjectHelper
+                .cast(Collection.class, data.getOrDefault(MESSAGES, Collections.emptyList()))
+                .stream()
+                .filter(ObjectHelper::isNotEmpty)
+                .map(message -> StitchMessage
+                        .fromMap(ObjectHelper.cast(Map.class, message))
+                        .build())
+                .collect(Collectors.toList());
+        final Collection<String> keyNames = ObjectHelper.cast(Collection.class, data.get(KEY_NAMES));
+
+        return new Builder()
+                .withSchema(schema)
+                .withTableName(tableName)
+                .withKeyNames(keyNames)
+                .withSchema(schema)
+                .addMessages(messages);
+    }
+
     public String getTableName() {
         return tableName;
     }
@@ -61,11 +95,11 @@ public class StitchRequestBody implements StitchModel {
         return schema;
     }
 
-    public List<StitchMessage> getMessages() {
+    public Collection<StitchMessage> getMessages() {
         return messages;
     }
 
-    public Set<String> getKeyNames() {
+    public Collection<String> getKeyNames() {
         return keyNames;
     }
 
@@ -84,8 +118,8 @@ public class StitchRequestBody implements StitchModel {
     public static final class Builder {
         private String tableName;
         private StitchSchema schema;
-        private List<StitchMessage> messages = new LinkedList<>();
-        private Set<String> keyNames = new LinkedHashSet<>();
+        private Collection<StitchMessage> messages = new LinkedList<>();
+        private Collection<String> keyNames = new LinkedHashSet<>();
 
         private Builder() {
         }
@@ -97,7 +131,9 @@ public class StitchRequestBody implements StitchModel {
          * @param tableName
          */
         public Builder withTableName(final String tableName) {
-            this.tableName = tableName;
+            if (ObjectHelper.isNotEmpty(tableName)) {
+                this.tableName = tableName;
+            }
             return this;
         }
 
@@ -108,7 +144,9 @@ public class StitchRequestBody implements StitchModel {
          * @param schema
          */
         public Builder withSchema(final StitchSchema schema) {
-            this.schema = schema;
+            if (ObjectHelper.isNotEmpty(schema)) {
+                this.schema = schema;
+            }
             return this;
         }
 
@@ -117,13 +155,17 @@ public class StitchRequestBody implements StitchModel {
          *
          * @param messages
          */
-        public Builder addMessages(final List<StitchMessage> messages) {
-            this.messages.addAll(messages);
+        public Builder addMessages(final Collection<StitchMessage> messages) {
+            if (ObjectHelper.isNotEmpty(messages)) {
+                this.messages.addAll(messages);
+            }
             return this;
         }
 
         public Builder addMessage(final StitchMessage messages) {
-            this.messages.add(messages);
+            if (ObjectHelper.isNotEmpty(messages)) {
+                this.messages.add(messages);
+            }
             return this;
         }
 
@@ -139,9 +181,16 @@ public class StitchRequestBody implements StitchModel {
          * @param keyNames
          */
         public Builder withKeyNames(final String... keyNames) {
-            ObjectHelper.notNull(keyNames, "keyNames");
+            if (ObjectHelper.isNotEmpty(keyNames)) {
+                this.keyNames.addAll(Arrays.stream(keyNames).collect(Collectors.toSet()));
+            }
+            return this;
+        }
 
-            this.keyNames.addAll(Arrays.stream(keyNames).collect(Collectors.toSet()));
+        public Builder withKeyNames(final Collection<String> keyNames) {
+            if (ObjectHelper.isNotEmpty(keyNames)) {
+                this.keyNames.addAll(keyNames);
+            }
             return this;
         }
 

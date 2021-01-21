@@ -80,4 +80,48 @@ class StitchRequestBodyTest {
         assertEquals(expectedJson, new ObjectMapper().writeValueAsString(body.toMap()));
     }
 
+    @Test
+    void testIfNotCreateRequestBodyFromInvalidMap() {
+        final Map<String, Object> data = new LinkedHashMap<>();
+        data.put(StitchRequestBody.TABLE_NAME, "table");
+        data.put(StitchRequestBody.SCHEMA, 1);
+        data.put(StitchRequestBody.MESSAGES, Collections.emptyList());
+        data.put(StitchRequestBody.KEY_NAMES, Collections.emptySet());
+
+        assertThrows(IllegalArgumentException.class, () -> StitchRequestBody.fromMap(data));
+
+        final Map<String, Object> data2 = new LinkedHashMap<>();
+        data2.put(StitchRequestBody.TABLE_NAME, "table");
+        data2.put(StitchRequestBody.SCHEMA, Collections.emptyMap());
+        data2.put(StitchRequestBody.MESSAGES, 12);
+        data2.put(StitchRequestBody.KEY_NAMES, Collections.emptySet());
+
+        assertThrows(IllegalArgumentException.class, () -> StitchRequestBody.fromMap(data2));
+    }
+
+    @Test
+    void testIfCreateRequestBodyFromMap() {
+        final Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("id", Collections.singletonMap("type", "integer"));
+        properties.put("name", Collections.singletonMap("type", "string"));
+        properties.put("age", Collections.singletonMap("type", "integer"));
+        properties.put("has_magic", Collections.singletonMap("type", "boolean"));
+
+        final Map<String, Object> data = new LinkedHashMap<>();
+        data.put(StitchRequestBody.TABLE_NAME, "my_table");
+        data.put(StitchRequestBody.SCHEMA, Collections.singletonMap("properties", properties));
+        data.put(StitchRequestBody.MESSAGES,
+                Collections.singletonList(Collections.singletonMap("data", Collections.singletonMap("id", 2))));
+        data.put(StitchRequestBody.KEY_NAMES, Collections.singletonList("test_key"));
+
+        final StitchRequestBody requestBody = StitchRequestBody
+                .fromMap(data)
+                .build();
+
+        assertEquals("my_table", requestBody.getTableName());
+        assertEquals(Collections.singletonMap("properties", properties), requestBody.getSchema().getKeywords());
+        assertEquals(Collections.singletonMap("id", 2), requestBody.getMessages().stream().findFirst().get().getData());
+        assertEquals("test_key", requestBody.getKeyNames().stream().findFirst().get());
+    }
+
 }

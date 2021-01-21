@@ -19,6 +19,8 @@ package org.apache.camel.component.stitch.client.models;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#schema-object
  */
@@ -54,12 +56,16 @@ public class StitchSchema implements StitchModel {
          * info about JSON schemas.
          */
         public Builder addKeywords(final Map<String, Object> keywords) {
-            this.keywords.putAll(keywords);
+            if (ObjectHelper.isNotEmpty(keywords)) {
+                this.keywords.putAll(keywords);
+            }
             return this;
         }
 
         public Builder addKeyword(final String key, final Object value) {
-            this.keywords.put(key, value);
+            if (ObjectHelper.isNotEmpty(key)) {
+                this.keywords.put(key, value);
+            }
             return this;
         }
 

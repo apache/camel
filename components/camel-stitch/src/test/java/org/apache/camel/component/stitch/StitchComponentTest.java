@@ -22,10 +22,6 @@ class StitchComponentTest extends CamelTestSupport {
 
     @Test
     void testIfNotAllProperties() {
-        final String uri = "stitch:?token=mytoken&region=north_america";
-
-        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint(uri, StitchEndpoint.class));
-
         final String uri2 = "stitch:my_table?region=north_america";
 
         assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint(uri2, StitchEndpoint.class));

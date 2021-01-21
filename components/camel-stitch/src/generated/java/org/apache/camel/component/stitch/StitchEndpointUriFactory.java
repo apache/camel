@@ -20,12 +20,14 @@ public class StitchEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(6);
+        Set<String> props = new HashSet<>(8);
+        props.add("stitchSchema");
         props.add("httpClient");
         props.add("lazyStartProducer");
         props.add("connectionProvider");
         props.add("region");
         props.add("tableName");
+        props.add("keyNames");
         props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
@@ -45,7 +47,7 @@ public class StitchEndpointUriFactory extends org.apache.camel.support.component
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "tableName", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "tableName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

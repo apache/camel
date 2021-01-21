@@ -38,18 +38,20 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *tableName* | *Required* The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destinations allowed limits or data will rejected. |  | String
+| *tableName* | The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destinations allowed limits or data will rejected. |  | String
 |===
 
 
-=== Query Parameters (5 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *keyNames* (producer) | A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | Collection
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
+| *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
 | *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
 | *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
 | *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
@@ -58,7 +60,7 @@ with the following path and query parameters:
 
 == Component Options
 // component options: START
-The Stitch component supports 7 options, which are listed below.
+The Stitch component supports 9 options, which are listed below.
 
 
 
@@ -66,8 +68,10 @@ The Stitch component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (producer) | The component configurations |  | StitchConfiguration
+| *keyNames* (producer) | A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | Collection
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
+| *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
 | *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
 | *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean

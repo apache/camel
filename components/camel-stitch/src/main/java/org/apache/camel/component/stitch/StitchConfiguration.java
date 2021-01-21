@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.stitch;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.stitch.client.StitchRegion;
+import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -29,13 +33,17 @@ import reactor.netty.resources.ConnectionProvider;
 public class StitchConfiguration implements Cloneable {
 
     @UriPath
-    @Metadata(required = true)
     private String tableName;
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String token;
     @UriParam(label = "producer", defaultValue = "europe")
     private StitchRegion region = StitchRegion.EUROPE;
+    @UriParam(label = "producer")
+    @Metadata(autowired = true)
+    private StitchSchema stitchSchema;
+    @UriParam(label = "producer")
+    private Collection<String> keyNames = new HashSet<>();
     @UriParam(label = "producer,advance")
     @Metadata(autowired = true)
     private HttpClient httpClient;
@@ -78,6 +86,29 @@ public class StitchConfiguration implements Cloneable {
 
     public void setRegion(StitchRegion region) {
         this.region = region;
+    }
+
+    /**
+     * A schema that describes the record(s)
+     */
+    public StitchSchema getStitchSchema() {
+        return stitchSchema;
+    }
+
+    public void setStitchSchema(StitchSchema stitchSchema) {
+        this.stitchSchema = stitchSchema;
+    }
+
+    /**
+     * A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to
+     * de-dupe data during loading If not provided, the table will be loaded in an append-only manner.
+     */
+    public Collection<String> getKeyNames() {
+        return keyNames;
+    }
+
+    public void setKeyNames(Collection<String> keyNames) {
+        this.keyNames = keyNames;
     }
 
     /**

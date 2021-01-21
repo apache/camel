@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.stitch.client.models;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -29,6 +30,9 @@ public class StitchMessage implements StitchModel {
     public static final String ACTION = "action";
     public static final String SEQUENCE = "sequence";
     public static final String DATA = "data";
+
+    private static final Action DEFAULT_ACTION = Action.UPSERT;
+    private static final long DEFAULT_SEQUENCE = System.currentTimeMillis();
 
     public enum Action {
         UPSERT
@@ -46,6 +50,18 @@ public class StitchMessage implements StitchModel {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Builder fromMap(final Map<String, Object> data) {
+        final Action action = Action.valueOf(data.getOrDefault(ACTION, DEFAULT_ACTION.name()).toString().toUpperCase());
+        final long sequence = ObjectHelper.cast(Long.class, data.getOrDefault(SEQUENCE, DEFAULT_SEQUENCE));
+        final Map<String, Object> inputData = ObjectHelper.cast(Map.class, data.getOrDefault(DATA, Collections.emptyMap()));
+
+        return new Builder()
+                .withAction(action)
+                .withData(inputData)
+                .withSequence(sequence);
     }
 
     public Action getAction() {
@@ -72,8 +88,8 @@ public class StitchMessage implements StitchModel {
     }
 
     public static final class Builder {
-        private Action action = Action.UPSERT;
-        private long sequence = System.currentTimeMillis();
+        private Action action;
+        private long sequence;
         private Map<String, Object> data = new LinkedHashMap<>();
 
         private Builder() {
@@ -87,7 +103,9 @@ public class StitchMessage implements StitchModel {
          * @param action
          */
         public Builder withAction(final Action action) {
-            this.action = action;
+            if (ObjectHelper.isNotEmpty(action)) {
+                this.action = action;
+            }
             return this;
         }
 
@@ -102,7 +120,9 @@ public class StitchMessage implements StitchModel {
          * @param sequence
          */
         public Builder withSequence(final long sequence) {
-            this.sequence = sequence;
+            if (ObjectHelper.isNotEmpty(sequence)) {
+                this.sequence = sequence;
+            }
             return this;
         }
 
@@ -113,12 +133,16 @@ public class StitchMessage implements StitchModel {
          * @param data
          */
         public Builder withData(final Map<String, Object> data) {
-            this.data.putAll(data);
+            if (ObjectHelper.isNotEmpty(data)) {
+                this.data.putAll(data);
+            }
             return this;
         }
 
         public Builder withData(final String key, final Object data) {
-            this.data.put(key, data);
+            if (ObjectHelper.isNotEmpty(key)) {
+                this.data.put(key, data);
+            }
             return this;
         }
 
@@ -126,6 +150,15 @@ public class StitchMessage implements StitchModel {
             if (ObjectHelper.isEmpty(data)) {
                 throw new IllegalArgumentException("Data cannot be empty.");
             }
+
+            if (ObjectHelper.isEmpty(action)) {
+                action = DEFAULT_ACTION;
+            }
+
+            if (ObjectHelper.isEmpty(sequence)) {
+                sequence = DEFAULT_SEQUENCE;
+            }
+
             return new StitchMessage(action, sequence, data);
         }
     }
