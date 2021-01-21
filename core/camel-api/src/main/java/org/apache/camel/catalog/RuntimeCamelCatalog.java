@@ -26,8 +26,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 
 /**
- * Runtime catalog which limited API needed by components that supports {@link ComponentVerifierExtension} or
- * {@link SendDynamicAware}.
+ * Runtime catalog which limited API needed by components that supports {@link ComponentVerifierExtension}.
  */
 public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
