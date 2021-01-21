@@ -90,6 +90,9 @@ public class JmsEndpoint extends DefaultEndpoint
     @UriParam
     private JmsConfiguration configuration;
 
+    public JmsEndpoint() {
+    }
+
     public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain,
                        JmsConfiguration configuration) {
         super(UnsafeUriCharactersEncoder.encode(uri), component);
