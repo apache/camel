@@ -46,6 +46,7 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest.Builder;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
@@ -71,10 +72,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         if (getConfiguration().isMoveAfterRead()) {
             try {
-                ListObjectsRequest.Builder builder = ListObjectsRequest.builder();
-                builder.bucket(getConfiguration().getDestinationBucket());
-                builder.maxKeys(maxMessagesPerPoll);
-                getAmazonS3Client().listObjects(builder.build());
+                getAmazonS3Client().headBucket(HeadBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build());
                 LOG.trace("Bucket [{}] already exists", getConfiguration().getDestinationBucket());
                 return;
             } catch (AwsServiceException ase) {
