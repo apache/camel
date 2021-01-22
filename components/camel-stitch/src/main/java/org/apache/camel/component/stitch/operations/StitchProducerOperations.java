@@ -1,12 +1,14 @@
 package org.apache.camel.component.stitch.operations;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.stitch.StitchConfiguration;
 import org.apache.camel.component.stitch.StitchConstants;
@@ -18,6 +20,7 @@ import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 public class StitchProducerOperations {
 
@@ -35,61 +38,96 @@ public class StitchProducerOperations {
     }
 
     public boolean sendEvents(
-            final Message inMessage, final Consumer<List<StitchResponse>> resultCallback, final AsyncCallback callback) {
+            final Message inMessage, final Consumer<StitchResponse> resultCallback, final AsyncCallback callback) {
+        sendAsyncEvents(inMessage)
+                .subscribe(resultCallback, error -> {
+                    // error but we continue
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Error processing async exchange with error: {}", error.getMessage());
+                    }
+                    inMessage.getExchange().setException(error);
+                    callback.done(false);
+                }, () -> {
+                    // we are done from everything, so mark it as sync done
+                    LOG.trace("All events with exchange have been sent successfully.");
+                    callback.done(false);
+                });
 
         return false;
     }
 
+    private Mono<StitchResponse> sendAsyncEvents(final Message inMessage) {
+        return client.batch(createStitchRecords(inMessage));
+    }
+
+    @SuppressWarnings("unchecked")
     private StitchRequestBody createStitchRecords(final Message inMessage) {
-        // check if our exchange is list or contain some values
         if (inMessage.getBody() instanceof StitchRequestBody) {
-            return createStitchRequestBodyFromStitchRequestBody(inMessage, inMessage.getBody(StitchRequestBody.class));
+            return createStitchRequestBodyFromStitchRequestBody(inMessage.getBody(StitchRequestBody.class), inMessage);
         }
 
         if (inMessage.getBody() instanceof StitchMessage) {
-            return createStitchRequestBodyFromStitchMessage(inMessage, inMessage.getBody(StitchMessage.class));
+            return createStitchRequestBodyFromStitchMessages(Collections.singletonList(inMessage.getBody(StitchMessage.class)),
+                    inMessage);
         }
 
         if (inMessage.getBody() instanceof Iterable) {
-            return null;
+            return createStitchRequestBodyFromIterable(inMessage.getBody(Iterable.class), inMessage);
         }
 
         if (inMessage.getBody() instanceof Map) {
-            return null;
+            return createStitchRecordFromMap(inMessage.getBody(Map.class), inMessage);
         }
 
-        // we have only a single event here
-        return null;
+        throw new IllegalArgumentException("Message body data `" + inMessage.getBody() + "` type is not supported");
     }
 
     private StitchRequestBody createStitchRequestBodyFromStitchRequestBody(
-            final Message message, final StitchRequestBody requestBody) {
-        return StitchRequestBody.fromStitchRequestBody(requestBody)
+            final StitchRequestBody requestBody, final Message message) {
+        return createStitchRecordFromBuilder(StitchRequestBody.fromStitchRequestBody(requestBody), message);
+    }
+
+    private StitchRequestBody createStitchRequestBodyFromStitchMessages(
+            final Collection<StitchMessage> stitchMessages, final Message message) {
+        final StitchRequestBody.Builder builder = StitchRequestBody.builder()
+                .addMessages(stitchMessages);
+
+        return createStitchRecordFromBuilder(builder, message);
+    }
+
+    @SuppressWarnings("unchecked")
+    private StitchRequestBody createStitchRequestBodyFromIterable(final Iterable<Object> inputData, final Message message) {
+        final Collection<StitchMessage> stitchMessages = new LinkedList<>();
+
+        inputData.forEach(data -> {
+            if (data instanceof StitchMessage) {
+                stitchMessages.add((StitchMessage) data);
+            } else if (data instanceof Map) {
+                stitchMessages.add(StitchMessage.fromMap(ObjectHelper.cast(Map.class, data)).build());
+            } else if (data instanceof StitchRequestBody) {
+                stitchMessages.addAll(((StitchRequestBody) data).getMessages());
+            } else if (data instanceof Message) {
+                stitchMessages.addAll(createStitchRecords((Message) data).getMessages());
+            } else if (data instanceof Exchange) {
+                stitchMessages.addAll(createStitchRecords(((Exchange) data).getMessage()).getMessages());
+            } else {
+                throw new IllegalArgumentException("Input data `" + data + "` type is not supported");
+            }
+        });
+
+        return createStitchRequestBodyFromStitchMessages(stitchMessages, message);
+    }
+
+    private StitchRequestBody createStitchRecordFromMap(final Map<String, Object> data, final Message message) {
+        return createStitchRecordFromBuilder(StitchRequestBody.fromMap(data), message);
+    }
+
+    private StitchRequestBody createStitchRecordFromBuilder(final StitchRequestBody.Builder builder, final Message message) {
+        return builder
                 .withSchema(getStitchSchema(message))
                 .withTableName(getTableName(message))
                 .withKeyNames(getKeyNames(message))
                 .build();
-    }
-
-    private StitchRequestBody createStitchRequestBodyFromStitchMessage(
-            final Message message, final StitchMessage stitchMessage) {
-        return StitchRequestBody
-                .builder()
-                .addMessage(stitchMessage)
-                .withKeyNames(getKeyNames(message))
-                .withSchema(getStitchSchema(message))
-                .withTableName(getTableName(message))
-                .withKeyNames(getKeyNames(message))
-                .build();
-    }
-
-    private StitchRequestBody createStitchRecordFromMap(final Message message, final Map<String, Object> data) {
-        // let's override things
-        if (ObjectHelper.isNotEmpty(getTableName(message))) {
-            data.put(StitchRequestBody.TABLE_NAME, getTableName(message));
-        }
-
-        return StitchRequestBody.fromMap(data).build();
     }
 
     private String getTableName(final Message message) {
