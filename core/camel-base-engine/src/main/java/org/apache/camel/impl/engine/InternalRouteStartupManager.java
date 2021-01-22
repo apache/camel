@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Internal route startup manager used by {@link AbstractCamelContext} to safely start internal route services during
  * starting routes.
- *
+ * <p>
  * This code has been refactored out of {@link AbstractCamelContext} to its own class.
  */
 class InternalRouteStartupManager {
@@ -67,6 +67,37 @@ class InternalRouteStartupManager {
      */
     public Route getSetupRoute() {
         return setupRoute.get();
+    }
+
+    /**
+     * Initializes the routes
+     *
+     * @param  routeServices the routes to initialize
+     * @throws Exception     is thrown if error initializing routes
+     */
+    protected void doInitRoutes(Map<String, RouteService> routeServices)
+            throws Exception {
+
+        abstractCamelContext.setStartingRoutes(true);
+        try {
+            for (RouteService routeService : routeServices.values()) {
+                StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
+                        "Initializing Route");
+                try {
+                    LOG.debug("Initializing route id: {}", routeService.getId());
+                    setupRoute.set(routeService.getRoute());
+                    // initializing route is called doSetup as we do not want to change the service state on the RouteService
+                    // so it can remain as stopped, when Camel is booting as this was the previous behavior - otherwise its state
+                    // would be initialized
+                    routeService.setUp();
+                } finally {
+                    setupRoute.remove();
+                    abstractCamelContext.getStartupStepRecorder().endStep(step);
+                }
+            }
+        } finally {
+            abstractCamelContext.setStartingRoutes(false);
+        }
     }
 
     /**
@@ -200,7 +231,7 @@ class InternalRouteStartupManager {
     }
 
     /**
-     * @see #safelyStartRouteServices(boolean,boolean,boolean,boolean,Collection)
+     * @see #safelyStartRouteServices(boolean, boolean, boolean, boolean, Collection)
      */
     protected synchronized void safelyStartRouteServices(
             boolean forceAutoStart, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
@@ -270,6 +301,8 @@ class InternalRouteStartupManager {
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
                 setupRoute.set(routeService.getRoute());
+                // ensure we setup before warmup
+                routeService.setUp();
                 routeService.warmUp();
             } finally {
                 setupRoute.remove();

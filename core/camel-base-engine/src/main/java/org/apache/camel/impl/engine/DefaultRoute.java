@@ -48,6 +48,7 @@ import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
@@ -156,8 +157,9 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
-    public void onStartingServices(List<Service> services) throws Exception {
-        addServices(services);
+    public void initializeServices() throws Exception {
+        // gather all the services for this route
+        gatherServices(services);
     }
 
     @Override
@@ -174,7 +176,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     public void warmUp() {
-        getServices().clear();
+        // noop
     }
 
     /**
@@ -570,7 +572,23 @@ public class DefaultRoute extends ServiceSupport implements Route {
      * Factory method to lazily create the complete list of services required for this route such as adding the
      * processor or consumer
      */
-    protected void addServices(List<Service> services) throws Exception {
+    protected void gatherServices(List<Service> services) throws Exception {
+        // first gather the root services
+        gatherRootServices(services);
+        // and then all the child services
+        List<Service> children = new ArrayList<>();
+        for (Service service : services) {
+            Set<Service> extra = ServiceHelper.getChildServices(service);
+            children.addAll(extra);
+        }
+        for (Service extra : children) {
+            if (!services.contains(extra)) {
+                services.add(extra);
+            }
+        }
+    }
+
+    protected void gatherRootServices(List<Service> services) throws Exception {
         Endpoint endpoint = getEndpoint();
         consumer = endpoint.createConsumer(processor);
         if (consumer != null) {

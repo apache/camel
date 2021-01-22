@@ -130,12 +130,11 @@ public interface Route extends RuntimeConfiguration {
     Endpoint getEndpoint();
 
     /**
-     * A strategy callback allowing special initialization when services are starting.
+     * A strategy callback allowing special initialization when services are initializing.
      *
-     * @param  services  the service
      * @throws Exception is thrown in case of error
      */
-    void onStartingServices(List<Service> services) throws Exception;
+    void initializeServices() throws Exception;
 
     /**
      * Returns the services for this particular route
