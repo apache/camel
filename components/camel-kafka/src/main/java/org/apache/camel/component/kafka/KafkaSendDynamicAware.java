@@ -56,7 +56,6 @@ public class KafkaSendDynamicAware extends ServiceSupport implements SendDynamic
         this.camelContext = camelContext;
     }
 
-
     @Override
     public boolean isLenientProperties() {
         return false;
