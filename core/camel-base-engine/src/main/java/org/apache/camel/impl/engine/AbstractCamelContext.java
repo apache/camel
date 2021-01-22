@@ -2708,8 +2708,9 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        // start the route definitions before the routes is started
+        // init the route definitions before the routes is started
         StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, getName(), "Initializing routes");
+        // the method is called start but at this point it will only initialize (as context is starting up)
         startRouteDefinitions();
         startupStepRecorder.endStep(subStep);
 
