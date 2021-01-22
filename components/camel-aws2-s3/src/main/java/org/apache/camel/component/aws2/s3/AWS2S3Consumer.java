@@ -72,7 +72,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         if (getConfiguration().isMoveAfterRead()) {
             try {
-                getAmazonS3Client().headBucket(HeadBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build());
+                getAmazonS3Client()
+                        .headBucket(HeadBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build());
                 LOG.trace("Bucket [{}] already exists", getConfiguration().getDestinationBucket());
                 return;
             } catch (AwsServiceException ase) {
