@@ -314,8 +314,8 @@ public abstract class AbstractCamelContext extends BaseService
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
+    private long initTaken;
     private long startDate;
-    private long bootDate;
 
     private SSLContextParameters sslContextParameters;
 
@@ -2535,8 +2535,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doBuild() throws Exception {
-        bootDate = System.currentTimeMillis();
-
         // auto-detect step recorder from classpath if none has been explicit configured
         if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
             StartupStepRecorder fr = getBootstrapFactoryFinder()
@@ -2593,6 +2591,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doInit() throws Exception {
+        StopWatch watch = new StopWatch();
+
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Initializing CamelContext");
 
         // init the route controller
@@ -2738,6 +2738,9 @@ public abstract class AbstractCamelContext extends BaseService
         EventHelper.notifyCamelContextInitialized(this);
 
         startupStepRecorder.endStep(step);
+
+        initTaken = watch.taken();
+        LOG.info("Apache Camel {} ({}) initialized in {}", getVersion(), getName(), TimeUtils.printDuration(initTaken));
     }
 
     @Override
@@ -2765,7 +2768,9 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartContext() throws Exception {
-        LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Apache Camel {} ({}) is starting", getVersion(), getName());
+        }
         vetoed = null;
         startDate = System.currentTimeMillis();
         stopWatch.restart();
@@ -2874,9 +2879,11 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        String start = TimeUtils.printDuration(stopWatch.taken());
-        String boot = TimeUtils.printDuration(new StopWatch(bootDate).taken());
-        LOG.info("Apache Camel {} ({}) started in {} (incl boot {})", getVersion(), getName(), start, boot);
+        long taken = stopWatch.taken();
+        long total = initTaken + taken;
+        String start = TimeUtils.printDuration(taken);
+        String boot = TimeUtils.printDuration(total);
+        LOG.info("Apache Camel {} ({}) started in {} (with init {})", getVersion(), getName(), start, boot);
     }
 
     protected void doStartCamel() throws Exception {
@@ -3176,7 +3183,6 @@ public abstract class AbstractCamelContext extends BaseService
 
         // and clear start date
         startDate = 0;
-        bootDate = 0;
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object

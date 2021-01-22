@@ -168,7 +168,7 @@ public class RouteService extends ChildServiceSupport {
                     list.add(service);
                 }
             }
-            initChildServices(route, list);
+            initChildServices(list);
         }
     }
 
@@ -249,8 +249,7 @@ public class RouteService extends ChildServiceSupport {
         }
 
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-            // TODO: childrenService + some more
-            // gather list of services to stop as we need to start child services as well
+            // gather list of services to stop
             Set<Service> services = gatherChildServices();
 
             // stop services
@@ -285,8 +284,7 @@ public class RouteService extends ChildServiceSupport {
     @Override
     protected void doShutdown() {
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-            // TODO: childrenService + some more
-            // gather list of services to stop as we need to start child services as well
+            // gather list of services to shutdown
             Set<Service> services = gatherChildServices();
 
             // shutdown services
@@ -351,9 +349,10 @@ public class RouteService extends ChildServiceSupport {
         }
     }
 
-    protected void initChildServices(Route route, List<Service> services) {
+    protected void initChildServices(List<Service> services) {
         for (Service service : services) {
             ServiceHelper.initService(service);
+            // add and remember as child service
             addChildService(service);
         }
     }
@@ -385,7 +384,6 @@ public class RouteService extends ChildServiceSupport {
      * Gather all child services
      */
     private Set<Service> gatherChildServices() {
-        // gather list of services to stop as we need to start child services as well
         List<Service> services = new ArrayList<>(route.getServices());
         // also get route scoped services
         doGetRouteServices(services);
