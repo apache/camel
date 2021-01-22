@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
@@ -51,9 +50,8 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     }
 
     @Override
-    public List<Consumer> getInputs() {
-        Map<Route, Consumer> inputs = routeService.getInputs();
-        return new ArrayList<>(inputs.values());
+    public Consumer getInput() {
+        return routeService.getInput();
     }
 
     @Override

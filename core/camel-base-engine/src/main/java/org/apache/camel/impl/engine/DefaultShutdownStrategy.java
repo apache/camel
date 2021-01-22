@@ -375,9 +375,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 order.getRoute().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
 
-            for (Consumer consumer : order.getInputs()) {
-                shutdownNow(order.getRoute().getId(), consumer);
-            }
+            // shutdown the route consumer
+            shutdownNow(order.getRoute().getId(), order.getInput());
         }
     }
 
@@ -574,52 +573,50 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                             order.getRoute().getId(), shutdownRoute, shutdownRunningTask);
                 }
 
-                for (Consumer consumer : order.getInputs()) {
+                Consumer consumer = order.getInput();
+                boolean suspend = false;
 
-                    boolean suspend = false;
+                // assume we should shutdown if we are not deferred
+                boolean shutdown = shutdownRoute != ShutdownRoute.Defer;
 
-                    // assume we should shutdown if we are not deferred
-                    boolean shutdown = shutdownRoute != ShutdownRoute.Defer;
+                if (shutdown) {
+                    // if we are to shutdown then check whether we can suspend instead as its a more
+                    // gentle way to graceful shutdown
 
-                    if (shutdown) {
-                        // if we are to shutdown then check whether we can suspend instead as its a more
-                        // gentle way to graceful shutdown
-
-                        // some consumers do not support shutting down so let them decide
-                        // if a consumer is suspendable then prefer to use that and then shutdown later
-                        if (consumer instanceof ShutdownAware) {
-                            shutdown = !((ShutdownAware) consumer).deferShutdown(shutdownRunningTask);
-                        }
-                        if (shutdown && consumer instanceof Suspendable) {
-                            // we prefer to suspend over shutdown
-                            suspend = true;
-                        }
+                    // some consumers do not support shutting down so let them decide
+                    // if a consumer is suspendable then prefer to use that and then shutdown later
+                    if (consumer instanceof ShutdownAware) {
+                        shutdown = !((ShutdownAware) consumer).deferShutdown(shutdownRunningTask);
                     }
-
-                    // log at info level when a route has been shutdown (otherwise log at debug level to not be too noisy)
-                    if (suspend) {
-                        // only suspend it and then later shutdown it
-                        suspendNow(order.getRoute().getId(), consumer);
-                        // add it to the deferred list so the route will be shutdown later
-                        deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        // use basic endpoint uri to not log verbose details or potential sensitive data
-                        String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
-                        uri = URISupport.sanitizeUri(uri);
-                        LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(),
-                                uri);
-                    } else if (shutdown) {
-                        shutdownNow(order.getRoute().getId(), consumer);
-                        // use basic endpoint uri to not log verbose details or potential sensitive data
-                        String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
-                        uri = URISupport.sanitizeUri(uri);
-                        LOG.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), uri);
-                    } else {
-                        // we will stop it later, but for now it must run to be able to help all inflight messages
-                        // be safely completed
-                        deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.debug("Route: " + order.getRoute().getId()
-                                  + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
+                    if (shutdown && consumer instanceof Suspendable) {
+                        // we prefer to suspend over shutdown
+                        suspend = true;
                     }
+                }
+
+                // log at info level when a route has been shutdown (otherwise log at debug level to not be too noisy)
+                if (suspend) {
+                    // only suspend it and then later shutdown it
+                    suspendNow(order.getRoute().getId(), consumer);
+                    // add it to the deferred list so the route will be shutdown later
+                    deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
+                    LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(),
+                            uri);
+                } else if (shutdown) {
+                    shutdownNow(order.getRoute().getId(), consumer);
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
+                    LOG.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), uri);
+                } else {
+                    // we will stop it later, but for now it must run to be able to help all inflight messages
+                    // be safely completed
+                    deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
+                    LOG.debug("Route: " + order.getRoute().getId()
+                              + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
                 }
             }
 

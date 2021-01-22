@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class RouteService extends ChildServiceSupport {
     private final CamelContext camelContext;
     private final Route route;
     private boolean removingRoutes;
-    private final Map<Route, Consumer> inputs = new HashMap<>();
+    private Consumer input;
     private final AtomicBoolean warmUpDone = new AtomicBoolean();
     private final AtomicBoolean endpointDone = new AtomicBoolean();
 
@@ -98,13 +97,8 @@ public class RouteService extends ChildServiceSupport {
         return answer;
     }
 
-    /**
-     * Gets the inputs to the routes.
-     *
-     * @return list of {@link Consumer} as inputs for the routes
-     */
-    public Map<Route, Consumer> getInputs() {
-        return inputs;
+    public Consumer getInput() {
+        return input;
     }
 
     public boolean isRemovingRoutes() {
@@ -173,7 +167,7 @@ public class RouteService extends ChildServiceSupport {
                     }
 
                     if (service instanceof Consumer) {
-                        inputs.put(route, (Consumer) service);
+                        this.input = (Consumer) service;
                     } else {
                         childServices.add(service);
                     }
@@ -301,7 +295,7 @@ public class RouteService extends ChildServiceSupport {
         camelContext.adapt(ExtendedCamelContext.class).removeRoute(route);
 
         // clear inputs on shutdown
-        inputs.clear();
+        input = null;
         warmUpDone.set(false);
         endpointDone.set(false);
     }

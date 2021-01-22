@@ -313,20 +313,19 @@ class InternalRouteStartupManager {
             StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, route.getRouteId(),
                     "Starting Route");
 
-            // start the service
-            for (Consumer consumer : routeService.getInputs().values()) {
+            // do some preparation before starting the consumer on the route
+            Consumer consumer = routeService.getInput();
+            if (consumer != null) {
                 Endpoint endpoint = consumer.getEndpoint();
 
-                // check multiple consumer violation, with the other routes to
-                // be started
+                // check multiple consumer violation, with the other routes to be started
                 if (!doCheckMultipleConsumerSupportClash(endpoint, routeInputs)) {
                     throw new FailedToStartRouteException(
                             routeService.getId(), "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                 }
 
                 // check for multiple consumer violations with existing routes
-                // which
-                // have already been started, or is currently starting
+                // which have already been started, or is currently starting
                 List<Endpoint> existingEndpoints = new ArrayList<>();
                 for (Route existingRoute : abstractCamelContext.getRoutes()) {
                     if (route.getId().equals(existingRoute.getId())) {

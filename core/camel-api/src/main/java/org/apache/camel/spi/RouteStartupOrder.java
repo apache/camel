@@ -46,11 +46,11 @@ public interface RouteStartupOrder {
     Route getRoute();
 
     /**
-     * Gets the input to this route (often only one consumer)
+     * Gets the input to this route
      *
-     * @return the input consumers.
+     * @return the consumer.
      */
-    List<Consumer> getInputs();
+    Consumer getInput();
 
     /**
      * Gets the services to this route.
