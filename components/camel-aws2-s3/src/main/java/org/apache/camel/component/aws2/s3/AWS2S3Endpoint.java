@@ -44,6 +44,8 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 import software.amazon.awssdk.utils.IoUtils;
@@ -107,11 +109,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         String prefix = getConfiguration().getPrefix();
 
         try {
-            ListObjectsRequest.Builder builder = ListObjectsRequest.builder();
-            builder.bucket(bucketName);
-            builder.prefix(prefix);
-            builder.maxKeys(maxMessagesPerPoll);
-            s3Client.listObjects(builder.build());
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
             LOG.trace("Bucket [{}] already exists", bucketName);
             return;
         } catch (AwsServiceException ase) {
