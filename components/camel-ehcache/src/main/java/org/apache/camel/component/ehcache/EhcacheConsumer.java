@@ -26,15 +26,24 @@ import org.ehcache.event.CacheEventListener;
 
 public class EhcacheConsumer extends DefaultConsumer implements CacheEventListener<Object, Object> {
     private final EhcacheConfiguration configuration;
-    private final EhcacheManager manager;
-    private final Cache cache;
+    private final String cacheName;
+    private Cache cache;
 
     public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration,
                            Processor processor) throws Exception {
         super(endpoint, processor);
-
         this.configuration = configuration;
-        this.manager = endpoint.getManager();
+        this.cacheName = cacheName;
+    }
+
+    @Override
+    public EhcacheEndpoint getEndpoint() {
+        return (EhcacheEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         Class<?> kt = null;
         if (configuration.getKeyType() != null) {
@@ -44,12 +53,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
         if (configuration.getValueType() != null) {
             vt = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getValueType());
         }
-        this.cache = manager.getCache(cacheName, kt, vt);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+        this.cache = getEndpoint().getManager().getCache(cacheName, kt, vt);
 
         this.cache.getRuntimeConfiguration().registerCacheEventListener(
                 this,

@@ -125,8 +125,8 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (eventBusRef != null && eventBus == null) {
             eventBus = CamelContextHelper.mandatoryLookup(getCamelContext(), eventBusRef, EventBus.class);
