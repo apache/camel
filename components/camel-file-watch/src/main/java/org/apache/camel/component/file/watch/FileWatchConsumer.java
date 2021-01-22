@@ -238,7 +238,7 @@ public class FileWatchConsumer extends DefaultConsumer {
                     try {
                         Exchange exchange = prepareExchange(event);
                         getProcessor().process(exchange);
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         handleException(t);
                     }
                 }

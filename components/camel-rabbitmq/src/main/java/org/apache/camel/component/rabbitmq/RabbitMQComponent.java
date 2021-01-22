@@ -175,7 +175,7 @@ public class RabbitMQComponent extends DefaultComponent {
                 } else {
                     exchangeName = "";
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }

@@ -139,7 +139,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         public void onMessage(Message message) {
             try {
                 doOnMessage(message);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 if (e instanceof JMSException) {
                     if (endpoint.getExceptionListener() != null) {
                         endpoint.getExceptionListener().onException((JMSException) e);
@@ -169,14 +169,14 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         if (exceptionListener != null) {
             try {
                 exceptionListener.onException(exception);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
         if (endpoint.getExceptionListener() != null) {
             try {
                 endpoint.getExceptionListener().onException(exception);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -196,7 +196,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             LOG.debug("Successfully recovered JMS Connection (attempt: {})", task.getCurrentAttempts());
             // success so do not try again
             return false;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Failed to recover JMS Connection. Will try again in " + task.getCurrentDelay() + " millis", e);
             }
@@ -333,7 +333,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             if (this.connection != null) {
                 try {
                     this.connection.stop();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     LOG.debug("Error stopping connection. This exception is ignored.", e);
                 }
             }

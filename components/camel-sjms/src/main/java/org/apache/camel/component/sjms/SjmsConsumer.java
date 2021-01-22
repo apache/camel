@@ -56,7 +56,7 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                 public void run() {
                     try {
                         prepareAndStartListenerContainer();
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         LOG.warn("Error starting listener container on destination: {}. This exception will be ignored.",
                                 getDestinationName(), e);
                     }
@@ -85,7 +85,7 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                     public void run() {
                         try {
                             stopAndDestroyListenerContainer();
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             LOG.warn("Error stopping listener container on destination: {}. This exception will be ignored.",
                                     getDestinationName(), e);
                         }

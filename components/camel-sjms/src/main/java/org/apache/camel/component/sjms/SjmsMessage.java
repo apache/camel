@@ -58,7 +58,7 @@ public class SjmsMessage extends DefaultMessage {
         if (jmsMessage != null) {
             try {
                 return "SjmsMessage[JmsMessageID: " + jmsMessage.getJMSMessageID() + "]";
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
