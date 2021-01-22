@@ -70,7 +70,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                 // fallback and use old way
                 beanInfo = beanHolder.getBeanInfo();
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -105,7 +105,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                 }
                 try {
                     target.process(exchange);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     exchange.setException(e);
                 }
                 callback.done(true);
@@ -123,7 +123,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         MethodInvocation invocation;
         try {
             invocation = beanInfo.createInvocation(bean, exchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;

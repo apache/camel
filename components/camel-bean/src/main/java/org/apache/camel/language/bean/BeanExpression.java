@@ -360,7 +360,7 @@ public class BeanExpression implements Expression, Predicate {
             if (resultExchange.getException() != null) {
                 exchange.setException(resultExchange.getException());
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
         }
 

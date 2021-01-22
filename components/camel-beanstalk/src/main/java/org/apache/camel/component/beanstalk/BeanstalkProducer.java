@@ -50,7 +50,7 @@ public class BeanstalkProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         try {
             executor.submit(new RunCommand(exchange, callback));
-        } catch (Throwable t) {
+        } catch (Exception t) {
             exchange.setException(t);
             callback.done(true);
             return true;
@@ -110,7 +110,7 @@ public class BeanstalkProducer extends DefaultAsyncProducer {
         public void run() {
             try {
                 doRun();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 exchange.setException(t);
             } finally {
                 if (callback != null) {

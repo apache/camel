@@ -121,7 +121,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     private EndpointReferenceType getReplyTo(Object o) {
         try {
             return (EndpointReferenceType) o.getClass().getMethod("getReplyTo").invoke(o);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw new Fault(t);
         }
     }

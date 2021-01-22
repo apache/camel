@@ -192,7 +192,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         public void process(Exchange exchange) {
             try {
                 incoming(exchange);
-            } catch (Throwable ex) {
+            } catch (Exception ex) {
                 exchange.setException(ex);
             }
         }

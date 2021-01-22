@@ -287,7 +287,7 @@ public class MethodInfo {
                     exchange.setException(e.getTargetException());
                     callback.done(true);
                     return true;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     exchange.setException(e);
                     callback.done(true);
                     return true;

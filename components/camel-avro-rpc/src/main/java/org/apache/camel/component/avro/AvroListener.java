@@ -185,7 +185,7 @@ public class AvroListener {
 
         try {
             consumer.getProcessor().process(exchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             consumer.getExceptionHandler().handleException(e);
         }
 
