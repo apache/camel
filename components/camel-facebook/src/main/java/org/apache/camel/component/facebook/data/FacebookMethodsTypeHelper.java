@@ -356,12 +356,11 @@ public final class FacebookMethodsTypeHelper {
 
         try {
             return method.getMethod().invoke(facebook, values);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // skip wrapper exception to simplify stack
             String msg;
             if (e.getCause() instanceof FacebookException) {
-                e = e.getCause();
-                msg = ((FacebookException) e).getErrorMessage();
+                msg = ((FacebookException) e.getCause()).getErrorMessage();
             } else {
                 msg = e.getMessage();
             }

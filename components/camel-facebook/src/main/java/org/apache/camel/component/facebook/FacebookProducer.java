@@ -113,7 +113,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
                                 rawJSON);
                     }
 
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
                 } finally {
                     callback.done(false);

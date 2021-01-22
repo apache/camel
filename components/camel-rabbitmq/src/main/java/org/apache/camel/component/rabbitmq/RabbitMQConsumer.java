@@ -108,7 +108,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         for (RabbitConsumer consumer : this.consumers) {
             try {
                 ServiceHelper.startService(consumer);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 fail = e;
             }
         }

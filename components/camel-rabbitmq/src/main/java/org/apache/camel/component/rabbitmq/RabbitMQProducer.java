@@ -207,7 +207,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                 // in only
                 return processInOnly(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // must catch exception to ensure callback is invoked as expected
             // to let Camel error handling deal with this
             exchange.setException(e);

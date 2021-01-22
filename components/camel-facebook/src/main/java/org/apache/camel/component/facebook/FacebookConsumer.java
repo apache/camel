@@ -178,7 +178,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 processResult(result, rawJSON);
                 return 1; // number of messages polled
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw RuntimeCamelException.wrapRuntimeCamelException(t);
         }
     }

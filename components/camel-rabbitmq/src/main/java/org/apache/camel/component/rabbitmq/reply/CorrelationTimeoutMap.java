@@ -47,7 +47,7 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
         } else if (type == Evict) {
             try {
                 handler.onTimeout(key);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must ignore so we ensure we evict the element
                 log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage()
                          + ". This exception is ignored.",

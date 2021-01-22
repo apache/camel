@@ -166,7 +166,7 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                                 = solverManager.solveAndListen(problemId, t -> body, eventSupport::updateBestSolution);
                         // wait for result
                         populateResultWithSolverManager(exchange, solverJob);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         exchange.setException(e);
                     } finally {
                         callback.done(false);

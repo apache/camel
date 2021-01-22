@@ -169,7 +169,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                         cause = e;
                         done = true;
                     }
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     cause = t;
                     done = true;
                 }

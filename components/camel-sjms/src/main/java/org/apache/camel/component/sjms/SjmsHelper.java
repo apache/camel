@@ -32,7 +32,7 @@ public final class SjmsHelper {
         if (producer != null) {
             try {
                 producer.close();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -42,7 +42,7 @@ public final class SjmsHelper {
         if (con != null) {
             try {
                 con.close();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -52,7 +52,7 @@ public final class SjmsHelper {
         if (ses != null) {
             try {
                 ses.close();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
