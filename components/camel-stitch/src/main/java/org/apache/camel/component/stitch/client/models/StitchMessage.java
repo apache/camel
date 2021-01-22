@@ -89,7 +89,7 @@ public class StitchMessage implements StitchModel {
 
     public static final class Builder {
         private Action action;
-        private long sequence;
+        private Long sequence;
         private Map<String, Object> data = new LinkedHashMap<>();
 
         private Builder() {

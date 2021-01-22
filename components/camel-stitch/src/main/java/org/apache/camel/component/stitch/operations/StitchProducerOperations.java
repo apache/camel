@@ -57,11 +57,12 @@ public class StitchProducerOperations {
     }
 
     private Mono<StitchResponse> sendAsyncEvents(final Message inMessage) {
-        return client.batch(createStitchRecords(inMessage));
+        return client.batch(createStitchRequestBody(inMessage));
     }
 
     @SuppressWarnings("unchecked")
-    private StitchRequestBody createStitchRecords(final Message inMessage) {
+    // visible for testing
+    public StitchRequestBody createStitchRequestBody(final Message inMessage) {
         if (inMessage.getBody() instanceof StitchRequestBody) {
             return createStitchRequestBodyFromStitchRequestBody(inMessage.getBody(StitchRequestBody.class), inMessage);
         }
@@ -107,9 +108,9 @@ public class StitchProducerOperations {
             } else if (data instanceof StitchRequestBody) {
                 stitchMessages.addAll(((StitchRequestBody) data).getMessages());
             } else if (data instanceof Message) {
-                stitchMessages.addAll(createStitchRecords((Message) data).getMessages());
+                stitchMessages.addAll(createStitchRequestBody((Message) data).getMessages());
             } else if (data instanceof Exchange) {
-                stitchMessages.addAll(createStitchRecords(((Exchange) data).getMessage()).getMessages());
+                stitchMessages.addAll(createStitchRequestBody(((Exchange) data).getMessage()).getMessages());
             } else {
                 throw new IllegalArgumentException("Input data `" + data + "` type is not supported");
             }
