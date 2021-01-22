@@ -29,6 +29,8 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mapbigdecimalasfloats":
+        case "mapBigDecimalAsFloats": target.setMapBigDecimalAsFloats(property(camelContext, boolean.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -46,6 +48,8 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "contentCache": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "mapbigdecimalasfloats":
+        case "mapBigDecimalAsFloats": return boolean.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         default: return null;
@@ -64,6 +68,8 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "contentCache": return target.isContentCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "mapbigdecimalasfloats":
+        case "mapBigDecimalAsFloats": return target.isMapBigDecimalAsFloats();
         case "prettyprint":
         case "prettyPrint": return target.isPrettyPrint();
         default: return null;

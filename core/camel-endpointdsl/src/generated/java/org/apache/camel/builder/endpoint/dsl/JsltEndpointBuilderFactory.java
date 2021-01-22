@@ -147,6 +147,41 @@ public interface JsltEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in
+         * serialization features.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param mapBigDecimalAsFloats the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder mapBigDecimalAsFloats(
+                boolean mapBigDecimalAsFloats) {
+            doSetProperty("mapBigDecimalAsFloats", mapBigDecimalAsFloats);
+            return this;
+        }
+        /**
+         * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in
+         * serialization features.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param mapBigDecimalAsFloats the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder mapBigDecimalAsFloats(
+                String mapBigDecimalAsFloats) {
+            doSetProperty("mapBigDecimalAsFloats", mapBigDecimalAsFloats);
+            return this;
+        }
+        /**
          * If true, JSON in output message is pretty printed.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

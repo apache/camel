@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -59,6 +60,8 @@ public class JsltEndpoint extends ResourceEndpoint {
     private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "false", label = "common")
     private boolean prettyPrint;
+    @UriParam(defaultValue = "false")
+    private boolean mapBigDecimalAsFloats;
 
     public JsltEndpoint() {
     }
@@ -145,6 +148,9 @@ public class JsltEndpoint extends ResourceEndpoint {
         JsonNode input;
 
         ObjectMapper objectMapper = new ObjectMapper();
+        if (isMapBigDecimalAsFloats()) {
+            objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        }
         if (exchange.getIn().getBody() instanceof String) {
             input = objectMapper.readTree(exchange.getIn().getBody(String.class));
         } else if (exchange.getIn().getBody() instanceof InputStream) {
@@ -224,4 +230,14 @@ public class JsltEndpoint extends ResourceEndpoint {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
+    public boolean isMapBigDecimalAsFloats() {
+        return mapBigDecimalAsFloats;
+    }
+
+    /**
+     * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in serialization features
+     */
+    public void setMapBigDecimalAsFloats(boolean mapBigDecimalAsFloats) {
+        this.mapBigDecimalAsFloats = mapBigDecimalAsFloats;
+    }
 }
