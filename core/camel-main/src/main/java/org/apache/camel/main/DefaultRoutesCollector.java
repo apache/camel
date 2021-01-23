@@ -144,7 +144,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 log.info("Loaded {} ({} millis) additional Camel XML route templates from: {}", count, watch.taken(),
                         directory);
             } else {
-                log.info("No additional Camel XML route templates discovered from: {}", directory);
+                log.debug("No additional Camel XML route templates discovered from: {}", directory);
             }
         }
 
@@ -183,7 +183,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             if (count > 0) {
                 log.info("Loaded {} ({} millis) additional Camel XML routes from: {}", count, watch.taken(), directory);
             } else {
-                log.info("No additional Camel XML routes discovered from: {}", directory);
+                log.debug("No additional Camel XML routes discovered from: {}", directory);
             }
         }
 
@@ -221,7 +221,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             if (count > 0) {
                 log.info("Loaded {} ({} millis) additional Camel XML rests from: {}", count, watch.taken(), directory);
             } else {
-                log.info("No additional Camel XML rests discovered from: {}", directory);
+                log.debug("No additional Camel XML rests discovered from: {}", directory);
             }
         }
 

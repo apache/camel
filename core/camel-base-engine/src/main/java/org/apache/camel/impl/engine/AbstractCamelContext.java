@@ -314,6 +314,7 @@ public abstract class AbstractCamelContext extends BaseService
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
+    private long buildTaken;
     private long initTaken;
     private long startDate;
 
@@ -2535,6 +2536,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doBuild() throws Exception {
+        StopWatch watch = new StopWatch();
+
         // auto-detect step recorder from classpath if none has been explicit configured
         if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
             StartupStepRecorder fr = getBootstrapFactoryFinder()
@@ -2587,6 +2590,9 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         startupStepRecorder.endStep(step);
+
+        buildTaken = watch.taken();
+        LOG.debug("Apache Camel {} ({}) built in {}", getVersion(), getName(), TimeUtils.printDuration(buildTaken));
     }
 
     @Override
@@ -2740,14 +2746,11 @@ public abstract class AbstractCamelContext extends BaseService
         startupStepRecorder.endStep(step);
 
         initTaken = watch.taken();
-        LOG.info("Apache Camel {} ({}) initialized in {}", getVersion(), getName(), TimeUtils.printDuration(initTaken));
+        LOG.debug("Apache Camel {} ({}) initialized in {}", getVersion(), getName(), TimeUtils.printDuration(initTaken));
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (!"DefaultStartupStepRecorder".equals(startupStepRecorder.getClass().getSimpleName())) {
-            LOG.info("Using startup recorder: {}", startupStepRecorder);
-        }
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start CamelContext");
 
         try {
@@ -2880,10 +2883,13 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         long taken = stopWatch.taken();
-        long total = initTaken + taken;
+        long max = buildTaken + initTaken + taken;
+        String total = TimeUtils.printDuration(max);
         String start = TimeUtils.printDuration(taken);
-        String boot = TimeUtils.printDuration(total);
-        LOG.info("Apache Camel {} ({}) started in {} (with init {})", getVersion(), getName(), start, boot);
+        String init = TimeUtils.printDuration(initTaken);
+        String built = TimeUtils.printDuration(buildTaken);
+        LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{})", getVersion(), getName(), total, built, init,
+                start);
     }
 
     protected void doStartCamel() throws Exception {
@@ -2987,8 +2993,8 @@ public abstract class AbstractCamelContext extends BaseService
         } else {
             // log if stream caching is not in use as this can help people to
             // enable it if they use streams
-            LOG.info("StreamCaching is not in use. If using streams then it's recommended to enable stream caching."
-                     + " See more details at http://camel.apache.org/stream-caching.html");
+            LOG.debug("StreamCaching is not in use. If using streams then it's recommended to enable stream caching."
+                      + " See more details at http://camel.apache.org/stream-caching.html");
         }
 
         if (isAllowUseOriginalMessage()) {
