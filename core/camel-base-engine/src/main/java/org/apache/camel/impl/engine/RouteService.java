@@ -372,7 +372,7 @@ public class RouteService extends ChildServiceSupport {
             boolean record
                     = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
             if (record) {
-                step = beginStep(service, "Initializing");
+                step = beginStep(service, "Init");
             }
             ServiceHelper.initService(service);
             if (step != null) {
@@ -390,7 +390,7 @@ public class RouteService extends ChildServiceSupport {
             boolean record
                     = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
             if (record) {
-                step = beginStep(service, "Starting");
+                step = beginStep(service, "Start");
             }
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
