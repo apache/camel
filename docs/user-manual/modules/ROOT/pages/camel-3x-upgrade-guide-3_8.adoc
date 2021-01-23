@@ -6,6 +6,17 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.7 to 3.8
 
+=== Route startup procedure change
+
+Camel will now initialize all routes during initialization of `CamelContext` itself.
+Before all routes where lazy initialized when they were started, which happens in the starting phase of `CamelContext`.
+But moving this forward to initialization phase, then we ensure all is done together.
+
+This means that all the resources used in the routes such as EIPs, processors, beans, components, data formats, languages etc.
+are also initialized. An affect of this change is that any custom Camel component that may do initialization logic in
+the constructors of `Consumer` or `Producer` should *not* do this, but move this logic to `doInit` or `doStart` where
+such logic correctly belongs.
+
 === API changes
 
 The following type names are renamed in `CamelEvent.Type` enum:
