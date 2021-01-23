@@ -61,7 +61,7 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        IronMQConsumer ironMQConsumer = new IronMQConsumer(this, processor, getClient().queue(configuration.getQueueName()));
+        IronMQConsumer ironMQConsumer = new IronMQConsumer(this, processor);
         configureConsumer(ironMQConsumer);
         ironMQConsumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();

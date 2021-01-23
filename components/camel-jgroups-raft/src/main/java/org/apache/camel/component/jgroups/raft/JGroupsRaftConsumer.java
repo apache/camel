@@ -18,7 +18,6 @@ package org.apache.camel.component.jgroups.raft;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,19 +28,17 @@ import org.slf4j.LoggerFactory;
 public class JGroupsRaftConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(JGroupsRaftConsumer.class);
 
-    private final RaftHandle raftHandle;
     private final String clusterName;
     private boolean enableRoleChangeEvents;
 
     private final CamelRoleChangeListener roleListener;
     private final JGroupsRaftEndpoint endpoint;
 
-    public JGroupsRaftConsumer(JGroupsRaftEndpoint endpoint, Processor processor, RaftHandle raftHandle, String clusterName,
+    public JGroupsRaftConsumer(JGroupsRaftEndpoint endpoint, Processor processor, String clusterName,
                                boolean enableRoleChangeEvents) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;
-        this.raftHandle = raftHandle;
         this.clusterName = clusterName;
         this.enableRoleChangeEvents = enableRoleChangeEvents;
 
@@ -53,7 +50,7 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
         super.doStart();
         if (enableRoleChangeEvents) {
             LOG.debug("Connecting roleListener : {} to the cluster: {}.", roleListener, clusterName);
-            raftHandle.addRoleListener(roleListener);
+            endpoint.getResolvedRaftHandle().addRoleListener(roleListener);
         }
         endpoint.connect();
     }
@@ -62,7 +59,7 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         if (enableRoleChangeEvents) {
             LOG.debug("Closing connection to cluster: {} from roleListener: {}.", clusterName, roleListener);
-            raftHandle.removeRoleListener(roleListener);
+            endpoint.getResolvedRaftHandle().removeRoleListener(roleListener);
         }
         endpoint.disconnect();
         super.doStop();

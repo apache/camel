@@ -19,7 +19,6 @@ package org.apache.camel.component.jgroups;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
-import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,17 +34,14 @@ public class JGroupsProducer extends DefaultProducer {
 
     private final JGroupsEndpoint endpoint;
 
-    private final JChannel channel;
-
     private final String clusterName;
 
     // Constructor
 
-    public JGroupsProducer(JGroupsEndpoint endpoint, JChannel channel, String clusterName) {
+    public JGroupsProducer(JGroupsEndpoint endpoint, String clusterName) {
         super(endpoint);
 
         this.endpoint = endpoint;
-        this.channel = channel;
         this.clusterName = clusterName;
     }
 
@@ -81,7 +77,7 @@ public class JGroupsProducer extends DefaultProducer {
             }
             Message message = new Message(destinationAddress, body);
             message.setSrc(sourceAddress);
-            channel.send(message);
+            endpoint.getResolvedChannel().send(message);
         } else {
             LOG.debug("Body is null, cannot post to channel.");
         }

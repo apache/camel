@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,15 +32,13 @@ public class JGroupsRaftProducer extends DefaultProducer {
 
     // Producer settings
     private final JGroupsRaftEndpoint endpoint;
-    private final RaftHandle raftHandle;
     private final String clusterName;
 
     // Constructor
-    public JGroupsRaftProducer(JGroupsRaftEndpoint endpoint, RaftHandle raftHandle, String clusterName) {
+    public JGroupsRaftProducer(JGroupsRaftEndpoint endpoint, String clusterName) {
         super(endpoint);
 
         this.endpoint = endpoint;
-        this.raftHandle = raftHandle;
         this.clusterName = clusterName;
     }
 
@@ -74,14 +71,14 @@ public class JGroupsRaftProducer extends DefaultProducer {
             if (setOffset != null && setLength != null && setTimeout != null && setTimeUnit != null) {
                 LOG.debug("Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.", body, setOffset,
                         setLength, setTimeout, setTimeUnit);
-                result = raftHandle.set(body, setOffset, setLength, setTimeout, setTimeUnit);
+                result = endpoint.getResolvedRaftHandle().set(body, setOffset, setLength, setTimeout, setTimeUnit);
             } else if (setOffset != null && setLength != null) {
                 LOG.debug("Calling set(byte[] {}, int {}, int {}) method on raftHandle.", body, setOffset, setLength);
-                result = raftHandle.set(body, setOffset, setLength);
+                result = endpoint.getResolvedRaftHandle().set(body, setOffset, setLength);
             } else {
                 LOG.debug("Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.", body, 0,
                         body.length);
-                result = raftHandle.set(body, 0, body.length);
+                result = endpoint.getResolvedRaftHandle().set(body, 0, body.length);
             }
             endpoint.populateJGroupsRaftHeaders(exchange);
             exchange.getIn().setBody(result);

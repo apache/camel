@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.milo;
 
-import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.Message;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public final class Messages {
+
     private Messages() {
     }
 
@@ -29,7 +30,7 @@ public final class Messages {
      * @param value  the value to feed from
      * @param result the result to feed to
      */
-    public static void fillFromDataValue(final DataValue value, final DefaultMessage result) {
+    public static void fillFromDataValue(final DataValue value, final Message result) {
         result.setBody(value);
     }
 }

@@ -80,7 +80,6 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private MonitorFilterType monitorFilterType;
 
     private final MiloClientComponent component;
-    private MiloClientConnection connection;
 
     public MiloClientEndpoint(final String uri, final MiloClientComponent component, final String endpointUri) {
         super(uri, component);
@@ -110,30 +109,19 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        this.component.disposed(this);
-        super.doStop();
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
-        return new MiloClientProducer(this, this.connection, this.defaultAwaitWrites);
+        return new MiloClientProducer(this, this.defaultAwaitWrites);
     }
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        MiloClientConsumer consumer = new MiloClientConsumer(this, processor, this.connection);
+        MiloClientConsumer consumer = new MiloClientConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
 
-    public MiloClientConnection getConnection() {
-        return this.connection;
+    public MiloClientConnection createConnection() {
+        return new MiloClientConnection(configuration, monitorFilterConfiguration);
     }
 
     // item configuration
@@ -186,7 +174,11 @@ public class MiloClientEndpoint extends DefaultEndpoint {
         this.defaultAwaitWrites = defaultAwaitWrites;
     }
 
-    public void setConnection(MiloClientConnection connection) {
-        this.connection = connection;
+    public MonitorFilterType getMonitorFilterType() {
+        return monitorFilterType;
+    }
+
+    public void setMonitorFilterType(MonitorFilterType monitorFilterType) {
+        this.monitorFilterType = monitorFilterType;
     }
 }

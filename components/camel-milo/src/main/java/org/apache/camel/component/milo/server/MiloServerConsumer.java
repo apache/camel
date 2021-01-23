@@ -18,61 +18,56 @@ package org.apache.camel.component.milo.server;
 
 import java.util.function.Consumer;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.milo.Messages;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public class MiloServerConsumer extends DefaultConsumer {
 
-    private final CamelServerItem item;
     private final Consumer<DataValue> writeHandler = this::performWrite;
+    private CamelServerItem item;
 
-    public MiloServerConsumer(final Endpoint endpoint, final Processor processor, final CamelServerItem item) {
+    public MiloServerConsumer(final MiloServerEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
-        this.item = item;
+    }
+
+    @Override
+    public MiloServerEndpoint getEndpoint() {
+        return (MiloServerEndpoint) super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
+        this.item = getEndpoint().getItem();
         this.item.addWriteListener(this.writeHandler);
     }
 
     @Override
     protected void doStop() throws Exception {
         this.item.removeWriteListener(this.writeHandler);
-
         super.doStop();
     }
 
     protected void performWrite(final DataValue value) {
-
-        final Exchange exchange = getEndpoint().createExchange();
-        exchange.setIn(mapToMessage(value));
+        Exchange exchange = getEndpoint().createExchange();
+        mapToMessage(value, exchange.getMessage());
 
         try {
-            getAsyncProcessor().process(exchange);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing exchange", e);
         }
     }
 
-    private DefaultMessage mapToMessage(final DataValue value) {
-        if (value == null) {
-            return null;
+    private void mapToMessage(final DataValue value, final Message message) {
+        if (value != null) {
+            Messages.fillFromDataValue(value, message);
         }
-
-        final DefaultMessage result = new DefaultMessage(getEndpoint().getCamelContext());
-
-        Messages.fillFromDataValue(value, result);
-
-        return result;
     }
 
 }

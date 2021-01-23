@@ -44,6 +44,11 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
         super(endpoint, processor);
         this.watchedFieldsList = new ArrayList<>();
         this.watchedFieldsList = Arrays.asList(endpoint.getWatchedFields().split(","));
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         initIssues();
     }
 

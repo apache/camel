@@ -72,12 +72,12 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JGroupsProducer(this, resolvedChannel, clusterName);
+        return new JGroupsProducer(this, clusterName);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        JGroupsConsumer consumer = new JGroupsConsumer(this, processor, resolvedChannel, clusterName);
+        JGroupsConsumer consumer = new JGroupsConsumer(this, processor, clusterName);
         configureConsumer(consumer);
         return consumer;
     }

@@ -26,8 +26,6 @@ import org.apache.ignite.Ignite;
  */
 public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
 
-    protected AbstractIgniteComponent component;
-
     @UriParam(defaultValue = "true")
     private boolean propagateIncomingBodyIfNoReturnValue = true;
 
@@ -39,10 +37,7 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
     }
 
     protected AbstractIgniteComponent igniteComponent() {
-        if (component == null) {
-            component = (AbstractIgniteComponent) getComponent();
-        }
-        return component;
+        return (AbstractIgniteComponent) getComponent();
     }
 
     protected Ignite ignite() {

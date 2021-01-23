@@ -47,16 +47,15 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
     private QueryCursor<Entry<Object, Object>> cursor;
 
-    public IgniteCacheContinuousQueryConsumer(IgniteCacheEndpoint endpoint, Processor processor,
-                                              IgniteCache<Object, Object> cache) {
+    public IgniteCacheContinuousQueryConsumer(IgniteCacheEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.cache = cache;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        cache = endpoint.obtainCache();
 
         launchContinuousQuery();
 

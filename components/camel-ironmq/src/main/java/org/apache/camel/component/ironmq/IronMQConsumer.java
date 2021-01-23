@@ -41,11 +41,16 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQConsumer.class);
 
-    private final io.iron.ironmq.Queue ironQueue;
+    private io.iron.ironmq.Queue ironQueue;
 
-    public IronMQConsumer(Endpoint endpoint, Processor processor, io.iron.ironmq.Queue ironQueue) {
+    public IronMQConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.ironQueue = ironQueue;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ironQueue = getEndpoint().getClient().queue(getEndpoint().getConfiguration().getQueueName());
     }
 
     @Override

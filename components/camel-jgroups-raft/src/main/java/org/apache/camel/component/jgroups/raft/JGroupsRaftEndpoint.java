@@ -72,12 +72,14 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JGroupsRaftProducer(this, resolvedRaftHandle, clusterName);
+        return new JGroupsRaftProducer(this, clusterName);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new JGroupsRaftConsumer(this, processor, resolvedRaftHandle, clusterName, enableRoleChangeEvents);
+        JGroupsRaftConsumer consumer = new JGroupsRaftConsumer(this, processor, clusterName, enableRoleChangeEvents);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

@@ -28,22 +28,43 @@ import static java.lang.Boolean.TRUE;
 
 public class MiloClientProducer extends DefaultAsyncProducer {
 
-    private final MiloClientConnection connection;
+    private MiloClientConnection connection;
 
     private final ExpandedNodeId nodeId;
     private final ExpandedNodeId methodId;
 
     private final boolean defaultAwaitWrites;
 
-    public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection,
+    public MiloClientProducer(final MiloClientEndpoint endpoint,
                               final boolean defaultAwaitWrites) {
         super(endpoint);
 
-        this.connection = connection;
         this.defaultAwaitWrites = defaultAwaitWrites;
-
         this.nodeId = endpoint.getNodeId();
         this.methodId = endpoint.getMethodId();
+    }
+
+    @Override
+    public MiloClientEndpoint getEndpoint() {
+        return (MiloClientEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.connection = getEndpoint().createConnection();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (this.connection != null) {
+            try {
+                this.connection.close();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        super.doStop();
     }
 
     @Override

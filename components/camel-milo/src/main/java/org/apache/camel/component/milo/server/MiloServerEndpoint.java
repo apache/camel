@@ -34,11 +34,11 @@ import org.apache.camel.support.DefaultEndpoint;
              category = { Category.IOT })
 public class MiloServerEndpoint extends DefaultEndpoint {
 
+    private volatile CamelServerItem item;
+
     @UriPath
     @Metadata(required = true)
     private String itemId;
-
-    private CamelServerItem item;
 
     public MiloServerEndpoint(final String uri, final String itemId, final Component component) {
         super(uri, component);
@@ -67,14 +67,18 @@ public class MiloServerEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new MiloServerProducer(this, this.item);
+        return new MiloServerProducer(this);
     }
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        MiloServerConsumer consumer = new MiloServerConsumer(this, processor, this.item);
+        MiloServerConsumer consumer = new MiloServerConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    CamelServerItem getItem() {
+        return item;
     }
 
     /**

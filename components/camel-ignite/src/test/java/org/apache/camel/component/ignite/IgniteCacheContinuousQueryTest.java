@@ -33,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
+import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheEntryEventSerializableFilter;
 import org.apache.ignite.cache.query.ScanQuery;
@@ -198,11 +199,13 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
     @AfterEach
     public void deleteCaches() {
         for (String cacheName : ImmutableSet.<String> of("testcontinuous1", "testcontinuous2", "testcontinuous3")) {
-            IgniteCache<?, ?> cache = ignite().cache(cacheName);
-            if (cache == null) {
-                continue;
+            Ignite ignite = ignite();
+            if (ignite != null) {
+                IgniteCache<?, ?> cache = ignite.cache(cacheName);
+                if (cache != null) {
+                    cache.clear();
+                }
             }
-            cache.clear();
         }
     }
 
