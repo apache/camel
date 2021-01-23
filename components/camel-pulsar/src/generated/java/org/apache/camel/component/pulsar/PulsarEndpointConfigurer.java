@@ -85,7 +85,6 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptionTopicsMode": target.getPulsarConfiguration().setSubscriptionTopicsMode(property(camelContext, org.apache.pulsar.client.api.RegexSubscriptionMode.class, value)); return true;
         case "subscriptiontype":
         case "subscriptionType": target.getPulsarConfiguration().setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicspattern":
         case "topicsPattern": target.getPulsarConfiguration().setTopicsPattern(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -159,7 +158,6 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptionTopicsMode": return org.apache.pulsar.client.api.RegexSubscriptionMode.class;
         case "subscriptiontype":
         case "subscriptionType": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class;
-        case "synchronous": return boolean.class;
         case "topicspattern":
         case "topicsPattern": return boolean.class;
         default: return null;
@@ -234,7 +232,6 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptionTopicsMode": return target.getPulsarConfiguration().getSubscriptionTopicsMode();
         case "subscriptiontype":
         case "subscriptionType": return target.getPulsarConfiguration().getSubscriptionType();
-        case "synchronous": return target.isSynchronous();
         case "topicspattern":
         case "topicsPattern": return target.getPulsarConfiguration().isTopicsPattern();
         default: return null;

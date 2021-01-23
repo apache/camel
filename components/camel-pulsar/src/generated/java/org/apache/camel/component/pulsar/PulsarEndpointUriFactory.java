@@ -20,10 +20,9 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(38);
+        Set<String> props = new HashSet<>(37);
         props.add("initialSequenceId");
         props.add("maxRedeliverCount");
-        props.add("synchronous");
         props.add("messageRouter");
         props.add("batchingMaxMessages");
         props.add("compressionType");

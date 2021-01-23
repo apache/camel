@@ -49,20 +49,10 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
                         endpoint.getComponent().getPulsarMessageReceiptFactory()
                                 .newInstance(exchange, message, consumer));
             }
-            if (endpoint.isSynchronous()) {
-                process(exchange, consumer, message);
-            } else {
-                processAsync(exchange, consumer, message);
-            }
+            processAsync(exchange, consumer, message);
         } catch (Exception exception) {
             handleProcessorException(exchange, exception);
         }
-    }
-
-    private void process(final Exchange exchange, final Consumer<byte[]> consumer, final Message<byte[]> message)
-            throws Exception {
-        pulsarConsumer.getProcessor().process(exchange);
-        acknowledge(consumer, message);
     }
 
     private void processAsync(final Exchange exchange, final Consumer<byte[]> consumer, final Message<byte[]> message) {

@@ -50,9 +50,6 @@ public class PulsarEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String topic;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
-    private boolean synchronous;
 
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
@@ -126,14 +123,6 @@ public class PulsarEndpoint extends DefaultEndpoint {
      */
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    public boolean isSynchronous() {
-        return synchronous;
-    }
-
-    public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
     }
 
     public PulsarConfiguration getPulsarConfiguration() {
