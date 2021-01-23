@@ -231,12 +231,12 @@ Input parameters are taken from the body:
 
 === Read Values from Nodes
 
-The component provide a producer to read values from multiple opc-ua nodes. The Node-IDs will be defined in the header `CamelMilo.nodeIds` as list of strings. (see <<nodeid, Node-ID>> for the ID format).
+The component provide a producer to read values from multiple opc-ua nodes. The Node-IDs will be defined in the header `CamelMiloNodeIds` as list of strings. (see <<nodeid, Node-ID>> for the ID format).
 
 Example:
 ```java
 from("direct:start")
-    .setHeader("CamelMilo.nodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
+    .setHeader("CamelMiloNodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
     .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
         .enrich("milo-client:opc.tcp://localhost:4334", new AggregationStrategy() {
 
