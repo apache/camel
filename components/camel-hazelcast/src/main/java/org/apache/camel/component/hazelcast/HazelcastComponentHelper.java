@@ -41,8 +41,8 @@ public final class HazelcastComponentHelper {
         }
 
         // propagate headers if OUT message created
-        if (ex.hasOut()) {
-            ex.getOut().setHeaders(headers);
+        if (ex.getMessage() != null) {
+            ex.getMessage().setHeaders(headers);
         }
     }
 

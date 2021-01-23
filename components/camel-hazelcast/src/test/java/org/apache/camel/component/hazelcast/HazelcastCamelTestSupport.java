@@ -32,7 +32,7 @@ public class HazelcastCamelTestSupport extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         CamelContext context = super.createCamelContext();
         HazelcastCamelTestHelper.registerHazelcastComponents(context, hazelcastInstance);
         trainHazelcastInstance(hazelcastInstance);
