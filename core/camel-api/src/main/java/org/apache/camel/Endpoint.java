@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Map;
 
+import org.apache.camel.support.service.ServiceSupport;
+
 /**
  * An <a href="http://camel.apache.org/endpoint.html">endpoint</a> implements the
  * <a href="http://camel.apache.org/message-endpoint.html">Message Endpoint</a> pattern and represents an endpoint that
@@ -84,7 +86,10 @@ public interface Endpoint extends IsSingleton, Service {
     CamelContext getCamelContext();
 
     /**
-     * Creates a new producer which is used send messages into the endpoint
+     * Creates a new producer which is used send messages into the endpoint.
+     *
+     * Important: Do not do any initialization in the constructor of the {@link Producer}.
+     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @return           a newly created producer
      * @throws Exception can be thrown
@@ -101,6 +106,9 @@ public interface Endpoint extends IsSingleton, Service {
     /**
      * Creates a new producer which is used send messages into the endpoint
      *
+     * Important: Do not do any initialization in the constructor of the {@link Producer}.
+     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
+     *
      * @return           a newly created producer
      * @throws Exception can be thrown
      */
@@ -109,6 +117,9 @@ public interface Endpoint extends IsSingleton, Service {
     /**
      * Creates a new <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a> which
      * consumes messages from the endpoint using the given processor
+     *
+     * Important: Do not do any initialization in the constructor of the {@link Consumer}.
+     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @param  processor the given processor
      * @return           a newly created consumer
@@ -122,6 +133,9 @@ public interface Endpoint extends IsSingleton, Service {
      * {@link PollingConsumer#receiveNoWait()} or {@link PollingConsumer#receive(long)} whenever it is ready to do so
      * rather than using the <a href="http://camel.apache.org/event-driven-consumer.html">Event Based Consumer</a>
      * returned by {@link #createConsumer(Processor)}
+     *
+     * Important: Do not do any initialization in the constructor of the {@link PollingConsumer}.
+     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @return           a newly created pull consumer
      * @throws Exception if the pull consumer could not be created
