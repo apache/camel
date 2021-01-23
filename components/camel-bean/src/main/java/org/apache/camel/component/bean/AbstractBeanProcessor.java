@@ -36,6 +36,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     private final BeanHolder beanHolder;
     private transient Processor processor;
+    private transient Object bean;
     private transient boolean lookupProcessorDone;
     private final Object lock = new Object();
     private BeanScope scope;
@@ -195,17 +196,18 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         // optimize to only get (create) a processor if really needed
         if (beanHolder.supportProcessor() && allowProcessor(method, beanHolder.getBeanInfo())) {
             processor = beanHolder.getProcessor();
-            ServiceHelper.startService(processor);
+            ServiceHelper.initService(processor);
         } else if (beanHolder instanceof ConstantBeanHolder) {
             try {
-                // Start the bean if it implements Service interface and if cached
-                // so meant to be reused
-                ServiceHelper.startService(beanHolder.getBean(null));
+                // Start the bean if it implements Service interface and if cached so meant to be reused
+                bean = beanHolder.getBean(null);
+                ServiceHelper.initService(bean);
             } catch (NoSuchBeanException e) {
                 // ignore
             }
@@ -213,17 +215,29 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        if (processor != null) {
+            ServiceHelper.startService(processor);
+        } else if (bean != null) {
+            ServiceHelper.startService(bean);
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (processor != null) {
             ServiceHelper.stopService(processor);
-        } else if (beanHolder instanceof ConstantBeanHolder) {
-            try {
-                // Stop the bean if it implements Service interface and if cached
-                // so meant to be reused
-                ServiceHelper.stopService(beanHolder.getBean(null));
-            } catch (NoSuchBeanException e) {
-                // ignore
-            }
+        } else if (bean != null) {
+            ServiceHelper.stopService(bean);
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (processor != null) {
+            ServiceHelper.stopAndShutdownService(processor);
+        } else if (bean != null) {
+            ServiceHelper.stopAndShutdownService(bean);
         }
     }
 

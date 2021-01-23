@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
@@ -25,11 +26,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandlerAware;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class BeanProcessor extends ServiceSupport implements AsyncProcessor, ErrorHandlerAware {
+public class BeanProcessor extends ServiceSupport implements AsyncProcessor, ErrorHandlerAware, IdAware {
 
     private final DelegateBeanProcessor delegate;
+    private String id;
 
     public BeanProcessor(Object pojo, CamelContext camelContext) {
         this(new ConstantBeanHolder(
@@ -43,6 +46,16 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor, Err
 
     public BeanProcessor(BeanHolder beanHolder) {
         this.delegate = new DelegateBeanProcessor(beanHolder);
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -110,13 +123,38 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor, Err
     }
 
     @Override
+    protected void doInit() throws Exception {
+        delegate.init();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        delegate.resume();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        delegate.suspend();
+    }
+
+    @Override
     protected void doStart() throws Exception {
-        delegate.doStart();
+        delegate.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         delegate.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        delegate.shutdown();
+    }
+
+    @Override
+    public void close() throws IOException {
+        delegate.close();
     }
 
     @Override

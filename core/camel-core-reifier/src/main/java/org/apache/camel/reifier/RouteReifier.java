@@ -39,7 +39,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ContractAdvice;
-import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RoutePipeline;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.ErrorHandlerAware;
@@ -252,7 +252,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // always use an pipeline even if there are only 1 processor as the pipeline
         // handles preparing the response from the exchange in regard to IN vs OUT messages etc
-        Processor target = new Pipeline(camelContext, eventDrivenProcessors);
+        RoutePipeline target = new RoutePipeline(camelContext, eventDrivenProcessors);
+        target.setRouteId(id);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         InternalProcessor internal = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()

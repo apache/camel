@@ -37,9 +37,13 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.StartupStep;
+import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -54,6 +58,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 public class RouteService extends ChildServiceSupport {
 
     private final CamelContext camelContext;
+    private final StartupStepRecorder startupStepRecorder;
     private final Route route;
     private boolean removingRoutes;
     private Consumer input;
@@ -64,6 +69,7 @@ public class RouteService extends ChildServiceSupport {
     public RouteService(Route route) {
         this.route = route;
         this.camelContext = this.route.getCamelContext();
+        this.startupStepRecorder = this.camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
     }
 
     public String getId() {
@@ -349,9 +355,29 @@ public class RouteService extends ChildServiceSupport {
         }
     }
 
+    private StartupStep beginStep(Service service, String description) {
+        Class<?> type = service instanceof Processor ? Processor.class : Service.class;
+        description = description + " " + service.getClass().getSimpleName();
+        String id = null;
+        if (service instanceof IdAware) {
+            id = ((IdAware) service).getId();
+        }
+        return startupStepRecorder.beginStep(type, id, description);
+    }
+
     protected void initChildServices(List<Service> services) {
         for (Service service : services) {
+            StartupStep step = null;
+            // skip internal services / route pipeline (starting point for route)
+            boolean record
+                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
+            if (record) {
+                step = beginStep(service, "Initializing");
+            }
             ServiceHelper.initService(service);
+            if (step != null) {
+                startupStepRecorder.endStep(step);
+            }
             // add and remember as child service
             addChildService(service);
         }
@@ -359,10 +385,20 @@ public class RouteService extends ChildServiceSupport {
 
     protected void startChildServices(Route route, List<Service> services) {
         for (Service service : services) {
+            StartupStep step = null;
+            // skip internal services / route pipeline (starting point for route)
+            boolean record
+                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
+            if (record) {
+                step = beginStep(service, "Starting");
+            }
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
             }
             ServiceHelper.startService(service);
+            if (step != null) {
+                startupStepRecorder.endStep(step);
+            }
         }
     }
 

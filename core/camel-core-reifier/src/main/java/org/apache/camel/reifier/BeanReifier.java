@@ -23,6 +23,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.BeanProcessorFactory;
+import org.apache.camel.spi.IdAware;
 
 public class BeanReifier extends ProcessorReifier<BeanDefinition> {
 
@@ -45,6 +46,10 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
             scope = parse(BeanScope.class, definition.getScope());
         }
         Processor answer = fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
+        if (answer instanceof IdAware) {
+            String id = camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory().createId(definition);
+            ((IdAware) answer).setId(id);
+        }
         return answer;
     }
 
