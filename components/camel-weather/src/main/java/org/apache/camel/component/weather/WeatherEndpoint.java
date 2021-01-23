@@ -45,7 +45,7 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        WeatherConsumer answer = new WeatherConsumer(this, processor, getWeatherQuery().getQuery());
+        WeatherConsumer answer = new WeatherConsumer(this, processor);
 
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed, so we override
         // with a new default value. End user can override this value by providing a consumer.delay parameter

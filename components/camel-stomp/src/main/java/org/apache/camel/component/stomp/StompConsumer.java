@@ -28,7 +28,6 @@ public class StompConsumer extends DefaultConsumer {
 
     public StompConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        id = getEndpoint().getNextId();
     }
 
     @Override
@@ -38,6 +37,7 @@ public class StompConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        id = getEndpoint().getNextId();
         getEndpoint().addConsumer(this);
         super.doStart();
     }

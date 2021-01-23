@@ -35,14 +35,13 @@ import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParamet
  */
 public class Web3jConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jConsumer.class);
-    private final Web3j web3j;
     private final Web3jConfiguration configuration;
+    private Web3j web3j;
     private Subscription subscription;
     private Web3jEndpoint endpoint;
 
     public Web3jConsumer(Web3jEndpoint endpoint, Processor processor, Web3jConfiguration configuration) {
         super(endpoint, processor);
-        this.web3j = endpoint.getWeb3j();
         this.endpoint = endpoint;
         this.configuration = configuration;
     }
@@ -55,6 +54,9 @@ public class Web3jConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        this.web3j = getEndpoint().getWeb3j();
+
         LOG.info("Subscribing to: {}", endpoint.getNodeAddress());
         switch (configuration.getOperation()) {
             case Web3jConstants.ETH_LOG_OBSERVABLE:
@@ -161,22 +163,6 @@ public class Web3jConsumer extends DefaultConsumer {
         }
 
         LOG.info("Subscribed: {}", this.configuration);
-    }
-
-    private EthFilter buildEthFilter() {
-        EthFilter ethFilter = new EthFilter(
-                toDefaultBlockParameter(configuration.getFromBlock()), toDefaultBlockParameter(configuration.getToBlock()),
-                configuration.getAddresses());
-        if (configuration.getTopics() != null) {
-            for (String topic : configuration.getTopics()) {
-                if (topic != null && topic.length() > 0) {
-                    ethFilter.addSingleTopic(topic);
-                } else {
-                    ethFilter.addNullTopic();
-                }
-            }
-        }
-        return ethFilter;
     }
 
     private void ethBlockHashObservable(String x) {

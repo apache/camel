@@ -33,16 +33,21 @@ public class WeatherConsumer extends ScheduledPollConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WeatherConsumer.class);
 
-    private final String query;
+    private String query;
 
-    public WeatherConsumer(WeatherEndpoint endpoint, Processor processor, String query) {
+    public WeatherConsumer(WeatherEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.query = query;
     }
 
     @Override
     public WeatherEndpoint getEndpoint() {
         return (WeatherEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.query = this.getEndpoint().getWeatherQuery().getQuery();
     }
 
     @Override
