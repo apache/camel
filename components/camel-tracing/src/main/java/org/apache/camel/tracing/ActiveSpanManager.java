@@ -17,6 +17,7 @@
 package org.apache.camel.tracing;
 
 import org.apache.camel.Exchange;
+import org.slf4j.MDC;
 
 /**
  * Utility class for managing active spans as a stack associated with an exchange.
@@ -24,6 +25,8 @@ import org.apache.camel.Exchange;
 public final class ActiveSpanManager {
 
     private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
+    public static final String MDC_TRACE_ID = "traceId";
+    public static final String MDC_SPAN_ID = "spanId";
 
     private ActiveSpanManager() {
     }
@@ -52,6 +55,11 @@ public final class ActiveSpanManager {
     public static void activate(Exchange exchange, SpanAdapter span) {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
                 new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
+
+        if (exchange.getContext().isUseMDCLogging()) {
+            MDC.put(MDC_TRACE_ID, "" + span.traceId());
+            MDC.put(MDC_SPAN_ID, "" + span.spanId());
+        }
     }
 
     /**
@@ -65,6 +73,18 @@ public final class ActiveSpanManager {
         Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
         if (holder != null) {
             exchange.setProperty(ACTIVE_SPAN_PROPERTY, holder.getParent());
+
+            if (exchange.getContext().isUseMDCLogging()) {
+                Holder parent = holder.getParent();
+                if (parent != null) {
+                    SpanAdapter span = holder.getParent().getSpan();
+                    MDC.put(MDC_TRACE_ID, "" + span.traceId());
+                    MDC.put(MDC_SPAN_ID, "" + span.spanId());
+                } else {
+                    MDC.remove(MDC_TRACE_ID);
+                    MDC.remove(MDC_SPAN_ID);
+                }
+            }
         }
     }
 

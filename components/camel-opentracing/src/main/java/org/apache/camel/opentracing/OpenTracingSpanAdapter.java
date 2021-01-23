@@ -90,4 +90,14 @@ public class OpenTracingSpanAdapter implements SpanAdapter {
         this.span.log(fields);
     }
 
+    @Override
+    public String traceId() {
+        return this.span.context().toTraceId();
+    }
+
+    @Override
+    public String spanId() {
+        return this.span.context().toSpanId();
+    }
+
 }

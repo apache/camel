@@ -100,6 +100,16 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         span.addEvent(getEventNameFromFields(fields), convertToAttributes(fields));
     }
 
+    @Override
+    public String traceId() {
+        return span.getSpanContext().getTraceIdAsHexString();
+    }
+
+    @Override
+    public String spanId() {
+        return span.getSpanContext().getSpanIdAsHexString();
+    }
+
     String getEventNameFromFields(Map<String, ?> fields) {
         Object eventValue = fields == null ? null : fields.get("event");
         if (eventValue != null) {
