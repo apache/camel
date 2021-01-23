@@ -88,8 +88,8 @@ public interface Endpoint extends IsSingleton, Service {
     /**
      * Creates a new producer which is used send messages into the endpoint.
      *
-     * Important: Do not do any initialization in the constructor of the {@link Producer}.
-     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
+     * Important: Do not do any initialization in the constructor of the {@link Producer}. Instead use
+     * {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @return           a newly created producer
      * @throws Exception can be thrown
@@ -106,8 +106,8 @@ public interface Endpoint extends IsSingleton, Service {
     /**
      * Creates a new producer which is used send messages into the endpoint
      *
-     * Important: Do not do any initialization in the constructor of the {@link Producer}.
-     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
+     * Important: Do not do any initialization in the constructor of the {@link Producer}. Instead use
+     * {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @return           a newly created producer
      * @throws Exception can be thrown
@@ -118,8 +118,8 @@ public interface Endpoint extends IsSingleton, Service {
      * Creates a new <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a> which
      * consumes messages from the endpoint using the given processor
      *
-     * Important: Do not do any initialization in the constructor of the {@link Consumer}.
-     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
+     * Important: Do not do any initialization in the constructor of the {@link Consumer}. Instead use
+     * {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @param  processor the given processor
      * @return           a newly created consumer
@@ -134,8 +134,8 @@ public interface Endpoint extends IsSingleton, Service {
      * rather than using the <a href="http://camel.apache.org/event-driven-consumer.html">Event Based Consumer</a>
      * returned by {@link #createConsumer(Processor)}
      *
-     * Important: Do not do any initialization in the constructor of the {@link PollingConsumer}.
-     * Instead use {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
+     * Important: Do not do any initialization in the constructor of the {@link PollingConsumer}. Instead use
+     * {@link ServiceSupport#doInit()} or {@link ServiceSupport#doStart()}.
      *
      * @return           a newly created pull consumer
      * @throws Exception if the pull consumer could not be created

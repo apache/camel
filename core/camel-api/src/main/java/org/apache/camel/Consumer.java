@@ -19,8 +19,8 @@ package org.apache.camel;
 /**
  * A consumer of message exchanges from an {@link Endpoint}.
  * <p/>
- * Important: Do not do any initialization in the constructor.
- * Instead use {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
+ * Important: Do not do any initialization in the constructor. Instead use
+ * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
  */
 public interface Consumer extends Service, EndpointAware {
