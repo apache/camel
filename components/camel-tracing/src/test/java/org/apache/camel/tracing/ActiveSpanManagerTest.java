@@ -19,6 +19,7 @@ package org.apache.camel.tracing;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -80,5 +81,41 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
         // Check that the current span in path2 is back to parent
         // and hasn't been affected by path1 creating its own child
         ActiveSpanManager.activate(path2, parent);
+    }
+
+    @Test
+    public void testMDCSupport() {
+        Exchange exchange = createExchange();
+        exchange.getContext().setUseMDCLogging(true);
+
+        SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
+        ((MockSpanAdapter) parent).setTraceId("0");
+        ((MockSpanAdapter) parent).setSpanId("1");
+
+        // no MDC entries before
+        // 0 and 1 after activating parent
+        assertNull(MDC.get(ActiveSpanManager.MDC_TRACE_ID));
+        assertNull(MDC.get(ActiveSpanManager.MDC_SPAN_ID));
+        ActiveSpanManager.activate(exchange, parent);
+        assertEquals("0", MDC.get(ActiveSpanManager.MDC_TRACE_ID));
+        assertEquals("1", MDC.get(ActiveSpanManager.MDC_SPAN_ID));
+
+        // 1 and 2 after activating child1
+        SpanAdapter child1 = MockSpanAdapter.buildSpan("child1");
+        ((MockSpanAdapter) child1).setTraceId("1");
+        ((MockSpanAdapter) child1).setSpanId("2");
+        ActiveSpanManager.activate(exchange, child1);
+        assertEquals("1", MDC.get(ActiveSpanManager.MDC_TRACE_ID));
+        assertEquals("2", MDC.get(ActiveSpanManager.MDC_SPAN_ID));
+
+        // back to 0 and 1 after deactivating child1
+        ActiveSpanManager.deactivate(exchange);
+        assertEquals("0", MDC.get(ActiveSpanManager.MDC_TRACE_ID));
+        assertEquals("1", MDC.get(ActiveSpanManager.MDC_SPAN_ID));
+
+        // back to no MDC entries after deactivating parent
+        ActiveSpanManager.deactivate(exchange);
+        assertNull(MDC.get(ActiveSpanManager.MDC_TRACE_ID));
+        assertNull(MDC.get(ActiveSpanManager.MDC_SPAN_ID));
     }
 }

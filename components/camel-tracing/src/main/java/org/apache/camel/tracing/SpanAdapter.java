@@ -34,4 +34,8 @@ public interface SpanAdapter {
     void setTag(String key, Boolean value);
 
     void log(Map<String, String> log);
+
+    String traceId();
+
+    String spanId();
 }
