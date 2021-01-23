@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (101 parameters):
+=== Query Parameters (102 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -146,6 +146,7 @@ with the following path and query parameters:
 | *transactionalId* (producer) | The TransactionalId to use for transactional delivery. This enables reliability semantics which span multiple producer sessions since it allows the client to guarantee that transactions using the same TransactionalId have been completed prior to starting any new transactions. If no TransactionalId is provided, then the producer is limited to idempotent delivery. If a TransactionalId is configured, enable.idempotence is implied. By default the TransactionId is not configured, which means transactions cannot be used. Note that, by default, transactions require a cluster of at least three brokers which is the recommended setting for production; for development you can change this, by adjusting broker setting transaction.state.log.replication.factor. |  | String
 | *transactionTimeoutMs* (producer) | The maximum amount of time in ms that the transaction coordinator will wait for a transaction status update from the producer before proactively aborting the ongoing transaction.If this value is larger than the transaction.max.timeout.ms setting in the broker, the request will fail with a InvalidTxnTimeoutException error. | 1m | int
 | *valueSerializer* (producer) | Serializer class for value that implements the org.apache.kafka.common.serialization.Serializer interface. | org.apache.kafka.common.serialization.StringSerializer | String
+| *vertxKafkaClientFactory* (advanced) | Factory to use for creating io.vertx.kafka.client.consumer.KafkaConsumer and io.vertx.kafka.client.consumer.KafkaProducer instances. This allows to configure a custom factory to create custom KafkaConsumer and KafkaProducer instances with logic that extends the vanilla VertX Kafka clients. |  | VertxKafkaClientFactory
 | *saslClientCallbackHandlerClass* (security) | The fully qualified name of a SASL client callback handler class that implements the AuthenticateCallbackHandler interface. |  | String
 | *saslJaasConfig* (security) | JAAS login context parameters for SASL connections in the format used by JAAS configuration files. JAAS configuration file format is described here. The format for the value is: 'loginModuleClass controlFlag (optionName=optionValue);'. For brokers, the config must be prefixed with listener prefix and SASL mechanism name in lower-case. For example, listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required; |  | String
 | *saslKerberosKinitCmd* (security) | Kerberos kinit command path. | /usr/bin/kinit | String
@@ -186,7 +187,7 @@ with the following path and query parameters:
 
 == Component Options
 // component options: START
-The Vert.x Kafka component supports 103 options, which are listed below.
+The Vert.x Kafka component supports 104 options, which are listed below.
 
 
 
@@ -260,6 +261,7 @@ The Vert.x Kafka component supports 103 options, which are listed below.
 | *valueSerializer* (producer) | Serializer class for value that implements the org.apache.kafka.common.serialization.Serializer interface. | org.apache.kafka.common.serialization.StringSerializer | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *vertx* (advanced) | *Autowired* To use an existing vertx instead of creating a new instance |  | Vertx
+| *vertxKafkaClientFactory* (advanced) | Factory to use for creating io.vertx.kafka.client.consumer.KafkaConsumer and io.vertx.kafka.client.consumer.KafkaProducer instances. This allows to configure a custom factory to create custom KafkaConsumer and KafkaProducer instances with logic that extends the vanilla VertX Kafka clients. |  | VertxKafkaClientFactory
 | *vertxOptions* (advanced) | To provide a custom set of vertx options for configuring vertx |  | VertxOptions
 | *saslClientCallbackHandlerClass* (security) | The fully qualified name of a SASL client callback handler class that implements the AuthenticateCallbackHandler interface. |  | String
 | *saslJaasConfig* (security) | JAAS login context parameters for SASL connections in the format used by JAAS configuration files. JAAS configuration file format is described here. The format for the value is: 'loginModuleClass controlFlag (optionName=optionValue);'. For brokers, the config must be prefixed with listener prefix and SASL mechanism name in lower-case. For example, listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required; |  | String

@@ -35,7 +35,8 @@ public class VertxKafkaProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() {
         // create kafka client
-        kafkaProducer = KafkaProducer.create(getEndpoint().getVertx(), getConfiguration().createProducerConfiguration());
+        kafkaProducer = getConfiguration().getVertxKafkaClientFactory()
+                .getVertxKafkaProducer(getEndpoint().getVertx(), getConfiguration().createProducerConfiguration());
 
         // create our operations
         producerOperations = new VertxKafkaProducerOperations(kafkaProducer, getConfiguration());
