@@ -56,6 +56,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
@@ -190,6 +191,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final boolean logExhaustedMessageBody;
     private final String version;
     private Date startDate;
+    private StartupSummaryLevel startupSummaryLevel;
 
     LightweightRuntimeCamelContext(CamelContext reference, CamelContext context) {
         this.reference = reference;
@@ -231,6 +233,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
         logExhaustedMessageBody = context.isLogExhaustedMessageBody();
         version = context.getVersion();
+        startupSummaryLevel = context.getStartupSummaryLevel();
     }
 
     /**
@@ -1215,6 +1218,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public StartupSummaryLevel getStartupSummaryLevel() {
+        return startupSummaryLevel;
+    }
+
+    @Override
     public Endpoint getPrototypeEndpoint(String uri) {
         throw new UnsupportedOperationException();
     }
@@ -1852,13 +1865,18 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     public RouteController getInternalRouteController() {
         return new RouteController() {
             @Override
-            public LoggingLevel getRouteStartupLoggingLevel() {
+            public LoggingLevel getLoggingLevel() {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void setRouteStartupLoggingLevel(LoggingLevel loggingLevel) {
+            public void setLoggingLevel(LoggingLevel loggingLevel) {
                 throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean isSupervising() {
+                return false;
             }
 
             @Override

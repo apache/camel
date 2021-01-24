@@ -364,9 +364,17 @@ public abstract class BaseMainSupport extends BaseService {
                 locations
                         = lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION).orElse(defaultPropertyPlaceholderLocation);
             }
+            if (locations != null) {
+                locations = locations.trim();
+            }
             if (!Objects.equals(locations, "false")) {
                 pc.addLocation(locations);
-                LOG.info("Using properties from: {}", locations);
+                if (DEFAULT_PROPERTY_PLACEHOLDER_LOCATION.equals(locations)) {
+                    LOG.debug("Using properties from: {}", locations);
+                } else {
+                    // if not default location then log at INFO
+                    LOG.info("Using properties from: {}", locations);
+                }
             }
         }
 
@@ -431,7 +439,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-            LOG.info("Auto-configuration summary:");
+            LOG.info("Auto-configuration summary");
             autoConfiguredProperties.forEach((k, v) -> {
                 if (SensitiveUtils.containsSensitive(k)) {
                     LOG.info("\t{}=xxxxxx", k);
@@ -1263,7 +1271,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
             // log summary of configurations
             if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-                LOG.info("Auto-configuration component {} summary:", name);
+                LOG.info("Auto-configuration component {} summary", name);
                 autoConfiguredProperties.forEach((k, v) -> {
                     if (SensitiveUtils.containsSensitive(k)) {
                         LOG.info("\t{}=xxxxxx", k);

@@ -47,6 +47,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -923,6 +924,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public SSLContextParameters getSSLContextParameters() {
         return delegate.getSSLContextParameters();
+    }
+
+    @Override
+    public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
+        delegate.setStartupSummaryLevel(startupSummaryLevel);
+    }
+
+    @Override
+    public StartupSummaryLevel getStartupSummaryLevel() {
+        return delegate.getStartupSummaryLevel();
     }
 
     @Override

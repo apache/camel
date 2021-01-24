@@ -320,7 +320,7 @@ class InternalRouteStartupManager {
     }
 
     private LoggingLevel getRouteLoggerLogLevel() {
-        return abstractCamelContext.getRouteController().getRouteStartupLoggingLevel();
+        return abstractCamelContext.getRouteController().getLoggingLevel();
     }
 
     private void doStartOrResumeRouteConsumers(

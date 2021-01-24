@@ -31,15 +31,21 @@ import org.apache.camel.StaticService;
 public interface RouteController extends CamelContextAware, StaticService {
 
     /**
-     * Gets the logging level used for logging route startup activity.
+     * Gets the logging level used for logging route activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
      */
-    LoggingLevel getRouteStartupLoggingLevel();
+    LoggingLevel getLoggingLevel();
 
     /**
-     * Sets the logging level used for logging route startup activity. By default INFO level is used. You can use this
-     * to change the level for example to OFF if this kind of logging is not wanted.
+     * Sets the logging level used for logging route activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
      */
-    void setRouteStartupLoggingLevel(LoggingLevel loggingLevel);
+    void setLoggingLevel(LoggingLevel loggingLevel);
+
+    /**
+     * Whether this route controller is a regular or supervising controller.
+     */
+    boolean isSupervising();
 
     /**
      * Enables supervising {@link RouteController}.

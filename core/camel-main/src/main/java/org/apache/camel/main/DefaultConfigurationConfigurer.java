@@ -127,6 +127,9 @@ public final class DefaultConfigurationConfigurer {
         if (config.getName() != null) {
             ecc.setName(config.getName());
         }
+        if (config.getStartupSummaryLevel() != null) {
+            camelContext.setStartupSummaryLevel(config.getStartupSummaryLevel());
+        }
 
         if (config.getShutdownTimeout() > 0) {
             camelContext.getShutdownStrategy().setTimeout(config.getShutdownTimeout());
@@ -245,8 +248,8 @@ public final class DefaultConfigurationConfigurer {
             }
             src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
         }
-        if (config.getRouteControllerRouteStartupLoggingLevel() != null) {
-            camelContext.getRouteController().setRouteStartupLoggingLevel(config.getRouteControllerRouteStartupLoggingLevel());
+        if (config.getRouteControllerLoggingLevel() != null) {
+            camelContext.getRouteController().setLoggingLevel(config.getRouteControllerLoggingLevel());
         }
     }
 

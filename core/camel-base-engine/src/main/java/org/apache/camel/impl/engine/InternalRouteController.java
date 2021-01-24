@@ -38,13 +38,18 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
-    public LoggingLevel getRouteStartupLoggingLevel() {
+    public LoggingLevel getLoggingLevel() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setRouteStartupLoggingLevel(LoggingLevel loggingLevel) {
+    public void setLoggingLevel(LoggingLevel loggingLevel) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isSupervising() {
+        return false;
     }
 
     @Override

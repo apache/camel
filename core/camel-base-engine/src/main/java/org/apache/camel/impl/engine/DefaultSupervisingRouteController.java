@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -345,6 +346,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         return routeManager.exhausted.keySet().stream()
                 .map(RouteHolder::get)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<String> getNonControlledRouteIds() {
+        return Collections.unmodifiableSet(nonSupervisedRoutes);
     }
 
     @Override

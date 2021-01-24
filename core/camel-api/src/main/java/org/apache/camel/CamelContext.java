@@ -1257,4 +1257,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     SSLContextParameters getSSLContextParameters();
 
+    /**
+     * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
+     */
+    void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel);
+
+    /**
+     * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
+     */
+    StartupSummaryLevel getStartupSummaryLevel();
+
 }

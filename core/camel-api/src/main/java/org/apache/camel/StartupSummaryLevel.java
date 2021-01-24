@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.LoggingLevel;
+/**
+ * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
+ */
+public enum StartupSummaryLevel {
 
-public class RouteStartupLoggingLevelTest extends SimpleMockTest {
+    Classic,
+    Verbose,
+    Default,
+    Brief,
+    Off
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.getRouteController().setLoggingLevel(LoggingLevel.WARN);
-        return context;
-    }
 }

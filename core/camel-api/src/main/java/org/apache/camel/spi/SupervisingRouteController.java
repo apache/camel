@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.camel.Route;
 import org.apache.camel.util.backoff.BackOffTimer;
@@ -138,6 +139,11 @@ public interface SupervisingRouteController extends RouteController {
      * Return the list of routes that have failed all attempts to startup and are now exhausted.
      */
     Collection<Route> getExhaustedRoutes();
+
+    /**
+     * Returns the route ids of routes which are non controlled (such as routes that was excluded)
+     */
+    Set<String> getNonControlledRouteIds();
 
     /**
      * Gets the state of the backoff for the given route if its managed and under restarting.

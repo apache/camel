@@ -33,7 +33,7 @@ public class ShutdownGracefulTimeoutTriggerTest extends ContextTestSupport {
         // timeout after 2 seconds
         context.getShutdownStrategy().setTimeout(2);
 
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");

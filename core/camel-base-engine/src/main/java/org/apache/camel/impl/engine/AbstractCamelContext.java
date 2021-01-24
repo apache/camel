@@ -56,6 +56,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -70,6 +71,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StartupStep;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
@@ -317,8 +319,8 @@ public abstract class AbstractCamelContext extends BaseService
     private long buildTaken;
     private long initTaken;
     private long startDate;
-
     private SSLContextParameters sslContextParameters;
+    private StartupSummaryLevel startupSummaryLevel = StartupSummaryLevel.Default;
 
     /**
      * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -2063,9 +2065,7 @@ public abstract class AbstractCamelContext extends BaseService
             logListeners = new LinkedHashSet<>();
         }
         // avoid adding double which can happen with spring xml on spring boot
-        if (!logListeners.contains(listener)) {
-            logListeners.add(listener);
-        }
+        logListeners.add(listener);
     }
 
     @Override
@@ -2603,6 +2603,21 @@ public abstract class AbstractCamelContext extends BaseService
 
         // init the route controller
         this.routeController = getRouteController();
+        if (startupSummaryLevel == StartupSummaryLevel.Classic || startupSummaryLevel == StartupSummaryLevel.Verbose) {
+            // classic/verbose startup should let route controller do the route startup logging
+            if (routeController.getLoggingLevel().ordinal() < LoggingLevel.INFO.ordinal()) {
+                routeController.setLoggingLevel(LoggingLevel.INFO);
+            }
+        }
+
+        // init the shutdown strategy
+        this.shutdownStrategy = getShutdownStrategy();
+        if (startupSummaryLevel == StartupSummaryLevel.Classic || startupSummaryLevel == StartupSummaryLevel.Verbose) {
+            // classic/verbose startup should let route controller do the route shutdown logging
+            if (shutdownStrategy != null && shutdownStrategy.getLoggingLevel().ordinal() < LoggingLevel.INFO.ordinal()) {
+                shutdownStrategy.setLoggingLevel(LoggingLevel.INFO);
+            }
+        }
 
         // optimize - before starting routes lets check if event notifications is possible
         eventNotificationApplicable = EventHelper.eventsApplicable(this);
@@ -2771,7 +2786,10 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartContext() throws Exception {
-        if (LOG.isDebugEnabled()) {
+        if (startupSummaryLevel == StartupSummaryLevel.Classic) {
+            // classic was logging this at INFO level
+            LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
+        } else if (LOG.isDebugEnabled()) {
             LOG.debug("Apache Camel {} ({}) is starting", getVersion(), getName());
         }
         vetoed = null;
@@ -2813,8 +2831,15 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
+        // ant duplicate components in use?
+        logDuplicateComponents();
+
         // log startup summary
-        logStartSummary();
+        if (startupSummaryLevel == StartupSummaryLevel.Classic) {
+            logClassicStartSummary();
+        } else {
+            logStartSummary();
+        }
 
         // now Camel has been started/bootstrap is complete, then run cleanup to help free up memory etc
         for (BootstrapCloseable bootstrap : bootstraps) {
@@ -2833,7 +2858,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    protected void logStartSummary() {
+    protected void logDuplicateComponents() {
         // output how many instances of the same component class are in use, as multiple instances is potential a mistake
         if (LOG.isInfoEnabled()) {
             Map<Class<?>, Set<String>> counters = new LinkedHashMap<>();
@@ -2862,6 +2887,9 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
+    }
+
+    protected void logClassicStartSummary() {
         if (LOG.isInfoEnabled()) {
             // count how many routes are actually started
             int started = 0;
@@ -2879,6 +2907,57 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}",
                         getRoutes().size(), started, controlledRoutes.size(),
                         getRouteController().getClass().getName());
+            }
+            LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+        }
+    }
+
+    protected void logStartSummary() {
+        // supervising route controller should do their own startup log summary
+        boolean supervised = getRouteController().isSupervising();
+        if (!supervised && startupSummaryLevel != StartupSummaryLevel.Off && LOG.isInfoEnabled()) {
+            int started = 0;
+            int total = 0;
+            int disabled = 0;
+            List<String> lines = new ArrayList<>();
+            routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
+            for (RouteStartupOrder order : routeStartupOrder) {
+                total++;
+                String id = order.getRoute().getRouteId();
+                String status = getRouteStatus(id).name();
+                if (ServiceStatus.Started.name().equals(status)) {
+                    started++;
+                }
+                // use basic endpoint uri to not log verbose details or potential sensitive data
+                String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                uri = URISupport.sanitizeUri(uri);
+                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+            }
+            for (Route route : routes) {
+                if (!route.isAutoStartup()) {
+                    total++;
+                    disabled++;
+                    String id = route.getRouteId();
+                    String status = getRouteStatus(id).name();
+                    if (ServiceStatus.Stopped.name().equals(status)) {
+                        status = "Disabled";
+                    }
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = route.getEndpoint().getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
+                    lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                }
+            }
+            if (disabled > 0) {
+                LOG.info("Routes startup summary (total:{} started:{} disabled:{})", total, started, disabled);
+            } else {
+                LOG.info("Routes startup summary (total:{} started:{})", total, started);
+            }
+            // if we are default/verbose then log each route line
+            if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
+                for (String line : lines) {
+                    LOG.info(line);
+                }
             }
         }
 
@@ -3058,7 +3137,14 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     protected void doStop() throws Exception {
         stopWatch.restart();
-        LOG.info("Apache Camel {} ({}) is shutting down", getVersion(), getName());
+
+        if (shutdownStrategy != null) {
+            long timeout = shutdownStrategy.getTimeUnit().toMillis(shutdownStrategy.getTimeout());
+            String to = TimeUtils.printDuration(timeout);
+            LOG.info("Apache Camel {} ({}) shutting down (timeout:{})", getVersion(), getName(), to);
+        } else {
+            LOG.info("Apache Camel {} ({}) shutting down", getVersion(), getName());
+        }
 
         EventHelper.notifyCamelContextStopping(this);
         EventHelper.notifyCamelContextRoutesStopping(this);
@@ -3098,6 +3184,11 @@ public abstract class AbstractCamelContext extends BaseService
             list.add(routeService);
         }
         shutdownServices(list, false);
+
+        if (startupSummaryLevel != StartupSummaryLevel.Classic && startupSummaryLevel != StartupSummaryLevel.Off) {
+            logRouteStopSummary();
+        }
+
         // do not clear route services or startup listeners as we can start
         // Camel again and get the route back as before
         routeStartupOrder.clear();
@@ -3178,10 +3269,17 @@ public abstract class AbstractCamelContext extends BaseService
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Apache Camel {} ({}) uptime {}", getVersion(), getName(), getUptime());
-            LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(),
-                    TimeUtils.printDuration(stopWatch.taken()));
+        if (startupSummaryLevel == StartupSummaryLevel.Classic) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Apache Camel {} ({}) uptime {}", getVersion(), getName(), getUptime());
+                LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(),
+                        TimeUtils.printDuration(stopWatch.taken()));
+            }
+        } else {
+            if (LOG.isInfoEnabled()) {
+                String taken = TimeUtils.printDuration(stopWatch.taken());
+                LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{})", getVersion(), getName(), taken, getUptime());
+            }
         }
 
         // ensure any recorder is stopped in case it was kept running
@@ -3193,6 +3291,48 @@ public abstract class AbstractCamelContext extends BaseService
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextDestroyed(this);
+    }
+
+    protected void logRouteStopSummary() {
+        if (LOG.isInfoEnabled()) {
+            int total = 0;
+            int stopped = 0;
+            int forced = 0;
+            List<String> lines = new ArrayList<>();
+
+            if (shutdownStrategy != null && shutdownStrategy.isShutdownRoutesInReverseOrder()) {
+                routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
+            } else {
+                routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
+            }
+            for (RouteStartupOrder order : routeStartupOrder) {
+                total++;
+                String id = order.getRoute().getRouteId();
+                String status = getRouteStatus(id).name();
+                if (ServiceStatus.Stopped.name().equals(status)) {
+                    stopped++;
+                }
+                if (order.getRoute().getProperties().containsKey("forcedShutdown")) {
+                    forced++;
+                    status = "Forced stopped";
+                }
+                // use basic endpoint uri to not log verbose details or potential sensitive data
+                String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                uri = URISupport.sanitizeUri(uri);
+                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+            }
+            if (forced > 0) {
+                LOG.info("Routes shutdown summary (total:{} stopped:{} forced:{})", total, stopped, forced);
+            } else {
+                LOG.info("Routes shutdown summary (total:{} stopped:{})", total, stopped);
+            }
+            // if we are default/verbose then log each route line
+            if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
+                for (String line : lines) {
+                    LOG.info(line);
+                }
+            }
+        }
     }
 
     public void startRouteDefinitions() throws Exception {
@@ -4344,6 +4484,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public StartupSummaryLevel getStartupSummaryLevel() {
+        return startupSummaryLevel;
+    }
+
+    @Override
+    public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
+        this.startupSummaryLevel = startupSummaryLevel;
     }
 
     @Override

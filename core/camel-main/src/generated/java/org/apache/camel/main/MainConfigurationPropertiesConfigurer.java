@@ -115,8 +115,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": target.setRouteControllerIncludeRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": target.setRouteControllerInitialDelay(property(camelContext, long.class, value)); return true;
-        case "routecontrollerroutestartuplogginglevel":
-        case "RouteControllerRouteStartupLoggingLevel": target.setRouteControllerRouteStartupLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "routecontrollerlogginglevel":
+        case "RouteControllerLoggingLevel": target.setRouteControllerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": target.setRouteControllerSuperviseEnabled(property(camelContext, boolean.class, value)); return true;
         case "routecontrollerthreadpoolsize":
@@ -155,6 +155,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StartupRecorderProfile": target.setStartupRecorderProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "startuprecorderrecording":
         case "StartupRecorderRecording": target.setStartupRecorderRecording(property(camelContext, boolean.class, value)); return true;
+        case "startupsummarylevel":
+        case "StartupSummaryLevel": target.setStartupSummaryLevel(property(camelContext, org.apache.camel.StartupSummaryLevel.class, value)); return true;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": target.setStreamCachingAnySpoolRules(property(camelContext, boolean.class, value)); return true;
         case "streamcachingbuffersize":
@@ -294,8 +296,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": return java.lang.String.class;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return long.class;
-        case "routecontrollerroutestartuplogginglevel":
-        case "RouteControllerRouteStartupLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "routecontrollerlogginglevel":
+        case "RouteControllerLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": return boolean.class;
         case "routecontrollerthreadpoolsize":
@@ -334,6 +336,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StartupRecorderProfile": return java.lang.String.class;
         case "startuprecorderrecording":
         case "StartupRecorderRecording": return boolean.class;
+        case "startupsummarylevel":
+        case "StartupSummaryLevel": return org.apache.camel.StartupSummaryLevel.class;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return boolean.class;
         case "streamcachingbuffersize":
@@ -474,8 +478,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": return target.getRouteControllerIncludeRoutes();
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return target.getRouteControllerInitialDelay();
-        case "routecontrollerroutestartuplogginglevel":
-        case "RouteControllerRouteStartupLoggingLevel": return target.getRouteControllerRouteStartupLoggingLevel();
+        case "routecontrollerlogginglevel":
+        case "RouteControllerLoggingLevel": return target.getRouteControllerLoggingLevel();
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": return target.isRouteControllerSuperviseEnabled();
         case "routecontrollerthreadpoolsize":
@@ -514,6 +518,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StartupRecorderProfile": return target.getStartupRecorderProfile();
         case "startuprecorderrecording":
         case "StartupRecorderRecording": return target.isStartupRecorderRecording();
+        case "startupsummarylevel":
+        case "StartupSummaryLevel": return target.getStartupSummaryLevel();
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return target.isStreamCachingAnySpoolRules();
         case "streamcachingbuffersize":

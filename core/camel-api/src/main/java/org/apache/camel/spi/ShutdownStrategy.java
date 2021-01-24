@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 
@@ -241,5 +242,17 @@ public interface ShutdownStrategy extends StaticService {
      * Whether a timeout has occurred during a shutdown.
      */
     boolean hasTimeoutOccurred();
+
+    /**
+     * Gets the logging level used for logging shutdown activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
+     */
+    LoggingLevel getLoggingLevel();
+
+    /**
+     * Sets the logging level used for logging shutdown activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
+     */
+    void setLoggingLevel(LoggingLevel loggingLevel);
 
 }

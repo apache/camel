@@ -42,7 +42,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
 
     private CamelContext camelContext;
 
-    private LoggingLevel routeStartupLoggingLevel = LoggingLevel.INFO;
+    private LoggingLevel loggingLevel = LoggingLevel.DEBUG;
 
     public DefaultRouteController() {
         this(null);
@@ -67,13 +67,18 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
-    public LoggingLevel getRouteStartupLoggingLevel() {
-        return routeStartupLoggingLevel;
+    public LoggingLevel getLoggingLevel() {
+        return loggingLevel;
     }
 
     @Override
-    public void setRouteStartupLoggingLevel(LoggingLevel routeStartupLoggingLevel) {
-        this.routeStartupLoggingLevel = routeStartupLoggingLevel;
+    public void setLoggingLevel(LoggingLevel loggingLevel) {
+        this.loggingLevel = loggingLevel;
+    }
+
+    @Override
+    public boolean isSupervising() {
+        return this instanceof SupervisingRouteController;
     }
 
     // ***************************************************

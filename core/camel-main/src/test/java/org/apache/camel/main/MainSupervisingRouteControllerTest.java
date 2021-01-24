@@ -42,12 +42,13 @@ public class MainSupervisingRouteControllerTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().withRouteStartupLoggingLevel(LoggingLevel.OFF)
+        main.configure().withRouteControllerLoggingLevel(LoggingLevel.OFF)
                 .withRouteControllerSuperviseEnabled(true)
                 .withRouteControllerBackOffDelay(25)
                 .withRouteControllerBackOffMaxAttempts(3)
                 .withRouteControllerInitialDelay(100)
-                .withRouteControllerThreadPoolSize(2);
+                .withRouteControllerThreadPoolSize(2)
+                .withRouteControllerExcludeRoutes("timer*");
         main.start();
 
         MockEndpoint mock = main.getCamelContext().getEndpoint("mock:foo", MockEndpoint.class);

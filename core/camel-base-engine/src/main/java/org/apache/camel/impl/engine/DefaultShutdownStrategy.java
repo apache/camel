@@ -38,12 +38,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
@@ -114,6 +116,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
+    private final CamelLogger logger = new CamelLogger(LOG, LoggingLevel.DEBUG);
 
     private CamelContext camelContext;
     private ExecutorService executor;
@@ -195,12 +198,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         List<RouteStartupOrder> routesOrdered = new ArrayList<>(routes);
         routesOrdered.sort(comparator);
 
-        if (suspendOnly) {
-            LOG.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout,
-                    timeUnit.toString().toLowerCase(Locale.ENGLISH));
-        } else {
-            LOG.info("Starting to graceful shutdown {} routes (timeout {} {})", routesOrdered.size(), timeout,
-                    timeUnit.toString().toLowerCase(Locale.ENGLISH));
+        if (logger.shouldLog()) {
+            if (suspendOnly) {
+                String msg = String.format("Starting to graceful suspend %s routes (timeout %s %s)", routesOrdered.size(),
+                        timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+                logger.log(msg);
+            } else {
+                String msg = String.format("Starting to graceful shutdown %s routes (timeout %s %s)", routesOrdered.size(),
+                        timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+                logger.log(msg);
+            }
         }
 
         // use another thread to perform the shutdowns so we can support timeout
@@ -265,8 +272,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             currentShutdownTaskFuture = null;
         }
 
-        LOG.info("Graceful shutdown of {} routes completed in {}", routesOrdered.size(),
-                TimeUtils.printDuration(watch.taken()));
+        if (logger.shouldLog()) {
+            logger.log(String.format("Graceful shutdown of %s routes completed in %s", routesOrdered.size(),
+                    TimeUtils.printDuration(watch.taken())));
+        }
         return true;
     }
 
@@ -344,6 +353,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     @Override
+    public LoggingLevel getLoggingLevel() {
+        return logger.getLevel();
+    }
+
+    @Override
+    public void setLoggingLevel(LoggingLevel loggingLevel) {
+        this.logger.setLevel(loggingLevel);
+    }
+
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -374,6 +393,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         current, order.getRoute().getId());
                 order.getRoute().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
+
+            order.getRoute().getProperties().put("forcedShutdown", true);
 
             // shutdown the route consumer
             shutdownNow(order.getRoute().getId(), order.getInput());
@@ -610,7 +631,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    LOG.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), uri);
+                    if (logger.shouldLog()) {
+                        logger.log(String.format("Route: %s shutdown complete, was consuming from: %s",
+                                order.getRoute().getId(), uri));
+                    }
                 } else {
                     // we will stop it later, but for now it must run to be able to help all inflight messages
                     // be safely completed
@@ -705,13 +729,19 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    LOG.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), uri);
+                    if (logger.shouldLog()) {
+                        logger.log(String.format("Route: %s suspend complete, was consuming from: %s",
+                                deferred.getRoute().getId(), uri));
+                    }
                 } else {
                     shutdownNow(deferred.getRoute().getId(), consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    LOG.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), uri);
+                    if (logger.shouldLog()) {
+                        logger.log(String.format("Route: %s shutdown complete, was consuming from: %s",
+                                deferred.getRoute().getId(), uri));
+                    }
                 }
             }
 

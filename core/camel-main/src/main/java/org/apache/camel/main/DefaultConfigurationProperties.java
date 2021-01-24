@@ -16,9 +16,11 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Experimental;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.PatternHelper;
 
@@ -28,6 +30,8 @@ import org.apache.camel.support.PatternHelper;
 public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
+    @Metadata(defaultValue = "Default")
+    private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
@@ -87,8 +91,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
     // route controller
-    @Metadata(defaultValue = "INFO")
-    private LoggingLevel routeControllerRouteStartupLoggingLevel = LoggingLevel.INFO;
+    @Metadata(defaultValue = "DEBUG")
+    @Deprecated
+    private LoggingLevel routeControllerLoggingLevel;
     private boolean routeControllerSuperviseEnabled;
     private String routeControllerIncludeRoutes;
     private String routeControllerExcludeRoutes;
@@ -119,6 +124,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public StartupSummaryLevel getStartupSummaryLevel() {
+        return startupSummaryLevel;
+    }
+
+    /**
+     * Controls the level of information logged during startup (and shutdown) of CamelContext.
+     */
+    public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
+        this.startupSummaryLevel = startupSummaryLevel;
     }
 
     public int getDurationMaxSeconds() {
@@ -942,16 +958,18 @@ public abstract class DefaultConfigurationProperties<T> {
         this.lightweight = lightweight;
     }
 
-    public LoggingLevel getRouteControllerRouteStartupLoggingLevel() {
-        return routeControllerRouteStartupLoggingLevel;
+    @Deprecated
+    public LoggingLevel getRouteControllerLoggingLevel() {
+        return routeControllerLoggingLevel;
     }
 
     /**
-     * Sets the logging level used for logging route startup activity. By default INFO level is used. You can use this
-     * to change the level for example to OFF if this kind of logging is not wanted.
+     * Sets the logging level used for logging route activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
      */
-    public void setRouteControllerRouteStartupLoggingLevel(LoggingLevel routeControllerRouteStartupLoggingLevel) {
-        this.routeControllerRouteStartupLoggingLevel = routeControllerRouteStartupLoggingLevel;
+    @Deprecated
+    public void setRouteControllerLoggingLevel(LoggingLevel routeControllerLoggingLevel) {
+        this.routeControllerLoggingLevel = routeControllerLoggingLevel;
     }
 
     public boolean isRouteControllerSuperviseEnabled() {
@@ -1846,11 +1864,11 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets the logging level used for logging route startup activity. By default INFO level is used. You can use this
-     * to change the level for example to OFF if this kind of logging is not wanted.
+     * Sets the logging level used for logging route activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
      */
-    public T withRouteStartupLoggingLevel(LoggingLevel routeStartupLoggingLevel) {
-        this.routeControllerRouteStartupLoggingLevel = routeStartupLoggingLevel;
+    public T withRouteControllerLoggingLevel(LoggingLevel routeControllerLoggingLevel) {
+        this.routeControllerLoggingLevel = routeControllerLoggingLevel;
         return (T) this;
     }
 
@@ -1925,6 +1943,34 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
         this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
+        return (T) this;
+    }
+
+    /**
+     * Pattern for filtering routes to be included as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
+     *
+     * For example to include all kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
+     * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    public T withRouteControllerIncludeRoutes(String routeControllerIncludeRoutes) {
+        this.routeControllerIncludeRoutes = routeControllerIncludeRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Pattern for filtering routes to be excluded as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
+     *
+     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>. And to exclude routes with specific route ids
+     * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    public T withRouteControllerExcludeRoutes(String routeControllerExcludeRoutes) {
+        this.routeControllerExcludeRoutes = routeControllerExcludeRoutes;
         return (T) this;
     }
 

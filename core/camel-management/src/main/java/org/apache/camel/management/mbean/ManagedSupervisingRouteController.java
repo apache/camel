@@ -134,7 +134,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     @Override
     public String getRouteStartupLoggingLevel() {
         if (controller != null) {
-            return controller.getRouteStartupLoggingLevel().name();
+            return controller.getLoggingLevel().name();
         } else {
             return null;
         }
