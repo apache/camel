@@ -61,13 +61,6 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
         super.doStop();
     }
 

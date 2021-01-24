@@ -60,13 +60,6 @@ public class MiloClientConsumer extends DefaultConsumer {
             this.handle.unregister();
             this.handle = null;
         }
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
         super.doStop();
     }
 
