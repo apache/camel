@@ -1409,6 +1409,27 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Factory to use for creating
+         * io.vertx.kafka.client.consumer.KafkaConsumer and
+         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
+         * to configure a custom factory to create custom KafkaConsumer and
+         * KafkaProducer instances with logic that extends the vanilla VertX
+         * Kafka clients.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param vertxKafkaClientFactory the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder vertxKafkaClientFactory(
+                org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory vertxKafkaClientFactory) {
+            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
+            return this;
+        }
+        /**
          * To provide a custom set of vertx options for configuring vertx.
          * 
          * The option is a: &lt;code&gt;io.vertx.core.VertxOptions&lt;/code&gt;
@@ -2146,6 +2167,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "valueSerializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "autowiredEnabled": ((VertxKafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "vertx": ((VertxKafkaComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
+            case "vertxKafkaClientFactory": getOrCreateConfiguration((VertxKafkaComponent) component).setVertxKafkaClientFactory((org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory) value); return true;
             case "vertxOptions": ((VertxKafkaComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "saslClientCallbackHandlerClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslClientCallbackHandlerClass((java.lang.String) value); return true;
             case "saslJaasConfig": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslJaasConfig((java.lang.String) value); return true;

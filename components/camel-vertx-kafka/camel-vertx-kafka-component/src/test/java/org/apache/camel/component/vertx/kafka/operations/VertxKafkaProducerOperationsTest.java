@@ -586,7 +586,7 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
 
         @Override
         public byte[] serialize(String topic, Object data) {
-            return stringSerializer.serialize(topic, data.toString());
+            return stringSerializer.serialize(topic, data != null ? data.toString() : null);
         }
     }
 }

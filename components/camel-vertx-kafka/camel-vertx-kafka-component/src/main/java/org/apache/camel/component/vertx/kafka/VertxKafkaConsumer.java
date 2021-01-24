@@ -47,7 +47,8 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
         super.doStart();
 
         // create the consumer client
-        kafkaConsumer = KafkaConsumer.create(getEndpoint().getVertx(), getConfiguration().createConsumerConfiguration());
+        kafkaConsumer = getConfiguration().getVertxKafkaClientFactory()
+                .getVertxKafkaConsumer(getEndpoint().getVertx(), getConfiguration().createConsumerConfiguration());
 
         // create the consumer operation
         final VertxKafkaConsumerOperations consumerOperations
