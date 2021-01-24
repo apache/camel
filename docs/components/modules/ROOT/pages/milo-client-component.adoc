@@ -187,6 +187,7 @@ might be different, and wrong from the point of view of the connecting client (e
 In this case it is possible to set the parameter `overrideHost` to `true`, which will take the discovered endpoint information,
 but override the host information with the value of the original URI.
 
+[[nodeid]]
 === Node ID
 
 
@@ -229,6 +230,24 @@ Input parameters are taken from the body:
 * If the body is a `Variant[]`, then it will be used as is
 * If the body is a `Variant`, then it will be wrapped in a `Variant[]` array
 * Otherwise the body will be converted into a `Variant` and wrapped in an array of `Variant[]`
+
+=== Read Values from Nodes
+
+The component provide a producer to read values from multiple opc-ua nodes. The Node-IDs will be defined in the header `CamelMiloNodeIds` as list of strings. (see <<nodeid, Node-ID>> for the ID format).
+
+Example:
+```java
+from("direct:start")
+    .setHeader("CamelMiloNodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
+    .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
+        .enrich("milo-client:opc.tcp://localhost:4334", new AggregationStrategy() {
+
+            @Override
+            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                return newExchange;
+            }
+        }).to("mock:test1");
+```
 
 === Security policies
 

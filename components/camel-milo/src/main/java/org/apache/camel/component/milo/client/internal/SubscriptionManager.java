@@ -34,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
@@ -188,9 +190,8 @@ public class SubscriptionManager {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     Double samplingInterval = s.getSamplingInterval();
 
-                    final MonitoringParameters parameters
-                            = new MonitoringParameters(
-                                    entry.getKey(), samplingInterval, s.createMonitoringFilter(client), null, null);
+                    final MonitoringParameters parameters = new MonitoringParameters(
+                            entry.getKey(), samplingInterval, s.createMonitoringFilter(client), null, null);
                     items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
                 }
             }
@@ -355,6 +356,17 @@ public class SubscriptionManager {
 
             });
         }
+
+        public CompletableFuture<List<DataValue>> readValues(List<ExpandedNodeId> expandedNodeIds) {
+
+            final CompletableFuture<NodeId>[] nodeIdFutures
+                    = expandedNodeIds.stream().map(this::lookupNamespace).toArray(CompletableFuture[]::new);
+
+            return CompletableFuture.allOf(nodeIdFutures).thenCompose(param -> {
+                List<NodeId> nodeIds = Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
+                return this.client.readValues(0, TimestampsToReturn.Server, nodeIds);
+            });
+        }
     }
 
     private final MiloClientConfiguration configuration;
@@ -449,7 +461,9 @@ public class SubscriptionManager {
 
         final URI uri = URI.create(getEndpointDiscoveryUri());
 
-        //milo library doesn't allow user info as a part of the uri, it has to be removed before sending to milo
+        // milo library doesn't allow user info as a part of the uri, it has to
+        // be
+        // removed before sending to milo
         final String user = uri.getUserInfo();
         if (user != null && !user.isEmpty()) {
             discoveryUri = discoveryUri.replaceFirst(user + "@", "");
@@ -702,6 +716,23 @@ public class SubscriptionManager {
                     handleConnectionFailue(e);
                 }
                 return null;
+            }, this.executor);
+        }
+    }
+
+    public CompletableFuture<?> readValues(final List<ExpandedNodeId> nodeIds) {
+        synchronized (this) {
+            if (this.connected == null) {
+                return newNotConnectedResult();
+            }
+
+            return this.connected.readValues(nodeIds).handleAsync((nodes, e) -> {
+                // handle outside the lock, running using
+                // handleAsync
+                if (e != null) {
+                    handleConnectionFailue(e);
+                }
+                return nodes;
             }, this.executor);
         }
     }
