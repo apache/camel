@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.milo.client;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("milo-client")
 public class MiloClientComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientComponent.class);
+
+    private final Map<String, MiloClientConnection> cache = new HashMap<>();
 
     @Metadata
     private MiloClientConfiguration configuration = new MiloClientConfiguration();
@@ -80,6 +87,18 @@ public class MiloClientComponent extends DefaultComponent {
      */
     public void setReconnectTimeout(final Long reconnectTimeout) {
         this.configuration.setRequestTimeout(reconnectTimeout);
+    }
+
+    public synchronized MiloClientConnection createConnection(
+            MiloClientConfiguration configurationParam, MonitorFilterConfiguration monitorFilterConfiguration) {
+        final String cacheId = configurationParam.toCacheId();
+        MiloClientConnection connection = this.cache.get(cacheId);
+        if (connection == null) {
+            LOG.debug("Cache miss - creating new connection instance: {}", cacheId);
+            connection = new MiloClientConnection(configurationParam, monitorFilterConfiguration);
+            this.cache.put(cacheId, connection);
+        }
+        return connection;
     }
 
 }

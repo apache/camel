@@ -39,7 +39,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
     private final boolean defaultAwaitWrites;
 
-    public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection,
+    public MiloClientProducer(final MiloClientEndpoint endpoint,
                               final boolean defaultAwaitWrites) {
         super(endpoint);
 

@@ -110,7 +110,7 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new MiloClientProducer(this, this.createConnection(), this.defaultAwaitWrites);
+        return new MiloClientProducer(this, this.defaultAwaitWrites);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     }
 
     public MiloClientConnection createConnection() {
-        return new MiloClientConnection(configuration, monitorFilterConfiguration);
+        return this.component.createConnection(configuration, monitorFilterConfiguration);
     }
 
     // item configuration
