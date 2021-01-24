@@ -101,4 +101,14 @@ public class MiloClientComponent extends DefaultComponent {
         return connection;
     }
 
+    @Override
+    protected synchronized void doStop() throws Exception {
+        super.doStop();
+
+        for (MiloClientConnection connection : this.cache.values()) {
+            connection.close();
+        }
+        this.cache.clear();
+    }
+
 }
