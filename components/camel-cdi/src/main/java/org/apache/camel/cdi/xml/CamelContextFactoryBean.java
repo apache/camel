@@ -34,6 +34,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
@@ -78,6 +79,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlAttribute(name = "depends-on")
     private String dependsOn;
+
+    @XmlAttribute
+    @Metadata(defaultValue = "Default")
+    private StartupSummaryLevel startupSummaryLevel;
 
     @XmlAttribute
     private String trace;
@@ -643,6 +648,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setCamelRouteController(CamelRouteControllerDefinition camelRouteController) {
         this.camelRouteController = camelRouteController;
+    }
+
+    @Override
+    public StartupSummaryLevel getStartupSummaryLevel() {
+        return startupSummaryLevel;
+    }
+
+    public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
+        this.startupSummaryLevel = startupSummaryLevel;
     }
 
     @Override

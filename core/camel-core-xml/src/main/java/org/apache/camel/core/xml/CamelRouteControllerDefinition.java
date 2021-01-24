@@ -59,6 +59,9 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "false")
     private String unhealthyOnExhausted;
+    @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    private String loggingLevel;
 
     public String getSupervising() {
         return supervising;
@@ -204,5 +207,17 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
      */
     public void setUnhealthyOnExhausted(String unhealthyOnExhausted) {
         this.unhealthyOnExhausted = unhealthyOnExhausted;
+    }
+
+    public String getLoggingLevel() {
+        return loggingLevel;
+    }
+
+    /**
+     * Sets the logging level used for logging route activity (such as starting and stopping routes). The default
+     * logging level is DEBUG.
+     */
+    public void setLoggingLevel(String loggingLevel) {
+        this.loggingLevel = loggingLevel;
     }
 }

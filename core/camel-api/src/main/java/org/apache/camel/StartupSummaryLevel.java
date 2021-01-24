@@ -16,9 +16,12 @@
  */
 package org.apache.camel;
 
+import javax.xml.bind.annotation.XmlEnum;
+
 /**
  * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
  */
+@XmlEnum
 public enum StartupSummaryLevel {
 
     Classic,

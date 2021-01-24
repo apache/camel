@@ -38,6 +38,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.ValueHolder;
@@ -741,6 +742,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (unhealthyOnExhausted != null && unhealthyOnExhausted) {
             src.setUnhealthyOnExhausted(unhealthyOnExhausted);
         }
+        LoggingLevel loggingLevel = CamelContextHelper.parse(getContext(), LoggingLevel.class, rc.getLoggingLevel());
+        if (loggingLevel != null) {
+            src.setLoggingLevel(loggingLevel);
+        }
     }
 
     protected void initPropertyPlaceholder() throws Exception {
@@ -883,6 +888,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract CamelPropertyPlaceholderDefinition getCamelPropertyPlaceholder();
 
+    public abstract StartupSummaryLevel getStartupSummaryLevel();
+
     public abstract String getTrace();
 
     public abstract String getTracePattern();
@@ -999,6 +1006,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      * @throws Exception is thrown if error occurred
      */
     protected void initCamelContext(T context) throws Exception {
+        if (getStartupSummaryLevel() != null) {
+            context.setStartupSummaryLevel(getStartupSummaryLevel());
+        }
         if (getBeanPostProcessorEnabled() != null) {
             CamelBeanPostProcessor cbpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
             if (cbpp != null) {
