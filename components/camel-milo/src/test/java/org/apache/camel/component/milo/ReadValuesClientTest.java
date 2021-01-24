@@ -70,7 +70,7 @@ public class ReadValuesClientTest extends AbstractMiloServerTest {
     }
 
     @Test
-    void testReadValues_Successful() throws Exception {
+    void testReadValuesSuccessful() throws Exception {
         this.test1Endpoint.expectedMinimumMessageCount(1);
 
         producer1.sendBody("Foo");

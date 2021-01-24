@@ -30,14 +30,14 @@ import static java.lang.Boolean.TRUE;
 
 public class MiloClientProducer extends DefaultAsyncProducer {
 
+    private static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
+
     private MiloClientConnection connection;
 
     private final ExpandedNodeId nodeId;
     private final ExpandedNodeId methodId;
 
     private final boolean defaultAwaitWrites;
-
-    private static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
 
     public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection,
                               final boolean defaultAwaitWrites) {
