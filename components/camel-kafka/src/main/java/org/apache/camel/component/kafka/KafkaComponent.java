@@ -35,6 +35,8 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
+    @Metadata(label = "advanced")
+    private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
 
     public KafkaComponent() {
     }
@@ -109,4 +111,22 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     public void setKafkaManualCommitFactory(KafkaManualCommitFactory kafkaManualCommitFactory) {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;
     }
+
+    public KafkaClientFactory getKafkaClientFactory() {
+        return kafkaClientFactory;
+    }
+
+    /**
+     * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
+     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows to configure a custom factory to
+     * create {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
+     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances with logic that extends the vanilla Kafka
+     * clients.
+     *
+     * @param kafkaClientFactory factory instance to use.
+     */
+    public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
+        this.kafkaClientFactory = kafkaClientFactory;
+    }
+
 }

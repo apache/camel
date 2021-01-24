@@ -239,7 +239,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         .setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
                 // this may throw an exception if something is wrong with kafka
                 // consumer
-                this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+                this.consumer = endpoint.getComponent().getKafkaClientFactory().getConsumer(kafkaProps);
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
             }
