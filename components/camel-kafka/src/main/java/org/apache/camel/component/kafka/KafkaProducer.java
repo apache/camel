@@ -112,7 +112,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 Thread.currentThread()
                         .setContextClassLoader(org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
                 LOG.trace("Creating KafkaProducer");
-                kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+                kafkaProducer = endpoint.getComponent().getKafkaClientFactory().getProducer(props);
                 closeKafkaProducer = true;
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
