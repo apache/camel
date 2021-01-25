@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonbAttributeOrderTest extends CamelTestSupport {
 
     final String expectedJson
-            = "{\"bg\":123.123,\"bool\":true,\"doubleNumber\":123.123,\"floatNumber\":123.0,\"intNumber\":123,\"longNumber\":123}";
+            = "{\"bg\":\"123.123\",\"bool\":true,\"doubleNumber\":123.123,\"floatNumber\":123.0,\"intNumber\":123,\"longNumber\":123}";
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
