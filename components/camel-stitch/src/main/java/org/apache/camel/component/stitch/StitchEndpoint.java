@@ -21,6 +21,8 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.stitch.client.StitchClient;
+import org.apache.camel.component.stitch.client.StitchClientBuilder;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,11 +39,26 @@ import org.apache.camel.support.DefaultEndpoint;
 public class StitchEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private StitchConfiguration configuration;
+    private StitchConfiguration configuration = new StitchConfiguration();
+
+    private StitchClient stitchClient;
+
+    public StitchEndpoint() {
+    }
 
     public StitchEndpoint(final String uri, final Component component, final StitchConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (stitchClient == null) {
+            stitchClient
+                    = configuration.getStitchClient() != null ? configuration.getStitchClient() : createClient(configuration);
+        }
     }
 
     @Override
@@ -65,19 +82,20 @@ public class StitchEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    /*public Exchange creatExchange() {
-        final Exchange exchange = createExchange();
-        final Message message = exchange.getIn();
-    
-        // set body as byte[] and let camel typeConverters do the job to convert
-        message.setBody(eventContext.getEventData().getBody());
-        // set headers
-        message.setHeader(StitchConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        message.setHeader(StitchConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
-        message.setHeader(StitchConstants.OFFSET, eventContext.getEventData().getOffset());
-        message.setHeader(StitchConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
-        message.setHeader(StitchConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
-    
-        return exchange;
-    }*/
+    public StitchClient getStitchClient() {
+        return stitchClient;
+    }
+
+    public void setStitchClient(StitchClient stitchClient) {
+        this.stitchClient = stitchClient;
+    }
+
+    private StitchClient createClient(final StitchConfiguration configuration) {
+        return StitchClientBuilder.builder()
+                .withRegion(getConfiguration().getRegion())
+                .withToken(getConfiguration().getToken())
+                .withHttpClient(getConfiguration().getHttpClient())
+                .withConnectionProvider(getConfiguration().getConnectionProvider())
+                .build();
+    }
 }

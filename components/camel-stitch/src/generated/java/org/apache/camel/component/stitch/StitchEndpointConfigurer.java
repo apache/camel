@@ -30,6 +30,8 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, org.apache.camel.component.stitch.client.StitchRegion.class, value)); return true;
+        case "stitchclient":
+        case "stitchClient": target.getConfiguration().setStitchClient(property(camelContext, org.apache.camel.component.stitch.client.StitchClient.class, value)); return true;
         case "stitchschema":
         case "stitchSchema": target.getConfiguration().setStitchSchema(property(camelContext, org.apache.camel.component.stitch.client.models.StitchSchema.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -39,7 +41,7 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"connectionProvider","httpClient","stitchSchema"};
+        return new String[]{"connectionProvider","httpClient","stitchClient","stitchSchema"};
     }
 
     @Override
@@ -54,6 +56,8 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "region": return org.apache.camel.component.stitch.client.StitchRegion.class;
+        case "stitchclient":
+        case "stitchClient": return org.apache.camel.component.stitch.client.StitchClient.class;
         case "stitchschema":
         case "stitchSchema": return org.apache.camel.component.stitch.client.models.StitchSchema.class;
         case "token": return java.lang.String.class;
@@ -74,6 +78,8 @@ public class StitchEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "region": return target.getConfiguration().getRegion();
+        case "stitchclient":
+        case "stitchClient": return target.getConfiguration().getStitchClient();
         case "stitchschema":
         case "stitchSchema": return target.getConfiguration().getStitchSchema();
         case "token": return target.getConfiguration().getToken();

@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#message-object
  */
-public class StitchMessage implements StitchModel {
+public final class StitchMessage implements StitchModel {
     // property names
     public static final String ACTION = "action";
     public static final String SEQUENCE = "sequence";

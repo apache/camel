@@ -24,14 +24,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class JsonUtils {
 
-    final static ObjectMapper mapper = new ObjectMapper();
+    static final ObjectMapper MAPPER = new ObjectMapper();
 
     private JsonUtils() {
     }
 
     public static String convertMapToJson(final Map<String, Object> inputMap) {
         try {
-            return mapper.writeValueAsString(inputMap);
+            return MAPPER.writeValueAsString(inputMap);
         } catch (JsonProcessingException exception) {
             throw new RuntimeException("Error occurred writing data map to JSON.", exception);
         }
@@ -39,7 +39,7 @@ public final class JsonUtils {
 
     public static Map<String, Object> convertJsonToMap(final String jsonString) {
         try {
-            return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
+            return MAPPER.readValue(jsonString, new TypeReference<Map<String, Object>>() {
             });
         } catch (JsonProcessingException exception) {
             throw new RuntimeException("Error occurred writing JSON to Map.", exception);

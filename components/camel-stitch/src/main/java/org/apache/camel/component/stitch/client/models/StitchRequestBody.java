@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#batch-data--arguments
  */
-public class StitchRequestBody implements StitchModel {
+public final class StitchRequestBody implements StitchModel {
     // property names
     public static final String TABLE_NAME = "table_name";
     public static final String SCHEMA = "schema";

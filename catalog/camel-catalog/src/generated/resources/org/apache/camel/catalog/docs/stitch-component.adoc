@@ -40,7 +40,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -52,13 +52,14 @@ with the following path and query parameters:
 | *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
 | *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
 | *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
+| *stitchClient* (advance) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
 | *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
 |===
 // endpoint options: END
 
 == Component Options
 // component options: START
-The Stitch component supports 9 options, which are listed below.
+The Stitch component supports 10 options, which are listed below.
 
 
 
@@ -72,6 +73,7 @@ The Stitch component supports 9 options, which are listed below.
 | *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
 | *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
 | *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
+| *stitchClient* (advance) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
 |===

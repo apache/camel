@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.stitch.client.StitchClient;
 import org.apache.camel.component.stitch.client.StitchRegion;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.apache.camel.spi.Metadata;
@@ -50,6 +51,9 @@ public class StitchConfiguration implements Cloneable {
     @UriParam(label = "producer,advance")
     @Metadata(autowired = true)
     private ConnectionProvider connectionProvider;
+    @UriParam(label = "advance")
+    @Metadata(autowired = true)
+    private StitchClient stitchClient;
 
     /**
      * The name of the destination table the data is being pushed to. Table names must be unique in each destination
@@ -132,6 +136,17 @@ public class StitchConfiguration implements Cloneable {
 
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
+    }
+
+    /**
+     * Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface
+     */
+    public StitchClient getStitchClient() {
+        return stitchClient;
+    }
+
+    public void setStitchClient(StitchClient stitchClient) {
+        this.stitchClient = stitchClient;
     }
 
     // *************************************************

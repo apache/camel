@@ -18,16 +18,18 @@ package org.apache.camel.component.stitch.client.models;
 
 public class StitchException extends RuntimeException {
     private final StitchResponse response;
-    private StitchError error;
+    private final StitchError error;
 
     public StitchException(StitchResponse response, Throwable cause) {
         super(response.getMessage(), cause);
         this.response = response;
+        this.error = null;
     }
 
     public StitchException(StitchResponse response) {
         super(response.getMessage());
         this.response = response;
+        this.error = null;
     }
 
     public StitchException(StitchResponse response, StitchError error, Throwable cause) {

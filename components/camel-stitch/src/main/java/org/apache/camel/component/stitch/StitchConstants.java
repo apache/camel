@@ -22,6 +22,10 @@ public final class StitchConstants {
     public static final String TABLE_NAME = HEADER_PREFIX + "TableName";
     public static final String SCHEMA = HEADER_PREFIX + "Schema";
     public static final String KEY_NAMES = HEADER_PREFIX + "KeyNames";
+    // headers set by producer
+    public static final String CODE = HEADER_PREFIX + "Code";
+    public static final String HEADERS = HEADER_PREFIX + "Headers";
+    public static final String STATUS = HEADER_PREFIX + "Status";
 
     private StitchConstants() {
     }

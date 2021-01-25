@@ -190,6 +190,23 @@ public interface StitchComponentBuilderFactory {
             return this;
         }
         /**
+         * Set a custom StitchClient that implements
+         * org.apache.camel.component.stitch.client.StitchClient interface.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchClient&lt;/code&gt; type.
+         * 
+         * Group: advance
+         * 
+         * @param stitchClient the value to set
+         * @return the dsl builder
+         */
+        default StitchComponentBuilder stitchClient(
+                org.apache.camel.component.stitch.client.StitchClient stitchClient) {
+            doSetProperty("stitchClient", stitchClient);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -254,6 +271,7 @@ public interface StitchComponentBuilderFactory {
             case "stitchSchema": getOrCreateConfiguration((StitchComponent) component).setStitchSchema((org.apache.camel.component.stitch.client.models.StitchSchema) value); return true;
             case "connectionProvider": getOrCreateConfiguration((StitchComponent) component).setConnectionProvider((reactor.netty.resources.ConnectionProvider) value); return true;
             case "httpClient": getOrCreateConfiguration((StitchComponent) component).setHttpClient((reactor.netty.http.client.HttpClient) value); return true;
+            case "stitchClient": getOrCreateConfiguration((StitchComponent) component).setStitchClient((org.apache.camel.component.stitch.client.StitchClient) value); return true;
             case "autowiredEnabled": ((StitchComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "token": getOrCreateConfiguration((StitchComponent) component).setToken((java.lang.String) value); return true;
             default: return false;

@@ -24,7 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#schema-object
  */
-public class StitchSchema implements StitchModel {
+public final class StitchSchema implements StitchModel {
 
     private final Map<String, Object> keywords;
 

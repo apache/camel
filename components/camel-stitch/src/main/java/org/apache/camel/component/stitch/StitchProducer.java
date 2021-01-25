@@ -19,24 +19,31 @@ package org.apache.camel.component.stitch;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.stitch.client.models.StitchResponse;
+import org.apache.camel.component.stitch.operations.StitchProducerOperations;
 import org.apache.camel.support.DefaultAsyncProducer;
 
 public class StitchProducer extends DefaultAsyncProducer {
+
+    private StitchProducerOperations operations;
 
     public StitchProducer(final Endpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        operations = new StitchProducerOperations(getEndpoint().getStitchClient(), getConfiguration());
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            //return producerOperations.sendEvents(exchange, callback);
-            return false;
+            return operations.sendEvents(exchange.getMessage(),
+                    response -> setDataOnExchange(response, exchange), callback);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -57,5 +64,16 @@ public class StitchProducer extends DefaultAsyncProducer {
 
     public StitchConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
+    }
+
+    private void setDataOnExchange(final StitchResponse response, final Exchange exchange) {
+        final Message message = exchange.getIn();
+
+        // set response message
+        message.setBody(response.getMessage());
+        // set headers
+        message.setHeader(StitchConstants.CODE, response.getHttpStatusCode());
+        message.setHeader(StitchConstants.STATUS, response.getStatus());
+        message.setHeader(StitchConstants.HEADERS, response.getHeaders());
     }
 }

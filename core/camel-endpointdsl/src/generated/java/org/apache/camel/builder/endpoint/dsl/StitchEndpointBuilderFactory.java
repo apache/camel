@@ -259,6 +259,38 @@ public interface StitchEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a custom StitchClient that implements
+         * org.apache.camel.component.stitch.client.StitchClient interface.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchClient&lt;/code&gt; type.
+         * 
+         * Group: advance
+         * 
+         * @param stitchClient the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder stitchClient(Object stitchClient) {
+            doSetProperty("stitchClient", stitchClient);
+            return this;
+        }
+        /**
+         * Set a custom StitchClient that implements
+         * org.apache.camel.component.stitch.client.StitchClient interface.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.stitch.client.StitchClient&lt;/code&gt; type.
+         * 
+         * Group: advance
+         * 
+         * @param stitchClient the value to set
+         * @return the dsl builder
+         */
+        default StitchEndpointBuilder stitchClient(String stitchClient) {
+            doSetProperty("stitchClient", stitchClient);
+            return this;
+        }
+        /**
          * Stitch access token for the Stitch Import API.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
