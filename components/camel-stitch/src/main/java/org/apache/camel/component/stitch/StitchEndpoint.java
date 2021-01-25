@@ -52,9 +52,10 @@ public class StitchEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
+        // since HttpClient.create() will create a pooled a connection when is called, hence placed in doStart
         if (stitchClient == null) {
             stitchClient
                     = configuration.getStitchClient() != null ? configuration.getStitchClient() : createClient(configuration);

@@ -33,8 +33,8 @@ public class StitchProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         operations = new StitchProducerOperations(getEndpoint().getStitchClient(), getConfiguration());
     }
