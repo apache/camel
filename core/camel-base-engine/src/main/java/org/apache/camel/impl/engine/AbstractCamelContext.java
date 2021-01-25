@@ -2548,6 +2548,10 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
+        LOG.warn("TODO Sleeping for 3 sec in doBuild START");
+        Thread.sleep(3000);
+        LOG.warn("TODO Sleeping for 3 sec in doBuild DONE");
+
         startupStepRecorder.start();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Build CamelContext");
 
@@ -2593,6 +2597,11 @@ public abstract class AbstractCamelContext extends BaseService
 
         buildTaken = watch.taken();
         LOG.debug("Apache Camel {} ({}) built in {}", getVersion(), getName(), TimeUtils.printDuration(buildTaken));
+    }
+
+    protected void resetBuildTime() {
+        // needed by camel-quarkus
+        buildTaken = 0;
     }
 
     @Override
