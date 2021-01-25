@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
-    protected RemoteCacheManager cacheContainer;
-
     @RegisterExtension
-    static InfinispanService service = InfinispanServiceFactory.createService();
+    public static InfinispanService service = InfinispanServiceFactory.createService();
+
+    protected RemoteCacheManager cacheContainer;
 
     @Override
     protected void setupResources() throws Exception {

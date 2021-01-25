@@ -33,9 +33,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport extends CamelSpringTestSupport {
-
     @RegisterExtension
-    static InfinispanService service = InfinispanServiceFactory.createService();
+    public static InfinispanService service = InfinispanServiceFactory.createService();
 
     @Override
     public void doPreSetup() throws Exception {

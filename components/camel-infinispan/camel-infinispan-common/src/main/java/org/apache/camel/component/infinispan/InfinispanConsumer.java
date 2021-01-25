@@ -23,8 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class InfinispanConsumer<
         ContainerType extends BasicCacheContainer,
@@ -32,8 +30,6 @@ public abstract class InfinispanConsumer<
         ConfigurationType extends InfinispanConfiguration>
         extends DefaultConsumer
         implements InfinispanEventProcessor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InfinispanProducer.class);
 
     protected final ConfigurationType configuration;
     protected final ManagerType manager;
@@ -66,7 +62,7 @@ public abstract class InfinispanConsumer<
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOG.error("Error processing event ", e);
+            getExceptionHandler().handleException(e);
         }
     }
 
