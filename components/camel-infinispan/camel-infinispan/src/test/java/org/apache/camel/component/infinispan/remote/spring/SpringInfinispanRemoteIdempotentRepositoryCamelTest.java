@@ -21,7 +21,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
-public class SpringInfinispanRemoteIdempotentRepositoryCamelTest extends SpringInfinispanRemoteIdempotentRepositoryTestSupport {
+public class SpringInfinispanRemoteIdempotentRepositoryCamelTest
+        extends SpringInfinispanRemoteIdempotentRepositoryTestSupport {
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(

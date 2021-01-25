@@ -23,6 +23,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 public class SpringInfinispanRemoteIdempotentRepositorySpringTest
         extends SpringInfinispanRemoteIdempotentRepositoryTestSupport {
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
