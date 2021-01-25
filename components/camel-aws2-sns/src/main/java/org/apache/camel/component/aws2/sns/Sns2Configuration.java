@@ -346,7 +346,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Whether or not the queue is a FIFO topic
+     * Whether or not the topic is a FIFO topic
      */
     boolean isFifoTopic() {
         // AWS docs suggest this is valid derivation.
