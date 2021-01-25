@@ -20,6 +20,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -350,6 +351,12 @@ public class Sns2Configuration implements Cloneable {
     boolean isFifoTopic() {
         // AWS docs suggest this is valid derivation.
         // FIFO topic names must end with .fifo, and standard topic cannot
-        return topicName.endsWith(".fifo") || topicArn.endsWith(".fifo");
+        if (topicName.endsWith(".fifo")) {
+            return true;
+        }
+        if (ObjectHelper.isNotEmpty(topicArn)) {
+            return topicArn.endsWith(".fifo");
+        }
+        return false;
     }
 }
