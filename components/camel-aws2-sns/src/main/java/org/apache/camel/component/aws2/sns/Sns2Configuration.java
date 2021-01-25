@@ -350,6 +350,6 @@ public class Sns2Configuration implements Cloneable {
     boolean isFifoTopic() {
         // AWS docs suggest this is valid derivation.
         // FIFO topic names must end with .fifo, and standard topic cannot
-        return topicName.endsWith(".fifo");
+        return topicName.endsWith(".fifo") || topicArn.endsWith(".fifo");
     }
 }
