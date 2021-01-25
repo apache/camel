@@ -18,7 +18,7 @@ package org.apache.camel.component.stitch.client;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StitchRegionTest {
 

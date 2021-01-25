@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.component.stitch.client.JsonUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StitchSchemaTest {
 
