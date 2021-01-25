@@ -43,7 +43,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(10))
                         .to("mock:result");
             }
         });
