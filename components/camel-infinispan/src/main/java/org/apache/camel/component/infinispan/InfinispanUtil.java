@@ -42,7 +42,7 @@ public final class InfinispanUtil {
     public static boolean isEmbedded(BasicCacheContainer container) {
         try {
             return container instanceof EmbeddedCacheManager;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -50,7 +50,7 @@ public final class InfinispanUtil {
     public static <K, V> boolean isEmbedded(BasicCache<K, V> cache) {
         try {
             return cache instanceof Cache;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -58,7 +58,7 @@ public final class InfinispanUtil {
     public static boolean isRemote(BasicCacheContainer container) {
         try {
             return container instanceof RemoteCacheManager;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -70,7 +70,7 @@ public final class InfinispanUtil {
     public static <K, V> boolean isRemote(BasicCache<K, V> cache) {
         try {
             return cache instanceof RemoteCache;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
     }

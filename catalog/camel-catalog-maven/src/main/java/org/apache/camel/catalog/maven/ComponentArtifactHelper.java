@@ -38,7 +38,7 @@ public final class ComponentArtifactHelper {
             if (is != null) {
                 answer.load(is);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (log) {
                 System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component.properties file due "
                                    + e.getMessage());
@@ -55,7 +55,7 @@ public final class ComponentArtifactHelper {
                 props.load(is);
                 return (String) props.get("class");
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (log) {
                 System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component/" + scheme + " file due "
                                    + e.getMessage());
@@ -83,7 +83,7 @@ public final class ComponentArtifactHelper {
                 if (is != null) {
                     answer = loadText(is);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 if (log) {
                     System.out.println("WARN: Error loading " + path + " file due " + e.getMessage());
                 }
