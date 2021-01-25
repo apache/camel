@@ -21,23 +21,23 @@ public class StitchException extends RuntimeException {
     private StitchError error;
 
     public StitchException(StitchResponse response, Throwable cause) {
-        super(cause);
+        super(response.getMessage(), cause);
         this.response = response;
     }
 
     public StitchException(StitchResponse response) {
-        super();
+        super(response.getMessage());
         this.response = response;
     }
 
     public StitchException(StitchResponse response, StitchError error, Throwable cause) {
-        super(cause);
+        super(error.getError(), cause);
         this.response = response;
         this.error = error;
     }
 
     public StitchException(StitchResponse response, StitchError error) {
-        super();
+        super(error.getError());
         this.response = response;
         this.error = error;
     }

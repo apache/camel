@@ -34,22 +34,30 @@ public final class StitchClientBuilder {
     }
 
     public StitchClientBuilder withHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
+        if (ObjectHelper.isNotEmpty(httpClient)) {
+            this.httpClient = httpClient;
+        }
         return this;
     }
 
     public StitchClientBuilder withToken(String token) {
-        this.token = token;
+        if (ObjectHelper.isNotEmpty(token)) {
+            this.token = token;
+        }
         return this;
     }
 
     public StitchClientBuilder withConnectionProvider(ConnectionProvider connectionProvider) {
-        this.connectionProvider = connectionProvider;
+        if (ObjectHelper.isNotEmpty(connectionProvider)) {
+            this.connectionProvider = connectionProvider;
+        }
         return this;
     }
 
     public StitchClientBuilder withRegion(StitchRegion region) {
-        this.region = region;
+        if (ObjectHelper.isNotEmpty(region)) {
+            this.region = region;
+        }
         return this;
     }
 
