@@ -88,14 +88,14 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 try {
                     exchange.getIn().getBody();
                     exchange.getIn().getHeaders();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // any problems with eager loading then set an exception so Camel error handler can react
                     exchange.setException(e);
                     String text = eagerPoisonBody;
                     try {
                         text = endpoint.getCamelContext().resolveLanguage("simple")
                                 .createExpression(eagerPoisonBody).evaluate(exchange, String.class);
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         // ignore
                     }
                     exchange.getIn().setBody(text);

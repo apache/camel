@@ -490,7 +490,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                     if (defaultQueuedThreadPool != null) {
                         try {
                             defaultQueuedThreadPool.stop();
-                        } catch (Throwable t) {
+                        } catch (Exception t) {
                             defaultQueuedThreadPool.destroy();
                         } finally {
                             defaultQueuedThreadPool = null;
@@ -1184,7 +1184,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         try {
             connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
                     .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore this due to OSGi problems
             LOG.debug("Cannot set MultiPartFormDataCompliance to RFC7578 due to {}. This exception is ignored.",
                     e.getMessage(), e);
@@ -1381,7 +1381,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             return (Container) server.getClass().getMethod("getContainer").invoke(server);
         } catch (RuntimeException t) {
             throw t;
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw new RuntimeException(t);
         }
     }

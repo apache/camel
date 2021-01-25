@@ -224,7 +224,7 @@ public class HttpProducer extends DefaultProducer {
                     public void onDone(Exchange exchange) {
                         try {
                             EntityUtils.consume(response.getEntity());
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             // ignore
                         }
                     }
@@ -233,7 +233,7 @@ public class HttpProducer extends DefaultProducer {
                 // close the stream now
                 try {
                     EntityUtils.consume(response.getEntity());
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // ignore
                 }
             }
