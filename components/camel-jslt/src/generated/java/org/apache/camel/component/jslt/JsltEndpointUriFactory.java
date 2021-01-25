@@ -20,9 +20,10 @@ public class JsltEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(8);
         props.add("allowTemplateFromHeader");
         props.add("lazyStartProducer");
+        props.add("objectMapper");
         props.add("prettyPrint");
         props.add("contentCache");
         props.add("allowContextMapAll");

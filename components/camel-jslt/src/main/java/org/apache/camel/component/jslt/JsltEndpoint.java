@@ -63,7 +63,7 @@ public class JsltEndpoint extends ResourceEndpoint {
     @UriParam(defaultValue = "false")
     private boolean mapBigDecimalAsFloats;
     @UriParam
-    private ObjectMapper objectMapper;    
+    private ObjectMapper objectMapper;
 
     public JsltEndpoint() {
     }
@@ -153,7 +153,7 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (ObjectHelper.isEmpty(getObjectMapper())) {
             objectMapper = new ObjectMapper();
         } else {
-        	objectMapper = getObjectMapper();
+            objectMapper = getObjectMapper();
         }
         if (isMapBigDecimalAsFloats()) {
             objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
@@ -248,14 +248,14 @@ public class JsltEndpoint extends ResourceEndpoint {
         this.mapBigDecimalAsFloats = mapBigDecimalAsFloats;
     }
 
-	public ObjectMapper getObjectMapper() {
-		return objectMapper;
-	}
-	
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
     /**
      * Setting a custom JSON Object Mapper to be used
      */
-	public void setObjectMapper(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 }

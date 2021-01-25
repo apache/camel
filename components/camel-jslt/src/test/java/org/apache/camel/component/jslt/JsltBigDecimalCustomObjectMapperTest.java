@@ -22,7 +22,6 @@ import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.filters.JsltJsonFilter;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,9 +31,9 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 public class JsltBigDecimalCustomObjectMapperTest extends CamelTestSupport {
-	
-	@BindToRegistry("customMapper")
-	ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+
+    @BindToRegistry("customMapper")
+    ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -147,72 +147,6 @@ public interface JsltEndpointBuilderFactory {
             return this;
         }
         /**
-         * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in
-         * serialization features.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param mapBigDecimalAsFloats the value to set
-         * @return the dsl builder
-         */
-        default JsltEndpointBuilder mapBigDecimalAsFloats(
-                boolean mapBigDecimalAsFloats) {
-            doSetProperty("mapBigDecimalAsFloats", mapBigDecimalAsFloats);
-            return this;
-        }
-        /**
-         * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in
-         * serialization features.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param mapBigDecimalAsFloats the value to set
-         * @return the dsl builder
-         */
-        default JsltEndpointBuilder mapBigDecimalAsFloats(
-                String mapBigDecimalAsFloats) {
-            doSetProperty("mapBigDecimalAsFloats", mapBigDecimalAsFloats);
-            return this;
-        }
-        /**
-         * If true, JSON in output message is pretty printed.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param prettyPrint the value to set
-         * @return the dsl builder
-         */
-        default JsltEndpointBuilder prettyPrint(boolean prettyPrint) {
-            doSetProperty("prettyPrint", prettyPrint);
-            return this;
-        }
-        /**
-         * If true, JSON in output message is pretty printed.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param prettyPrint the value to set
-         * @return the dsl builder
-         */
-        default JsltEndpointBuilder prettyPrint(String prettyPrint) {
-            doSetProperty("prettyPrint", prettyPrint);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -257,6 +191,104 @@ public interface JsltEndpointBuilderFactory {
          */
         default JsltEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in
+         * serialization features.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param mapBigDecimalAsFloats the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder mapBigDecimalAsFloats(
+                boolean mapBigDecimalAsFloats) {
+            doSetProperty("mapBigDecimalAsFloats", mapBigDecimalAsFloats);
+            return this;
+        }
+        /**
+         * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in
+         * serialization features.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param mapBigDecimalAsFloats the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder mapBigDecimalAsFloats(
+                String mapBigDecimalAsFloats) {
+            doSetProperty("mapBigDecimalAsFloats", mapBigDecimalAsFloats);
+            return this;
+        }
+        /**
+         * Setting a custom JSON Object Mapper to be used.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param objectMapper the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder objectMapper(Object objectMapper) {
+            doSetProperty("objectMapper", objectMapper);
+            return this;
+        }
+        /**
+         * Setting a custom JSON Object Mapper to be used.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param objectMapper the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder objectMapper(String objectMapper) {
+            doSetProperty("objectMapper", objectMapper);
+            return this;
+        }
+        /**
+         * If true, JSON in output message is pretty printed.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder prettyPrint(boolean prettyPrint) {
+            doSetProperty("prettyPrint", prettyPrint);
+            return this;
+        }
+        /**
+         * If true, JSON in output message is pretty printed.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
+         */
+        default JsltEndpointBuilder prettyPrint(String prettyPrint) {
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
     }

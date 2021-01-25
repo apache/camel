@@ -31,6 +31,8 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mapbigdecimalasfloats":
         case "mapBigDecimalAsFloats": target.setMapBigDecimalAsFloats(property(camelContext, boolean.class, value)); return true;
+        case "objectmapper":
+        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -50,6 +52,8 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "mapbigdecimalasfloats":
         case "mapBigDecimalAsFloats": return boolean.class;
+        case "objectmapper":
+        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         default: return null;
@@ -70,6 +74,8 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mapbigdecimalasfloats":
         case "mapBigDecimalAsFloats": return target.isMapBigDecimalAsFloats();
+        case "objectmapper":
+        case "objectMapper": return target.getObjectMapper();
         case "prettyprint":
         case "prettyPrint": return target.isPrettyPrint();
         default: return null;
