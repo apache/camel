@@ -142,7 +142,7 @@ public class NatsConsumer extends DefaultConsumer {
                         setActive(true);
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 getExceptionHandler().handleException("Error during processing", e);
             }
 

@@ -47,7 +47,7 @@ public final class ManagedGroupFactoryBuilder {
                 beanIntrospection.setProperty(camelContext, instance, "classLoader", loader);
                 return (ManagedGroupFactory) instance;
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // Ignore if we'e not in OSGi
         }
         return new StaticManagedGroupFactory(factory.call(), true);

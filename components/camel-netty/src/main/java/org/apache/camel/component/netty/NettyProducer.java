@@ -665,7 +665,7 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             try {
                 processWithConnectedChannel(exchange, callback, future, body);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
                 callback.done(false);
             }
