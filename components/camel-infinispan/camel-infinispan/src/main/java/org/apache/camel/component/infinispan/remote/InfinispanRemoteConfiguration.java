@@ -64,9 +64,7 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     }
 
     /**
-     * The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types:
-     * org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration;
-     * org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration;
+     * The CacheContainer configuration. Used if the cacheContainer is not defined.
      */
     public void setCacheContainerConfiguration(Configuration cacheContainerConfiguration) {
         this.cacheContainerConfiguration = cacheContainerConfiguration;
@@ -216,8 +214,7 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     }
 
     /**
-     * A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote
-     * caches.
+     * A comma separated list of org.infinispan.client.hotrod.Flag to be applied by default on each cache invocation.
      */
     public void setFlags(String flagsAsString) {
         String[] flagsArray = flagsAsString.split(",");
