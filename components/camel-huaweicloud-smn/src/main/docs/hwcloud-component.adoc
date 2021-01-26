@@ -119,9 +119,9 @@ with the following path and query parameters:
 |=======================================================================
 |Header |Type |Description
 
-|`CamelSmnMesssageId` |`String` | Unique message id returned by simple message notification server after processing the request
+|`CamelHwCloudSmnMesssageId` |`String` | Unique message id returned by simple message notification server after processing the request
 
-|`CamelSmnRequestId` |`String` | Unique request id returned by simple message notification server after processing the request
+|`CamelHwCloudSmnRequestId` |`String` | Unique request id returned by simple message notification server after processing the request
 
 |=======================================================================
 

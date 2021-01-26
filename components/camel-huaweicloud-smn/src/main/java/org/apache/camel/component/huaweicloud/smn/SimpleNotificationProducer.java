@@ -27,6 +27,7 @@ import com.huaweicloud.sdk.smn.v2.model.PublishMessageResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnConstants;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnOperations;
+import org.apache.camel.component.huaweicloud.smn.constants.SmnProperties;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnServices;
 import org.apache.camel.component.huaweicloud.smn.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
@@ -123,8 +124,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
                         .withMessage(exchange.getMessage().getBody(String.class))
                         .withSubject(clientConfigurations.getSubject())
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()))
-                        .withMessageTemplateName((String) exchange.getProperty("CamelHwCloudSmnTemplateName"))
-                        .withTags((HashMap<String, String>) exchange.getProperty("CamelHwCloudSmnTemplateTags"))
+                        .withMessageTemplateName((String) exchange.getProperty(SmnProperties.TEMPLATE_NAME))
+                        .withTags((HashMap<String, String>) exchange.getProperty(SmnProperties.TEMPLATE_TAGS))
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()));
 
                 response = smnClient.publishMessage(new PublishMessageRequest()
@@ -151,10 +152,10 @@ public class SimpleNotificationProducer extends DefaultProducer {
             return; // mapping is not required if response object is null
         }
         if (!ObjectHelper.isEmpty(response.getMessageId())) {
-            exchange.setProperty("CamelSmnMesssageId", response.getMessageId());
+            exchange.setProperty(SmnProperties.SERVICE_MESSAGE_ID, response.getMessageId());
         }
         if (!ObjectHelper.isEmpty(response.getRequestId())) {
-            exchange.setProperty("CamelSmnRequestId", response.getRequestId());
+            exchange.setProperty(SmnProperties.SERVICE_REQUEST_ID, response.getRequestId());
         }
     }
 
@@ -216,7 +217,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
         boolean ignoreSslVerification = simpleNotificationEndpoint.isIgnoreSslVerification();
         if (ignoreSslVerification) {
             if (LOG.isWarnEnabled()) {
-                LOG.error("SSL verification is ignored. This is unsafe in production environment");
+                LOG.warn("SSL verification is ignored. This is unsafe in production environment");
             }
             clientConfigurations.setIgnoreSslVerification(ignoreSslVerification);
         }
@@ -308,22 +309,22 @@ public class SimpleNotificationProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting operation name");
         }
-        if (ObjectHelper.isEmpty(exchange.getProperty("CamelHwCloudOperation"))
+        if (ObjectHelper.isEmpty(exchange.getProperty(SmnProperties.SMN_OPERATION))
                 && ObjectHelper.isEmpty(simpleNotificationEndpoint.getOperation())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Found null/empty operation name. Cannot proceed with Smn operations");
             }
             throw new IllegalArgumentException("operation name not found");
         } else {
-            clientConfigurations.setOperation(exchange.getProperty("CamelHwCloudOperation") != null
-                    ? (String) exchange.getProperty("CamelHwCloudOperation") : simpleNotificationEndpoint.getOperation());
+            clientConfigurations.setOperation(exchange.getProperty(SmnProperties.SMN_OPERATION) != null
+                    ? (String) exchange.getProperty(SmnProperties.SMN_OPERATION) : simpleNotificationEndpoint.getOperation());
         }
 
         // checking for mandatory field 'topic name'
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting topic name");
         }
-        if (ObjectHelper.isEmpty(exchange.getProperty("CamelHwCloudSmnTopic"))) {
+        if (ObjectHelper.isEmpty(exchange.getProperty(SmnProperties.NOTIFICATION_TOPIC_NAME))) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Found null/empty topic name");
             }
@@ -331,33 +332,33 @@ public class SimpleNotificationProducer extends DefaultProducer {
         } else {
             clientConfigurations.setTopicUrn(String.format(SmnConstants.TOPIC_URN_FORMAT,
                     simpleNotificationEndpoint.getRegion(), simpleNotificationEndpoint.getProjectId(),
-                    exchange.getProperty("CamelHwCloudSmnTopic")));
+                    exchange.getProperty(SmnProperties.NOTIFICATION_TOPIC_NAME)));
         }
 
         // checking for optional field 'message subject'
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting notification subject value");
         }
-        if (ObjectHelper.isEmpty(exchange.getProperty("CamelHwCloudSmnSubject"))) {
+        if (ObjectHelper.isEmpty(exchange.getProperty(SmnProperties.NOTIFICATION_SUBJECT))) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("notification subject not found. defaulting to 'DEFAULT_SUBJECT'");
             }
             clientConfigurations.setSubject("DEFAULT_SUBJECT");
         } else {
-            clientConfigurations.setSubject((String) exchange.getProperty("CamelHwCloudSmnSubject"));
+            clientConfigurations.setSubject((String) exchange.getProperty(SmnProperties.NOTIFICATION_SUBJECT));
         }
 
         // checking for optional field 'message ttl'
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting TTL");
         }
-        if (ObjectHelper.isEmpty(exchange.getProperty("CamelHwCloudSmnMessageTtl"))) {
+        if (ObjectHelper.isEmpty(exchange.getProperty(SmnProperties.NOTIFICATION_TTL))) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("TTL not found. defaulting to default value {}", simpleNotificationEndpoint.getMessageTtl());
             }
             clientConfigurations.setMessageTtl(simpleNotificationEndpoint.getMessageTtl());
         } else {
-            clientConfigurations.setMessageTtl((int) exchange.getProperty("CamelHwCloudSmnMessageTtl"));
+            clientConfigurations.setMessageTtl((int) exchange.getProperty(SmnProperties.NOTIFICATION_TTL));
         }
 
         return clientConfigurations;

@@ -26,6 +26,7 @@ import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.smn.constants.SmnProperties;
 import org.apache.camel.component.huaweicloud.smn.models.ServiceKeys;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -61,11 +62,11 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish_templated_message")
-                        .setProperty("CamelHwCloudSmnSubject", constant("This is my subjectline"))
-                        .setProperty("CamelHwCloudSmnTopic", constant(testConfiguration.getProperty("topic")))
-                        .setProperty("CamelHwCloudSmnMessageTtl", constant(60))
-                        .setProperty("CamelHwCloudSmnTemplateTags", constant(tags))
-                        .setProperty("CamelHwCloudSmnTemplateName", constant("hello-template"))
+                        .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("This is my subjectline"))
+                        .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
+                        .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
+                        .setProperty(SmnProperties.TEMPLATE_TAGS, constant(tags))
+                        .setProperty(SmnProperties.TEMPLATE_NAME, constant("hello-template"))
                         //.to("hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"+"&projectId="+testConfiguration.getProperty("projectId")+"&region="+testConfiguration.getProperty("region")+"&proxyHost=localhost&proxyPort=3128&ignoreSslVerification=true")
                         .to("hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"
                             + "&projectId=" + testConfiguration.getProperty("projectId") + "&region="
@@ -102,14 +103,14 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        Assert.assertNotNull(responseExchange.getProperty("CamelSmnMesssageId"));
-        Assert.assertNotNull(responseExchange.getProperty("CamelSmnRequestId"));
-        Assert.assertTrue(responseExchange.getProperty("CamelSmnMesssageId").toString().length() > 0);
-        Assert.assertTrue(responseExchange.getProperty("CamelSmnRequestId").toString().length() > 0);
+        Assert.assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        Assert.assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
+        Assert.assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
+        Assert.assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
 
         if (isMockedServerTest) {
-            Assert.assertEquals("bf94b63a5dfb475994d3ac34664e24f2", responseExchange.getProperty("CamelSmnMesssageId"));
-            Assert.assertEquals("6a63a18b8bab40ffb71ebd9cb80d0085", responseExchange.getProperty("CamelSmnRequestId"));
+            Assert.assertEquals("bf94b63a5dfb475994d3ac34664e24f2", responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+            Assert.assertEquals("6a63a18b8bab40ffb71ebd9cb80d0085", responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
 
             LoggedRequest loggedRequest = TestUtils.retrieveTemplatedNotificationRequest(getAllServeEvents());
             LOGGER.info("Verifying wiremock request");
