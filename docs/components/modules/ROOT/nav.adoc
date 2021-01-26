@@ -70,6 +70,7 @@
 *** xref:azure-blob-component.adoc[Azure Storage Blob Service (Deprecated)]
 *** xref:azure-storage-queue-component.adoc[Azure Storage Queue Service]
 *** xref:azure-queue-component.adoc[Azure Storage Queue Service (Deprecated)]
+** xref:azure-storage-datalake-component.adoc[Azure storage datalake service]
 ** xref:bean-component.adoc[Bean]
 ** xref:bean-validator-component.adoc[Bean Validator]
 ** xref:beanstalk-component.adoc[Beanstalk]
