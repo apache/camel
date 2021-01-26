@@ -541,6 +541,13 @@ For running all the test in the component, you will need to obtain azure account
 can run the full test, on this component directory, by running the following maven command
 
 ----
-mvn test -Dazure.storage.account.name=accountName -Dazure.storage.account.key=accountKey
+mvn verify -PfullTests -Dazure.storage.account.name=<accountName> -Dazure.storage.account.key=<accessKey>
 ----
+
+You can also skip the integration test, and run only basic unit test by using the command
+
+----
+mvn test
+----
+
 

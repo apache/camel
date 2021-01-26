@@ -50,11 +50,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataLakeConsumerTest extends BaseIT {
+public class DataLakeConsumerIT extends BaseIT {
 
     @TempDir
     static Path testDir;
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeConsumerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataLakeConsumerIT.class);
 
     @EndpointInject("direct:createFile")
     private ProducerTemplate templateStart;
