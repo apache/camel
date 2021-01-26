@@ -36,13 +36,12 @@ import org.slf4j.LoggerFactory;
 
 public class SimpleNotificationProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationProducer.class);
-    private SimpleNotificationEndpoint simpleNotificationEndpoint;
     private SmnClient smnClient;
     private ClientConfigurations clientConfigurations;
 
     public SimpleNotificationProducer(SimpleNotificationEndpoint endpoint) {
         super(endpoint);
-        this.simpleNotificationEndpoint = endpoint;
+        //this.simpleNotificationEndpoint = endpoint;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -55,10 +54,10 @@ public class SimpleNotificationProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Initializing the SmnClient");
             }
-            validateAndInitializeSmnClient(simpleNotificationEndpoint);
+            validateAndInitializeSmnClient((SimpleNotificationEndpoint) super.getEndpoint());
         }
 
-        String service = simpleNotificationEndpoint.getSmnService();
+        String service = ((SimpleNotificationEndpoint) super.getEndpoint()).getSmnService();
 
         if (!ObjectHelper.isEmpty(service)) {
             switch (service) {
@@ -66,7 +65,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using message publishing service");
                     }
-                    performPublishMessageServiceOperations(simpleNotificationEndpoint, exchange);
+                    performPublishMessageServiceOperations((SimpleNotificationEndpoint) super.getEndpoint(), exchange);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Completed publishing message");
                     }
