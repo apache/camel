@@ -312,12 +312,8 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
             return this;
         }
         /**
-         * The CacheContainer configuration. Uses if the cacheContainer is not
-         * defined. Must be the following types:
-         * org.infinispan.client.hotrod.configuration.Configuration - for remote
-         * cache interaction configuration;
-         * org.infinispan.configuration.cache.Configuration - for embedded cache
-         * interaction configuration;.
+         * The CacheContainer configuration. Used if the cacheContainer is not
+         * defined.
          * 
          * The option is a:
          * &lt;code&gt;org.infinispan.configuration.cache.Configuration&lt;/code&gt; type.
@@ -348,8 +344,8 @@ public interface InfinispanEmbeddedComponentBuilderFactory {
             return this;
         }
         /**
-         * A comma separated list of Flag to be applied by default on each cache
-         * invocation, not applicable to remote caches.
+         * A comma separated list of org.infinispan.context.Flag to be applied
+         * by default on each cache invocation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
