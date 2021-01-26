@@ -4545,6 +4545,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "KameletComponentBuilderFactory": {
+    "kind": "component",
+    "name": "kamelet",
+    "title": "Kamelet",
+    "description": "The Kamelet Component provides support for interacting with the Camel Route Template engine",
+    "deprecated": false,
+    "firstVersion": "3.8.0",
+    "label": "core",
+    "javaType": "org.apache.camel.component.kamelet.KameletComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kamelet",
+    "version": "3.8.0-SNAPSHOT",
+    "scheme": "kamelet",
+    "extendsScheme": "",
+    "syntax": "kamelet:templateId\/routeId",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": true
+  },
   "KubernetesConfigMapsComponentBuilderFactory": {
     "kind": "component",
     "name": "kubernetes-config-maps",

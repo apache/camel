@@ -206,6 +206,7 @@
 ** xref:jsonata-component.adoc[JSONata]
 ** xref:jt400-component.adoc[JT400]
 ** xref:kafka-component.adoc[Kafka]
+** xref:kamelet-component.adoc[Kamelet]
 ** xref:kubernetes-summary.adoc[Kubernetes]
 *** xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap]
 *** xref:kubernetes-custom-resources-component.adoc[Kubernetes Custom Resources]

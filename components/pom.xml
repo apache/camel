@@ -267,6 +267,7 @@
         <module>camel-jt400</module>
         <module>camel-jta</module>
         <module>camel-kafka</module>
+        <module>camel-kamelet</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
         <module>camel-ldap</module>

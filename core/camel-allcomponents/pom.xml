@@ -847,6 +847,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-kamelet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kubernetes</artifactId>
 		</dependency>
 		<dependency>
