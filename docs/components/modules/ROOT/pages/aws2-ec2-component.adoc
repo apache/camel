@@ -225,11 +225,6 @@ from("direct:stop")
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
 --------------------------------------------------------------------------------
 
-== Automatic detection of Ec2Client client in registry
-
-The component is capable of detecting the presence of an Ec2Client bean into the registry.
-If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
-This may be really useful for smarter configuration of the endpoint.
 
 == Using a POJO as body
 
