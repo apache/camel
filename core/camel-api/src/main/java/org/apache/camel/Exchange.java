@@ -190,6 +190,7 @@ public interface Exchange {
     String NOTIFY_EVENT = "CamelNotifyEvent";
 
     String ON_COMPLETION = "CamelOnCompletion";
+    String ON_COMPLETION_ROUTE_IDS = "CamelOnCompletionRouteIds";
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
