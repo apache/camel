@@ -86,9 +86,3 @@ equivalent non-OSGi configuration.
 </plugin>
 ----
 
-== Classpath
-
-The plugin will construct a classpath of any Maven dependency with scope
-"compile". The classpath is output as an INFO log statement upon
-startup.
-
