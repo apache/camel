@@ -75,3 +75,22 @@ Other information has been stored in headers declared in GitHubConstants class:
 
 * GITHUB_EVENT_PAYLOAD - "CamelGitHubEventPayload" - The event payload
 
+
+=== camel-infinispan
+
+There are now two components for Infinispan:
+
+- *camel-infinispan* to integrate with remote caches through the Hot Rod protocol (scheme: *infinispan*).
+- *camel-infinispan-embedded* to integrate with local/embedded caches  (scheme: *infinispan-embedded*).
+
+As conseguence of the refactor
+
+- the remote and embedded endpoints provide support the same capabilities, as example queries were only possible on a remote cache and now they are suported on both remote and local/embedded caches
+- the configuration options for the endpoint are now specific to the context which remove the possibility to mix unrelated propertis
+- some classes have been relocated, as example, indempotent and aggregation repositories have been moved from `org.apache.camel.component.infinispan.processor.*` to `org.apache.camel.component.infinispan.embedded` or `org.apache.camel.component.infinispan.remote`:
++
+org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedAggregationRepository
+org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository
+org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository
+org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository
+
