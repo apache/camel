@@ -162,12 +162,6 @@ from("direct:start")
 The `#client` refers to a `SesClient` in the
 Registry.
 
-== Automatic detection of SesClient client in registry
-
-The component is capable of detecting the presence of an SesClient bean into the registry.
-If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
-This may be really useful for smarter configuration of the endpoint.
-
 == Producer Examples
 
 [source,java]

@@ -407,12 +407,6 @@ As result you'll get an exchange containing a `PurgeQueueResponse` instance.
 With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `true`.
 If set to false any operation on a not-existent queue in AWS won't be successful and an error will be returned.
 
-== Automatic detection of SqsClient client in registry
-
-The component is capable of detecting the presence of an SqsClient bean into the registry.
-If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
-This may be really useful for smarter configuration of the endpoint.
-
 == Send Batch Message and Message Deduplication Strategy
 
 In case you're using a SendBatchMessage Operation, you can set two different kind of Message Deduplication Strategy:
