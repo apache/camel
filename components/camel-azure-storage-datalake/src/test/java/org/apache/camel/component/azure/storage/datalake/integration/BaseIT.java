@@ -33,10 +33,12 @@ import org.apache.camel.test.infra.azure.storage.datalake.services.AzureStorageD
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+@Ignore
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BaseIT extends CamelTestSupport {
 

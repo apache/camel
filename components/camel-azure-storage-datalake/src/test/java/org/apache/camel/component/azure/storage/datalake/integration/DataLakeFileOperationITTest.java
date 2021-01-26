@@ -38,6 +38,7 @@ import org.apache.camel.component.azure.storage.datalake.operations.DataLakeOper
 import org.apache.camel.support.DefaultExchange;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DataLakeFileOperationIT extends BaseIT {
+@Ignore
+public class DataLakeFileOperationITTest extends BaseIT {
     private DataLakeFileSystemClientWrapper fileSystemClientWrapper;
     private String randomFileName;
 
