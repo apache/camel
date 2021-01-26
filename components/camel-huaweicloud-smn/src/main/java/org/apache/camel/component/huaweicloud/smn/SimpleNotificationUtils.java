@@ -18,6 +18,7 @@ package org.apache.camel.component.huaweicloud.smn;
 
 import com.huaweicloud.sdk.smn.v2.region.SmnRegion;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +38,11 @@ public class SimpleNotificationUtils {
      * @return
      */
     public static String resolveSmnServiceEndpoint(String region) {
-        if (region == null) {
+        if (region == null || StringUtils.isEmpty(region)) {
             return null;
         }
 
-        String result = SmnRegion.valueOf(formatEndpointKey(region)).getEndpoint();
+        String result = SmnRegion.valueOf(region).getEndpoint();
 
         LOG.info("endpoint resolved as {} for region {}", result, region);
 
@@ -54,15 +55,5 @@ public class SimpleNotificationUtils {
             LOG.info("Returning endpoint {} for region {}", result, region);
         }
         return result;
-    }
-
-    /**
-     * formats the region id to SmnRegion class variable name
-     * 
-     * @param  region
-     * @return
-     */
-    private static String formatEndpointKey(String region) {
-        return region.toUpperCase().replace("-", "_");
     }
 }
