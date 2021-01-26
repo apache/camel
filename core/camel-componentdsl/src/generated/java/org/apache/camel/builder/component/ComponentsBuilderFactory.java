@@ -2732,6 +2732,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();
     }
     /**
+     * Kamelet (camel-kamelet)
+     * The Kamelet Component provides support for interacting with the Camel
+     * Route Template engine
+     * 
+     * Category: core
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-kamelet
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.KameletComponentBuilder kamelet() {
+        return org.apache.camel.builder.component.dsl.KameletComponentBuilderFactory.kamelet();
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.

@@ -9258,6 +9258,59 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kamelet (camel-kamelet)
+     * The Kamelet Component provides support for interacting with the Camel
+     * Route Template engine
+     * 
+     * Category: core
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-kamelet
+     * 
+     * Syntax: <code>kamelet:templateId/routeId</code>
+     * 
+     * Path parameter: templateId (required)
+     * The Route Template ID
+     * 
+     * Path parameter: routeId
+     * The Route ID. Default value notice: The ID will be auto-generated if not
+     * provided
+     * 
+     * @param path templateId/routeId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.KameletEndpointBuilder kamelet(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.endpointBuilder("kamelet", path);
+    }
+    /**
+     * Kamelet (camel-kamelet)
+     * The Kamelet Component provides support for interacting with the Camel
+     * Route Template engine
+     * 
+     * Category: core
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-kamelet
+     * 
+     * Syntax: <code>kamelet:templateId/routeId</code>
+     * 
+     * Path parameter: templateId (required)
+     * The Route Template ID
+     * 
+     * Path parameter: routeId
+     * The Route ID. Default value notice: The ID will be auto-generated if not
+     * provided
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path templateId/routeId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.KameletEndpointBuilder kamelet(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
