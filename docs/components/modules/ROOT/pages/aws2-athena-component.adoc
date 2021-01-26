@@ -513,12 +513,6 @@ from("direct:start")
 Caution: the preceding example would block indefinitely, however, if the query did not complete with a
 status of SUCCEEDED.
 
-== Automatic detection of AmazonAthena client in registry
-
-The component is capable of detecting the presence of an AmazonAthena bean in the registry.
-If it's the only instance of that type it will be used as the client and you won't have to define it as URI parameter, like the example above.
-This may be really useful for smarter configuration of the endpoint.
-
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
