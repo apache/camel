@@ -225,7 +225,6 @@ from("direct:stop")
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
 --------------------------------------------------------------------------------
 
-
 == Using a POJO as body
 
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
