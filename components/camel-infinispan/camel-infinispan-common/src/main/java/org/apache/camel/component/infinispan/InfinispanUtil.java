@@ -27,20 +27,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.infinispan.AdvancedCache;
-import org.infinispan.commons.api.BasicCache;
 
 public class InfinispanUtil {
     protected InfinispanUtil() {
     }
 
-    @SuppressWarnings("unchecked")
-    public static <K, V> AdvancedCache<K, V> asAdvanced(BasicCache<K, V> cache) {
-        return (AdvancedCache) cache;
-    }
-
     public static boolean isInHeaderEmpty(Exchange exchange, String header) {
-        return isHeaderEmpty(exchange.getIn(), header);
+        return isHeaderEmpty(exchange.getMessage(), header);
     }
 
     public static boolean isHeaderEmpty(Message message, String header) {

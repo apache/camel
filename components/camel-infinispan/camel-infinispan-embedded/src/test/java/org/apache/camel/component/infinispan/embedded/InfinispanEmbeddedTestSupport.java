@@ -65,6 +65,7 @@ public class InfinispanEmbeddedTestSupport extends InfinispanTestSupport {
     protected ConfigurationBuilder getConfiguration() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder.clustering().cacheMode(CacheMode.LOCAL);
+
         return builder;
     }
 

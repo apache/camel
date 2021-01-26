@@ -23,8 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanProducerTestSupport;
-import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.infinispan.commons.api.BasicCache;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.stats.Stats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,10 +37,16 @@ public class InfinispanEmbeddedProducerTest extends InfinispanEmbeddedTestSuppor
         return (k, v) -> v + "replay";
     }
 
+    @Override
+    protected ConfigurationBuilder getConfiguration() {
+        ConfigurationBuilder builder = super.getConfiguration();
+        builder.statistics().enable();
+
+        return builder;
+    }
+
     @Test
     public void statsOperation() {
-        InfinispanUtil.asAdvanced(getCache()).getStats().setStatisticsEnabled(true);
-
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, InfinispanProducerTestSupport.KEY_ONE)
