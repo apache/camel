@@ -17,5 +17,9 @@
 package org.apache.camel.component.huaweicloud.smn.constants;
 
 public class SmnServices {
+
+    private SmnServices() {
+    }
+
     public static final String PUBLISH_MESSAGE = "publishMessageService";
 }

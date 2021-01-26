@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.huaweicloud.smn;
 
-import com.huaweicloud.sdk.core.region.Region;
 import com.huaweicloud.sdk.smn.v2.region.SmnRegion;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleNotificationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationUtils.class.getName());
+
+    private SimpleNotificationUtils() {
+    }
 
     /**
      * resolves endpoint url for the given region
@@ -38,14 +41,11 @@ public class SimpleNotificationUtils {
             return null;
         }
 
-        String result = null;
+        String result = SmnRegion.valueOf(formatEndpointKey(region)).getEndpoint();
 
-        try {
-            String formattedEndpointKey = formatEndpointKey(region);
-            result = ((Region) SmnRegion.class.getField(formattedEndpointKey)
-                    .get(SmnRegion.class.getField(formattedEndpointKey)))
-                            .getEndpoint();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        LOG.info("endpoint resolved as {} for region {}", result, region);
+
+        if(ObjectHelper.isEmpty(result)) {
             LOG.error("Couldn't resolve endpoint for region :  {}", region);
             result = null;
         }
@@ -53,7 +53,6 @@ public class SimpleNotificationUtils {
         if (LOG.isDebugEnabled()) {
             LOG.info("Returning endpoint {} for region {}", result, region);
         }
-
         return result;
     }
 
