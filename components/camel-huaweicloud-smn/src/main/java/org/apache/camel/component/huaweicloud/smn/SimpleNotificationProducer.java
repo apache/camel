@@ -154,6 +154,13 @@ public class SimpleNotificationProducer extends DefaultProducer {
      * @param simpleNotificationEndpoint
      */
     private void validateAndInitializeSmnClient(SimpleNotificationEndpoint simpleNotificationEndpoint) {
+        if(simpleNotificationEndpoint.getSmnClient() != null) {
+            if(LOG.isWarnEnabled()) {
+                LOG.warn("Instance of SmnClient was set on the endpoint. Skipping creation of SmnClient from endpoint parameters");
+            }
+            this.smnClient = simpleNotificationEndpoint.getSmnClient();
+            return;
+        }
         this.clientConfigurations = new ClientConfigurations();
 
         //checking for cloud SK (secret key)
@@ -281,6 +288,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
     private ClientConfigurations validateServiceConfigurations(
             SimpleNotificationEndpoint simpleNotificationEndpoint, Exchange exchange) {
 
+        ClientConfigurations clientConfigurations = new ClientConfigurations();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting exchange body");
         }

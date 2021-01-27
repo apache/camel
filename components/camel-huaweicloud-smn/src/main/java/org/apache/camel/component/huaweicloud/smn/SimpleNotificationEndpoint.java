@@ -18,6 +18,7 @@ package org.apache.camel.component.huaweicloud.smn;
 
 import java.util.concurrent.ExecutorService;
 
+import com.huaweicloud.sdk.smn.v2.SmnClient;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -90,6 +91,8 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
               defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification = false;
+
+    private SmnClient smnClient;
 
     public SimpleNotificationEndpoint() {
     }
@@ -219,6 +222,14 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
 
     public void setIgnoreSslVerification(boolean ignoreSslVerification) {
         this.ignoreSslVerification = ignoreSslVerification;
+    }
+
+    public SmnClient getSmnClient() {
+        return smnClient;
+    }
+
+    public void setSmnClient(SmnClient smnClient) {
+        this.smnClient = smnClient;
     }
 
     public ExecutorService createExecutor() {
