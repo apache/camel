@@ -21,7 +21,6 @@ import java.util.Optional;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterView;
-import org.apache.camel.component.master.MasterComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
@@ -34,7 +33,7 @@ public class ConsulClusterViewTest {
     public static ConsulService service = ConsulServiceFactory.createService();
 
     @Test
-    public void getLeader_singleNode_localLeader() throws Exception {
+    public void getLeaderTest() throws Exception {
         //Set up a single node cluster.
         ConsulClusterService consulClusterService = new ConsulClusterService();
         consulClusterService.setId("node");
@@ -47,12 +46,12 @@ public class ConsulClusterViewTest {
         context.addService(consulClusterService);
 
         context.addRoutes(new RouteBuilder() {
-              @Override
-              public void configure() {
-                  from("master:key:timer:consul?repeatCount=1")
-                      .routeId("route1")
-                      .stop();
-              }
+            @Override
+            public void configure() {
+                from("master:key:timer:consul?repeatCount=1")
+                        .routeId("route1")
+                        .stop();
+            }
         });
 
         context.start();
