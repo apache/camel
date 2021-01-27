@@ -7208,6 +7208,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "StitchComponentBuilderFactory": {
+    "kind": "component",
+    "name": "stitch",
+    "title": "Stitch",
+    "description": "Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.",
+    "deprecated": false,
+    "firstVersion": "3.8.0",
+    "label": "cloud,api,compute,bigdata",
+    "javaType": "org.apache.camel.component.stitch.StitchComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-stitch",
+    "version": "3.8.0-SNAPSHOT",
+    "scheme": "stitch",
+    "extendsScheme": "",
+    "syntax": "stitch:tableName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "StompComponentBuilderFactory": {
     "kind": "component",
     "name": "stomp",

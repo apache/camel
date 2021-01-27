@@ -14896,6 +14896,57 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Stitch (camel-stitch)
+     * Stitch is a cloud ETL service that integrates various data sources into a
+     * central data warehouse through various integrations.
+     * 
+     * Category: cloud,api,compute,bigdata
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-stitch
+     * 
+     * Syntax: <code>stitch:tableName</code>
+     * 
+     * Path parameter: tableName
+     * The name of the destination table the data is being pushed to. Table
+     * names must be unique in each destination schema, or loading issues will
+     * occur. Note: The number of characters in the table name should be within
+     * the destinations allowed limits or data will rejected.
+     * 
+     * @param path tableName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.endpointBuilder("stitch", path);
+    }
+    /**
+     * Stitch (camel-stitch)
+     * Stitch is a cloud ETL service that integrates various data sources into a
+     * central data warehouse through various integrations.
+     * 
+     * Category: cloud,api,compute,bigdata
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-stitch
+     * 
+     * Syntax: <code>stitch:tableName</code>
+     * 
+     * Path parameter: tableName
+     * The name of the destination table the data is being pushed to. Table
+     * names must be unique in each destination schema, or loading issues will
+     * occur. Note: The number of characters in the table name should be within
+     * the destinations allowed limits or data will rejected.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path tableName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Stomp (camel-stomp)
      * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.
