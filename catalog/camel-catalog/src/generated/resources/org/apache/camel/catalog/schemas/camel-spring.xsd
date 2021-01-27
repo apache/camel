@@ -2617,14 +2617,6 @@ stopping routes). The default logging level is DEBUG. Default value: DEBUG
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="loggingLevel" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level used for logging route activity (such as starting and
-stopping routes). The default logging level is DEBUG. Default value: DEBUG
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
