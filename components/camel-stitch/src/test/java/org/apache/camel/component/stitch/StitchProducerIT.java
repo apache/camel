@@ -55,7 +55,7 @@ class StitchProducerIT extends CamelTestSupport {
         template.send("direct:sendStitch", exchange -> {
             exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                     StitchSchema.builder().addKeyword("field_1", "string").build());
-            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
 
             exchange.getMessage().setBody(StitchMessage.builder()
                     .withData("field_1", "data")
@@ -121,7 +121,7 @@ class StitchProducerIT extends CamelTestSupport {
         template.send("direct:sendStitch", exchange -> {
             exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                     StitchSchema.builder().addKeyword("field_1", "string").build());
-            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
 
             exchange.getMessage().setBody(inputMessages);
         });
@@ -144,7 +144,7 @@ class StitchProducerIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                 StitchSchema.builder().addKeyword("field_1", "string").build());
-        exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+        exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
 
         exchange.getMessage().setBody(StitchMessage.builder()
                 .withData("field_2", "data")

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.stitch.operations;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -172,9 +173,14 @@ public class StitchProducerOperations {
         return configuration.getStitchSchema();
     }
 
-    @SuppressWarnings("unchecked")
     private Collection<String> getKeyNames(final Message message) {
-        return getOption(message, StitchConstants.KEY_NAMES, configuration::getKeyNames, Collection.class);
+        final String keys = getOption(message, StitchConstants.KEY_NAMES, configuration::getKeyNames, String.class);
+
+        if (ObjectHelper.isNotEmpty(keys)) {
+            return Arrays.asList(keys.split(",").clone());
+        }
+
+        return Collections.emptyList();
     }
 
     private <R> R getOption(

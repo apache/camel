@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.stitch;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.stitch.client.StitchClient;
 import org.apache.camel.component.stitch.client.StitchRegion;
@@ -44,14 +41,14 @@ public class StitchConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private StitchSchema stitchSchema;
     @UriParam(label = "producer")
-    private Collection<String> keyNames = new HashSet<>();
-    @UriParam(label = "producer,advance")
+    private String keyNames;
+    @UriParam(label = "producer,advanced")
     @Metadata(autowired = true)
     private HttpClient httpClient;
-    @UriParam(label = "producer,advance")
+    @UriParam(label = "producer,advanced")
     @Metadata(autowired = true)
     private ConnectionProvider connectionProvider;
-    @UriParam(label = "advance")
+    @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private StitchClient stitchClient;
 
@@ -104,14 +101,14 @@ public class StitchConfiguration implements Cloneable {
     }
 
     /**
-     * A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to
-     * de-dupe data during loading If not provided, the table will be loaded in an append-only manner.
+     * A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these
+     * Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner.
      */
-    public Collection<String> getKeyNames() {
+    public String getKeyNames() {
         return keyNames;
     }
 
-    public void setKeyNames(Collection<String> keyNames) {
+    public void setKeyNames(String keyNames) {
         this.keyNames = keyNames;
     }
 

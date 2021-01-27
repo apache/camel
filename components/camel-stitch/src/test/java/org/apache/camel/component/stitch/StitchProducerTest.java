@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.stitch;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -64,7 +65,7 @@ class StitchProducerTest extends CamelTestSupport {
         template.send("direct:sendStitch", exchange -> {
             exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                     StitchSchema.builder().addKeyword("field_1", "string").build());
-            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
 
             exchange.getMessage().setBody(StitchMessage.builder()
                     .withData("field_1", "data")
@@ -130,7 +131,7 @@ class StitchProducerTest extends CamelTestSupport {
         template.send("direct:sendStitch", exchange -> {
             exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                     StitchSchema.builder().addKeyword("field_1", "string").build());
-            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+            exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
 
             exchange.getMessage().setBody(inputMessages);
         });
@@ -150,7 +151,7 @@ class StitchProducerTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                 StitchSchema.builder().addKeyword("field_1", "string").build());
-        exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+        exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
 
         exchange.getMessage().setBody(StitchMessage.builder()
                 .withData("field_2", "data")
@@ -199,6 +200,11 @@ class StitchProducerTest extends CamelTestSupport {
 
             return Mono.just(response);
         }
+
+        @Override
+        public void close() throws IOException {
+            // noop
+        }
     }
 
     static class TestErrorClient implements StitchClient {
@@ -214,6 +220,11 @@ class StitchProducerTest extends CamelTestSupport {
             final StitchException exception = new StitchException(response);
 
             return Mono.error(exception);
+        }
+
+        @Override
+        public void close() throws IOException {
+            // noop
         }
     }
 }

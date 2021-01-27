@@ -65,7 +65,7 @@ class StitchProducerOperationsIT extends CamelTestSupport {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("test_table");
         configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
-        configuration.setKeyNames(Collections.singleton("field_1"));
+        configuration.setKeyNames("field_1");
 
         final StitchMessage message = StitchMessage.builder()
                 .withData("field_1", "data")
@@ -85,7 +85,7 @@ class StitchProducerOperationsIT extends CamelTestSupport {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
         configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
-        configuration.setKeyNames(Collections.singleton("field_1"));
+        configuration.setKeyNames("field_1");
 
         final StitchMessage stitchMessage1 = StitchMessage.builder()
                 .withData("field_1", "stitchMessage1")

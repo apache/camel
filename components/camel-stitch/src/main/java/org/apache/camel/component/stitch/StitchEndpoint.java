@@ -26,12 +26,11 @@ import org.apache.camel.component.stitch.client.StitchClientBuilder;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Stitch is a cloud ETL service, developer-focused platform for rapidly moving and replicates data from more than 90
- * applications and databases. It integrates various data sources into a central data warehouse. Stitch has integrations
- * for many enterprise software data sources, and can receive data via WebHooks and an API (Stitch Import API) which
- * Camel Stitch Component uses to produce the data to Stitch ETL.
+ * Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various
+ * integrations.
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "stitch", title = "Stitch",
              syntax = "stitch:tableName", producerOnly = true, category = {
@@ -72,6 +71,16 @@ public class StitchEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Stitch component does not support consumer operations.");
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        // only close if it is created by the endpoint
+        if (ObjectHelper.isEmpty(configuration.getStitchClient()) && stitchClient != null) {
+            stitchClient.close();
+        }
+
+        super.doStop();
+    }
+
     /**
      * The component configurations
      */
@@ -93,10 +102,10 @@ public class StitchEndpoint extends DefaultEndpoint {
 
     private StitchClient createClient(final StitchConfiguration configuration) {
         return StitchClientBuilder.builder()
-                .withRegion(getConfiguration().getRegion())
-                .withToken(getConfiguration().getToken())
-                .withHttpClient(getConfiguration().getHttpClient())
-                .withConnectionProvider(getConfiguration().getConnectionProvider())
+                .withRegion(configuration.getRegion())
+                .withToken(configuration.getToken())
+                .withHttpClient(configuration.getHttpClient())
+                .withConnectionProvider(configuration.getConnectionProvider())
                 .build();
     }
 }

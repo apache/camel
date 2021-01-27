@@ -14693,12 +14693,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service, developer-focused platform for rapidly
-     * moving and replicates data from more than 90 applications and databases.
-     * It integrates various data sources into a central data warehouse. Stitch
-     * has integrations for many enterprise software data sources, and can
-     * receive data via WebHooks and an API (Stitch Import API) which Camel
-     * Stitch Component uses to produce the data to Stitch ETL.
+     * Stitch is a cloud ETL service that integrates various data sources into a
+     * central data warehouse through various integrations.
      * 
      * Category: cloud,api,compute,bigdata
      * Since: 3.8
@@ -14721,12 +14717,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service, developer-focused platform for rapidly
-     * moving and replicates data from more than 90 applications and databases.
-     * It integrates various data sources into a central data warehouse. Stitch
-     * has integrations for many enterprise software data sources, and can
-     * receive data via WebHooks and an API (Stitch Import API) which Camel
-     * Stitch Component uses to produce the data to Stitch ETL.
+     * Stitch is a cloud ETL service that integrates various data sources into a
+     * central data warehouse through various integrations.
      * 
      * Category: cloud,api,compute,bigdata
      * Since: 3.8

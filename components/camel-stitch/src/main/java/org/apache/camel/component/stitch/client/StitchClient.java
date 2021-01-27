@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.stitch.client;
 
+import java.io.Closeable;
+
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchResponse;
 import reactor.core.publisher.Mono;
 
-public interface StitchClient {
+public interface StitchClient extends Closeable {
     /**
      * Create a batch
      *

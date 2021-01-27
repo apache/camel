@@ -53,6 +53,12 @@ public class StitchClientImpl implements StitchClient {
         return sendBatch(convertMapToByteBuf(requestBody.toMap()));
     }
 
+    @Override
+    public void close() {
+        // dispose the connection provider
+        httpClient.configuration().connectionProvider().disposeLater().block();
+    }
+
     private Mono<StitchResponse> sendBatch(final ByteBufMono bodyAsByte) {
         return httpClient
                 .headers(applyHeaders())

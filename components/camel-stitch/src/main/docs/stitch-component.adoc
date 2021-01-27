@@ -2,7 +2,7 @@
 = Stitch Component
 :docTitle: Stitch
 :artifactId: camel-stitch
-:description: Stitch is a cloud ETL service, developer-focused platform for rapidly moving and replicates data from more than 90 applications and databases. It integrates various data sources into a central data warehouse. Stitch has integrations for many enterprise software data sources, and can receive data via WebHooks and an API (Stitch Import API) which Camel Stitch Component uses to produce the data to Stitch ETL.
+:description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.
 :since: 3.8
 :supportLevel: Preview
 :component-header: Only producer is supported
@@ -12,7 +12,10 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stitch.ado
 
 *{component-header}*
 
-{description}
+Stitch is a cloud ETL service, developer-focused platform for rapidly moving and replicates data from more than 90
+applications and databases. It integrates various data sources into a central data warehouse. Stitch has integrations
+for many enterprise software data sources, and can receive data via WebHooks and an API (Stitch Import API) which
+Camel Stitch Component uses to produce the data to Stitch ETL.
 
 For more info, feel free to visit their website: https://www.stitchdata.com/
 
@@ -89,13 +92,13 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *keyNames* (producer) | A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | Collection
+| *keyNames* (producer) | A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
 | *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
-| *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
-| *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
-| *stitchClient* (advance) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
+| *connectionProvider* (producer) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
+| *httpClient* (producer) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
+| *stitchClient* (advanced) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
 | *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
 |===
 // endpoint options: END
@@ -110,14 +113,14 @@ The Stitch component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (producer) | The component configurations |  | StitchConfiguration
-| *keyNames* (producer) | A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | Collection
+| *keyNames* (producer) | A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
 | *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
-| *connectionProvider* (advance) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
-| *httpClient* (advance) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
-| *stitchClient* (advance) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
+| *connectionProvider* (producer) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
+| *httpClient* (producer) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *stitchClient* (advanced) | *Autowired* Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface |  | StitchClient
 | *token* (security) | *Required* Stitch access token for the Stitch Import API |  | String
 |===
 // component options: END

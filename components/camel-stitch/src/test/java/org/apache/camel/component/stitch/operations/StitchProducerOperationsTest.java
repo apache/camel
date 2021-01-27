@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.stitch.operations;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -52,7 +53,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("test_table");
         configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "integer").build());
-        configuration.setKeyNames(Collections.singleton("field_1"));
+        configuration.setKeyNames("field_1,field_2");
 
         final StitchMessage message = StitchMessage.builder()
                 .withData("field_1", "data")
@@ -65,7 +66,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final StitchProducerOperations operations = new StitchProducerOperations(new TestClient(), configuration);
 
         assertEquals("{\"table_name\":\"test_table\",\"schema\":{\"field_1\":\"integer\"},\"messages\":[{\"action\":\"upsert\","
-                     + "\"sequence\":0,\"data\":{\"field_1\":\"data\"}}],\"key_names\":[\"field_1\"]}",
+                     + "\"sequence\":0,\"data\":{\"field_1\":\"data\"}}],\"key_names\":[\"field_1\",\"field_2\"]}",
                 JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap()));
 
         final StitchMessage message1 = StitchMessage.builder()
@@ -76,12 +77,12 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         exchange.getMessage().setHeader(StitchConstants.SCHEMA,
                 StitchSchema.builder().addKeyword("field_1", "integer").addKeyword("field_2", "string").build());
         exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "test_table_2");
-        exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_2"));
+        exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1,field_2");
 
         exchange.getMessage().setBody(message1);
 
         assertEquals("{\"table_name\":\"test_table_2\",\"schema\":{\"field_1\":\"integer\",\"field_2\":\"string\"},"
-                     + "\"messages\":[{\"action\":\"upsert\",\"sequence\":0,\"data\":{\"field_1\":\"test_2\"}}],\"key_names\":[\"field_2\"]}",
+                     + "\"messages\":[{\"action\":\"upsert\",\"sequence\":0,\"data\":{\"field_1\":\"test_2\"}}],\"key_names\":[\"field_1\",\"field_2\"]}",
                 JsonUtils.convertMapToJson(operations.createStitchRequestBody(exchange.getMessage()).toMap()));
     }
 
@@ -153,7 +154,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
         configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
-        configuration.setKeyNames(Collections.singleton("field_1"));
+        configuration.setKeyNames("field_1");
 
         final StitchMessage stitchMessage1 = StitchMessage.builder()
                 .withData("field_1", "stitchMessage1")
@@ -221,7 +222,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
         configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
-        configuration.setKeyNames(Collections.singleton("field_1"));
+        configuration.setKeyNames("field_1");
 
         final StitchMessage message = StitchMessage.builder()
                 .withData("field_1", "data")
@@ -255,7 +256,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         final StitchConfiguration configuration = new StitchConfiguration();
         configuration.setTableName("table_1");
         configuration.setStitchSchema(StitchSchema.builder().addKeyword("field_1", "string").build());
-        configuration.setKeyNames(Collections.singleton("field_1"));
+        configuration.setKeyNames("field_1");
 
         final StitchMessage message = StitchMessage.builder()
                 .withData("field_1", "data")
@@ -291,6 +292,11 @@ class StitchProducerOperationsTest extends CamelTestSupport {
 
             return Mono.just(response);
         }
+
+        @Override
+        public void close() throws IOException {
+            // noop
+        }
     }
 
     static class TestErrorClient implements StitchClient {
@@ -306,6 +312,11 @@ class StitchProducerOperationsTest extends CamelTestSupport {
             final StitchException exception = new StitchException(response);
 
             return Mono.error(exception);
+        }
+
+        @Override
+        public void close() throws IOException {
+            // noop
         }
     }
 }
