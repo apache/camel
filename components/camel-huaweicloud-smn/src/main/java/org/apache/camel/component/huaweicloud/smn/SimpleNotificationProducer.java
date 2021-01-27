@@ -42,21 +42,10 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     public SimpleNotificationProducer(SimpleNotificationEndpoint endpoint) {
         super(endpoint);
-        //this.simpleNotificationEndpoint = endpoint;
+        validateAndInitializeSmnClient((SimpleNotificationEndpoint) super.getEndpoint());
     }
 
     public void process(Exchange exchange) throws Exception {
-
-        /**
-         * the produce method is invoked when a message arrives at producer endpoint (lazy init of SmnClient on first
-         * message)
-         */
-        if (this.smnClient == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Initializing the SmnClient");
-            }
-            validateAndInitializeSmnClient((SimpleNotificationEndpoint) super.getEndpoint());
-        }
 
         String service = ((SimpleNotificationEndpoint) super.getEndpoint()).getSmnService();
 
