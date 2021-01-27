@@ -25,15 +25,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PublishTemplatedMessageTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
 
