@@ -42,6 +42,11 @@ public class SimpleNotificationProducer extends DefaultProducer {
 
     public SimpleNotificationProducer(SimpleNotificationEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         validateAndInitializeSmnClient((SimpleNotificationEndpoint) super.getEndpoint());
     }
 

@@ -6,14 +6,14 @@ public class SmnProperties {
     }
 
     // request properties
-    public static String TEMPLATE_NAME = "CamelHwCloudSmnTemplateName";
-    public static String TEMPLATE_TAGS = "CamelHwCloudSmnTemplateTags";
-    public static String SMN_OPERATION = "CamelHwCloudSmnOperation";
-    public static String NOTIFICATION_TOPIC_NAME = "CamelHwCloudSmnTopic";
-    public static String NOTIFICATION_SUBJECT = "CamelHwCloudSmnSubject";
-    public static String NOTIFICATION_TTL = "CamelHwCloudSmnMessageTtl";
+    public static final String TEMPLATE_NAME = "CamelHwCloudSmnTemplateName";
+    public static final String TEMPLATE_TAGS = "CamelHwCloudSmnTemplateTags";
+    public static final String SMN_OPERATION = "CamelHwCloudSmnOperation";
+    public static final String NOTIFICATION_TOPIC_NAME = "CamelHwCloudSmnTopic";
+    public static final String NOTIFICATION_SUBJECT = "CamelHwCloudSmnSubject";
+    public static final String NOTIFICATION_TTL = "CamelHwCloudSmnMessageTtl";
 
     //response properties
-    public static String SERVICE_MESSAGE_ID = "CamelHwCloudSmnMesssageId";
-    public static String SERVICE_REQUEST_ID = "CamelHwCloudSmnRequestId";
+    public static final String SERVICE_MESSAGE_ID = "CamelHwCloudSmnMesssageId";
+    public static final String SERVICE_REQUEST_ID = "CamelHwCloudSmnRequestId";
 }
