@@ -769,6 +769,7 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
+            List<EndpointKey> toRemove = new ArrayList<>();
             for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
                 oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
@@ -778,8 +779,11 @@ public abstract class AbstractCamelContext extends BaseService
                         LOG.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
                     }
                     answer.add(oldEndpoint);
-                    endpoints.remove(entry.getKey());
+                    toRemove.add(entry.getKey());
                 }
+            }
+            for (EndpointKey key : toRemove) {
+                endpoints.remove(key);
             }
         }
 
