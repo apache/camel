@@ -54,6 +54,7 @@ import org.apache.camel.util.ObjectHelper;
  * @see CaffeineLRUCache
  * @see CaffeineLRUSoftCache
  */
+@Deprecated
 public class CaffeineLRUWeakCache<K, V> extends CaffeineLRUCache<K, V> {
 
     public CaffeineLRUWeakCache(int maximumCacheSize) {

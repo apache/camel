@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * @see CaffeineLRUSoftCache
  * @see CaffeineLRUWeakCache
  */
+@Deprecated
 public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K, V>, Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineLRUCache.class);
 

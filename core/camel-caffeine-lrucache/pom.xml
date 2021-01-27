@@ -29,7 +29,7 @@
 
     <artifactId>camel-caffeine-lrucache</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Caffeine LRUCache</name>
+    <name>Camel :: Caffeine LRUCache (deprecated)</name>
     <description>Camel Caffeine LRUCache support</description>
 
     <properties>

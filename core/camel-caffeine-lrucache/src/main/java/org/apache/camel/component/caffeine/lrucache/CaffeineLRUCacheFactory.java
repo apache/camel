@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Factory to create {@link CaffeineLRUCache} instances.
  */
+@Deprecated
 @JdkService(LRUCacheFactory.FACTORY)
 public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
 

@@ -59,10 +59,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-caffeine-lrucache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-controlbus</artifactId>
         </dependency>
         <dependency>

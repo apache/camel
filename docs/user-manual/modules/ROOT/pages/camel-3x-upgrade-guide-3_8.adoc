@@ -33,6 +33,14 @@ The method `isOnlyDynamicQueryParameters` is removed from `org.apache.camel.spi.
 
 The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
 
+=== camel-caffeine-lrucache
+
+This LRUCache implementation is using an algorithm where elements that are removed may not be in strict order, and therefore
+not ideal for LRU caches assuming ordering.
+
+The need for this implementation is not needed anymore in Camel 3, as we are using a simpler default implementation internally.
+This component is deprecated, and has been removed as Maven dependency in `camel-core` pom.xml file.
+
 === camel-activemq and camel-jms
 
 The JMS and ActiveMQ component now supports optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.

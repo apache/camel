@@ -26,8 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link LRUCacheFactory} which uses a {@link LinkedHashMap}. You can use camel-caffeine-lrucache instead which
- * has a better LRUCache implementation.
+ * Default {@link LRUCacheFactory} which uses a {@link LinkedHashMap} based implementation.
  */
 public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
