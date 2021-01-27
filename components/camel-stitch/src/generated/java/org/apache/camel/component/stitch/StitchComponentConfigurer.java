@@ -36,7 +36,7 @@ public class StitchComponentConfigurer extends PropertyConfigurerSupport impleme
         case "httpclient":
         case "httpClient": getOrCreateConfiguration(target).setHttpClient(property(camelContext, reactor.netty.http.client.HttpClient.class, value)); return true;
         case "keynames":
-        case "keyNames": getOrCreateConfiguration(target).setKeyNames(property(camelContext, java.util.Collection.class, value)); return true;
+        case "keyNames": getOrCreateConfiguration(target).setKeyNames(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, org.apache.camel.component.stitch.client.StitchRegion.class, value)); return true;
@@ -65,7 +65,7 @@ public class StitchComponentConfigurer extends PropertyConfigurerSupport impleme
         case "httpclient":
         case "httpClient": return reactor.netty.http.client.HttpClient.class;
         case "keynames":
-        case "keyNames": return java.util.Collection.class;
+        case "keyNames": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "region": return org.apache.camel.component.stitch.client.StitchRegion.class;
@@ -99,15 +99,6 @@ public class StitchComponentConfigurer extends PropertyConfigurerSupport impleme
         case "stitchschema":
         case "stitchSchema": return getOrCreateConfiguration(target).getStitchSchema();
         case "token": return getOrCreateConfiguration(target).getToken();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "keynames":
-        case "keyNames": return java.lang.String.class;
         default: return null;
         }
     }
