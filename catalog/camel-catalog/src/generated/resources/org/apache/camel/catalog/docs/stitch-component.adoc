@@ -208,7 +208,7 @@ from("direct:sendStitch")
 from("direct:sendStitch")
      .process(exchange -> {
          exchange.getMessage().setHeader(StitchConstants.SCHEMA, StitchSchema.builder().addKeyword("field_1", "string").build());
-         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
          exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "table_1");
 
          final StitchMessage stitchMessage = StitchMessage.builder()
@@ -237,7 +237,7 @@ from("direct:sendStitch")
         data.put(StitchRequestBody.SCHEMA, Collections.singletonMap("properties", properties));
         data.put(StitchRequestBody.MESSAGES,
                 Collections.singletonList(Collections.singletonMap("data", Collections.singletonMap("id", 2))));
-        data.put(StitchRequestBody.KEY_NAMES, Collections.singletonList("test_key"));
+        data.put(StitchRequestBody.KEY_NAMES, "test_key");
 
         exchange.getMessage().setBody(data);
      })
@@ -252,7 +252,7 @@ from("direct:sendStitch")
 from("direct:sendStitch")
      .process(exchange -> {
          exchange.getMessage().setHeader(StitchConstants.SCHEMA, StitchSchema.builder().addKeyword("field_1", "string").build());
-         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
          exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "table_1");
 
         final StitchMessage stitchMessage1 = StitchMessage.builder()
