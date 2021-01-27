@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.ResourceHelper;
@@ -65,5 +66,22 @@ public class InfinispanUtil {
         return camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(
                 source,
                 source.getClass().getSimpleName());
+    }
+
+    public static ScheduledExecutorService newSingleThreadScheduledExecutor(
+            CamelContextAware camelContextAware, Object source) {
+        return newSingleThreadScheduledExecutor(camelContextAware.getCamelContext(), source);
+    }
+
+    public static ScheduledExecutorService newSingleThreadScheduledExecutor(
+            CamelContext camelContext, Object source, String id) {
+        return camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(
+                source,
+                source.getClass().getSimpleName() + "-" + id);
+    }
+
+    public static ScheduledExecutorService newSingleThreadScheduledExecutor(
+            CamelContextAware camelContextAware, Object source, String id) {
+        return newSingleThreadScheduledExecutor(camelContextAware.getCamelContext(), source, id);
     }
 }
