@@ -42,4 +42,13 @@ public interface Predicate {
     default void init(CamelContext context) {
     }
 
+    /**
+     * Initialize as a predicate with the given camel context
+     *
+     * @param context the camel context
+     */
+    default void initPredicate(CamelContext context) {
+        init(context);
+    }
+
 }

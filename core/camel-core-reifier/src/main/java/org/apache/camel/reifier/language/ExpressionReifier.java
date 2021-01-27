@@ -230,7 +230,9 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         if (predicate instanceof CamelContextAware) {
             ((CamelContextAware) predicate).setCamelContext(camelContext);
         }
-        predicate.init(camelContext);
+        // if the predicate is created via a delegate then it would need to know if its a predicate or expression
+        // when being initialized
+        predicate.initPredicate(camelContext);
         return predicate;
     }
 

@@ -51,7 +51,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
-        this.otherwise = AsyncProcessorConverterHelper.convert(otherwise);
+        this.otherwise = otherwise != null ? AsyncProcessorConverterHelper.convert(otherwise) : null;
     }
 
     @Override
