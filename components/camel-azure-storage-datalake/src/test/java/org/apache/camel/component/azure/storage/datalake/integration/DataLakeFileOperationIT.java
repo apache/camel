@@ -47,7 +47,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Ignore
-public class DataLakeFileOperationITTest extends BaseIT {
+public class DataLakeFileOperationIT extends BaseIT {
     private DataLakeFileSystemClientWrapper fileSystemClientWrapper;
     private String randomFileName;
 

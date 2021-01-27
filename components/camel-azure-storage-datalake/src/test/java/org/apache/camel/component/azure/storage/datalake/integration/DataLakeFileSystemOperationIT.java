@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Ignore
-public class DataLakeFileSystemOperationITTest extends BaseIT {
+public class DataLakeFileSystemOperationIT extends BaseIT {
 
     private DataLakeServiceClientWrapper serviceClientWrapper;
 
