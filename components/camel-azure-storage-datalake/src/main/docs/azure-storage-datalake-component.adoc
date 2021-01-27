@@ -7,6 +7,7 @@
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-datalake.adoc[opts=optional]
+//Manually maintained attributes
 :group: Azure
 
 *Since Camel {since}*
@@ -550,5 +551,3 @@ You can also skip the integration test, and run only basic unit test by using th
 ----
 mvn test
 ----
-
-
