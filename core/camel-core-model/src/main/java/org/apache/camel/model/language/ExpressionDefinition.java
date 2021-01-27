@@ -33,9 +33,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
+import org.apache.camel.PredicateFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExpressionFactoryAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PredicateFactoryAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -46,7 +48,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public class ExpressionDefinition implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware {
+public class ExpressionDefinition
+        implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware, PredicateFactory, PredicateFactoryAware {
     @XmlAttribute
     @XmlID
     private String id;
@@ -196,6 +199,11 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
     }
 
     @Override
+    public PredicateFactory getPredicateFactory() {
+        return this;
+    }
+
+    @Override
     public Expression createExpression(CamelContext camelContext) {
         return camelContext.adapt(ModelCamelContext.class).createExpression(this);
     }
@@ -240,4 +248,10 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
         }
     }
 
+    @Override
+    public void initPredicate(CamelContext context) {
+        if (predicate == null) {
+            predicate = createPredicate(context);
+        }
+    }
 }

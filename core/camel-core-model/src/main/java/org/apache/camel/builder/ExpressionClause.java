@@ -38,6 +38,7 @@ import org.apache.camel.support.builder.Namespaces;
 public class ExpressionClause<T> implements Expression, Predicate {
     private ExpressionClauseSupport<T> delegate;
     private volatile Expression expr;
+    private volatile Predicate pred;
 
     public ExpressionClause(T result) {
         this.delegate = new ExpressionClauseSupport<>(result);
@@ -998,6 +999,23 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     @Override
+    public void initPredicate(CamelContext context) {
+        if (pred == null) {
+            synchronized (this) {
+                if (pred == null) {
+                    Expression newExpression = getExpressionValue();
+                    if (newExpression == null) {
+                        pred = delegate.getPredicateType().createPredicate(context);
+                    } else {
+                        pred = ExpressionToPredicateAdapter.toPredicate(newExpression);
+                    }
+                    pred.initPredicate(context);
+                }
+            }
+        }
+    }
+
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         init(exchange.getContext());
         return expr.evaluate(exchange, type);
@@ -1005,7 +1023,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
 
     @Override
     public boolean matches(Exchange exchange) {
-        init(exchange.getContext());
-        return new ExpressionToPredicateAdapter(expr).matches(exchange);
+        initPredicate(exchange.getContext());
+        return pred.matches(exchange);
     }
 }

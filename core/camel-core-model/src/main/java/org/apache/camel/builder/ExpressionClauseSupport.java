@@ -22,6 +22,7 @@ import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
+import org.apache.camel.PredicateFactory;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
@@ -43,12 +44,13 @@ import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.ExpressionFactoryAware;
+import org.apache.camel.spi.PredicateFactoryAware;
 import org.apache.camel.support.builder.Namespaces;
 
 /**
  * A support class for building expression clauses.
  */
-public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
+public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, PredicateFactoryAware {
 
     // Implementation detail: We must use the specific model.language.xxx
     // classes to make the DSL use these specific types
@@ -58,6 +60,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     private T result;
     private Expression expressionValue;
     private ExpressionFactory expressionType;
+    private PredicateFactory predicateType;
 
     public ExpressionClauseSupport(T result) {
         this.result = result;
@@ -70,8 +73,14 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
      * Specify an {@link org.apache.camel.Expression} instance
      */
     public T expression(Expression expression) {
-        if (expression instanceof ExpressionFactory) {
-            setExpressionType((ExpressionFactory) expression);
+        if (expression instanceof ExpressionFactory || expression instanceof PredicateFactory) {
+            // it can be both an expression and predicate
+            if (expression instanceof ExpressionFactory) {
+                setExpressionType((ExpressionFactory) expression);
+            }
+            if (expression instanceof PredicateFactory) {
+                setPredicateType((PredicateFactory) expression);
+            }
         } else {
             setExpressionValue(expression);
         }
@@ -384,7 +393,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T jsonpath(String text, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
         expression.setResultType(resultType);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -400,7 +409,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         JsonPathExpression expression = new JsonPathExpression(text);
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setResultType(resultType);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -418,7 +427,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setAllowSimple(Boolean.toString(allowSimple));
         expression.setResultType(resultType);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -438,7 +447,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setAllowSimple(Boolean.toString(allowSimple));
         expression.setResultType(resultType);
         expression.setHeaderName(headerName);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -584,7 +593,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T simple(String text, Class<?> resultType) {
         SimpleExpression expression = new SimpleExpression(text);
         expression.setResultType(resultType);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -678,7 +687,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setToken(token);
         expression.setHeaderName(headerName);
         expression.setRegex(Boolean.toString(regex));
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -710,7 +719,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setHeaderName(headerName);
         expression.setRegex(Boolean.toString(regex));
         expression.setSkipFirst(Boolean.toString(skipFirst));
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -761,7 +770,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setGroup(group);
         expression.setGroupDelimiter(groupDelimiter);
         expression.setSkipFirst(Boolean.toString(skipFirst));
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -778,7 +787,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setToken(startToken);
         expression.setEndToken(endToken);
         expression.setIncludeTokens(Boolean.toString(includeTokens));
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -808,7 +817,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setInheritNamespaceTagName(inheritNamespaceTagName);
         expression.setXml(Boolean.toString(true));
         expression.setGroup(group);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -830,7 +839,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         if (group > 0) {
             expression.setGroup(Integer.toString(group));
         }
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -868,7 +877,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T xpath(String text, Class<?> resultType) {
         XPathExpression expression = new XPathExpression(text);
         expression.setResultType(resultType);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -884,7 +893,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T xpath(String text, Class<?> resultType, String headerName) {
         XPathExpression expression = new XPathExpression(text);
         expression.setHeaderName(headerName);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -916,7 +925,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setResultType(resultType);
         expression.setNamespaces(namespaces.getNamespaces());
         expression.setHeaderName(headerName);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -933,7 +942,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         XPathExpression expression = new XPathExpression(text);
         expression.setResultType(resultType);
         expression.setNamespaces(namespaces);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -960,7 +969,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T xpath(String text, Map<String, String> namespaces) {
         XPathExpression expression = new XPathExpression(text);
         expression.setNamespaces(namespaces);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -997,7 +1006,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T xquery(String text, Class<?> resultType) {
         XQueryExpression expression = new XQueryExpression(text);
         expression.setResultType(resultType);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -1012,7 +1021,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T xquery(String text, Class<?> resultType, String headerName) {
         XQueryExpression expression = new XQueryExpression(text);
         expression.setHeaderName(headerName);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -1044,7 +1053,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         expression.setResultType(resultType);
         expression.setNamespaces(namespaces.getNamespaces());
         expression.setHeaderName(headerName);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -1061,7 +1070,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         XQueryExpression expression = new XQueryExpression(text);
         expression.setResultType(resultType);
         expression.setNamespaces(namespaces);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -1088,7 +1097,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     public T xquery(String text, Map<String, String> namespaces) {
         XQueryExpression expression = new XQueryExpression(text);
         expression.setNamespaces(namespaces);
-        setExpressionType(expression);
+        expression(expression);
         return result;
     }
 
@@ -1101,7 +1110,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
      */
     public T language(String language, String expression) {
         LanguageExpression exp = new LanguageExpression(language, expression);
-        setExpressionType(exp);
+        expression(exp);
         return result;
     }
 
@@ -1127,6 +1136,19 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     @Override
     public ExpressionFactory getExpressionFactory() {
         return expressionType;
+    }
+
+    public PredicateFactory getPredicateType() {
+        return predicateType;
+    }
+
+    public void setPredicateType(PredicateFactory predicateType) {
+        this.predicateType = predicateType;
+    }
+
+    @Override
+    public PredicateFactory getPredicateFactory() {
+        return predicateType;
     }
 
     protected Expression createExpression(CamelContext camelContext) {
