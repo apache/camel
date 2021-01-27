@@ -94,7 +94,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *keyNames* (producer) | A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
+| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | EUROPE | StitchRegion
 | *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
 | *connectionProvider* (producer) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
 | *httpClient* (producer) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
@@ -115,7 +115,7 @@ The Stitch component supports 10 options, which are listed below.
 | *configuration* (producer) | The component configurations |  | StitchConfiguration
 | *keyNames* (producer) | A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | europe | StitchRegion
+| *region* (producer) | Stitch account region, e.g: europe. There are 2 enums and the value can be one of: NORTH_AMERICA, EUROPE | EUROPE | StitchRegion
 | *stitchSchema* (producer) | *Autowired* A schema that describes the record(s) |  | StitchSchema
 | *connectionProvider* (producer) | *Autowired* ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider |  | ConnectionProvider
 | *httpClient* (producer) | *Autowired* Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient |  | HttpClient
@@ -208,7 +208,7 @@ from("direct:sendStitch")
 from("direct:sendStitch")
      .process(exchange -> {
          exchange.getMessage().setHeader(StitchConstants.SCHEMA, StitchSchema.builder().addKeyword("field_1", "string").build());
-         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
          exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "table_1");
 
          final StitchMessage stitchMessage = StitchMessage.builder()
@@ -237,7 +237,7 @@ from("direct:sendStitch")
         data.put(StitchRequestBody.SCHEMA, Collections.singletonMap("properties", properties));
         data.put(StitchRequestBody.MESSAGES,
                 Collections.singletonList(Collections.singletonMap("data", Collections.singletonMap("id", 2))));
-        data.put(StitchRequestBody.KEY_NAMES, Collections.singletonList("test_key"));
+        data.put(StitchRequestBody.KEY_NAMES, "test_key");
 
         exchange.getMessage().setBody(data);
      })
@@ -252,7 +252,7 @@ from("direct:sendStitch")
 from("direct:sendStitch")
      .process(exchange -> {
          exchange.getMessage().setHeader(StitchConstants.SCHEMA, StitchSchema.builder().addKeyword("field_1", "string").build());
-         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, Collections.singleton("field_1"));
+         exchange.getMessage().setHeader(StitchConstants.KEY_NAMES, "field_1");
          exchange.getMessage().setHeader(StitchConstants.TABLE_NAME, "table_1");
 
         final StitchMessage stitchMessage1 = StitchMessage.builder()

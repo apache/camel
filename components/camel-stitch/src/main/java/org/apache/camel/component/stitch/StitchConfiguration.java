@@ -35,7 +35,7 @@ public class StitchConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String token;
-    @UriParam(label = "producer", defaultValue = "europe")
+    @UriParam(label = "producer", defaultValue = "EUROPE")
     private StitchRegion region = StitchRegion.EUROPE;
     @UriParam(label = "producer")
     @Metadata(autowired = true)
