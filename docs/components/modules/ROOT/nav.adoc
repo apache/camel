@@ -323,6 +323,7 @@
 ** xref:sql-stored-component.adoc[SQL Stored Procedure]
 ** xref:ssh-component.adoc[SSH]
 ** xref:stax-component.adoc[StAX]
+** xref:stitch-component.adoc[Stitch]
 ** xref:stomp-component.adoc[Stomp]
 ** xref:stream-component.adoc[Stream]
 ** xref:string-template-component.adoc[String Template]
