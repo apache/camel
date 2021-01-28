@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmnConstantsTest {
     @Test

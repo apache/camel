@@ -26,14 +26,12 @@ import org.apache.camel.component.huaweicloud.smn.constants.SmnProperties;
 import org.apache.camel.component.huaweicloud.smn.models.ServiceKeys;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PublishTemplatedMessageTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
