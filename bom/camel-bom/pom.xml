@@ -954,12 +954,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hystrix</artifactId>
+        <artifactId>camel-huaweicloud-smn</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-huaweicloud-smn</artifactId>
+        <artifactId>camel-hystrix</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

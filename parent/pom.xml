@@ -1563,11 +1563,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-huaweicloud-smn</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-http-base</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1579,6 +1574,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-http</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-huaweicloud-smn</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
