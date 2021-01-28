@@ -41,6 +41,13 @@ not ideal for LRU caches assuming ordering.
 The need for this implementation is not needed anymore in Camel 3, as we are using a simpler default implementation internally.
 This component is deprecated, and has been removed as Maven dependency in `camel-core` pom.xml file.
 
+=== camel-infinispan
+
+The infinispan component has been splitup into client and embedded server mode.
+The module `camel-infinispan` is the client mode, and `camel-infinispan-embedded` is for server mode.
+Most use cases would be client mode to integrate with an existing Infinispan cluster, and hence why it was choosen
+to be the `camel-infinispan` component.
+
 === camel-activemq and camel-jms
 
 The JMS and ActiveMQ component now supports optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.
