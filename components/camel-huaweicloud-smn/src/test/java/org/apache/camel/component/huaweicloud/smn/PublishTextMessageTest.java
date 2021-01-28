@@ -21,10 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnProperties;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +47,11 @@ public class PublishTextMessageTest extends CamelTestSupport {
                         .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
                         .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey="
-                                + testConfiguration.getProperty("authKey") + "&secretKey="
-                                + testConfiguration.getProperty("secretKey") + "&projectId="
-                                + testConfiguration.getProperty("projectId") + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true"
-                                + "&smnClient=#smnClient")
+                            + testConfiguration.getProperty("authKey") + "&secretKey="
+                            + testConfiguration.getProperty("secretKey") + "&projectId="
+                            + testConfiguration.getProperty("projectId") + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true"
+                            + "&smnClient=#smnClient")
                         .log("publish message successful")
                         .to("mock:publish_text_message_result");
             }
@@ -65,14 +68,13 @@ public class PublishTextMessageTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        Assert.assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
-        Assert.assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        Assert.assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
-        Assert.assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
+        assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
+        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
+        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
 
-        Assert.assertEquals("bf94b63a5dfb475994d3ac34664e24f2", responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
-        Assert.assertEquals("6a63a18b8bab40ffb71ebd9cb80d0085", responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
+        assertEquals("bf94b63a5dfb475994d3ac34664e24f2", responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        assertEquals("6a63a18b8bab40ffb71ebd9cb80d0085", responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
     }
-
 
 }

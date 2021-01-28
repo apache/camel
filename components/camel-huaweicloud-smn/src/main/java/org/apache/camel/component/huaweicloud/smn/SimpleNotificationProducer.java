@@ -159,9 +159,10 @@ public class SimpleNotificationProducer extends DefaultProducer {
      * @param simpleNotificationEndpoint
      */
     private void validateAndInitializeSmnClient(SimpleNotificationEndpoint simpleNotificationEndpoint) {
-        if(simpleNotificationEndpoint.getSmnClient() != null) {
-            if(LOG.isWarnEnabled()) {
-                LOG.warn("Instance of SmnClient was set on the endpoint. Skipping creation of SmnClient from endpoint parameters");
+        if (simpleNotificationEndpoint.getSmnClient() != null) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(
+                        "Instance of SmnClient was set on the endpoint. Skipping creation of SmnClient from endpoint parameters");
             }
             this.smnClient = simpleNotificationEndpoint.getSmnClient();
             return;

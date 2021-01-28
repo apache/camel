@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class SmnConstantsTest {
     @Test
     public void testConstants() {
-        Assert.assertEquals("urn:smn:%s:%s:%s", SmnConstants.TOPIC_URN_FORMAT);
+        assertEquals("urn:smn:%s:%s:%s", SmnConstants.TOPIC_URN_FORMAT);
     }
 }

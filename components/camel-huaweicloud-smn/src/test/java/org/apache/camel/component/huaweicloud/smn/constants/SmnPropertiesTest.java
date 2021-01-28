@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class SmnPropertiesTest {
     @Test
     public void testHwCloudSmnPropertyNames() {
-        Assert.assertEquals("CamelHwCloudSmnTemplateName", SmnProperties.TEMPLATE_NAME);
-        Assert.assertEquals("CamelHwCloudSmnTemplateTags", SmnProperties.TEMPLATE_TAGS);
-        Assert.assertEquals("CamelHwCloudSmnOperation", SmnProperties.SMN_OPERATION);
-        Assert.assertEquals("CamelHwCloudSmnTopic", SmnProperties.NOTIFICATION_TOPIC_NAME);
-        Assert.assertEquals("CamelHwCloudSmnSubject", SmnProperties.NOTIFICATION_SUBJECT);
-        Assert.assertEquals("CamelHwCloudSmnMesssageId", SmnProperties.SERVICE_MESSAGE_ID);
-        Assert.assertEquals("CamelHwCloudSmnRequestId", SmnProperties.SERVICE_REQUEST_ID);
+        assertEquals("CamelHwCloudSmnTemplateName", SmnProperties.TEMPLATE_NAME);
+        assertEquals("CamelHwCloudSmnTemplateTags", SmnProperties.TEMPLATE_TAGS);
+        assertEquals("CamelHwCloudSmnOperation", SmnProperties.SMN_OPERATION);
+        assertEquals("CamelHwCloudSmnTopic", SmnProperties.NOTIFICATION_TOPIC_NAME);
+        assertEquals("CamelHwCloudSmnSubject", SmnProperties.NOTIFICATION_SUBJECT);
+        assertEquals("CamelHwCloudSmnMesssageId", SmnProperties.SERVICE_MESSAGE_ID);
+        assertEquals("CamelHwCloudSmnRequestId", SmnProperties.SERVICE_REQUEST_ID);
     }
 }

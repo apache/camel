@@ -16,20 +16,24 @@
  */
 package org.apache.camel.component.huaweicloud.smn;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.smn.constants.SmnProperties;
 import org.apache.camel.component.huaweicloud.smn.models.ServiceKeys;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PublishTemplatedMessageTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
@@ -58,9 +62,9 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
                         .setProperty(SmnProperties.TEMPLATE_TAGS, constant(tags))
                         .setProperty(SmnProperties.TEMPLATE_NAME, constant("hello-template"))
                         .to("hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"
-                                + "&projectId=" + testConfiguration.getProperty("projectId") + "&region="
-                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
-                        + "&smnClient=#smnClient")
+                            + "&projectId=" + testConfiguration.getProperty("projectId") + "&region="
+                            + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                            + "&smnClient=#smnClient")
                         .log("templated notification sent")
                         .to("mock:publish_templated_message_result");
             }
@@ -76,11 +80,10 @@ public class PublishTemplatedMessageTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        Assert.assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
-        Assert.assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        Assert.assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
-        Assert.assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
+        assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
+        assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
+        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
+        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
     }
-
 
 }

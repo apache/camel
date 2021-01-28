@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class SmnServicesTest {
     @Test
     public void testSmnServicesName() {
-        Assert.assertEquals("publishMessageService", SmnServices.PUBLISH_MESSAGE);
+        assertEquals("publishMessageService", SmnServices.PUBLISH_MESSAGE);
     }
 }

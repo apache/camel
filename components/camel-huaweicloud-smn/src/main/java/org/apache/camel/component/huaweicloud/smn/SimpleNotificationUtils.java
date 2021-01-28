@@ -44,11 +44,11 @@ public class SimpleNotificationUtils {
 
         String result = SmnRegion.valueOf(region).getEndpoint();
 
-        if(LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("endpoint resolved as {} for region {}", result, region);
         }
 
-        if(ObjectHelper.isEmpty(result)) {
+        if (ObjectHelper.isEmpty(result)) {
             LOG.error("Couldn't resolve endpoint for region :  {}", region);
             result = null;
         }

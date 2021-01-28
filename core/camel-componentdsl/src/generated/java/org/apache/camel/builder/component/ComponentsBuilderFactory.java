@@ -2255,6 +2255,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
+     * SimpleNotification (camel-huaweicloud-smn)
+     * Huawei Cloud component to integrate with SimpleNotification services
+     * 
+     * Category: cloud,messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.HwcloudSmnComponentBuilder hwcloudSmn() {
+        return org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.hwcloudSmn();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

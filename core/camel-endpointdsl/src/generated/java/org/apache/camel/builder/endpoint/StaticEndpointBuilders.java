@@ -7599,6 +7599,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * SimpleNotification (camel-huaweicloud-smn)
+     * Huawei Cloud component to integrate with SimpleNotification services
+     * 
+     * Category: cloud,messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
+     * 
+     * Syntax: <code>hwcloud-smn:smnService</code>
+     * 
+     * Path parameter: smnService (required)
+     * Name of SMN service to invoke
+     * 
+     * @param path smnService
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder("hwcloud-smn", path);
+    }
+    /**
+     * SimpleNotification (camel-huaweicloud-smn)
+     * Huawei Cloud component to integrate with SimpleNotification services
+     * 
+     * Category: cloud,messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
+     * 
+     * Syntax: <code>hwcloud-smn:smnService</code>
+     * 
+     * Path parameter: smnService (required)
+     * Name of SMN service to invoke
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path smnService
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

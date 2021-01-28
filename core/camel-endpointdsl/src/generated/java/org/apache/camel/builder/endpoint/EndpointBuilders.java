@@ -308,6 +308,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory,
