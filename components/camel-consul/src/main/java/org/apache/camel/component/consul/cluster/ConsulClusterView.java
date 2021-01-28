@@ -69,7 +69,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             return Optional.empty();
         }
 
-        return keyValueClient.getSession(configuration.getRootPath()).map(ConsulClusterMember::new);
+        return keyValueClient.getSession(path).map(ConsulClusterMember::new);
     }
 
     @Override
