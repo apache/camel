@@ -167,6 +167,7 @@
 ** xref:hbase-component.adoc[HBase]
 ** xref:hdfs-component.adoc[HDFS]
 ** xref:http-component.adoc[HTTP]
+** xref:hwcloud-component.adoc[Huawei Cloud SMN (Simple notification services)]
 ** xref:iec60870-client-component.adoc[IEC 60870 Client]
 ** xref:iec60870-server-component.adoc[IEC 60870 Server]
 ** xref:ignite-summary.adoc[Ignite]
