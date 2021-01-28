@@ -51,6 +51,8 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "deleteafterwrite":
         case "deleteAfterWrite": target.getConfiguration().setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
+        case "donefilename":
+        case "doneFileName": target.getConfiguration().setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "dualstackenabled":
         case "dualstackEnabled": target.getConfiguration().setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
         case "encryptionmaterials":
@@ -164,6 +166,8 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "deleteafterwrite":
         case "deleteAfterWrite": return boolean.class;
         case "delimiter": return java.lang.String.class;
+        case "donefilename":
+        case "doneFileName": return java.lang.String.class;
         case "dualstackenabled":
         case "dualstackEnabled": return boolean.class;
         case "encryptionmaterials":
@@ -278,6 +282,8 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "deleteafterwrite":
         case "deleteAfterWrite": return target.getConfiguration().isDeleteAfterWrite();
         case "delimiter": return target.getConfiguration().getDelimiter();
+        case "donefilename":
+        case "doneFileName": return target.getConfiguration().getDoneFileName();
         case "dualstackenabled":
         case "dualstackEnabled": return target.getConfiguration().isDualstackEnabled();
         case "encryptionmaterials":

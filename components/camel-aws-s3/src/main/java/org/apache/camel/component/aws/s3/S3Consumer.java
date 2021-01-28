@@ -24,6 +24,7 @@ import java.util.Queue;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -66,9 +67,12 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
+        String doneFileName = getConfiguration().getDoneFileName();
         Queue<Exchange> exchanges;
 
-        if (fileName != null) {
+        if (shouldSkipCauseDoneFileIsConfiguredButMissing(bucketName, doneFileName)) {
+            exchanges = new LinkedList<>();
+        } else if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
             S3Object s3Object = getAmazonS3Client().getObject(new GetObjectRequest(bucketName, fileName));
@@ -106,6 +110,22 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             exchanges = createExchanges(listObjects.getObjectSummaries());
         }
         return processBatch(CastUtils.cast(exchanges));
+    }
+
+    private boolean shouldSkipCauseDoneFileIsConfiguredButMissing(String bucketName, String doneFileName) {
+        if (doneFileName == null) {
+            return false;
+        } else {
+            try {
+                getAmazonS3Client().getObjectMetadata(bucketName, doneFileName);
+                return false;
+            } catch(AmazonS3Exception e) {
+                if (e.getStatusCode() == 404) {
+                    return true;
+                }
+                throw e;
+            }
+        }
     }
 
     protected Queue<Exchange> createExchanges(S3Object s3Object) {

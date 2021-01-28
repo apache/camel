@@ -53,6 +53,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": target.getConfiguration().setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
+        case "donefilename":
+        case "doneFileName": target.getConfiguration().setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationbucket":
         case "destinationBucket": target.getConfiguration().setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationbucketprefix":
@@ -177,6 +179,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": return boolean.class;
         case "delimiter": return java.lang.String.class;
+        case "donefilename":
+        case "doneFileName": return java.lang.String.class;
         case "destinationbucket":
         case "destinationBucket": return java.lang.String.class;
         case "destinationbucketprefix":
@@ -297,6 +301,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": return target.getConfiguration().isDeleteAfterWrite();
         case "delimiter": return target.getConfiguration().getDelimiter();
+        case "donefilename":
+        case "doneFileName": return target.getConfiguration().getDoneFileName();
         case "destinationbucket":
         case "destinationBucket": return target.getConfiguration().getDestinationBucket();
         case "destinationbucketprefix":

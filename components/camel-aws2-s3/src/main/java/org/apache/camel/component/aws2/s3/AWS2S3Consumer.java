@@ -47,8 +47,10 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest.Builder;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
@@ -109,9 +111,12 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
+        String doneFileName = getConfiguration().getDoneFileName();
         Queue<Exchange> exchanges;
 
-        if (fileName != null) {
+        if (shouldSkipCauseDoneFileIsConfiguredButMissing(bucketName, doneFileName)) {
+            exchanges = new LinkedList<>();
+        } else if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
             ResponseInputStream<GetObjectResponse> s3Object
@@ -153,6 +158,22 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         return processBatch(CastUtils.cast(exchanges));
     }
 
+    private boolean shouldSkipCauseDoneFileIsConfiguredButMissing(String bucketName, String doneFileName) {
+        if (doneFileName == null) {
+            return false;
+        } else {
+            HeadObjectRequest.Builder headObjectsRequest = HeadObjectRequest.builder();
+            headObjectsRequest.bucket(bucketName);
+            headObjectsRequest.key(doneFileName);
+            try {
+                getAmazonS3Client().headObject(headObjectsRequest.build());
+                return false;
+            } catch(NoSuchKeyException e) {
+                return true;
+            }
+        }
+    }
+
     protected Queue<Exchange> createExchanges(ResponseInputStream<GetObjectResponse> s3Object, String key) {
         Queue<Exchange> answer = new LinkedList<>();
         Exchange exchange = getEndpoint().createExchange(s3Object, key);
@@ -190,7 +211,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                     Exchange exchange = getEndpoint().createExchange(s3Object, s3ObjectSummary.key());
                     answer.add(exchange);
                 } else {
-                    // If includeFolders != true and the object is not included, it is safe to close the object here. 
+                    // If includeFolders != true and the object is not included, it is safe to close the object here.
                     // If includeFolders == true, the exchange will close the object.
                     IOHelper.close(s3Object);
                 }
