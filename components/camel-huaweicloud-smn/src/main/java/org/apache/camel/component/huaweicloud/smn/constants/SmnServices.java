@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-public class SmnServices {
+public final class SmnServices {
+
+    public static final String PUBLISH_MESSAGE = "publishMessageService";
 
     private SmnServices() {
     }
-
-    public static final String PUBLISH_MESSAGE = "publishMessageService";
 }

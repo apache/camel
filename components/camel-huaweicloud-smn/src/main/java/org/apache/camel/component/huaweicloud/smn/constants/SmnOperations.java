@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-public class SmnOperations {
+public final class SmnOperations {
+
+    public static final String PUBLISH_AS_TEMPLATED_MESSAGE = "publishAsTemplatedMessage";
+    public static final String PUBLISH_AS_TEXT_MESSAGE = "publishAsTextMessage";
 
     private SmnOperations() {
     }
 
-    public static final String PUBLISH_AS_TEXT_MESSAGE = "publishAsTextMessage";
-    public static final String PUBLISH_AS_TEMPLATED_MESSAGE = "publishAsTemplatedMessage";
 }

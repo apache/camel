@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * utility functions for the component
  */
-public class SimpleNotificationUtils {
+public final class SimpleNotificationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationUtils.class.getName());
 
     private SimpleNotificationUtils() {

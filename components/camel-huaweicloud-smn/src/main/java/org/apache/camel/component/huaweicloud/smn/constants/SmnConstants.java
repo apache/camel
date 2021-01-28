@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.huaweicloud.smn.constants;
 
-public class SmnConstants {
+public final class SmnConstants {
+
+    public static final String TOPIC_URN_FORMAT = "urn:smn:%s:%s:%s";
 
     private SmnConstants() {
     }
-
-    public static final String TOPIC_URN_FORMAT = "urn:smn:%s:%s:%s";
 }
