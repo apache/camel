@@ -43,6 +43,8 @@ public class S3Configuration implements Cloneable {
     private String prefix;
     @UriParam(label = "consumer")
     private String delimiter;
+    @UriParam(label = "consumer")
+    private String doneFileName;
     @UriParam
     private String region;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -190,6 +192,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
+    }
+
+    public String getDoneFileName() {
+        return doneFileName;
+    }
+
+    /**
+     * If provided, Camel will only consume files if a done file exists.
+     */
+    public void setDoneFileName(String doneFileName) {
+        this.doneFileName = doneFileName;
     }
 
     public String getBucketName() {
