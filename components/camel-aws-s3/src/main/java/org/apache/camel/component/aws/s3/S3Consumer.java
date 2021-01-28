@@ -70,7 +70,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         String doneFileName = getConfiguration().getDoneFileName();
         Queue<Exchange> exchanges;
 
-        if (shouldSkipCauseDoneFileIsConfiguredButMissing(bucketName, doneFileName)) {
+        if (!doneFileCheckPasses(bucketName, doneFileName)) {
             exchanges = new LinkedList<>();
         } else if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
@@ -112,19 +112,23 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         return processBatch(CastUtils.cast(exchanges));
     }
 
-    private boolean shouldSkipCauseDoneFileIsConfiguredButMissing(String bucketName, String doneFileName) {
+    private boolean doneFileCheckPasses(String bucketName, String doneFileName) {
         if (doneFileName == null) {
-            return false;
+            return true;
         } else {
-            try {
-                getAmazonS3Client().getObjectMetadata(bucketName, doneFileName);
+            return checkFileExists(bucketName, doneFileName);
+        }
+    }
+
+    private boolean checkFileExists(String bucketName, String doneFileName) {
+        try {
+            getAmazonS3Client().getObjectMetadata(bucketName, doneFileName);
+            return true;
+        } catch (AmazonS3Exception e) {
+            if (e.getStatusCode() == 404) {
                 return false;
-            } catch(AmazonS3Exception e) {
-                if (e.getStatusCode() == 404) {
-                    return true;
-                }
-                throw e;
             }
+            throw e;
         }
     }
 
