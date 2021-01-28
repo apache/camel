@@ -39,7 +39,7 @@ import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 /**
  * A selector-based producer which uses a header value to determine which processor should be invoked.
  */
-public class HeaderSelectorProducer extends BaseSelectorProducer {
+public abstract class HeaderSelectorProducer extends BaseSelectorProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderSelectorProducer.class);
 
     private final Supplier<String> headerSupplier;
@@ -197,6 +197,6 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
     }
 
     protected final Object getTarget() {
-        return getTarget();
+        return this;
     }
 }
