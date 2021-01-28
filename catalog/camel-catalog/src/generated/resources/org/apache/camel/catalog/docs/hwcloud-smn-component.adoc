@@ -1,12 +1,10 @@
 [[hwcloud-smn-component]]
-= Huawei Cloud Smn Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-huaweicloud-smn/src/main/docs/hwcloud-component.adoc
-:docTitle: Huawei Cloud SMN (Simple notification services)
+= SimpleNotification Component
+:docTitle: SimpleNotification
 :artifactId: camel-huaweicloud-smn
-:description: Send message to simple notification services
-:since: 3.8.0
-:supportLevel: Stable
+:description: Huawei Cloud component to integrate with SimpleNotification services
+:since: 3.8
+:supportLevel: Preview
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-smn.adoc[opts=optional]
 
@@ -42,7 +40,7 @@ hwcloud-smn:service[?options]
 == Options
 
 // component options: START
-The SMN component supports 4 options, which are listed below.
+The SimpleNotification component supports 2 options, which are listed below.
 
 
 
@@ -55,10 +53,10 @@ The SMN component supports 4 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The SMN endpoint is configured using URI syntax:
+The SimpleNotification endpoint is configured using URI syntax:
 
 ----
-hwcloud-smn:service
+hwcloud-smn:smnService
 ----
 
 with the following path and query parameters:
@@ -69,28 +67,29 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *service* | *Required* name of the available services in SMN |  | String
+| *smnService* | *Required* Name of SMN service to invoke |  | String
 |===
 
 
-=== Query Parameters (28 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* (producer) | *Required* The actual operation to invoke under the mentioned service |  | String
-| *serviceKeys* (advanced) | Configuration object of class org.apache.camel.component.huaweicloud.smn.models.ServiceKeys containing connectivity parameters like AK, SK, ProjectID and region | null | ServiceKeys
-| *authKey* | *Required* Authentication Key (AK) can be generated from your cloud account user settings | null | String
-| *secretKey* | *Required* Secret Key (AK) can be generated from your cloud account user settings |  | String
-| *projectId* | *Required* Project ID for your specific region. Refer your cloud account settings |  | String
-| *proxyHost* | *Optional* IP/Hostname of the proxy server to access the public cloud from your deployment landscape |  | String
-| *proxyPort* | *Optional* Port number of the proxy service on proxy host |  | String
-| *proxyUser* | *Optional* Proxy user id (if applicable) |  | String
-| *proxyPassword* | *Optional* Proxy user password (if applicable)  |  | String
-| *region*| *Required* Region where your SMN service is hosted |  | String
-| *messageTtl* | *Optional* Time-to-live parameter for each message published to the topic. The subcriptions which are added to the topic within this timeout value will receive the notification | 3600 | String
-| *ignoreSslVerification* | *Optional* whether to ignore SSL verification while connecting to huawei cloud services. It's not recommended in production environment  | false | Boolean
+| *authKey* (producer) | *Required* Authentication key for the cloud user |  | String
+| *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageTtl* (producer) | TTL for published message | 3600 | int
+| *operation* (producer) | *Required* Name of operation to perform |  | String
+| *projectId* (producer) | *Required* Cloud project ID |  | String
+| *proxyHost* (producer) | Proxy server ip/hostname |  | String
+| *proxyPassword* (producer) | Proxy authentication password |  | String
+| *proxyPort* (producer) | Proxy server port |  | int
+| *proxyUser* (producer) | Proxy authentication user |  | String
+| *region* (producer) | *Required* SMN service region |  | String
+| *secretKey* (producer) | *Required* Secret key for the cloud user |  | String
+| *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
 |===
 // endpoint options: END
 
