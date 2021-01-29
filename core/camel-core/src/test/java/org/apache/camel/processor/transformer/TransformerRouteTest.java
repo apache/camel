@@ -286,7 +286,7 @@ public class TransformerRouteTest extends ContextTestSupport {
 
         @Override
         public boolean isSingleton() {
-            return false;
+            return true;
         }
 
         @Override

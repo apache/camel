@@ -139,7 +139,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
         @Override
         public boolean isSingleton() {
-            return false;
+            return true;
         }
 
         @Override

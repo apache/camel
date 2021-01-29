@@ -70,10 +70,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         this.creator = creator;
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
-        // only use a LRU cache if capacity is more than one
-        // the LRU cache is a facade that handles the logic to know which producers/consumers to evict/remove
-        // when we hit max capacity. Then we remove them in the associated pool ConcurrentMap instance.
-        this.cache = capacity > 1 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
+        this.cache = capacity > 0 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
     }
 
     /**
