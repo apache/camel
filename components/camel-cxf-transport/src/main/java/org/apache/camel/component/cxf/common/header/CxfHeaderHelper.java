@@ -91,7 +91,8 @@ public final class CxfHeaderHelper {
 
             // drop this header as we do not want to propagate the http method/path into the CXF request message
             if (Exchange.HTTP_METHOD.equalsIgnoreCase(entry.getKey())
-                    || Exchange.HTTP_PATH.equalsIgnoreCase(entry.getKey())) {
+                    || Exchange.HTTP_PATH.equalsIgnoreCase(entry.getKey())
+                    || Exchange.HTTP_QUERY.equalsIgnoreCase(entry.getKey())) {
                 return;
             }
 
