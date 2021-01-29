@@ -29,10 +29,11 @@
     <artifactId>camel-aws-kinesis</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS Kinesis</name>
+    <name>Camel :: AWS Kinesis (deprecated)</name>
     <description>A Camel Amazon Kinesis Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

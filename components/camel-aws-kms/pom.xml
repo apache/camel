@@ -29,10 +29,11 @@
     <artifactId>camel-aws-kms</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS KMS</name>
+    <name>Camel :: AWS KMS (deprecated)</name>
     <description>A Camel Amazon KMS Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

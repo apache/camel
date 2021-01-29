@@ -29,10 +29,11 @@
     <artifactId>camel-aws-iam</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS IAM</name>
+    <name>Camel :: AWS IAM (deprecated)</name>
     <description>A Camel Amazon IAM Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

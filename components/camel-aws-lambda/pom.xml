@@ -29,10 +29,11 @@
     <artifactId>camel-aws-lambda</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS Lambda</name>
+    <name>Camel :: AWS Lambda (deprecated)</name>
     <description>A Camel Amazon Lambda We Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
