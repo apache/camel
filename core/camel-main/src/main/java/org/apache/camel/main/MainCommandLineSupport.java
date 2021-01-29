@@ -159,12 +159,16 @@ public abstract class MainCommandLineSupport extends MainSupport {
     }
 
     /**
-     * Parses the command line arguments then runs the program.
+     * Parses the command line arguments then runs the program. The run method will keep blocking until the program is
+     * stopped.
+     *
+     * @return the exit code, usually 0 for normal termination.
      */
-    public void run(String[] args) throws Exception {
+    public int run(String[] args) throws Exception {
         parseArguments(args);
         run();
-        LOG.info("MainSupport exiting code: {}", getExitCode());
+
+        return getExitCode();
     }
 
     /**
