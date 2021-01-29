@@ -42,6 +42,8 @@ public class DirectEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of direct endpoint")
     @Metadata(required = true)
     private String name;
+    @UriParam(label = "advanced")
+    private boolean synchronous;
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
@@ -75,6 +77,23 @@ public class DirectEndpoint extends DefaultEndpoint {
     @Deprecated
     public DirectConsumer getConsumer() throws InterruptedException {
         return component.getConsumer(key, block, timeout);
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Whether synchronous processing is forced.
+     *
+     * If enabled then the producer thread, will be forced to wait until the message has been completed before the same
+     * thread will continue processing.
+     *
+     * If disabled (default) then the producer thread may be freed and can do other work while the message is continued
+     * processed by other threads (reactive).
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     public boolean isBlock() {

@@ -167,6 +167,49 @@ public interface DirectEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * Whether synchronous processing is forced. If enabled then the
+         * producer thread, will be forced to wait until the message has been
+         * completed before the same thread will continue processing. If
+         * disabled (default) then the producer thread may be freed and can do
+         * other work while the message is continued processed by other threads
+         * (reactive).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDirectEndpointConsumerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether synchronous processing is forced. If enabled then the
+         * producer thread, will be forced to wait until the message has been
+         * completed before the same thread will continue processing. If
+         * disabled (default) then the producer thread may be freed and can do
+         * other work while the message is continued processed by other threads
+         * (reactive).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDirectEndpointConsumerBuilder synchronous(
+                String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -338,6 +381,49 @@ public interface DirectEndpointBuilderFactory {
         default DirectEndpointProducerBuilder basic() {
             return (DirectEndpointProducerBuilder) this;
         }
+        /**
+         * Whether synchronous processing is forced. If enabled then the
+         * producer thread, will be forced to wait until the message has been
+         * completed before the same thread will continue processing. If
+         * disabled (default) then the producer thread may be freed and can do
+         * other work while the message is continued processed by other threads
+         * (reactive).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDirectEndpointProducerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether synchronous processing is forced. If enabled then the
+         * producer thread, will be forced to wait until the message has been
+         * completed before the same thread will continue processing. If
+         * disabled (default) then the producer thread may be freed and can do
+         * other work while the message is continued processed by other threads
+         * (reactive).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDirectEndpointProducerBuilder synchronous(
+                String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -361,6 +447,47 @@ public interface DirectEndpointBuilderFactory {
                 AdvancedDirectEndpointProducerBuilder {
         default DirectEndpointBuilder basic() {
             return (DirectEndpointBuilder) this;
+        }
+        /**
+         * Whether synchronous processing is forced. If enabled then the
+         * producer thread, will be forced to wait until the message has been
+         * completed before the same thread will continue processing. If
+         * disabled (default) then the producer thread may be freed and can do
+         * other work while the message is continued processed by other threads
+         * (reactive).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDirectEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether synchronous processing is forced. If enabled then the
+         * producer thread, will be forced to wait until the message has been
+         * completed before the same thread will continue processing. If
+         * disabled (default) then the producer thread may be freed and can do
+         * other work while the message is continued processed by other threads
+         * (reactive).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDirectEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
         }
     }
 

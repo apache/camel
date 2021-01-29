@@ -32,6 +32,7 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "failIfNoConsumers": target.setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
@@ -51,6 +52,7 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "failIfNoConsumers": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
         case "timeout": return long.class;
         default: return null;
         }
@@ -71,6 +73,7 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "failIfNoConsumers": return target.isFailIfNoConsumers();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getTimeout();
         default: return null;
         }

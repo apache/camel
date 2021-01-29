@@ -67,6 +67,12 @@ public class DirectProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
+            // we may be forced synchronous
+            if (endpoint.isSynchronous()) {
+                process(exchange);
+                callback.done(true);
+                return true;
+            }
             if (consumer == null || stateCounter != component.getStateCounter()) {
                 stateCounter = component.getStateCounter();
                 consumer = component.getConsumer(key, block, timeout);
@@ -81,7 +87,14 @@ public class DirectProducer extends DefaultAsyncProducer {
                 callback.done(true);
                 return true;
             } else {
-                return consumer.getAsyncProcessor().process(exchange, callback);
+                // the consumer may be forced synchronous
+                if (consumer.getEndpoint().isSynchronous()) {
+                    consumer.getProcessor().process(exchange);
+                    callback.done(true);
+                    return true;
+                } else {
+                    return consumer.getAsyncProcessor().process(exchange, callback);
+                }
             }
         } catch (Exception e) {
             exchange.setException(e);
