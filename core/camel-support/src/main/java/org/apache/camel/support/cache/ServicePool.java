@@ -94,7 +94,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             try {
                 e.getCamelContext().removeService(s);
             } catch (Exception ex) {
-                LOG.debug("Error removing service: {}", s, ex);
+                LOG.debug("Error removing service: {}. This exception is ignored.", s, ex);
             }
         }
     }
@@ -179,13 +179,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Stosp the service safely
+     * Stops the service safely
      */
     private static <S extends Service> void stop(S s) {
         try {
             s.stop();
         } catch (Exception e) {
-            LOG.debug("Error stopping service: {}", s, e);
+            LOG.debug("Error stopping service: {}. This exception is ignored.", s, e);
         }
     }
 
@@ -267,7 +267,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 try {
                     endpoint.getCamelContext().removeService(s);
                 } catch (Exception e) {
-                    LOG.debug("Error removing service: {}", s, e);
+                    LOG.debug("Error removing service: {}. This exception is ignored.", s, e);
                 }
             }
         }
@@ -354,7 +354,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 try {
                     endpoint.getCamelContext().removeService(s);
                 } catch (Exception e) {
-                    LOG.debug("Error removing service: {}", s, e);
+                    LOG.debug("Error removing service: {}. This exception is ignored.", s, e);
                 }
             }
         }
