@@ -90,7 +90,6 @@ Other information has been stored in headers declared in GitHubConstants class:
 
 * GITHUB_EVENT_PAYLOAD - "CamelGitHubEventPayload" - The event payload
 
-
 === camel-infinispan
 
 There are now two components for Infinispan:
@@ -108,4 +107,8 @@ org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedAggregationRepo
 org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository
 org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository
 org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository
+
+=== Camel-AWS
+
+All the camel-aws components except camel-aws-xray have been deprecated. We suggest to migrate to Camel-AWS2-* components, because in future releases the AWS components will be removed and with the next LTS release (3.10 probably) camel-aws2 components will be renamed to camel-aws.
 
