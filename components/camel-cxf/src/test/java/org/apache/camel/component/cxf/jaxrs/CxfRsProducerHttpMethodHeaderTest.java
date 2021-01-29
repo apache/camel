@@ -48,6 +48,7 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
                         Message inMessage = exchange.getIn();
                         inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                         inMessage.setHeader(Exchange.HTTP_PATH, "/CxfRsProducerHttpMethodHeaderTest/");
+                        inMessage.setHeader(Exchange.HTTP_QUERY, "q=1");
                         inMessage.setHeader(Exchange.CONTENT_TYPE, "application/text");
                         inMessage.setBody("Hello World");
                     }
