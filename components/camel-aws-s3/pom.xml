@@ -29,7 +29,7 @@
     <artifactId>camel-aws-s3</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS S3  (deprecated)</name>
+    <name>Camel :: AWS S3 (deprecated)</name>
     <description>A Camel Amazon S3 Web Service Component</description>
 
     <properties>
