@@ -29,10 +29,11 @@
     <artifactId>camel-aws-ses</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS SES</name>
+    <name>Camel :: AWS SES (deprecated)</name>
     <description>A Camel Amazon SES Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

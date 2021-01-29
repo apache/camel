@@ -29,10 +29,11 @@
     <artifactId>camel-aws-msk</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS MSK</name>
+    <name>Camel :: AWS MSK (deprecated)</name>
     <description>A Camel Amazon MSK Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

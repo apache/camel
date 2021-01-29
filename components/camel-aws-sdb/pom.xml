@@ -29,10 +29,11 @@
     <artifactId>camel-aws-sdb</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS SDB</name>
+    <name>Camel :: AWS SDB (deprecated)</name>
     <description>A Camel Amazon SDB Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
