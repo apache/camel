@@ -14701,7 +14701,6 @@ Sets a reference to a thread pool to be used by the error handler.
       <xs:enumeration value="Verbose"/>
       <xs:enumeration value="Default"/>
       <xs:enumeration value="Brief"/>
-      <xs:enumeration value="Oneline"/>
       <xs:enumeration value="Off"/>
     </xs:restriction>
   </xs:simpleType>
