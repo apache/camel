@@ -80,7 +80,8 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the database.
+         * Sets the DataSource to use to communicate with the databaset at
+         * endpoint level.
          * 
          * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
@@ -94,7 +95,8 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the database.
+         * Sets the DataSource to use to communicate with the databaset at
+         * endpoint level.
          * 
          * The option will be converted to a
          * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
@@ -1493,7 +1495,8 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the database.
+         * Sets the DataSource to use to communicate with the databaset at
+         * endpoint level.
          * 
          * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
@@ -1507,7 +1510,8 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the database.
+         * Sets the DataSource to use to communicate with the databaset at
+         * endpoint level.
          * 
          * The option will be converted to a
          * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
@@ -2115,7 +2119,8 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the database.
+         * Sets the DataSource to use to communicate with the databaset at
+         * endpoint level.
          * 
          * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
@@ -2129,7 +2134,8 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the DataSource to use to communicate with the database.
+         * Sets the DataSource to use to communicate with the databaset at
+         * endpoint level.
          * 
          * The option will be converted to a
          * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.

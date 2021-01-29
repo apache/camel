@@ -163,7 +163,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *allowNamedParameters* (common) | Whether to allow using named parameters in the queries. | true | boolean
-| *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
+| *dataSource* (common) | Sets the DataSource to use to communicate with the databaset at endpoint level. |  | DataSource
 | *dataSourceRef* (common) | *Deprecated* Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database. |  | String
 | *outputClass* (common) | Specify the full package and class name to use as conversion when outputType=SelectOne. |  | String
 | *outputHeader* (common) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. |  | String
