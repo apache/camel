@@ -338,6 +338,7 @@ public interface KMSEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default KMSEndpointBuilder awsKms(String path) {
             return KMSEndpointBuilderFactory.endpointBuilder("aws-kms", path);
         }
@@ -359,10 +360,12 @@ public interface KMSEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default KMSEndpointBuilder awsKms(String componentName, String path) {
             return KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static KMSEndpointBuilder endpointBuilder(String componentName, String path) {
         class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder {
             public KMSEndpointBuilderImpl(String path) {

@@ -1,12 +1,13 @@
 [[aws-cw-component]]
-= AWS CloudWatch Component
+= AWS CloudWatch Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-cw/src/main/docs/aws-cw-component.adoc
 :docTitle: AWS CloudWatch
 :artifactId: camel-aws-cw
 :description: Send metrics to AWS CloudWatch.
 :since: 2.11
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-cw.adoc[opts=optional]
 //Manually maintained attributes

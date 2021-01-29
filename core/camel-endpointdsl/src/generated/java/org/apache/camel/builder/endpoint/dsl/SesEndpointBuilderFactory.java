@@ -389,6 +389,7 @@ public interface SesEndpointBuilderFactory {
          * @param path from
          * @return the dsl builder
          */
+        @Deprecated
         default SesEndpointBuilder awsSes(String path) {
             return SesEndpointBuilderFactory.endpointBuilder("aws-ses", path);
         }
@@ -410,10 +411,12 @@ public interface SesEndpointBuilderFactory {
          * @param path from
          * @return the dsl builder
          */
+        @Deprecated
         default SesEndpointBuilder awsSes(String componentName, String path) {
             return SesEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static SesEndpointBuilder endpointBuilder(String componentName, String path) {
         class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {

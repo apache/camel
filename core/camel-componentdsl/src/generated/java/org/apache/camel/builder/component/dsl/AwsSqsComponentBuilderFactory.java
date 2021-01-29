@@ -40,6 +40,7 @@ public interface AwsSqsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsSqsComponentBuilder awsSqs() {
         return new AwsSqsComponentBuilderImpl();
     }

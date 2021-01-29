@@ -40,6 +40,7 @@ public interface AwsKmsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsKmsComponentBuilder awsKms() {
         return new AwsKmsComponentBuilderImpl();
     }

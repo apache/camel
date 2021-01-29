@@ -372,6 +372,7 @@ public interface LambdaEndpointBuilderFactory {
          * @param path function
          * @return the dsl builder
          */
+        @Deprecated
         default LambdaEndpointBuilder awsLambda(String path) {
             return LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
         }
@@ -393,12 +394,14 @@ public interface LambdaEndpointBuilderFactory {
          * @param path function
          * @return the dsl builder
          */
+        @Deprecated
         default LambdaEndpointBuilder awsLambda(
                 String componentName,
                 String path) {
             return LambdaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static LambdaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

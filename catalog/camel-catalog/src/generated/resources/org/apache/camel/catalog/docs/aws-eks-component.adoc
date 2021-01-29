@@ -1,10 +1,11 @@
 [[aws-eks-component]]
-= AWS Elastic Kubernetes Service (EKS) Component
+= AWS Elastic Kubernetes Service (EKS) Component (deprecated)
 :docTitle: AWS Elastic Kubernetes Service (EKS)
 :artifactId: camel-aws-eks
 :description: Manage AWS EKS cluster instances.
 :since: 3.0
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-eks.adoc[opts=optional]
 //Manually maintained attributes

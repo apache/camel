@@ -380,6 +380,7 @@ public interface CwEndpointBuilderFactory {
          * @param path namespace
          * @return the dsl builder
          */
+        @Deprecated
         default CwEndpointBuilder awsCw(String path) {
             return CwEndpointBuilderFactory.endpointBuilder("aws-cw", path);
         }
@@ -401,10 +402,12 @@ public interface CwEndpointBuilderFactory {
          * @param path namespace
          * @return the dsl builder
          */
+        @Deprecated
         default CwEndpointBuilder awsCw(String componentName, String path) {
             return CwEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static CwEndpointBuilder endpointBuilder(String componentName, String path) {
         class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder {
             public CwEndpointBuilderImpl(String path) {

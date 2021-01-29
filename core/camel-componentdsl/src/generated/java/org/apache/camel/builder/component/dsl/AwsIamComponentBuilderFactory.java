@@ -40,6 +40,7 @@ public interface AwsIamComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsIamComponentBuilder awsIam() {
         return new AwsIamComponentBuilderImpl();
     }

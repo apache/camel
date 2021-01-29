@@ -1421,6 +1421,7 @@ public interface SWFEndpointBuilderFactory {
          * @param path type
          * @return the dsl builder
          */
+        @Deprecated
         default SWFEndpointBuilder awsSwf(String path) {
             return SWFEndpointBuilderFactory.endpointBuilder("aws-swf", path);
         }
@@ -1443,10 +1444,12 @@ public interface SWFEndpointBuilderFactory {
          * @param path type
          * @return the dsl builder
          */
+        @Deprecated
         default SWFEndpointBuilder awsSwf(String componentName, String path) {
             return SWFEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static SWFEndpointBuilder endpointBuilder(String componentName, String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {
             public SWFEndpointBuilderImpl(String path) {

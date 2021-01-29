@@ -349,6 +349,7 @@ public interface EC2EndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default EC2EndpointBuilder awsEc2(String path) {
             return EC2EndpointBuilderFactory.endpointBuilder("aws-ec2", path);
         }
@@ -370,10 +371,12 @@ public interface EC2EndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default EC2EndpointBuilder awsEc2(String componentName, String path) {
             return EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static EC2EndpointBuilder endpointBuilder(String componentName, String path) {
         class EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements EC2EndpointBuilder {
             public EC2EndpointBuilderImpl(String path) {

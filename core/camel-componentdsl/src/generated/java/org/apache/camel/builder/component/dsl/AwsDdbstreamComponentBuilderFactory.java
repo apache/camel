@@ -40,6 +40,7 @@ public interface AwsDdbstreamComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsDdbstreamComponentBuilder awsDdbstream() {
         return new AwsDdbstreamComponentBuilderImpl();
     }

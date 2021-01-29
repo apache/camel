@@ -1,12 +1,13 @@
 [[aws-ddbstream-component]]
-= AWS DynamoDB Streams Component
+= AWS DynamoDB Streams Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ddb/src/main/docs/aws-ddbstream-component.adoc
 :docTitle: AWS DynamoDB Streams
 :artifactId: camel-aws-ddb
 :description: Receive messages from AWS DynamoDB Stream service.
 :since: 2.17
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ddbstream.adoc[opts=optional]
 //Manually maintained attributes

@@ -1,12 +1,13 @@
 [[aws-kinesis-firehose-component]]
-= AWS Kinesis Firehose Component
+= AWS Kinesis Firehose Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-kinesis/src/main/docs/aws-kinesis-firehose-component.adoc
 :docTitle: AWS Kinesis Firehose
 :artifactId: camel-aws-kinesis
 :description: Consume data from AWS Kinesis Firehose streams.
 :since: 2.19
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-kinesis-firehose.adoc[opts=optional]
 //Manually maintained attributes

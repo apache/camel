@@ -1,12 +1,13 @@
 [[aws-kms-component]]
-= AWS Key Management Service (KMS) Component
+= AWS Key Management Service (KMS) Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-kms/src/main/docs/aws-kms-component.adoc
 :docTitle: AWS Key Management Service (KMS)
 :artifactId: camel-aws-kms
 :description: Manage keys stored in AWS KMS instances.
 :since: 2.21
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-kms.adoc[opts=optional]
 //Manually maintained attributes

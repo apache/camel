@@ -1,12 +1,13 @@
 [[aws-lambda-component]]
-= AWS Lambda Component
+= AWS Lambda Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-lambda/src/main/docs/aws-lambda-component.adoc
 :docTitle: AWS Lambda
 :artifactId: camel-aws-lambda
 :description: Manage and invoke AWS Lambda functions.
 :since: 2.20
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-lambda.adoc[opts=optional]
 //Manually maintained attributes

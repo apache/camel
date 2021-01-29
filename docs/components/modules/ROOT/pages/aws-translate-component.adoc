@@ -1,12 +1,13 @@
 [[aws-translate-component]]
-= AWS Translate Component
+= AWS Translate Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
 :docTitle: AWS Translate
 :artifactId: camel-aws-translate
 :description: Translate texts using AWS Translate.
 :since: 3.0
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-translate.adoc[opts=optional]
 //Manually maintained attributes

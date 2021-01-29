@@ -315,6 +315,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.AwsCwComponentBuilder awsCw() {
         return org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.awsCw();
     }
@@ -328,6 +329,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsDdbComponentBuilderFactory.AwsDdbComponentBuilder awsDdb() {
         return org.apache.camel.builder.component.dsl.AwsDdbComponentBuilderFactory.awsDdb();
     }
@@ -341,6 +343,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.AwsDdbstreamComponentBuilder awsDdbstream() {
         return org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.awsDdbstream();
     }
@@ -354,6 +357,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.AwsEc2ComponentBuilder awsEc2() {
         return org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.awsEc2();
     }
@@ -367,6 +371,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.AwsEcsComponentBuilder awsEcs() {
         return org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.awsEcs();
     }
@@ -380,6 +385,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.AwsEksComponentBuilder awsEks() {
         return org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.awsEks();
     }
@@ -393,6 +399,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.AwsIamComponentBuilder awsIam() {
         return org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.awsIam();
     }
@@ -406,6 +413,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsKinesisComponentBuilderFactory.AwsKinesisComponentBuilder awsKinesis() {
         return org.apache.camel.builder.component.dsl.AwsKinesisComponentBuilderFactory.awsKinesis();
     }
@@ -419,6 +427,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.AwsKinesisFirehoseComponentBuilder awsKinesisFirehose() {
         return org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
     }
@@ -432,6 +441,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.AwsKmsComponentBuilder awsKms() {
         return org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.awsKms();
     }
@@ -445,6 +455,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.AwsLambdaComponentBuilder awsLambda() {
         return org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.awsLambda();
     }
@@ -458,6 +469,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.AwsMqComponentBuilder awsMq() {
         return org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.awsMq();
     }
@@ -471,6 +483,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsMskComponentBuilderFactory.AwsMskComponentBuilder awsMsk() {
         return org.apache.camel.builder.component.dsl.AwsMskComponentBuilderFactory.awsMsk();
     }
@@ -498,6 +511,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSdbComponentBuilderFactory.AwsSdbComponentBuilder awsSdb() {
         return org.apache.camel.builder.component.dsl.AwsSdbComponentBuilderFactory.awsSdb();
     }
@@ -511,6 +525,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.AwsSesComponentBuilder awsSes() {
         return org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.awsSes();
     }
@@ -524,6 +539,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.AwsSnsComponentBuilder awsSns() {
         return org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.awsSns();
     }
@@ -537,6 +553,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.AwsSqsComponentBuilder awsSqs() {
         return org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.awsSqs();
     }
@@ -550,6 +567,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.AwsSwfComponentBuilder awsSwf() {
         return org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.awsSwf();
     }
@@ -563,6 +581,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.AwsTranslateComponentBuilder awsTranslate() {
         return org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.awsTranslate();
     }

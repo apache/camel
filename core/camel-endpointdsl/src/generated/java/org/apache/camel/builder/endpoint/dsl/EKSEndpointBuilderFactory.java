@@ -337,6 +337,7 @@ public interface EKSEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default EKSEndpointBuilder awsEks(String path) {
             return EKSEndpointBuilderFactory.endpointBuilder("aws-eks", path);
         }
@@ -358,10 +359,12 @@ public interface EKSEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default EKSEndpointBuilder awsEks(String componentName, String path) {
             return EKSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static EKSEndpointBuilder endpointBuilder(String componentName, String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder {
             public EKSEndpointBuilderImpl(String path) {

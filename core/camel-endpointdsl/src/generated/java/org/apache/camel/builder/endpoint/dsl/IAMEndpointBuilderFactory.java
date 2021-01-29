@@ -346,6 +346,7 @@ public interface IAMEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default IAMEndpointBuilder awsIam(String path) {
             return IAMEndpointBuilderFactory.endpointBuilder("aws-iam", path);
         }
@@ -367,10 +368,12 @@ public interface IAMEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default IAMEndpointBuilder awsIam(String componentName, String path) {
             return IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static IAMEndpointBuilder endpointBuilder(String componentName, String path) {
         class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder {
             public IAMEndpointBuilderImpl(String path) {

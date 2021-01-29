@@ -40,6 +40,7 @@ public interface AwsCwComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsCwComponentBuilder awsCw() {
         return new AwsCwComponentBuilderImpl();
     }

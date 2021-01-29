@@ -40,6 +40,7 @@ public interface AwsMskComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsMskComponentBuilder awsMsk() {
         return new AwsMskComponentBuilderImpl();
     }

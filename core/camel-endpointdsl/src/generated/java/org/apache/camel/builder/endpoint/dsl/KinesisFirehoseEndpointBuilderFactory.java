@@ -310,6 +310,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * @param path streamName
          * @return the dsl builder
          */
+        @Deprecated
         default KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
             return KinesisFirehoseEndpointBuilderFactory.endpointBuilder("aws-kinesis-firehose", path);
         }
@@ -331,12 +332,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * @param path streamName
          * @return the dsl builder
          */
+        @Deprecated
         default KinesisFirehoseEndpointBuilder awsKinesisFirehose(
                 String componentName,
                 String path) {
             return KinesisFirehoseEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static KinesisFirehoseEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

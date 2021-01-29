@@ -40,6 +40,7 @@ public interface AwsSesComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsSesComponentBuilder awsSes() {
         return new AwsSesComponentBuilderImpl();
     }

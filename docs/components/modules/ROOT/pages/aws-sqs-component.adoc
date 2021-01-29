@@ -1,12 +1,13 @@
 [[aws-sqs-component]]
-= AWS Simple Queue Service (SQS) Component
+= AWS Simple Queue Service (SQS) Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-sqs/src/main/docs/aws-sqs-component.adoc
 :docTitle: AWS Simple Queue Service (SQS)
 :artifactId: camel-aws-sqs
 :description: Sending and receive messages to/from AWS SQS service.
 :since: 2.6
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-sqs.adoc[opts=optional]
 //Manually maintained attributes

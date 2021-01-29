@@ -1,10 +1,11 @@
 [[aws-ses-component]]
-= AWS Simple Email Service (SES) Component
+= AWS Simple Email Service (SES) Component (deprecated)
 :docTitle: AWS Simple Email Service (SES)
 :artifactId: camel-aws-ses
 :description: Send e-mails through AWS SES service.
 :since: 2.9
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ses.adoc[opts=optional]
 //Manually maintained attributes

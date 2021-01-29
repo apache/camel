@@ -337,6 +337,7 @@ public interface MSKEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default MSKEndpointBuilder awsMsk(String path) {
             return MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
         }
@@ -358,10 +359,12 @@ public interface MSKEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default MSKEndpointBuilder awsMsk(String componentName, String path) {
             return MSKEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static MSKEndpointBuilder endpointBuilder(String componentName, String path) {
         class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder {
             public MSKEndpointBuilderImpl(String path) {

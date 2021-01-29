@@ -40,6 +40,7 @@ public interface AwsTranslateComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsTranslateComponentBuilder awsTranslate() {
         return new AwsTranslateComponentBuilderImpl();
     }

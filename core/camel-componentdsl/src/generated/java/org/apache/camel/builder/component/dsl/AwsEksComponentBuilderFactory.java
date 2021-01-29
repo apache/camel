@@ -40,6 +40,7 @@ public interface AwsEksComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsEksComponentBuilder awsEks() {
         return new AwsEksComponentBuilderImpl();
     }

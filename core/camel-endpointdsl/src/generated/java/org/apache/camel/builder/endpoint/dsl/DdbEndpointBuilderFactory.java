@@ -468,6 +468,7 @@ public interface DdbEndpointBuilderFactory {
          * @param path tableName
          * @return the dsl builder
          */
+        @Deprecated
         default DdbEndpointBuilder awsDdb(String path) {
             return DdbEndpointBuilderFactory.endpointBuilder("aws-ddb", path);
         }
@@ -489,10 +490,12 @@ public interface DdbEndpointBuilderFactory {
          * @param path tableName
          * @return the dsl builder
          */
+        @Deprecated
         default DdbEndpointBuilder awsDdb(String componentName, String path) {
             return DdbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static DdbEndpointBuilder endpointBuilder(String componentName, String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder {
             public DdbEndpointBuilderImpl(String path) {

@@ -1,12 +1,13 @@
 [[aws-sdb-component]]
-= AWS SimpleDB Component
+= AWS SimpleDB Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-sdb/src/main/docs/aws-sdb-component.adoc
 :docTitle: AWS SimpleDB
 :artifactId: camel-aws-sdb
 :description: Store and Retrieve data from/to AWS SDB service.
 :since: 2.9
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-sdb.adoc[opts=optional]
 //Manually maintained attributes

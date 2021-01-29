@@ -1,12 +1,13 @@
 [[aws-ddb-component]]
-= AWS DynamoDB Component
+= AWS DynamoDB Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ddb/src/main/docs/aws-ddb-component.adoc
 :docTitle: AWS DynamoDB
 :artifactId: camel-aws-ddb
 :description: Store and retrieve data from AWS DynamoDB service.
 :since: 2.10
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ddb.adoc[opts=optional]
 //Manually maintained attributes

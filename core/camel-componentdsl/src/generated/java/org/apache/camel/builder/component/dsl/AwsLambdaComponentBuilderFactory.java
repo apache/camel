@@ -40,6 +40,7 @@ public interface AwsLambdaComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsLambdaComponentBuilder awsLambda() {
         return new AwsLambdaComponentBuilderImpl();
     }

@@ -40,6 +40,7 @@ public interface AwsKinesisComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsKinesisComponentBuilder awsKinesis() {
         return new AwsKinesisComponentBuilderImpl();
     }

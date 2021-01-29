@@ -370,6 +370,7 @@ public interface SdbEndpointBuilderFactory {
          * @param path domainName
          * @return the dsl builder
          */
+        @Deprecated
         default SdbEndpointBuilder awsSdb(String path) {
             return SdbEndpointBuilderFactory.endpointBuilder("aws-sdb", path);
         }
@@ -391,10 +392,12 @@ public interface SdbEndpointBuilderFactory {
          * @param path domainName
          * @return the dsl builder
          */
+        @Deprecated
         default SdbEndpointBuilder awsSdb(String componentName, String path) {
             return SdbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static SdbEndpointBuilder endpointBuilder(String componentName, String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder {
             public SdbEndpointBuilderImpl(String path) {

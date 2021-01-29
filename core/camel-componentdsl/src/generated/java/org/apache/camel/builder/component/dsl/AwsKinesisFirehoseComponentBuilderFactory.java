@@ -40,6 +40,7 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsKinesisFirehoseComponentBuilder awsKinesisFirehose() {
         return new AwsKinesisFirehoseComponentBuilderImpl();
     }

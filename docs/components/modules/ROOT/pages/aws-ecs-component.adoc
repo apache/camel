@@ -1,12 +1,13 @@
 [[aws-ecs-component]]
-= AWS Elastic Container Service (ECS) Component
+= AWS Elastic Container Service (ECS) Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ecs/src/main/docs/aws-ecs-component.adoc
 :docTitle: AWS Elastic Container Service (ECS)
 :artifactId: camel-aws-ecs
 :description: Manage AWS ECS cluster instances.
 :since: 3.0
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ecs.adoc[opts=optional]
 //Manually maintained attributes

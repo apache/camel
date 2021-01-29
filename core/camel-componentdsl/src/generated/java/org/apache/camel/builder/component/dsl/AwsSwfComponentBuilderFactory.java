@@ -40,6 +40,7 @@ public interface AwsSwfComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsSwfComponentBuilder awsSwf() {
         return new AwsSwfComponentBuilderImpl();
     }

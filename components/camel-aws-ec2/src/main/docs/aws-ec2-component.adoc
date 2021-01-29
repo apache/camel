@@ -1,10 +1,11 @@
 [[aws-ec2-component]]
-= AWS Elastic Compute Cloud (EC2) Component
+= AWS Elastic Compute Cloud (EC2) Component (deprecated)
 :docTitle: AWS Elastic Compute Cloud (EC2)
 :artifactId: camel-aws-ec2
 :description: Manage AWS EC2 instances.
 :since: 2.16
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ec2.adoc[opts=optional]
 //Manually maintained attributes

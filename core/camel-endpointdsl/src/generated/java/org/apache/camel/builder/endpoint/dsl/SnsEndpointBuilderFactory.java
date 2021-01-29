@@ -528,6 +528,7 @@ public interface SnsEndpointBuilderFactory {
          * @param path topicNameOrArn
          * @return the dsl builder
          */
+        @Deprecated
         default SnsEndpointBuilder awsSns(String path) {
             return SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
         }
@@ -549,10 +550,12 @@ public interface SnsEndpointBuilderFactory {
          * @param path topicNameOrArn
          * @return the dsl builder
          */
+        @Deprecated
         default SnsEndpointBuilder awsSns(String componentName, String path) {
             return SnsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static SnsEndpointBuilder endpointBuilder(String componentName, String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {

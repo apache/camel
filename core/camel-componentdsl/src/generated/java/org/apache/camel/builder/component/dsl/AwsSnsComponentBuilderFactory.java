@@ -40,6 +40,7 @@ public interface AwsSnsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsSnsComponentBuilder awsSns() {
         return new AwsSnsComponentBuilderImpl();
     }

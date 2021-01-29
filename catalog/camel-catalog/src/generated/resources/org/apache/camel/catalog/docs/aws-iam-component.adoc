@@ -1,10 +1,11 @@
 [[aws-iam-component]]
-= AWS Identity and Access Management (IAM) Component
+= AWS Identity and Access Management (IAM) Component (deprecated)
 :docTitle: AWS Identity and Access Management (IAM)
 :artifactId: camel-aws-iam
 :description: Manage AWS IAM instances.
 :since: 2.23
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-iam.adoc[opts=optional]
 //Manually maintained attributes

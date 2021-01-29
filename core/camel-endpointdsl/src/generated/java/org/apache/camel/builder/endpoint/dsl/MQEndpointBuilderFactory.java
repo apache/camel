@@ -340,6 +340,7 @@ public interface MQEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default MQEndpointBuilder awsMq(String path) {
             return MQEndpointBuilderFactory.endpointBuilder("aws-mq", path);
         }
@@ -361,10 +362,12 @@ public interface MQEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default MQEndpointBuilder awsMq(String componentName, String path) {
             return MQEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static MQEndpointBuilder endpointBuilder(String componentName, String path) {
         class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder {
             public MQEndpointBuilderImpl(String path) {

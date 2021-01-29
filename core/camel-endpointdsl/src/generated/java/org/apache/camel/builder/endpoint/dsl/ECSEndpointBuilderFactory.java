@@ -337,6 +337,7 @@ public interface ECSEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default ECSEndpointBuilder awsEcs(String path) {
             return ECSEndpointBuilderFactory.endpointBuilder("aws-ecs", path);
         }
@@ -358,10 +359,12 @@ public interface ECSEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default ECSEndpointBuilder awsEcs(String componentName, String path) {
             return ECSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static ECSEndpointBuilder endpointBuilder(String componentName, String path) {
         class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder {
             public ECSEndpointBuilderImpl(String path) {

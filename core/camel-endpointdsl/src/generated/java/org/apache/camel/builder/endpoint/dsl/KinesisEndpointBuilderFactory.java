@@ -1581,6 +1581,7 @@ public interface KinesisEndpointBuilderFactory {
          * @param path streamName
          * @return the dsl builder
          */
+        @Deprecated
         default KinesisEndpointBuilder awsKinesis(String path) {
             return KinesisEndpointBuilderFactory.endpointBuilder("aws-kinesis", path);
         }
@@ -1602,12 +1603,14 @@ public interface KinesisEndpointBuilderFactory {
          * @param path streamName
          * @return the dsl builder
          */
+        @Deprecated
         default KinesisEndpointBuilder awsKinesis(
                 String componentName,
                 String path) {
             return KinesisEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static KinesisEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

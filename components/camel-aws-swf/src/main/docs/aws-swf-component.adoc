@@ -1,10 +1,11 @@
 [[aws-swf-component]]
-= AWS Simple Workflow (SWF) Component
+= AWS Simple Workflow (SWF) Component (deprecated)
 :docTitle: AWS Simple Workflow (SWF)
 :artifactId: camel-aws-swf
 :description: Manage workflows in the AWS Simple Workflow service.
 :since: 2.13
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-swf.adoc[opts=optional]
 //Manually maintained attributes

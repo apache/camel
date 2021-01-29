@@ -1,12 +1,13 @@
 [[aws-sns-component]]
-= AWS Simple Notification System (SNS) Component
+= AWS Simple Notification System (SNS) Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-sns/src/main/docs/aws-sns-component.adoc
 :docTitle: AWS Simple Notification System (SNS)
 :artifactId: camel-aws-sns
 :description: Send messages to an AWS Simple Notification Topic.
 :since: 2.8
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-sns.adoc[opts=optional]
 //Manually maintained attributes

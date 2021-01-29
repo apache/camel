@@ -40,6 +40,7 @@ public interface AwsSdbComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsSdbComponentBuilder awsSdb() {
         return new AwsSdbComponentBuilderImpl();
     }

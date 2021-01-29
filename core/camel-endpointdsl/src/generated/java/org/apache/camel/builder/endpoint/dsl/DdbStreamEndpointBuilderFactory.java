@@ -1044,6 +1044,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * @param path tableName
          * @return the dsl builder
          */
+        @Deprecated
         default DdbStreamEndpointBuilder awsDdbstream(String path) {
             return DdbStreamEndpointBuilderFactory.endpointBuilder("aws-ddbstream", path);
         }
@@ -1065,12 +1066,14 @@ public interface DdbStreamEndpointBuilderFactory {
          * @param path tableName
          * @return the dsl builder
          */
+        @Deprecated
         default DdbStreamEndpointBuilder awsDdbstream(
                 String componentName,
                 String path) {
             return DdbStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static DdbStreamEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

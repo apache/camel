@@ -1,12 +1,13 @@
 [[aws-msk-component]]
-= AWS Managed Streaming for Apache Kafka (MSK) Component
+= AWS Managed Streaming for Apache Kafka (MSK) Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-msk/src/main/docs/aws-msk-component.adoc
 :docTitle: AWS Managed Streaming for Apache Kafka (MSK)
 :artifactId: camel-aws-msk
 :description: Manage AWS MSK instances.
 :since: 3.0
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-msk.adoc[opts=optional]
 //Manually maintained attributes

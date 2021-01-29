@@ -401,6 +401,7 @@ public interface TranslateEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default TranslateEndpointBuilder awsTranslate(String path) {
             return TranslateEndpointBuilderFactory.endpointBuilder("aws-translate", path);
         }
@@ -422,12 +423,14 @@ public interface TranslateEndpointBuilderFactory {
          * @param path label
          * @return the dsl builder
          */
+        @Deprecated
         default TranslateEndpointBuilder awsTranslate(
                 String componentName,
                 String path) {
             return TranslateEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static TranslateEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
