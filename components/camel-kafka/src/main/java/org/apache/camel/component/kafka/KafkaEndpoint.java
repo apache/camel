@@ -127,7 +127,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
                 replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             // can ignore and Kafka itself might be able to handle it, if not,
             // it will throw an exception
             LOG.debug("Problem loading classes for Serializers", t);

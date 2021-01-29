@@ -199,7 +199,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         // consumer
                         doInit();
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // ensure this is logged so users can see the problem
                     LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due {}", e.getMessage(), e);
                 }

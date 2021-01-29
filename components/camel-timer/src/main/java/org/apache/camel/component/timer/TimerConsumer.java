@@ -81,7 +81,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                                     endpoint.getTimerName(), endpoint.getRepeatCount());
                             cancel();
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         // catch all to avoid the JVM closing the thread and not
                         // firing again
                         LOG.warn(
