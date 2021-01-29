@@ -29,10 +29,11 @@
     <artifactId>camel-aws-ddb</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS DDB</name>
+    <name>Camel :: AWS DDB (deprecated)</name>
     <description>A Camel Amazon DynamoDB Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
