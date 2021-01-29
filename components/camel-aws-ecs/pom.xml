@@ -29,10 +29,11 @@
     <artifactId>camel-aws-ecs</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS ECS</name>
+    <name>Camel :: AWS ECS (deprecated)</name>
     <description>A Camel Amazon ECS Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
