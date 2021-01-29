@@ -29,10 +29,11 @@
     <artifactId>camel-aws-ec2</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS EC2</name>
+    <name>Camel :: AWS EC2 (deprecated)</name>
     <description>A Camel Amazon EC2 Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
