@@ -248,7 +248,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
         // No mapping in header, and no existing context. Create new one from resourceUri
         if (log.isDebugEnabled()) {
             log.debug("Atlas mapping content read from resourceUri: {} for endpoint {}",
-                    new Object[] { path, getEndpointUri() });
+                    path, getEndpointUri());
         }
         atlasContext = getOrCreateAtlasContextFactory().createContext(
                 path.toLowerCase().endsWith("adm") ? ADM : JSON, getResourceAsInputStream());
@@ -269,7 +269,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
                     getPropertiesFile());
             try {
                 properties.load(reader);
-                log.info("Loaded the Atlas properties file " + getPropertiesFile());
+                log.info("Loaded the Atlas properties file {}", getPropertiesFile());
             } finally {
                 IOHelper.close(reader, getPropertiesFile(), log);
             }
@@ -354,7 +354,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
         }
         Object body = null;
 
-        if (dataSource != null && dataSource.getUri() != null
+        if (dataSource.getUri() != null
                 && !(dataSource.getUri().startsWith("atlas:core")
                         || dataSource.getUri().startsWith("atlas:java"))) {
             body = message.getBody(String.class);
