@@ -2924,7 +2924,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected void logStartSummary() {
         // supervising route controller should do their own startup log summary
         boolean supervised = getRouteController().isSupervising();
-        if (!supervised && startupSummaryLevel != StartupSummaryLevel.Off && LOG.isInfoEnabled()) {
+        if (!supervised && startupSummaryLevel != StartupSummaryLevel.Oneline && startupSummaryLevel != StartupSummaryLevel.Off
+                && LOG.isInfoEnabled()) {
             int started = 0;
             int total = 0;
             int disabled = 0;
@@ -2970,14 +2971,17 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        long taken = stopWatch.taken();
-        long max = buildTaken + initTaken + taken;
-        String total = TimeUtils.printDuration(max);
-        String start = TimeUtils.printDuration(taken);
-        String init = TimeUtils.printDuration(initTaken);
-        String built = TimeUtils.printDuration(buildTaken);
-        LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{})", getVersion(), getName(), total, built, init,
-                start);
+        if (startupSummaryLevel != StartupSummaryLevel.Off && LOG.isInfoEnabled()) {
+            long taken = stopWatch.taken();
+            long max = buildTaken + initTaken + taken;
+            String total = TimeUtils.printDuration(max);
+            String start = TimeUtils.printDuration(taken);
+            String init = TimeUtils.printDuration(initTaken);
+            String built = TimeUtils.printDuration(buildTaken);
+            LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{})", getVersion(), getName(), total, built,
+                    init,
+                    start);
+        }
     }
 
     protected void doStartCamel() throws Exception {
@@ -3147,7 +3151,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStop() throws Exception {
         stopWatch.restart();
 
-        if (startupSummaryLevel != StartupSummaryLevel.Off) {
+        if (startupSummaryLevel != StartupSummaryLevel.Oneline && startupSummaryLevel != StartupSummaryLevel.Off) {
             if (shutdownStrategy != null && shutdownStrategy.getTimeUnit() != null) {
                 long timeout = shutdownStrategy.getTimeUnit().toMillis(shutdownStrategy.getTimeout());
                 String to = TimeUtils.printDuration(timeout);
@@ -3196,7 +3200,8 @@ public abstract class AbstractCamelContext extends BaseService
         }
         shutdownServices(list, false);
 
-        if (startupSummaryLevel != StartupSummaryLevel.Classic && startupSummaryLevel != StartupSummaryLevel.Off) {
+        if (startupSummaryLevel != StartupSummaryLevel.Classic && startupSummaryLevel != StartupSummaryLevel.Oneline
+                && startupSummaryLevel != StartupSummaryLevel.Off) {
             logRouteStopSummary();
         }
 
@@ -3286,7 +3291,7 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(),
                         TimeUtils.printDuration(stopWatch.taken()));
             }
-        } else {
+        } else if (startupSummaryLevel != StartupSummaryLevel.Off) {
             if (LOG.isInfoEnabled()) {
                 String taken = TimeUtils.printDuration(stopWatch.taken());
                 LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{})", getVersion(), getName(), taken, getUptime());

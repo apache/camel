@@ -28,6 +28,7 @@ public enum StartupSummaryLevel {
     Verbose,
     Default,
     Brief,
+    Oneline,
     Off
 
 }
