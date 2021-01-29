@@ -33,6 +33,7 @@
     <description>A Camel Amazon CW Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
