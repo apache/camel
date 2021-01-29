@@ -738,7 +738,8 @@ public abstract class BaseMainSupport extends BaseService {
         if (!beansProperties.isEmpty()) {
             LOG.debug("Creating and binding beans to registry from loaded properties: {}", beansProperties.size());
             bindBeansToRegistry(camelContext, beansProperties, "camel.beans.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    mainConfigurationProperties.isAutoConfigurationLogSummary(), true, autoConfiguredProperties);
         }
         if (!contextProperties.isEmpty()) {
             LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
@@ -986,7 +987,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void bindBeansToRegistry(
             CamelContext camelContext, Map<String, Object> properties,
-            String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+            String optionPrefix, boolean failIfNotSet, boolean logSummary, boolean ignoreCase,
             Map<String, String> autoConfiguredProperties)
             throws Exception {
 
@@ -1006,7 +1007,11 @@ public abstract class BaseMainSupport extends BaseService {
                             "Cannot create/resolve bean with name " + name + " from value: " + value);
                 }
                 // register bean
-                LOG.info("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+                if (logSummary) {
+                    LOG.info("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+                } else {
+                    LOG.debug("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+                }
                 camelContext.getRegistry().bind(name, bean);
             }
         }

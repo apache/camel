@@ -3147,12 +3147,14 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStop() throws Exception {
         stopWatch.restart();
 
-        if (shutdownStrategy != null && shutdownStrategy.getTimeUnit() != null) {
-            long timeout = shutdownStrategy.getTimeUnit().toMillis(shutdownStrategy.getTimeout());
-            String to = TimeUtils.printDuration(timeout);
-            LOG.info("Apache Camel {} ({}) shutting down (timeout:{})", getVersion(), getName(), to);
-        } else {
-            LOG.info("Apache Camel {} ({}) shutting down", getVersion(), getName());
+        if (startupSummaryLevel != StartupSummaryLevel.Off) {
+            if (shutdownStrategy != null && shutdownStrategy.getTimeUnit() != null) {
+                long timeout = shutdownStrategy.getTimeUnit().toMillis(shutdownStrategy.getTimeout());
+                String to = TimeUtils.printDuration(timeout);
+                LOG.info("Apache Camel {} ({}) shutting down (timeout:{})", getVersion(), getName(), to);
+            } else {
+                LOG.info("Apache Camel {} ({}) shutting down", getVersion(), getName());
+            }
         }
 
         EventHelper.notifyCamelContextStopping(this);
