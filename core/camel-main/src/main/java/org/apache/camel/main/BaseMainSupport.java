@@ -442,9 +442,9 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.info("Auto-configuration summary");
             autoConfiguredProperties.forEach((k, v) -> {
                 if (SensitiveUtils.containsSensitive(k)) {
-                    LOG.info("\t{}=xxxxxx", k);
+                    LOG.info("    {}=xxxxxx", k);
                 } else {
-                    LOG.info("\t{}={}", k, v);
+                    LOG.info("    {}={}", k, v);
                 }
             });
         }
@@ -1279,9 +1279,9 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.info("Auto-configuration component {} summary", name);
                 autoConfiguredProperties.forEach((k, v) -> {
                     if (SensitiveUtils.containsSensitive(k)) {
-                        LOG.info("\t{}=xxxxxx", k);
+                        LOG.info("    {}=xxxxxx", k);
                     } else {
-                        LOG.info("\t{}={}", k, v);
+                        LOG.info("    {}={}", k, v);
                     }
                 });
             }
