@@ -44,4 +44,5 @@ public interface AWS2S3Constants {
     String RANGE_START = "CamelAwsS3RangeStart";
     String RANGE_END = "CamelAwsS3RangeEnd";
     String DOWNLOAD_LINK_EXPIRATION_TIME = "CamelAwsS3DowloadLinkExpirationTime";
+    String METADATA = "CamelAwsS3Metadata";
 }
