@@ -29,10 +29,11 @@
     <artifactId>camel-aws-sns</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS SNS</name>
+    <name>Camel :: AWS SNS (deprecated)</name>
     <description>A Camel Amazon SNS Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

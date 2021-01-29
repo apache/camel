@@ -29,10 +29,11 @@
     <artifactId>camel-aws-translate</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS Translate</name>
+    <name>Camel :: AWS Translate (deprecated)</name>
     <description>A Camel Amazon Translate Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>

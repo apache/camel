@@ -29,10 +29,11 @@
     <artifactId>camel-aws-swf</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS SWF</name>
+    <name>Camel :: AWS SWF (deprecated)</name>
     <description>A Camel Amazon SWF Web Service Component</description>
 
     <properties>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
