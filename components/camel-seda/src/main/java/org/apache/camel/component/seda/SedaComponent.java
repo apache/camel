@@ -51,6 +51,7 @@ public class SedaComponent extends DefaultComponent {
     private long defaultOfferTimeout;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
+    private final Map<String, Integer> customSize = new HashMap<>();
 
     public SedaComponent() {
     }
@@ -130,11 +131,16 @@ public class SedaComponent extends DefaultComponent {
 
     public synchronized QueueReference getOrCreateQueue(
             SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
+
         String key = getQueueKey(endpoint.getEndpointUri());
+
+        if (size == null) {
+            // there may be a custom size during startup
+            size = customSize.get(key);
+        }
 
         QueueReference ref = getQueues().get(key);
         if (ref != null) {
-
             // if the given size is not provided, we just use the existing queue as is
             if (size != null && !size.equals(ref.getSize())) {
                 // there is already a queue, so make sure the size matches
@@ -229,6 +235,17 @@ public class SedaComponent extends DefaultComponent {
         // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
         long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
 
+        // using custom size?
+        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
+        if (size != null) {
+            answer.setSize(size);
+            // this queue has a custom size remember this while setting up routes
+            if (!getCamelContext().isStarted()) {
+                String key = getQueueKey(uri);
+                customSize.put(key, size);
+            }
+        }
+
         answer.setOfferTimeout(offerTimeout);
         answer.setBlockWhenFull(blockWhenFull);
         answer.setDiscardWhenFull(discardWhenFull);
@@ -259,6 +276,7 @@ public class SedaComponent extends DefaultComponent {
     @Override
     protected void doStop() throws Exception {
         getQueues().clear();
+        customSize.clear();
         super.doStop();
     }
 

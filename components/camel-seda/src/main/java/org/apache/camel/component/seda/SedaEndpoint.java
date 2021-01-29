@@ -526,15 +526,20 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                                                + " You can only either discard or block when full.");
         }
 
-        // force creating queue when starting
-        if (queue == null) {
-            queue = getQueue();
-        }
-
         // special for unit testing where we can set a system property to make seda poll faster
         // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
         String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
         setPollTimeout(Integer.parseInt(override));
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // force creating queue when starting
+        if (queue == null) {
+            queue = getQueue();
+        }
     }
 
     @Override

@@ -36,7 +36,7 @@ public class SedaSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:bar?size=5");
+                from("direct:start").to("seda:bar");
 
                 from("seda:bar?size=5").to("mock:bar");
             }
