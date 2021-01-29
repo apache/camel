@@ -1,12 +1,13 @@
 [[aws-s3-component]]
-= AWS S3 Storage Service Component
+= AWS S3 Storage Service Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-s3/src/main/docs/aws-s3-component.adoc
 :docTitle: AWS S3 Storage Service
 :artifactId: camel-aws-s3
 :description: Store and retrieve objects from AWS S3 Storage Service.
 :since: 2.8
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-s3.adoc[opts=optional]
 //Manually maintained attributes

@@ -3023,6 +3023,7 @@ public interface S3EndpointBuilderFactory {
          * @param path //bucketNameOrArn
          * @return the dsl builder
          */
+        @Deprecated
         default S3EndpointBuilder awsS3(String path) {
             return S3EndpointBuilderFactory.endpointBuilder("aws-s3", path);
         }
@@ -3044,10 +3045,12 @@ public interface S3EndpointBuilderFactory {
          * @param path //bucketNameOrArn
          * @return the dsl builder
          */
+        @Deprecated
         default S3EndpointBuilder awsS3(String componentName, String path) {
             return S3EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static S3EndpointBuilder endpointBuilder(String componentName, String path) {
         class S3EndpointBuilderImpl extends AbstractEndpointBuilder implements S3EndpointBuilder, AdvancedS3EndpointBuilder {
             public S3EndpointBuilderImpl(String path) {

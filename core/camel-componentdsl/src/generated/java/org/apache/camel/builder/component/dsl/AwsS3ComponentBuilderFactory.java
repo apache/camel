@@ -40,6 +40,7 @@ public interface AwsS3ComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AwsS3ComponentBuilder awsS3() {
         return new AwsS3ComponentBuilderImpl();
     }

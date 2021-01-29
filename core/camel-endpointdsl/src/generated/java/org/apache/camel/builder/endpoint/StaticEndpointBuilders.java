@@ -2406,6 +2406,7 @@ public class StaticEndpointBuilders {
      * @param path //bucketNameOrArn
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder("aws-s3", path);
@@ -2428,6 +2429,7 @@ public class StaticEndpointBuilders {
      * @param path //bucketNameOrArn
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
             String componentName,
             String path) {
