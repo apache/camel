@@ -29,7 +29,7 @@
     <artifactId>camel-aws-cw</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS CW</name>
+    <name>Camel :: AWS CW (deprecated)</name>
     <description>A Camel Amazon CW Web Service Component</description>
 
     <properties>
