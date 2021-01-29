@@ -5,6 +5,7 @@
     "title": "Caffeine Lrucache",
     "description": "Camel Caffeine LRUCache support",
     "deprecated": true,
+    "deprecatedSince": "3.8.0",
     "firstVersion": "3.0",
     "label": "core",
     "supportLevel": "Stable",
