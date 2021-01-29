@@ -4,6 +4,7 @@
 * xref:others:index.adoc[Miscellaneous Components]
 ** xref:attachments.adoc[Attachments]
 ** xref:aws-xray.adoc[AWS XRay]
+** xref:caffeine-lrucache.adoc[Caffeine Lrucache]
 ** xref:cdi.adoc[CDI]
 ** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
