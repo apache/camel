@@ -114,12 +114,9 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
 
             // copy messageId, popReceipt, timeout for fix exchange override case
             // azure storage blob can override this headers
-            final String messageId = exchange.getIn()
-                .getHeader(QueueConstants.MESSAGE_ID, String.class);
-            final String popReceipt = exchange.getIn()
-                .getHeader(QueueConstants.POP_RECEIPT, String.class);
-            final Duration timeout = exchange.getIn()
-                .getHeader(QueueConstants.TIMEOUT, Duration.class);
+            final String messageId = exchange.getIn().getHeader(QueueConstants.MESSAGE_ID, String.class);
+            final String popReceipt = exchange.getIn().getHeader(QueueConstants.POP_RECEIPT, String.class);
+            final Duration timeout = exchange.getIn().getHeader(QueueConstants.TIMEOUT, Duration.class);
 
             // add on completion to handle after work when the exchange is done
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
