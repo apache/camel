@@ -50,8 +50,6 @@ public class SedaProducer extends DefaultAsyncProducer {
         this.blockWhenFull = blockWhenFull;
         this.discardWhenFull = discardWhenFull;
         this.offerTimeout = offerTimeout;
-        // Force the creation of the queue
-        endpoint.getQueue();
     }
 
     @Override

@@ -534,7 +534,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         // special for unit testing where we can set a system property to make seda poll faster
         // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
         String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
-        setPollTimeout(Integer.valueOf(override));
+        setPollTimeout(Integer.parseInt(override));
     }
 
     @Override
