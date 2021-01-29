@@ -62,6 +62,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "destinationBucketPrefix": getOrCreateConfiguration(target).setDestinationBucketPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationbucketsuffix":
         case "destinationBucketSuffix": getOrCreateConfiguration(target).setDestinationBucketSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "donefilename":
+        case "doneFileName": getOrCreateConfiguration(target).setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
@@ -152,6 +154,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "destinationBucketPrefix": return java.lang.String.class;
         case "destinationbucketsuffix":
         case "destinationBucketSuffix": return java.lang.String.class;
+        case "donefilename":
+        case "doneFileName": return java.lang.String.class;
         case "filename":
         case "fileName": return java.lang.String.class;
         case "includebody":
@@ -238,6 +242,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "destinationBucketPrefix": return getOrCreateConfiguration(target).getDestinationBucketPrefix();
         case "destinationbucketsuffix":
         case "destinationBucketSuffix": return getOrCreateConfiguration(target).getDestinationBucketSuffix();
+        case "donefilename":
+        case "doneFileName": return getOrCreateConfiguration(target).getDoneFileName();
         case "filename":
         case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "includebody":
