@@ -150,7 +150,7 @@ public abstract class CamelTestSupport
         if (support != null && support.isCreateCamelContextPerClass()) {
             try {
                 support.tearDownCreateCamelContextPerClass();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -335,7 +335,7 @@ public abstract class CamelTestSupport
     @BeforeEach
     public void setUp() throws Exception {
         LOG.info("********************************************************************************");
-        LOG.info("Testing: " + currentTestName + "(" + getClass().getName() + ")");
+        LOG.info("Testing: {} ({})", currentTestName, getClass().getName());
         LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
@@ -482,7 +482,7 @@ public abstract class CamelTestSupport
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
             for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder: " + builder);
+                LOG.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
             replaceFromEndpoints();
@@ -496,9 +496,9 @@ public abstract class CamelTestSupport
             }
         } else {
             replaceFromEndpoints();
-            LOG.debug("Using route builder from the created context: " + context);
+            LOG.debug("Using route builder from the created context: {}", context);
         }
-        LOG.debug("Routing Rules are: " + context.getRoutes());
+        LOG.debug("Routing Rules are: {}", context.getRoutes());
 
         assertValidContext(context);
     }
@@ -523,8 +523,8 @@ public abstract class CamelTestSupport
         long time = watch.taken();
 
         LOG.info("********************************************************************************");
-        LOG.info("Testing done: " + currentTestName + "(" + getClass().getName() + ")");
-        LOG.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+        LOG.info("Testing done: {} ({})", currentTestName, getClass().getName());
+        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
 
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {
@@ -672,7 +672,7 @@ public abstract class CamelTestSupport
         doStopCamelContext(context, camelContextService);
     }
 
-    private static void doStopCamelContext(CamelContext context, Service camelContextService) throws Exception {
+    private static void doStopCamelContext(CamelContext context, Service camelContextService) {
         if (camelContextService != null) {
             if (camelContextService == threadService.get()) {
                 threadService.remove();
@@ -689,8 +689,7 @@ public abstract class CamelTestSupport
     }
 
     private static void doStopTemplates(
-            ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate)
-            throws Exception {
+            ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate) {
         if (consumer != null) {
             if (consumer == threadConsumer.get()) {
                 threadConsumer.remove();
@@ -729,13 +728,14 @@ public abstract class CamelTestSupport
     protected CamelContext createCamelContext() throws Exception {
         Registry registry = createCamelRegistry();
 
-        CamelContext context;
+        CamelContext retContext;
         if (registry != null) {
-            context = new DefaultCamelContext(registry);
+            retContext = new DefaultCamelContext(registry);
         } else {
-            context = new DefaultCamelContext();
+            retContext = new DefaultCamelContext();
         }
-        return context;
+
+        return retContext;
     }
 
     /**
@@ -866,11 +866,9 @@ public abstract class CamelTestSupport
      * @param body        the body for the message
      */
     protected void sendBody(String endpointUri, final Object body) {
-        template.send(endpointUri, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-            }
+        template.send(endpointUri, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody(body);
         });
     }
 
@@ -882,13 +880,11 @@ public abstract class CamelTestSupport
      * @param headers     any headers to set on the message
      */
     protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
-        template.send(endpointUri, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-                for (Map.Entry<String, Object> entry : headers.entrySet()) {
-                    in.setHeader(entry.getKey(), entry.getValue());
-                }
+        template.send(endpointUri, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody(body);
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                in.setHeader(entry.getKey(), entry.getValue());
             }
         });
     }
