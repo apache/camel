@@ -188,6 +188,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(AWS2S3Constants.EXPIRATION_TIME, s3Object.response().expiration());
         message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
+        message.setHeader(AWS2S3Constants.METADATA, s3Object.response().metadata());
 
         /*
          * If includeBody == true, it is safe to close the object here because the S3Object
