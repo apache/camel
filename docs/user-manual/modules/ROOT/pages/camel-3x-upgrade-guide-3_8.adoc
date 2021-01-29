@@ -90,7 +90,7 @@ Other information has been stored in headers declared in GitHubConstants class:
 
 * GITHUB_EVENT_PAYLOAD - "CamelGitHubEventPayload" - The event payload
 
-=== camel-infinispan
+=== Camel-infinispan
 
 There are now two components for Infinispan:
 
