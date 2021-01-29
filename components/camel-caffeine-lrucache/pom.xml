@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>3.0</firstVersion>
         <label>core</label>
+        <deprecatedSince>3.8.0</deprecatedSince>
     </properties>
 
     <dependencies>
