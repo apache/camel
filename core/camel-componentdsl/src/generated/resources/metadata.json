@@ -1198,6 +1198,7 @@
     "title": "AWS S3 Storage Service",
     "description": "Store and retrieve objects from AWS S3 Storage Service.",
     "deprecated": true,
+    "deprecatedSince": "3.8.0",
     "firstVersion": "2.8.0",
     "label": "cloud,file",
     "javaType": "org.apache.camel.component.aws.s3.S3Component",
