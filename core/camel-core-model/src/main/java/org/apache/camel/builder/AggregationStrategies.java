@@ -27,8 +27,6 @@ import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 /**
  * Toolbox class to create commonly used Aggregation Strategies in a fluent manner. For more information about the
  * supported {@link AggregationStrategy}, see links to the Javadocs of the relevant class below.
- * 
- * @since 2.12
  */
 public final class AggregationStrategies {
 
@@ -145,8 +143,6 @@ public final class AggregationStrategies {
 
     /**
      * Creates a {@link StringAggregationStrategy}.
-     * 
-     * @since 3.0.0
      */
     public static StringAggregationStrategy string() {
         return new StringAggregationStrategy();
@@ -156,7 +152,6 @@ public final class AggregationStrategies {
      * Creates a {@link StringAggregationStrategy} with delimiter.
      * 
      * @param delimiter The delimiter to join with.
-     * @since           3.0.0
      */
     public static StringAggregationStrategy string(String delimiter) {
         return string().delimiter(delimiter);

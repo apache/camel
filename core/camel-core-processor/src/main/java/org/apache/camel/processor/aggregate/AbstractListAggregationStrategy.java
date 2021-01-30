@@ -31,8 +31,6 @@ import org.apache.camel.Exchange;
  * {@link org.apache.camel.Message#setBody(Object)} or be kept as a property on the exchange. <br/>
  * The default behavior to store as message body, allows to more easily group together a list of values and have its
  * result stored as a {@link List} on the completed {@link Exchange}.
- *
- * @since 2.11
  */
 public abstract class AbstractListAggregationStrategy<V> implements AggregationStrategy {
 

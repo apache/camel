@@ -62,8 +62,6 @@ public interface Component extends CamelContextAware, Service {
      * <b>Notice:</b> When using raw uris, then the parameter values is raw as well.
      *
      * @return <tt>true</tt> to use raw uris, <tt>false</tt> to use encoded uris (default).
-     *
-     * @since  Camel 2.11.0
      */
     boolean useRawUri();
 
