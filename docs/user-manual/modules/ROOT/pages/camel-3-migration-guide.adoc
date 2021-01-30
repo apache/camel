@@ -484,7 +484,7 @@ The methods on `CamelContext` that are related to catalog has been moved into a 
 
   CatalogCamelContext ccc = context.adapt(CatalogCamelContext.class);
 
-The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has been changed to `addRouteDefinitions` and `addRestDefinitions` to be aligned with the other methods. You can find loader methods on the `ModelHelper` utility class.
+The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has been changed to `addRouteDefinitions` and `addRestDefinitions` to be aligned with the other methods. You can find `getModelToXMLDumper` and `getXMLRoutesDefinitionLoader` loader methods on the `ExtendedCamelContext` class.
 
 ==== ModelCamelContext
 
