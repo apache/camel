@@ -114,6 +114,22 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
+         * Instance for managing client connections.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.milo.client.MiloClientConnectionManager&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param miloClientCachingConnectionManager the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder miloClientCachingConnectionManager(
+                org.apache.camel.component.milo.client.MiloClientConnectionManager miloClientCachingConnectionManager) {
+            doSetProperty("miloClientCachingConnectionManager", miloClientCachingConnectionManager);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -468,6 +484,7 @@ public interface MiloClientComponentBuilderFactory {
             case "configuration": ((MiloClientComponent) component).setConfiguration((org.apache.camel.component.milo.client.MiloClientConfiguration) value); return true;
             case "discoveryEndpointSuffix": getOrCreateConfiguration((MiloClientComponent) component).setDiscoveryEndpointSuffix((java.lang.String) value); return true;
             case "discoveryEndpointUri": getOrCreateConfiguration((MiloClientComponent) component).setDiscoveryEndpointUri((java.lang.String) value); return true;
+            case "miloClientCachingConnectionManager": ((MiloClientComponent) component).setMiloClientCachingConnectionManager((org.apache.camel.component.milo.client.MiloClientConnectionManager) value); return true;
             case "bridgeErrorHandler": ((MiloClientComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MiloClientComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((MiloClientComponent) component).setAutowiredEnabled((boolean) value); return true;

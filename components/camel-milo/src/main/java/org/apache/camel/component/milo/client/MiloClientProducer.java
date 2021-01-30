@@ -39,7 +39,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
     private final boolean defaultAwaitWrites;
 
-    public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection,
+    public MiloClientProducer(final MiloClientEndpoint endpoint,
                               final boolean defaultAwaitWrites) {
         super(endpoint);
 
@@ -61,12 +61,8 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (Exception e) {
-                // ignore
-            }
+        if (null != this.connection) {
+            getEndpoint().releaseConnection(connection);
         }
         super.doStop();
     }

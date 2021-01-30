@@ -63,6 +63,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxPendingPublishRequests": getOrCreateConfiguration(target).setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": getOrCreateConfiguration(target).setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "miloclientcachingconnectionmanager":
+        case "miloClientCachingConnectionManager": target.setMiloClientCachingConnectionManager(property(camelContext, org.apache.camel.component.milo.client.MiloClientConnectionManager.class, value)); return true;
         case "overridehost":
         case "overrideHost": getOrCreateConfiguration(target).setOverrideHost(property(camelContext, boolean.class, value)); return true;
         case "producturi":
@@ -117,6 +119,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxPendingPublishRequests": return java.lang.Long.class;
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": return java.lang.Long.class;
+        case "miloclientcachingconnectionmanager":
+        case "miloClientCachingConnectionManager": return org.apache.camel.component.milo.client.MiloClientConnectionManager.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
         case "producturi":
@@ -172,6 +176,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxPendingPublishRequests": return getOrCreateConfiguration(target).getMaxPendingPublishRequests();
         case "maxresponsemessagesize":
         case "maxResponseMessageSize": return getOrCreateConfiguration(target).getMaxResponseMessageSize();
+        case "miloclientcachingconnectionmanager":
+        case "miloClientCachingConnectionManager": return target.getMiloClientCachingConnectionManager();
         case "overridehost":
         case "overrideHost": return getOrCreateConfiguration(target).isOverrideHost();
         case "producturi":
