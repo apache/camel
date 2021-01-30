@@ -237,6 +237,10 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                         if (aggregatedExchange != null) {
                             // copy aggregation result onto original exchange (preserving pattern)
                             copyResultsPreservePattern(exchange, aggregatedExchange);
+                            // handover any synchronization
+                            if (resourceExchange != null) {
+                                resourceExchange.adapt(ExtendedExchange.class).handoverCompletions(exchange);
+                            }
                         }
                     } catch (Throwable e) {
                         // if the aggregationStrategy threw an exception, set it on the original exchange

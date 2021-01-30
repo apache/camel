@@ -35,7 +35,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
     /**
      * Set delimiter used for joining aggregated String
      * 
-     * @param  delimiter The delimiter to join with. Default empty String
+     * @param delimiter The delimiter to join with. Default empty String
      */
     public StringAggregationStrategy delimiter(String delimiter) {
         this.delimiter = delimiter;
