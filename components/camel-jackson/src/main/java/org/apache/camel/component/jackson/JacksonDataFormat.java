@@ -68,6 +68,7 @@ public class JacksonDataFormat extends ServiceSupport
     private String moduleRefs;
     private String unmarshalTypeName;
     private Class<?> unmarshalType;
+    private String jsonViewTypeName;
     private Class<?> jsonView;
     private String include;
     private boolean prettyPrint;
@@ -241,6 +242,14 @@ public class JacksonDataFormat extends ServiceSupport
 
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
+    }
+
+    public String getJsonViewTypeName() {
+        return jsonViewTypeName;
+    }
+
+    public void setJsonViewTypeName(String jsonViewTypeName) {
+        this.jsonViewTypeName = jsonViewTypeName;
     }
 
     public String getInclude() {
@@ -478,6 +487,9 @@ public class JacksonDataFormat extends ServiceSupport
     protected void doInit() throws Exception {
         if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+        if (jsonViewTypeName != null && jsonView == null) {
+            jsonView = camelContext.getClassResolver().resolveClass(jsonViewTypeName);
         }
         if (collectionTypeName != null && collectionType == null) {
             Class<?> clazz = camelContext.getClassResolver().resolveClass(collectionTypeName);

@@ -41,7 +41,11 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
     }
 
     protected void configureSnakeDataFormat(Map<String, Object> properties) {
-        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
+        if (definition.getUnmarshalType() != null) {
+            properties.put("unmarshalTypeName", asTypeName(definition.getUnmarshalType()));
+        } else {
+            properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
+        }
         properties.put("classLoader", definition.getClassLoader());
         properties.put("useApplicationContextClassLoader", definition.getUseApplicationContextClassLoader());
         properties.put("prettyFlow", definition.getPrettyFlow());
@@ -60,7 +64,6 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
             List<String> typeFilterDefinitions = new ArrayList<>(definition.getTypeFilters().size());
             for (YAMLTypeFilterDefinition definition : definition.getTypeFilters()) {
                 String value = parseString(definition.getValue());
-
                 if (!value.startsWith("type") && !value.startsWith("regexp")) {
                     YAMLTypeFilterType type = parse(YAMLTypeFilterType.class, definition.getType());
                     if (type == null) {
@@ -69,7 +72,6 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
 
                     value = type.name() + ":" + value;
                 }
-
                 typeFilterDefinitions.add(value);
             }
             return typeFilterDefinitions;

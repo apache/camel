@@ -30,8 +30,8 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "moduleRefs": dataformat.setModuleRefs(property(camelContext, java.lang.String.class, value)); return true;
         case "unmarshaltypename":
         case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
-        case "jsonview":
-        case "jsonView": dataformat.setJsonView(property(camelContext, java.lang.Class.class, value)); return true;
+        case "jsonviewtypename":
+        case "jsonViewTypeName": dataformat.setJsonViewTypeName(property(camelContext, java.lang.String.class, value)); return true;
         case "include": dataformat.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": dataformat.setPrettyPrint(property(camelContext, boolean.class, value)); return true;

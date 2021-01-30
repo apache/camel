@@ -33,6 +33,11 @@ The method `isOnlyDynamicQueryParameters` is removed from `org.apache.camel.spi.
 
 The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
 
+=== camel-jackson
+
+When using XML DSL then `jsonView` has been renamed to `jsonViewTypeName` and made general available in the model,
+and for the lightweight `camel-xml-io` route parser.
+
 === camel-caffeine-lrucache
 
 This LRUCache implementation is using an algorithm where elements that are removed may not be in strict order, and therefore

@@ -1962,7 +1962,7 @@ public class ModelParser extends BaseParser {
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
                 case "include": def.setInclude(val); break;
-                case "jsonView": def.setJsonView(asClass(val)); break;
+                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
@@ -2023,7 +2023,7 @@ public class ModelParser extends BaseParser {
                 case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
-                case "jsonView": def.setJsonView(asClass(val)); break;
+                case "jsonViewTypeName": def.setJsonViewTypeName(val); break;
                 case "library": def.setLibrary(JsonLibrary.valueOf(val)); break;
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;

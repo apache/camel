@@ -36,8 +36,12 @@ public class JacksonXMLDataFormatReifier extends DataFormatReifier<JacksonXMLDat
         } else {
             properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
         }
+        if (definition.getJsonView() != null) {
+            properties.put("jsonViewTypeName", asTypeName(definition.getJsonView()));
+        } else {
+            properties.put("jsonViewTypeName", definition.getJsonViewTypeName());
+        }
         properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("jsonView", definition.getJsonView());
         properties.put("include", definition.getInclude());
         properties.put("allowJmsType", definition.getAllowJmsType());
         properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));

@@ -40,6 +40,11 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
                 properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
             }
             properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
+            if (definition.getJsonView() != null) {
+                properties.put("jsonViewTypeName", asTypeName(definition.getJsonView()));
+            } else {
+                properties.put("jsonViewTypeName", definition.getJsonViewTypeName());
+            }
         }
         if (definition.getLibrary() != JsonLibrary.XStream) {
             if (definition.getUnmarshalType() != null) {
@@ -54,7 +59,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         properties.put("allowJmsType", definition.getAllowJmsType());
         if (definition.getLibrary() != JsonLibrary.XStream) {
             if (definition.getCollectionType() != null) {
-                properties.put("collectionTypeName", definition.getCollectionType().getName());
+                properties.put("collectionTypeName", asTypeName(definition.getCollectionType()));
             } else {
                 properties.put("collectionTypeName", definition.getCollectionTypeName());
             }

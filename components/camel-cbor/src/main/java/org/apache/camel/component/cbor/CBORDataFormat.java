@@ -33,25 +33,29 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("cbor")
-public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);
 
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private boolean useDefaultObjectMapper = true;
     private boolean allowUnmarshallType;
+    private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private boolean useList;
     private boolean prettyPrint;
@@ -123,6 +127,14 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.objectMapper = objectMapper;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public Class<?> getUnmarshalType() {
         return unmarshalType;
     }
@@ -137,6 +149,14 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setAllowUnmarshallType(boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public String getCollectionTypeName() {
+        return collectionTypeName;
+    }
+
+    public void setCollectionTypeName(String collectionTypeName) {
+        this.collectionTypeName = collectionTypeName;
     }
 
     public Class<? extends Collection> getCollectionType() {
@@ -290,6 +310,14 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        if (unmarshalTypeName != null && (unmarshalType == null)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+        if (collectionTypeName != null && collectionType == null) {
+            Class<?> clazz = camelContext.getClassResolver().resolveClass(collectionTypeName);
+            collectionType = CastUtils.cast(clazz);
+        }
 
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
