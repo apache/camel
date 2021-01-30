@@ -43,7 +43,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         }
         if (definition.getLibrary() != JsonLibrary.XStream) {
             if (definition.getUnmarshalType() != null) {
-                properties.put("unmarshalTypeName", definition.getUnmarshalType().getName());
+                properties.put("unmarshalTypeName", asTypeName(definition.getUnmarshalType()));
             } else {
                 properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
             }
