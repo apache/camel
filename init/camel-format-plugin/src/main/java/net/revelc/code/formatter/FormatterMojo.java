@@ -386,13 +386,15 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
                 storeFileHashCache(hashCache);
             }
 
-            long endClock = System.currentTimeMillis();
-
-            log.info("Successfully formatted:          " + rc.successCount + FILE_S);
-            log.info("Fail to format:                  " + rc.failCount + FILE_S);
-            log.info("Skipped:                         " + rc.skippedCount + FILE_S);
-            log.info("Read only skipped:               " + rc.readOnlyCount + FILE_S);
-            log.info("Approximate time taken:          " + ((endClock - startClock) / 1000) + "s");
+            // only output if we formatted something
+            if (rc.successCount > 0) {
+                log.info("Successfully formatted:          " + rc.successCount + FILE_S);
+                log.info("Fail to format:                  " + rc.failCount + FILE_S);
+                log.info("Skipped:                         " + rc.skippedCount + FILE_S);
+                log.info("Read only skipped:               " + rc.readOnlyCount + FILE_S);
+                long endClock = System.currentTimeMillis();
+                log.info("Approximate time taken:          " + ((endClock - startClock) / 1000) + "s");
+            }
         }
     }
 
@@ -557,14 +559,14 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             }
         } else if (file.getName().endsWith(".js") && jsFormatter.isInitialized()) {
             if (skipJsFormatting) {
-                getLog().info("Javascript formatting is skipped");
+                getLog().debug("Javascript formatting is skipped");
                 result = Result.SKIPPED;
             } else {
                 formattedCode = this.jsFormatter.formatFile(file, originalCode, this.lineEnding);
             }
         } else if (file.getName().endsWith(".html") && htmlFormatter.isInitialized()) {
             if (skipHtmlFormatting) {
-                getLog().info("Html formatting is skipped");
+                getLog().debug("Html formatting is skipped");
                 result = Result.SKIPPED;
             } else {
                 formattedCode = this.htmlFormatter.formatFile(file, originalCode, this.lineEnding);
@@ -585,7 +587,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             }
         } else if (file.getName().endsWith(".css") && cssFormatter.isInitialized()) {
             if (skipCssFormatting) {
-                getLog().info("css formatting is skipped");
+                getLog().debug("css formatting is skipped");
                 result = Result.SKIPPED;
             } else {
                 formattedCode = this.cssFormatter.formatFile(file, originalCode, this.lineEnding);

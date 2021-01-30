@@ -4128,7 +4128,9 @@
                     <configuration>
                         <configFile>camel-eclipse-formatter-config.xml</configFile>
                         <skip>${format.skip}</skip>
+                        <skipCssFormatting>true</skipCssFormatting>
                         <skipHtmlFormatting>true</skipHtmlFormatting>
+                        <skipJsFormatting>true</skipJsFormatting>
                         <cachedir>${basedir}/target</cachedir>
                         <excludes>${sourcecheckExcludes}</excludes>
                         <lineEnding>KEEP</lineEnding>
