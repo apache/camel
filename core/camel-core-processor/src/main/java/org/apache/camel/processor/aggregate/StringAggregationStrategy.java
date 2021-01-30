@@ -26,8 +26,6 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * {@link String} as the message body.
  *
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
- * 
- * @since 3.0.0
  */
 public class StringAggregationStrategy implements AggregationStrategy {
 
@@ -38,7 +36,6 @@ public class StringAggregationStrategy implements AggregationStrategy {
      * Set delimiter used for joining aggregated String
      * 
      * @param  delimiter The delimiter to join with. Default empty String
-     * @return
      */
     public StringAggregationStrategy delimiter(String delimiter) {
         this.delimiter = delimiter;
@@ -58,9 +55,6 @@ public class StringAggregationStrategy implements AggregationStrategy {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         StringBuffer result; // Aggregate in StringBuffer instead of StringBuilder, to make it thread safe

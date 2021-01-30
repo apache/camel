@@ -44,8 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link FlexibleAggregationStrategy}.
- * 
- * @since 2.12
  */
 public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
