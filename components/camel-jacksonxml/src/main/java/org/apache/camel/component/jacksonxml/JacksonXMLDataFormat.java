@@ -63,6 +63,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
     private List<Module> modules;
     private String moduleClassNames;
     private String moduleRefs;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
@@ -198,6 +199,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     public void setXmlMapper(XmlMapper xmlMapper) {
         this.xmlMapper = xmlMapper;
+    }
+
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     public Class<?> getUnmarshalType() {
@@ -449,6 +458,13 @@ public class JacksonXMLDataFormat extends ServiceSupport
             disableFeatures = feature.name();
         } else {
             disableFeatures += "," + feature.name();
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == HashMap.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
     }
 

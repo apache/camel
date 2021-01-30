@@ -72,7 +72,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             // if we have the unmarshal type, but no permission set, then use it to be allowed
             String type = definition.getUnmarshalTypeName();
             if (type == null && definition.getUnmarshalType() != null) {
-                type = definition.getUnmarshalType().getName();
+                type = asTypeName(definition.getUnmarshalType());
             }
             properties.put("permissions", type);
             // xstream has no unmarshalType option
