@@ -296,8 +296,8 @@ public class RestProducer extends DefaultAsyncProducer {
             name = "json-jackson";
         }
         // this will create a new instance as the name was not already pre-created
-        DataFormat json = camelContext.resolveDataFormat(name);
-        DataFormat outJson = camelContext.resolveDataFormat(name);
+        DataFormat json = camelContext.createDataFormat(name);
+        DataFormat outJson = camelContext.createDataFormat(name);
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
@@ -350,8 +350,8 @@ public class RestProducer extends DefaultAsyncProducer {
             name = "jaxb";
         }
         // this will create a new instance as the name was not already pre-created
-        DataFormat jaxb = camelContext.resolveDataFormat(name);
-        DataFormat outJaxb = camelContext.resolveDataFormat(name);
+        DataFormat jaxb = camelContext.createDataFormat(name);
+        DataFormat outJaxb = camelContext.createDataFormat(name);
 
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
