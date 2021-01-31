@@ -18,17 +18,15 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 
 public class TransactedStackSizeParallelProcessingTest extends TransactionClientDataSourceSupport {
 
     private int total = 100;
     private static final boolean PRINT_STACK_TRACE = false;
 
-    @Disabled("Flaky - May report 101 or 102 messages")
-    @RepeatedTest(value = 100)
+    // to test for flaky when using parallel processing then set this to 100
+    @RepeatedTest(value = 1)
     public void testStackSize() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(total);
         getMockEndpoint("mock:line").assertNoDuplicates(body());
@@ -49,11 +47,11 @@ public class TransactedStackSizeParallelProcessingTest extends TransactionClient
                     int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 100, "Stackframe should be < 100");
-            log.info("#{} size {}", i, size);
+            log.debug("#{} size {}", i, size);
         }
         int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
         sizes[total] = size;
-        log.info("#{} size {}", total, size);
+        log.debug("#{} size {}", total, size);
 
         int prev = sizes[0];
         // last may be shorter, so use total - 1

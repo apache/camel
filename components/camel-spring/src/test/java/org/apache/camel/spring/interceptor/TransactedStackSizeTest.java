@@ -46,11 +46,11 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
                     int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 100, "Stackframe should be < 100");
-            log.info("#{} size {}", i, size);
+            log.debug("#{} size {}", i, size);
         }
         int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
         sizes[total] = size;
-        log.info("#{} size {}", total, size);
+        log.debug("#{} size {}", total, size);
 
         int prev = sizes[0];
         // last may be shorter, so use total - 1

@@ -49,7 +49,7 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
                     int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 100, "Stackframe should be < 100");
-            log.info("#{} size {}", i, size);
+            log.debug("#{} size {}", i, size);
         }
 
         int prev = sizes[0];

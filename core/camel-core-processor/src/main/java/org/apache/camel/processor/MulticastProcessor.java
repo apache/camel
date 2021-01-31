@@ -288,7 +288,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // must handle this specially in a while loop structure to ensure the strackframe does not grow deeper
         // the reactive mode will execute each sub task in its own runnable task which is scheduled on the reactive executor
         // which is how the routing engine normally operates
-        MulticastTask state = exchange.isTransacted()
+        // if we have parallel processing enabled then we cannot run in transacted mode (requires synchronous processing via same thread)
+        MulticastTask state = !isParallelProcessing() && exchange.isTransacted()
                 ? new MulticastTransactedTask(exchange, pairs, callback) : new MulticastReactiveTask(exchange, pairs, callback);
         if (isParallelProcessing()) {
             executorService.submit(() -> reactiveExecutor.schedule(state));
