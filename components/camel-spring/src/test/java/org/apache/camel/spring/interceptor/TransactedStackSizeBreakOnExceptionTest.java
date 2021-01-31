@@ -16,46 +16,46 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TransactedStackSizeTest extends TransactionClientDataSourceSupport {
+public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDataSourceSupport {
 
     private int total = 100;
+    private int failAt = 70;
     private static final boolean PRINT_STACK_TRACE = false;
 
     @Test
     public void testStackSize() throws Exception {
-        getMockEndpoint("mock:line").expectedMessageCount(total);
+        getMockEndpoint("mock:line").expectedMessageCount(failAt);
         getMockEndpoint("mock:line").assertNoDuplicates(body());
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < total; i++) {
             sb.append(i);
             sb.append(",");
         }
+
         template.sendBody("seda:start", "" + sb.toString());
 
         assertMockEndpointsSatisfied();
 
-        int[] sizes = new int[total + 1];
-        for (int i = 0; i < total; i++) {
+        int[] sizes = new int[failAt];
+        for (int i = 0; i < failAt; i++) {
             int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
                     int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 100, "Stackframe should be < 100");
             log.info("#{} size {}", i, size);
         }
-        int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
-        sizes[total] = size;
-        log.info("#{} size {}", total, size);
 
         int prev = sizes[0];
         // last may be shorter, so use total - 1
-        for (int i = 1; i < total - 1; i++) {
-            size = sizes[i];
+        for (int i = 1; i < failAt; i++) {
+            int size = sizes[i];
             Assertions.assertEquals(prev, size, "Stackframe should be same size");
         }
     }
@@ -67,14 +67,17 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
             public void configure() throws Exception {
                 from("seda:start")
                     .transacted()
-                    .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
                     .log("BEGIN: ${body} stack-size ${header.stackSize}")
-                    .split(body())
-                        .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .split(body()).stopOnException()
+                        .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
                         .log("LINE: ${body} stack-size ${header.stackSize}")
                         .to("mock:line")
+                        .filter(header(Exchange.SPLIT_INDEX).isEqualTo(failAt))
+                            .throwException(new IllegalStateException("Forced"))
+                        .end()
                     .end()
-                    .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .setHeader("stackSize", TransactedStackSizeBreakOnExceptionTest::currentStackSize)
                     .log("RESULT: ${body} stack-size ${header.stackSize}")
                     .to("mock:result");
             }

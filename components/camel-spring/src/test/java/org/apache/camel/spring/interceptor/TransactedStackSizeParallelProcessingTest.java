@@ -18,14 +18,17 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-public class TransactedStackSizeTest extends TransactionClientDataSourceSupport {
+public class TransactedStackSizeParallelProcessingTest extends TransactionClientDataSourceSupport {
 
     private int total = 100;
     private static final boolean PRINT_STACK_TRACE = false;
 
-    @Test
+    @Disabled("Flaky - May report 101 or 102 messages")
+    @RepeatedTest(value = 100)
     public void testStackSize() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(total);
         getMockEndpoint("mock:line").assertNoDuplicates(body());
@@ -67,14 +70,14 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
             public void configure() throws Exception {
                 from("seda:start")
                     .transacted()
-                    .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .setHeader("stackSize", TransactedStackSizeParallelProcessingTest::currentStackSize)
                     .log("BEGIN: ${body} stack-size ${header.stackSize}")
-                    .split(body())
-                        .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .split(body()).parallelProcessing()
+                        .setHeader("stackSize", TransactedStackSizeParallelProcessingTest::currentStackSize)
                         .log("LINE: ${body} stack-size ${header.stackSize}")
                         .to("mock:line")
                     .end()
-                    .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .setHeader("stackSize", TransactedStackSizeParallelProcessingTest::currentStackSize)
                     .log("RESULT: ${body} stack-size ${header.stackSize}")
                     .to("mock:result");
             }
