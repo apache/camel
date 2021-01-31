@@ -239,7 +239,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
             return result.get();
         } else {
             throw new IllegalArgumentException(
-                    "Cannot find InternalProcessorFactory on classpath. Add ccamel-core-processor to classpath.");
+                    "Cannot find InternalProcessorFactory on classpath. Add camel-core-processor to classpath.");
         }
     }
 
