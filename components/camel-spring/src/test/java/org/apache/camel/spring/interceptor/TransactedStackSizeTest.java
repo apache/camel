@@ -17,31 +17,46 @@
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TransactedStackSizeTest extends TransactionClientDataSourceSupport {
 
-    private static final boolean PRINT_STACK_TRACE = true;
+    private int total = 100;
+    private static final boolean PRINT_STACK_TRACE = false;
 
     @Test
     public void testStackSize() throws Exception {
-        getMockEndpoint("mock:line").expectedMessageCount(10);
+        getMockEndpoint("mock:line").expectedMessageCount(total);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("seda:start", "A,B,C,D,E,F,G,H,I,J");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < total; i++) {
+            sb.append(i);
+            sb.append(",");
+        }
+        template.sendBody("seda:start", "" + sb.toString());
 
         assertMockEndpointsSatisfied();
 
-        int[] sizes = new int[11];
-        for (int i = 0; i < 10; i++) {
+        int[] sizes = new int[total + 1];
+        for (int i = 0; i < total; i++) {
             int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
                     int.class);
             sizes[i] = size;
+            Assertions.assertTrue(size < 100, "Stackframe should be < 100");
             log.info("#{} size {}", i, size);
         }
         int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
-        sizes[10] = size;
-        log.info("#{} size {}", 10, size);
+        sizes[total] = size;
+        log.info("#{} size {}", total, size);
+
+        int prev = sizes[0];
+        // last may be shorter, so use total - 1
+        for (int i = 1; i < total - 1; i++) {
+            size = sizes[i];
+            Assertions.assertEquals(prev, size, "Stackframe should be same size");
+        }
     }
 
     @Override
@@ -53,9 +68,11 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
                     .transacted()
                     .split(body())
                         .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                        .log("${body} stack-size ${header.stackSize}")
                         .to("mock:line")
                     .end()
                     .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                    .log("${body} stack-size ${header.stackSize}")
                     .to("mock:result");
             }
         };

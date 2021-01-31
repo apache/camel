@@ -33,6 +33,15 @@ The method `isOnlyDynamicQueryParameters` is removed from `org.apache.camel.spi.
 
 The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
 
+=== Transactions and Multicast, Splitter, or Recipient List EIPs
+
+When using `transacted` in Camel routes with Multicast, Splitter, or Recipient List EIPs, then the exection strackframe
+may grown deep and could cause Stack overflow exception. This has been fixed by refactoring the EIP into a special
+transacted mode and the existing reactive mode.
+
+We do not anticipate any issues but if you are using transactions and these EIPs then we would like to have feedback
+if you encounter any problems with upgrading.
+
 === camel-jackson
 
 When using XML DSL then `jsonView` has been renamed to `jsonViewTypeName` and made general available in the model,

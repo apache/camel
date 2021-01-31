@@ -282,7 +282,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
             return true;
         }
 
-        MulticastTask state = new MulticastTask(exchange, pairs, callback);
+        // we need to run in either transacted or reactive mode because the threading model is different
+        // when we run in transacted mode, then we synchronous processing on the current thread
+        // this can lead to a long execution which can lead to deep stackframes, and therefore we
+        // must handle this specially in a while loop structure to ensure the strackframe does not grow deeper
+        // the reactive mode will execute each sub task in its own runnable task which is scheduled on the reactive executor
+        // which is how the routing engine normally operates
+        AbstractMulticastTask state = exchange.isTransacted()
+                ? new MulticastTransactedTask(exchange, pairs, callback) : new MulticastTask(exchange, pairs, callback);
         if (isParallelProcessing()) {
             executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
@@ -307,7 +314,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
     }
 
-    protected class MulticastTask implements Runnable {
+    protected abstract class AbstractMulticastTask implements Runnable {
 
         final Exchange original;
         final Iterable<ProcessorExchangePair> pairs;
@@ -321,7 +328,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
 
-        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        AbstractMulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -337,6 +344,71 @@ public class MulticastProcessor extends AsyncProcessorSupport
         @Override
         public String toString() {
             return "MulticastTask";
+        }
+
+        protected void aggregate() {
+            Lock lock = this.lock;
+            if (lock.tryLock()) {
+                try {
+                    Exchange exchange;
+                    while (!done.get() && (exchange = completion.poll()) != null) {
+                        doAggregate(result, exchange, original);
+                        if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
+                            doDone(result.get(), true);
+                        }
+                    }
+                } catch (Throwable e) {
+                    original.setException(e);
+                    // and do the done work
+                    doDone(null, false);
+                } finally {
+                    lock.unlock();
+                }
+            }
+        }
+
+        protected void timeout() {
+            Lock lock = this.lock;
+            if (lock.tryLock()) {
+                try {
+                    while (nbAggregated.get() < nbExchangeSent.get()) {
+                        Exchange exchange = completion.pollUnordered();
+                        int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
+                        while (nbAggregated.get() < index) {
+                            AggregationStrategy strategy = getAggregationStrategy(null);
+                            strategy.timeout(result.get() != null ? result.get() : original,
+                                    nbAggregated.getAndIncrement(), nbExchangeSent.get(), timeout);
+                        }
+                        if (exchange != null) {
+                            doAggregate(result, exchange, original);
+                            nbAggregated.incrementAndGet();
+                        }
+                    }
+                    doDone(result.get(), true);
+                } catch (Throwable e) {
+                    original.setException(e);
+                    // and do the done work
+                    doDone(null, false);
+                } finally {
+                    lock.unlock();
+                }
+            }
+        }
+
+        protected void doDone(Exchange exchange, boolean forceExhaust) {
+            if (done.compareAndSet(false, true)) {
+                MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+    }
+
+    /**
+     * Sub taks processed reactive via the {@link ReactiveExecutor}.
+     */
+    protected class MulticastTask extends AbstractMulticastTask {
+
+        public MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+            super(original, pairs, callback);
         }
 
         @Override
@@ -421,59 +493,103 @@ public class MulticastProcessor extends AsyncProcessorSupport
             }
         }
 
-        protected void aggregate() {
-            Lock lock = this.lock;
-            if (lock.tryLock()) {
+    }
+
+    /**
+     * Transacted sub task processed synchronously using {@link Processor#process(Exchange)} with the same thread in a
+     * while loop control flow.
+     */
+    protected class MulticastTransactedTask extends AbstractMulticastTask {
+
+        public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+            super(original, pairs, callback);
+        }
+
+        @Override
+        public void run() {
+            boolean next = true;
+            while (next) {
                 try {
-                    Exchange exchange;
-                    while (!done.get() && (exchange = completion.poll()) != null) {
-                        doAggregate(result, exchange, original);
-                        if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
-                            doDone(result.get(), true);
-                        }
-                    }
-                } catch (Throwable e) {
+                    next = doRun();
+                } catch (Exception e) {
                     original.setException(e);
-                    // and do the done work
                     doDone(null, false);
-                } finally {
-                    lock.unlock();
+                    return;
                 }
             }
         }
 
-        protected void timeout() {
-            Lock lock = this.lock;
-            if (lock.tryLock()) {
-                try {
-                    while (nbAggregated.get() < nbExchangeSent.get()) {
-                        Exchange exchange = completion.pollUnordered();
-                        int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
-                        while (nbAggregated.get() < index) {
-                            AggregationStrategy strategy = getAggregationStrategy(null);
-                            strategy.timeout(result.get() != null ? result.get() : original,
-                                    nbAggregated.getAndIncrement(), nbExchangeSent.get(), timeout);
-                        }
-                        if (exchange != null) {
-                            doAggregate(result, exchange, original);
-                            nbAggregated.incrementAndGet();
-                        }
-                    }
-                    doDone(result.get(), true);
-                } catch (Throwable e) {
-                    original.setException(e);
-                    // and do the done work
-                    doDone(null, false);
-                } finally {
-                    lock.unlock();
-                }
+        boolean doRun() throws Exception {
+            if (done.get()) {
+                return false;
             }
-        }
 
-        protected void doDone(Exchange exchange, boolean forceExhaust) {
-            if (done.compareAndSet(false, true)) {
-                MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            // Check if the iterator is empty
+            // This can happen the very first time we check the existence
+            // of an item before queuing the run.
+            // or some iterators may return true for hasNext() but then null in next()
+            if (!iterator.hasNext()) {
+                doDone(result.get(), true);
+                return false;
             }
+
+            ProcessorExchangePair pair = iterator.next();
+            boolean hasNext = iterator.hasNext();
+            // some iterators may return true for hasNext() but then null in next()
+            if (pair == null && !hasNext) {
+                doDone(result.get(), true);
+                return false;
+            }
+
+            Exchange exchange = pair.getExchange();
+            int index = nbExchangeSent.getAndIncrement();
+            updateNewExchange(exchange, index, pairs, hasNext);
+
+            // Schedule the processing of the next pair
+            if (hasNext) {
+                if (isParallelProcessing()) {
+                    schedule(this);
+                }
+            } else {
+                allSent.set(true);
+            }
+
+            // process next
+
+            // compute time taken if sending to another endpoint
+            StopWatch watch = beforeSend(pair);
+            Processor sync = pair.getProcessor();
+            try {
+                sync.process(exchange);
+            } finally {
+                afterSend(pair, watch);
+            }
+
+            // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+            // remember to test for stop on exception and aggregate before copying back results
+            boolean continueProcessing = PipelineHelper.continueProcessing(exchange,
+                    "Multicast processing failed for number " + index, LOG);
+            if (stopOnException && !continueProcessing) {
+                if (exchange.getException() != null) {
+                    // wrap in exception to explain where it failed
+                    exchange.setException(new CamelExchangeException(
+                            "Multicast processing failed for number " + index, exchange, exchange.getException()));
+                } else {
+                    // we want to stop on exception, and the exception was handled by the error handler
+                    // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                    // so we should set the failed exchange as the result and be done
+                    result.set(exchange);
+                }
+                // and do the done work
+                doDone(exchange, true);
+                return false;
+            }
+
+            // aggregate exchanges if any
+            aggregate();
+
+            // next step
+            return true;
         }
     }
 
