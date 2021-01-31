@@ -288,8 +288,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // must handle this specially in a while loop structure to ensure the strackframe does not grow deeper
         // the reactive mode will execute each sub task in its own runnable task which is scheduled on the reactive executor
         // which is how the routing engine normally operates
-        AbstractMulticastTask state = exchange.isTransacted()
-                ? new MulticastTransactedTask(exchange, pairs, callback) : new MulticastTask(exchange, pairs, callback);
+        MulticastTask state = exchange.isTransacted()
+                ? new MulticastTransactedTask(exchange, pairs, callback) : new MulticastReactiveTask(exchange, pairs, callback);
         if (isParallelProcessing()) {
             executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
@@ -314,7 +314,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
     }
 
-    protected abstract class AbstractMulticastTask implements Runnable {
+    protected abstract class MulticastTask implements Runnable {
 
         final Exchange original;
         final Iterable<ProcessorExchangePair> pairs;
@@ -328,7 +328,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
 
-        AbstractMulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -405,9 +405,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
     /**
      * Sub taks processed reactive via the {@link ReactiveExecutor}.
      */
-    protected class MulticastTask extends AbstractMulticastTask {
+    protected class MulticastReactiveTask extends MulticastTask {
 
-        public MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             super(original, pairs, callback);
         }
 
@@ -499,7 +499,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * Transacted sub task processed synchronously using {@link Processor#process(Exchange)} with the same thread in a
      * while loop control flow.
      */
-    protected class MulticastTransactedTask extends AbstractMulticastTask {
+    protected class MulticastTransactedTask extends MulticastTask {
 
         public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             super(original, pairs, callback);
