@@ -22,8 +22,8 @@ import org.junit.jupiter.api.Test;
 
 public class TransactedStackSizeTest extends TransactionClientDataSourceSupport {
 
-    private int total = 100;
     private static final boolean PRINT_STACK_TRACE = false;
+    private int total = 100;
 
     @Test
     public void testStackSize() throws Exception {

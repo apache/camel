@@ -23,9 +23,9 @@ import org.junit.jupiter.api.Test;
 
 public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDataSourceSupport {
 
+    private static final boolean PRINT_STACK_TRACE = false;
     private int total = 100;
     private int failAt = 70;
-    private static final boolean PRINT_STACK_TRACE = false;
 
     @Test
     public void testStackSize() throws Exception {

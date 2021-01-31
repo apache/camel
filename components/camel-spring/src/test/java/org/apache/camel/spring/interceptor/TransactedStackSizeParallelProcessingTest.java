@@ -22,8 +22,8 @@ import org.junit.jupiter.api.RepeatedTest;
 
 public class TransactedStackSizeParallelProcessingTest extends TransactionClientDataSourceSupport {
 
-    private int total = 100;
     private static final boolean PRINT_STACK_TRACE = false;
+    private int total = 100;
 
     // to test for flaky when using parallel processing then set this to 100
     @RepeatedTest(value = 1)
