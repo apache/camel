@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.ServerWebSocket;
@@ -56,13 +57,39 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
                 String subProtocols = request.getHeader("Sec-WebSocket-Protocol");
                 assertEquals("foo,bar,cheese", subProtocols);
 
-                ServerWebSocket webSocket = request.upgrade();
-                webSocket.textMessageHandler(new Handler<String>() {
-                    @Override
-                    public void handle(String message) {
-                        latch.countDown();
+                String connectionHeader = request.headers().get(HttpHeaders.CONNECTION);
+                if (connectionHeader == null || !connectionHeader.toLowerCase().contains("upgrade")) {
+                    context.response().setStatusCode(400);
+                    context.response().end("Can \"Upgrade\" only to \"WebSocket\".");
+                } else {
+                    // we're about to upgrade the connection, which means an asynchronous
+                    // operation. We have to pause the request otherwise we will loose the
+                    // body of the request once the upgrade completes
+                    final boolean parseEnded = request.isEnded();
+                    if (!parseEnded) {
+                        request.pause();
                     }
-                });
+                    // upgrade
+                    request.toWebSocket(toWebSocket -> {
+                        if (toWebSocket.succeeded()) {
+                            // resume the parsing
+                            if (!parseEnded) {
+                                request.resume();
+                            }
+                            // handle the websocket session as usual
+                            ServerWebSocket webSocket = toWebSocket.result();
+                            webSocket.textMessageHandler(new Handler<String>() {
+                                @Override
+                                public void handle(String message) {
+                                    latch.countDown();
+                                }
+                            });
+                        } else {
+                            // the upgrade failed
+                            context.fail(toWebSocket.cause());
+                        }
+                    });
+                }
             }
         });
 

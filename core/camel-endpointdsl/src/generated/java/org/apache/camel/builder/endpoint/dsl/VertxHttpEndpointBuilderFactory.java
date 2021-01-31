@@ -153,7 +153,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @param httpMethod the value to set
          * @return the dsl builder
          */
-        default VertxHttpEndpointBuilder httpMethod(HttpMethod httpMethod) {
+        default VertxHttpEndpointBuilder httpMethod(Object httpMethod) {
             doSetProperty("httpMethod", httpMethod);
             return this;
         }
@@ -711,22 +711,6 @@ public interface VertxHttpEndpointBuilderFactory {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>io.vertx.core.http.HttpMethod</code> enum.
-     */
-    enum HttpMethod {
-        OPTIONS,
-        GET,
-        HEAD,
-        POST,
-        PUT,
-        DELETE,
-        TRACE,
-        CONNECT,
-        PATCH,
-        OTHER;
     }
 
     /**

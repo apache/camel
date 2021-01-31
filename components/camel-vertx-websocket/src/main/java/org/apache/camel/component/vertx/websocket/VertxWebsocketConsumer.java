@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import io.vertx.core.net.SocketAddress;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -58,9 +59,10 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         return endpoint.getComponent();
     }
 
-    public void onMessage(String connectionKey, Object message) {
+    public void onMessage(String connectionKey, Object message, SocketAddress remote) {
         Exchange exchange = createExchange(true);
-        exchange.getMessage().setHeader(VertxWebsocketContants.CONNECTION_KEY, connectionKey);
+        exchange.getMessage().setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
+        exchange.getMessage().setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
         exchange.getMessage().setBody(message);
 
         // use default consumer callback
@@ -68,9 +70,10 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         getAsyncProcessor().process(exchange, cb);
     }
 
-    public void onException(String connectionKey, Throwable cause) {
+    public void onException(String connectionKey, Throwable cause, SocketAddress remote) {
         Exchange exchange = createExchange(false);
-        exchange.getMessage().setHeader(VertxWebsocketContants.CONNECTION_KEY, connectionKey);
+        exchange.getMessage().setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
+        exchange.getMessage().setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
         getExceptionHandler().handleException("Error processing exchange", exchange, cause);
         releaseExchange(exchange, false);
     }

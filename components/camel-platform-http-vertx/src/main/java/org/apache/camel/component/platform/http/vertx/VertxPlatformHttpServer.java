@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -159,7 +161,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                 });
     }
 
-    protected void startServer() {
+    protected void startServer() throws GeneralSecurityException, IOException {
         HttpServerOptions options = new HttpServerOptions();
 
         configureSSL(options, configuration, context);

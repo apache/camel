@@ -29,7 +29,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.KeyStoreOptions;
 import io.vertx.core.net.TCPSSLOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -53,13 +53,13 @@ public final class VertxHttpHelper {
      */
     public static void setupSSLOptions(SSLContextParameters sslContextParameters, TCPSSLOptions options) {
         options.setSsl(true);
-        options.setKeyCertOptions(new JksOptions() {
+        options.setKeyCertOptions(new KeyStoreOptions() {
             @Override
             public KeyManagerFactory getKeyManagerFactory(Vertx vertx) throws Exception {
                 return createKeyManagerFactory(sslContextParameters);
             }
         });
-        options.setTrustOptions(new JksOptions() {
+        options.setTrustOptions(new KeyStoreOptions() {
             @Override
             public TrustManagerFactory getTrustManagerFactory(Vertx vertx) throws Exception {
                 return createTrustManagerFactory(sslContextParameters);

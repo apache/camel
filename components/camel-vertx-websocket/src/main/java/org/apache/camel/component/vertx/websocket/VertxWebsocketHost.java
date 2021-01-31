@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
@@ -48,7 +49,7 @@ public class VertxWebsocketHost {
     private final Map<String, Route> routeRegistry = new HashMap<>();
     private final Map<String, ServerWebSocket> connectedPeers = new ConcurrentHashMap<>();
     private HttpServer server;
-    private int port = VertxWebsocketContants.DEFAULT_VERTX_SERVER_PORT;
+    private int port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
 
     public VertxWebsocketHost(VertxWebsocketHostConfiguration websocketHostConfiguration, VertxWebsocketHostKey key) {
         this.hostConfiguration = websocketHostConfiguration;
@@ -73,29 +74,57 @@ public class VertxWebsocketHost {
 
         route.handler(routingContext -> {
             HttpServerRequest request = routingContext.request();
-            ServerWebSocket webSocket = request.upgrade();
-            SocketAddress socketAddress = webSocket.localAddress();
-
-            String connectionKey = UUID.randomUUID().toString();
-            connectedPeers.put(connectionKey, webSocket);
-
-            if (LOG.isDebugEnabled()) {
-                if (socketAddress != null) {
-                    LOG.debug("WebSocket peer {} connected from {}", connectionKey, socketAddress.host());
+            String connectionHeader = request.headers().get(HttpHeaders.CONNECTION);
+            if (connectionHeader == null || !connectionHeader.toLowerCase().contains("upgrade")) {
+                routingContext.response().setStatusCode(400);
+                routingContext.response().end("Can \"Upgrade\" only to \"WebSocket\".");
+            } else {
+                // we're about to upgrade the connection, which means an asynchronous
+                // operation. We have to pause the request otherwise we will loose the
+                // body of the request once the upgrade completes
+                final boolean parseEnded = request.isEnded();
+                if (!parseEnded) {
+                    request.pause();
                 }
-            }
+                // upgrade
+                request.toWebSocket(toWebSocket -> {
+                    if (toWebSocket.succeeded()) {
+                        // resume the parsing
+                        if (!parseEnded) {
+                            request.resume();
+                        }
+                        // handle the websocket session as usual
+                        ServerWebSocket webSocket = toWebSocket.result();
+                        SocketAddress socketAddress = webSocket.localAddress();
+                        SocketAddress remote = webSocket.remoteAddress();
 
-            webSocket.textMessageHandler(message -> consumer.onMessage(connectionKey, message));
-            webSocket.binaryMessageHandler(message -> consumer.onMessage(connectionKey, message.getBytes()));
-            webSocket.exceptionHandler(exception -> consumer.onException(connectionKey, exception));
-            webSocket.closeHandler(closeEvent -> {
-                if (LOG.isDebugEnabled()) {
-                    if (socketAddress != null) {
-                        LOG.debug("WebSocket peer {} disconnected from {}", connectionKey, socketAddress.host());
+                        String connectionKey = UUID.randomUUID().toString();
+                        connectedPeers.put(connectionKey, webSocket);
+
+                        if (LOG.isDebugEnabled()) {
+                            if (socketAddress != null) {
+                                LOG.debug("WebSocket peer {} connected from {}", connectionKey, socketAddress.host());
+                            }
+                        }
+
+                        webSocket.textMessageHandler(message -> consumer.onMessage(connectionKey, message, remote));
+                        webSocket
+                                .binaryMessageHandler(message -> consumer.onMessage(connectionKey, message.getBytes(), remote));
+                        webSocket.exceptionHandler(exception -> consumer.onException(connectionKey, exception, remote));
+                        webSocket.closeHandler(closeEvent -> {
+                            if (LOG.isDebugEnabled()) {
+                                if (socketAddress != null) {
+                                    LOG.debug("WebSocket peer {} disconnected from {}", connectionKey, socketAddress.host());
+                                }
+                            }
+                            connectedPeers.remove(connectionKey);
+                        });
+                    } else {
+                        // the upgrade failed
+                        routingContext.fail(toWebSocket.cause());
                     }
-                }
-                connectedPeers.remove(connectionKey);
-            });
+                });
+            }
         });
 
         routeRegistry.put(configuration.getPath(), route);
@@ -120,7 +149,7 @@ public class VertxWebsocketHost {
     /**
      * Starts a Vert.x HTTP server to host the WebSocket router
      */
-    public void start() throws InterruptedException, ExecutionException {
+    public void start() throws Exception {
         if (server == null) {
             Vertx vertx = hostConfiguration.getVertx();
             Router router = hostConfiguration.getRouter();
@@ -178,7 +207,7 @@ public class VertxWebsocketHost {
         }
         connectedPeers.clear();
         routeRegistry.clear();
-        port = VertxWebsocketContants.DEFAULT_VERTX_SERVER_PORT;
+        port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
     }
 
     /**

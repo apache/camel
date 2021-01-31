@@ -14,19 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.vertx.websocket;
+package org.apache.camel.component.vertx.http;
 
-import io.vertx.core.net.NetServerOptions;
+import io.vertx.core.http.HttpMethod;
+import org.apache.camel.Converter;
 
-public final class VertxWebsocketContants {
+/**
+ * Converter methods to convert from / to Vert.x HttpMethod
+ */
+@Converter(generateLoader = true)
+public final class VertxHttpMethodConverter {
 
-    public static final String DEFAULT_VERTX_SERVER_HOST = NetServerOptions.DEFAULT_HOST;
-    public static final int DEFAULT_VERTX_SERVER_PORT = NetServerOptions.DEFAULT_PORT;
-    public static final String DEFAULT_VERTX_SERVER_PATH = "/";
+    private VertxHttpMethodConverter() {
+    }
 
-    public static final String CONNECTION_KEY = "CamelVertxWebsocket.connectionKey";
-    public static final String SEND_TO_ALL = "CamelVertxWebsocket.sendToAll";
+    @Converter
+    public static HttpMethod toHttpMethod(String string) {
+        return HttpMethod.valueOf(string);
+    }
 
-    private VertxWebsocketContants() {
+    @Converter
+    public static String toString(HttpMethod method) {
+        return method.toString();
     }
 }

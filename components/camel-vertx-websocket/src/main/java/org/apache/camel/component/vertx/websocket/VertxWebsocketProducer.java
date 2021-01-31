@@ -107,7 +107,7 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
         Map<String, WebSocketBase> connectedPeers = new HashMap<>();
         VertxWebsocketEndpoint endpoint = getEndpoint();
 
-        String connectionKey = exchange.getMessage().getHeader(VertxWebsocketContants.CONNECTION_KEY, String.class);
+        String connectionKey = exchange.getMessage().getHeader(VertxWebsocketConstants.CONNECTION_KEY, String.class);
         if (connectionKey != null) {
             if (endpoint.isManagedPort()) {
                 Stream.of(connectionKey.split(","))
@@ -132,7 +132,7 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
     }
 
     private boolean isSendToAll(Message message) {
-        Boolean value = message.getHeader(VertxWebsocketContants.SEND_TO_ALL, getEndpoint().getConfiguration().isSendToAll(),
+        Boolean value = message.getHeader(VertxWebsocketConstants.SEND_TO_ALL, getEndpoint().getConfiguration().isSendToAll(),
                 Boolean.class);
         return value == null ? false : value;
     }
