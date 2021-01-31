@@ -45,10 +45,11 @@ public final class SqlHelper {
             throws NoTypeConversionAvailableException, IOException {
         String answer = query;
         if (ResourceHelper.hasScheme(query)) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, query);
-            answer = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
-            if (placeholder != null) {
-                answer = answer.replaceAll(placeholder, "@");
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, query)) {
+                answer = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
+                if (placeholder != null) {
+                    answer = answer.replaceAll(placeholder, "@");
+                }
             }
         }
         return answer;

@@ -107,8 +107,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         private String getInputUri() {
             // find the xsd with relative path
             if (ObjectHelper.isNotEmpty(relatedURI)) {
-                try {
-                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, relatedURI);
+                try (ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, relatedURI)) {
                     return relatedURI;
                 } catch (IOException e) {
                     // ignore the exception

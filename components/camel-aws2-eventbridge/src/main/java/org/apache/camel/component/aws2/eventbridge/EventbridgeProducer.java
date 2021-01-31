@@ -150,10 +150,11 @@ public class EventbridgeProducer extends DefaultProducer {
                 builder.name(ruleName);
             }
             if (ObjectHelper.isEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
-                InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
-                        getConfiguration().getEventPatternFile());
-                String eventPattern = IOUtils.toString(s, Charset.defaultCharset());
-                builder.eventPattern(eventPattern);
+                try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
+                        getConfiguration().getEventPatternFile())) {
+                    String eventPattern = IOUtils.toString(s, Charset.defaultCharset());
+                    builder.eventPattern(eventPattern);
+                }
             } else {
                 String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
                 builder.eventPattern(eventPattern);
