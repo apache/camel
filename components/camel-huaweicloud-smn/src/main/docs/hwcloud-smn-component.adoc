@@ -126,17 +126,18 @@ with the following path and query parameters:
 
 |=======================================================================
 
-== Supported smn services
 
-- publishMessageService
+== Supported list of smn services and corresponding operations
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Service |Operations
+
+|`publishMessageService` | publishAsTextMessage, publishAsTemplatedMessage|
+|=======================================================================
 
 
-== Supported smn operations
-
-- publishAsTextMessage
-- publishAsTemplatedMessage
-
-== Inline Configuration of Route
+== Inline Configuration of route
 ==== publishAsTextMessage
 Java DSL
 [source,java]
@@ -154,18 +155,18 @@ XML DSL
 [source,xml]
 --------------------------------------------------------------------------------
 <route>
-            <from uri="direct:triggerRoute"/>
-            <setProperty name="CamelHwCloudSmnSubject">
-                <constant>this is my subjectline</constant>
-            </setProperty>
-            <setProperty name="CamelHwCloudSmnTopic">
-                <constant>reji-test</constant>
-            </setProperty>
-            <setProperty name="CamelHwCloudSmnMessageTtl">
-                <constant>60</constant>
-            </setProperty>
-            <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;authKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
-        </route>
+   <from uri="direct:triggerRoute" />
+   <setProperty name="CamelHwCloudSmnSubject">
+      <constant>this is my subjectline</constant>
+   </setProperty>
+   <setProperty name="CamelHwCloudSmnTopic">
+      <constant>reji-test</constant>
+   </setProperty>
+   <setProperty name="CamelHwCloudSmnMessageTtl">
+      <constant>60</constant>
+   </setProperty>
+   <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;authKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+</route>
 --------------------------------------------------------------------------------
 
 
@@ -191,16 +192,16 @@ Check the following code snippets
 
 [source,xml]
 ----
-   <bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.smn.models.ServiceKeys">
-       <property name="authenticationKey" value="your_auth_key"/>
-       <property name="secretKey" value="your_secret_key"/>
-   </bean>
+<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.smn.models.ServiceKeys">
+   <property name="authenticationKey" value="your_auth_key" />
+   <property name="secretKey" value="your_secret_key" />
+</bean>
 ----
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:triggerRoute")
-.setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
-.setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
-.setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
-.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
+ .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
+ .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
+ .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
+ .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 --------------------------------------------------------------------------------
