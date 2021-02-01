@@ -357,8 +357,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The comma-separated list of operations to skip during streaming, defined
-     * as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no
-     * operations will be skipped.
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
+     * no operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;

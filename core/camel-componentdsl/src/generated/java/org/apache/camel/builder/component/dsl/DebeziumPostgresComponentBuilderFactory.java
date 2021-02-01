@@ -1150,8 +1150,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
-         * default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
+         * By default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

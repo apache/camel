@@ -32,6 +32,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": getOrCreateConfiguration(target).setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
@@ -171,6 +173,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "additionalProperties": return java.util.Map.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "columnblacklist":
@@ -311,6 +315,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return getOrCreateConfiguration(target).getBinaryHandlingMode();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":

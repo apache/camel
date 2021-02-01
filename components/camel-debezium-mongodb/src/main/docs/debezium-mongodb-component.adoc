@@ -102,7 +102,7 @@ The Debezium MongoDB Connector component supports 57 options, which are listed b
 | *queryFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (mongodb) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (mongodb) | Whether field names will be sanitized to Avro naming conventions | false | boolean
-| *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
+| *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotCollectionFilter{zwsp}Overrides* (mongodb) | This property contains a comma-separated list of ., for which the initial snapshot may be a subset of data present in the data source. The subset would be defined by mongodb filter query specified as value for property snapshot.collection.filter.override.. |  | String
 | *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
@@ -188,7 +188,7 @@ with the following path and query parameters:
 | *queryFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (mongodb) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (mongodb) | Whether field names will be sanitized to Avro naming conventions | false | boolean
-| *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
+| *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotCollectionFilter{zwsp}Overrides* (mongodb) | This property contains a comma-separated list of ., for which the initial snapshot may be a subset of data present in the data source. The subset would be defined by mongodb filter query specified as value for property snapshot.collection.filter.override.. |  | String
 | *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int

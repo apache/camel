@@ -44,7 +44,7 @@ debezium-sqlserver:name[?options]
 
 
 // component options: START
-The Debezium SQL Server Connector component supports 67 options, which are listed below.
+The Debezium SQL Server Connector component supports 68 options, which are listed below.
 
 
 
@@ -65,6 +65,7 @@ The Debezium SQL Server Connector component supports 67 options, which are liste
 | *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
 | *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *binaryHandlingMode* (sqlserver) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
 | *columnBlacklist* (sqlserver) | Regular expressions matching columns to exclude from change events (deprecated, use column.exclude.list instead) |  | String
 | *columnExcludeList* (sqlserver) | Regular expressions matching columns to exclude from change events |  | String
 | *columnIncludeList* (sqlserver) | Regular expressions matching columns to include in change events |  | String
@@ -100,7 +101,7 @@ The Debezium SQL Server Connector component supports 67 options, which are liste
 | *queryFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (sqlserver) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (sqlserver) | Whether field names will be sanitized to Avro naming conventions | false | boolean
-| *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
+| *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotDelayMs* (sqlserver) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
 | *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
 | *snapshotIncludeCollectionList* (sqlserver) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
@@ -141,7 +142,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (67 parameters):
+=== Query Parameters (68 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -161,6 +162,7 @@ with the following path and query parameters:
 | *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *binaryHandlingMode* (sqlserver) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
 | *columnBlacklist* (sqlserver) | Regular expressions matching columns to exclude from change events (deprecated, use column.exclude.list instead) |  | String
 | *columnExcludeList* (sqlserver) | Regular expressions matching columns to exclude from change events |  | String
 | *columnIncludeList* (sqlserver) | Regular expressions matching columns to include in change events |  | String
@@ -196,7 +198,7 @@ with the following path and query parameters:
 | *queryFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (sqlserver) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (sqlserver) | Whether field names will be sanitized to Avro naming conventions | false | boolean
-| *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
+| *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotDelayMs* (sqlserver) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
 | *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
 | *snapshotIncludeCollectionList* (sqlserver) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String

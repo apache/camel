@@ -302,6 +302,25 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including:'bytes' represents binary data as byte
+         * array (default)'base64' represents binary data as base64-encoded
+         * string'hex' represents binary data as hex-encoded (base16) string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: bytes
+         * Group: sqlserver
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder binaryHandlingMode(
+                java.lang.String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to exclude from change events
          * (deprecated, use column.exclude.list instead).
          * 
@@ -906,8 +925,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
-         * default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
+         * By default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1280,6 +1299,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumSqlserverComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "binaryHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnBlacklist((java.lang.String) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnIncludeList((java.lang.String) value); return true;

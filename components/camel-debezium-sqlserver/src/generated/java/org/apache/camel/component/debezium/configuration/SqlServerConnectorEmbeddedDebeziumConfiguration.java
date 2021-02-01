@@ -93,6 +93,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
+    @UriParam(label = LABEL_NAME, defaultValue = "bytes")
+    private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
@@ -481,8 +483,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The comma-separated list of operations to skip during streaming, defined
-     * as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no
-     * operations will be skipped.
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
+     * no operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;
@@ -647,6 +649,20 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getDecimalHandlingMode() {
         return decimalHandlingMode;
+    }
+
+    /**
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including:'bytes' represents binary data as byte array
+     * (default)'base64' represents binary data as base64-encoded string'hex'
+     * represents binary data as hex-encoded (base16) string
+     */
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
+    }
+
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
     }
 
     /**
@@ -872,6 +888,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.server.timezone", databaseServerTimezone);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
+        addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
