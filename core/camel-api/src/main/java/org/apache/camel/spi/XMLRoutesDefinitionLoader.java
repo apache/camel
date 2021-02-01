@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NamedNode;
 
 /**
  * SPI for loading routes/rests from XML input streams and parsing this to model definition classes.
@@ -45,10 +44,4 @@ public interface XMLRoutesDefinitionLoader {
      * Loads from XML into rests.
      */
     Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception;
-
-    /**
-     * Creates a model of the given type from the xml
-     */
-    <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws Exception;
-
 }
