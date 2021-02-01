@@ -307,12 +307,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
-    public void restart() throws Exception {
-        context.stop();
-        context.start();
-    }
-
-    @Override
     public void suspend() throws Exception {
         context.suspend();
     }

@@ -22,9 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- */
 public class DefaultCamelContextRestartTest extends ContextTestSupport {
 
     @Test
@@ -44,18 +41,14 @@ public class DefaultCamelContextRestartTest extends ContextTestSupport {
         assertEquals(0, context.getRoutes().size());
 
         // now start
-        context.start();
-        assertTrue(context.getStatus().isStarted());
-        assertFalse(context.getStatus().isStopped());
-        assertEquals(1, context.getRoutes().size());
-
-        // must obtain a new template
-        template = context.createProducerTemplate();
-
-        // should still work
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBody("direct:start", "Bye World");
-        assertMockEndpointsSatisfied();
+        try {
+            context.start();
+            fail("Should throw exception");
+        } catch (IllegalStateException e) {
+            assertEquals(
+                    "CamelContext cannot be started after it has previously been stopped. You can use suspend/resume instead.",
+                    e.getMessage());
+        }
     }
 
     @Override

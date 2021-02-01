@@ -143,9 +143,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Stop Camel (shutdown)")
     void stop() throws Exception;
 
-    @ManagedOperation(description = "Restart Camel (stop and then start)")
-    void restart() throws Exception;
-
     @ManagedOperation(description = "Suspend Camel")
     void suspend() throws Exception;
 

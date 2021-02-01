@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,16 +32,13 @@ public class LogCustomFormatterTest extends ContextTestSupport {
 
     private TestExchangeFormatter exchangeFormatter;
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     @Test
     public void testCustomFormatterInComponent() throws Exception {
-        context.stop();
-
         LogComponent log = new LogComponent();
         exchangeFormatter = new TestExchangeFormatter();
         log.setExchangeFormatter(exchangeFormatter);
@@ -61,8 +57,6 @@ public class LogCustomFormatterTest extends ContextTestSupport {
 
     @Test
     public void testCustomFormatterInRegistry() throws Exception {
-        context.stop();
-
         exchangeFormatter = new TestExchangeFormatter();
         context.getRegistry().bind("logFormatter", exchangeFormatter);
 
@@ -79,8 +73,6 @@ public class LogCustomFormatterTest extends ContextTestSupport {
 
     @Test
     public void testCustomFormatterInRegistryOptions() throws Exception {
-        context.stop();
-
         exchangeFormatter = new TestExchangeFormatter();
         context.getRegistry().bind("logFormatter", exchangeFormatter);
         assertEquals("", exchangeFormatter.getPrefix());
@@ -97,8 +89,6 @@ public class LogCustomFormatterTest extends ContextTestSupport {
 
     @Test
     public void testCustomFormatterInRegistryUnknownOption() throws Exception {
-        context.stop();
-
         exchangeFormatter = new TestExchangeFormatter();
         context.getRegistry().bind("logFormatter", exchangeFormatter);
         assertEquals("", exchangeFormatter.getPrefix());
@@ -118,8 +108,6 @@ public class LogCustomFormatterTest extends ContextTestSupport {
 
     @Test
     public void testFormatterNotPickedUpWithDifferentKey() throws Exception {
-        context.stop();
-
         exchangeFormatter = new TestExchangeFormatter();
         context.getRegistry().bind("anotherFormatter", exchangeFormatter);
         context.getRegistry().bind("yetAnotherFormatter", new DefaultExchangeFormatter());

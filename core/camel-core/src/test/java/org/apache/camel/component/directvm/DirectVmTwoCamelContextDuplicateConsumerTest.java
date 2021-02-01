@@ -43,8 +43,8 @@ public class DirectVmTwoCamelContextDuplicateConsumerTest extends AbstractDirect
                     e.getMessage());
         }
 
-        // stop first camel context then
-        context.stop();
+        // suspend first camel context then
+        context.suspend();
 
         // and start the 3rd which should work now
         third.start();

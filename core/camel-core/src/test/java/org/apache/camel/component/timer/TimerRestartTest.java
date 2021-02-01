@@ -33,11 +33,11 @@ public class TimerRestartTest extends ContextTestSupport {
         mock.reset();
         mock.expectedMessageCount(0);
 
-        context.stop();
+        context.suspend();
 
         mock.reset();
 
-        context.start();
+        context.resume();
 
         mock.expectedMinimumMessageCount(1);
 
