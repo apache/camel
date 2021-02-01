@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -107,7 +108,9 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         private String getInputUri() {
             // find the xsd with relative path
             if (ObjectHelper.isNotEmpty(relatedURI)) {
-                try (ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, relatedURI)) {
+                try {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, relatedURI);
+                    IOHelper.close(is);
                     return relatedURI;
                 } catch (IOException e) {
                     // ignore the exception
