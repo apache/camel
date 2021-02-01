@@ -27,24 +27,13 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultPackageScanResourceResolverTest {
-    @Test
-    public void testFileResourcesScan() {
-        DefaultCamelContext ctx = new DefaultCamelContext(false);
-
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/**/*.xml")).containsOnly("dummy-a",
-                "scan-a", "dummy-b", "scan-b");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml")).containsOnly("dummy-a",
-                "scan-a");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml")).containsOnly("dummy-b",
-                "scan-b");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml")).isEmpty();
-    }
-
     private static Set<String> loadRouteIDs(CamelContext context, String path) {
         return loadRouteDefinitions(context, path).stream().map(RouteDefinition::getId).collect(Collectors.toSet());
     }
@@ -54,10 +43,16 @@ public class DefaultPackageScanResourceResolverTest {
 
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         try {
-            for (InputStream is : ecc.getPackageScanResourceResolver().findResources(path)) {
-                RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
-                if (routes != null) {
-                    answer.addAll(routes.getRoutes());
+            for (Resource resource : ecc.getPackageScanResourceResolver().findResources(path)) {
+                InputStream is = resource.getInputStream();
+                try {
+                    RoutesDefinition routes
+                            = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
+                    if (routes != null) {
+                        answer.addAll(routes.getRoutes());
+                    }
+                } finally {
+                    IOHelper.close(is);
                 }
             }
         } catch (Exception e) {
@@ -65,5 +60,19 @@ public class DefaultPackageScanResourceResolverTest {
         }
 
         return answer;
+    }
+
+    @Test
+    public void testFileResourcesScan() {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/**/*.xml"))
+                .containsOnly("dummy-a", "scan-a", "dummy-b", "scan-b");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml"))
+                .containsOnly("dummy-a", "scan-a");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml"))
+                .containsOnly("dummy-b", "scan-b");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml"))
+                .isEmpty();
     }
 }

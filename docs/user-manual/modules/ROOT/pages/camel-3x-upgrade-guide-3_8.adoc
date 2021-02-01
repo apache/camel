@@ -34,6 +34,13 @@ The following type names are renamed in `CamelEvent.Type` enum:
 The method `isOnlyDynamicQueryParameters` is removed from `org.apache.camel.spi.SendDynamicAware` and
 `org.apache.camel.support.component.SendDynamicAwareSupport` classes.
 
+The `PackageScanResourceResolver` has been revisited and `findResources`` now returns a colelctions of `org.apache.camel.spi.Resource` which provide both the location of the resolved resources an a method to open the related InpuStream:
+
+[source,java]
+----
+Collection<Resource> findResources(String location) throws Exception;
+----
+
 === OnCompletion EIP
 
 The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
@@ -130,4 +137,5 @@ org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepositor
 === Camel-AWS
 
 All the camel-aws components except camel-aws-xray have been deprecated. We suggest to migrate to Camel-AWS2-* components, because in future releases the AWS components will be removed and with the next LTS release (3.10 probably) camel-aws2 components will be renamed to camel-aws.
+
 
