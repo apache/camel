@@ -32,21 +32,23 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 public class SlackProducer extends DefaultProducer {
 
-    private SlackEndpoint slackEndpoint;
+    private final SlackEndpoint slackEndpoint;
+    private final HttpClient client;
 
     public SlackProducer(SlackEndpoint endpoint) {
         super(endpoint);
         this.slackEndpoint = endpoint;
+        this.client = HttpClientBuilder.create().useSystemProperties().build();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        // Create an HttpClient and Post object
-        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
+        // Create Post object
         HttpPost httpPost = new HttpPost(slackEndpoint.getWebhookUrl());
 
         // Build Helper object
@@ -73,11 +75,18 @@ public class SlackProducer extends DefaultProducer {
         // Do the post
         httpPost.setEntity(body);
 
-        HttpResponse response = client.execute(httpPost);
+        HttpResponse response = null;
+        try {
+            response = client.execute(httpPost);
 
-        // 2xx is OK, anything else we regard as failure
-        if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-            throw new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange);
+            // 2xx is OK, anything else we regard as failure
+            if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+                throw new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange);
+            }
+        } finally {
+            if (response != null) {
+                EntityUtils.consumeQuietly(response.getEntity());
+            }
         }
     }
 
