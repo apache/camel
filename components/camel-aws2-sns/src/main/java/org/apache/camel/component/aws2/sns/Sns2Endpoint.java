@@ -160,15 +160,16 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
 
-            InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
-                    getConfiguration().getPolicy());
-            String policy = IOUtils.toString(s, Charset.defaultCharset());
+            try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
+                    getConfiguration().getPolicy())) {
+                String policy = IOUtils.toString(s, Charset.defaultCharset());
 
-            snsClient.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn())
-                    .attributeName("Policy").attributeValue(policy)
-                    .build());
+                snsClient.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn())
+                        .attributeName("Policy").attributeValue(policy)
+                        .build());
 
-            LOG.trace("Topic policy updated");
+                LOG.trace("Topic policy updated");
+            }
         }
 
         if (configuration.isSubscribeSNStoSQS()) {

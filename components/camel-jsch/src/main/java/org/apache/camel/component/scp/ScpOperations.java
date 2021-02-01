@@ -251,8 +251,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 if (!name.startsWith("classpath:")) {
                     name = "file:" + name;
                 }
-                try {
-                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name);
+                try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name)) {
                     byte[] data = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
                     jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
