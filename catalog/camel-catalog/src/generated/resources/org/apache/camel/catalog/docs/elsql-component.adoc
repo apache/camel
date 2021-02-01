@@ -14,7 +14,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/elsql.adoc
 
 The ELSQL component is an extension to the existing
 xref:sql-component.adoc[SQL Component] that uses
-https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries.
+https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
 handling.
