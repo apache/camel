@@ -189,7 +189,7 @@ public class SftpEmbeddedService implements FtpService {
         try {
             FileKeyPairProvider provider = new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem"));
 
-            provider.loadKeys();
+            provider.loadKeys(null);
             return true;
         } catch (Exception e) {
             String name = System.getProperty("os.name");

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -35,6 +37,7 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
+import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.common.util.io.IoUtils;
 import org.apache.sshd.common.util.security.SecurityUtils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -111,7 +114,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     }
 
     @Override
-    public Iterable<KeyPair> loadKeys() {
+    public Iterable<KeyPair> loadKeys(SessionContext sessionContext) throws IOException, GeneralSecurityException {
         if (!SecurityUtils.isBouncyCastleRegistered()) {
             throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
         }
