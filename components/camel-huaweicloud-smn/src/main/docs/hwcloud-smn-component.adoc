@@ -181,7 +181,7 @@ from("direct:triggerRoute")
 .setProperty("CamelHwCloudSmnMessageTtl", constant(60))
 .setProperty("CamelHwCloudSmnTemplateTags", constant(tags))
 .setProperty("CamelHwCloudSmnTemplateName", constant("hello-template"))
-.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
+.to("hwcloud-smn:publishMessageService?operation=publishAsTemplatedMessage&authKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 --------------------------------------------------------------------------------
 
 == Using ServiceKey configuration Bean
