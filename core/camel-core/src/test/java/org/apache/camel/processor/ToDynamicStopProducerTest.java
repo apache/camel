@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -27,7 +28,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultLRUCacheFactory;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.LRUCacheFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +42,16 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        // use default lru cache for this test
+        LRUCacheFactory.setLRUCacheFactory(new DefaultLRUCacheFactory());
+
+        return context;
     }
 
     @Test
