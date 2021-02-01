@@ -276,6 +276,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
+     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
+     *
+     * @param ref reference to the error handler to use
+     */
+    public void errorHandler(String ref) {
+        if (!getRouteCollection().getRoutes().isEmpty()) {
+            throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
+        }
+        getRouteCollection().setCamelContext(getContext());
+        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(ref));
+    }
+
+    /**
      * Injects a property placeholder value with the given key converted to the given type.
      *
      * @param  key       the property key
