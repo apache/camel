@@ -19,7 +19,6 @@ package org.apache.camel.xml.in;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NamedNode;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.spi.annotations.JdkService;
 
@@ -48,11 +47,6 @@ public class ModelParserXMLRoutesDefinitionLoader implements XMLRoutesDefinition
     public Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
         ModelParser parser = new ModelParser(inputStream, NAMESPACE);
         return parser.parseRestsDefinition();
-    }
-
-    @Override
-    public <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws Exception {
-        throw new UnsupportedOperationException("Not supported use camel-xml-jaxb instead");
     }
 
     @Override
