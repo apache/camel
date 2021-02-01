@@ -60,7 +60,6 @@ import org.apache.camel.util.json.JsonObject;
 public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
-    private static final String MODEL_DIR = "org/apache/camel/catalog/models";
     private static final String DOC_DIR = "org/apache/camel/catalog/docs";
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
