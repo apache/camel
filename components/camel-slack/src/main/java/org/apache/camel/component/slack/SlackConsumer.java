@@ -48,10 +48,12 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     private SlackEndpoint slackEndpoint;
     private String timestamp;
     private String channelId;
+    private HttpClient client;
 
     public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, DeserializationException {
         super(endpoint, processor);
         this.slackEndpoint = endpoint;
+        this.client = HttpClientBuilder.create().useSystemProperties().build();
     }
 
     @Override
@@ -64,7 +66,6 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     protected int poll() throws Exception {
         Queue<Exchange> exchanges;
 
-        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/conversations.history");
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(SlackConstants.SLACK_CHANNEL_FIELD, channelId));
@@ -131,7 +132,6 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private String getChannelId(String channel) throws IOException, DeserializationException {
-        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/conversations.list");
 
         List<BasicNameValuePair> params = new ArrayList<>();
