@@ -32,8 +32,8 @@ public class VmMultipleContextsStartStopTest extends AbstractVmTestSupport {
         mock.reset();
 
         /* Restart the consumer Camel Context */
-        context2.suspend();
-        context2.resume();
+        context2.stop();
+        context2.start();
 
         /* Send a message again and assert that it's received */
         template.requestBody("direct:test", "Hello world!");

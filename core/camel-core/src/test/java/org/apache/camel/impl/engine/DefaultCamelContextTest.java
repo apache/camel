@@ -196,6 +196,28 @@ public class DefaultCamelContextTest extends TestSupport {
     }
 
     @Test
+    public void testRestartCamelContext() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+        ctx.disableJMX();
+        ctx.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:endpointA").to("mock:endpointB");
+            }
+        });
+        ctx.start();
+        assertEquals(1, ctx.getRouteServices().size(), "Should have one RouteService");
+        String routesString = ctx.getRoutes().toString();
+        ctx.stop();
+        assertEquals(1, ctx.getRouteServices().size(), "The RouteService should NOT be removed even when we stop");
+        ctx.start();
+        assertEquals(1, ctx.getRouteServices().size(), "Should have one RouteService");
+        assertEquals(routesString, ctx.getRoutes().toString(), "The Routes should be same");
+        ctx.stop();
+        assertEquals(1, ctx.getRouteServices().size(), "The RouteService should NOT be removed even when we stop");
+    }
+
+    @Test
     public void testName() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();

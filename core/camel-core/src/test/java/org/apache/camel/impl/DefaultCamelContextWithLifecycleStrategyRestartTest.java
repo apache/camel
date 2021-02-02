@@ -16,8 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Route;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,13 +32,16 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
-public class DefaultCamelContextRestartTest extends ContextTestSupport {
+public class DefaultCamelContextWithLifecycleStrategyRestartTest extends ContextTestSupport {
+
+    private MyStrategy strategy = new MyStrategy();
 
     @Test
     public void testRestart() throws Exception {
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());
         assertEquals(1, context.getRoutes().size());
+        assertEquals(1, strategy.getContextStartCounter());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -48,6 +58,7 @@ public class DefaultCamelContextRestartTest extends ContextTestSupport {
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());
         assertEquals(1, context.getRoutes().size());
+        assertEquals(2, strategy.getContextStartCounter());
 
         // must obtain a new template
         template = context.createProducerTemplate();
@@ -58,6 +69,25 @@ public class DefaultCamelContextRestartTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testRouteStopped() throws Exception {
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertEquals(0, strategy.getRemoveCounter());
+
+        context.getRouteController().stopRoute("foo");
+        assertEquals(0, strategy.getRemoveCounter());
+
+        context.removeRoute("foo");
+        assertEquals(1, strategy.getRemoveCounter());
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.addLifecycleStrategy(strategy);
+        return context;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -66,5 +96,29 @@ public class DefaultCamelContextRestartTest extends ContextTestSupport {
                 from("direct:start").routeId("foo").to("mock:result");
             }
         };
+    }
+
+    private class MyStrategy extends LifecycleStrategySupport {
+
+        private AtomicInteger contextStartCounter = new AtomicInteger();
+        private AtomicInteger removeCounter = new AtomicInteger();
+
+        @Override
+        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+            contextStartCounter.incrementAndGet();
+        }
+
+        @Override
+        public void onRoutesRemove(Collection<Route> routes) {
+            removeCounter.incrementAndGet();
+        }
+
+        public int getContextStartCounter() {
+            return contextStartCounter.get();
+        }
+
+        public int getRemoveCounter() {
+            return removeCounter.get();
+        }
     }
 }

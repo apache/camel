@@ -70,8 +70,12 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <b>Notice:</b> {@link #stop()} and {@link #suspend()} will gracefully stop/suspend routes ensuring any messages in
  * progress will be given time to complete. See more details at {@link org.apache.camel.spi.ShutdownStrategy}.
  * <p/>
- * If you are doing a restart then use the suspend/resume methods, it is not possible to start a CamelContext after it
- * has been stopped.
+ * If you are doing a hot restart then it's advised to use the suspend/resume methods which ensure a faster restart but
+ * also allows any internal state to be kept as is. The stop/start approach will do a <i>cold</i> restart of Camel,
+ * where all internal state is reset.
+ * <p/>
+ * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that when
+ * it's being started again using the start method that Camel will operate consistently.
  * <p/>
  * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}, which you can obtain via the adapt
  * method.

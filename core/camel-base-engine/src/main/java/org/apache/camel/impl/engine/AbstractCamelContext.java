@@ -231,6 +231,9 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile RestConfiguration restConfiguration;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
+    // special flags to control the first startup which can are special
+    private volatile boolean firstStartDone;
+    private volatile boolean doNotStartRoutesOnFirstStart;
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean backlogTrace = Boolean.FALSE;
@@ -318,7 +321,6 @@ public abstract class AbstractCamelContext extends BaseService
     private long startDate;
     private SSLContextParameters sslContextParameters;
     private StartupSummaryLevel startupSummaryLevel = StartupSummaryLevel.Default;
-    private boolean closed;
 
     /**
      * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -2773,11 +2775,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     protected void doStart() throws Exception {
-        if (closed) {
-            throw new IllegalStateException(
-                    "CamelContext cannot be started after it has previously been stopped. You can use suspend/resume instead.");
-        }
-
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start CamelContext");
 
         try {
@@ -2811,9 +2808,25 @@ public abstract class AbstractCamelContext extends BaseService
         // Start the route controller
         ServiceHelper.startService(this.routeController);
 
+        doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
+
+        // if the context was configured with auto startup = false, and we
+        // are already started,
+        // then we may need to start the routes on the 2nd start call
+        if (firstStartDone && !isAutoStartup() && isStarted()) {
+            // invoke this logic to warm up the routes and if possible also
+            // start the routes
+            try {
+                internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, true, false, true);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
         // super will invoke doStart which will prepare internal services
         // and start routes etc.
         try {
+            firstStartDone = true;
             doStartCamel();
         } catch (Exception e) {
             VetoCamelContextStartException veto = ObjectHelper.getException(VetoCamelContextStartException.class, e);
@@ -3111,14 +3124,14 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // start routes
-        if (!isAutoStartup()) {
+        if (doNotStartRoutesOnFirstStart) {
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
         // invoke this logic to warmup the routes and if possible also start the routes
         StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Routes");
         EventHelper.notifyCamelContextRoutesStarting(this);
-        internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, isAutoStartup(), false, true);
+        internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
         EventHelper.notifyCamelContextRoutesStarted(this);
         startupStepRecorder.endStep(subStep);
 
@@ -3294,15 +3307,6 @@ public abstract class AbstractCamelContext extends BaseService
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextDestroyed(this);
-
-        closed = true;
-    }
-
-    @Override
-    protected void doFail(Exception e) {
-        // if we failed during start then dont mark as closed
-        closed = false;
-        super.doFail(e);
     }
 
     protected void logRouteStopSummary() {

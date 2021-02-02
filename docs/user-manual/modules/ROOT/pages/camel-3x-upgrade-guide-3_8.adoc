@@ -17,11 +17,6 @@ are also initialized. An affect of this change is that any custom Camel componen
 the constructors of `Consumer` or `Producer` should *not* do this, but move this logic to `doInit` or `doStart` where
 such logic correctly belongs.
 
-=== Restart CamelContext
-
-It is no longer possible to start `CamelContext` after it has been stopped. To restart a context, then use suspend/resume.
-The `restart` JMX operation on `CamelContextMBean` has been removed from `camel-management`.
-
 === API changes
 
 The following type names are renamed in `CamelEvent.Type` enum:
