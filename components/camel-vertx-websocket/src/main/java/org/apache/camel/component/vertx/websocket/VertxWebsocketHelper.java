@@ -22,9 +22,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.TCPSSLOptions;
-import io.vertx.core.net.TrustOptions;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
@@ -40,28 +39,16 @@ public final class VertxWebsocketHelper {
      */
     public static void setupSSLOptions(SSLContextParameters sslContextParameters, TCPSSLOptions options) {
         options.setSsl(true);
-        options.setKeyCertOptions(new KeyCertOptions() {
+        options.setKeyCertOptions(new JksOptions() {
             @Override
             public KeyManagerFactory getKeyManagerFactory(Vertx vertx) throws Exception {
                 return createKeyManagerFactory(sslContextParameters);
             }
-
-            @Override
-            @SuppressWarnings("deprecation")
-            public KeyCertOptions clone() {
-                return this;
-            }
         });
-        options.setTrustOptions(new TrustOptions() {
+        options.setTrustOptions(new JksOptions() {
             @Override
             public TrustManagerFactory getTrustManagerFactory(Vertx vertx) throws Exception {
                 return createTrustManagerFactory(sslContextParameters);
-            }
-
-            @Override
-            @SuppressWarnings("deprecation")
-            public TrustOptions clone() {
-                return this;
             }
         });
     }
