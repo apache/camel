@@ -36,7 +36,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
@@ -164,6 +163,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
     }
 
+    @Deprecated
     public void parseURI(URI uri, Map<String, Object> parameters, NettyComponent component, String... supportedProtocols)
             throws Exception {
         protocol = uri.getScheme();
@@ -207,15 +207,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelHandler.class, null);
         addToHandlersList(decoders, referencedDecoders, ChannelHandler.class);
 
-        // then set parameters with the help of the camel context type converters
-        PropertyBindingSupport.bindProperties(component.getCamelContext(), this, parameters);
-
         // additional netty options, we don't want to store an empty map, so set it as null if empty
         options = PropertiesHelper.extractProperties(parameters, "option.");
         if (options.isEmpty()) {
             options = null;
         }
+    }
 
+    public void setDefaultEncodersAndDecoders() {
         // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
             if (isAllowDefaultCodec()) {

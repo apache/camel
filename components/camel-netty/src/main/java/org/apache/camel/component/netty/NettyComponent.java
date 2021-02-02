@@ -96,11 +96,13 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        // validate config
-        config.validateConfiguration();
-
         NettyEndpoint nettyEndpoint = new NettyEndpoint(uri, this, config);
         setProperties(nettyEndpoint, parameters);
+
+        // set defaults on config and validate
+        config.setDefaultEncodersAndDecoders();
+        config.validateConfiguration();
+
         return nettyEndpoint;
     }
 
