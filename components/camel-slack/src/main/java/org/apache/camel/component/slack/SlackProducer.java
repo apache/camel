@@ -28,18 +28,16 @@ import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 public class SlackProducer extends DefaultAsyncProducer {
 
     private final SlackEndpoint slackEndpoint;
-    private CloseableHttpAsyncClient client;
+    private CloseableHttpClient client;
 
     public SlackProducer(SlackEndpoint endpoint) {
         super(endpoint);
@@ -48,9 +46,7 @@ public class SlackProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        this.client = HttpAsyncClientBuilder.create().useSystemProperties().build();
-        this.client.start();
-
+        this.client = HttpClientBuilder.create().useSystemProperties().build();
         super.doStart();
     }
 
@@ -94,29 +90,25 @@ public class SlackProducer extends DefaultAsyncProducer {
         // Do the post
         httpPost.setEntity(body);
 
-        client.execute(httpPost, new FutureCallback<HttpResponse>() {
-            @Override
-            public void completed(HttpResponse response) {
-                // 2xx is OK, anything else we regard as failure
-                if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                    exchange.setException(
-                            new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+        try {
+            client.execute(httpPost, response -> {
+                try {
+                    // 2xx is OK, anything else we regard as failure
+                    if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+                        exchange.setException(
+                                new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+                    }
+                    EntityUtils.consumeQuietly(response.getEntity());
+                } finally {
+                    callback.done(false);
                 }
-                EntityUtils.consumeQuietly(response.getEntity());
-                callback.done(false);
-            }
-
-            @Override
-            public void failed(Exception ex) {
-                exchange.setException(ex);
-                callback.done(false);
-            }
-
-            @Override
-            public void cancelled() {
-                callback.done(false);
-            }
-        });
+                return null;
+            });
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
 
         return false;
     }
