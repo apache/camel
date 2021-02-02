@@ -189,7 +189,7 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue. Is loaded by default from classpath, but
+         * The policy for this topic. Is loaded by default from classpath, but
          * you can prefix with classpath:, file:, or http: to load the resource
          * from different systems.
          * 
