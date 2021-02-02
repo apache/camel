@@ -53,10 +53,10 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
                         .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(TOPIC_NAME))
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
                         .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&authKey=" + AUTH_KEY
-                            + "&secretKey=" + SECRET_KEY
-                            + "&projectId=" + PROJECT_ID
-                            + "&region=" + REGION
-                            + "&ignoreSslVerification=true")
+                                + "&secretKey=" + SECRET_KEY
+                                + "&projectId=" + PROJECT_ID
+                                + "&region=" + REGION
+                                + "&ignoreSslVerification=true")
                         .log("publish message successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:publish_text_message_result");
@@ -65,9 +65,10 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
     }
 
     /**
-     * following test cases should be manually enabled to perform test against the actual huaweicloud simple notification server
-     * with real user credentials. To perform this test, manually comment out the @Disabled annotation and enter relevant
-     * service parameters in the placeholders above (static variables of this test class)
+     * following test cases should be manually enabled to perform test against the actual huaweicloud simple
+     * notification server with real user credentials. To perform this test, manually comment out the @Disabled
+     * annotation and enter relevant service parameters in the placeholders above (static variables of this test class)
+     *
      * @throws Exception
      */
     @Test
