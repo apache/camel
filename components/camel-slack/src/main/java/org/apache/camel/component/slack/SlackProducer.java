@@ -27,22 +27,35 @@ import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
 public class SlackProducer extends DefaultProducer {
 
     private final SlackEndpoint slackEndpoint;
-    private final HttpClient client;
+
+    private CloseableHttpClient client;
 
     public SlackProducer(SlackEndpoint endpoint) {
         super(endpoint);
         this.slackEndpoint = endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         this.client = HttpClientBuilder.create().useSystemProperties().build();
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            client.close();
+        }
     }
 
     @Override
@@ -75,17 +88,10 @@ public class SlackProducer extends DefaultProducer {
         // Do the post
         httpPost.setEntity(body);
 
-        HttpResponse response = null;
-        try {
-            response = client.execute(httpPost);
-
+        try (CloseableHttpResponse response = client.execute(httpPost)) {
             // 2xx is OK, anything else we regard as failure
             if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                 throw new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange);
-            }
-        } finally {
-            if (response != null) {
-                EntityUtils.consumeQuietly(response.getEntity());
             }
         }
     }

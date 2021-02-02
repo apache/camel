@@ -35,9 +35,9 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -48,18 +48,26 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     private SlackEndpoint slackEndpoint;
     private String timestamp;
     private String channelId;
-    private HttpClient client;
+    private CloseableHttpClient client;
 
     public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, DeserializationException {
         super(endpoint, processor);
         this.slackEndpoint = endpoint;
-        this.client = HttpClientBuilder.create().useSystemProperties().build();
     }
 
     @Override
     protected void doStart() throws Exception {
+        this.client = HttpClientBuilder.create().useSystemProperties().build();
         super.doStart();
         this.channelId = getChannelId(slackEndpoint.getChannel());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            client.close();
+        }
     }
 
     @Override
