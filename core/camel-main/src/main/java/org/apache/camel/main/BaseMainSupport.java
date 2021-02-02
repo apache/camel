@@ -39,7 +39,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
@@ -275,47 +274,6 @@ public abstract class BaseMainSupport extends BaseService {
         listeners.remove(listener);
     }
 
-    protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
-        // lets use Camel's bean post processor on any existing route builder classes
-        // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (RoutesBuilder routeBuilder : mainConfigurationProperties.getRoutesBuilders()) {
-            postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
-            postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
-        }
-
-        if (mainConfigurationProperties.getRoutesBuilderClasses() != null) {
-            String[] routeClasses = mainConfigurationProperties.getRoutesBuilderClasses().split(",");
-            for (String routeClass : routeClasses) {
-                Class<RoutesBuilder> routeClazz = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
-                if (routeClazz == null) {
-                    LOG.warn("Unable to resolve class: {}", routeClass);
-                    continue;
-                }
-
-                // lets use Camel's injector so the class has some support for dependency injection
-                RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
-
-                mainConfigurationProperties.addRoutesBuilder(builder);
-            }
-        }
-
-        if (mainConfigurationProperties.getPackageScanRouteBuilders() != null) {
-            String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
-            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
-                    .getPackageScanClassResolver()
-                    .findImplementations(RoutesBuilder.class, pkgs);
-            for (Class<?> routeClazz : set) {
-                Object builder = camelContext.getInjector().newInstance(routeClazz);
-                if (builder instanceof RoutesBuilder) {
-                    mainConfigurationProperties.addRoutesBuilder((RoutesBuilder) builder);
-                } else {
-                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
-                }
-            }
-        }
-    }
-
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
@@ -515,11 +473,8 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void configureRoutes(CamelContext camelContext) throws Exception {
-        // try to load the route builders
-        loadRouteBuilders(camelContext);
-
         // then configure and add the routes
-        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, mainConfigurationProperties.getRoutesBuilders());
+        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector);
         configurer.configureRoutes(camelContext, mainConfigurationProperties);
     }
 

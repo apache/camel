@@ -21,12 +21,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.Model;
-import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.support.OrderedComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +33,9 @@ import org.slf4j.LoggerFactory;
  * To configure routes using {@link RoutesCollector} which collects the routes from various sources.
  */
 public class RoutesConfigurer {
-
     private static final Logger LOG = LoggerFactory.getLogger(RoutesConfigurer.class);
 
     private final RoutesCollector routesCollector;
-    private final List<RoutesBuilder> routesBuilders;
-    private boolean addRestsToRoutes = true;
 
     /**
      * Creates a new routes configurer
@@ -48,25 +43,7 @@ public class RoutesConfigurer {
      * @param routesCollector routes collector
      */
     public RoutesConfigurer(RoutesCollector routesCollector) {
-        this(routesCollector, new ArrayList<>());
-    }
-
-    /**
-     * Creates a new routes configurer
-     *
-     * @param routesCollector routes collector
-     * @param routesBuilders  existing route builders
-     */
-    public RoutesConfigurer(RoutesCollector routesCollector, List<RoutesBuilder> routesBuilders) {
         this.routesCollector = routesCollector;
-        this.routesBuilders = routesBuilders;
-    }
-
-    /**
-     * Whether rests should be automatic added as routes
-     */
-    public void setAddRestsToRoutes(boolean addRestsToRoutes) {
-        this.addRestsToRoutes = addRestsToRoutes;
     }
 
     /**
@@ -76,56 +53,76 @@ public class RoutesConfigurer {
      * @param camelContext the Camel context
      * @param config       the configuration
      */
-    public void configureRoutes(CamelContext camelContext, DefaultConfigurationProperties config) {
+    public void configureRoutes(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
+        final List<RoutesBuilder> routes = new ArrayList<>(config.getRoutesBuilders());
+
+        if (config.getRoutesBuilderClasses() != null) {
+            String[] routeClasses = config.getRoutesBuilderClasses().split(",");
+            for (String routeClass : routeClasses) {
+                Class<RoutesBuilder> routeClazz = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
+                if (routeClazz == null) {
+                    LOG.warn("Unable to resolve class: {}", routeClass);
+                    continue;
+                }
+
+                // lets use Camel's injector so the class has some support for dependency injection
+                RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
+
+                routes.add(builder);
+            }
+        }
+
+        if (config.getPackageScanRouteBuilders() != null) {
+            String[] pkgs = config.getPackageScanRouteBuilders().split(",");
+            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
+                    .getPackageScanClassResolver()
+                    .findImplementations(RoutesBuilder.class, pkgs);
+
+            for (Class<?> routeClazz : set) {
+                Object builder = camelContext.getInjector().newInstance(routeClazz);
+                if (builder instanceof RoutesBuilder) {
+                    routes.add((RoutesBuilder) builder);
+                } else {
+                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                }
+            }
+        }
+
         if (config.isRoutesCollectorEnabled()) {
             try {
                 LOG.debug("RoutesCollectorEnabled: {}", routesCollector);
-                final List<RoutesBuilder> routes = routesCollector.collectRoutesFromRegistry(camelContext,
+
+                // add discovered routes from registry
+                routes.addAll(routesCollector.collectRoutesFromRegistry(
+                        camelContext,
                         config.getJavaRoutesExcludePattern(),
-                        config.getJavaRoutesIncludePattern());
+                        config.getJavaRoutesIncludePattern()));
+                // add discovered routes from directories
+                routes.addAll(routesCollector.collectRoutesFromDirectory(
+                        camelContext,
+                        config.getRoutesExcludePattern(),
+                        config.getRoutesIncludePattern()));
 
-                // add newly discovered routes
-                routesBuilders.addAll(routes);
-                // sort routes according to ordered
-                routesBuilders.sort(OrderedComparator.get());
-                // then add the routes
-                for (RoutesBuilder builder : routesBuilders) {
-                    LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
-                    camelContext.addRoutes(builder);
-                }
-
-                boolean scan = !config.getXmlRoutes().equals("false");
-                if (scan) {
-                    List<RoutesDefinition> defs
-                            = routesCollector.collectXmlRoutesFromDirectory(camelContext, config.getXmlRoutes());
-                    for (RoutesDefinition def : defs) {
-                        LOG.debug("Adding routes into CamelContext from XML files: {}", config.getXmlRoutes());
-                        camelContext.getExtension(Model.class).addRouteDefinitions(def.getRoutes());
-                    }
-                }
-
-                boolean scanTemplates = !config.getXmlRouteTemplates().equals("false");
-                if (scanTemplates) {
-                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext,
-                            config.getXmlRouteTemplates());
-                    for (RouteTemplatesDefinition def : defs) {
-                        LOG.debug("Adding route templates into CamelContext from XML files: {}", config.getXmlRouteTemplates());
-                        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(def.getRouteTemplates());
-                    }
-                }
-
-                boolean scanRests = !config.getXmlRests().equals("false");
-                if (scanRests) {
-                    List<RestsDefinition> defs
-                            = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
-                    for (RestsDefinition def : defs) {
-                        LOG.debug("Adding rests into CamelContext from XML files: {}", config.getXmlRests());
-                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), addRestsToRoutes);
-                    }
-                }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
+        }
+
+        // lets use Camel's bean post processor on any existing route builder classes
+        // so the instance has some support for dependency injection
+        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        for (RoutesBuilder routeBuilder : routes) {
+            postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
+            postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+        }
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        // then add the routes
+        for (RoutesBuilder builder : routes) {
+            LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
+            camelContext.addRoutes(builder);
         }
 
         Set<ConfigureRouteTemplates> set = camelContext.getRegistry().findByType(ConfigureRouteTemplates.class);

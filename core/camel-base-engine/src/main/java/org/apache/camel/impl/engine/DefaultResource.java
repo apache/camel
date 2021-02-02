@@ -59,4 +59,11 @@ public class DefaultResource implements Resource {
     public int hashCode() {
         return Objects.hash(getLocation());
     }
+
+    @Override
+    public String toString() {
+        return "DefaultResource{" +
+               "location='" + location + '\'' +
+               '}';
+    }
 }

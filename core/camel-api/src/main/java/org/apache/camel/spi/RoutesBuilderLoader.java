@@ -16,35 +16,22 @@
  */
 package org.apache.camel.spi;
 
-import java.io.InputStream;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
 
 /**
- * SPI for loading routes/rests from XML input streams and parsing this to model definition classes.
- *
- * @deprecated sue {@link RoutesBuilderLoader}
+ * SPI for loading {@link RoutesBuilder} from a {@link Resource}.
  */
-@Deprecated
-public interface XMLRoutesDefinitionLoader {
+public interface RoutesBuilderLoader {
+    /**
+     * Service factory base path for language specific loaders.
+     */
+    String LOADERS_FACTORY_PATH = "META-INF/services/org/apache/camel/routes-loaders/";
 
     /**
-     * Service factory key.
+     * Loads {@link RoutesBuilder} from {@link Resource}.
+     *
+     * @param  resource the resource to be loaded.
+     * @return          a {@link RoutesBuilder}
      */
-    String FACTORY = "xmlroutes-loader";
-
-    /**
-     * Loads from XML into routes.
-     */
-    Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception;
-
-    /**
-     * Loads from XML into route templates.
-     */
-    Object loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream) throws Exception;
-
-    /**
-     * Loads from XML into rests.
-     */
-    Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception;
+    RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception;
 }

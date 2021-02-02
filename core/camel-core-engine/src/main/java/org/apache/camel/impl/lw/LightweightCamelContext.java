@@ -123,6 +123,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -1462,6 +1463,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
         return getExtendedCamelContext().getXMLRoutesDefinitionLoader();
+    }
+
+    @Override
+    public void setRoutesBuilderLoader(RoutesBuilderLoader routesBuilderLoader) {
+        getExtendedCamelContext().setRoutesBuilderLoader(routesBuilderLoader);
+    }
+
+    @Override
+    public RoutesBuilderLoader getRoutesBuilderLoader() {
+        return getExtendedCamelContext().getRoutesBuilderLoader();
     }
 
     @Override

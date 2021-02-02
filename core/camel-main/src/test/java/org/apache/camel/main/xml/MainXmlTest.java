@@ -19,6 +19,7 @@ package org.apache.camel.main.xml;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.Main;
+import org.apache.camel.main.support.MockRestConsumerFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,58 +30,76 @@ public class MainXmlTest {
     @Test
     public void testMainRoutesCollector() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-dummy.xml,org/apache/camel/main/xml/camel-scan.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-dummy.xml,org/apache/camel/main/xml/camel-scan.xml",
+                null);
     }
 
     @Test
     public void testMainRoutesCollectorScan() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-*.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-*.xml",
+                "**/camel-rests.xml,**/camel-template.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirClasspathPath() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/**/*.xml");
+        doTestMain(
+                "org/apache/camel/main/**/*.xml",
+                "**/camel-rests.xml,**/camel-template.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("classpath:org/apache/camel/main/xml/camel-*.xml");
+        doTestMain(
+                "classpath:org/apache/camel/main/xml/camel-*.xml",
+                "**/camel-rests.xml,**/camel-template.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanInJar() throws Exception {
         // will load XML from camel-core test JAR when testing
-        doTestMain("org/apache/camel/model/scan-*.xml");
+        doTestMain(
+                "org/apache/camel/model/scan-*.xml",
+                null);
     }
 
     @Test
     public void testMainRoutesCollectorScanInDir() throws Exception {
-        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-*.xml");
+        doTestMain(
+                "file:src/test/resources/org/apache/camel/main/xml/camel-*.xml",
+                "**/camel-rests.xml,**/camel-template.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirFilePath() throws Exception {
-        doTestMain("file:src/test/resources/**/*.xml");
+        doTestMain(
+                "file:src/test/resources/**/*.xml",
+                "**/camel-rests.xml,**/camel-template.xml");
     }
 
     @Test
     public void testMainRoutesCollectorFile() throws Exception {
         doTestMain(
-                "file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
+                "file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,",
+                null);
     }
 
     @Test
     public void testMainRoutesCollectorScanInJarAndDir() throws Exception {
         doTestMain(
-                "classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
+                "classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml",
+                null);
     }
 
-    protected void doTestMain(String xmlRoutes) throws Exception {
+    protected void doTestMain(String includes, String excludes) throws Exception {
         Main main = new Main();
-        main.configure().withXmlRoutes(xmlRoutes);
+        main.bind("restConsumerFactory", new MockRestConsumerFactory());
+        main.configure().withRoutesIncludePattern(includes);
+        main.configure().withRoutesExcludePattern(excludes);
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

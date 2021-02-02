@@ -34,4 +34,34 @@ public interface Resource {
      * Each invocation must return a new {@link InputStream} instance.
      */
     InputStream getInputStream() throws IOException;
+
+    /**
+     * Finds a resource with a given name.
+     *
+     * @see Class#getResourceAsStream(String)
+     *
+     */
+    static Resource fromClasspath(String location) {
+        return fromClasspath(Resource.class, location);
+    }
+
+    /**
+     * Finds a resource with a given name.
+     *
+     * @see Class#getResourceAsStream(String)
+     *
+     */
+    static Resource fromClasspath(Class<?> type, String location) {
+        return new Resource() {
+            @Override
+            public String getLocation() {
+                return location;
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return type.getResourceAsStream(location);
+            }
+        };
+    }
 }

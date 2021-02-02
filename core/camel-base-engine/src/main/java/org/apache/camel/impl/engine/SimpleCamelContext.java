@@ -65,6 +65,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
+import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -408,6 +409,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
             throw new IllegalArgumentException(
                     "Cannot find ModelJAXBContextFactory on classpath. Add either camel-xml-io or camel-xml-jaxb to classpath.");
         }
+    }
+
+    @Override
+    protected RoutesBuilderLoader createRoutesBuilderLoader() {
+        return new DefaultRoutesBuilderLoader();
     }
 
     @Override

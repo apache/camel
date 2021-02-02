@@ -22,11 +22,15 @@ package org.apache.camel;
 public interface CamelContextAware {
 
     /**
-     * Injects the {@link CamelContext}
-     *
-     * @param camelContext the Camel context
+     * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
      */
-    void setCamelContext(CamelContext camelContext);
+    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
+        if (object instanceof CamelContextAware) {
+            ((CamelContextAware) object).setCamelContext(camelContext);
+        }
+
+        return object;
+    }
 
     /**
      * Get the {@link CamelContext}
@@ -36,14 +40,27 @@ public interface CamelContextAware {
     CamelContext getCamelContext();
 
     /**
-     * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
+     * Injects the {@link CamelContext}
+     *
+     * @param camelContext the Camel context
      */
-    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (object instanceof CamelContextAware) {
-            ((CamelContextAware) object).setCamelContext(camelContext);
+    void setCamelContext(CamelContext camelContext);
+
+    /**
+     * Get the {@link CamelContext} adapted to the specialized type.
+     * <p/>
+     *
+     * @param  type the type to adapt to
+     * @return      this {@link CamelContext} adapted to the given type
+     *
+     * @see         CamelContext#adapt(Class)
+     */
+    default <T extends CamelContext> T getCamelContext(Class<T> type) {
+        if (getCamelContext() == null) {
+            return null;
         }
 
-        return object;
+        return getCamelContext().adapt(type);
     }
 
 }

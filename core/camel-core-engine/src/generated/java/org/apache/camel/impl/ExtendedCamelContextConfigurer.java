@@ -135,6 +135,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RouteController": target.setRouteController(property(camelContext, org.apache.camel.spi.RouteController.class, value)); return true;
         case "routefactory":
         case "RouteFactory": target.setRouteFactory(property(camelContext, org.apache.camel.spi.RouteFactory.class, value)); return true;
+        case "routesbuilderloader":
+        case "RoutesBuilderLoader": target.setRoutesBuilderLoader(property(camelContext, org.apache.camel.spi.RoutesBuilderLoader.class, value)); return true;
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": target.setRuntimeCamelCatalog(property(camelContext, org.apache.camel.catalog.RuntimeCamelCatalog.class, value)); return true;
         case "runtimeendpointregistry":
@@ -300,6 +302,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RouteController": return org.apache.camel.spi.RouteController.class;
         case "routefactory":
         case "RouteFactory": return org.apache.camel.spi.RouteFactory.class;
+        case "routesbuilderloader":
+        case "RoutesBuilderLoader": return org.apache.camel.spi.RoutesBuilderLoader.class;
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": return org.apache.camel.catalog.RuntimeCamelCatalog.class;
         case "runtimeendpointregistry":
@@ -466,6 +470,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "RouteController": return target.getRouteController();
         case "routefactory":
         case "RouteFactory": return target.getRouteFactory();
+        case "routesbuilderloader":
+        case "RoutesBuilderLoader": return target.getRoutesBuilderLoader();
         case "runtimecamelcatalog":
         case "RuntimeCamelCatalog": return target.getRuntimeCamelCatalog();
         case "runtimeendpointregistry":
