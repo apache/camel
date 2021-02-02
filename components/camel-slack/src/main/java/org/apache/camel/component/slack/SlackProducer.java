@@ -34,6 +34,7 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 public class SlackProducer extends DefaultAsyncProducer {
 
@@ -97,6 +98,7 @@ public class SlackProducer extends DefaultAsyncProducer {
                 if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                     exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
                 }
+                EntityUtils.consumeQuietly(response.getEntity());
                 callback.done(false);
             }
             @Override
