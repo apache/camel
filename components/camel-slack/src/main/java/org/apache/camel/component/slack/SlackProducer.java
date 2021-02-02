@@ -21,21 +21,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.util.EntityUtils;
 
-public class SlackProducer extends DefaultProducer {
+public class SlackProducer extends DefaultAsyncProducer {
 
-    private SlackEndpoint slackEndpoint;
+    private final SlackEndpoint slackEndpoint;
+
+    private CloseableHttpAsyncClient client;
 
     public SlackProducer(SlackEndpoint endpoint) {
         super(endpoint);
@@ -43,10 +48,23 @@ public class SlackProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doStart() throws Exception {
+        this.client = HttpAsyncClientBuilder.create().useSystemProperties().build();
+        super.doStart();
+    }
 
-        // Create an HttpClient and Post object
-        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            client.close();
+        }
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+
+        // Create Post object
         HttpPost httpPost = new HttpPost(slackEndpoint.getWebhookUrl());
 
         // Build Helper object
@@ -73,12 +91,28 @@ public class SlackProducer extends DefaultProducer {
         // Do the post
         httpPost.setEntity(body);
 
-        HttpResponse response = client.execute(httpPost);
+        client.execute(httpPost, new FutureCallback<HttpResponse>() {
+            @Override
+            public void completed(HttpResponse response) {
+                // 2xx is OK, anything else we regard as failure
+                if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+                    exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+                }
+                EntityUtils.consumeQuietly(response.getEntity());
+                callback.done(false);
+            }
+            @Override
+            public void failed(Exception ex) {
+                exchange.setException(ex);
+                callback.done(false);
+            }
+            @Override
+            public void cancelled() {
+                callback.done(false);
+            }
+        });
 
-        // 2xx is OK, anything else we regard as failure
-        if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-            throw new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange);
-        }
+        return false;
     }
 
     /**
