@@ -39,7 +39,6 @@ import org.apache.http.util.EntityUtils;
 public class SlackProducer extends DefaultAsyncProducer {
 
     private final SlackEndpoint slackEndpoint;
-
     private CloseableHttpAsyncClient client;
 
     public SlackProducer(SlackEndpoint endpoint) {
@@ -50,14 +49,18 @@ public class SlackProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         this.client = HttpAsyncClientBuilder.create().useSystemProperties().build();
+        this.client.start();
+
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
         if (client != null) {
             client.close();
+            client = null;
         }
     }
 
@@ -96,16 +99,19 @@ public class SlackProducer extends DefaultAsyncProducer {
             public void completed(HttpResponse response) {
                 // 2xx is OK, anything else we regard as failure
                 if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                    exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+                    exchange.setException(
+                            new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
                 }
                 EntityUtils.consumeQuietly(response.getEntity());
                 callback.done(false);
             }
+
             @Override
             public void failed(Exception ex) {
                 exchange.setException(ex);
                 callback.done(false);
             }
+
             @Override
             public void cancelled() {
                 callback.done(false);
