@@ -17,18 +17,14 @@
 package org.apache.camel.main.xml;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
 import org.apache.camel.main.Main;
+import org.apache.camel.main.support.MockRestConsumerFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.rest.GetVerbDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
-import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.RestConsumerFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,49 +34,63 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MainXmlRestsTest {
 
     @Test
-    public void testMainRestsCollector() throws Exception {
+    public void testMainRestsCollector() {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-rests.xml");
-    }
-
-    @Test
-    public void testMainRestsCollectorScan() throws Exception {
-        // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-res*.xml");
-    }
-
-    @Test
-    public void testMainRestsCollectorScanWildcardDirClasspathPath() throws Exception {
-        // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/**/camel-res*.xml");
-    }
-
-    @Test
-    public void testMainRestsCollectorScanClasspathPrefix() throws Exception {
-        // will load XML from target/classes when testing
-        doTestMain("classpath:org/apache/camel/main/xml/camel-res*.xml");
-    }
-
-    @Test
-    public void testMainRestsCollectorScanInDir() throws Exception {
-        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-res*.xml");
-    }
-
-    @Test
-    public void testMainRestsCollectorScanWildcardDirFilePath() throws Exception {
-        doTestMain("file:src/test/resources/**/camel-res*.xml");
-    }
-
-    @Test
-    public void testMainRestsCollectorFile() throws Exception {
         doTestMain(
-                "file:src/test/resources/org/apache/camel/main/xml/camel-rests.xml,");
+                "org/apache/camel/main/xml/camel-rests.xml",
+                null);
     }
 
-    protected void doTestMain(String xmlRests) throws Exception {
+    @Test
+    public void testMainRestsCollectorScan() {
+        // will load XML from target/classes when testing
+        doTestMain(
+                "org/apache/camel/main/xml/camel-res*.xml",
+                null);
+    }
+
+    @Test
+    public void testMainRestsCollectorScanWildcardDirClasspathPath() {
+        // will load XML from target/classes when testing
+        doTestMain(
+                "org/apache/camel/main/**/camel-res*.xml",
+                null);
+    }
+
+    @Test
+    public void testMainRestsCollectorScanClasspathPrefix() {
+        // will load XML from target/classes when testing
+        doTestMain(
+                "classpath:org/apache/camel/main/xml/camel-res*.xml",
+                null);
+    }
+
+    @Test
+    public void testMainRestsCollectorScanInDir() {
+        doTestMain(
+                "file:src/test/resources/org/apache/camel/main/xml/camel-res*.xml",
+                null);
+    }
+
+    @Test
+    public void testMainRestsCollectorScanWildcardDirFilePath() {
+        doTestMain(
+                "file:src/test/resources/**/camel-res*.xml",
+                null);
+    }
+
+    @Test
+    public void testMainRestsCollectorFile() {
+        doTestMain(
+                "file:src/test/resources/org/apache/camel/main/xml/camel-rests.xml,",
+                null);
+    }
+
+    protected void doTestMain(String includes, String excludes) {
         Main main = new Main();
         main.bind("restConsumerFactory", new MockRestConsumerFactory());
-        main.configure().withXmlRests(xmlRests);
+        main.configure().withRoutesIncludePattern(includes);
+        main.configure().withRoutesExcludePattern(excludes);
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -101,16 +111,5 @@ public class MainXmlRestsTest {
         assertTrue(verbDefinition instanceof GetVerbDefinition);
 
         main.stop();
-    }
-
-    private static final class MockRestConsumerFactory implements RestConsumerFactory {
-        @Override
-        public Consumer createConsumer(
-                CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                String consumes,
-                String produces, RestConfiguration configuration, Map<String, Object> parameters)
-                throws Exception {
-            return null;
-        }
     }
 }

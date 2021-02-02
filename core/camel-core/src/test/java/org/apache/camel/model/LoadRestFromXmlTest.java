@@ -20,12 +20,14 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +44,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLoadRestFromXml() throws Exception {
+    public void testLoadRestsDefinitionFromXml() throws Exception {
         assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
 
         assertEquals(2, context.getRoutes().size());
@@ -58,6 +60,35 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
         context.addRestDefinitions(rests.getRests(), true);
+
+        assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
+        assertEquals(3, context.getRoutes().size());
+
+        // test that loaded route works
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedBodiesReceived("Bye World");
+        template.sendBody("seda:get-say-hello-bar", "Bye World");
+        bar.assertIsSatisfied();
+    }
+
+    @Test
+    public void testLoadRoutesBuilderFromXml() throws Exception {
+        assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
+
+        assertEquals(2, context.getRoutes().size());
+
+        // test that existing route works
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedBodiesReceived("Hello World");
+        template.sendBody("direct:foo", "Hello World");
+        foo.assertIsSatisfied();
+
+        // load rest from XML and add them to the existing camel context
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        Resource resource = Resource.fromClasspath(LoadRouteFromXmlTest.class, "barRest.xml");
+        RoutesBuilder routes = ecc.getRoutesBuilderLoader().loadRoutesBuilder(resource);
+
+        context.addRoutes(routes);
 
         assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
         assertEquals(3, context.getRoutes().size());

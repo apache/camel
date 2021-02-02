@@ -89,7 +89,7 @@ public final class DefaultConfigurationConfigurer {
      * @param camelContext the camel context
      * @param config       the configuration
      */
-    public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
+    public static void configure(CamelContext camelContext, DefaultConfigurationProperties<?> config) throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
         if (config.getStartupRecorder() != null) {

@@ -133,6 +133,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": target.setRoutesBuilders(property(camelContext, java.util.List.class, value)); return true;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": target.setRoutesCollectorEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routesexcludepattern":
+        case "RoutesExcludePattern": target.setRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesincludepattern":
+        case "RoutesIncludePattern": target.setRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": target.setShutdownLogInflightExchangesOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "shutdownnowontimeout":
@@ -189,12 +193,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": target.setUseDataType(property(camelContext, boolean.class, value)); return true;
         case "usemdclogging":
         case "UseMdcLogging": target.setUseMdcLogging(property(camelContext, boolean.class, value)); return true;
-        case "xmlrests":
-        case "XmlRests": target.setXmlRests(property(camelContext, java.lang.String.class, value)); return true;
-        case "xmlroutetemplates":
-        case "XmlRouteTemplates": target.setXmlRouteTemplates(property(camelContext, java.lang.String.class, value)); return true;
-        case "xmlroutes":
-        case "XmlRoutes": target.setXmlRoutes(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -314,6 +312,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return java.util.List.class;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return boolean.class;
+        case "routesexcludepattern":
+        case "RoutesExcludePattern": return java.lang.String.class;
+        case "routesincludepattern":
+        case "RoutesIncludePattern": return java.lang.String.class;
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
         case "shutdownnowontimeout":
@@ -370,12 +372,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": return boolean.class;
         case "usemdclogging":
         case "UseMdcLogging": return boolean.class;
-        case "xmlrests":
-        case "XmlRests": return java.lang.String.class;
-        case "xmlroutetemplates":
-        case "XmlRouteTemplates": return java.lang.String.class;
-        case "xmlroutes":
-        case "XmlRoutes": return java.lang.String.class;
         default: return null;
         }
     }
@@ -496,6 +492,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return target.getRoutesBuilders();
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return target.isRoutesCollectorEnabled();
+        case "routesexcludepattern":
+        case "RoutesExcludePattern": return target.getRoutesExcludePattern();
+        case "routesincludepattern":
+        case "RoutesIncludePattern": return target.getRoutesIncludePattern();
         case "shutdownloginflightexchangesontimeout":
         case "ShutdownLogInflightExchangesOnTimeout": return target.isShutdownLogInflightExchangesOnTimeout();
         case "shutdownnowontimeout":
@@ -552,12 +552,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": return target.isUseDataType();
         case "usemdclogging":
         case "UseMdcLogging": return target.isUseMdcLogging();
-        case "xmlrests":
-        case "XmlRests": return target.getXmlRests();
-        case "xmlroutetemplates":
-        case "XmlRouteTemplates": return target.getXmlRouteTemplates();
-        case "xmlroutes":
-        case "XmlRoutes": return target.getXmlRoutes();
         default: return null;
         }
     }

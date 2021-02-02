@@ -16,6 +16,8 @@
  */
 package org.apache.camel.xml.jaxb;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Map;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -41,6 +44,8 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 
@@ -185,5 +190,103 @@ public final class JaxbHelper {
         }
 
         return type.cast(result);
+    }
+
+    public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = xmlConverter.toDOMDocument(inputStream, null);
+
+        JAXBContext jaxbContext = getJAXBContext(context);
+
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+
+        Binder<Node> binder = jaxbContext.createBinder();
+        Object result = binder.unmarshal(dom);
+
+        if (result == null) {
+            throw new JAXBException("Cannot unmarshal to RoutesDefinition using JAXB");
+        }
+
+        // can either be routes or a single route
+        RoutesDefinition answer;
+        if (result instanceof RouteDefinition) {
+            RouteDefinition route = (RouteDefinition) result;
+            answer = new RoutesDefinition();
+            applyNamespaces(route, namespaces);
+            answer.getRoutes().add(route);
+        } else if (result instanceof RoutesDefinition) {
+            answer = (RoutesDefinition) result;
+            for (RouteDefinition route : answer.getRoutes()) {
+                applyNamespaces(route, namespaces);
+            }
+        } else {
+            // ignore not supported type
+            return null;
+        }
+
+        return answer;
+    }
+
+    public static RouteTemplatesDefinition loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream)
+            throws Exception {
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = xmlConverter.toDOMDocument(inputStream, null);
+
+        JAXBContext jaxbContext = getJAXBContext(context);
+
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+
+        Binder<Node> binder = jaxbContext.createBinder();
+        Object result = binder.unmarshal(dom);
+
+        if (result == null) {
+            throw new JAXBException("Cannot unmarshal to RouteTemplatesDefinition using JAXB");
+        }
+
+        // can either be routes or a single route
+        RouteTemplatesDefinition answer;
+        if (result instanceof RouteTemplateDefinition) {
+            RouteTemplateDefinition route = (RouteTemplateDefinition) result;
+            answer = new RouteTemplatesDefinition();
+            applyNamespaces(route.getRoute(), namespaces);
+            answer.getRouteTemplates().add(route);
+        } else if (result instanceof RouteTemplatesDefinition) {
+            answer = (RouteTemplatesDefinition) result;
+            for (RouteTemplateDefinition route : answer.getRouteTemplates()) {
+                applyNamespaces(route.getRoute(), namespaces);
+            }
+        } else {
+            // ignore not supported type
+            return null;
+        }
+
+        return answer;
+    }
+
+    public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
+        // load routes using JAXB
+        Unmarshaller unmarshaller = getJAXBContext(context).createUnmarshaller();
+        Object result = unmarshaller.unmarshal(inputStream);
+
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + inputStream);
+        }
+
+        // can either be routes or a single route
+        RestsDefinition answer;
+        if (result instanceof RestDefinition) {
+            RestDefinition rest = (RestDefinition) result;
+            answer = new RestsDefinition();
+            answer.getRests().add(rest);
+        } else if (result instanceof RestsDefinition) {
+            answer = (RestsDefinition) result;
+        } else {
+            // ignore not supported type
+            return null;
+        }
+
+        return answer;
     }
 }

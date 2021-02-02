@@ -59,6 +59,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -599,8 +600,21 @@ public interface ExtendedCamelContext extends CamelContext {
 
     /**
      * Gets the {@link XMLRoutesDefinitionLoader} to be used.
+     *
+     * @deprecated use {@link #getRoutesBuilderLoader()}
      */
+    @Deprecated
     XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
+
+    /**
+     * Sets a custom {@link RoutesBuilderLoader} to be used.
+     */
+    void setRoutesBuilderLoader(RoutesBuilderLoader routesBuilderLoader);
+
+    /**
+     * Gets the {@link RoutesBuilderLoader} to be used.
+     */
+    RoutesBuilderLoader getRoutesBuilderLoader();
 
     /**
      * Sets a custom {@link ModelToXMLDumper} to be used.

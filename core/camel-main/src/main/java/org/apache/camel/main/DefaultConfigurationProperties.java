@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Experimental;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
@@ -86,9 +85,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean routesCollectorEnabled = true;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
-    private String xmlRoutes = "classpath:camel/*.xml";
-    private String xmlRouteTemplates = "classpath:camel-template/*.xml";
-    private String xmlRests = "classpath:camel-rest/*.xml";
+    private String routesIncludePattern = "classpath:camel/*.xml,classpath:camel-template/*.xml,classpath:camel-rest/*.xml";
+    private String routesExcludePattern;
     private boolean lightweight;
     // route controller
     @Metadata(defaultValue = "DEBUG")
@@ -838,7 +836,7 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Whether the routes collector is enabled or not.
-     * 
+     *
      * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional
      * XML routes from the file system.
      *
@@ -883,66 +881,96 @@ public abstract class DefaultConfigurationProperties<T> {
         this.javaRoutesExcludePattern = javaRoutesExcludePattern;
     }
 
-    public String getXmlRoutes() {
-        return xmlRoutes;
+    public String getRoutesIncludePattern() {
+        return routesIncludePattern;
     }
 
     /**
-     * Directory to scan for adding additional XML routes. You can turn this off by setting the value to false.
+     * Used for inclusive filtering of routes from directories. This is used to retrieve the initial list of resource
+     * which can be filtered using the exclusive filter. The pattern is using Ant-path style pattern.
      *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     * Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory
+     * whose name contains foo use: &#42;&#42;/*foo*.
      */
-    public void setXmlRoutes(String xmlRoutes) {
-        this.xmlRoutes = xmlRoutes;
+    public void setRoutesIncludePattern(String routesIncludePattern) {
+        this.routesIncludePattern = routesIncludePattern;
     }
 
-    public String getXmlRouteTemplates() {
-        return xmlRouteTemplates;
+    public String getRoutesExcludePattern() {
+        return routesExcludePattern;
     }
 
     /**
-     * Directory to scan for adding additional XML route templates. You can turn this off by setting the value to false.
+     * Used for exclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive
+     * filtering. The pattern is using Ant-path style pattern.
      *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes from a directory
+     * whose name contains foo use: &#42;&#42;/*foo*.
      */
-    public void setXmlRouteTemplates(String xmlRouteTemplates) {
-        this.xmlRouteTemplates = xmlRouteTemplates;
+    public void setRoutesExcludePattern(String routesExcludePattern) {
+        this.routesExcludePattern = routesExcludePattern;
     }
 
-    public String getXmlRests() {
-        return xmlRests;
-    }
-
-    /**
-     * Directory to scan for adding additional XML rests. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public void setXmlRests(String xmlRests) {
-        this.xmlRests = xmlRests;
-    }
-
+    //    public String getXmlRoutes() {
+    //        return xmlRoutes;
+    //    }
+    //
+    //    /**
+    //     * Directory to scan for adding additional XML routes. You can turn this off by setting the value to false.
+    //     *
+    //     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
+    //     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+    //     *
+    //     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+    //     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+    //     *
+    //     * Multiple directories can be specified and separated by comma, such as:
+    //     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+    //     */
+    //    public void setXmlRoutes(String xmlRoutes) {
+    //        this.xmlRoutes = xmlRoutes;
+    //    }
+    //
+    //    public String getXmlRouteTemplates() {
+    //        return xmlRouteTemplates;
+    //    }
+    //
+    //    /**
+    //     * Directory to scan for adding additional XML route templates. You can turn this off by setting the value to false.
+    //     *
+    //     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
+    //     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
+    //     *
+    //     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+    //     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+    //     *
+    //     * Multiple directories can be specified and separated by comma, such as:
+    //     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+    //     */
+    //    public void setXmlRouteTemplates(String xmlRouteTemplates) {
+    //        this.xmlRouteTemplates = xmlRouteTemplates;
+    //    }
+    //
+    //    public String getXmlRests() {
+    //        return xmlRests;
+    //    }
+    //
+    //    /**
+    //     * Directory to scan for adding additional XML rests. You can turn this off by setting the value to false.
+    //     *
+    //     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
+    //     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+    //     *
+    //     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+    //     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+    //     *
+    //     * Multiple directories can be specified and separated by comma, such as:
+    //     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+    //     */
+    //    public void setXmlRests(String xmlRests) {
+    //        this.xmlRests = xmlRests;
+    //    }
+    //
     @Experimental
     public boolean isLightweight() {
         return lightweight;
@@ -1793,60 +1821,70 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
-    /**
-     * Directory to scan for adding additional XML routes. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: By default classpath is
-     * assumed if no prefix is specified.
-     *
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public T withXmlRoutes(String xmlRoutes) {
-        this.xmlRoutes = xmlRoutes;
+    public T withRoutesIncludePattern(String routesIncludePattern) {
+        this.routesIncludePattern = routesIncludePattern;
         return (T) this;
     }
 
-    /**
-     * Directory to scan for adding additional XML route templates. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
-     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public T withXmlRouteTemplates(String xmlRouteTemplates) {
-        this.xmlRouteTemplates = xmlRouteTemplates;
+    public T withRoutesExcludePattern(String routesExcludePattern) {
+        this.routesExcludePattern = routesExcludePattern;
         return (T) this;
     }
 
-    /**
-     * Directory to scan for adding additional XML rests. You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file: By default classpath is
-     * assumed if no prefix is specified.
-     *
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    public T withXmlRests(String xmlRests) {
-        this.xmlRests = xmlRests;
-        return (T) this;
-    }
+    //    /**
+    //     * Directory to scan for adding additional XML routes. You can turn this off by setting the value to false.
+    //     *
+    //     * Files can be loaded from either classpath or file by prefixing with classpath: or file: By default classpath is
+    //     * assumed if no prefix is specified.
+    //     *
+    //     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+    //     *
+    //     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+    //     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+    //     *
+    //     * Multiple directories can be specified and separated by comma, such as:
+    //     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+    //     */
+    //    public T withXmlRoutes(String xmlRoutes) {
+    //        this.xmlRoutes = xmlRoutes;
+    //        return (T) this;
+    //    }
+    //
+    //    /**
+    //     * Directory to scan for adding additional XML route templates. You can turn this off by setting the value to false.
+    //     *
+    //     * Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported
+    //     * using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;template-&#42;.xml
+    //     *
+    //     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+    //     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+    //     *
+    //     * Multiple directories can be specified and separated by comma, such as:
+    //     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+    //     */
+    //    public T withXmlRouteTemplates(String xmlRouteTemplates) {
+    //        this.xmlRouteTemplates = xmlRouteTemplates;
+    //        return (T) this;
+    //    }
+    //
+    //    /**
+    //     * Directory to scan for adding additional XML rests. You can turn this off by setting the value to false.
+    //     *
+    //     * Files can be loaded from either classpath or file by prefixing with classpath: or file: By default classpath is
+    //     * assumed if no prefix is specified.
+    //     *
+    //     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+    //     *
+    //     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+    //     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+    //     *
+    //     * Multiple directories can be specified and separated by comma, such as:
+    //     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+    //     */
+    //    public T withXmlRests(String xmlRests) {
+    //        this.xmlRests = xmlRests;
+    //        return (T) this;
+    //    }
 
     /*
      * Configure the context to be lightweight.  This will trigger some optimizations

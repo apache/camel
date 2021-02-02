@@ -14,37 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.main.support;
 
-import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
 
-/**
- * SPI for loading routes/rests from XML input streams and parsing this to model definition classes.
- *
- * @deprecated sue {@link RoutesBuilderLoader}
- */
-@Deprecated
-public interface XMLRoutesDefinitionLoader {
-
-    /**
-     * Service factory key.
-     */
-    String FACTORY = "xmlroutes-loader";
-
-    /**
-     * Loads from XML into routes.
-     */
-    Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception;
-
-    /**
-     * Loads from XML into route templates.
-     */
-    Object loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream) throws Exception;
-
-    /**
-     * Loads from XML into rests.
-     */
-    Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception;
+public final class MockRestConsumerFactory implements RestConsumerFactory {
+    @Override
+    public Consumer createConsumer(
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters) {
+        return null;
+    }
 }

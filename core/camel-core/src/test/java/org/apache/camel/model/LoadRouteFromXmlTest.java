@@ -20,8 +20,10 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class LoadRouteFromXmlTest extends ContextTestSupport {
 
     @Test
-    public void testLoadRouteFromXml() throws Exception {
+    public void testLoadRoutesDefinitionFromXml() throws Exception {
         assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
         assertEquals(1, context.getRoutes().size());
 
@@ -46,6 +48,36 @@ public class LoadRouteFromXmlTest extends ContextTestSupport {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
+        // END SNIPPET: e1
+
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
+        assertEquals(2, context.getRoutes().size());
+
+        // test that loaded route works
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedBodiesReceived("Bye World");
+        template.sendBody("direct:bar", "Bye World");
+        bar.assertIsSatisfied();
+    }
+
+    @Test
+    public void testLoadRoutesBuilderFromXml() throws Exception {
+        assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
+        assertEquals(1, context.getRoutes().size());
+
+        // test that existing route works
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedBodiesReceived("Hello World");
+        template.sendBody("direct:foo", "Hello World");
+        foo.assertIsSatisfied();
+
+        // START SNIPPET: e1
+        // load route from XML and add them to the existing camel context
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        Resource resource = Resource.fromClasspath(LoadRouteFromXmlTest.class, "barRoute.xml");
+        RoutesBuilder routes = ecc.getRoutesBuilderLoader().loadRoutesBuilder(resource);
+
+        context.addRoutes(routes);
         // END SNIPPET: e1
 
         assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");

@@ -141,6 +141,7 @@ import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -283,6 +284,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
+    private volatile RoutesBuilderLoader routesBuilderLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
     private volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     private volatile RuntimeCamelCatalog runtimeCamelCatalog;
@@ -4536,6 +4538,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.headersMapFactory = doAddService(headersMapFactory);
     }
 
+    @Override
     public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
         if (xmlRoutesDefinitionLoader == null) {
             synchronized (lock) {
@@ -4547,8 +4550,26 @@ public abstract class AbstractCamelContext extends BaseService
         return xmlRoutesDefinitionLoader;
     }
 
+    @Override
     public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
         this.xmlRoutesDefinitionLoader = doAddService(xmlRoutesDefinitionLoader);
+    }
+
+    @Override
+    public RoutesBuilderLoader getRoutesBuilderLoader() {
+        if (routesBuilderLoader == null) {
+            synchronized (lock) {
+                if (routesBuilderLoader == null) {
+                    setRoutesBuilderLoader(createRoutesBuilderLoader());
+                }
+            }
+        }
+        return routesBuilderLoader;
+    }
+
+    @Override
+    public void setRoutesBuilderLoader(RoutesBuilderLoader routesBuilderLoader) {
+        this.routesBuilderLoader = doAddService(routesBuilderLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {
@@ -4767,6 +4788,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract BeanIntrospection createBeanIntrospection();
 
     protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
+
+    protected abstract RoutesBuilderLoader createRoutesBuilderLoader();
 
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 

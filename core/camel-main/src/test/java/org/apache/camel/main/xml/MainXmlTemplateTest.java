@@ -18,6 +18,7 @@ package org.apache.camel.main.xml;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.Main;
+import org.apache.camel.main.support.MockRestConsumerFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
 
@@ -27,38 +28,50 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainXmlTemplateTest {
 
     @Test
-    public void testMainRoutesCollector() throws Exception {
+    public void testMainRoutesCollector() {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-template.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-template.xml",
+                null);
     }
 
     @Test
-    public void testMainRoutesCollectorScan() throws Exception {
+    public void testMainRoutesCollectorScan() {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-template*.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-template*.xml",
+                null);
     }
 
     @Test
-    public void testMainRoutesCollectorScanTwo() throws Exception {
+    public void testMainRoutesCollectorScanTwo() {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-*.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-t*.xml",
+                null);
     }
 
     @Test
-    public void testMainRoutesCollectorScanWildcardDirClasspathPath() throws Exception {
+    public void testMainRoutesCollectorScanWildcardDirClasspathPath() {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/**/*.xml");
+        doTestMain(
+                "org/apache/camel/main/**/camel-t*.xml",
+                null);
     }
 
     @Test
-    public void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
+    public void testMainRoutesCollectorScanClasspathPrefix() {
         // will load XML from target/classes when testing
-        doTestMain("classpath:org/apache/camel/main/xml/camel-*.xml");
+        doTestMain(
+                "classpath:org/apache/camel/main/xml/camel-t*.xml",
+                null);
     }
 
-    protected void doTestMain(String xmlRoutes) throws Exception {
+    protected void doTestMain(String includes, String excludes) {
         Main main = new Main();
-        main.configure().withXmlRouteTemplates(xmlRoutes);
+        main.bind("restConsumerFactory", new MockRestConsumerFactory());
+        main.configure().withRoutesIncludePattern(includes);
+        main.configure().withRoutesExcludePattern(excludes);
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -68,5 +81,4 @@ public class MainXmlTemplateTest {
 
         main.stop();
     }
-
 }
