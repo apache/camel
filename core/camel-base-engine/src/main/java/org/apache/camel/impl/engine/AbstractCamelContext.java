@@ -2778,7 +2778,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStart() throws Exception {
         if (firstStartDone) {
             // its not good practice to reset a camel context
-            LOG.warn("Starting CamelContext: {} after the context has been stopped is not recommended.", getName());
+            LOG.warn("Starting CamelContext: {} after the context has been stopped is not recommended", getName());
         }
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start CamelContext");
 
