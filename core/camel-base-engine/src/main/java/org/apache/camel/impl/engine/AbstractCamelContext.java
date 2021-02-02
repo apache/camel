@@ -233,6 +233,7 @@ public abstract class AbstractCamelContext extends BaseService
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
+    private volatile boolean firstStopDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
@@ -2775,6 +2776,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     protected void doStart() throws Exception {
+        if (firstStartDone) {
+            // its not good practice to reset a camel context
+            LOG.warn("Starting CamelContext: {} after the context has been stopped is not recommended.", getName());
+        }
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start CamelContext");
 
         try {
@@ -3307,6 +3312,15 @@ public abstract class AbstractCamelContext extends BaseService
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextDestroyed(this);
+
+        firstStartDone = true;
+    }
+
+    @Override
+    protected void doFail(Exception e) {
+        super.doFail(e);
+        // reset flag in case of startup fail as we want to be able to allow to start again
+        firstStartDone = false;
     }
 
     protected void logRouteStopSummary() {
