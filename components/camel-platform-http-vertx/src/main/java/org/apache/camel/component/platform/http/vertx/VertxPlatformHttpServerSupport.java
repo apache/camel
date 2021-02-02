@@ -35,8 +35,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.net.KeyCertOptions;
-import io.vertx.core.net.TrustOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
@@ -172,24 +171,14 @@ public final class VertxPlatformHttpServerSupport {
 
         if (sslParameters != null) {
             options.setSsl(true);
-            options.setKeyCertOptions(new KeyCertOptions() {
+            options.setKeyCertOptions(new JksOptions() {
                 @Override
                 public KeyManagerFactory getKeyManagerFactory(Vertx vertx) throws Exception {
                     return createKeyManagerFactory(camelContext, sslParameters);
                 }
-
-                @Override
-                public KeyCertOptions clone() {
-                    return this;
-                }
             });
 
-            options.setTrustOptions(new TrustOptions() {
-                @Override
-                public TrustOptions clone() {
-                    return this;
-                }
-
+            options.setTrustOptions(new JksOptions() {
                 @Override
                 public TrustManagerFactory getTrustManagerFactory(Vertx vertx) throws Exception {
                     return createTrustManagerFactory(camelContext, sslParameters);
