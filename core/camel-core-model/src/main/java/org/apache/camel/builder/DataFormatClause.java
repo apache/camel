@@ -626,6 +626,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the Jackson JSON data format
      *
      * @param unmarshalType unmarshal type for json jackson type
+     */
+    public T json(Class<?> unmarshalType) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the Jackson JSON data format
+     *
+     * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
      */
     public T json(Class<?> unmarshalType, Class<?> jsonView) {
