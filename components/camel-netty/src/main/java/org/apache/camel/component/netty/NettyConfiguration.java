@@ -30,8 +30,10 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.CharsetUtil;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.CamelContextHelper;
@@ -208,7 +210,17 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         addToHandlersList(decoders, referencedDecoders, ChannelHandler.class);
 
         // then set parameters with the help of the camel context type converters
-        PropertyBindingSupport.bindProperties(component.getCamelContext(), this, parameters);
+        // and use configurer to avoid any reflection calls
+        PropertyConfigurer configurer = component.getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer(NettyConfiguration.class.getName(), component.getCamelContext());
+        PropertyBindingSupport.build()
+                .withCamelContext(component.getCamelContext())
+                .withTarget(this)
+                .withReflection(false)
+                .withIgnoreCase(true)
+                .withConfigurer(configurer)
+                .withProperties(parameters)
+                .bind();
 
         // additional netty options, we don't want to store an empty map, so set it as null if empty
         options = PropertiesHelper.extractProperties(parameters, "option.");
@@ -612,7 +624,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     /**
      * Whether producer pool is enabled or not.
-     *
+     * <p>
      * Important: If you turn this off then a single shared connection is used for the producer, also if you are doing
      * request/reply. That means there is a potential issue with interleaved responses if replies comes back
      * out-of-order. Therefore you need to have a correlation id in both the request and reply messages so you can
