@@ -100,88 +100,144 @@ public class DockerProducer extends DefaultProducer {
 
             /** General **/
             case AUTH:
-                result = executeAuthRequest(client, message).exec();
+                try (AuthCmd cmd = executeAuthRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case INFO:
-                result = executeInfoRequest(client, message).exec();
+                try (InfoCmd cmd = executeInfoRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case PING:
-                result = executePingRequest(client, message).exec();
+                try (PingCmd cmd = executePingRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case VERSION:
-                result = executeVersionRequest(client, message).exec();
+                try (VersionCmd cmd = executeVersionRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case CREATE_IMAGE:
-                result = executeCreateImageRequest(client, message).exec();
+                try (CreateImageCmd cmd = executeCreateImageRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case INSPECT_IMAGE:
-                result = executeInspectImageRequest(client, message).exec();
+                try (InspectImageCmd cmd = executeInspectImageRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case LIST_IMAGES:
-                result = executeListImagesRequest(client, message).exec();
+                try (ListImagesCmd cmd = executeListImagesRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case REMOVE_IMAGE:
-                result = executeRemoveImageRequest(client, message).exec();
+                try (RemoveImageCmd cmd = executeRemoveImageRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case SEARCH_IMAGES:
-                result = executeSearchImageRequest(client, message).exec();
+                try (SearchImagesCmd cmd = executeSearchImageRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case TAG_IMAGE:
-                result = executeTagImageRequest(client, message).exec();
+                try (TagImageCmd cmd = executeTagImageRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case COMMIT_CONTAINER:
-                result = executeCommitContainerRequest(client, message).exec();
+                try (CommitCmd cmd = executeCommitContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case COPY_FILE_CONTAINER:
-                result = executeCopyFileContainerRequest(client, message).exec();
+                try (CopyArchiveFromContainerCmd cmd = executeCopyFileContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case CREATE_CONTAINER:
-                result = executeCreateContainerRequest(client, message).exec();
+                try (CreateContainerCmd cmd = executeCreateContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case DIFF_CONTAINER:
-                result = executeDiffContainerRequest(client, message).exec();
+                try (ContainerDiffCmd cmd = executeDiffContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case INSPECT_CONTAINER:
-                result = executeInspectContainerRequest(client, message).exec();
+                try (InspectContainerCmd cmd = executeInspectContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case LIST_CONTAINERS:
-                result = executeListContainersRequest(client, message).exec();
+                try (ListContainersCmd cmd = executeListContainersRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case KILL_CONTAINER:
-                result = executeKillContainerRequest(client, message).exec();
+                try (KillContainerCmd cmd = executeKillContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case PAUSE_CONTAINER:
-                result = executePauseContainerRequest(client, message).exec();
+                try (PauseContainerCmd cmd = executePauseContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case REMOVE_CONTAINER:
-                result = executeRemoveContainerRequest(client, message).exec();
+                try (RemoveContainerCmd cmd = executeRemoveContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case RESTART_CONTAINER:
-                result = executeRestartContainerRequest(client, message).exec();
+                try (RestartContainerCmd cmd = executeRestartContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case START_CONTAINER:
-                result = executeStartContainerRequest(client, message).exec();
+                try (StartContainerCmd cmd = executeStartContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case STOP_CONTAINER:
-                result = executeStopContainerRequest(client, message).exec();
+                try (StopContainerCmd cmd = executeStopContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case TOP_CONTAINER:
-                result = executeTopContainerRequest(client, message).exec();
+                try (TopContainerCmd cmd = executeTopContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case UNPAUSE_CONTAINER:
-                result = executeUnpauseContainerRequest(client, message).exec();
+                try (UnpauseContainerCmd cmd = executeUnpauseContainerRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case CREATE_NETWORK:
-                result = executeCreateNetworkRequest(client, message).exec();
+                try (CreateNetworkCmd cmd = executeCreateNetworkRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case REMOVE_NETWORK:
-                result = executeRemoveNetworkRequest(client, message).exec();
+                try (RemoveNetworkCmd cmd = executeRemoveNetworkRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case CONNECT_NETWORK:
-                result = executeConnectToNetworkRequest(client, message).exec();
+                try (ConnectToNetworkCmd cmd = executeConnectToNetworkRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             case EXEC_CREATE:
-                result = executeExecCreateRequest(client, message).exec();
+                try (ExecCreateCmd cmd = executeExecCreateRequest(client, message)) {
+                    result = cmd.exec();
+                }
                 break;
             default:
                 throw new DockerException("Invalid operation: " + operation);
