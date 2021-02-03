@@ -87,10 +87,8 @@ public abstract class BaseMainSupport extends BaseService {
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
-
-    protected volatile CamelContext camelContext;
-
     protected final List<MainListener> listeners = new ArrayList<>();
+    protected volatile CamelContext camelContext;
     protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected Properties wildcardProperties = new OrderedProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
@@ -104,6 +102,23 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected BaseMainSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
+        // lookup in service registry first
+        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        }
+        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                .newInstance("lra-saga-service", CamelSagaService.class)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find LRASagaService on classpath. "
+                                                                + "Add camel-lra to classpath."));
+
+        // add as service so its discover by saga eip
+        camelContext.addService(answer, true, false);
+        return answer;
     }
 
     /**
@@ -474,8 +489,21 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
-        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector);
-        configurer.configureRoutes(camelContext, mainConfigurationProperties);
+        RoutesConfigurer configurer = new RoutesConfigurer();
+
+        if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
+            configurer.setRoutesCollector(routesCollector);
+        }
+
+        configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
+        configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
+        configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
+        configurer.setPackageScanRouteBuilders(mainConfigurationProperties.getPackageScanRouteBuilders());
+        configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
+        configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
+        configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
+        configurer.setRoutesIncludePattern(mainConfigurationProperties.getRoutesIncludePattern());
+        configurer.configureRoutes(camelContext);
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
@@ -921,23 +949,6 @@ public abstract class BaseMainSupport extends BaseService {
             CamelSagaService css = resolveLraSagaService(camelContext);
             setPropertiesOnTarget(camelContext, css, lraProperties, "camel.lra.", failIfNotSet, true, autoConfiguredProperties);
         }
-    }
-
-    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        }
-        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
-                .newInstance("lra-saga-service", CamelSagaService.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find LRASagaService on classpath. "
-                                                                + "Add camel-lra to classpath."));
-
-        // add as service so its discover by saga eip
-        camelContext.addService(answer, true, false);
-        return answer;
     }
 
     private void bindBeansToRegistry(

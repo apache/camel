@@ -35,15 +35,86 @@ import org.slf4j.LoggerFactory;
 public class RoutesConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(RoutesConfigurer.class);
 
-    private final RoutesCollector routesCollector;
+    private RoutesCollector routesCollector;
+    private CamelBeanPostProcessor beanPostProcessor;
+    private List<RoutesBuilder> routesBuilders;
+    private String packageScanRouteBuilders;
+    private String routesBuilderClasses;
+    private String javaRoutesExcludePattern;
+    private String javaRoutesIncludePattern;
+    private String routesExcludePattern;
+    private String routesIncludePattern;
 
-    /**
-     * Creates a new routes configurer
-     *
-     * @param routesCollector routes collector
-     */
-    public RoutesConfigurer(RoutesCollector routesCollector) {
+    public List<RoutesBuilder> getRoutesBuilders() {
+        return routesBuilders;
+    }
+
+    public void setRoutesBuilders(List<RoutesBuilder> routesBuilders) {
+        this.routesBuilders = routesBuilders;
+    }
+
+    public String getPackageScanRouteBuilders() {
+        return packageScanRouteBuilders;
+    }
+
+    public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
+        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    }
+
+    public String getRoutesBuilderClasses() {
+        return routesBuilderClasses;
+    }
+
+    public void setRoutesBuilderClasses(String routesBuilderClasses) {
+        this.routesBuilderClasses = routesBuilderClasses;
+    }
+
+    public String getJavaRoutesExcludePattern() {
+        return javaRoutesExcludePattern;
+    }
+
+    public void setJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
+    }
+
+    public String getJavaRoutesIncludePattern() {
+        return javaRoutesIncludePattern;
+    }
+
+    public void setJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
+    }
+
+    public String getRoutesExcludePattern() {
+        return routesExcludePattern;
+    }
+
+    public void setRoutesExcludePattern(String routesExcludePattern) {
+        this.routesExcludePattern = routesExcludePattern;
+    }
+
+    public String getRoutesIncludePattern() {
+        return routesIncludePattern;
+    }
+
+    public void setRoutesIncludePattern(String routesIncludePattern) {
+        this.routesIncludePattern = routesIncludePattern;
+    }
+
+    public RoutesCollector getRoutesCollector() {
+        return routesCollector;
+    }
+
+    public void setRoutesCollector(RoutesCollector routesCollector) {
         this.routesCollector = routesCollector;
+    }
+
+    public CamelBeanPostProcessor getBeanPostProcessor() {
+        return beanPostProcessor;
+    }
+
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessor = beanPostProcessor;
     }
 
     /**
@@ -51,13 +122,15 @@ public class RoutesConfigurer {
      * (adds) these into the Camel context.
      *
      * @param camelContext the Camel context
-     * @param config       the configuration
      */
-    public void configureRoutes(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
-        final List<RoutesBuilder> routes = new ArrayList<>(config.getRoutesBuilders());
+    public void configureRoutes(CamelContext camelContext) throws Exception {
+        final List<RoutesBuilder> routes = new ArrayList<>();
+        if (getRoutesBuilders() != null) {
+            routes.addAll(getRoutesBuilders());
+        }
 
-        if (config.getRoutesBuilderClasses() != null) {
-            String[] routeClasses = config.getRoutesBuilderClasses().split(",");
+        if (getRoutesBuilderClasses() != null) {
+            String[] routeClasses = getRoutesBuilderClasses().split(",");
             for (String routeClass : routeClasses) {
                 Class<RoutesBuilder> routeClazz = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
                 if (routeClazz == null) {
@@ -72,8 +145,8 @@ public class RoutesConfigurer {
             }
         }
 
-        if (config.getPackageScanRouteBuilders() != null) {
-            String[] pkgs = config.getPackageScanRouteBuilders().split(",");
+        if (getPackageScanRouteBuilders() != null) {
+            String[] pkgs = getPackageScanRouteBuilders().split(",");
             Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
                     .getPackageScanClassResolver()
                     .findImplementations(RoutesBuilder.class, pkgs);
@@ -88,32 +161,34 @@ public class RoutesConfigurer {
             }
         }
 
-        if (config.isRoutesCollectorEnabled()) {
+        if (getRoutesCollector() != null) {
             try {
-                LOG.debug("RoutesCollectorEnabled: {}", routesCollector);
+                LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
 
                 // add discovered routes from registry
-                routes.addAll(routesCollector.collectRoutesFromRegistry(
+                routes.addAll(getRoutesCollector().collectRoutesFromRegistry(
                         camelContext,
-                        config.getJavaRoutesExcludePattern(),
-                        config.getJavaRoutesIncludePattern()));
+                        getJavaRoutesExcludePattern(),
+                        getJavaRoutesIncludePattern()));
                 // add discovered routes from directories
-                routes.addAll(routesCollector.collectRoutesFromDirectory(
+                routes.addAll(getRoutesCollector().collectRoutesFromDirectory(
                         camelContext,
-                        config.getRoutesExcludePattern(),
-                        config.getRoutesIncludePattern()));
+                        getRoutesExcludePattern(),
+                        getRoutesIncludePattern()));
 
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
 
-        // lets use Camel's bean post processor on any existing route builder classes
-        // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (RoutesBuilder routeBuilder : routes) {
-            postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
-            postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+        if (getBeanPostProcessor() != null) {
+            // lets use Camel's bean post processor on any existing route builder classes
+            // so the instance has some support for dependency injection
+
+            for (RoutesBuilder routeBuilder : routes) {
+                getBeanPostProcessor().postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
+                getBeanPostProcessor().postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+            }
         }
 
         // sort routes according to ordered
