@@ -29,7 +29,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.JdkService;
 
-@JdkService("routes-loaders/xml")
+@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/xml")
 public class XmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 

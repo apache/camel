@@ -31,7 +31,7 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
 
-@JdkService("routes-loaders/xml")
+@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/xml")
 public class JaxbXmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 

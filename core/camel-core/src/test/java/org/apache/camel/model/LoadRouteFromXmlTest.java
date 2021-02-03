@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Resource;
@@ -75,9 +74,9 @@ public class LoadRouteFromXmlTest extends ContextTestSupport {
         // load route from XML and add them to the existing camel context
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         Resource resource = Resource.fromClasspath(LoadRouteFromXmlTest.class, "barRoute.xml");
-        RoutesBuilder routes = ecc.getRoutesBuilderLoader().loadRoutesBuilder(resource);
 
-        context.addRoutes(routes);
+        ecc.getRoutesLoader().loadRoutes(resource);
+
         // END SNIPPET: e1
 
         assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");

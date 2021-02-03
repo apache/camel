@@ -16,27 +16,31 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
-public class DefaultRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
+@JdkService(RoutesLoader.FACTORY)
+public class DefaultRoutesLoader implements RoutesLoader {
     private CamelContext camelContext;
 
-    public DefaultRoutesBuilderLoader() {
+    public DefaultRoutesLoader() {
     }
 
-    public DefaultRoutesBuilderLoader(CamelContext camelContext) {
+    public DefaultRoutesLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -51,15 +55,21 @@ public class DefaultRoutesBuilderLoader implements RoutesBuilderLoader, CamelCon
     }
 
     @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
-        // language is derived from the file extension
-        final String language = FileUtil.onlyExt(resource.getLocation(), true);
+    public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources) throws Exception {
+        List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
-        if (ObjectHelper.isEmpty(language)) {
-            throw new IllegalArgumentException("Unable to determine language for resource: " + resource.getLocation());
+        for (Resource resource : resources) {
+            // language is derived from the file extension
+            final String language = FileUtil.onlyExt(resource.getLocation(), true);
+
+            if (ObjectHelper.isEmpty(language)) {
+                throw new IllegalArgumentException("Unable to determine language for resource: " + resource.getLocation());
+            }
+
+            answer.add(getLoader(language).loadRoutesBuilder(resource));
         }
 
-        return getLoader(language).loadRoutesBuilder(resource);
+        return answer;
     }
 
     private RoutesBuilderLoader getLoader(String language) {
@@ -67,9 +77,7 @@ public class DefaultRoutesBuilderLoader implements RoutesBuilderLoader, CamelCon
 
         if (answer == null) {
             final ExtendedCamelContext ecc = getCamelContext(ExtendedCamelContext.class);
-            final FactoryFinderResolver ffr = ecc.getFactoryFinderResolver();
-            final ClassResolver cr = ecc.getClassResolver();
-            final FactoryFinder finder = ffr.resolveBootstrapFactoryFinder(cr, RoutesBuilderLoader.LOADERS_FACTORY_PATH);
+            final FactoryFinder finder = ecc.getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
             final BaseServiceResolver<RoutesBuilderLoader> resolver
                     = new BaseServiceResolver<>(language, RoutesBuilderLoader.class, finder);

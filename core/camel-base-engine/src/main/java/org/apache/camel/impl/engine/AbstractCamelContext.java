@@ -141,7 +141,7 @@ import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
-import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -284,7 +284,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
-    private volatile RoutesBuilderLoader routesBuilderLoader;
+    private volatile RoutesLoader routesLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
     private volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     private volatile RuntimeCamelCatalog runtimeCamelCatalog;
@@ -4556,20 +4556,20 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public RoutesBuilderLoader getRoutesBuilderLoader() {
-        if (routesBuilderLoader == null) {
+    public RoutesLoader getRoutesLoader() {
+        if (routesLoader == null) {
             synchronized (lock) {
-                if (routesBuilderLoader == null) {
-                    setRoutesBuilderLoader(createRoutesBuilderLoader());
+                if (routesLoader == null) {
+                    setRoutesLoader(createRoutesLoader());
                 }
             }
         }
-        return routesBuilderLoader;
+        return routesLoader;
     }
 
     @Override
-    public void setRoutesBuilderLoader(RoutesBuilderLoader routesBuilderLoader) {
-        this.routesBuilderLoader = doAddService(routesBuilderLoader);
+    public void setRoutesLoader(RoutesLoader routesLoader) {
+        this.routesLoader = doAddService(routesLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {
@@ -4789,7 +4789,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
-    protected abstract RoutesBuilderLoader createRoutesBuilderLoader();
+    protected abstract RoutesLoader createRoutesLoader();
 
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 

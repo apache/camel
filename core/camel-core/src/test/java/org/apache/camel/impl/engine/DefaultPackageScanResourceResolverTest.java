@@ -46,10 +46,8 @@ public class DefaultPackageScanResourceResolverTest {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         try {
             for (Resource resource : ecc.getPackageScanResourceResolver().findResources(path)) {
-                RoutesBuilder builder = ecc.getRoutesBuilderLoader().loadRoutesBuilder(resource);
-                if (builder != null) {
-                    answer.add(builder);
-                }
+                answer.addAll(
+                        ecc.getRoutesLoader().findRoutesBuilders(resource));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
