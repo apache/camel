@@ -32,7 +32,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -57,11 +56,10 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        VertxHttpConfiguration configuration = getEndpoint().getConfiguration();
         Message message = exchange.getMessage();
 
         try {
-            VertxHttpBinding vertxHttpBinding = configuration.getVertxHttpBinding();
+            VertxHttpBinding vertxHttpBinding = getEndpoint().getConfiguration().getVertxHttpBinding();
             HttpRequest<Buffer> request = vertxHttpBinding.prepareHttpRequest(getEndpoint(), exchange);
             Handler<AsyncResult<HttpResponse<Buffer>>> resultHandler = createResultHandler(exchange, callback);
 
@@ -132,7 +130,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                 VertxHttpBinding vertxHttpBinding = endpoint.getConfiguration().getVertxHttpBinding();
                 vertxHttpBinding.handleResponse(endpoint, exchange, response);
             } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+                exchange.setException(e);
             } finally {
                 callback.done(false);
             }
