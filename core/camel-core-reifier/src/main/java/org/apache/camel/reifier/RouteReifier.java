@@ -331,8 +331,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 builder, null);
         prepareErrorHandlerAware(route, errorHandler);
 
-        // okay route has been created from the model, then the model is no longer needed and we can de-reference
-        route.clearRouteModel();
+        camelContext.adapt(ExtendedCamelContext.class).addBootstrap(() -> {
+            // okay route has been created from the model, then the model is no longer needed and we can de-reference
+            route.clearRouteModel();
+        });
 
         return route;
     }
