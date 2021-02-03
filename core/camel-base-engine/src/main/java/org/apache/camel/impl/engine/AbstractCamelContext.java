@@ -206,6 +206,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
+    private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private volatile FactoryFinder bootstrapFactoryFinder;
     private volatile ConfigurerResolver bootstrapConfigurerResolver;
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
@@ -365,6 +366,14 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add the default bootstrap closer
         this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
+
+        // add a cleaner for FactoryFinder used only when bootstrapping the context
+        this.bootstraps.add(new BootstrapCloseable() {
+            @Override
+            public void close() throws IOException {
+                bootstrapFactories.clear();
+            }
+        });
 
         if (build) {
             try {
@@ -3637,6 +3646,8 @@ public abstract class AbstractCamelContext extends BaseService
         getModelJAXBContextFactory();
         getUnitOfWorkFactory();
         getRouteController();
+        getRoutesLoader();
+
         try {
             getRestRegistryFactory();
         } catch (IllegalArgumentException e) {
@@ -3758,6 +3769,15 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
         this.bootstrapFactoryFinder = factoryFinder;
+    }
+
+    @Override
+    public FactoryFinder getBootstrapFactoryFinder(String path) {
+        return bootstrapFactories.computeIfAbsent(path, this::createBootstrapFactoryFinder);
+    }
+
+    protected FactoryFinder createBootstrapFactoryFinder(String path) {
+        return getFactoryFinderResolver().resolveBootstrapFactoryFinder(getClassResolver(), path);
     }
 
     @Override

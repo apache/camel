@@ -34,6 +34,8 @@ public interface RoutesBuilderLoader {
 
     /**
      * The supported file extension.
+     * <p/>
+     * Implementations should support a single extension only.
      */
     String getSupportedExtension();
 

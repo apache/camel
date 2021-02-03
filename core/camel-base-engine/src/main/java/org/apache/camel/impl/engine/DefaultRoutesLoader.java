@@ -59,30 +59,33 @@ public class DefaultRoutesLoader implements RoutesLoader {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
         for (Resource resource : resources) {
-            // language is derived from the file extension
+            // the loader to use is derived from the file extension
             final String extension = FileUtil.onlyExt(resource.getLocation(), true);
 
             if (ObjectHelper.isEmpty(extension)) {
-                throw new IllegalArgumentException("Unable to determine extension for resource: " + resource.getLocation());
+                throw new IllegalArgumentException(
+                        "Unable to determine file extension for resource: " + resource.getLocation());
             }
 
-            answer.add(getLoader(extension).loadRoutesBuilder(resource));
+            answer.add(getRoutesLoader(extension).loadRoutesBuilder(resource));
         }
 
         return answer;
     }
 
     /**
+     * Looks up a {@link RoutesBuilderLoader} in the registry or fallback to a factory finder mechanism if none found.
      *
-     * @param  extension
-     * @return
+     * @param  extension                the file extension for which a loader should be find.
+     * @return                          a {@link RoutesBuilderLoader}
+     * @throws IllegalArgumentException if no {@link RoutesBuilderLoader} can be found for the given file extension
      */
-    private RoutesBuilderLoader getLoader(String extension) {
+    private RoutesBuilderLoader getRoutesLoader(String extension) {
         RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(extension, RoutesBuilderLoader.class);
 
         if (answer == null) {
-            final ExtendedCamelContext ecc = getCamelContext(ExtendedCamelContext.class);
-            final FactoryFinder finder = ecc.getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
+            final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+            final FactoryFinder finder = ecc.getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
             final BaseServiceResolver<RoutesBuilderLoader> resolver
                     = new BaseServiceResolver<>(extension, RoutesBuilderLoader.class, finder);
@@ -95,7 +98,8 @@ public class DefaultRoutesLoader implements RoutesLoader {
         }
 
         if (answer == null) {
-            throw new IllegalArgumentException("Unable to fina a RoutesBuilderLoader for extension " + extension);
+            throw new IllegalArgumentException(
+                    "Unable to fina a RoutesBuilderLoader for resource with file extension: " + extension);
         }
 
         return answer;

@@ -59,7 +59,7 @@ public interface RoutesLoader extends CamelContextAware {
      * Find {@link RoutesBuilder} from the give list of {@link Resource}.
      *
      * @param  resources the resource to be loaded.
-     * @return           a {@link RoutesBuilder}
+     * @return           a collection of {@link RoutesBuilder}
      */
     default Collection<RoutesBuilder> findRoutesBuilders(Resource... resources) throws Exception {
         return findRoutesBuilders(Arrays.asList(resources));
@@ -69,7 +69,7 @@ public interface RoutesLoader extends CamelContextAware {
      * Find {@link RoutesBuilder} from the give list of {@link Resource}.
      *
      * @param  resources the resource to be loaded.
-     * @return           a {@link RoutesBuilder}
+     * @return           a collection {@link RoutesBuilder}
      */
     Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources) throws Exception;
 }

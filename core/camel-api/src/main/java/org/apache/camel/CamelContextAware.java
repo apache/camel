@@ -45,22 +45,4 @@ public interface CamelContextAware {
      * @param camelContext the Camel context
      */
     void setCamelContext(CamelContext camelContext);
-
-    /**
-     * Get the {@link CamelContext} adapted to the specialized type.
-     * <p/>
-     *
-     * @param  type the type to adapt to
-     * @return      this {@link CamelContext} adapted to the given type
-     *
-     * @see         CamelContext#adapt(Class)
-     */
-    default <T extends CamelContext> T getCamelContext(Class<T> type) {
-        if (getCamelContext() == null) {
-            return null;
-        }
-
-        return getCamelContext().adapt(type);
-    }
-
 }

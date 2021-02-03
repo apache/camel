@@ -1414,6 +1414,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public FactoryFinder getBootstrapFactoryFinder(String path) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FactoryFinder getFactoryFinder(String path) {
         throw new UnsupportedOperationException();
     }

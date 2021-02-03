@@ -39,7 +39,6 @@ public interface Resource {
      * Finds a resource with a given name.
      *
      * @see Class#getResourceAsStream(String)
-     *
      */
     static Resource fromClasspath(String location) {
         return fromClasspath(Resource.class, location);
@@ -49,7 +48,6 @@ public interface Resource {
      * Finds a resource with a given name.
      *
      * @see Class#getResourceAsStream(String)
-     *
      */
     static Resource fromClasspath(Class<?> type, String location) {
         return new Resource() {

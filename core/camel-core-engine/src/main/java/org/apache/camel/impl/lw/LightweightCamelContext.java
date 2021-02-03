@@ -1271,6 +1271,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public FactoryFinder getBootstrapFactoryFinder(String path) {
+        return getExtendedCamelContext().getBootstrapFactoryFinder(path);
+    }
+
+    @Override
     public FactoryFinder getFactoryFinder(String path) {
         return getExtendedCamelContext().getFactoryFinder(path);
     }
