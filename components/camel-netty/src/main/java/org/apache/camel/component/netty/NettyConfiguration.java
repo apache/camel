@@ -212,7 +212,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         // then set parameters with the help of the camel context type converters
         // and use configurer to avoid any reflection calls
         PropertyConfigurer configurer = component.getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                .resolvePropertyConfigurer(NettyConfiguration.class.getName(), component.getCamelContext());
+                .resolvePropertyConfigurer(this.getClass().getName(), component.getCamelContext());
         PropertyBindingSupport.build()
                 .withCamelContext(component.getCamelContext())
                 .withTarget(this)
