@@ -129,11 +129,15 @@ public class DefaultRoutesCollector implements RoutesCollector {
         StopWatch watch = new StopWatch();
         AtomicInteger count = new AtomicInteger();
 
+        if (ObjectHelper.equal("false", includePattern)) {
+            return answer;
+        }
+
         for (String include : includes) {
             log.debug("Loading additional RoutesBuilder from: {}", include);
             try {
                 for (Resource resource : resolver.findResources(include)) {
-                    if (AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
+                    if (!"false".equals(excludePattern) && AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
                         continue;
                     }
 
