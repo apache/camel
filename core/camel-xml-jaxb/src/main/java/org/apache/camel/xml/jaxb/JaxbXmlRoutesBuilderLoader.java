@@ -16,6 +16,8 @@
  */
 package org.apache.camel.xml.jaxb;
 
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
@@ -31,9 +33,9 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
 
-@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/xml")
+@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + JaxbXmlRoutesBuilderLoader.EXTENSION)
 public class JaxbXmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
-    public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
+    public static final String EXTENSION = "xml";
 
     private CamelContext camelContext;
 
@@ -48,23 +50,34 @@ public class JaxbXmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelCon
     }
 
     @Override
+    public String getSupportedExtension() {
+        return EXTENSION;
+    }
+
+    @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), resource.getInputStream());
-                if (templates != null) {
-                    setRouteTemplateCollection(templates);
+                try (InputStream is = resource.getInputStream()) {
+                    RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
+                    if (templates != null) {
+                        setRouteTemplateCollection(templates);
+                    }
                 }
 
-                RestsDefinition rests = loadRestsDefinition(getCamelContext(), resource.getInputStream());
-                if (rests != null) {
-                    setRestCollection(rests);
+                try (InputStream is = resource.getInputStream()) {
+                    RestsDefinition rests = loadRestsDefinition(getCamelContext(), is);
+                    if (rests != null) {
+                        setRestCollection(rests);
+                    }
                 }
 
-                RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), resource.getInputStream());
-                if (routes != null) {
-                    setRouteCollection(routes);
+                try (InputStream is = resource.getInputStream()) {
+                    RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
+                    if (routes != null) {
+                        setRouteCollection(routes);
+                    }
                 }
             }
         };

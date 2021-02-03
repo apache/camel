@@ -60,35 +60,42 @@ public class DefaultRoutesLoader implements RoutesLoader {
 
         for (Resource resource : resources) {
             // language is derived from the file extension
-            final String language = FileUtil.onlyExt(resource.getLocation(), true);
+            final String extension = FileUtil.onlyExt(resource.getLocation(), true);
 
-            if (ObjectHelper.isEmpty(language)) {
-                throw new IllegalArgumentException("Unable to determine language for resource: " + resource.getLocation());
+            if (ObjectHelper.isEmpty(extension)) {
+                throw new IllegalArgumentException("Unable to determine extension for resource: " + resource.getLocation());
             }
 
-            answer.add(getLoader(language).loadRoutesBuilder(resource));
+            answer.add(getLoader(extension).loadRoutesBuilder(resource));
         }
 
         return answer;
     }
 
-    private RoutesBuilderLoader getLoader(String language) {
-        RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(language, RoutesBuilderLoader.class);
+    /**
+     *
+     * @param  extension
+     * @return
+     */
+    private RoutesBuilderLoader getLoader(String extension) {
+        RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(extension, RoutesBuilderLoader.class);
 
         if (answer == null) {
             final ExtendedCamelContext ecc = getCamelContext(ExtendedCamelContext.class);
             final FactoryFinder finder = ecc.getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
             final BaseServiceResolver<RoutesBuilderLoader> resolver
-                    = new BaseServiceResolver<>(language, RoutesBuilderLoader.class, finder);
+                    = new BaseServiceResolver<>(extension, RoutesBuilderLoader.class, finder);
             final Optional<RoutesBuilderLoader> loader
                     = resolver.resolve(ecc);
 
             if (loader.isPresent()) {
                 return CamelContextAware.trySetCamelContext(loader.get(), ecc);
-            } else {
-                throw new IllegalArgumentException("Unable to fina a RoutesBuilderLoader for language " + language);
             }
+        }
+
+        if (answer == null) {
+            throw new IllegalArgumentException("Unable to fina a RoutesBuilderLoader for extension " + extension);
         }
 
         return answer;

@@ -33,6 +33,11 @@ public interface RoutesBuilderLoader {
     String FACTORY_GROUP = "routes-loader";
 
     /**
+     * The supported file extension.
+     */
+    String getSupportedExtension();
+
+    /**
      * Loads {@link RoutesBuilder} from {@link Resource}.
      *
      * @param  resource the resource to be loaded.
