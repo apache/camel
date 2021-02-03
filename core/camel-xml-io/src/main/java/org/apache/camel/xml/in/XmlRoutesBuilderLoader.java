@@ -29,8 +29,9 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.JdkService;
 
-@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/xml")
+@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + XmlRoutesBuilderLoader.EXTENSION)
 public class XmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
+    public static final String EXTENSION = "xml";
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 
     private CamelContext camelContext;
@@ -43,6 +44,11 @@ public class XmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContext
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public String getSupportedExtension() {
+        return EXTENSION;
     }
 
     @Override
