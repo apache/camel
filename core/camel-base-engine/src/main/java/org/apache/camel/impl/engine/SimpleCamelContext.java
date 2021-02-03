@@ -65,7 +65,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
-import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -412,8 +412,19 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected RoutesBuilderLoader createRoutesBuilderLoader() {
-        return new DefaultRoutesBuilderLoader();
+    protected RoutesLoader createRoutesLoader() {
+        BaseServiceResolver<RoutesLoader> resolver = new BaseServiceResolver<>(
+                RoutesLoader.FACTORY,
+                RoutesLoader.class,
+                getBootstrapFactoryFinder());
+
+        Optional<RoutesLoader> result = resolver.resolve(getCamelContextReference());
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find RoutesLoader on classpath.");
+        }
     }
 
     @Override

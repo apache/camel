@@ -25,7 +25,12 @@ public interface RoutesBuilderLoader {
     /**
      * Service factory base path for language specific loaders.
      */
-    String LOADERS_FACTORY_PATH = "META-INF/services/org/apache/camel/routes-loaders/";
+    String FACTORY_PATH = "META-INF/services/org/apache/camel/routes-loader/";
+
+    /**
+     * Service factory group.
+     */
+    String FACTORY_GROUP = "routes-loader";
 
     /**
      * Loads {@link RoutesBuilder} from {@link Resource}.
