@@ -16,10 +16,14 @@
  */
 package org.apache.camel.support;
 
+import java.util.Optional;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,12 +132,80 @@ public final class ResolverHelper {
         return null;
     }
 
-    public static class LookupExceptionHandler {
+    /**
+     * Create an instance of the given factory.
+     *
+     * @param  camelContext the {@link CamelContext}
+     * @param  factoryPath  the path of the factory file
+     * @param  factoryKey   the key used top lookup the factory class
+     * @param  factoryClass the type of the class
+     * @return              an instance fo the given factory
+     */
+    public static <T> Optional<T> resolveService(
+            CamelContext camelContext, String factoryPath, String factoryKey, Class<T> factoryClass) {
+        return resolveService(
+                camelContext,
+                camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(factoryPath),
+                factoryKey, factoryClass);
+    }
 
-        public void handleException(Exception e, Logger log, String name) {
-            log.debug("Ignored error looking up bean: {}", name, e);
+    /**
+     * Create an instance of the given factory using the default factory finder
+     *
+     * @param  camelContext the {@link CamelContext}
+     * @param  factoryKey   the key used top lookup the factory class
+     * @param  factoryClass the type of the class
+     * @return              an instance fo the given factory
+     */
+    public static <T> Optional<T> resolveService(
+            CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
+        return resolveService(
+                camelContext,
+                camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder(),
+                factoryKey, factoryClass);
+    }
+
+    /**
+     * Create an instance of the given factory.
+     *
+     * @param  camelContext  the {@link CamelContext}
+     * @param  factoryFinder the {@link FactoryFinder} to use
+     * @param  factoryKey    the key used top lookup the factory class
+     * @param  factoryClass  the type of the class
+     * @return               an instance fo the given factory
+     */
+    public static <T> Optional<T> resolveService(
+            CamelContext camelContext, FactoryFinder factoryFinder, String factoryKey, Class<T> factoryClass) {
+
+        // use factory finder to find a custom implementations
+        Class<?> type = null;
+
+        try {
+            type = factoryFinder.findClass(factoryKey).orElse(null);
+        } catch (Exception e) {
+            // ignore
         }
 
+        if (type != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found {}: {} via: {}{}", factoryClass.getSimpleName(), type.getName(), FactoryFinder.DEFAULT_PATH,
+                        factoryKey);
+            }
+            if (factoryClass.isAssignableFrom(type)) {
+                final Object instance = camelContext.getInjector().newInstance(type, false);
+                final T answer = factoryClass.cast(instance);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Detected and using {}: {}", factoryClass.getSimpleName(), answer);
+                }
+
+                return Optional.of(answer);
+            } else {
+                throw new IllegalArgumentException(
+                        "Type is not a " + factoryClass.getSimpleName() + " implementation. Found: " + type.getName());
+            }
+        }
+        return Optional.empty();
     }
 
     private static Object lookupInRegistry(
@@ -157,6 +229,14 @@ public final class ResolverHelper {
         }
 
         return null;
+    }
+
+    public static class LookupExceptionHandler {
+
+        public void handleException(Exception e, Logger log, String name) {
+            log.debug("Ignored error looking up bean: {}", name, e);
+        }
+
     }
 
 }

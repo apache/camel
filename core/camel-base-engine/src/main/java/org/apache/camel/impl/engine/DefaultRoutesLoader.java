@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -29,11 +28,10 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
-@JdkService(RoutesLoader.FACTORY)
 public class DefaultRoutesLoader implements RoutesLoader {
     private CamelContext camelContext;
 
@@ -87,21 +85,13 @@ public class DefaultRoutesLoader implements RoutesLoader {
             final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
             final FactoryFinder finder = ecc.getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
-            final BaseServiceResolver<RoutesBuilderLoader> resolver
-                    = new BaseServiceResolver<>(extension, RoutesBuilderLoader.class, finder);
-            final Optional<RoutesBuilderLoader> loader
-                    = resolver.resolve(ecc);
-
-            if (loader.isPresent()) {
-                return CamelContextAware.trySetCamelContext(loader.get(), ecc);
-            }
+            answer = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class).orElse(null);
         }
-
         if (answer == null) {
             throw new IllegalArgumentException(
                     "Unable to fina a RoutesBuilderLoader for resource with file extension: " + extension);
         }
 
-        return answer;
+        return CamelContextAware.trySetCamelContext(answer, getCamelContext());
     }
 }
