@@ -141,11 +141,16 @@ public class DefaultRoutesCollector implements RoutesCollector {
                         continue;
                     }
 
-                    log.debug("Found route builder from location: {}", include);
-                    ecc.getRoutesLoader().findRoutesBuilders(resource).forEach(builder -> {
+                    Collection<RoutesBuilder> builders = ecc.getRoutesLoader().findRoutesBuilders(resource);
+                    if (builders.isEmpty()) {
+                        continue;
+                    }
+
+                    log.debug("Found {} route builder from location: {}", builders.size(), include);
+                    for (RoutesBuilder builder : builders) {
                         answer.add(builder);
                         count.incrementAndGet();
-                    });
+                    }
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No RoutesBuilder found in {}. Skipping detection.", include);
