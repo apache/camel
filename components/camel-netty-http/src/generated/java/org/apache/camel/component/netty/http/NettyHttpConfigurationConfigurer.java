@@ -163,8 +163,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "SslHandler": target.setSslHandler(property(camelContext, io.netty.handler.ssl.SslHandler.class, value)); return true;
         case "sync":
         case "Sync": target.setSync(property(camelContext, boolean.class, value)); return true;
-        case "synchronous":
-        case "Synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tcpnodelay":
         case "TcpNoDelay": target.setTcpNoDelay(property(camelContext, boolean.class, value)); return true;
         case "textline":
@@ -344,8 +342,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "SslHandler": return io.netty.handler.ssl.SslHandler.class;
         case "sync":
         case "Sync": return boolean.class;
-        case "synchronous":
-        case "Synchronous": return boolean.class;
         case "tcpnodelay":
         case "TcpNoDelay": return boolean.class;
         case "textline":
@@ -526,8 +522,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "SslHandler": return target.getSslHandler();
         case "sync":
         case "Sync": return target.isSync();
-        case "synchronous":
-        case "Synchronous": return target.isSynchronous();
         case "tcpnodelay":
         case "TcpNoDelay": return target.isTcpNoDelay();
         case "textline":
