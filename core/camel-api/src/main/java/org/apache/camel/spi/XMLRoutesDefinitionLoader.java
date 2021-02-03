@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 /**
  * SPI for loading routes/rests from XML input streams and parsing this to model definition classes.
  *
- * @deprecated sue {@link RoutesLoader}
+ * @deprecated use {@link RoutesLoader}
  */
 @Deprecated
 public interface XMLRoutesDefinitionLoader {
