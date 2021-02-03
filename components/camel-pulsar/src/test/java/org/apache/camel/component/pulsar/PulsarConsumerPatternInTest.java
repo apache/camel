@@ -49,6 +49,14 @@ public class PulsarConsumerPatternInTest extends PulsarTestSupport {
                     + "&subscriptionName=camel-subscription&consumerQueueSize=5&consumerName=camel-consumer")
     private Endpoint from;
 
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+    private Endpoint fromOne;
+
+    @EndpointInject("pulsar:" + TOPIC_TWO_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+    private Endpoint fromTwo;
+
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
@@ -88,8 +96,34 @@ public class PulsarConsumerPatternInTest extends PulsarTestSupport {
     @Test
     public void testAMessageToClusterIsConsumed() throws Exception {
         // must create topics first when using topic patterns for the consumer
-        givenPulsarAdmin().topics().createNonPartitionedTopic("camel-foo");
-        givenPulsarAdmin().topics().createNonPartitionedTopic("camel-bar");
+        // and for that we add them first as routes, which we then later stop
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(fromOne).routeId("one").to("mock:one");
+                from(fromTwo).routeId("two").to("mock:two");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:one").expectedMessageCount(1);
+        getMockEndpoint("mock:two").expectedMessageCount(1);
+
+        Producer<String> producer
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        producer.send("Hello One");
+
+        Producer<String> producer2
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_TWO_URI).create();
+        producer2.send("Hello Two");
+
+        assertMockEndpointsSatisfied();
+
+        resetMocks();
+
+        // now switch to patterns
+        context.getRouteController().stopRoute("one");
+        context.getRouteController().stopRoute("two");
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -97,16 +131,10 @@ public class PulsarConsumerPatternInTest extends PulsarTestSupport {
                 from(from).to(to).process(e -> LOGGER.info("Processing message {}", e.getIn().getBody(String.class)));
             }
         });
-        context.start();
 
         to.expectedBodiesReceivedInAnyOrder("Hello World!", "Bye World!");
 
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
         producer.send("Hello World!");
-
-        Producer<String> producer2
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_TWO_URI).create();
         producer2.send("Bye World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
