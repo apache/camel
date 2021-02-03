@@ -1004,12 +1004,14 @@ public class ExpressionClause<T> implements Expression, Predicate {
             synchronized (this) {
                 if (pred == null) {
                     Expression newExpression = getExpressionValue();
+                    Predicate newPredicate;
                     if (newExpression == null) {
-                        pred = delegate.getPredicateType().createPredicate(context);
+                        newPredicate = delegate.getPredicateType().createPredicate(context);
                     } else {
-                        pred = ExpressionToPredicateAdapter.toPredicate(newExpression);
+                        newPredicate = ExpressionToPredicateAdapter.toPredicate(newExpression);
                     }
-                    pred.initPredicate(context);
+                    newPredicate.initPredicate(context);
+                    pred = newPredicate;
                 }
             }
         }
