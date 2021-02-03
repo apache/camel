@@ -316,10 +316,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
-                reactiveExecutor.schedule(() -> {
-                    // execute any after processor work (in current thread, not in the callback)
-                    uow.afterProcess(processor, exchange, callback, false);
-                });
+                // execute any after processor work (in current thread, not in the callback)
+                uow.afterProcess(processor, exchange, callback, false);
             }
 
             if (LOG.isTraceEnabled()) {

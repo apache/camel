@@ -222,10 +222,8 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
 
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
-                reactiveExecutor.schedule(() -> {
-                    // execute any after processor work (in current thread, not in the callback)
-                    uow.afterProcess(processor, exchange, callback, sync);
-                });
+                // execute any after processor work (in current thread, not in the callback)
+                uow.afterProcess(processor, exchange, callback, sync);
             }
 
             if (LOG.isTraceEnabled()) {
