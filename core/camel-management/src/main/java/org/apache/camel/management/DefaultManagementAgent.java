@@ -391,9 +391,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             }
         }
         if (caught > 0) {
-            LOG.warn("A number of {} exceptions caught while unregistering MBeans during stop operation. See INFO log"
-                     + "for details.",
-                    caught);
+            LOG.warn("{} exceptions caught while unregistering MBeans during stop operation. See INFO log for details.", caught);
         }
 
         ServiceHelper.stopService(assembler);
