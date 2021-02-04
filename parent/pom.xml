@@ -4918,6 +4918,13 @@
                             <argLine>@{camel.surefire.fork.vmargs}</argLine>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>@{camel.surefire.fork.vmargs}</argLine>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
