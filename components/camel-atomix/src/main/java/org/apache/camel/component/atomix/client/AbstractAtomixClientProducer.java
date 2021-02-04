@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.RES
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource>
-        extends DefaultAsyncProducer {
+        extends HeaderSelectorProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAtomixClientProducer.class);
 
@@ -43,30 +44,10 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
     private ConcurrentMap<String, R> resources;
 
     protected AbstractAtomixClientProducer(E endpoint) {
-        super(endpoint);
+        super(endpoint, get);
 
         this.processors = new HashMap<>();
         this.resources = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        final Message message = exchange.getIn();
-        final String key = getProcessorKey(message);
-
-        AtomixAsyncMessageProcessor processor = this.processors.get(key);
-        if (processor != null) {
-            try {
-                return processor.process(message, callback);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-        } else {
-            exchange.setException(new IllegalArgumentException("No handler for action " + key));
-        }
-
-        callback.done(true);
-        return true;
     }
 
     // **********************************

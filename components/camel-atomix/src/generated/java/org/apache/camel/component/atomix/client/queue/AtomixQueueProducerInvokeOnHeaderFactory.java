@@ -16,24 +16,24 @@ public class AtomixQueueProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.atomix.client.queue.AtomixQueueProducer target = (org.apache.camel.component.atomix.client.queue.AtomixQueueProducer) obj;
         switch (key) {
+        case "poll":
+        case "POLL": return target.onPoll(exchange.getMessage(), callback);
         case "clear":
         case "CLEAR": return target.onClear(exchange.getMessage(), callback);
-        case "add":
-        case "ADD": return target.onAdd(exchange.getMessage(), callback);
+        case "size":
+        case "SIZE": return target.onSize(exchange.getMessage(), callback);
         case "contains":
         case "CONTAINS": return target.onContains(exchange.getMessage(), callback);
+        case "remove":
+        case "REMOVE": return target.onRemove(exchange.getMessage(), callback);
         case "peek":
         case "PEEK": return target.onPeek(exchange.getMessage(), callback);
+        case "add":
+        case "ADD": return target.onAdd(exchange.getMessage(), callback);
         case "is_empty":
         case "IS_EMPTY": return target.onIsEmpty(exchange.getMessage(), callback);
         case "offer":
         case "OFFER": return target.onOffer(exchange.getMessage(), callback);
-        case "poll":
-        case "POLL": return target.onPoll(exchange.getMessage(), callback);
-        case "remove":
-        case "REMOVE": return target.onRemove(exchange.getMessage(), callback);
-        case "size":
-        case "SIZE": return target.onSize(exchange.getMessage(), callback);
         default: return null;
         }
     }

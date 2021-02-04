@@ -171,10 +171,9 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         String cn = fqn.substring(pos + 1) + "InvokeOnHeaderFactory";
         String en = fqn;
         String pfqn = fqn;
-        String psn = "org.apache.camel.support.component.InvokeOnHeaderSupport";
 
         StringWriter sw = new StringWriter();
-        generateInvokeOnHeaderSource(pn, cn, en, pfqn, psn, sw, models);
+        generateInvokeOnHeaderSource(pn, cn, en, pfqn, sw, models);
 
         String source = sw.toString();
 
@@ -184,11 +183,11 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         if (updated) {
             getLog().info("Updated " + fileName);
         }
-        return pfqn + "." + cn;
+        return pn + "." + cn;
     }
 
     private void generateInvokeOnHeaderSource(
-            String pn, String cn, String en, String pfqn, String psn, StringWriter w, Set<InvokeOnHeaderModel> models) {
+            String pn, String cn, String en, String pfqn, StringWriter w, Set<InvokeOnHeaderModel> models) {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");

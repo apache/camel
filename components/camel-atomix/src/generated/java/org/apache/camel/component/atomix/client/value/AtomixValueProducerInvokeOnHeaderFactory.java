@@ -16,14 +16,14 @@ public class AtomixValueProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.atomix.client.value.AtomixValueProducer target = (org.apache.camel.component.atomix.client.value.AtomixValueProducer) obj;
         switch (key) {
-        case "compare_and_set":
-        case "COMPARE_AND_SET": return target.onCompareAndSet(exchange.getMessage(), callback);
         case "set":
         case "SET": return target.onSet(exchange.getMessage(), callback);
-        case "get":
-        case "GET": return target.onGet(exchange.getMessage(), callback);
+        case "compare_and_set":
+        case "COMPARE_AND_SET": return target.onCompareAndSet(exchange.getMessage(), callback);
         case "get_and_set":
         case "GET_AND_SET": return target.onGetAndSet(exchange.getMessage(), callback);
+        case "get":
+        case "GET": return target.onGet(exchange.getMessage(), callback);
         default: return null;
         }
     }

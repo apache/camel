@@ -16,22 +16,22 @@ public class AtomixMultiMapProducerInvokeOnHeaderFactory implements InvokeOnHead
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.atomix.client.multimap.AtomixMultiMapProducer target = (org.apache.camel.component.atomix.client.multimap.AtomixMultiMapProducer) obj;
         switch (key) {
-        case "get":
-        case "GET": return target.onGet(exchange.getMessage(), callback);
-        case "remove":
-        case "REMOVE": return target.onRemove(exchange.getMessage(), callback);
         case "is_empty":
         case "IS_EMPTY": return target.onIsEmpty(exchange.getMessage(), callback);
+        case "size":
+        case "SIZE": return target.onSize(exchange.getMessage(), callback);
         case "contains_key":
         case "CONTAINS_KEY": return target.onContainsKey(exchange.getMessage(), callback);
         case "put":
         case "PUT": return target.onPut(exchange.getMessage(), callback);
-        case "clear":
-        case "CLEAR": return target.onClear(exchange.getMessage(), callback);
-        case "size":
-        case "SIZE": return target.onSize(exchange.getMessage(), callback);
         case "remove_value":
         case "REMOVE_VALUE": return target.onRemoveValue(exchange.getMessage(), callback);
+        case "get":
+        case "GET": return target.onGet(exchange.getMessage(), callback);
+        case "clear":
+        case "CLEAR": return target.onClear(exchange.getMessage(), callback);
+        case "remove":
+        case "REMOVE": return target.onRemove(exchange.getMessage(), callback);
         default: return null;
         }
     }

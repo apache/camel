@@ -142,7 +142,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         super.doBuild();
 
         String key = this.getClass().getName();
-        String fqn = RESOURCE_PATH + "/" + key;
+        String fqn = RESOURCE_PATH + key;
         strategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
                 .newInstance(key, InvokeOnHeaderStrategy.class)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
@@ -162,7 +162,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             }
 
             LOGGER.debug("Invoking @InvokeOnHeader method: {}", action);
-            Object answer = strategy.invoke(this, action, exchange, callback);
+            Object answer = strategy.invoke(target, action, exchange, callback);
             LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
 
             if (answer == null) {
