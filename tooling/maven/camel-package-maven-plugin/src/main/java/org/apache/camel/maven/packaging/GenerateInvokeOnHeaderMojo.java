@@ -122,8 +122,8 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
                 set = new HashSet<>();
             }
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
-            model.key = value;
-            model.methodName = methodName;
+            model.setKey(value);
+            model.setMethodName(methodName);
             set.add(model);
         });
 
