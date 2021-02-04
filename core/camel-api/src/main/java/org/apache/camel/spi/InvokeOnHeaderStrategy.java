@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 
 /**
@@ -31,8 +32,9 @@ public interface InvokeOnHeaderStrategy {
      * @param  target    the target such as HeaderSelectorProducer
      * @param  key       the header key
      * @param  exchange  the exchange
+     * @param  callback  the async callback
      * @return           option response from invoking the method, or <tt>null</tt> if the method is void
      * @throws Exception is thrown if error invoking the method.
      */
-    Object invoke(Object target, String key, Exchange exchange) throws Exception;
+    Object invoke(Object target, String key, Exchange exchange, AsyncCallback callback) throws Exception;
 }

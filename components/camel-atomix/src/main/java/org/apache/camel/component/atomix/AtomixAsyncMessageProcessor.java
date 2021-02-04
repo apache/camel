@@ -21,11 +21,7 @@ import org.apache.camel.Message;
 
 @FunctionalInterface
 public interface AtomixAsyncMessageProcessor {
-    /**
-     * @param  message
-     * @param  callback
-     * @return
-     * @throws Exception
-     */
+
     boolean process(Message message, AsyncCallback callback) throws Exception;
+
 }

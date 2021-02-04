@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,9 +25,7 @@ import io.atomix.resource.Resource;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
-import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
-import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource>
         extends DefaultAsyncProducer {
@@ -54,20 +50,6 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
     }
 
     @Override
-    protected void doInit() throws Exception {
-        for (final Method method : getClass().getDeclaredMethods()) {
-            InvokeOnHeader[] annotations = method.getAnnotationsByType(InvokeOnHeader.class);
-            if (annotations != null && annotations.length > 0) {
-                for (InvokeOnHeader annotation : annotations) {
-                    bind(annotation, method);
-                }
-            }
-        }
-
-        super.doInit();
-    }
-
-    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         final Message message = exchange.getIn();
         final String key = getProcessorKey(message);
@@ -77,11 +59,14 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
             try {
                 return processor.process(message, callback);
             } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+                exchange.setException(e);
             }
         } else {
-            throw new RuntimeCamelException("No handler for action " + key);
+            exchange.setException(new IllegalArgumentException("No handler for action " + key));
         }
+
+        callback.done(true);
+        return true;
     }
 
     // **********************************
@@ -124,30 +109,4 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
 
     protected abstract R createResource(String name);
 
-    // ************************************
-    // Binding helpers
-    // ************************************
-
-    private void bind(InvokeOnHeader annotation, final Method method) {
-        if (method.getParameterCount() == 2) {
-
-            if (!Message.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                throw new IllegalArgumentException("First argument should be of type Message");
-            }
-            if (!AsyncCallback.class.isAssignableFrom(method.getParameterTypes()[1])) {
-                throw new IllegalArgumentException("Second argument should be of type AsyncCallback");
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("bind key={}, class={}, method={}",
-                        annotation.value(), this.getClass(), method.getName());
-            }
-
-            this.processors.put(annotation.value(), (m, c) -> (boolean) invokeMethodSafe(method, this, m, c));
-        } else {
-            throw new IllegalArgumentException(
-                    "Illegal number of parameters for method: " + method.getName() + ", required: 2, found: "
-                                               + method.getParameterCount());
-        }
-    }
 }

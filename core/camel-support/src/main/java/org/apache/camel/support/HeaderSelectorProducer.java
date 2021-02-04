@@ -159,6 +159,8 @@ public abstract class HeaderSelectorProducer extends BaseSelectorProducer {
                 "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get()));
     }
 
+    // TODO: bind should use factory finder and use reflection free
+    // TODO: And setup this as part of doBuild as its loaded via classpath so we can build time optimize this
     protected void bind() {
         for (final Method method : getTarget().getClass().getDeclaredMethods()) {
             bind(method.getAnnotation(InvokeOnHeader.class), method);

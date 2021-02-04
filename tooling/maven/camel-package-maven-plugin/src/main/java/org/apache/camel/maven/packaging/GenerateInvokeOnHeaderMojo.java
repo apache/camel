@@ -68,6 +68,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         private String key;
         private String methodName;
         private boolean isVoid;
+        private boolean callback;
 
         public String getKey() {
             return key;
@@ -91,6 +92,14 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
         public void setVoid(boolean aVoid) {
             isVoid = aVoid;
+        }
+
+        public boolean isCallback() {
+            return callback;
+        }
+
+        public void setCallback(boolean callback) {
+            this.callback = callback;
         }
     }
 
@@ -127,11 +136,13 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             String value = a.value().asString();
             String methodName = a.target().asMethod().name();
             boolean isVoid = Type.Kind.VOID == a.target().asMethod().returnType().kind();
+            boolean callback = a.target().asMethod().parameters().size() == 2;
             Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass, k -> new HashSet<>());
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
             model.setKey(value);
             model.setMethodName(methodName);
             model.setVoid(isVoid);
+            model.setCallback(callback);
             set.add(model);
         });
 
@@ -181,6 +192,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
+        w.write("import org.apache.camel.AsyncCallback;\n");
         w.write("import org.apache.camel.Exchange;\n");
         w.write("import org.apache.camel.spi.InvokeOnHeaderStrategy;\n");
         w.write("import " + pfqn + ";\n");
@@ -199,12 +211,17 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         }
 
         w.write("    @Override\n");
-        w.write("    public Object invoke(Object obj, String key, Exchange exchange) throws Exception {\n");
+        w.write("    public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {\n");
         w.write("        " + en + " target = (" + en + ") obj;\n");
         if (!models.isEmpty()) {
             w.write("        switch (key) {\n");
             for (InvokeOnHeaderModel option : models) {
-                String invoke = "target." + option.getMethodName() + "(exchange.getMessage())";
+                String invoke;
+                if (option.isCallback()) {
+                    invoke = "target." + option.getMethodName() + "(exchange.getMessage(), callback)";
+                } else {
+                    invoke = "target." + option.getMethodName() + "(exchange.getMessage())";
+                }
                 if (!option.getKey().toLowerCase().equals(option.getKey())) {
                     w.write(String.format("        case \"%s\":\n", option.getKey().toLowerCase()));
                 }
