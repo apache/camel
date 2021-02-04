@@ -838,7 +838,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * Whether the routes collector is enabled or not.
      *
      * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional
-     * XML routes from the file system.
+     * routes from the file system).
      *
      * The routes collector is default enabled.
      */
@@ -851,8 +851,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive
-     * filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern.
+     * Used for inclusive filtering RouteBuilder classes which are collected from the registry or via classpath
+     * scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style
+     * pattern. Multiple patterns can be specified separated by comma.
      *
      * Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use:
      * &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/&#42; To include all routes
@@ -868,9 +869,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive
-     * filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple
-     * patterns can be specified separated by comma.
+     * Used for exclusive filtering RouteBuilder classes which are collected from the registry or via classpath
+     * scanning. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style
+     * pattern. Multiple patterns can be specified separated by comma.
      *
      * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42; To exclude all routes form a
      * specific package use: com/mycompany/bar/&#42; To exclude all routes form a specific package and its sub-packages
@@ -886,8 +887,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for inclusive filtering of routes from directories. This is used to retrieve the initial list of resource
-     * which can be filtered using the exclusive filter. The pattern is using Ant-path style pattern.
+     * Used for inclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive
+     * filtering. The pattern is using Ant-path style pattern.
      *
      * Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory
      * whose name contains foo use: &#42;&#42;/*foo*.
