@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.JdkService;
@@ -57,22 +54,19 @@ public class XmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContext
             @Override
             public void configure() throws Exception {
                 try (InputStream is = resource.getInputStream()) {
-                    RouteTemplatesDefinition templates = new ModelParser(is, NAMESPACE).parseRouteTemplatesDefinition();
-                    if (templates != null) {
-                        setRouteTemplateCollection(templates);
-                    }
+                    new ModelParser(is, NAMESPACE)
+                            .parseRouteTemplatesDefinition()
+                            .ifPresent(this::setRouteTemplateCollection);
                 }
                 try (InputStream is = resource.getInputStream()) {
-                    RestsDefinition rests = new ModelParser(is, NAMESPACE).parseRestsDefinition();
-                    if (rests != null) {
-                        setRestCollection(rests);
-                    }
+                    new ModelParser(is, NAMESPACE)
+                            .parseRestsDefinition()
+                            .ifPresent(this::setRestCollection);
                 }
                 try (InputStream is = resource.getInputStream()) {
-                    RoutesDefinition routes = new ModelParser(is, NAMESPACE).parseRoutesDefinition();
-                    if (routes != null) {
-                        setRouteCollection(routes);
-                    }
+                    new ModelParser(is, NAMESPACE)
+                            .parseRoutesDefinition()
+                            .ifPresent(this::setRouteCollection);
                 }
             }
         };

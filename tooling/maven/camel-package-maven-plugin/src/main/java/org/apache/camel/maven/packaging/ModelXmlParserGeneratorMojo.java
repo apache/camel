@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -475,8 +476,12 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             });
             if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == restsDefinitionClass) {
                 String element = clazz.getAnnotation(XmlRootElement.class).name();
-                parser.addMethod().setPublic().setReturnType(clazz).setName("parse" + name).addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION)
-                    .setBody("expectTag(\"" + element + "\");\nreturn doParse" + name + "();");
+                parser.addMethod().setPublic()
+                    .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
+                    .setName("parse" + name)
+                    .addThrows(IOException.class)
+                    .addThrows(XML_PULL_PARSER_EXCEPTION)
+                    .setBodyF("return hasTag(\"%s\") ? Optional.of(doParse%s()) : Optional.empty();", element, name);
             }
             if (hasDerived) {
                 if (!attributeMembers.isEmpty()) {
