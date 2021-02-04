@@ -16,16 +16,16 @@ public class ConsulSessionProducerInvokeOnHeaderFactory implements InvokeOnHeade
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.consul.endpoint.ConsulSessionProducer target = (org.apache.camel.component.consul.endpoint.ConsulSessionProducer) obj;
         switch (key) {
-        case "info":
-        case "INFO": target.info(exchange.getMessage()); return null;
-        case "create":
-        case "CREATE": target.create(exchange.getMessage()); return null;
         case "renew":
         case "RENEW": target.renew(exchange.getMessage()); return null;
-        case "list":
-        case "LIST": target.list(exchange.getMessage()); return null;
         case "destroy":
         case "DESTROY": target.destroy(exchange.getMessage()); return null;
+        case "create":
+        case "CREATE": target.create(exchange.getMessage()); return null;
+        case "list":
+        case "LIST": target.list(exchange.getMessage()); return null;
+        case "info":
+        case "INFO": target.info(exchange.getMessage()); return null;
         default: return null;
         }
     }

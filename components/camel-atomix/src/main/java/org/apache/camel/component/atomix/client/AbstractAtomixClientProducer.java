@@ -23,10 +23,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import io.atomix.resource.Resource;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
-import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;

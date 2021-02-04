@@ -18,12 +18,12 @@ public class ConsulHealthProducerInvokeOnHeaderFactory implements InvokeOnHeader
         switch (key) {
         case "node_checks":
         case "NODE_CHECKS": target.nodeChecks(exchange.getMessage()); return null;
-        case "checks":
-        case "CHECKS": target.checks(exchange.getMessage()); return null;
-        case "service_checks":
-        case "SERVICE_CHECKS": target.serviceChecks(exchange.getMessage()); return null;
         case "service_instances":
         case "SERVICE_INSTANCES": target.serviceInstances(exchange.getMessage()); return null;
+        case "service_checks":
+        case "SERVICE_CHECKS": target.serviceChecks(exchange.getMessage()); return null;
+        case "checks":
+        case "CHECKS": target.checks(exchange.getMessage()); return null;
         default: return null;
         }
     }

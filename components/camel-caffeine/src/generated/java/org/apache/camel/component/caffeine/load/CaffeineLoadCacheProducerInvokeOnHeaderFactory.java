@@ -18,16 +18,16 @@ public class CaffeineLoadCacheProducerInvokeOnHeaderFactory implements InvokeOnH
         switch (key) {
         case "get_all":
         case "GET_ALL": target.onGetAll(exchange.getMessage()); return null;
-        case "cleanup":
-        case "CLEANUP": target.onCleanUp(exchange.getMessage()); return null;
-        case "put":
-        case "PUT": target.onPut(exchange.getMessage()); return null;
-        case "invalidate_all":
-        case "INVALIDATE_ALL": target.onInvalidateAll(exchange.getMessage()); return null;
-        case "put_all":
-        case "PUT_ALL": target.onPutAll(exchange.getMessage()); return null;
         case "get":
         case "GET": target.onGet(exchange.getMessage()); return null;
+        case "put":
+        case "PUT": target.onPut(exchange.getMessage()); return null;
+        case "put_all":
+        case "PUT_ALL": target.onPutAll(exchange.getMessage()); return null;
+        case "cleanup":
+        case "CLEANUP": target.onCleanUp(exchange.getMessage()); return null;
+        case "invalidate_all":
+        case "INVALIDATE_ALL": target.onInvalidateAll(exchange.getMessage()); return null;
         case "invalidate":
         case "INVALIDATE": target.onInvalidate(exchange.getMessage()); return null;
         default: return null;
