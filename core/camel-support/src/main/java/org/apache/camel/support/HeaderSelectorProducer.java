@@ -16,35 +16,34 @@
  */
 package org.apache.camel.support;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.Processor;
-import org.apache.camel.spi.InvokeOnHeader;
+import org.apache.camel.spi.InvokeOnHeaderStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
-
 /**
  * A selector-based producer which uses a header value to determine which processor should be invoked.
  */
-public abstract class HeaderSelectorProducer extends BaseSelectorProducer {
+public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implements CamelContextAware {
+
+    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/invoke-on-header/";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderSelectorProducer.class);
 
     private final Supplier<String> headerSupplier;
     private final Supplier<String> defaultHeaderValueSupplier;
     private final Object target;
-    private Map<String, Processor> handlers;
+    private CamelContext camelContext;
+    private InvokeOnHeaderStrategy strategy;
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
         this(endpoint, headerSupplier, () -> null, null);
@@ -126,71 +125,68 @@ public abstract class HeaderSelectorProducer extends BaseSelectorProducer {
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");
         this.defaultHeaderValueSupplier = ObjectHelper.notNull(defaultHeaderValueSupplier, "defaultHeaderValueSupplier");
         this.target = target != null ? target : this;
-        this.handlers = caseSensitive ? new HashMap<>() : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     @Override
-    protected void doStart() throws Exception {
-        bind();
-
-        handlers = Collections.unmodifiableMap(handlers);
-
-        super.doStart();
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     @Override
-    protected Processor getProcessor(Exchange exchange) throws Exception {
-        String header = headerSupplier.get();
-        String action = exchange.getIn().getHeader(header, String.class);
-
-        if (action == null) {
-            action = defaultHeaderValueSupplier.get();
-        }
-        if (action == null) {
-            throw new NoSuchHeaderException(exchange, header, String.class);
-        }
-
-        return handlers.get(action);
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
-    protected void onMissingProcessor(Exchange exchange) throws Exception {
-        throw new IllegalStateException(
-                "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get()));
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+        String key = this.getClass().getName();
+        String fqn = RESOURCE_PATH + "/" + key;
+        strategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+                .newInstance(key, InvokeOnHeaderStrategy.class)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
     }
 
-    // TODO: bind should use factory finder and use reflection free
-    // TODO: And setup this as part of doBuild as its loaded via classpath so we can build time optimize this
-    protected void bind() {
-        for (final Method method : getTarget().getClass().getDeclaredMethods()) {
-            bind(method.getAnnotation(InvokeOnHeader.class), method);
-        }
-    }
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            String header = headerSupplier.get();
+            String action = exchange.getIn().getHeader(header, String.class);
 
-    protected final void bind(String key, Processor processor) {
-        if (handlers.containsKey(key)) {
-            LOGGER.warn("A processor is already set for action {}", key);
-        }
-
-        this.handlers.put(key, processor);
-    }
-
-    protected void bind(InvokeOnHeader handler, final Method method) {
-        if (handler != null && method.getParameterCount() == 1) {
-            final Class<?> type = method.getParameterTypes()[0];
-
-            LOGGER.debug("bind key={}, class={}, method={}, type={}",
-                    handler.value(), this.getClass(), method.getName(), type);
-
-            if (Message.class.isAssignableFrom(type)) {
-                bind(handler.value(), e -> invokeMethodSafe(method, target, e.getIn()));
-            } else {
-                bind(handler.value(), e -> invokeMethodSafe(method, target, e));
+            if (action == null) {
+                action = defaultHeaderValueSupplier.get();
             }
+            if (action == null) {
+                throw new NoSuchHeaderException(exchange, header, String.class);
+            }
+
+            LOGGER.debug("Invoking @InvokeOnHeader method: {}", action);
+            Object answer = strategy.invoke(this, action, exchange, callback);
+            LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
+
+            if (answer == null) {
+                // strategy invoked synchronously so trigger callback and return true
+                callback.done(true);
+                return true;
+            } else if (answer instanceof Boolean) {
+                boolean bool = (boolean) answer;
+                if (bool) {
+                    // strategy invoked synchronously so trigger callback and return true
+                    callback.done(true);
+                    return true;
+                } else {
+                    // strategy is invoking this asynchronously so return false
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
+
+        return false;
     }
 
-    protected final Object getTarget() {
-        return this;
-    }
 }

@@ -27,15 +27,18 @@ import org.apache.camel.Message;
 /**
  * Marks a method as being invoked for a specific header value.
  * <p/>
- * The method must have either of the following  method signatures:
+ * The method must have either of the following method signatures:
+ * 
  * <pre>
- *     void theMethodName(Message message) throws Exception;
- *     Object theMethodName(Message message) throws Exception;
- *     boolean theMethodName(Message message, AsyncCallback callback) throws Exception;
+ * void theMethodName(Message message) throws Exception;
+ * 
+ * Object theMethodName(Message message) throws Exception;
+ * 
+ * boolean theMethodName(Message message, AsyncCallback callback) throws Exception;
  * </pre>
- * If the method includes the {@link AsyncCallback} type, then the return value must be boolean,
- * as part of the async callback contract.
- * Throwing exceptions is optional and can be omitted.
+ * 
+ * If the method includes the {@link AsyncCallback} type, then the return value must be boolean, as part of the async
+ * callback contract. Throwing exceptions is optional and can be omitted.
  * <p/>
  * This can be used by Component implementations that uses org.apache.camel.support.HeaderSelectorProducer.
  *
