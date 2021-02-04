@@ -75,12 +75,12 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     @Test
     public void testRemoveFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watchDelete");
+        mock.expectedMessageCount(2);
+        mock.setResultWaitTime(1000);
 
         Files.delete(testFiles.get(0));
         Files.delete(testFiles.get(1));
 
-        mock.expectedMessageCount(2);
-        mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
     }
 
@@ -120,11 +120,11 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     @Test
     public void createModifyReadBodyAsString() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
+        mock.setExpectedCount(1);
+        mock.setResultWaitTime(1000);
 
         Files.write(testFiles.get(0), "Hello".getBytes(), StandardOpenOption.SYNC);
 
-        mock.setExpectedCount(1);
-        mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
         assertEquals("Hello", mock.getExchanges().get(0).getIn().getBody(String.class));
     }
@@ -132,14 +132,14 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     @Test
     public void testCreateBatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
+        mock.expectedMessageCount(10);
+        mock.expectedMessagesMatches(exchange -> exchange.getIn()
+                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
 
         for (int i = 0; i < 10; i++) {
             createFile(testPath(), i + "");
         }
 
-        mock.expectedMessageCount(10);
-        mock.expectedMessagesMatches(exchange -> exchange.getIn()
-                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
         assertMockEndpointsSatisfied();
     }
 
