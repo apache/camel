@@ -16,12 +16,12 @@ public class ConsulPreparedQueryProducerInvokeOnHeaderFactory implements InvokeO
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.consul.endpoint.ConsulPreparedQueryProducer target = (org.apache.camel.component.consul.endpoint.ConsulPreparedQueryProducer) obj;
         switch (key) {
+        case "create":
+        case "CREATE": target.create(exchange.getMessage()); return null;
         case "execute":
         case "EXECUTE": target.execute(exchange.getMessage()); return null;
         case "get":
         case "GET": target.get(exchange.getMessage()); return null;
-        case "create":
-        case "CREATE": target.create(exchange.getMessage()); return null;
         default: return null;
         }
     }

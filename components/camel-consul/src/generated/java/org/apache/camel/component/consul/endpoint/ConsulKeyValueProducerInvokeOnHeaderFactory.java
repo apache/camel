@@ -16,24 +16,24 @@ public class ConsulKeyValueProducerInvokeOnHeaderFactory implements InvokeOnHead
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.consul.endpoint.ConsulKeyValueProducer target = (org.apache.camel.component.consul.endpoint.ConsulKeyValueProducer) obj;
         switch (key) {
-        case "get_values":
-        case "GET_VALUES": target.getValues(exchange.getMessage()); return null;
+        case "delete_key":
+        case "DELETE_KEY": target.deleteKey(exchange.getMessage()); return null;
+        case "delete_keys":
+        case "DELETE_KEYS": target.deleteKeys(exchange.getMessage()); return null;
         case "get_keys":
         case "GET_KEYS": target.getKeys(exchange.getMessage()); return null;
         case "get_sessions":
         case "GET_SESSIONS": target.getSessions(exchange.getMessage()); return null;
-        case "delete_keys":
-        case "DELETE_KEYS": target.deleteKeys(exchange.getMessage()); return null;
-        case "unlock":
-        case "UNLOCK": target.unlock(exchange.getMessage()); return null;
-        case "delete_key":
-        case "DELETE_KEY": target.deleteKey(exchange.getMessage()); return null;
-        case "put":
-        case "PUT": target.put(exchange.getMessage()); return null;
         case "get_value":
         case "GET_VALUE": target.getValue(exchange.getMessage()); return null;
+        case "get_values":
+        case "GET_VALUES": target.getValues(exchange.getMessage()); return null;
         case "lock":
         case "LOCK": target.lock(exchange.getMessage()); return null;
+        case "put":
+        case "PUT": target.put(exchange.getMessage()); return null;
+        case "unlock":
+        case "UNLOCK": target.unlock(exchange.getMessage()); return null;
         default: return null;
         }
     }

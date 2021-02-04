@@ -18,12 +18,12 @@ public class ConsulAgentProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
         switch (key) {
         case "agent":
         case "AGENT": return target.invokeAgent(exchange.getMessage());
-        case "services":
-        case "SERVICES": return target.invokeServices(exchange.getMessage());
         case "checks":
         case "CHECKS": return target.invokeChecks(exchange.getMessage());
         case "members":
         case "MEMBERS": return target.invokeMembers(exchange.getMessage());
+        case "services":
+        case "SERVICES": return target.invokeServices(exchange.getMessage());
         default: return null;
         }
     }

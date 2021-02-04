@@ -18,18 +18,18 @@ public class ConsulCatalogProducerInvokeOnHeaderFactory implements InvokeOnHeade
         switch (key) {
         case "deregister":
         case "DEREGISTER": target.deregister(exchange.getMessage()); return null;
-        case "get_service":
-        case "GET_SERVICE": target.getService(exchange.getMessage()); return null;
-        case "register":
-        case "REGISTER": target.register(exchange.getMessage()); return null;
-        case "list_nodes":
-        case "LIST_NODES": target.listNodes(exchange.getMessage()); return null;
         case "get_node":
         case "GET_NODE": target.getNode(exchange.getMessage()); return null;
-        case "list_services":
-        case "LIST_SERVICES": target.listServices(exchange.getMessage()); return null;
+        case "get_service":
+        case "GET_SERVICE": target.getService(exchange.getMessage()); return null;
         case "list_datacenters":
         case "LIST_DATACENTERS": target.listDatacenters(exchange.getMessage()); return null;
+        case "list_nodes":
+        case "LIST_NODES": target.listNodes(exchange.getMessage()); return null;
+        case "list_services":
+        case "LIST_SERVICES": target.listServices(exchange.getMessage()); return null;
+        case "register":
+        case "REGISTER": target.register(exchange.getMessage()); return null;
         default: return null;
         }
     }

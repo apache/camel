@@ -16,10 +16,10 @@ public class ConsulCoordinatesProducerInvokeOnHeaderFactory implements InvokeOnH
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.consul.endpoint.ConsulCoordinatesProducer target = (org.apache.camel.component.consul.endpoint.ConsulCoordinatesProducer) obj;
         switch (key) {
-        case "nodes":
-        case "NODES": target.nodes(exchange.getMessage()); return null;
         case "datacenters":
         case "DATACENTERS": target.datacenters(exchange.getMessage()); return null;
+        case "nodes":
+        case "NODES": target.nodes(exchange.getMessage()); return null;
         default: return null;
         }
     }

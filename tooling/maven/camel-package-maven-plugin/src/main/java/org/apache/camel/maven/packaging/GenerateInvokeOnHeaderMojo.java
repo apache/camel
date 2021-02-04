@@ -25,11 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.TreeSet;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -137,7 +136,8 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             String methodName = a.target().asMethod().name();
             boolean isVoid = Type.Kind.VOID == a.target().asMethod().returnType().kind();
             boolean callback = a.target().asMethod().parameters().size() == 2;
-            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass, k -> new HashSet<>());
+            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass,
+                    k -> new TreeSet<>(Comparator.comparing(InvokeOnHeaderModel::getKey)));
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
             model.setKey(value);
             model.setMethodName(methodName);
@@ -203,11 +203,6 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         w.write("public class " + cn + " implements InvokeOnHeaderStrategy");
         w.write(" {\n");
         w.write("\n");
-
-        // sort options A..Z so they always have same order
-        if (!models.isEmpty()) {
-            models = models.stream().sorted(Comparator.comparing(InvokeOnHeaderModel::getKey)).collect(Collectors.toSet());
-        }
 
         w.write("    @Override\n");
         w.write("    public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {\n");

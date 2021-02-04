@@ -16,20 +16,20 @@ public class EhcacheProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrat
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.ehcache.EhcacheProducer target = (org.apache.camel.component.ehcache.EhcacheProducer) obj;
         switch (key) {
-        case "get_all":
-        case "GET_ALL": target.onGetAll(exchange.getMessage()); return null;
         case "clear":
         case "CLEAR": target.onClear(exchange.getMessage()); return null;
-        case "put_if_absent":
-        case "PUT_IF_ABSENT": target.onPutIfAbsent(exchange.getMessage()); return null;
-        case "remove":
-        case "REMOVE": target.onRemove(exchange.getMessage()); return null;
         case "get":
         case "GET": target.onGet(exchange.getMessage()); return null;
+        case "get_all":
+        case "GET_ALL": target.onGetAll(exchange.getMessage()); return null;
         case "put":
         case "PUT": target.onPut(exchange.getMessage()); return null;
         case "put_all":
         case "PUT_ALL": target.onPutAll(exchange.getMessage()); return null;
+        case "put_if_absent":
+        case "PUT_IF_ABSENT": target.onPutIfAbsent(exchange.getMessage()); return null;
+        case "remove":
+        case "REMOVE": target.onRemove(exchange.getMessage()); return null;
         case "remove_all":
         case "REMOVE_ALL": target.onRemoveAll(exchange.getMessage()); return null;
         case "replace":
