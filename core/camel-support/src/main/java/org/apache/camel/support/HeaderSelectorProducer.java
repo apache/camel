@@ -29,7 +29,6 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InvokeOnHeader;
-import org.apache.camel.spi.InvokeOnHeaders;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,14 +161,7 @@ public abstract class HeaderSelectorProducer extends BaseSelectorProducer {
 
     protected void bind() {
         for (final Method method : getTarget().getClass().getDeclaredMethods()) {
-            InvokeOnHeaders annotation = method.getAnnotation(InvokeOnHeaders.class);
-            if (annotation != null) {
-                for (InvokeOnHeader processor : annotation.value()) {
-                    bind(processor, method);
-                }
-            } else {
-                bind(method.getAnnotation(InvokeOnHeader.class), method);
-            }
+            bind(method.getAnnotation(InvokeOnHeader.class), method);
         }
     }
 

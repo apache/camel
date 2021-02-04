@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -31,7 +30,6 @@ import org.apache.camel.Message;
  *
  * @see Message#getHeader(String)
  */
-@Repeatable(InvokeOnHeaders.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface InvokeOnHeader {

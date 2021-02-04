@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 
 /**
- * Pluggable strategy for invoking {@link InvokeOnHeader} or {@link InvokeOnHeaders}.
+ * Pluggable strategy for invoking {@link InvokeOnHeader}.
  * <p>
  * Camel provides source code generated strategies via the camel maven tooling.
  */

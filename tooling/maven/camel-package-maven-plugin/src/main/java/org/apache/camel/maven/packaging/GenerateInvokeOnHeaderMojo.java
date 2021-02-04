@@ -44,7 +44,7 @@ import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.Type;
 
 /**
- * Abstract class for @InvokeOnHeader/@InvokeOnHeaders factory generator.
+ * Abstract class for @InvokeOnHeader factory generator.
  */
 @Mojo(name = "generate-invoke-on-header", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
       requiresDependencyCollection = ResolutionScope.COMPILE,
@@ -52,7 +52,6 @@ import org.jboss.jandex.Type;
 public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
     public static final DotName HEADER_ANNOTATION = DotName.createSimple("org.apache.camel.spi.InvokeOnHeader");
-    public static final DotName HEADERS_ANNOTATION = DotName.createSimple("org.apache.camel.spi.InvokeOnHeaders");
 
     /**
      * The project build directory
