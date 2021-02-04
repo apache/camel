@@ -28,10 +28,11 @@ public interface InvokeOnHeaderStrategy {
     /**
      * Invoke the method based on the header key
      *
+     * @param  target    the target such as HeaderSelectorProducer
      * @param  key       the header key
      * @param  exchange  the exchange
      * @return           option response from invoking the method, or <tt>null</tt> if the method is void
      * @throws Exception is thrown if error invoking the method.
      */
-    Object invoke(String key, Exchange exchange) throws Exception;
+    Object invoke(Object target, String key, Exchange exchange) throws Exception;
 }

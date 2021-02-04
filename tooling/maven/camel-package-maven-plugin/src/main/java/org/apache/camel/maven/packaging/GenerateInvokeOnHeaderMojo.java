@@ -41,6 +41,7 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
+import org.jboss.jandex.Type;
 
 /**
  * Abstract class for @InvokeOnHeader/@InvokeOnHeaders factory generator.
@@ -67,6 +68,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
     private static class InvokeOnHeaderModel {
         private String key;
         private String methodName;
+        private boolean isVoid;
 
         public String getKey() {
             return key;
@@ -82,6 +84,14 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
         public void setMethodName(String methodName) {
             this.methodName = methodName;
+        }
+
+        public boolean isVoid() {
+            return isVoid;
+        }
+
+        public void setVoid(boolean aVoid) {
+            isVoid = aVoid;
         }
     }
 
@@ -117,10 +127,12 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             String currentClass = a.target().asMethod().declaringClass().name().toString();
             String value = a.value().asString();
             String methodName = a.target().asMethod().name();
+            boolean isVoid = Type.Kind.VOID == a.target().asMethod().returnType().kind();
             Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass, k -> new HashSet<>());
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
             model.setKey(value);
             model.setMethodName(methodName);
+            model.setVoid(isVoid);
             set.add(model);
         });
 
@@ -134,16 +146,15 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
     }
 
     protected void createInvokeOnHeaderFactory(String fqn, Set<InvokeOnHeaderModel> models) throws IOException {
-        generateInvokeOnHeaderFactory(fqn, models, sourcesOutputDir);
+        String tfqn = generateInvokeOnHeaderFactory(fqn, models, sourcesOutputDir);
         updateResource(resourcesOutputDir.toPath(),
                 "META-INF/services/org/apache/camel/invoke-on-header/" + fqn,
-                "# " + GENERATED_MSG + NL + "class=" + fqn + NL);
+                "# " + GENERATED_MSG + NL + "class=" + tfqn + NL);
     }
 
     @Deprecated
-    private void generateInvokeOnHeaderFactory(
-            String fqn, Set<InvokeOnHeaderModel> models, File outputDir)
-            throws IOException {
+    private String generateInvokeOnHeaderFactory(
+            String fqn, Set<InvokeOnHeaderModel> models, File outputDir) {
 
         int pos = fqn.lastIndexOf('.');
         String pn = fqn.substring(0, pos);
@@ -163,6 +174,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         if (updated) {
             getLog().info("Updated " + fileName);
         }
+        return pfqn + "." + cn;
     }
 
     private void generateInvokeOnHeaderSource(
@@ -170,19 +182,15 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
-        w.write("import java.util.Map;\n");
-        w.write("\n");
-        w.write("import org.apache.camel.CamelContext;\n");
+        w.write("import org.apache.camel.Exchange;\n");
         w.write("import org.apache.camel.spi.InvokeOnHeaderStrategy;\n");
-        w.write("import org.apache.camel.util.CaseInsensitiveMap;\n");
         w.write("import " + pfqn + ";\n");
         w.write("\n");
         w.write("/**\n");
         w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
         w.write(" */\n");
         w.write("@SuppressWarnings(\"unchecked\")\n");
-        w.write("public class " + cn + " extends " + psn
-                + " implements InvokeOnHeaderStrategy");
+        w.write("public class " + cn + " implements InvokeOnHeaderStrategy");
         w.write(" {\n");
         w.write("\n");
 
@@ -192,18 +200,26 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         }
 
         w.write("    @Override\n");
-        w.write("    public Object invoke(String key, Exchange exchange) {\n");
+        w.write("    public Object invoke(Object obj, String key, Exchange exchange) throws Exception {\n");
+        w.write("        " + en + " target = (" + en + ") obj;\n");
         if (!models.isEmpty()) {
-            w.write("        switch (name) {\n");
+            w.write("        switch (key) {\n");
             for (InvokeOnHeaderModel option : models) {
-                String invoke = option.getMethodName() + "(exchange.getMessage());";
+                String invoke = "target." + option.getMethodName() + "(exchange.getMessage())";
                 if (!option.getKey().toLowerCase().equals(option.getKey())) {
                     w.write(String.format("        case \"%s\":\n", option.getKey().toLowerCase()));
                 }
-                w.write(String.format("        case \"%s\": return %s;\n", option.getKey(), invoke));
+                if (option.isVoid()) {
+                    w.write(String.format("        case \"%s\": %s; return null;\n", option.getKey(), invoke));
+                } else {
+                    w.write(String.format("        case \"%s\": return %s;\n", option.getKey(), invoke));
+                }
             }
+            w.write("        default: return null;\n");
+            w.write("        }\n");
         }
         w.write("    }\n");
+        w.write("\n");
 
         w.write("}\n");
         w.write("\n");
