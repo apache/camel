@@ -39,7 +39,14 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             } else {
                 properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
             }
-            properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
+
+            if (definition.getAutoDiscoverObjectMapper() != null) {
+                properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
+            } else if (camelContext.getGlobalOption("jackson.json.autoDiscoverObjectMapper") != null) {
+                properties.put("autoDiscoverObjectMapper",
+                        camelContext.getGlobalOption("jackson.json.autoDiscoverObjectMapper"));
+            }
+
             if (definition.getJsonView() != null) {
                 properties.put("jsonViewTypeName", asTypeName(definition.getJsonView()));
             } else {
