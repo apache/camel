@@ -51,13 +51,13 @@ public class ModelParserTest {
             boolean isRest = REST_XMLS.contains(path.getFileName().toString());
             boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
             if (isRest) {
-                RestsDefinition rests = parser.parseRestsDefinition();
+                RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                 assertNotNull(rests);
             } else if (isTemplate) {
-                RouteTemplatesDefinition templates = parser.parseRouteTemplatesDefinition();
+                RouteTemplatesDefinition templates = parser.parseRouteTemplatesDefinition().orElse(null);
                 assertNotNull(templates);
             } else {
-                RoutesDefinition routes = parser.parseRoutesDefinition();
+                RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
                 assertNotNull(routes);
             }
         }
@@ -67,9 +67,11 @@ public class ModelParserTest {
     public void testSimpleString() throws Exception {
         RoutesDefinition routes = new ModelParser(
                 new StringReader(
-                        "<routes>" + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>"
+                        "<routes>"
+                                 + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>"
                                  + "  </route>"
-                                 + "</routes>")).parseRoutesDefinition();
+                                 + "</routes>")).parseRoutesDefinition().orElse(null);
+
         assertNotNull(routes);
     }
 
@@ -86,7 +88,7 @@ public class ModelParserTest {
                                  + "      </setBody>\n"
                                  + "   </route>\n"
                                  + "</routes>";
-        final RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition();
+        final RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition().orElse(null);
         final RouteDefinition route0 = routes.getRoutes().get(0);
         final SetBodyDefinition setBody = (SetBodyDefinition) route0.getOutputs().get(0);
         final XPathExpression xPath = (XPathExpression) setBody.getExpression();

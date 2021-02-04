@@ -22,18 +22,249 @@ package org.apache.camel.xml.in;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Optional;
+
 import javax.annotation.Generated;
-import org.apache.camel.model.*;
-import org.apache.camel.model.cloud.*;
+
+import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.BeanDefinition;
+import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.model.ClaimCheckDefinition;
+import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.ConvertBodyDefinition;
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.DelayDefinition;
+import org.apache.camel.model.DescriptionDefinition;
+import org.apache.camel.model.DynamicRouterDefinition;
+import org.apache.camel.model.EnrichDefinition;
+import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationCommon;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.FinallyDefinition;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.GlobalOptionDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
+import org.apache.camel.model.HystrixConfigurationCommon;
+import org.apache.camel.model.HystrixConfigurationDefinition;
+import org.apache.camel.model.IdempotentConsumerDefinition;
+import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.InOnlyDefinition;
+import org.apache.camel.model.InOutDefinition;
+import org.apache.camel.model.InputTypeDefinition;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.LoadBalancerDefinition;
+import org.apache.camel.model.LogDefinition;
+import org.apache.camel.model.LoopDefinition;
+import org.apache.camel.model.MarshalDefinition;
+import org.apache.camel.model.MulticastDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.OnFallbackDefinition;
+import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.OtherwiseDefinition;
+import org.apache.camel.model.OutputDefinition;
+import org.apache.camel.model.OutputExpressionNode;
+import org.apache.camel.model.OutputTypeDefinition;
+import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.PipelineDefinition;
+import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
+import org.apache.camel.model.ProcessDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.model.PropertyDefinitions;
+import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.RemoveHeaderDefinition;
+import org.apache.camel.model.RemoveHeadersDefinition;
+import org.apache.camel.model.RemovePropertiesDefinition;
+import org.apache.camel.model.RemovePropertyDefinition;
+import org.apache.camel.model.ResequenceDefinition;
+import org.apache.camel.model.Resilience4jConfigurationCommon;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RestContextRefDefinition;
+import org.apache.camel.model.RollbackDefinition;
+import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteContextRefDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateContextRefDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.SagaActionUriDefinition;
+import org.apache.camel.model.SagaDefinition;
+import org.apache.camel.model.SagaOptionDefinition;
+import org.apache.camel.model.SamplingDefinition;
+import org.apache.camel.model.ScriptDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.SetBodyDefinition;
+import org.apache.camel.model.SetExchangePatternDefinition;
+import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetPropertyDefinition;
+import org.apache.camel.model.SortDefinition;
+import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.StepDefinition;
+import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.ThreadsDefinition;
+import org.apache.camel.model.ThrottleDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.TransformDefinition;
+import org.apache.camel.model.TryDefinition;
+import org.apache.camel.model.UnmarshalDefinition;
+import org.apache.camel.model.ValidateDefinition;
+import org.apache.camel.model.WhenDefinition;
+import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
+import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration;
+import org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration;
+import org.apache.camel.model.cloud.ServiceCallConfiguration;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallDefinition;
+import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
+import org.apache.camel.model.cloud.ServiceCallServiceChooserConfiguration;
+import org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.ServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.ServiceCallServiceLoadBalancerConfiguration;
+import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.config.BatchResequencerConfig;
-import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
-import org.apache.camel.model.dataformat.*;
-import org.apache.camel.model.language.*;
-import org.apache.camel.model.loadbalancer.*;
-import org.apache.camel.model.rest.*;
-import org.apache.camel.model.transformer.*;
-import org.apache.camel.model.validator.*;
+import org.apache.camel.model.dataformat.ASN1DataFormat;
+import org.apache.camel.model.dataformat.Any23DataFormat;
+import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.BarcodeDataFormat;
+import org.apache.camel.model.dataformat.Base64DataFormat;
+import org.apache.camel.model.dataformat.BeanioDataFormat;
+import org.apache.camel.model.dataformat.BindyDataFormat;
+import org.apache.camel.model.dataformat.CBORDataFormat;
+import org.apache.camel.model.dataformat.CryptoDataFormat;
+import org.apache.camel.model.dataformat.CsvDataFormat;
+import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.dataformat.FhirDataformat;
+import org.apache.camel.model.dataformat.FhirJsonDataFormat;
+import org.apache.camel.model.dataformat.FhirXmlDataFormat;
+import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.GrokDataFormat;
+import org.apache.camel.model.dataformat.GzipDataFormat;
+import org.apache.camel.model.dataformat.HL7DataFormat;
+import org.apache.camel.model.dataformat.IcalDataFormat;
+import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
+import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.JsonApiDataFormat;
+import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.LZFDataFormat;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
+import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ProtobufDataFormat;
+import org.apache.camel.model.dataformat.RssDataFormat;
+import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SyslogDataFormat;
+import org.apache.camel.model.dataformat.TarFileDataFormat;
+import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
+import org.apache.camel.model.dataformat.UniVocityAbstractDataFormat;
+import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityHeader;
+import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
+import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
+import org.apache.camel.model.dataformat.XStreamDataFormat;
+import org.apache.camel.model.dataformat.XmlRpcDataFormat;
+import org.apache.camel.model.dataformat.YAMLDataFormat;
+import org.apache.camel.model.dataformat.YAMLLibrary;
+import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
+import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
+import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.model.language.CSimpleExpression;
+import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.DatasonnetExpression;
+import org.apache.camel.model.language.ExchangePropertyExpression;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.language.GroovyExpression;
+import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JoorExpression;
+import org.apache.camel.model.language.JsonPathExpression;
+import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.MvelExpression;
+import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.RefExpression;
+import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.SpELExpression;
+import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.XMLTokenizerExpression;
+import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
+import org.apache.camel.model.rest.CollectionFormat;
+import org.apache.camel.model.rest.DeleteVerbDefinition;
+import org.apache.camel.model.rest.GetVerbDefinition;
+import org.apache.camel.model.rest.HeadVerbDefinition;
+import org.apache.camel.model.rest.PatchVerbDefinition;
+import org.apache.camel.model.rest.PostVerbDefinition;
+import org.apache.camel.model.rest.PutVerbDefinition;
+import org.apache.camel.model.rest.RestBindingDefinition;
+import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestHostNameResolver;
+import org.apache.camel.model.rest.RestOperationParamDefinition;
+import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
+import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
+import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.model.rest.RestPropertyDefinition;
+import org.apache.camel.model.rest.RestSecuritiesDefinition;
+import org.apache.camel.model.rest.RestSecurityApiKey;
+import org.apache.camel.model.rest.RestSecurityBasicAuth;
+import org.apache.camel.model.rest.RestSecurityDefinition;
+import org.apache.camel.model.rest.RestSecurityOAuth2;
+import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.rest.SecurityDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.model.transformer.CustomTransformerDefinition;
+import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
+import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.CustomValidatorDefinition;
+import org.apache.camel.model.validator.EndpointValidatorDefinition;
+import org.apache.camel.model.validator.PredicateValidatorDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.xml.io.XmlPullParserException;
 
 @SuppressWarnings("unused")
@@ -104,7 +335,7 @@ public class ModelParser extends BaseParser {
         return doParse(new ExpressionSubElementDefinition(),
             noAttributeHandler(), (def, key) -> {
             ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setExpressionType(v);
                 return true;
             }
@@ -127,7 +358,7 @@ public class ModelParser extends BaseParser {
     protected <T extends OutputDefinition> ElementHandler<T> outputDefinitionElementHandler() {
         return (def, key) -> {
             ProcessorDefinition v = doParseProcessorDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 doAdd(v, def.getOutputs(), def::setOutputs);
                 return true;
             }
@@ -135,7 +366,7 @@ public class ModelParser extends BaseParser {
         };
     }
     protected OutputDefinition doParseOutputDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OutputDefinition(), 
+        return doParse(new OutputDefinition(),
             processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
     }
     protected <T extends ProcessorDefinition> AttributeHandler<T> processorDefinitionAttributeHandler() {
@@ -201,7 +432,7 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected WhenDefinition doParseWhenDefinition() throws IOException, XmlPullParserException {
-        return doParse(new WhenDefinition(), 
+        return doParse(new WhenDefinition(),
             processorDefinitionAttributeHandler(),  outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
@@ -289,7 +520,7 @@ public class ModelParser extends BaseParser {
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected DataFormatDefinition doParseDataFormatDefinition() throws IOException, XmlPullParserException {
-        return doParse(new DataFormatDefinition(), 
+        return doParse(new DataFormatDefinition(),
             identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected <T extends IdentifiedType> AttributeHandler<T> identifiedTypeAttributeHandler() {
@@ -315,7 +546,7 @@ public class ModelParser extends BaseParser {
     protected <T extends ExpressionNode> ElementHandler<T> expressionNodeElementHandler() {
         return (def, key) -> {
             ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setExpression(v);
                 return true;
             }
@@ -392,7 +623,7 @@ public class ModelParser extends BaseParser {
     protected <T extends OutputExpressionNode> ElementHandler<T> outputExpressionNodeElementHandler() {
         return (def, key) -> {
             ProcessorDefinition v = doParseProcessorDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 doAdd(v, def.getOutputs(), def::setOutputs);
                 return true;
             }
@@ -515,7 +746,7 @@ public class ModelParser extends BaseParser {
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected InterceptDefinition doParseInterceptDefinition() throws IOException, XmlPullParserException {
-        return doParse(new InterceptDefinition(), 
+        return doParse(new InterceptDefinition(),
             processorDefinitionAttributeHandler(),  outputDefinitionElementHandler(), noValueHandler());
     }
     protected InterceptFromDefinition doParseInterceptFromDefinition() throws IOException, XmlPullParserException {
@@ -555,7 +786,7 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected LoadBalancerDefinition doParseLoadBalancerDefinition() throws IOException, XmlPullParserException {
-        return doParse(new LoadBalancerDefinition(), 
+        return doParse(new LoadBalancerDefinition(),
             identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected LogDefinition doParseLogDefinition() throws IOException, XmlPullParserException {
@@ -586,7 +817,7 @@ public class ModelParser extends BaseParser {
         return doParse(new MarshalDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
             DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setDataFormatType(v);
                 return true;
             }
@@ -844,9 +1075,9 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "batch-config": def.setResequencerConfig(doParseBatchResequencerConfig()); break;
                 case "stream-config": def.setResequencerConfig(doParseStreamResequencerConfig()); break;
-                default: 
+                default:
                     ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-                    if (v != null) { 
+                    if (v != null) {
                         def.setExpression(v);
                         return true;
                     }
@@ -1040,10 +1271,9 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    public RouteTemplatesDefinition parseRouteTemplatesDefinition()
+    public Optional<RouteTemplatesDefinition> parseRouteTemplatesDefinition()
             throws IOException, XmlPullParserException {
-        expectTag("routeTemplates");
-        return doParseRouteTemplatesDefinition();
+        return hasTag("routeTemplates") ? Optional.of(doParseRouteTemplatesDefinition()) : Optional.empty();
     }
     protected RouteTemplatesDefinition doParseRouteTemplatesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplatesDefinition(),
@@ -1055,10 +1285,9 @@ public class ModelParser extends BaseParser {
             return optionalIdentifiedDefinitionElementHandler().accept(def, key);
         }, noValueHandler());
     }
-    public RoutesDefinition parseRoutesDefinition()
+    public Optional<RoutesDefinition> parseRoutesDefinition()
             throws IOException, XmlPullParserException {
-        expectTag("routes");
-        return doParseRoutesDefinition();
+        return hasTag("routes") ? Optional.of(doParseRoutesDefinition()) : Optional.empty();
     }
     protected RoutesDefinition doParseRoutesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RoutesDefinition(),
@@ -1120,7 +1349,7 @@ public class ModelParser extends BaseParser {
             return false;
         }, (def, key) -> {
             ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setExpression(v);
                 return true;
             }
@@ -1322,7 +1551,7 @@ public class ModelParser extends BaseParser {
         return doParse(new UnmarshalDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
             DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setDataFormatType(v);
                 return true;
             }
@@ -1368,7 +1597,7 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected ServiceCallServiceFilterConfiguration doParseServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceFilterConfiguration(), 
+        return doParse(new ServiceCallServiceFilterConfiguration(),
             identifiedTypeAttributeHandler(),  serviceCallConfigurationElementHandler(), noValueHandler());
     }
     protected <T extends ServiceCallConfiguration> ElementHandler<T> serviceCallConfigurationElementHandler() {
@@ -1402,7 +1631,7 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected ServiceCallServiceDiscoveryConfiguration doParseServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceDiscoveryConfiguration(), 
+        return doParse(new ServiceCallServiceDiscoveryConfiguration(),
             identifiedTypeAttributeHandler(),  serviceCallConfigurationElementHandler(), noValueHandler());
     }
     protected CombinedServiceCallServiceDiscoveryConfiguration doParseCombinedServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
@@ -1464,7 +1693,7 @@ public class ModelParser extends BaseParser {
             identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
     }
     protected ServiceCallServiceLoadBalancerConfiguration doParseServiceCallServiceLoadBalancerConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceLoadBalancerConfiguration(), 
+        return doParse(new ServiceCallServiceLoadBalancerConfiguration(),
             identifiedTypeAttributeHandler(),  serviceCallConfigurationElementHandler(), noValueHandler());
     }
     protected DnsServiceCallServiceDiscoveryConfiguration doParseDnsServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
@@ -1585,7 +1814,7 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setExpressionType(v);
                 return true;
             }
@@ -1865,7 +2094,7 @@ public class ModelParser extends BaseParser {
         return doParse(new DataFormatsDefinition(),
             noAttributeHandler(), (def, key) -> {
             DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 doAdd(v, def.getDataFormats(), def::setDataFormats);
                 return true;
             }
@@ -2795,10 +3024,9 @@ public class ModelParser extends BaseParser {
             return false;
         }, noValueHandler());
     }
-    public RestsDefinition parseRestsDefinition()
+    public Optional<RestsDefinition> parseRestsDefinition()
             throws IOException, XmlPullParserException {
-        expectTag("rests");
-        return doParseRestsDefinition();
+        return hasTag("rests") ? Optional.of(doParseRestsDefinition()) : Optional.empty();
     }
     protected RestsDefinition doParseRestsDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestsDefinition(),
@@ -2840,7 +3068,7 @@ public class ModelParser extends BaseParser {
             return transformerDefinitionAttributeHandler().accept(def, key, val);
         }, (def, key) -> {
             DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setDataFormatType(v);
                 return true;
             }
@@ -2902,7 +3130,7 @@ public class ModelParser extends BaseParser {
         return doParse(new PredicateValidatorDefinition(),
             validatorDefinitionAttributeHandler(), (def, key) -> {
             ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) { 
+            if (v != null) {
                 def.setExpression(v);
                 return true;
             }

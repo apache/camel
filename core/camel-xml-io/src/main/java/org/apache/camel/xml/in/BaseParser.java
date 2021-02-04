@@ -206,6 +206,18 @@ public class BaseParser {
         }
     }
 
+    protected boolean hasTag(String name) throws XmlPullParserException, IOException {
+        if (parser.nextTag() != XmlPullParser.START_TAG) {
+            throw new XmlPullParserException("Expected starting tag");
+        }
+
+        if (!Objects.equals(name, parser.getName()) || !Objects.equals(namespace, parser.getNamespace())) {
+            return false;
+        }
+
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         // Ignore

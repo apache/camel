@@ -16,8 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Describe a resource, such as a file or class path resource.
@@ -61,5 +63,29 @@ public interface Resource {
                 return type.getResourceAsStream(location);
             }
         };
+    }
+
+    /**
+     * Create a resource from bytes.
+     */
+    static Resource fromBytes(String location, byte[] content) {
+        return new Resource() {
+            @Override
+            public String getLocation() {
+                return location;
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return new ByteArrayInputStream(content);
+            }
+        };
+    }
+
+    /**
+     * Create a resource from a string.
+     */
+    static Resource fromString(String location, String content) {
+        return fromBytes(location, content.getBytes(StandardCharsets.UTF_8));
     }
 }
