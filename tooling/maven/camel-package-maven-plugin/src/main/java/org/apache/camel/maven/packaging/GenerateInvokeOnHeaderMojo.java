@@ -114,13 +114,10 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         Map<String, Set<InvokeOnHeaderModel>> classes = new HashMap<>();
         List<AnnotationInstance> annotations = index.getAnnotations(HEADER_ANNOTATION);
         annotations.forEach(a -> {
-            String currentClass = a.target().asClass().name().toString();
+            String currentClass = a.target().asMethod().declaringClass().name().toString();
             String value = a.value().asString();
             String methodName = a.target().asMethod().name();
-            Set<InvokeOnHeaderModel> set = classes.get(currentClass);
-            if (set == null) {
-                set = new HashSet<>();
-            }
+            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass, k -> new HashSet<>());
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
             model.setKey(value);
             model.setMethodName(methodName);
