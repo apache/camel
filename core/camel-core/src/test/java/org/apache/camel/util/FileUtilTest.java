@@ -154,6 +154,18 @@ public class FileUtilTest {
     }
 
     @Test
+    public void testOnlyName() {
+        assertEquals(null, FileUtil.onlyName(null));
+        assertEquals("foo", FileUtil.onlyName("foo"));
+        assertEquals("foo", FileUtil.onlyName("foo.xml"));
+        assertEquals("bar", FileUtil.onlyName("foo/bar.xml"));
+        assertEquals("bar", FileUtil.onlyName("/foo/bar.xml"));
+        assertEquals("baz", FileUtil.onlyName("/foo/bar/baz.xml"));
+        assertEquals("foo", FileUtil.onlyName("/foo.xml"));
+        assertEquals("foo", FileUtil.onlyName("/bar/foo.xml"));
+    }
+
+    @Test
     public void testCompactPath() {
         assertEquals(null, FileUtil.compactPath(null));
         if (FileUtil.isWindows()) {
