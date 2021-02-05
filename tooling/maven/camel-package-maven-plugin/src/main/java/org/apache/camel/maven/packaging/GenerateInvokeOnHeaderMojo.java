@@ -68,6 +68,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         private String methodName;
         private boolean isVoid;
         private boolean callback;
+        private boolean exchange;
 
         public String getKey() {
             return key;
@@ -99,6 +100,14 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
         public void setCallback(boolean callback) {
             this.callback = callback;
+        }
+
+        public boolean isExchange() {
+            return exchange;
+        }
+
+        public void setExchange(boolean exchange) {
+            this.exchange = exchange;
         }
     }
 
@@ -136,6 +145,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             String methodName = a.target().asMethod().name();
             boolean isVoid = Type.Kind.VOID == a.target().asMethod().returnType().kind();
             boolean callback = a.target().asMethod().parameters().size() == 2;
+            boolean exchange = "org.apache.camel.Exchange".equals(a.target().asMethod().parameters().get(0).name().toString());
             Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass,
                     k -> new TreeSet<>(Comparator.comparing(InvokeOnHeaderModel::getKey)));
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
@@ -143,6 +153,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             model.setMethodName(methodName);
             model.setVoid(isVoid);
             model.setCallback(callback);
+            model.setExchange(exchange);
             set.add(model);
         });
 
@@ -211,10 +222,12 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             w.write("        switch (key) {\n");
             for (InvokeOnHeaderModel option : models) {
                 String invoke;
-                if (option.isCallback()) {
-                    invoke = "target." + option.getMethodName() + "(exchange.getMessage(), callback)";
+                String arg1 = option.isExchange() ? "exchange" : "exchange.getMessage()";
+                String arg2 = option.isCallback() ? "callback" : null;
+                if (arg2 != null) {
+                    invoke = "target." + option.getMethodName() + "(" + arg1 + ", " + arg2 + ")";
                 } else {
-                    invoke = "target." + option.getMethodName() + "(exchange.getMessage())";
+                    invoke = "target." + option.getMethodName() + "(" + arg1 + ")";
                 }
                 if (!option.getKey().toLowerCase().equals(option.getKey())) {
                     w.write(String.format("        case \"%s\":\n", option.getKey().toLowerCase()));

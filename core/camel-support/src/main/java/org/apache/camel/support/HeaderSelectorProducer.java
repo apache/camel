@@ -164,29 +164,16 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             LOGGER.debug("Invoking @InvokeOnHeader method: {}", action);
             Object answer = strategy.invoke(target, action, exchange, callback);
             LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
-
-            if (answer == null) {
-                // strategy invoked synchronously so trigger callback and return true
-                callback.done(true);
-                return true;
-            } else if (answer instanceof Boolean) {
-                boolean bool = (boolean) answer;
-                if (bool) {
-                    // strategy invoked synchronously so trigger callback and return true
-                    callback.done(true);
-                    return true;
-                } else {
-                    // strategy is invoking this asynchronously so return false
-                    return false;
-                }
+            if (answer != null) {
+                exchange.getMessage().setBody(answer);
             }
+
         } catch (Exception e) {
             exchange.setException(e);
-            callback.done(true);
-            return true;
         }
 
-        return false;
+        callback.done(true);
+        return true;
     }
 
 }

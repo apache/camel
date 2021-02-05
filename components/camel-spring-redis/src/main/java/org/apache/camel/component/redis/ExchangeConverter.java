@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 
-class ExchangeConverter {
+public class ExchangeConverter {
     String getKey(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.KEY, String.class);
     }
