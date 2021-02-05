@@ -654,15 +654,13 @@ from("timer:fire?period=2000").setBody(constant("{\n" +
      "   \"ExternalID\" : \"EXTERNAL\"\n"
      " }]\n" +
      "}")
-   .to("salesforce:composite?rawPayload=true&sObjectName=FOO&sObjectIdName=EXTERNAL&compositeMethod=PATCH")
+   .to("salesforce:composite?rawPayload=true")
    .log("${body}");
 ----
 
 The route directly creates the body as JSON and directly submit to salesforce endpoint using `rawPayload=true` option.
 
 With this approach, you have the complete control on the Salesforce request.
-
-The `compositeMethod` option allows you to define the Salesforce client method style (PATCH, PUT, POST, ...).
 
 ==  Sending null values to salesforce
 

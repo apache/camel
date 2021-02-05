@@ -95,19 +95,16 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     public void submitCompositeRaw(
             final InputStream raw, final Map<String, List<String>> headers,
-            final ResponseCallback<InputStream> callback,
-            final String sObjectName, final String extId, String compositeMethod)
+            final ResponseCallback<InputStream> callback, String compositeMethod)
             throws SalesforceException {
         checkCompositeFormat(format, SObjectComposite.REQUIRED_PAYLOAD_FORMAT);
 
-        final String url = String.format("%s%s/%s/%s/%s", versionUrl(), "composite", "sobjects", sObjectName, extId);
+        final String url = versionUrl() + "composite";
 
-        Request request;
-        if (compositeMethod != null) {
-            request = createRequest(compositeMethod, url, headers);
-        } else {
-            request = createRequest(HttpMethod.POST, url, headers);
+        if (compositeMethod == null) {
+            compositeMethod = HttpMethod.POST.asString();
         }
+        Request request = createRequest(compositeMethod, url, headers);
 
         final ContentProvider content = new InputStreamContentProvider(raw);
         request.content(content);

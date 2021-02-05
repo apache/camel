@@ -45,7 +45,7 @@ public interface CompositeApiClient {
 
     void submitCompositeRaw(
             InputStream raw, Map<String, List<String>> headers, ResponseCallback<InputStream> callback,
-            String sObjectName, String extId, String method)
+            String method)
             throws SalesforceException;
 
     void submitComposite(
