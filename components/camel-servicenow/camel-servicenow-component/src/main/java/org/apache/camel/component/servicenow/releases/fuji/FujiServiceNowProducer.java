@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.servicenow.releases.fuji;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.AbstractServiceNowProducer;
 import org.apache.camel.component.servicenow.ServiceNowConstants;
@@ -40,17 +41,17 @@ public class FujiServiceNowProducer extends AbstractServiceNowProducer {
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_TABLE)
-    public void invokeProcessor1(Message message) throws Exception {
-        processor1.process(message.getExchange());
+    public void invokeProcessor1(Exchange exchange) throws Exception {
+        processor1.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_AGGREGATE)
-    public void invokeProcessor2(Message message) throws Exception {
-        processor2.process(message.getExchange());
+    public void invokeProcessor2(Exchange exchange) throws Exception {
+        processor2.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_IMPORT)
-    public void invokeProcessor3(Message message) throws Exception {
-        processor3.process(message.getExchange());
+    public void invokeProcessor3(Exchange exchange) throws Exception {
+        processor3.process(exchange);
     }
 }

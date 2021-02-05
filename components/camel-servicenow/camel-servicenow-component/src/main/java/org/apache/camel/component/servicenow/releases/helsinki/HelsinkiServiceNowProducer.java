@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.servicenow.releases.helsinki;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.AbstractServiceNowProducer;
 import org.apache.camel.component.servicenow.ServiceNowConstants;
@@ -54,53 +55,53 @@ public class HelsinkiServiceNowProducer extends AbstractServiceNowProducer {
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_TABLE)
-    public void invokeProcessor1(Message message) throws Exception {
-        processor1.process(message.getExchange());
+    public void invokeProcessor1(Exchange exchange) throws Exception {
+        processor1.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_AGGREGATE)
-    public void invokeProcessor2(Message message) throws Exception {
-        processor2.process(message.getExchange());
+    public void invokeProcessor2(Exchange exchange) throws Exception {
+        processor2.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_IMPORT)
-    public void invokeProcessor3(Message message) throws Exception {
-        processor3.process(message.getExchange());
+    public void invokeProcessor3(Exchange exchange) throws Exception {
+        processor3.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_ATTACHMENT)
-    public void invokeProcessor4(Message message) throws Exception {
-        processor4.process(message.getExchange());
+    public void invokeProcessor4(Exchange exchange) throws Exception {
+        processor4.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_SCORECARDS)
-    public void invokeProcessor5(Message message) throws Exception {
-        processor5.process(message.getExchange());
+    public void invokeProcessor5(Exchange exchange) throws Exception {
+        processor5.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_MISC)
-    public void invokeProcessor6(Message message) throws Exception {
-        processor6.process(message.getExchange());
+    public void invokeProcessor6(Exchange exchange) throws Exception {
+        processor6.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-    public void invokeProcessor7(Message message) throws Exception {
-        processor7.process(message.getExchange());
+    public void invokeProcessor7(Exchange exchange) throws Exception {
+        processor7.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_ITEMS)
-    public void invokeProcessor8(Message message) throws Exception {
-        processor8.process(message.getExchange());
+    public void invokeProcessor8(Exchange exchange) throws Exception {
+        processor8.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_CARTS)
-    public void invokeProcessor9(Message message) throws Exception {
-        processor9.process(message.getExchange());
+    public void invokeProcessor9(Exchange exchange) throws Exception {
+        processor9.process(exchange);
     }
 
     @InvokeOnHeader(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_CATEGORIES)
-    public void invokeProcessor10(Message message) throws Exception {
-        processor10.process(message.getExchange());
+    public void invokeProcessor10(Exchange exchange) throws Exception {
+        processor10.process(exchange);
     }
 
 }
