@@ -150,7 +150,7 @@ public final class FileUtil {
 
         String s = name;
 
-        // there must be some leading text, as we should only remove trailing separators 
+        // there must be some leading text, as we should only remove trailing separators
         while (s.endsWith("/") || s.endsWith(File.separator)) {
             s = s.substring(0, s.length() - 1);
         }
@@ -252,6 +252,17 @@ public final class FileUtil {
         }
         // no path in name
         return null;
+    }
+
+    public static String onlyName(String name) {
+        return onlyName(name, false);
+    }
+
+    public static String onlyName(String name, boolean singleMode) {
+        name = FileUtil.stripPath(name);
+        name = FileUtil.stripExt(name, singleMode);
+
+        return name;
     }
 
     /**
@@ -425,7 +436,7 @@ public final class FileUtil {
     /**
      * Rename file using copy and delete strategy. This is primarily used in environments where the regular rename
      * operation is unreliable.
-     * 
+     *
      * @param  from        the file to be renamed
      * @param  to          the new target file
      * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
