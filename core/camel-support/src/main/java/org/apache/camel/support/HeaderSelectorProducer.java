@@ -32,6 +32,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A selector-based producer which uses a header value to determine which processor should be invoked.
+ *
+ * @see org.apache.camel.spi.InvokeOnHeader
+ * @see InvokeOnHeaderStrategy
  */
 public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implements CamelContextAware {
 
@@ -186,11 +189,9 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             }
             if (sync) {
                 LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
+                processResult(exchange, answer);
             } else {
                 LOGGER.trace("Invoked @InvokeOnHeader method: {} is continuing asynchronously", action);
-            }
-            if (answer != null) {
-                exchange.getMessage().setBody(answer);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -201,6 +202,18 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             callback.done(true);
         }
         return sync;
+    }
+
+    /**
+     * Process the result. Will by default set the result as the message body.
+     *
+     * @param exchange  the exchange
+     * @param result    the result (may be null)
+     */
+    protected void processResult(Exchange exchange, Object result) {
+        if (result != null) {
+            exchange.getMessage().setBody(result);
+        }
     }
 
 }
