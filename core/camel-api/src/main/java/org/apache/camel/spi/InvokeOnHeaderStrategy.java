@@ -35,8 +35,8 @@ public interface InvokeOnHeaderStrategy {
      * @param  key       the header key
      * @param  exchange  the exchange
      * @param  callback  the async callback
-     * @return           option response from invoking the method, or <tt>null</tt> if the method is void
-     *                   if a value is returned, then this value is stored as result on the message body.
+     * @return           option response from invoking the method, or <tt>null</tt> if the method is void if a value is
+     *                   returned, then this value is stored as result on the message body.
      * @throws Exception is thrown if error invoking the method.
      */
     Object invoke(Object target, String key, Exchange exchange, AsyncCallback callback) throws Exception;

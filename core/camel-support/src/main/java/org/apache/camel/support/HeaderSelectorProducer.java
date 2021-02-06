@@ -207,8 +207,8 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
     /**
      * Process the result. Will by default set the result as the message body.
      *
-     * @param exchange  the exchange
-     * @param result    the result (may be null)
+     * @param exchange the exchange
+     * @param result   the result (may be null)
      */
     protected void processResult(Exchange exchange, Object result) {
         if (result != null) {
