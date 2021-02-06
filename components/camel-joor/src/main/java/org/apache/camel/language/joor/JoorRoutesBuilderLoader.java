@@ -27,6 +27,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
@@ -68,7 +69,13 @@ public class JoorRoutesBuilderLoader implements RoutesBuilderLoader, CamelContex
     }
 
     private String determineName(Resource resource, String content) {
-        final String name = FileUtil.onlyName(resource.getLocation(), true);
+        String loc = resource.getLocation();
+        // strip scheme to compute the name
+        String scheme = ResourceHelper.getScheme(loc);
+        if (scheme != null) {
+            loc = loc.substring(scheme.length());
+        }
+        final String name = FileUtil.onlyName(loc, true);
         final Matcher matcher = PACKAGE_PATTERN.matcher(content);
 
         return matcher.find()
