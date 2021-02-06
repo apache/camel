@@ -40,6 +40,7 @@ import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StartupStep;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -428,38 +429,39 @@ public abstract class BaseMainSupport extends BaseService {
         Object value = prop.remove("camel.main.startupRecorder");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorder(value.toString());
-            }
         }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorder(value.toString());
+        }
+
         value = prop.remove("camel.main.startupRecorderRecording");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-recording");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderProfile");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-profile");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderProfile(
-                        CamelContextHelper.parseText(camelContext, value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderProfile(
+                    CamelContextHelper.parseText(camelContext, value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderDuration");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-duration");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderMaxDepth");
         if (value == null) {
             value = prop.remove("camel.main.startup-recorder-max-depth");
-            if (value != null) {
-                mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
-            }
+        }
+        if (value != null) {
+            mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
         }
 
         if ("false".equals(mainConfigurationProperties.getStartupRecorder())) {
@@ -519,9 +521,18 @@ public abstract class BaseMainSupport extends BaseService {
             listener.beforeConfigure(this);
         }
 
+        // we want to capture startup events for import tasks during main bootstrap
+        StartupStepRecorder recorder = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+
+        StartupStep step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
         autoconfigure(camelContext);
+        recorder.endStep(step);
+
         configureLifecycle(camelContext);
+
+        step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
         configureRoutes(camelContext);
+        recorder.endStep(step);
 
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
