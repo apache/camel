@@ -69,43 +69,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <configuration>
-                    <!-- set to true to make build fail fast if missing documentation in docs files -->
-                    <failFast>false</failFast>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase/>
-                    </execution>
-                    <execution>
-                        <id>generate-postcompile</id>
-                        <goals>
-                            <goal>generate-postcompile</goal>
-                        </goals>
-                        <phase/>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

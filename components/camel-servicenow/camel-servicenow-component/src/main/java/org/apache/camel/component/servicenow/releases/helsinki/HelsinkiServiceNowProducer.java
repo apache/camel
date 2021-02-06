@@ -17,7 +17,6 @@
 package org.apache.camel.component.servicenow.releases.helsinki;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.AbstractServiceNowProducer;
 import org.apache.camel.component.servicenow.ServiceNowConstants;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;

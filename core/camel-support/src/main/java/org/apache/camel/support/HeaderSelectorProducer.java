@@ -44,6 +44,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
     private final Object target;
     private CamelContext camelContext;
     private InvokeOnHeaderStrategy strategy;
+    private InvokeOnHeaderStrategy strategy2;
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
         this(endpoint, headerSupplier, () -> null, null);
@@ -146,6 +147,17 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         strategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
                 .newInstance(key, InvokeOnHeaderStrategy.class)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
+
+        Class<?> sclazz = this.getClass().getSuperclass();
+        if (sclazz != null && !sclazz.getName().equals("java.lang.Object")
+                && !sclazz.getName().equals(HeaderSelectorProducer.class.getName())) {
+            // some components may have a common base class they extend from (such as camel-infinispan)
+            String key2 = this.getClass().getSuperclass().getName();
+            String fqn2 = RESOURCE_PATH + key2;
+            strategy2 = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+                    .newInstance(key2, InvokeOnHeaderStrategy.class)
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn2 + " in classpath."));
+        }
     }
 
     @Override
@@ -163,6 +175,9 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
             LOGGER.debug("Invoking @InvokeOnHeader method: {}", action);
             Object answer = strategy.invoke(target, action, exchange, callback);
+            if (answer == null && strategy2 != null) {
+                answer = strategy2.invoke(target, action, exchange, callback);
+            }
             LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
             if (answer != null) {
                 exchange.getMessage().setBody(answer);

@@ -16,9 +16,9 @@ public class FujiServiceNowProducerInvokeOnHeaderFactory implements InvokeOnHead
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.servicenow.releases.fuji.FujiServiceNowProducer target = (org.apache.camel.component.servicenow.releases.fuji.FujiServiceNowProducer) obj;
         switch (key) {
-        case "aggregate": target.invokeProcessor2(exchange.getMessage()); return null;
-        case "import": target.invokeProcessor3(exchange.getMessage()); return null;
-        case "table": target.invokeProcessor1(exchange.getMessage()); return null;
+        case "aggregate": target.invokeProcessor2(exchange); return null;
+        case "import": target.invokeProcessor3(exchange); return null;
+        case "table": target.invokeProcessor1(exchange); return null;
         default: return null;
         }
     }
