@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -127,6 +128,9 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         Index index;
         try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
             index = new IndexReader(is).read();
+        } catch (NoSuchFileException e) {
+            // ignore
+            return;
         } catch (IOException e) {
             throw new MojoExecutionException("IOException: " + e.getMessage(), e);
         }
