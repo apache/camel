@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -127,7 +126,6 @@ public class DefaultRoutesCollector implements RoutesCollector {
         }
 
         StopWatch watch = new StopWatch();
-        AtomicInteger count = new AtomicInteger();
 
         if (ObjectHelper.equal("false", includePattern)) {
             return answer;
@@ -147,18 +145,16 @@ public class DefaultRoutesCollector implements RoutesCollector {
                     }
 
                     log.debug("Found {} route builder from location: {}", builders.size(), include);
-                    for (RoutesBuilder builder : builders) {
-                        answer.add(builder);
-                        count.incrementAndGet();
-                    }
+                    answer.addAll(builders);
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No RoutesBuilder found in {}. Skipping detection.", include);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
-            if (count.get() > 0) {
-                log.info("Loaded {} ({} millis) additional RoutesBuilder from: {}, pattern: {}", count, watch.taken(), include,
+            if (answer.size() > 0) {
+                log.info("Loaded {} ({} millis) additional RoutesBuilder from: {}, pattern: {}", answer.size(), watch.taken(),
+                        include,
                         includePattern);
             } else {
                 log.debug("No additional RoutesBuilder discovered from: {}", includePattern);
