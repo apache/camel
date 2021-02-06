@@ -664,6 +664,11 @@ The route directly creates the body as JSON and directly submit to salesforce en
 
 With this approach, you have the complete control on the Salesforce request.
 
+`POST` is the default HTTP method used to send raw Composite requests to salesforce. Use the
+`compositeMethod` option to override to the other supported value, `GET`, which returns a list of
+other available composite resources.
+
+
 ==  Sending null values to salesforce
 
 By default, SObject fields with null values are not sent to salesforce. In order to
