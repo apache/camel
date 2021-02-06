@@ -27,8 +27,15 @@ public class RedisComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "redistemplate":
+        case "redisTemplate": target.setRedisTemplate(property(camelContext, org.springframework.data.redis.core.RedisTemplate.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"redisTemplate"};
     }
 
     @Override
@@ -40,6 +47,8 @@ public class RedisComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "redistemplate":
+        case "redisTemplate": return org.springframework.data.redis.core.RedisTemplate.class;
         default: return null;
         }
     }
@@ -54,6 +63,8 @@ public class RedisComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "redistemplate":
+        case "redisTemplate": return target.getRedisTemplate();
         default: return null;
         }
     }

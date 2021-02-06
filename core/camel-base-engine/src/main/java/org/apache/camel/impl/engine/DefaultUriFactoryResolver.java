@@ -31,10 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default assembler resolver that looks for assembler factories in
+ * Default assembler resolver that looks for {@link UriFactoryResolver} factories in
  * <b>META-INF/services/org/apache/camel/urifactory/</b>.
  */
-
 public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryResolver {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/urifactory/";
 
@@ -70,7 +69,7 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
         // not in registry then use assembler factory for endpoints
         Class<?> type;
         try {
-            type = findAssembler(name + "-endpoint", context);
+            type = findFactory(name + "-endpoint", context);
         } catch (NoFactoryAvailableException e) {
             // its optional so its okay
             type = null;
@@ -99,7 +98,7 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
         return answer;
     }
 
-    private Class<?> findAssembler(String name, CamelContext context) throws IOException {
+    private Class<?> findFactory(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
             factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         }

@@ -33,7 +33,6 @@ public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam
     private RedisConfiguration configuration;
-    private RedisProcessorsCreator redisProcessorsCreator;
 
     public RedisEndpoint(String uri, RedisComponent component, RedisConfiguration configuration) {
         super(uri, component);
@@ -46,11 +45,9 @@ public class RedisEndpoint extends DefaultEndpoint {
         if (defaultCommand == null) {
             defaultCommand = Command.SET;
         }
+
         return new RedisProducer(
-                this,
-                RedisConstants.COMMAND,
-                defaultCommand.name(),
-                redisProcessorsCreator);
+                this, RedisConstants.COMMAND, defaultCommand.name(), new RedisClient(configuration.getRedisTemplate()));
     }
 
     @Override
@@ -58,14 +55,6 @@ public class RedisEndpoint extends DefaultEndpoint {
         RedisConsumer answer = new RedisConsumer(this, processor, configuration);
         configureConsumer(answer);
         return answer;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-        redisProcessorsCreator = new AllRedisProcessorsCreator(
-                new RedisClient(configuration.getRedisTemplate()),
-                ((RedisComponent) getComponent()).getExchangeConverter());
     }
 
     @Override

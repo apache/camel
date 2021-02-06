@@ -19,8 +19,10 @@ package org.apache.camel.component.redis;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * Represents the component that manages {@link RedisEndpoint}.
@@ -28,7 +30,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("spring-redis")
 public class RedisComponent extends DefaultComponent {
 
-    private final ExchangeConverter exchangeConverter = new ExchangeConverter();
+    @Metadata(autowired = true)
+    private RedisTemplate redisTemplate;
 
     public RedisComponent() {
     }
@@ -36,7 +39,9 @@ public class RedisComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RedisConfiguration configuration = new RedisConfiguration();
+        configuration.setRedisTemplate(redisTemplate);
         setHostAndPort(configuration, remaining);
+
         RedisEndpoint endpoint = new RedisEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -52,7 +57,14 @@ public class RedisComponent extends DefaultComponent {
         }
     }
 
-    public ExchangeConverter getExchangeConverter() {
-        return exchangeConverter;
+    public RedisTemplate getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    /**
+     * Reference to a pre-configured RedisTemplate instance to use.
+     */
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 }
