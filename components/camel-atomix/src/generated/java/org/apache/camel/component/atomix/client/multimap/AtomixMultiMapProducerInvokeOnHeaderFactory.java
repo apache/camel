@@ -16,22 +16,26 @@ public class AtomixMultiMapProducerInvokeOnHeaderFactory implements InvokeOnHead
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.atomix.client.multimap.AtomixMultiMapProducer target = (org.apache.camel.component.atomix.client.multimap.AtomixMultiMapProducer) obj;
         switch (key) {
-        case "is_empty":
-        case "IS_EMPTY": return target.onIsEmpty(exchange.getMessage(), callback);
-        case "size":
-        case "SIZE": return target.onSize(exchange.getMessage(), callback);
-        case "contains_key":
-        case "CONTAINS_KEY": return target.onContainsKey(exchange.getMessage(), callback);
-        case "put":
-        case "PUT": return target.onPut(exchange.getMessage(), callback);
-        case "remove_value":
-        case "REMOVE_VALUE": return target.onRemoveValue(exchange.getMessage(), callback);
-        case "get":
-        case "GET": return target.onGet(exchange.getMessage(), callback);
         case "clear":
-        case "CLEAR": return target.onClear(exchange.getMessage(), callback);
+        case "CLEAR": target.onClear(exchange.getMessage(), callback); return callback;
+        case "contains_entry":
+        case "CONTAINS_ENTRY": target.onContainsEntry(exchange.getMessage(), callback); return callback;
+        case "contains_key":
+        case "CONTAINS_KEY": target.onContainsKey(exchange.getMessage(), callback); return callback;
+        case "contains_value":
+        case "CONTAINS_VALUE": target.onContainsValue(exchange.getMessage(), callback); return callback;
+        case "get":
+        case "GET": target.onGet(exchange.getMessage(), callback); return callback;
+        case "is_empty":
+        case "IS_EMPTY": target.onIsEmpty(exchange.getMessage(), callback); return callback;
+        case "put":
+        case "PUT": target.onPut(exchange.getMessage(), callback); return callback;
         case "remove":
-        case "REMOVE": return target.onRemove(exchange.getMessage(), callback);
+        case "REMOVE": target.onRemove(exchange.getMessage(), callback); return callback;
+        case "remove_value":
+        case "REMOVE_VALUE": target.onRemoveValue(exchange.getMessage(), callback); return callback;
+        case "size":
+        case "SIZE": target.onSize(exchange.getMessage(), callback); return callback;
         default: return null;
         }
     }

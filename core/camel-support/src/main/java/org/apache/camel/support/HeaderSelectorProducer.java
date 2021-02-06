@@ -162,6 +162,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        boolean sync = true;
         try {
             String header = headerSupplier.get();
             String action = exchange.getIn().getHeader(header, String.class);
@@ -178,17 +179,28 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             if (answer == null && parentStrategy != null) {
                 answer = parentStrategy.invoke(target, action, exchange, callback);
             }
-            LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
+            if (answer == callback) {
+                // okay it was an async invoked so we should return false
+                sync = false;
+                answer = null;
+            }
+            if (sync) {
+                LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
+            } else {
+                LOGGER.trace("Invoked @InvokeOnHeader method: {} is continuing asynchronously", action);
+            }
             if (answer != null) {
                 exchange.getMessage().setBody(answer);
             }
-
         } catch (Exception e) {
             exchange.setException(e);
         }
 
-        callback.done(true);
-        return true;
+        if (sync) {
+            // callback was not in use, so we must done it here
+            callback.done(true);
+        }
+        return sync;
     }
 
 }

@@ -221,22 +221,30 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         if (!models.isEmpty()) {
             w.write("        switch (key) {\n");
             for (InvokeOnHeaderModel option : models) {
+                boolean sync = true;
                 String invoke = "target." + option.getMethodName() + "(";
                 if (!option.getArgs().isEmpty()) {
                     StringJoiner sj = new StringJoiner(", ");
                     for (String arg : option.getArgs()) {
                         String ba = bindArg(arg);
+                        // if callback is in use then we are no long synchronous
+                        sync &= !ba.equals("callback");
                         sj.add(ba);
                     }
                     invoke += sj.toString();
+                }
+                String ret = "null";
+                if (!sync) {
+                    // return the callback instance in async mode to signal that callback are in use
+                    ret = "callback";
                 }
                 invoke += ")";
 
                 if (!option.getKey().toLowerCase().equals(option.getKey())) {
                     w.write(String.format("        case \"%s\":\n", option.getKey().toLowerCase()));
                 }
-                if (option.getReturnType().equals("VOID")) {
-                    w.write(String.format("        case \"%s\": %s; return null;\n", option.getKey(), invoke));
+                if (!sync || option.getReturnType().equals("VOID")) {
+                    w.write(String.format("        case \"%s\": %s; return %s;\n", option.getKey(), invoke, ret));
                 } else {
                     w.write(String.format("        case \"%s\": return %s;\n", option.getKey(), invoke));
                 }

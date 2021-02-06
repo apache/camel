@@ -16,10 +16,10 @@ public class AtomixMessagingProducerInvokeOnHeaderFactory implements InvokeOnHea
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.atomix.client.messaging.AtomixMessagingProducer target = (org.apache.camel.component.atomix.client.messaging.AtomixMessagingProducer) obj;
         switch (key) {
-        case "direct":
-        case "DIRECT": return target.onDirect(exchange.getMessage(), callback);
         case "broadcast":
-        case "BROADCAST": return target.onBroadcast(exchange.getMessage(), callback);
+        case "BROADCAST": target.onBroadcast(exchange.getMessage(), callback); return callback;
+        case "direct":
+        case "DIRECT": target.onDirect(exchange.getMessage(), callback); return callback;
         default: return null;
         }
     }

@@ -16,35 +16,28 @@
  */
 package org.apache.camel.component.atomix.client;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import io.atomix.resource.Resource;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Message;
-import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
-import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
+import static org.apache.camel.component.atomix.client.AtomixClientConstants.*;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource>
         extends HeaderSelectorProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAtomixClientProducer.class);
 
-    private final Map<String, AtomixAsyncMessageProcessor> processors;
     private ConcurrentMap<String, R> resources;
 
-    protected AbstractAtomixClientProducer(E endpoint) {
-        super(endpoint, get);
-
-        this.processors = new HashMap<>();
+    protected AbstractAtomixClientProducer(E endpoint, String defaultHeader) {
+        super(endpoint, RESOURCE_ACTION, defaultHeader);
         this.resources = new ConcurrentHashMap<>();
     }
 
@@ -81,8 +74,6 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
 
         return resources.computeIfAbsent(resourceName, name -> createResource(name));
     }
-
-    protected abstract String getProcessorKey(Message message);
 
     protected abstract String getResourceName(Message message);
 

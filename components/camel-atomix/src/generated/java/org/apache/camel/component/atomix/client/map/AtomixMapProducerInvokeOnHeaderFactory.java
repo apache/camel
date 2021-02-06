@@ -16,30 +16,30 @@ public class AtomixMapProducerInvokeOnHeaderFactory implements InvokeOnHeaderStr
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.atomix.client.map.AtomixMapProducer target = (org.apache.camel.component.atomix.client.map.AtomixMapProducer) obj;
         switch (key) {
-        case "values":
-        case "VALUES": return target.onValues(exchange.getMessage(), callback);
-        case "is_empty":
-        case "IS_EMPTY": return target.onIsEmpty(exchange.getMessage(), callback);
-        case "replace":
-        case "REPLACE": return target.onReplace(exchange.getMessage(), callback);
-        case "put_if_absent":
-        case "PUT_IF_ABSENT": return target.onPutIfAbsent(exchange.getMessage(), callback);
-        case "get":
-        case "GET": return target.onGet(exchange.getMessage(), callback);
-        case "put":
-        case "PUT": return target.onPut(exchange.getMessage(), callback);
-        case "entry_set":
-        case "ENTRY_SET": return target.onEntrySet(exchange.getMessage(), callback);
-        case "size":
-        case "SIZE": return target.onSize(exchange.getMessage(), callback);
         case "clear":
-        case "CLEAR": return target.onClear(exchange.getMessage(), callback);
-        case "remove":
-        case "REMOVE": return target.onRemove(exchange.getMessage(), callback);
-        case "contains_value":
-        case "CONTAINS_VALUE": return target.onContainsValue(exchange.getMessage(), callback);
+        case "CLEAR": target.onClear(exchange.getMessage(), callback); return callback;
         case "contains_key":
-        case "CONTAINS_KEY": return target.onContainsKey(exchange.getMessage(), callback);
+        case "CONTAINS_KEY": target.onContainsKey(exchange.getMessage(), callback); return callback;
+        case "contains_value":
+        case "CONTAINS_VALUE": target.onContainsValue(exchange.getMessage(), callback); return callback;
+        case "entry_set":
+        case "ENTRY_SET": target.onEntrySet(exchange.getMessage(), callback); return callback;
+        case "get":
+        case "GET": target.onGet(exchange.getMessage(), callback); return callback;
+        case "is_empty":
+        case "IS_EMPTY": target.onIsEmpty(exchange.getMessage(), callback); return callback;
+        case "put":
+        case "PUT": target.onPut(exchange.getMessage(), callback); return callback;
+        case "put_if_absent":
+        case "PUT_IF_ABSENT": target.onPutIfAbsent(exchange.getMessage(), callback); return callback;
+        case "remove":
+        case "REMOVE": target.onRemove(exchange.getMessage(), callback); return callback;
+        case "replace":
+        case "REPLACE": target.onReplace(exchange.getMessage(), callback); return callback;
+        case "size":
+        case "SIZE": target.onSize(exchange.getMessage(), callback); return callback;
+        case "values":
+        case "VALUES": target.onValues(exchange.getMessage(), callback); return callback;
         default: return null;
         }
     }
