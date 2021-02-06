@@ -92,6 +92,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      *
      * @parameter property="camel.coverageThreshold" default-value="100"
      */
+    @Parameter(property = "camel.coverageThreshold", defaultValue = "100")
     private byte coverageThreshold = 100;
 
     /**
