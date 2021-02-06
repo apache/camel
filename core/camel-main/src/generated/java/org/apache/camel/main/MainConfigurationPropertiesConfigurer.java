@@ -31,6 +31,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationFailFast": target.setAutoConfigurationFailFast(property(camelContext, boolean.class, value)); return true;
         case "autoconfigurationlogsummary":
         case "AutoConfigurationLogSummary": target.setAutoConfigurationLogSummary(property(camelContext, boolean.class, value)); return true;
+        case "autoconfigurationsystempropertiesenabled":
+        case "AutoConfigurationSystemPropertiesEnabled": target.setAutoConfigurationSystemPropertiesEnabled(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -210,6 +212,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationFailFast": return boolean.class;
         case "autoconfigurationlogsummary":
         case "AutoConfigurationLogSummary": return boolean.class;
+        case "autoconfigurationsystempropertiesenabled":
+        case "AutoConfigurationSystemPropertiesEnabled": return boolean.class;
         case "autostartup":
         case "AutoStartup": return boolean.class;
         case "autowiredenabled":
@@ -390,6 +394,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationFailFast": return target.isAutoConfigurationFailFast();
         case "autoconfigurationlogsummary":
         case "AutoConfigurationLogSummary": return target.isAutoConfigurationLogSummary();
+        case "autoconfigurationsystempropertiesenabled":
+        case "AutoConfigurationSystemPropertiesEnabled": return target.isAutoConfigurationSystemPropertiesEnabled();
         case "autostartup":
         case "AutoStartup": return target.isAutoStartup();
         case "autowiredenabled":

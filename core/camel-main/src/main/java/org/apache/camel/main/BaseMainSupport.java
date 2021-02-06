@@ -67,12 +67,7 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.main.MainHelper.computeProperties;
-import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
-import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
-import static org.apache.camel.main.MainHelper.optionKey;
-import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
-import static org.apache.camel.main.MainHelper.validateOptionAndValue;
+import static org.apache.camel.main.MainHelper.*;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -568,9 +563,27 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
         }
+        // load properties from JVM (override existing)
+        Properties propJVM = null;
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
+                }
+            }
+        }
 
         // special for fail-fast as we need to know this early before we set all the other options
         Object failFast = propENV != null ? propENV.remove("camel.main.autoconfigurationfailfast") : null;
+        if (propJVM != null) {
+            Object val = propJVM.remove("camel.main.autoconfigurationfailfast");
+            if (val != null) {
+                failFast = val;
+            }
+        }
         if (failFast != null) {
             mainConfigurationProperties
                     .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
@@ -639,6 +652,17 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.debug("Properties from OS environment variables:");
                 for (String key : propENV.stringPropertyNames()) {
                     LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
                 }
             }
         }
@@ -1007,6 +1031,13 @@ public abstract class BaseMainSupport extends BaseService {
                 prop.putAll(propENV);
             }
         }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
+            }
+        }
 
         Map<String, Object> properties = new LinkedHashMap<>();
 
@@ -1045,11 +1076,19 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
             Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            // ENV variables cannot use dash so replace with dot
             propENV.remove(INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
             propENV.remove(OVERRIDE_PROPERTIES_LOCATION.replace('-', '.'));
             propENV.remove(PROPERTY_PLACEHOLDER_LOCATION.replace('-', '.'));
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
             }
         }
 
@@ -1115,6 +1154,14 @@ public abstract class BaseMainSupport extends BaseService {
                     new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = loadJvmSystemPropertiesAsProperties(
+                    new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
             }
         }
 

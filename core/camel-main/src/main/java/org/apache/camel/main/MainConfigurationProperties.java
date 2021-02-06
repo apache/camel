@@ -34,6 +34,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
+    private boolean autoConfigurationSystemPropertiesEnabled = true;
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
     private int durationHitExitCode;
@@ -204,6 +205,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutoConfigurationEnvironmentVariablesEnabled(boolean autoConfigurationEnvironmentVariablesEnabled) {
         this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
+    }
+
+    public boolean isAutoConfigurationSystemPropertiesEnabled() {
+        return autoConfigurationSystemPropertiesEnabled;
+    }
+
+    /**
+     * Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any
+     * configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D
+     * camel.main.shutdown-timeout=5.
+     * <p/>
+     * Note that JVM system properties take precedence over OS environment variables.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationSystemPropertiesEnabled(boolean autoConfigurationSystemPropertiesEnabled) {
+        this.autoConfigurationSystemPropertiesEnabled = autoConfigurationSystemPropertiesEnabled;
     }
 
     public boolean isAutoConfigurationFailFast() {
@@ -406,6 +424,21 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     public MainConfigurationProperties withAutoConfigurationEnvironmentVariablesEnabled(
             boolean autoConfigurationEnvironmentVariablesEnabled) {
         this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
+        return this;
+    }
+
+    /**
+     * Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any
+     * configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D
+     * camel.main.shutdown-timeout=5.
+     * <p/>
+     * Note that JVM system properties take precedence over OS environment variables.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutoConfigurationSystemPropertiesEnabled(
+            boolean autoConfigurationSystemPropertiesEnabled) {
+        this.autoConfigurationSystemPropertiesEnabled = autoConfigurationSystemPropertiesEnabled;
         return this;
     }
 

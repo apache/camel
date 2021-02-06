@@ -77,6 +77,27 @@ public final class MainHelper {
         return answer;
     }
 
+    public static Properties loadJvmSystemPropertiesAsProperties(String[] prefixes) {
+        Properties answer = new OrderedProperties();
+        if (prefixes == null || prefixes.length == 0) {
+            return answer;
+        }
+
+        for (String prefix : prefixes) {
+            final String pk = prefix.toUpperCase(Locale.US).replaceAll("[^\\w]", "-");
+            final String pk2 = pk.replace('-', '.');
+            System.getProperties().forEach((k, v) -> {
+                String key = k.toString().toUpperCase(Locale.US);
+                if (key.startsWith(pk) || key.startsWith(pk2)) {
+                    key = key.toLowerCase(Locale.ENGLISH).replace('_', '.');
+                    answer.put(key, v);
+                }
+            });
+        }
+
+        return answer;
+    }
+
     public static String optionKey(String key) {
         // as we ignore case for property names we should use keys in same case and without dashes
         key = StringHelper.dashToCamelCase(key);
