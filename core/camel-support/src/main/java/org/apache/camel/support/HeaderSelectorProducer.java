@@ -44,7 +44,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
     private final Object target;
     private CamelContext camelContext;
     private InvokeOnHeaderStrategy strategy;
-    private InvokeOnHeaderStrategy strategy2;
+    private InvokeOnHeaderStrategy parentStrategy;
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
         this(endpoint, headerSupplier, () -> null, null);
@@ -154,7 +154,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             // some components may have a common base class they extend from (such as camel-infinispan)
             String key2 = this.getClass().getSuperclass().getName();
             String fqn2 = RESOURCE_PATH + key2;
-            strategy2 = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+            parentStrategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
                     .newInstance(key2, InvokeOnHeaderStrategy.class)
                     .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn2 + " in classpath."));
         }
@@ -175,8 +175,8 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
             LOGGER.debug("Invoking @InvokeOnHeader method: {}", action);
             Object answer = strategy.invoke(target, action, exchange, callback);
-            if (answer == null && strategy2 != null) {
-                answer = strategy2.invoke(target, action, exchange, callback);
+            if (answer == null && parentStrategy != null) {
+                answer = parentStrategy.invoke(target, action, exchange, callback);
             }
             LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
             if (answer != null) {

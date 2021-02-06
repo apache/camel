@@ -23,17 +23,20 @@ import org.apache.camel.Exchange;
  * Pluggable strategy for invoking {@link InvokeOnHeader}.
  * <p>
  * Camel provides source code generated strategies via the camel maven tooling.
+ *
+ * @see InvokeOnHeader
  */
 public interface InvokeOnHeaderStrategy {
 
     /**
      * Invoke the method based on the header key
      *
-     * @param  target    the target such as HeaderSelectorProducer
+     * @param  target    the target such as a producer extending HeaderSelectorProducer
      * @param  key       the header key
      * @param  exchange  the exchange
      * @param  callback  the async callback
      * @return           option response from invoking the method, or <tt>null</tt> if the method is void
+     *                   if a value is returned, then this value is stored as result on the message body.
      * @throws Exception is thrown if error invoking the method.
      */
     Object invoke(Object target, String key, Exchange exchange, AsyncCallback callback) throws Exception;

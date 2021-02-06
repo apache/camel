@@ -23,11 +23,13 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,6 +42,7 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
+import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
 /**
@@ -66,9 +69,8 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
     private static class InvokeOnHeaderModel {
         private String key;
         private String methodName;
-        private boolean isVoid;
-        private boolean callback;
-        private boolean exchange;
+        private String returnType;
+        private final List<String> args = new ArrayList<>();
 
         public String getKey() {
             return key;
@@ -86,28 +88,20 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             this.methodName = methodName;
         }
 
-        public boolean isVoid() {
-            return isVoid;
+        public String getReturnType() {
+            return returnType;
         }
 
-        public void setVoid(boolean aVoid) {
-            isVoid = aVoid;
+        public void setReturnType(String returnType) {
+            this.returnType = returnType;
         }
 
-        public boolean isCallback() {
-            return callback;
+        public List<String> getArgs() {
+            return args;
         }
 
-        public void setCallback(boolean callback) {
-            this.callback = callback;
-        }
-
-        public boolean isExchange() {
-            return exchange;
-        }
-
-        public void setExchange(boolean exchange) {
-            this.exchange = exchange;
+        public void addArgs(String arg) {
+            args.add(arg);
         }
     }
 
@@ -142,18 +136,24 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         annotations.forEach(a -> {
             String currentClass = a.target().asMethod().declaringClass().name().toString();
             String value = a.value().asString();
-            String methodName = a.target().asMethod().name();
-            boolean isVoid = Type.Kind.VOID == a.target().asMethod().returnType().kind();
-            boolean callback = a.target().asMethod().parameters().size() == 2;
-            boolean exchange = "org.apache.camel.Exchange".equals(a.target().asMethod().parameters().get(0).name().toString());
-            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass,
-                    k -> new TreeSet<>(Comparator.comparing(InvokeOnHeaderModel::getKey)));
+            MethodInfo mi = a.target().asMethod();
+
             InvokeOnHeaderModel model = new InvokeOnHeaderModel();
             model.setKey(value);
-            model.setMethodName(methodName);
-            model.setVoid(isVoid);
-            model.setCallback(callback);
-            model.setExchange(exchange);
+            model.setMethodName(mi.name());
+
+            boolean isVoid = Type.Kind.VOID == mi.returnType().kind();
+            if (isVoid) {
+                model.setReturnType("VOID");
+            } else {
+                model.setReturnType(mi.returnType().toString());
+            }
+            for (Type type : mi.parameters()) {
+                String arg = type.name().toString();
+                model.addArgs(arg);
+            }
+            Set<InvokeOnHeaderModel> set = classes.computeIfAbsent(currentClass,
+                    k -> new TreeSet<>(Comparator.comparing(InvokeOnHeaderModel::getKey)));
             set.add(model);
         });
 
@@ -221,18 +221,21 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         if (!models.isEmpty()) {
             w.write("        switch (key) {\n");
             for (InvokeOnHeaderModel option : models) {
-                String invoke;
-                String arg1 = option.isExchange() ? "exchange" : "exchange.getMessage()";
-                String arg2 = option.isCallback() ? "callback" : null;
-                if (arg2 != null) {
-                    invoke = "target." + option.getMethodName() + "(" + arg1 + ", " + arg2 + ")";
-                } else {
-                    invoke = "target." + option.getMethodName() + "(" + arg1 + ")";
+                String invoke = "target." + option.getMethodName() + "(";
+                if (!option.getArgs().isEmpty()) {
+                    StringJoiner sj = new StringJoiner(", ");
+                    for (String arg : option.getArgs()) {
+                        String ba = bindArg(arg);
+                        sj.add(ba);
+                    }
+                    invoke += sj.toString();
                 }
+                invoke += ")";
+
                 if (!option.getKey().toLowerCase().equals(option.getKey())) {
                     w.write(String.format("        case \"%s\":\n", option.getKey().toLowerCase()));
                 }
-                if (option.isVoid()) {
+                if (option.getReturnType().equals("VOID")) {
                     w.write(String.format("        case \"%s\": %s; return null;\n", option.getKey(), invoke));
                 } else {
                     w.write(String.format("        case \"%s\": return %s;\n", option.getKey(), invoke));
@@ -246,6 +249,20 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
         w.write("}\n");
         w.write("\n");
+    }
+
+    protected String bindArg(String type) {
+        if ("org.apache.camel.Exchange".equals(type)) {
+            return "exchange";
+        } else if ("org.apache.camel.Message".equals(type)) {
+            return "exchange.getMessage()";
+        } else if ("org.apache.camel.AsyncCallback".equals(type)) {
+            return "callback";
+        } else if ("org.apache.camel.CamelContext".equals(type)) {
+            return "exchange.getContext()";
+        } else {
+            return "exchange.getMessage().getBody(" + type + ".class)";
+        }
     }
 
 }

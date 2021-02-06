@@ -42,11 +42,16 @@ import org.apache.camel.Message;
  * <p/>
  * This can be used by Component implementations that uses org.apache.camel.support.HeaderSelectorProducer.
  *
+ * This requires to use Camel maven tooling (camel-package-maven-plugin) to generate java source code
+ * that selects and invokes the method at runtime.
+ *
  * @see Message#getHeader(String)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface InvokeOnHeader {
+
+    // TODO: Update javadoc as parameter binding has improved
 
     /**
      * Name of header.
