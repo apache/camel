@@ -152,11 +152,11 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         if (sclazz != null && !sclazz.getName().equals("java.lang.Object")
                 && !sclazz.getName().equals(HeaderSelectorProducer.class.getName())) {
             // some components may have a common base class they extend from (such as camel-infinispan)
+            // so try to discover that (optional so return null if not present)
             String key2 = this.getClass().getSuperclass().getName();
-            String fqn2 = RESOURCE_PATH + key2;
             parentStrategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
                     .newInstance(key2, InvokeOnHeaderStrategy.class)
-                    .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn2 + " in classpath."));
+                    .orElse(null);
         }
     }
 
