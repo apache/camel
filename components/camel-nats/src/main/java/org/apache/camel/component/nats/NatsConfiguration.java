@@ -57,6 +57,8 @@ public class NatsConfiguration {
     private int maxPingsOut = Options.DEFAULT_MAX_PINGS_OUT;
     @UriParam(label = "common", defaultValue = "5000")
     private int requestCleanupInterval = 5000;
+    @UriParam(label = "producer", defaultValue = "20000")
+    private long requestTimeout = 20000L;
     @UriParam(label = "producer")
     private String replySubject;
     @UriParam
@@ -190,6 +192,17 @@ public class NatsConfiguration {
 
     public void setRequestCleanupInterval(int requestCleanupInterval) {
         this.requestCleanupInterval = requestCleanupInterval;
+    }
+
+    /**
+     * Request timeout in milliseconds
+     */
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public long getRequestTimeout() {
+        return this.requestTimeout;
     }
 
     /**

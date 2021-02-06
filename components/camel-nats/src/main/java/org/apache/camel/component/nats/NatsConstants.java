@@ -23,4 +23,5 @@ public interface NatsConstants {
     String NATS_REPLY_TO = "CamelNatsReplyTo";
     String NATS_SUBJECT = "CamelNatsSubject";
     String NATS_QUEUE_NAME = "CamelNatsQueueName";
+    String NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME = "CamelNatsRequestTimeoutExecutor";
 }
