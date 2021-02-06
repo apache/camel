@@ -247,14 +247,12 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException(e);
         }
 
-        String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        String extId = getParameter(SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        String method = getParameter(SalesforceEndpointConfig.COMPOSITE_METHOD, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        String method = getParameter(SalesforceEndpointConfig.COMPOSITE_METHOD, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         compositeClient.submitCompositeRaw(body, determineHeaders(exchange),
                 (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders,
                         exception, callback),
-                sObjectName, extId, method);
+                method);
 
         return false;
     }
