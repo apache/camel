@@ -86,11 +86,15 @@ public final class MainHelper {
         for (String prefix : prefixes) {
             final String pk = prefix.toUpperCase(Locale.US).replaceAll("[^\\w]", "-");
             final String pk2 = pk.replace('-', '.');
+            Map<String, String> env = System.getenv();
             System.getProperties().forEach((k, v) -> {
                 String key = k.toString().toUpperCase(Locale.US);
-                if (key.startsWith(pk) || key.startsWith(pk2)) {
-                    key = key.toLowerCase(Locale.ENGLISH).replace('_', '.');
-                    answer.put(key, v);
+                if (!env.containsKey(key)) {
+                    // skip keys that are already from ENV so we don't process it twice
+                    // as we only want to do this for JVM system properties
+                    if (key.startsWith(pk) || key.startsWith(pk2)) {
+                        answer.put(k.toString(), v);
+                    }
                 }
             });
         }

@@ -1076,6 +1076,7 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
             Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            // special handling of these so remove them
             // ENV variables cannot use dash so replace with dot
             propENV.remove(INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
             propENV.remove(OVERRIDE_PROPERTIES_LOCATION.replace('-', '.'));
@@ -1087,6 +1088,13 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
             Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            // special handling of these so remove them
+            propJVM.remove(INITIAL_PROPERTIES_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(INITIAL_PROPERTIES_LOCATION));
+            propJVM.remove(OVERRIDE_PROPERTIES_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(OVERRIDE_PROPERTIES_LOCATION));
+            propJVM.remove(PROPERTY_PLACEHOLDER_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(PROPERTY_PLACEHOLDER_LOCATION));
             if (!propJVM.isEmpty()) {
                 prop.putAll(propJVM);
             }
