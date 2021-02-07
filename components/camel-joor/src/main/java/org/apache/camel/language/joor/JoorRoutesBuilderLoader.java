@@ -16,16 +16,18 @@
  */
 package org.apache.camel.language.joor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.StartupStep;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
@@ -57,14 +59,19 @@ public class JoorRoutesBuilderLoader implements RoutesBuilderLoader, CamelContex
 
     @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+        StartupStepRecorder recorder = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+
         try (InputStream is = resource.getInputStream()) {
             final String content = IOHelper.loadText(is);
             final String name = determineName(resource, content);
-            final Reflect compiled = Reflect.compile(name, content);
 
-            return compiled.create().get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            StartupStep step = recorder.beginStep(JoorRoutesBuilderLoader.class, name, "Compiling RouteBuilder");
+            try {
+                final Reflect compiled = Reflect.compile(name, content);
+                return compiled.create().get();
+            } finally {
+                recorder.endStep(step);
+            }
         }
     }
 
