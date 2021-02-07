@@ -134,6 +134,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": getOrCreateConfig(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "packages": target.setPackages(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkchunking":
+        case "pkChunking": getOrCreateConfig(target).setPkChunking(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": getOrCreateConfig(target).setPkChunkingChunkSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pkchunkingparent":
+        case "pkChunkingParent": getOrCreateConfig(target).setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": getOrCreateConfig(target).setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
@@ -285,6 +293,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
         case "packages": return java.lang.String.class;
         case "password": return java.lang.String.class;
+        case "pkchunking":
+        case "pkChunking": return java.lang.Boolean.class;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return java.lang.Integer.class;
+        case "pkchunkingparent":
+        case "pkChunkingParent": return java.lang.String.class;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
         case "rawpayload":
@@ -437,6 +453,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "objectMapper": return getOrCreateConfig(target).getObjectMapper();
         case "packages": return target.getPackages();
         case "password": return target.getPassword();
+        case "pkchunking":
+        case "pkChunking": return getOrCreateConfig(target).getPkChunking();
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return getOrCreateConfig(target).getPkChunkingChunkSize();
+        case "pkchunkingparent":
+        case "pkChunkingParent": return getOrCreateConfig(target).getPkChunkingParent();
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return getOrCreateConfig(target).getPkChunkingStartRow();
         case "querylocator":
         case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
         case "rawpayload":

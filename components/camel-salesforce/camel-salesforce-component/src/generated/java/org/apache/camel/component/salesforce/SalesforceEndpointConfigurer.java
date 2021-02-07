@@ -77,6 +77,14 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
         case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "pkchunking":
+        case "pkChunking": target.getConfiguration().setPkChunking(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": target.getConfiguration().setPkChunkingChunkSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pkchunkingparent":
+        case "pkChunkingParent": target.getConfiguration().setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": target.getConfiguration().setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": target.getConfiguration().setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
@@ -172,6 +180,14 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
         case "objectmapper":
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "pkchunking":
+        case "pkChunking": return java.lang.Boolean.class;
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return java.lang.Integer.class;
+        case "pkchunkingparent":
+        case "pkChunkingParent": return java.lang.String.class;
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
         case "rawpayload":
@@ -268,6 +284,14 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperations": return target.getConfiguration().getNotifyForOperations();
         case "objectmapper":
         case "objectMapper": return target.getConfiguration().getObjectMapper();
+        case "pkchunking":
+        case "pkChunking": return target.getConfiguration().getPkChunking();
+        case "pkchunkingchunksize":
+        case "pkChunkingChunkSize": return target.getConfiguration().getPkChunkingChunkSize();
+        case "pkchunkingparent":
+        case "pkChunkingParent": return target.getConfiguration().getPkChunkingParent();
+        case "pkchunkingstartrow":
+        case "pkChunkingStartRow": return target.getConfiguration().getPkChunkingStartRow();
         case "querylocator":
         case "queryLocator": return target.getConfiguration().getQueryLocator();
         case "rawpayload":
