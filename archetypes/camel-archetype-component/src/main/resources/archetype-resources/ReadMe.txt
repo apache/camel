@@ -9,5 +9,5 @@ To build this project use
 
 For more help see the Apache Camel documentation:
 
-    http://camel.apache.org/writing-components.html
+    https://camel.apache.org/writing-components.html
     
