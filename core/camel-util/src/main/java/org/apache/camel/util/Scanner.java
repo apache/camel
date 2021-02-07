@@ -151,6 +151,10 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
     }
 
+    public String getDelim() {
+        return delimPattern.pattern();
+    }
+
     private void saveState() {
         savedPosition = position;
     }
