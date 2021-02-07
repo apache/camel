@@ -33,9 +33,15 @@ class SensitiveUtilsTest {
         assertTrue(SensitiveUtils.containsSensitive("passphrase"));
         assertTrue(SensitiveUtils.containsSensitive("password"));
         assertTrue(SensitiveUtils.containsSensitive("sasljaasconfig"));
+        assertTrue(SensitiveUtils.containsSensitive("sasl-jaas-config"));
+        assertTrue(SensitiveUtils.containsSensitive("saslJaasConfig"));
         assertTrue(SensitiveUtils.containsSensitive("secretkey"));
         assertTrue(SensitiveUtils.containsSensitive("secret-key"));
+        assertTrue(SensitiveUtils.containsSensitive("secretKey"));
+        assertTrue(SensitiveUtils.containsSensitive("secret-Key"));
         assertTrue(SensitiveUtils.containsSensitive("access-key"));
+        assertTrue(SensitiveUtils.containsSensitive("accessKey"));
+        assertTrue(SensitiveUtils.containsSensitive("access-Key"));
         assertTrue(SensitiveUtils.containsSensitive("client-secret"));
         assertTrue(SensitiveUtils.containsSensitive("authorization-token"));
 

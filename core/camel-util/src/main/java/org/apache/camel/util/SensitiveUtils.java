@@ -24,14 +24,18 @@ import java.util.Set;
 
 public final class SensitiveUtils {
     private static final Set<String> SENSITIVE_KEYS = new HashSet<>(
-            Arrays.asList("accesskey", "accesstoken", "authorizationtoken", "clientsecret", "passphrase", "password",
-                    "sasljaasconfig", "secretkey", "access-key", "secret-key", "client-secret", "access-token",
-                    "sasl-jaas-config", "authorization-token"));
+            Arrays.asList(
+                    "accesskey", "accesstoken", "authorizationtoken",
+                    "clientsecret",
+                    "passphrase", "password",
+                    "sasljaasconfig", "secretkey"));
 
     private SensitiveUtils() {
     }
 
     public static boolean containsSensitive(String text) {
-        return SENSITIVE_KEYS.contains(text.toLowerCase(Locale.ENGLISH));
+        text = text.toLowerCase(Locale.ENGLISH);
+        text = StringHelper.replaceAll(text, "-", "");
+        return SENSITIVE_KEYS.contains(text);
     }
 }
