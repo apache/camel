@@ -20,38 +20,37 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupStep;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
 
+@ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + JoorRoutesBuilderLoader.EXTENSION)
-public class JoorRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
+public class JoorRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     public static final String EXTENSION = "java";
     public static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
-    private CamelContext camelContext;
+    private StartupStepRecorder recorder;
 
     @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
     }
 
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
+    @ManagedAttribute(description = "Supported file extension")
     @Override
     public String getSupportedExtension() {
         return EXTENSION;
@@ -59,8 +58,6 @@ public class JoorRoutesBuilderLoader implements RoutesBuilderLoader, CamelContex
 
     @Override
     public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
-        StartupStepRecorder recorder = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-
         try (InputStream is = resource.getInputStream()) {
             final String content = IOHelper.loadText(is);
             final String name = determineName(resource, content);
@@ -75,7 +72,7 @@ public class JoorRoutesBuilderLoader implements RoutesBuilderLoader, CamelContex
         }
     }
 
-    private String determineName(Resource resource, String content) {
+    private static String determineName(Resource resource, String content) {
         String loc = resource.getLocation();
         // strip scheme to compute the name
         String scheme = ResourceHelper.getScheme(loc);

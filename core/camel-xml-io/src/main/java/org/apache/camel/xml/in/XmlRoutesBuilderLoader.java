@@ -18,31 +18,23 @@ package org.apache.camel.xml.in;
 
 import java.io.InputStream;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
+@ManagedResource(description = "Managed XML RoutesBuilderLoader")
 @JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + XmlRoutesBuilderLoader.EXTENSION)
-public class XmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
+public class XmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
+
     public static final String EXTENSION = "xml";
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 
-    private CamelContext camelContext;
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
+    @ManagedAttribute(description = "Supported file extension")
     @Override
     public String getSupportedExtension() {
         return EXTENSION;

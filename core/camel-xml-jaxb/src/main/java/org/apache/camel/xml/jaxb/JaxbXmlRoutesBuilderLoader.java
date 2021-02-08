@@ -18,9 +18,9 @@ package org.apache.camel.xml.jaxb;
 
 import java.io.InputStream;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -28,27 +28,17 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
-import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.*;
 
+@ManagedResource(description = "Managed JAXB XML RoutesBuilderLoader")
 @JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + JaxbXmlRoutesBuilderLoader.EXTENSION)
-public class JaxbXmlRoutesBuilderLoader implements RoutesBuilderLoader, CamelContextAware {
+public class JaxbXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
+
     public static final String EXTENSION = "xml";
 
-    private CamelContext camelContext;
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
+    @ManagedAttribute(description = "Supported file extension")
     @Override
     public String getSupportedExtension() {
         return EXTENSION;

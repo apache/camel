@@ -26,6 +26,7 @@ import org.apache.camel.RoutesBuilder;
  * SPI for loading {@link RoutesBuilder} from a list of {@link Resource}.
  */
 public interface RoutesLoader extends CamelContextAware {
+
     /**
      * Service factory key.
      */

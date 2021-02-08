@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.FactoryFinder;
@@ -32,7 +31,16 @@ import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Default {@link RoutesLoader}.
+ */
 public class DefaultRoutesLoader implements RoutesLoader {
+
+    /**
+     * Prefix to use for looking up existing {@link RoutesLoader} from the {@link org.apache.camel.spi.Registry}.
+     */
+    public static final String ROUTES_LOADER_KEY_PREFIX = "routes-builder-loader-";
+
     private CamelContext camelContext;
 
     public DefaultRoutesLoader() {
@@ -78,20 +86,25 @@ public class DefaultRoutesLoader implements RoutesLoader {
      * @return                          a {@link RoutesBuilderLoader}
      * @throws IllegalArgumentException if no {@link RoutesBuilderLoader} can be found for the given file extension
      */
-    private RoutesBuilderLoader getRoutesLoader(String extension) {
-        RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(extension, RoutesBuilderLoader.class);
+    private RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
+        RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(ROUTES_LOADER_KEY_PREFIX + extension,
+                RoutesBuilderLoader.class);
 
         if (answer == null) {
             final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
             final FactoryFinder finder = ecc.getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
             answer = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class).orElse(null);
-        }
-        if (answer == null) {
-            throw new IllegalArgumentException(
-                    "Unable to fina a RoutesBuilderLoader for resource with file extension: " + extension);
+            if (answer == null) {
+                throw new IllegalArgumentException(
+                        "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
+            }
+            // add as service so its lifecycle is managed
+            getCamelContext().addService(answer);
+            // store loader so we can reuse it
+            getCamelContext().getRegistry().bind(ROUTES_LOADER_KEY_PREFIX + extension, answer);
         }
 
-        return CamelContextAware.trySetCamelContext(answer, getCamelContext());
+        return answer;
     }
 }

@@ -16,12 +16,15 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.StaticService;
 
 /**
  * SPI for loading {@link RoutesBuilder} from a {@link Resource}.
  */
-public interface RoutesBuilderLoader {
+public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
+
     /**
      * Service factory base path for language specific loaders.
      */
