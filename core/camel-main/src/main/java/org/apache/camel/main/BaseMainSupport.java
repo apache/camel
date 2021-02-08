@@ -561,6 +561,17 @@ public abstract class BaseMainSupport extends BaseService {
                         envEnabled.toString());
             }
         }
+        // special for system-properties-enabled as we need to know this early before we set all the other options
+        Object jvmEnabled = prop.remove("camel.main.autoConfigurationSystemPropertiesEnabled");
+        if (jvmEnabled == null) {
+            jvmEnabled = prop.remove("camel.main.auto-configuration-system-properties-enabled");
+            if (jvmEnabled != null) {
+                mainConfigurationProperties.setAutoConfigurationSystemPropertiesEnabled(
+                        CamelContextHelper.parseBoolean(camelContext, jvmEnabled.toString()));
+                autoConfiguredProperties.put("camel.main.auto-configuration-system-properties-enabled",
+                        jvmEnabled.toString());
+            }
+        }
 
         // load properties from ENV (override existing)
         Properties propENV = null;
