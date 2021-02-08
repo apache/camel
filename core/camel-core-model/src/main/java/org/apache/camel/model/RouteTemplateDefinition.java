@@ -185,11 +185,14 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     public RouteDefinition asRouteDefinition() {
         RouteDefinition copy = new RouteDefinition();
 
-        // do not copy id as it is used for route template id
+        // must set these first in this order
+        copy.setErrorHandlerRef(route.getErrorHandlerRef());
+        copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
+
+        // and then copy over the rest
+        // (do not copy id as it is used for route template id)
         copy.setAutoStartup(route.getAutoStartup());
         copy.setDelayer(route.getDelayer());
-        copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
-        copy.setErrorHandlerRef(route.getErrorHandlerRef());
         copy.setGroup(route.getGroup());
         copy.setInheritErrorHandler(route.isInheritErrorHandler());
         copy.setInput(route.getInput());
