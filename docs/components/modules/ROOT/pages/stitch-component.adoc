@@ -182,7 +182,7 @@ can be type of `StitchMessage`, `StitchRequestBody` or `Map` but this Map here i
 
 Here are list of examples of data that can be proceeded to Stitch:
 
-===== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
+==== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -204,7 +204,7 @@ from("direct:sendStitch")
 --------------------------------------------------------------------------------
 
 
-===== Input body type `org.apache.camel.component.stitch.client.models.StitchMessage`:
+==== Input body type `org.apache.camel.component.stitch.client.models.StitchMessage`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -223,7 +223,7 @@ from("direct:sendStitch")
 --------------------------------------------------------------------------------
 
 
-===== Input body type `Map`:
+==== Input body type `Map`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -248,7 +248,7 @@ from("direct:sendStitch")
 
 
 
-===== Input body type `Iterable`:
+==== Input body type `Iterable`:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")

@@ -140,7 +140,8 @@ with the following path and query parameters:
 
 
 == Inline Configuration of route
-==== publishAsTextMessage
+
+=== publishAsTextMessage
 Java DSL
 [source,java]
 --------------------------------------------------------------------------------
@@ -173,7 +174,7 @@ XML DSL
 
 
 
-==== publishAsTemplatedMessage
+=== publishAsTemplatedMessage
 Java DSL
 [source,java]
 --------------------------------------------------------------------------------
