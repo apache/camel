@@ -16,17 +16,28 @@
  */
 package org.apache.camel.oaipmh;
 
-import java.io.IOException;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.oaipmh.utils.JettyTestServer;
+import org.apache.camel.oaipmh.utils.MockOaipmhServer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
+
+    private static MockOaipmhServer mockOaipmhServer;
+
+    @BeforeAll
+    public static void startServer() {
+        mockOaipmhServer = MockOaipmhServer.create();
+        mockOaipmhServer.start();
+    }
+
+    @AfterAll
+    public static void stopServer() {
+        mockOaipmhServer.stop();
+    }
 
     @Test
     public void testOAIPMH() throws Exception {
@@ -35,25 +46,12 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
         mock.assertIsSatisfied(5 * 1000);
     }
 
-    @BeforeAll
-    public static void startServer() throws IOException {
-        //Mocked data  taken from https://repositorio.cepal.org/oai/request - July 21, 2020
-        JettyTestServer.getInstance().context = "test4";
-        JettyTestServer.getInstance().https = true;
-        JettyTestServer.getInstance().startServer();
-    }
-
-    @AfterAll
-    public static void stopServer() {
-        JettyTestServer.getInstance().stopServer();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-                from("oaipmh://localhost:" + JettyTestServer.getInstance().portssl + "/oai/request?"
+                from("oaipmh://localhost:" + mockOaipmhServer.getHttpsPort() + "/oai/request?"
                      + "ssl=true&"
                      + "ignoreSSLWarnings=true&"
                      + "delay=1000&"
