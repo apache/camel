@@ -26,7 +26,7 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer> {
     public static final String DEFAULT_ACCOUNT_KEY
             = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
 
-    private static final String CONTAINER_NAME = "mcr.microsoft.com/azure-storage/azurite:3.9.0";
+    private static final String CONTAINER_NAME = "mcr.microsoft.com/azure-storage/azurite:3.10.0";
 
     public AzuriteContainer() {
         this(CONTAINER_NAME);
