@@ -202,7 +202,7 @@
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>4.0.4</flatpack-version>
     <flink-version>1.12.1</flink-version>
-    <fop-version>2.5</fop-version>
+    <fop-version>2.6</fop-version>
     <freemarker-version>2.3.30</freemarker-version>
     <ftpserver-version>1.1.1</ftpserver-version>
     <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
