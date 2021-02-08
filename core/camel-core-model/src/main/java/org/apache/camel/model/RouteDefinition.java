@@ -607,7 +607,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * and then applies {@link org.apache.camel.spi.Validator} as well. The type name consists of two parts, 'scheme'
      * and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example
      * {@code java:java.lang.String}, {@code json:ABCOrder}.
-     * 
+     *
      * @see        org.apache.camel.spi.Transformer
      * @see        org.apache.camel.spi.Validator
      * @param  urn output type URN
@@ -635,7 +635,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Declare the expected data type of the ouput message by Java class with content validation enabled. If the actual
      * message type is different at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and
      * apply if exists, and then applies {@link org.apache.camel.spi.Validator} as well.
-     * 
+     *
      * @see          org.apache.camel.spi.Transformer
      * @see          org.apache.camel.spi.Validator
      * @param  clazz Class object of the output type
@@ -844,11 +844,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      */
     @XmlAttribute
     public void setErrorHandlerRef(String errorHandlerRef) {
-        this.errorHandlerRef = errorHandlerRef;
-        // we use an specific error handler ref (from Spring DSL) then wrap that
-        // with a error handler build ref so Camel knows its not just the
-        // default one
-        setErrorHandlerFactory(new ErrorHandlerBuilderRef(errorHandlerRef));
+        if (errorHandlerRef != null) {
+            this.errorHandlerRef = errorHandlerRef;
+            // we use an specific error handler ref (from Spring DSL) then wrap that
+            // with a error handler build ref so Camel knows its not just the
+            // default one
+            setErrorHandlerFactory(new ErrorHandlerBuilderRef(errorHandlerRef));
+        }
     }
 
     /**
