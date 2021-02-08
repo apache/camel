@@ -73,6 +73,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
     public static final String QUERY_LOCATOR = "queryLocator";
+    public static final String PK_CHUNKING = "pkChunking";
+    public static final String PK_CHUNKING_CHUNK_SIZE = "pkChunkingChunkSize";
+    public static final String PK_CHUNKING_PARENT = "pkChunkingParent";
+    public static final String PK_CHUNKING_START_ROW = "pkChunkingStartRow";
 
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
@@ -145,6 +149,14 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String resultId;
     @UriParam
     private String queryLocator;
+    @UriParam
+    private Boolean pkChunking;
+    @UriParam
+    private Integer pkChunkingChunkSize;
+    @UriParam
+    private String pkChunkingParent;
+    @UriParam
+    private String pkChunkingStartRow;
 
     // Streaming API properties
     @UriParam
@@ -465,6 +477,55 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setQueryLocator(String queryLocator) {
         this.queryLocator = queryLocator;
+    }
+
+    public Boolean getPkChunking() {
+        return pkChunking;
+    }
+
+    /**
+     * Use PK Chunking. Only for use in original Bulk API. Bulk 2.0 API performs PK chunking automatically, if
+     * necessary.
+     */
+    public void setPkChunking(Boolean pkChunking) {
+        this.pkChunking = pkChunking;
+    }
+
+    public Integer getPkChunkingChunkSize() {
+        return pkChunkingChunkSize;
+    }
+
+    /**
+     * Chunk size for use with PK Chunking. If unspecified, salesforce default is 100,000. Maximum size is 250,000.
+     */
+    public void setPkChunkingChunkSize(Integer pkChunkingChunkSize) {
+        this.pkChunkingChunkSize = pkChunkingChunkSize;
+    }
+
+    public String getPkChunkingParent() {
+        return pkChunkingParent;
+    }
+
+    /**
+     * Specifies the parent object when you're enabling PK chunking for queries on sharing objects. The chunks are based
+     * on the parent object's records rather than the sharing object's records. For example, when querying on
+     * AccountShare, specify Account as the parent object. PK chunking is supported for sharing objects as long as the
+     * parent object is supported.
+     */
+    public void setPkChunkingParent(String pkChunkingParent) {
+        this.pkChunkingParent = pkChunkingParent;
+    }
+
+    public String getPkChunkingStartRow() {
+        return pkChunkingStartRow;
+    }
+
+    /**
+     * Specifies the 15-character or 18-character record ID to be used as the lower boundary for the first chunk. Use
+     * this parameter to specify a starting ID when restarting a job that failed between batches.
+     */
+    public void setPkChunkingStartRow(String pkChunkingStartRow) {
+        this.pkChunkingStartRow = pkChunkingStartRow;
     }
 
     /**
