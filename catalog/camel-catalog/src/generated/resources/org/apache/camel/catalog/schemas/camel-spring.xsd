@@ -6651,7 +6651,15 @@ Class name of the java type to use when unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="jsonView" type="xs:string"/>
+        <xs:attribute name="jsonViewTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When marshalling a POJO to JSON you might want to exclude certain fields from
+the JSON output. With Jackson you can use JSON views to accomplish this. This
+option is to refer to the class which has JsonView annotations.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="include" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -6966,7 +6974,15 @@ Class name of the java type to use when unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="jsonView" type="xs:string"/>
+        <xs:attribute name="jsonViewTypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+When marshalling a POJO to JSON you might want to exclude certain fields from
+the JSON output. With Jackson you can use JSON views to accomplish this. This
+option is to refer to the class which has JsonView annotations.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="include" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
