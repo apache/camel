@@ -18,12 +18,15 @@ package org.apache.camel.xml.in;
 
 import java.io.InputStream;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
@@ -33,6 +36,14 @@ public class XmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "xml";
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
+
+    private StartupStepRecorder recorder;
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+    }
 
     @ManagedAttribute(description = "Supported file extension")
     @Override
@@ -45,20 +56,32 @@ public class XmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is, NAMESPACE)
-                            .parseRouteTemplatesDefinition()
-                            .ifPresent(this::setRouteTemplateCollection);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is, NAMESPACE)
-                            .parseRestsDefinition()
-                            .ifPresent(this::setRestCollection);
-                }
-                try (InputStream is = resource.getInputStream()) {
-                    new ModelParser(is, NAMESPACE)
-                            .parseRoutesDefinition()
-                            .ifPresent(this::setRouteCollection);
+                // we use configure to load the routes
+
+                StartupStep step = recorder != null
+                        ? recorder.beginStep(XmlRoutesBuilderLoader.class, resource.getLocation(),
+                                "Loading and Parsing XML routes")
+                        : null;
+                try {
+                    try (InputStream is = resource.getInputStream()) {
+                        new ModelParser(is, NAMESPACE)
+                                .parseRouteTemplatesDefinition()
+                                .ifPresent(this::setRouteTemplateCollection);
+                    }
+                    try (InputStream is = resource.getInputStream()) {
+                        new ModelParser(is, NAMESPACE)
+                                .parseRestsDefinition()
+                                .ifPresent(this::setRestCollection);
+                    }
+                    try (InputStream is = resource.getInputStream()) {
+                        new ModelParser(is, NAMESPACE)
+                                .parseRoutesDefinition()
+                                .ifPresent(this::setRouteCollection);
+                    }
+                } finally {
+                    if (recorder != null) {
+                        recorder.endStep(step);
+                    }
                 }
             }
         };

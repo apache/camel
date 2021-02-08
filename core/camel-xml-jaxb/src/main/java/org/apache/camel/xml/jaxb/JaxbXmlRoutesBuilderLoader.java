@@ -18,7 +18,9 @@ package org.apache.camel.xml.jaxb;
 
 import java.io.InputStream;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
@@ -37,6 +40,14 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.*;
 public class JaxbXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "xml";
+
+    private StartupStepRecorder recorder;
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+    }
 
     @ManagedAttribute(description = "Supported file extension")
     @Override
@@ -49,24 +60,36 @@ public class JaxbXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                try (InputStream is = resource.getInputStream()) {
-                    RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
-                    if (templates != null) {
-                        setRouteTemplateCollection(templates);
-                    }
-                }
+                // we use configure to load the routes
 
-                try (InputStream is = resource.getInputStream()) {
-                    RestsDefinition rests = loadRestsDefinition(getCamelContext(), is);
-                    if (rests != null) {
-                        setRestCollection(rests);
+                StartupStep step = recorder != null
+                        ? recorder.beginStep(JaxbXmlRoutesBuilderLoader.class, resource.getLocation(),
+                                "Loading and Parsing XML routes")
+                        : null;
+                try {
+                    try (InputStream is = resource.getInputStream()) {
+                        RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
+                        if (templates != null) {
+                            setRouteTemplateCollection(templates);
+                        }
                     }
-                }
 
-                try (InputStream is = resource.getInputStream()) {
-                    RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
-                    if (routes != null) {
-                        setRouteCollection(routes);
+                    try (InputStream is = resource.getInputStream()) {
+                        RestsDefinition rests = loadRestsDefinition(getCamelContext(), is);
+                        if (rests != null) {
+                            setRestCollection(rests);
+                        }
+                    }
+
+                    try (InputStream is = resource.getInputStream()) {
+                        RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
+                        if (routes != null) {
+                            setRouteCollection(routes);
+                        }
+                    }
+                } finally {
+                    if (recorder != null) {
+                        recorder.endStep(step);
                     }
                 }
             }
