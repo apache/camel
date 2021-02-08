@@ -56,6 +56,12 @@ public class PrepareExampleMojo extends AbstractMojo {
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
+    @Parameter(property = "startingFolder", required = true, readonly = true, defaultValue = "examples")
+    protected String startingFolder = "examples";
+
+    @Parameter(property = "filter", required = true, readonly = true, defaultValue = "camel-example")
+    protected String filter = "camel-example";
+
     /**
      * Maven ProjectHelper.
      */
@@ -76,11 +82,12 @@ public class PrepareExampleMojo extends AbstractMojo {
     protected void executeExamplesReadme() throws MojoExecutionException, MojoFailureException {
         Set<File> examples = new TreeSet<>();
 
-        // only run in examples directory where the main readme.adoc file is
-        // located
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
-        if (!currentDir.endsWith("examples")) {
-            return;
+        if (startingFolder != null && !startingFolder.isEmpty()) {
+            // only run in examples directory where the main readme.adoc file is located
+            if (!currentDir.endsWith("examples")) {
+                return;
+            }
         }
 
         File dir = new File(".");
@@ -93,8 +100,15 @@ public class PrepareExampleMojo extends AbstractMojo {
             List<ExampleModel> models = new ArrayList<>();
 
             for (File file : examples) {
+                if (file.isDirectory()) {
 
-                if (file.isDirectory() && file.getName().startsWith("camel-example")) {
+                    // must match filter
+                    if (filter != null && !filter.isEmpty()) {
+                        if (!file.getName().startsWith(filter)) {
+                            continue;
+                        }
+                    }
+
                     File pom = new File(file, "pom.xml");
                     if (pom.exists()) {
                         String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
