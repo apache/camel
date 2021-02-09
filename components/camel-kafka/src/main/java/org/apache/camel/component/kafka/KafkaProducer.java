@@ -70,11 +70,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Properties props = endpoint.getConfiguration().createProducerProperties();
         endpoint.updateClassProperties(props);
 
-        String brokers = endpoint.getConfiguration().getBrokers();
-        if (brokers == null) {
-            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
+        String brokers = endpoint.getComponent().getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
+        if (brokers != null) {
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         }
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
 
         return props;
     }

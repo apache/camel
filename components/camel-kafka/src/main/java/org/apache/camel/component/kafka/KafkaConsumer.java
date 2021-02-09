@@ -41,7 +41,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -71,11 +70,6 @@ public class KafkaConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.processor = processor;
         this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
-
-        String brokers = endpoint.getConfiguration().getBrokers();
-        if (ObjectHelper.isEmpty(brokers)) {
-            throw new IllegalArgumentException("Brokers must be configured");
-        }
     }
 
     @Override
@@ -87,12 +81,10 @@ public class KafkaConsumer extends DefaultConsumer {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
         endpoint.updateClassProperties(props);
 
-        String brokers = endpoint.getConfiguration().getBrokers();
-        if (brokers == null) {
-            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
+        String brokers = endpoint.getComponent().getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
+        if (brokers != null) {
+            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         }
-
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
 
         if (endpoint.getConfiguration().getGroupId() != null) {
             String groupId = endpoint.getConfiguration().getGroupId();

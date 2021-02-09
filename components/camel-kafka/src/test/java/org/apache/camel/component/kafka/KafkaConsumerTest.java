@@ -20,12 +20,14 @@ import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class KafkaConsumerTest {
 
     private KafkaConfiguration configuration = mock(KafkaConfiguration.class);
+    private KafkaClientFactory clientFactory = mock(KafkaClientFactory.class);
     private KafkaComponent component = mock(KafkaComponent.class);
     private KafkaEndpoint endpoint = mock(KafkaEndpoint.class);
     private Processor processor = mock(Processor.class);
@@ -35,8 +37,10 @@ public class KafkaConsumerTest {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
+        when(component.getKafkaClientFactory()).thenReturn(clientFactory);
+        when(clientFactory.getBrokers(any())).thenReturn(null);
         assertThrows(IllegalArgumentException.class,
-                () -> new KafkaConsumer(endpoint, processor));
+                () -> new KafkaConsumer(endpoint, processor).getProps());
     }
 
     @Test

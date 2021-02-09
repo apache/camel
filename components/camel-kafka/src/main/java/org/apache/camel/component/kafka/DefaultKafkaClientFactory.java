@@ -18,10 +18,12 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
 public class DefaultKafkaClientFactory implements KafkaClientFactory {
+
     @Override
     public KafkaProducer getProducer(Properties kafkaProps) {
         return new org.apache.kafka.clients.producer.KafkaProducer(kafkaProps);
@@ -30,5 +32,15 @@ public class DefaultKafkaClientFactory implements KafkaClientFactory {
     @Override
     public KafkaConsumer getConsumer(Properties kafkaProps) {
         return new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+    }
+
+    @Override
+    public String getBrokers(KafkaConfiguration configuration) {
+        // broker urls is mandatory in this implementation
+        String brokers = configuration.getBrokers();
+        if (ObjectHelper.isEmpty(brokers)) {
+            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
+        }
+        return brokers;
     }
 }
