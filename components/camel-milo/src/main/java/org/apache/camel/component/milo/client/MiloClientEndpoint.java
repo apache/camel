@@ -36,6 +36,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
              category = { Category.IOT })
 public class MiloClientEndpoint extends DefaultEndpoint {
 
+    private final MiloClientConnectionManager connectionManager;
+
     /**
      * The OPC UA server endpoint
      */
@@ -78,8 +80,6 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     @UriParam
     private MonitorFilterType monitorFilterType;
-
-    private MiloClientConnectionManager connectionManager;
 
     public MiloClientEndpoint(final String uri, final MiloClientComponent component, final String endpointUri,
                               final MiloClientConnectionManager connectionManager) {

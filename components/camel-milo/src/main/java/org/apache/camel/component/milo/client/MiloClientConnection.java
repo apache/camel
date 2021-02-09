@@ -34,11 +34,8 @@ import static java.util.Objects.requireNonNull;
 public class MiloClientConnection implements AutoCloseable {
 
     private final MiloClientConfiguration configuration;
-
     private SubscriptionManager manager;
-
-    private boolean initialized;
-
+    private volatile boolean initialized;
     private MonitorFilterConfiguration monitorFilterConfiguration;
 
     public MiloClientConnection(final MiloClientConfiguration configuration,
@@ -128,7 +125,6 @@ public class MiloClientConnection implements AutoCloseable {
      * @return       the outgoing call request
      */
     private Variant[] mapCallValue(final Object value) {
-
         if (value == null) {
             return new Variant[0];
         }

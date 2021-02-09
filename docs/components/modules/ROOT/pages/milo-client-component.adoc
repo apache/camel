@@ -46,7 +46,6 @@ The OPC UA Client component supports 25 options, which are listed below.
 | *configuration* (common) | All default options for client configurations |  | MiloClientConfiguration
 | *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
 | *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
-| *miloClientCachingConnection{zwsp}Manager* (common) | Instance for managing client connections. |  | MiloClientConnectionManager
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
@@ -61,6 +60,7 @@ The OPC UA Client component supports 25 options, which are listed below.
 | *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
 | *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
+| *miloClientConnectionManager* (client) | *Autowired* Instance for managing client connections |  | MiloClientConnectionManager
 | *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
 | *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
 | *requestedPublishingInterval* (client) | The requested publishing interval in milliseconds | 1_000.0 | Double
