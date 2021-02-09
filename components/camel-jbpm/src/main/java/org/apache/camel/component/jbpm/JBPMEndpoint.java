@@ -46,7 +46,7 @@ public class JBPMEndpoint extends DefaultEndpoint {
     @UriParam
     private JBPMConfiguration configuration;
     @UriParam(defaultValue = "false", label = "consumer,advanced",
-            description = "Sets whether synchronous processing should be strictly used")
+              description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     public JBPMEndpoint(String uri, JBPMComponent component, JBPMConfiguration configuration) {
