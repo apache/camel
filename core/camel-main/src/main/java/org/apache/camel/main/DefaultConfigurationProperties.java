@@ -105,7 +105,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean routeControllerUnhealthyOnExhausted;
     private String startupRecorder;
     private int startupRecorderMaxDepth = -1;
-    private boolean startupRecorderRecording = true;
+    private boolean startupRecorderRecording;
     private String startupRecorderProfile = "default";
     private long startupRecorderDuration;
     private String startupRecorderDir;
@@ -1126,9 +1126,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is
      * complete.
      *
-     * This requires that camel-jfr is on the classpath.
-     *
-     * The default is true.
+     * This requires that camel-jfr is on the classpath, and to enable this option.
      */
     public void setStartupRecorderRecording(boolean startupRecorderRecording) {
         this.startupRecorderRecording = startupRecorderRecording;
@@ -1936,9 +1934,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is
      * complete.
      *
-     * This requires that camel-jfr is in use.
-     *
-     * The default is false.
+     * This requires that camel-jfr is on the classpath, and to enable this option.
      */
     public T withStartupRecorderRecording(boolean startupRecorderRecording) {
         this.startupRecorderRecording = startupRecorderRecording;
