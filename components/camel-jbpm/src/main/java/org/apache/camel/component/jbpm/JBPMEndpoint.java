@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jbpm;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
