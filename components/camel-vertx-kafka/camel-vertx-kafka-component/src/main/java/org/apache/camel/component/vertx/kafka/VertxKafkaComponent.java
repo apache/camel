@@ -40,6 +40,8 @@ public class VertxKafkaComponent extends DefaultComponent {
     private Vertx vertx;
     @Metadata(label = "advanced")
     private VertxOptions vertxOptions;
+    @Metadata(label = "advanced", autowired = true)
+    private VertxKafkaClientFactory vertxKafkaClientFactory = new DefaultVertxKafkaClientFactory();
 
     public VertxKafkaComponent() {
     }
@@ -50,14 +52,12 @@ public class VertxKafkaComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         if (ObjectHelper.isEmpty(remaining)) {
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
 
         final VertxKafkaConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new VertxKafkaConfiguration();
-
         configuration.setTopic(remaining);
 
         final VertxKafkaEndpoint endpoint = new VertxKafkaEndpoint(uri, this, configuration);
@@ -72,8 +72,6 @@ public class VertxKafkaComponent extends DefaultComponent {
         }
 
         setProperties(endpoint, parameters);
-
-        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -96,6 +94,7 @@ public class VertxKafkaComponent extends DefaultComponent {
     protected void doStop() throws Exception {
         if (managedVertx && vertx != null) {
             vertx.close();
+            vertx = null;
         }
 
         super.doStop();
@@ -134,9 +133,17 @@ public class VertxKafkaComponent extends DefaultComponent {
         this.vertxOptions = vertxOptions;
     }
 
-    private void validateConfigurations(final VertxKafkaConfiguration configuration) {
-        if (ObjectHelper.isEmpty(configuration.getBootstrapServers())) {
-            throw new IllegalArgumentException("Kafka bootstrap servers must be configured in 'bootstrapServers' option.");
-        }
+    public VertxKafkaClientFactory getVertxKafkaClientFactory() {
+        return vertxKafkaClientFactory;
     }
+
+    /**
+     * Factory to use for creating {@Link io.vertx.kafka.client.consumer.KafkaConsumer} and
+     * {@Link io.vertx.kafka.client.consumer.KafkaProducer} instances. This allows to configure a custom factory to
+     * create custom KafkaConsumer and KafkaProducer instances with logic that extends the vanilla VertX Kafka clients.
+     */
+    public void setVertxKafkaClientFactory(VertxKafkaClientFactory vertxKafkaClientFactory) {
+        this.vertxKafkaClientFactory = vertxKafkaClientFactory;
+    }
+
 }

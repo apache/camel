@@ -21,6 +21,8 @@ import java.util.Properties;
 import io.vertx.core.Vertx;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import io.vertx.kafka.client.producer.KafkaProducer;
+import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default implementation for {@Link VertxKafkaClientFactory} interface.
@@ -28,6 +30,7 @@ import io.vertx.kafka.client.producer.KafkaProducer;
  * Creates default VertX {@Link KafkaConsumer} and {@Link KafkaProducer} instances.
  */
 public class DefaultVertxKafkaClientFactory implements VertxKafkaClientFactory {
+
     @Override
     public <K, V> KafkaConsumer<K, V> getVertxKafkaConsumer(Vertx vertx, Properties config) {
         return KafkaConsumer.create(vertx, config);
@@ -37,4 +40,15 @@ public class DefaultVertxKafkaClientFactory implements VertxKafkaClientFactory {
     public <K, V> KafkaProducer<K, V> getVertxKafkaProducer(Vertx vertx, Properties config) {
         return KafkaProducer.create(vertx, config);
     }
+
+    @Override
+    public String getBootstrapBrokers(VertxKafkaConfiguration configuration) {
+        // broker urls is mandatory in this implementation
+        String brokers = configuration.getBootstrapServers();
+        if (ObjectHelper.isEmpty(brokers)) {
+            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the BootstrapServers option.");
+        }
+        return brokers;
+    }
+
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.vertx.kafka.configuration;
 
-import org.apache.camel.component.vertx.kafka.DefaultVertxKafkaClientFactory;
-import org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory;
 import org.apache.camel.component.vertx.kafka.VertxKafkaHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -27,9 +25,6 @@ public abstract class BaseVertxKafkaConfiguration implements HeaderFilterStrateg
 
     @UriParam(label = "common")
     private HeaderFilterStrategy headerFilterStrategy = new VertxKafkaHeaderFilterStrategy();
-
-    @UriParam(label = "advanced")
-    private VertxKafkaClientFactory vertxKafkaClientFactory = new DefaultVertxKafkaClientFactory();
 
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
@@ -42,18 +37,4 @@ public abstract class BaseVertxKafkaConfiguration implements HeaderFilterStrateg
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public VertxKafkaClientFactory getVertxKafkaClientFactory() {
-        return vertxKafkaClientFactory;
-    }
-
-    /**
-     * Factory to use for creating {@Link io.vertx.kafka.client.consumer.KafkaConsumer} and
-     * {@Link io.vertx.kafka.client.consumer.KafkaProducer} instances. This allows to configure a custom factory to
-     * create custom KafkaConsumer and KafkaProducer instances with logic that extends the vanilla VertX Kafka clients.
-     *
-     * @param vertxKafkaClientFactory factory instance to use.
-     */
-    public void setVertxKafkaClientFactory(VertxKafkaClientFactory vertxKafkaClientFactory) {
-        this.vertxKafkaClientFactory = vertxKafkaClientFactory;
-    }
 }

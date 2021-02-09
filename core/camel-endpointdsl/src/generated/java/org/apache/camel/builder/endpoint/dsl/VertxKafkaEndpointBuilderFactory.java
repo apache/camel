@@ -2405,48 +2405,6 @@ public interface VertxKafkaEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointConsumerBuilder vertxKafkaClientFactory(
-                Object vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointConsumerBuilder vertxKafkaClientFactory(
-                String vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
     }
 
     /**
@@ -4619,48 +4577,6 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointProducerBuilder basic() {
             return (VertxKafkaEndpointProducerBuilder) this;
         }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointProducerBuilder vertxKafkaClientFactory(
-                Object vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointProducerBuilder vertxKafkaClientFactory(
-                String vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
     }
 
     /**
@@ -6117,48 +6033,6 @@ public interface VertxKafkaEndpointBuilderFactory {
                 AdvancedVertxKafkaEndpointProducerBuilder {
         default VertxKafkaEndpointBuilder basic() {
             return (VertxKafkaEndpointBuilder) this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointBuilder vertxKafkaClientFactory(
-                Object vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
-        }
-        /**
-         * Factory to use for creating
-         * io.vertx.kafka.client.consumer.KafkaConsumer and
-         * io.vertx.kafka.client.consumer.KafkaProducer instances. This allows
-         * to configure a custom factory to create custom KafkaConsumer and
-         * KafkaProducer instances with logic that extends the vanilla VertX
-         * Kafka clients.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param vertxKafkaClientFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedVertxKafkaEndpointBuilder vertxKafkaClientFactory(
-                String vertxKafkaClientFactory) {
-            doSetProperty("vertxKafkaClientFactory", vertxKafkaClientFactory);
-            return this;
         }
     }
 

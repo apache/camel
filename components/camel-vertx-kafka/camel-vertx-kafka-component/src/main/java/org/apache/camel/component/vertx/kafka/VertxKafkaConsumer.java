@@ -46,8 +46,13 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
     protected void doStart() throws Exception {
         super.doStart();
 
+        String brokers = getEndpoint().getComponent().getVertxKafkaClientFactory().getBootstrapBrokers(getConfiguration());
+        if (brokers != null) {
+            LOG.debug("Creating KafkaConsumer connecting to BootstrapBrokers: {}", brokers);
+        }
+
         // create the consumer client
-        kafkaConsumer = getConfiguration().getVertxKafkaClientFactory()
+        kafkaConsumer = getEndpoint().getComponent().getVertxKafkaClientFactory()
                 .getVertxKafkaConsumer(getEndpoint().getVertx(), getConfiguration().createConsumerConfiguration());
 
         // create the consumer operation

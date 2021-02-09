@@ -2167,7 +2167,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "valueSerializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "autowiredEnabled": ((VertxKafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "vertx": ((VertxKafkaComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
-            case "vertxKafkaClientFactory": getOrCreateConfiguration((VertxKafkaComponent) component).setVertxKafkaClientFactory((org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory) value); return true;
+            case "vertxKafkaClientFactory": ((VertxKafkaComponent) component).setVertxKafkaClientFactory((org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory) value); return true;
             case "vertxOptions": ((VertxKafkaComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "saslClientCallbackHandlerClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslClientCallbackHandlerClass((java.lang.String) value); return true;
             case "saslJaasConfig": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslJaasConfig((java.lang.String) value); return true;

@@ -221,8 +221,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "valueDeserializer": target.getConfiguration().setValueDeserializer(property(camelContext, java.lang.String.class, value)); return true;
         case "valueserializer":
         case "valueSerializer": target.getConfiguration().setValueSerializer(property(camelContext, java.lang.String.class, value)); return true;
-        case "vertxkafkaclientfactory":
-        case "vertxKafkaClientFactory": target.getConfiguration().setVertxKafkaClientFactory(property(camelContext, org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory.class, value)); return true;
         default: return false;
         }
     }
@@ -430,8 +428,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "valueDeserializer": return java.lang.String.class;
         case "valueserializer":
         case "valueSerializer": return java.lang.String.class;
-        case "vertxkafkaclientfactory":
-        case "vertxKafkaClientFactory": return org.apache.camel.component.vertx.kafka.VertxKafkaClientFactory.class;
         default: return null;
         }
     }
@@ -640,8 +636,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "valueDeserializer": return target.getConfiguration().getValueDeserializer();
         case "valueserializer":
         case "valueSerializer": return target.getConfiguration().getValueSerializer();
-        case "vertxkafkaclientfactory":
-        case "vertxKafkaClientFactory": return target.getConfiguration().getVertxKafkaClientFactory();
         default: return null;
         }
     }

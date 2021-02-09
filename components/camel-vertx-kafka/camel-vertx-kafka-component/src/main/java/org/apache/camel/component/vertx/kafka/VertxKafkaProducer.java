@@ -22,8 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.component.vertx.kafka.operations.VertxKafkaProducerOperations;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VertxKafkaProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VertxKafkaProducer.class);
 
     private KafkaProducer<Object, Object> kafkaProducer;
     private VertxKafkaProducerOperations producerOperations;
@@ -34,8 +38,13 @@ public class VertxKafkaProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() {
+        String brokers = getEndpoint().getComponent().getVertxKafkaClientFactory().getBootstrapBrokers(getConfiguration());
+        if (brokers != null) {
+            LOG.debug("Creating KafkaConsumer connecting to BootstrapBrokers: {}", brokers);
+        }
+
         // create kafka client
-        kafkaProducer = getConfiguration().getVertxKafkaClientFactory()
+        kafkaProducer = getEndpoint().getComponent().getVertxKafkaClientFactory()
                 .getVertxKafkaProducer(getEndpoint().getVertx(), getConfiguration().createProducerConfiguration());
 
         // create our operations

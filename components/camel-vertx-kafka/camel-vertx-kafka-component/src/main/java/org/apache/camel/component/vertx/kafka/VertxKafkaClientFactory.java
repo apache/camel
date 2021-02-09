@@ -21,13 +21,40 @@ import java.util.Properties;
 import io.vertx.core.Vertx;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import io.vertx.kafka.client.producer.KafkaProducer;
+import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 
 /**
- * Defines the factory that this component uses to create {@Link KafkaConsumer} and {@Link KafkaProducer} instances.
+ * Defines the factory that this component uses to create vertx based {@Link KafkaConsumer} and {@Link KafkaProducer}
+ * instances.
  */
 public interface VertxKafkaClientFactory {
 
+    /**
+     * Creates a new instance of the {@link org.apache.kafka.clients.consumer.KafkaConsumer} class.
+     *
+     * @param  vertx  vertx instance
+     * @param  config The consumer configs.
+     * @return        an instance of Kafka consumer.
+     */
     <K, V> KafkaConsumer<K, V> getVertxKafkaConsumer(Vertx vertx, Properties config);
 
+    /**
+     * Creates a new instance of the {@link org.apache.kafka.clients.producer.KafkaProducer} class.
+     *
+     * @param  vertx  vertx instance
+     * @param  config The producer configs.
+     * @return        an instance of Kafka producer.
+     */
     <K, V> KafkaProducer<K, V> getVertxKafkaProducer(Vertx vertx, Properties config);
+
+    /**
+     * URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers
+     * or a VIP pointing to a subset of brokers.
+     * <p/>
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
+     *
+     * @param configuration the configuration
+     */
+    String getBootstrapBrokers(VertxKafkaConfiguration configuration);
+
 }
