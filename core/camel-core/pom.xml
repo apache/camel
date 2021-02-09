@@ -254,7 +254,7 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>log4j.properties</exclude>
+                        <exclude>log4j2.properties</exclude>
                     </excludes>
                 </configuration>
             </plugin>
