@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.component.zookeepermaster.group.Group;
+import org.apache.camel.component.zookeepermaster.group.ManagedGroupFactory;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.camel.component.zookeepermaster.group.internal.DelegateZooKeeperGroup;
 import org.apache.camel.component.zookeepermaster.group.internal.DelegateZooKeeperMultiGroup;
-import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;

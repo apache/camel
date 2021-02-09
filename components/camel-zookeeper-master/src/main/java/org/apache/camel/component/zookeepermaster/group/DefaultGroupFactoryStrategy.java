@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeepermaster.group.internal;
+package org.apache.camel.component.zookeepermaster.group;
 
 import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.component.zookeepermaster.ManagedGroupFactoryStrategy;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 
-public final class ManagedGroupFactoryBuilder {
+public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy {
 
-    private ManagedGroupFactoryBuilder() {
-    }
-
-    public static ManagedGroupFactory create(
+    @Override
+    public ManagedGroupFactory createGroupFactory(
             CuratorFramework curator,
             ClassLoader loader,
             CamelContext camelContext,
             Callable<CuratorFramework> factory)
             throws Exception {
         if (curator != null) {
-            return new StaticManagedGroupFactory(curator, false);
+            return new DefaultManagedGroupFactory(curator, false);
         }
         try {
             Class<?> clazz = camelContext.getClassResolver()
@@ -50,7 +49,7 @@ public final class ManagedGroupFactoryBuilder {
         } catch (Throwable e) {
             // Ignore if we're not in OSGi
         }
-        return new StaticManagedGroupFactory(factory.call(), true);
+        return new DefaultManagedGroupFactory(factory.call(), true);
     }
 
 }

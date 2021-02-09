@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeepermaster.group.internal;
+package org.apache.camel.component.zookeepermaster.group;
 
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.camel.component.zookeepermaster.group.Group;
-import org.apache.camel.component.zookeepermaster.group.NodeState;
+import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
+import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperMultiGroup;
 import org.apache.curator.framework.CuratorFramework;
 
-public class StaticManagedGroupFactory implements ManagedGroupFactory {
+public class DefaultManagedGroupFactory implements ManagedGroupFactory {
 
     private final CuratorFramework curator;
     private final boolean shouldClose;
 
-    StaticManagedGroupFactory(CuratorFramework curator, boolean shouldClose) {
+    public DefaultManagedGroupFactory(CuratorFramework curator, boolean shouldClose) {
         this.curator = curator;
         this.shouldClose = shouldClose;
     }
