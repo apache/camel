@@ -25,8 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A caching {@link MiloClientConnectionManager} which cache and reuses the same {@link MiloClientConnection}
- * for clients with the same cache id ({@link MiloClientConfiguration#toCacheId()}.
+ * A caching {@link MiloClientConnectionManager} which cache and reuses the same {@link MiloClientConnection} for
+ * clients with the same cache id ({@link MiloClientConfiguration#toCacheId()}.
  */
 public class MiloClientCachingConnectionManager implements MiloClientConnectionManager {
 
