@@ -26,11 +26,15 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.stream.JsonParser;
 
+import io.smallrye.health.AsyncHealthCheckFactory;
 import io.smallrye.health.SmallRyeHealth;
 import io.smallrye.health.SmallRyeHealthReporter;
+import io.smallrye.health.registry.LivenessHealthRegistry;
+import io.smallrye.health.registry.ReadinessHealthRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.ReflectionHelper;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -46,6 +50,15 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         reporter = new SmallRyeHealthReporter();
+
+        // we do not run in CDI so we have to setup this with reflection
+        ReflectionHelper.setField(reporter.getClass().getDeclaredField("asyncHealthCheckFactory"), reporter,
+                new AsyncHealthCheckFactory());
+        ReflectionHelper.setField(reporter.getClass().getDeclaredField("livenessHealthRegistry"), reporter,
+                new LivenessHealthRegistry());
+        ReflectionHelper.setField(reporter.getClass().getDeclaredField("readinessHealthRegistry"), reporter,
+                new ReadinessHealthRegistry());
+        ReflectionHelper.setField(reporter.getClass().getDeclaredField("timeoutSeconds"), reporter, 60);
     }
 
     protected void assertHealthCheckOutput(
