@@ -30,7 +30,8 @@ import javax.crypto.spec.IvParameterSpec;
 public class CipherPair {
     private final String transformation;
     private final Cipher enccipher;
-    private final Cipher deccipher;
+    private final Key key;
+    private final byte[] ivp;
 
     public CipherPair(String transformation) throws GeneralSecurityException {
         this.transformation = transformation;
@@ -45,12 +46,10 @@ public class CipherPair {
 
         KeyGenerator keygen = KeyGenerator.getInstance(a);
         keygen.init(new SecureRandom());
-        Key key = keygen.generateKey();
+        key = keygen.generateKey();
         enccipher = Cipher.getInstance(transformation);
-        deccipher = Cipher.getInstance(transformation);
         enccipher.init(Cipher.ENCRYPT_MODE, key);
-        final byte[] ivp = enccipher.getIV();
-        deccipher.init(Cipher.DECRYPT_MODE, key, ivp == null ? null : new IvParameterSpec(ivp));
+        ivp = enccipher.getIV();
     }
 
     public String getTransformation() {
@@ -61,7 +60,18 @@ public class CipherPair {
         return enccipher;
     }
 
-    public Cipher getDecryptor() {
-        return deccipher;
+    /**
+     * Create the decryptor every time because the decryptor is not thead safe. For example, if you reuse the decryptor
+     * instance in the Multi-cast case then you will get errors.
+     */
+    public Cipher createDecryptor() {
+        try {
+            Cipher deccipher = Cipher.getInstance(transformation);
+            deccipher.init(Cipher.DECRYPT_MODE, key, ivp == null ? null : new IvParameterSpec(ivp));
+            return deccipher;
+        } catch (GeneralSecurityException e) {
+            // should not happen
+            throw new IllegalStateException("Could not instanciate decryptor, e");
+        }
     }
 }
