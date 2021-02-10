@@ -71,7 +71,7 @@ public class CipherPair {
             return deccipher;
         } catch (GeneralSecurityException e) {
             // should not happen
-            throw new IllegalStateException("Could not instantiate decryptor, e");
+            throw new IllegalStateException("Could not instanciate decryptor, e");
         }
     }
 }
