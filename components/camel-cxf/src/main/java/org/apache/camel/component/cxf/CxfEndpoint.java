@@ -1084,7 +1084,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void doStop() throws Exception {
         // we should consider to shutdown the bus if the bus is created by cxfEndpoint
         if (createBus && bus != null) {
-            LOG.info("shutdown the bus ... {}", bus);
+            LOG.debug("Shutdown CXF bus {}", bus);
             getBus().shutdown(false);
             // clean up the bus to create a new one if the endpoint is started again
             bus = null;
