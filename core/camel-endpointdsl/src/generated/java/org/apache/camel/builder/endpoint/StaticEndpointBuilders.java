@@ -6786,6 +6786,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Storage (camel-google-storage)
+     * GoogleCloudStorage component which does bla bla.
+     * 
+     * Category: cloud
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-google-storage
+     * 
+     * Syntax: <code>google-storage:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name or ARN
+     * 
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.endpointBuilder("google-storage", path);
+    }
+    /**
+     * Google Storage (camel-google-storage)
+     * GoogleCloudStorage component which does bla bla.
+     * 
+     * Category: cloud
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-google-storage
+     * 
+     * Syntax: <code>google-storage:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name or ARN
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Gora (camel-gora)
      * Access NoSQL databases using the Apache Gora framework.
      * 

@@ -2012,6 +2012,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GoogleSheetsStreamComponentBuilderFactory.googleSheetsStream();
     }
     /**
+     * Google Storage (camel-google-storage)
+     * GoogleCloudStorage component which does bla bla.
+     * 
+     * Category: cloud
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-google-storage
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.GoogleStorageComponentBuilderFactory.GoogleStorageComponentBuilder googleStorage() {
+        return org.apache.camel.builder.component.dsl.GoogleStorageComponentBuilderFactory.googleStorage();
+    }
+    /**
      * Gora (camel-gora)
      * Access NoSQL databases using the Apache Gora framework.
      * 
