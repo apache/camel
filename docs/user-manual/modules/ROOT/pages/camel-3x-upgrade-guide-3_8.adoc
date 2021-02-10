@@ -76,26 +76,26 @@ The components are now reactive and non-blocking, and support the optimized toD 
 Many of the previous features and configuration options have been removed/renamed.
 To migrate you need to read their documentation and see what options they now offer.
 
-=== Camel-AWS2-SNS
+=== camel-aws2-sns
 
 The policy option now expects a file, since the policy is going to be complex. It can be from classpath:, http: or file: etc.
 
-=== Camel-AWS2-SQS
+=== camel-aws2-sqs
 
 The policy option now expects a file, since the policy is going to be complex. It can be from classpath:, http: or file: etc.
 
-=== Camel-Github
+=== camel-github
 
 The Camel Github Commit consumer has been changed a bit.
 
 For each exchange now in the body you'll get the commit full message as a String and not the Commit Object like before.
 
-Other information has been stored in headers declared in GitHubConstants class:
+Other information has been stored in headers declared in `GitHubConstants` class:
 
-* GITHUB_COMMIT_AUTHOR - "CamelGitHubCommitAuthor" - The commit Author
-* GITHUB_COMMIT_COMMITTER - "CamelGitHubCommitCommitter" - The committer name
-* GITHUB_COMMIT_SHA - "CamelGitHubCommitSha" - The commit sha
-* GITHUB_COMMIT_URL - "CamelGitHubCommitUrl" - The commit url
+* GITHUB_COMMIT_AUTHOR - `CamelGitHubCommitAuthor` - The commit Author
+* GITHUB_COMMIT_COMMITTER - `CamelGitHubCommitCommitter` - The committer name
+* GITHUB_COMMIT_SHA - `CamelGitHubCommitSha` - The commit sha
+* GITHUB_COMMIT_URL - `CamelGitHubCommitUrl` - The commit url
 
 The Camel Github Events consumer has been changed a bit.
 
@@ -103,9 +103,9 @@ For each exchange now in the body you'll get the event type as a String and not 
 
 Other information has been stored in headers declared in GitHubConstants class:
 
-* GITHUB_EVENT_PAYLOAD - "CamelGitHubEventPayload" - The event payload
+* GITHUB_EVENT_PAYLOAD - `CamelGitHubEventPayload` - The event payload
 
-=== Camel-infinispan
+=== camel-infinispan
 
 There are now two components for Infinispan:
 
@@ -114,17 +114,18 @@ There are now two components for Infinispan:
 
 As consequence of the refactor:
 
-- the remote and embedded endpoints provide support the same capabilities, as example queries were only possible on a remote cache and now they are suported on both remote and local/embedded caches
-- the configuration options for the endpoint are now specific to the context which remove the possibility to mix unrelated propertis
-- some classes have been relocated, as example, indempotent and aggregation repositories have been moved from `org.apache.camel.component.infinispan.processor.*` to `org.apache.camel.component.infinispan.embedded` or `org.apache.camel.component.infinispan.remote`:
-+
-org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedAggregationRepository
-org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository
-org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository
-org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository
+The remote and embedded endpoints provide support the same capabilities, as example queries were only possible on a remote cache and now they are supported on both remote and local/embedded caches.
+The configuration options for the endpoint are now specific to the context which remove the possibility to mix unrelated properties.
+Some classes have been relocated (such as indempotent and aggregation repositories) have been moved from `org.apache.camel.component.infinispan.processor.*` to `org.apache.camel.component.infinispan.embedded` or `org.apache.camel.component.infinispan.remote`:
+- `org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedAggregationRepository`
+- `org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository`
+- `org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository`
+- `org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository`
 
-=== Camel-AWS
+=== camel-aws
 
-All the camel-aws components except camel-aws-xray have been deprecated. We suggest to migrate to Camel-AWS2-* components, because in future releases the AWS components will be removed and with the next LTS release (3.10 probably) camel-aws2 components will be renamed to camel-aws.
+All the camel-aws components except camel-aws-xray have been deprecated. We suggest migrating to camel-aws2-* components,
+because in future releases the AWS components will be removed and with the next LTS release (3.10 probably)
+camel-aws2 components will be renamed to camel-aws.
 
 
