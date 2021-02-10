@@ -26,7 +26,7 @@ public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
      * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel.</tt>
      */
     public static final Pattern CAMEL_KAFKA_FILTER_PATTERN
-            = Pattern.compile("(?i)(Camel|org\\.apache\\.camel|kafka\\.)[\\.|a-z|A-z|0-9]*");
+            = Pattern.compile("(?i)(Camel|org\\.apache\\.camel|kafka\\.)[\\.|a-z|A-Z|0-9]*");
 
     public KafkaHeaderFilterStrategy() {
         initialize();
