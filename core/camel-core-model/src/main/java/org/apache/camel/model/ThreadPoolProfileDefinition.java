@@ -56,7 +56,8 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     @Metadata(javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy")
+    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+              enums = "Abort,CallerRuns,DiscardOldest,Discard")
     private String rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
