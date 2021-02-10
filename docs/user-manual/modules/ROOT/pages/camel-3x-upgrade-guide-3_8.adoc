@@ -50,6 +50,23 @@ transacted mode and the existing reactive mode.
 We do not anticipate any issues but if you are using transactions and these EIPs then we would like to have feedback
 if you encounter any problems with upgrading.
 
+=== Configuration changes
+
+The configuration for specifying directory for loading XML routes have been consolidation into a single option (supporting all kinds):
+
+For Spring Boot users:
+
+`camel.springboot.xml-routes` to `camel.springboot.routes-include-pattern`
+`camel.springboot.xml-route-templates` to `camel.springboot.routes-include-pattern`
+`camel.springboot.xml-rests` to `camel.springboot.routes-include-pattern`
+
+For Camel Main users:
+
+`camel.main.xml-routes` to `camel.springboot.routes-include-pattern`
+`camel.main.xml-route-templates` to `camel.springboot.routes-include-pattern`
+`camel.main.xml-rests` to `camel.springboot.routes-include-pattern`
+
+
 === camel-jackson
 
 In the XML DSL `jsonView` has been renamed to `jsonViewTypeName` and made general available in the model
