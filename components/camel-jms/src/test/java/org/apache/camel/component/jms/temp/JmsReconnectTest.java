@@ -22,7 +22,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.spring.xml.CamelBeanPostProcessor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

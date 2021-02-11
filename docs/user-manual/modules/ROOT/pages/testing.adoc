@@ -105,12 +105,12 @@ and the test classes that come with it.
 === Spring Test with XML Config Example
 
 Here is the Spring Testing
-https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
+https://github.com/apache/camel/blob/master/components/camel-spring-xml/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
 using XML Config]:
 
 [source,java]
 ----
-include::{examplesdir}/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[tags=example]
+include::{examplesdir}/components/camel-spring-xml/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[tags=example]
 ----
 
 Notice that we use @`DirtiesContext` on the test methods to force
@@ -126,7 +126,7 @@ on the classpath] to configure the test case which looks like this:
 
 [source,xml]
 ----
-include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[tags=example]
+include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[tags=example]
 ----
 
 [[Testing-SpringTestwithJavaConfigExample]]

@@ -69,6 +69,7 @@
         <module>camel-testcontainers-spring-junit5</module>
         <module>camel-spring</module>
         <module>camel-spring-main</module>
+        <module>camel-spring-xml</module>
         <module>camel-groovy</module>
         <module>camel-attachments</module>
         <module>camel-http-base</module>

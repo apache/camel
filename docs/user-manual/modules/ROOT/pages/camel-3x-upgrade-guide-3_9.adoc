@@ -6,3 +6,20 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.8 to 3.9
 
+=== Modularized camel-spring
+
+The `camel-spring` component has been modularized into:
+
+- `camel-spring` - Core module for Camel Spring support
+- `camel-spring-xml` - XML DSL when using Spring XML (eg `<beans>`)
+
+The motivation is to move out the XML DSL from `camel-spring` which reduces the number of dependencies and makes
+the module lighter.
+
+Users that use the Spring XML DSL (eg the top XML tag is Spring `<beans>`) should migrate from using `camel-spring`
+to `camel-spring-xml` as dependency.
+
+Users that do not use Spring XML should not be affected.
+
+In Spring XML `<proxy>` and <remote>` have been removed. They were only available in Spring XML
+and not in the other XML DSLs (Blueprint and CDI).
