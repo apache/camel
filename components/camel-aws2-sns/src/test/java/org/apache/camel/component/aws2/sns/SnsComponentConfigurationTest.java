@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -228,7 +228,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
     }
-    
+
     @Test
     public void createEndpointWithArnConfiguration() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
@@ -237,7 +237,8 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         Sns2Endpoint endpoint = (Sns2Endpoint) component
-                .createEndpoint("aws2-sns://arn:aws:sns:eu-west-1:123456789:somewhere-over-the-rainbow?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
+                .createEndpoint(
+                        "aws2-sns://arn:aws:sns:eu-west-1:123456789:somewhere-over-the-rainbow?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
 
         assertEquals("arn:aws:sns:eu-west-1:123456789:somewhere-over-the-rainbow", endpoint.getConfiguration().getTopicArn());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
