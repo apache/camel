@@ -94,7 +94,7 @@ public class Sqs2Configuration implements Cloneable {
     @UriParam(label = "producer")
     private Sqs2Operations operation;
     @UriParam(label = "producer", defaultValue = ",")
-    private String batchSeparator;
+    private String batchSeparator = ",";
 
     // queue properties
     @UriParam(label = "queue")
@@ -573,23 +573,23 @@ public class Sqs2Configuration implements Cloneable {
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
-    
+
     public String getBatchSeparator() {
-		return batchSeparator;
-	}
+        return batchSeparator;
+    }
 
     /**
      * Set the separator when passing a String to send batch message operation
      */
-	public void setBatchSeparator(String batchSeparator) {
-		this.batchSeparator = batchSeparator;
-	}    
+    public void setBatchSeparator(String batchSeparator) {
+        this.batchSeparator = batchSeparator;
+    }
 
     // *************************************************
     //
     // *************************************************
 
-	public Sqs2Configuration copy() {
+    public Sqs2Configuration copy() {
         try {
             return (Sqs2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
