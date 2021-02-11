@@ -28,8 +28,8 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the processing of a file stream-cache with encryption by the multi-cast
- * processor in the parallel processing mode.
+ * Tests the processing of a file stream-cache with encryption by the multi-cast processor in the parallel processing
+ * mode.
  */
 public class MultiCastParallelAndStreamCachingWithEncryptionTest extends ContextTestSupport {
 
@@ -77,8 +77,8 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
     }
 
     /**
-     * Tests the FileInputStreamCache. The sent input stream is transformed to
-     * FileInputStreamCache before the multi-cast processor is called.
+     * Tests the FileInputStreamCache. The sent input stream is transformed to FileInputStreamCache before the
+     * multi-cast processor is called.
      * 
      * @throws Exception
      */
