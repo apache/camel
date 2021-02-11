@@ -32,7 +32,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public ArtemisContainer() {
-        super(new ImageFromDockerfile("localhost/apache-artemis:ckc", false)
+        super(new ImageFromDockerfile("localhost/apache-artemis:camel", false)
                 .withFileFromClasspath("Dockerfile",
                         "org/apache/camel/test/infra/artemis/services/Dockerfile")
                 .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME)));

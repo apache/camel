@@ -28,7 +28,7 @@ abstract class HadoopBaseContainer<T extends GenericContainer<T>> extends Generi
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public HadoopBaseContainer(Network network, String name) {
-        super(new ImageFromDockerfile("localhost/hadoop-2x:ckc", false)
+        super(new ImageFromDockerfile("localhost/hadoop-2x:camel", false)
                 .withFileFromClasspath(".",
                         "org/apache/camel/test/infra/hdfs/v2/services/")
                 .withBuildArg(FROM_IMAGE_BUILDER_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME))
