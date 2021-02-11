@@ -19,7 +19,7 @@ adding some functionalities (bucket creation and deletion). However there are st
 ### Execution of integration tests
 
 To run the Google Storage client library, you must first set up authentication by creating a service account key.
-You can find more info at: (cloud.google.com/storage/docs/reference/libraries#setting_up_authentication)[https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication].
+You can find more info at: [cloud.google.com/storage/docs/reference/libraries#setting_up_authentication](https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication).
 
 When you have the **service account key** you can provide authentication credentials to your application code by setting the environment variable:
 
