@@ -12,7 +12,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-FROM fedora:33 as artemis-base
+ARG FROMIMAGE
+FROM $FROMIMAGE as artemis-base
 LABEL maintainer="orpiske@apache.org"
 ARG ARTEMIS_VERSION
 ENV ARTEMIS_VERSION ${ARTEMIS_VERSION:-2.7.0}

@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 /**
  * Test utilities
@@ -100,5 +101,15 @@ public final class TestUtils {
         int range = (max - min) + 1;
 
         return (int) (Math.random() * range) + min;
+    }
+
+    /**
+     * Prepend imageName with configured hub.image.name.prefix if any is configured in testcontainers
+     *
+     * @param  imageName
+     * @return           a String composed of hub.image.name.prefix as configured in testcontainers + imageName
+     */
+    public static String prependHubImageNamePrefixIfNeeded(String imageName) {
+        return TestcontainersConfiguration.getInstance().getEnvVarOrProperty("hub.image.name.prefix", "") + imageName;
     }
 }

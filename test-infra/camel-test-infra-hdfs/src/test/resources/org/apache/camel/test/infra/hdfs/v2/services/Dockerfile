@@ -12,8 +12,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
-FROM fedora:33 as builder
+ARG FROMIMAGE_BUILDER
+ARG FROMIMAGE
+FROM ${FROMIMAGE_BUILDER} as builder
 ARG HADOOP_VERSION
 ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.0}
 RUN curl https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop.tar.gz
@@ -23,7 +24,8 @@ ADD hdfs-site.xml /hadoop/etc/hadoop/hdfs-site.xml
 ADD run-datanode.sh /hadoop
 ADD run-namenode.sh /hadoop
 
-FROM fedora:33
+ARG FROMIMAGE
+FROM $FROMIMAGE
 LABEL maintainer="orpiske@apache.org"
 ARG HADOOP_VERSION
 ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.0}
