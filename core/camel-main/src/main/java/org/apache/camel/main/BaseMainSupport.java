@@ -1013,7 +1013,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (key.indexOf('.') == -1) {
                 String name = key;
                 Object value = properties.remove(key);
-                Object bean = PropertyBindingSupport.resolveBean(camelContext, name, value);
+                Object bean = PropertyBindingSupport.resolveBean(camelContext, value);
                 if (bean == null) {
                     throw new IllegalArgumentException(
                             "Cannot create/resolve bean with name " + name + " from value: " + value);
