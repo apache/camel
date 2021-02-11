@@ -232,6 +232,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (database == null || (collection == null && !(getDbStats.equals(operation) || command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
+
+        if (mongoConnection == null) {
+            mongoConnection = resolveMongoConnection();
+            if (mongoConnection == null) {
+                throw new CamelMongoDbException(
+                        "Could not initialise MongoDbComponent. Could not resolve the mongo connection.");
+            }
+        }
+
         mongoDatabase = mongoConnection.getDatabase(database);
         if (mongoDatabase == null) {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
@@ -322,13 +331,19 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         if (mongoConnection == null) {
-            mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-            LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
-                    mongoConnection);
+            mongoConnection = resolveMongoConnection();
         } else {
             LOG.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
         }
         super.doStart();
+    }
+
+    private MongoClient resolveMongoConnection() {
+        MongoClient mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+        LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
+                mongoConnection);
+
+        return mongoClient;
     }
 
     public String getConnectionBean() {
