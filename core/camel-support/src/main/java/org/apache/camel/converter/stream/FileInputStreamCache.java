@@ -136,7 +136,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     private InputStream createInputStream(File file) throws IOException {
         InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath(), StandardOpenOption.READ));
         if (ciphers != null) {
-            in = new CipherInputStream(in, ciphers.getDecryptor()) {
+            in = new CipherInputStream(in, ciphers.createDecryptor()) {
                 boolean closed;
 
                 public void close() throws IOException {
