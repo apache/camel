@@ -1,4 +1,4 @@
-package org.apache.camel.component.google.storage;
+package org.apache.camel.component.google.storage.unit;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -9,6 +9,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations;
+import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

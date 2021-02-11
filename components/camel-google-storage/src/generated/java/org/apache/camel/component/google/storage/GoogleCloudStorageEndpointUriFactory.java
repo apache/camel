@@ -20,9 +20,8 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffMultiplier");
-        props.add("bucketName");
         props.add("destinationBucket");
         props.add("initialDelay");
         props.add("serviceAccountCredentials");
@@ -70,7 +69,6 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "bucketName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

@@ -15,18 +15,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.storage.client.StorageInternalClientFactory;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * GoogleCloudStorage component which does bla bla.
- *
- * TODO: Update one line description above what the component does.
+ * Google Cloud Storage is an Object Storage to store any amount of data and retrieve it as often you like.
+ * 
+ * Google Storage Endpoint definition represents a bucket within the storage and contains configuration 
+ * to customize the behavior of Consumer and Producer.
  */
 @UriEndpoint(firstVersion = "3.7.0", scheme = "google-storage", title = "Google Storage",
              syntax = "google-storage:bucketName",
@@ -34,10 +33,6 @@ import org.slf4j.LoggerFactory;
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);
-
-    @UriPath(description = "Bucket name or ARN")
-    @Metadata(required = true)
-    private String bucketName; // to support component docs
 
     @UriParam
     private GoogleCloudStorageComponentConfiguration configuration;
@@ -165,19 +160,6 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
         */
 
         return exchange;
-    }
-
-    public String getBucketName() {
-        return bucketName;
-    }
-
-    /**
-     * Bucket name
-     * 
-     * @param bucketName
-     */
-    public void setBucketName(String bucketName) {
-        this.bucketName = bucketName;
     }
 
 }
