@@ -1,4 +1,4 @@
-## Camel Google Storage Component
+# Camel Google Storage Component
 This component is based on the https://github.com/googleapis/java-storage[google java storage library] that works as a client for the Google Cloud Storage.
 
 

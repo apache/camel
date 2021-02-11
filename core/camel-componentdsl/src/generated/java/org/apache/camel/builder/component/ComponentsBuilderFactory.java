@@ -1985,7 +1985,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Storage (camel-google-storage)
-     * GoogleCloudStorage component which does bla bla.
+     * Google Cloud Storage is an Object Storage to store any amount of data and
+     * retrieve it as often you like.
      * 
      * Category: cloud
      * Since: 3.7

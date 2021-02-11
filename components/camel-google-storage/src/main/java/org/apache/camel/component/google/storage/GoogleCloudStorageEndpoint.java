@@ -24,11 +24,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Google Cloud Storage is an Object Storage to store any amount of data and retrieve it as often you like.
  * 
- * Google Storage Endpoint definition represents a bucket within the storage and contains configuration 
- * to customize the behavior of Consumer and Producer.
+ * Google Storage Endpoint definition represents a bucket within the storage and contains configuration to customize the
+ * behavior of Consumer and Producer.
+ * 
  */
-@UriEndpoint(firstVersion = "3.7.0", scheme = "google-storage", title = "Google Storage",
-             syntax = "google-storage:bucketName",
+@UriEndpoint(firstVersion = "3.7.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
              category = { Category.CLOUD })
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
