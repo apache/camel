@@ -1,7 +1,8 @@
-package org.apache.camel.component.google.storage;
+package org.apache.camel.component.google.storage.unit;
 
 import com.google.cloud.storage.Storage;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.google.storage.GoogleCloudStorageComponent;
 import org.apache.camel.component.google.storage.localstorage.LocalStorageHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 

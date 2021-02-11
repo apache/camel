@@ -92,10 +92,9 @@
               <forkCount>1</forkCount>
               <reuseForks>true</reuseForks>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <!--<includes>
-                     
+              <includes>
                   <include>**/unit/**/*.java</include>
-              </includes>-->
+              </includes>
           </configuration>
       </plugin>
     </plugins>
