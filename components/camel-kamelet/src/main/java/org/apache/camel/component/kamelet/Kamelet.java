@@ -58,7 +58,10 @@ public final class Kamelet {
             return context.resolvePropertyPlaceholders("{{" + PARAM_TEMPLATE_ID + "}}");
         }
 
-        String answer = StringHelper.before(remaining, "/");
+        String answer = null;
+        if (remaining != null) {
+            answer = StringHelper.before(remaining, "/");
+        }
         if (answer == null) {
             answer = remaining;
         }
@@ -76,7 +79,10 @@ public final class Kamelet {
             return context.resolvePropertyPlaceholders("{{" + PARAM_ROUTE_ID + "}}");
         }
 
-        String answer = StringHelper.after(remaining, "/");
+        String answer = null;
+        if (remaining != null) {
+            answer = StringHelper.after(remaining, "/");
+        }
         if (answer == null) {
             answer = extractTemplateId(context, remaining, parameters) + "-" + context.getUuidGenerator().generateUuid();
         }
