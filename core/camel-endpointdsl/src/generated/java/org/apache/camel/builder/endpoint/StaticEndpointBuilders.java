@@ -6787,8 +6787,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Storage (camel-google-storage)
-     * Google Cloud Storage is an Object Storage to store any amount of data and
-     * retrieve it as often you like.
+     * Store and retrieve objects from Google Cloud Storage Service using the
+     * google-cloud-storage library.
      * 
      * Category: cloud
      * Since: 3.7
@@ -6808,8 +6808,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Storage (camel-google-storage)
-     * Google Cloud Storage is an Object Storage to store any amount of data and
-     * retrieve it as often you like.
+     * Store and retrieve objects from Google Cloud Storage Service using the
+     * google-cloud-storage library.
      * 
      * Category: cloud
      * Since: 3.7
