@@ -3237,7 +3237,7 @@
     "kind": "component",
     "name": "google-storage",
     "title": "Google Storage",
-    "description": "Google Cloud Storage is an Object Storage to store any amount of data and retrieve it as often you like.",
+    "description": "Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.",
     "deprecated": false,
     "firstVersion": "3.7.0",
     "label": "cloud",

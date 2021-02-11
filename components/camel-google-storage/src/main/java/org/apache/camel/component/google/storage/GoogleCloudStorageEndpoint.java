@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Google Cloud Storage is an Object Storage to store any amount of data and retrieve it as often you like.
+ * Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
  * 
  * Google Storage Endpoint definition represents a bucket within the storage and contains configuration to customize the
  * behavior of Consumer and Producer.
