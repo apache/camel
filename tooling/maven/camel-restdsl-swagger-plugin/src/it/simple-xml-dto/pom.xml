@@ -89,7 +89,7 @@
   </build>
   <profiles>
     <profile>
-      <id>jdk9+-build</id>
+      <id>jdk9s-build</id>
       <activation>
         <jdk>[9,)</jdk>
       </activation>
