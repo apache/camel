@@ -6787,7 +6787,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Storage (camel-google-storage)
-     * GoogleCloudStorage component which does bla bla.
+     * Google Cloud Storage is an Object Storage to store any amount of data and
+     * retrieve it as often you like.
      * 
      * Category: cloud
      * Since: 3.7
@@ -6796,7 +6797,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-storage:bucketName</code>
      * 
      * Path parameter: bucketName (required)
-     * Bucket name or ARN
+     * Bucket name
      * 
      * @param path bucketName
      * @return the dsl builder
@@ -6807,7 +6808,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Storage (camel-google-storage)
-     * GoogleCloudStorage component which does bla bla.
+     * Google Cloud Storage is an Object Storage to store any amount of data and
+     * retrieve it as often you like.
      * 
      * Category: cloud
      * Since: 3.7
@@ -6816,7 +6818,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-storage:bucketName</code>
      * 
      * Path parameter: bucketName (required)
-     * Bucket name or ARN
+     * Bucket name
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
