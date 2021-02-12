@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.PageRange;
