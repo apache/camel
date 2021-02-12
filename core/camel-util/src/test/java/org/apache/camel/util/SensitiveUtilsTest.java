@@ -27,6 +27,9 @@ class SensitiveUtilsTest {
     void testContainsSensitive() {
         assertTrue(SensitiveUtils.containsSensitive("accessKey"));
         assertTrue(SensitiveUtils.containsSensitive("passphrase"));
+        assertTrue(SensitiveUtils.containsSensitive("foo.bar.accessKey"));
+
+        assertFalse(SensitiveUtils.containsSensitive("foo.bar.accessKey."));
     }
 
 }
