@@ -8,10 +8,10 @@
     "firstVersion": "3.7.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.jsonb.JsonbDataFormat",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsonb",
-    "version": "3.8.0-SNAPSHOT",
+    "version": "3.9.0-SNAPSHOT",
     "modelName": "json",
     "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat"
   },

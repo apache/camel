@@ -6,7 +6,7 @@
 :artifactId: camel-jsonb
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
-:supportLevel: Preview
+:supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-jsonb.adoc[opts=optional]
 
 *Since Camel {since}*
