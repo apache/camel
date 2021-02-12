@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -151,7 +152,7 @@ class BlobProducerITTest extends BaseIT {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
 
             byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
-            new Random().nextBytes(dataBytes);
+            new SecureRandom().nextBytes(dataBytes);
             final InputStream dataStream = new ByteArrayInputStream(dataBytes);
             final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
 
