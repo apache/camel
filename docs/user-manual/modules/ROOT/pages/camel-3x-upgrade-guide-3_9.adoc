@@ -13,6 +13,11 @@ The `camel-spring` component has been modularized into:
 - `camel-spring` - Core module for Camel Spring support
 - `camel-spring-xml` - XML DSL when using Spring XML (eg `<beans>`)
 
+And also for Camel on Spring Boot:
+
+- `camel-spring-boot-starter` - Camel with Spring Boot
+- `camel-spring-boot-xml-starter` - XML DSL when using Spring XML (eg `<beans>`) with Spring Boot
+
 The motivation is to move out the XML DSL from `camel-spring` which reduces the number of dependencies and makes
 the module lighter.
 
