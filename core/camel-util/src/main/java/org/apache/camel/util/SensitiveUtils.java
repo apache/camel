@@ -31,6 +31,12 @@ public final class SensitiveUtils {
     }
 
     public static boolean containsSensitive(String text) {
-        return SENSITIVE_KEYS.contains(text.toLowerCase(Locale.ENGLISH));
+        int lastPeriod = text.lastIndexOf('.');
+        if (lastPeriod >= 0) {
+            text = text.substring(lastPeriod + 1);
+        }
+        text = text.toLowerCase(Locale.ENGLISH);
+        text = StringHelper.replaceAll(text, "-", "");
+        return SENSITIVE_KEYS.contains(text);
     }
 }
