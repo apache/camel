@@ -24,6 +24,7 @@ import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2S3BaseTest extends CamelTestSupport {
@@ -36,5 +37,10 @@ public class Aws2S3BaseTest extends CamelTestSupport {
         AWS2S3Component s3 = context.getComponent("aws2-s3", AWS2S3Component.class);
         s3.getConfiguration().setAmazonS3Client(AWSSDKClientUtils.newS3Client());
         return context;
+    }
+
+    protected String createKmsKey() {
+        return AWSSDKClientUtils.newKMSClient().createKey(CreateKeyRequest.builder().description("Test_key").build())
+                .keyMetadata().keyId();
     }
 }
