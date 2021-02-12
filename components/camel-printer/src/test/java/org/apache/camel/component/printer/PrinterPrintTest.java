@@ -18,6 +18,7 @@ package org.apache.camel.component.printer;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.print.Doc;
@@ -58,13 +59,13 @@ import static org.mockito.Mockito.when;
 public class PrinterPrintTest extends CamelTestSupport {
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         setupJavaPrint();
     }
 
     @AfterEach
     public void tearDown() {
-        sun.awt.AppContext.getAppContext().put(PrintServiceLookup.class.getDeclaredClasses()[0], null);
+        restoreJavaPrint();
     }
 
     @Override
@@ -224,10 +225,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
     @Test
     public void moreThanOneLprEndpoint() throws Exception {
-
-        if (isAwtHeadless()) {
-            return;
-        }
+        assumeTrue(isAwtHeadless());
 
         int numberOfPrintservicesBefore = PrintServiceLookup.lookupPrintServices(null, null).length;
 
@@ -402,7 +400,18 @@ public class PrinterPrintTest extends CamelTestSupport {
         assertEquals("reverse-landscape", attribute.toString());
     }
 
-    protected void setupJavaPrint() {
+    Class<?> printServiceLookupServicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
+    Object printServiceLookup;
+
+    protected void setupJavaPrint() throws Exception {
+        // save the current print services
+        printServiceLookup = sun.awt.AppContext.getAppContext().get(printServiceLookupServicesClass);
+        // setup a new empty list of printer services
+        sun.awt.AppContext.getAppContext().put(printServiceLookupServicesClass, null);
+        Method method = PrintServiceLookup.class.getDeclaredMethod("initListOfLookupServices");
+        method.setAccessible(true);
+        method.invoke(null);
+
         // "install" another default printer
         PrintService psDefault = mock(PrintService.class);
         when(psDefault.getName()).thenReturn("DefaultPrinter");
@@ -419,6 +428,11 @@ public class PrinterPrintTest extends CamelTestSupport {
         };
         when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);
+    }
+
+    protected void restoreJavaPrint() {
+        // restore print services
+        sun.awt.AppContext.getAppContext().put(printServiceLookupServicesClass, printServiceLookup);
     }
 
 }

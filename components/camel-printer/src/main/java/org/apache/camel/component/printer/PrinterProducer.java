@@ -157,7 +157,7 @@ public class PrinterProducer extends DefaultProducer {
             // align slashes so we match / or \
             printerName = printerName.toLowerCase(Locale.US);
             printerName = printerName.replace('\\', '/');
-            if (printer.endsWith(printerName)) {
+            if (printer.endsWith(printerName) || printerName.endsWith(printer)) {
                 position = i;
                 break;
             }
