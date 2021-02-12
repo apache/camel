@@ -49,7 +49,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
-    private ThreadPoolConfigurationProperties threadPool;
+    private ThreadPoolConfigurationProperties threadPoolProperties;
     private HystrixConfigurationProperties hystrixConfigurationProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
@@ -65,9 +65,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             lraConfigurationProperties.close();
             lraConfigurationProperties = null;
         }
-        if (threadPool != null) {
-            threadPool.close();
-            threadPool = null;
+        if (threadPoolProperties != null) {
+            threadPoolProperties.close();
+            threadPoolProperties = null;
         }
         if (hystrixConfigurationProperties != null) {
             hystrixConfigurationProperties.close();
@@ -105,6 +105,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any health check configuration specified
+     */
+    public boolean hasHealthCheckConfiguration() {
+        return healthConfigurationProperties != null;
+    }
+
+    /**
      * To configure Saga LRA
      */
     public LraConfigurationProperties lra() {
@@ -115,13 +122,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any Saga LRA configuration specified
+     */
+    public boolean hasLraConfiguration() {
+        return lraConfigurationProperties != null;
+    }
+
+    /**
      * To configure thread pools
      */
     public ThreadPoolConfigurationProperties threadPool() {
-        if (threadPool == null) {
-            threadPool = new ThreadPoolConfigurationProperties(this);
+        if (threadPoolProperties == null) {
+            threadPoolProperties = new ThreadPoolConfigurationProperties(this);
         }
-        return threadPool;
+        return threadPoolProperties;
+    }
+
+    /**
+     * Whether there has been any thread pool configuration specified
+     */
+    public boolean hasThreadPoolConfiguration() {
+        return threadPoolProperties != null;
     }
 
     /**
@@ -136,6 +157,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any Hystrix EIP configuration specified
+     */
+    public boolean hasHystrixConfiguration() {
+        return hystrixConfigurationProperties != null;
+    }
+
+    /**
      * To configure Circuit Breaker EIP with Resilience4j
      */
     public Resilience4jConfigurationProperties resilience4j() {
@@ -143,6 +171,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
         }
         return resilience4jConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Resilience4j EIP configuration specified
+     */
+    public boolean hasResilience4jConfiguration() {
+        return resilience4jConfigurationProperties != null;
     }
 
     /**
@@ -156,6 +191,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any MicroProfile Fault Tolerance EIP configuration specified
+     */
+    public boolean hasFaultToleranceConfiguration() {
+        return faultToleranceConfigurationProperties != null;
+    }
+
+    /**
      * To configure Rest DSL
      */
     public RestConfigurationProperties rest() {
@@ -163,6 +205,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             restConfigurationProperties = new RestConfigurationProperties(this);
         }
         return restConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any rest configuration specified
+     */
+    public boolean hasRestConfiguration() {
+        return restConfigurationProperties != null;
     }
 
     // getter and setters

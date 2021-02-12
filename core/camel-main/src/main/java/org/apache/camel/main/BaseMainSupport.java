@@ -776,7 +776,7 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
-        if (!restProperties.isEmpty()) {
+        if (!restProperties.isEmpty() || mainConfigurationProperties.hasRestConfiguration()) {
             RestConfigurationProperties rest = mainConfigurationProperties.rest();
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
@@ -784,12 +784,12 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.setRestConfiguration(rest);
         }
 
-        if (!threadPoolProperties.isEmpty()) {
+        if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
-        if (!healthProperties.isEmpty()) {
+        if (!healthProperties.isEmpty() || mainConfigurationProperties.hasHealthCheckConfiguration()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
             setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
@@ -799,7 +799,7 @@ public abstract class BaseMainSupport extends BaseService {
             setRouteTemplateProperties(camelContext, routeTemplateProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
-        if (!lraProperties.isEmpty()) {
+        if (!lraProperties.isEmpty() || mainConfigurationProperties.hasLraConfiguration()) {
             LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
             setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
