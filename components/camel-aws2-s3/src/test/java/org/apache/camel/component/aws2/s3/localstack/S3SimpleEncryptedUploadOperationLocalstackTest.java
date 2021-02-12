@@ -39,9 +39,13 @@ public class S3SimpleEncryptedUploadOperationLocalstackTest extends Aws2S3BaseTe
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @EndpointInject("mock:resultGet")
+    private MockEndpoint resultGet;
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
+        resultGet.expectedMessageCount(1);
 
         template.send("direct:putObject", new Processor() {
 
@@ -61,9 +65,20 @@ public class S3SimpleEncryptedUploadOperationLocalstackTest extends Aws2S3BaseTe
             }
         });
 
+        Exchange c = template.request("direct:getObject", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
+            }
+        });
+
         List<S3Object> resp = result.getExchanges().get(0).getMessage().getBody(List.class);
         assertEquals(1, resp.size());
         assertEquals("camel.txt", resp.get(0).key());
+
+        assertEquals("Camel rocks!", c.getIn().getBody(String.class));
 
         assertMockEndpointsSatisfied();
     }
@@ -79,6 +94,8 @@ public class S3SimpleEncryptedUploadOperationLocalstackTest extends Aws2S3BaseTe
                 from("direct:putObject").to(awsEndpoint);
 
                 from("direct:listObjects").to(awsEndpoint).to("mock:result");
+
+                from("direct:getObject").to("aws2-s3://mycamel?autoCreateBucket=true").to("mock:resultGet");
 
             }
         };
