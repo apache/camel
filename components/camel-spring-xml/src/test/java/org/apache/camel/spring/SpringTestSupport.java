@@ -25,7 +25,7 @@ import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
@@ -49,14 +49,14 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     public void setUp() throws Exception {
         // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
         System.setProperty("CamelSedaPollTimeout", "10");
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, Boolean.toString(!useJmx()));
+        DefaultCamelContext.setDisableJmx(!useJmx());
         Class<?>[] excluded = excludeRoutes();
         if (excluded != null && excluded.length > 0) {
             StringJoiner excludedRoutes = new StringJoiner(",");
             for (Class<?> clazz : excluded) {
                 excludedRoutes.add(clazz.getName());
             }
-            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES, excludedRoutes.toString());
+            DefaultCamelContext.setExcludeRoutes(excludedRoutes.toString());
         }
 
         applicationContext = createApplicationContext();
@@ -69,6 +69,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
+        DefaultCamelContext.clearOptions();
     }
 
     private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
