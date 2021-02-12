@@ -307,7 +307,7 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isUseAwsKMS()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
                 putObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
-                putObjectRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);            
+                putObjectRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
             }
         }
 
