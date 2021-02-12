@@ -30,7 +30,6 @@ import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
@@ -303,7 +302,7 @@ class BlobOperationsITTest extends BaseIT {
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[1024]; // we set range for the page from 0-511
-        new Random().nextBytes(dataBytes);
+        new SecureRandom().nextBytes(dataBytes);
         final String data = new String(dataBytes, StandardCharsets.UTF_8);
         final InputStream dataStream = new ByteArrayInputStream(dataBytes);
 
@@ -339,7 +338,7 @@ class BlobOperationsITTest extends BaseIT {
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
-        new Random().nextBytes(dataBytes);
+        new SecureRandom().nextBytes(dataBytes);
         final String data = new String(dataBytes, StandardCharsets.UTF_8);
         final InputStream dataStream = new ByteArrayInputStream(dataBytes);
 
@@ -368,7 +367,7 @@ class BlobOperationsITTest extends BaseIT {
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
-        new Random().nextBytes(dataBytes);
+        new SecureRandom().nextBytes(dataBytes);
         final String data = new String(dataBytes, StandardCharsets.UTF_8);
         final InputStream dataStream = new ByteArrayInputStream(dataBytes);
 
