@@ -30,15 +30,7 @@ bean / table as a queue
 [[HidingMiddleware-HowtodecouplefrommiddlewareAPIs]]
 == How to decouple from middleware APIs
 
-The best approach when using remoting is to use
-xref:spring-remoting.adoc[Spring Remoting] which can then use any
-messaging or remoting technology under the covers. When using Camel's
-implementation you can then use any of the Camel
-xref:components::index.adoc[Components] along with any of the
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns].
-
-Another approach is to bind Java beans to Camel endpoints via the
+You can bind Java beans to Camel endpoints via the
 xref:bean-integration.adoc[Bean Integration]. For example using
 xref:pojo-consuming.adoc[POJO Consuming] and
 xref:pojo-producing.adoc[POJO Producing] you can avoid using any Camel
