@@ -5,7 +5,7 @@
 :docTitle: Google Storage
 :artifactId: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
-:since: 3.7
+:since: 3.8
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
@@ -41,7 +41,13 @@ Google Storage component authentication is targeted for use with the GCP Service
 For more information please refer to https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication[Google Storage Auth Guide].
 
 When you have the **service account key** you can provide authentication credentials to your application code.
-Google security credentials can be set explicitly by providing the path to the GCP credentials file location.
+Google security credentials can be set through the component endpoint:
+[source,text]
+--------------------------------------------------------
+String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
+--------------------------------------------------------
+
+Or by providing the path to the GCP credentials file location:
 
 [source,text]
 --------------------------------------------------------
@@ -55,11 +61,6 @@ or for windows:
 $Env:GOOGLE_APPLICATION_CREDENTIALS = "/home/user/Downloads/my-key.json"
 --------------------------------------------------------
 
-or directly through the component endpoint
-[source,text]
---------------------------------------------------------
-String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
---------------------------------------------------------
 
 == URI Format
 

@@ -2017,7 +2017,7 @@ public interface ComponentsBuilderFactory {
      * google-cloud-storage library.
      * 
      * Category: cloud
-     * Since: 3.7
+     * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-google-storage
      * 
      * @return the dsl builder
