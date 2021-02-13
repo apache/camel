@@ -19,7 +19,7 @@ package org.apache.camel.component.caffeine.cache;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;d
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
