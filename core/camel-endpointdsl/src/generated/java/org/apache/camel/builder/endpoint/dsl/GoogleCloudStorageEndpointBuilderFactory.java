@@ -128,6 +128,22 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Cloud Storage location to use when creating the new buckets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: US-EAST1
+         * Group: common
+         * 
+         * @param storageLocation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder storageLocation(
+                String storageLocation) {
+            doSetProperty("storageLocation", storageLocation);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -1074,6 +1090,22 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Cloud Storage location to use when creating the new buckets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: US-EAST1
+         * Group: common
+         * 
+         * @param storageLocation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder storageLocation(
+                String storageLocation) {
+            doSetProperty("storageLocation", storageLocation);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1270,6 +1302,22 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         default GoogleCloudStorageEndpointBuilder storageClient(
                 String storageClient) {
             doSetProperty("storageClient", storageClient);
+            return this;
+        }
+        /**
+         * The Cloud Storage location to use when creating the new buckets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: US-EAST1
+         * Group: common
+         * 
+         * @param storageLocation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder storageLocation(
+                String storageLocation) {
+            doSetProperty("storageLocation", storageLocation);
             return this;
         }
     }

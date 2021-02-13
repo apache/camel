@@ -73,6 +73,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "storageclient":
         case "storageClient": target.getConfiguration().setStorageClient(property(camelContext, com.google.cloud.storage.Storage.class, value)); return true;
+        case "storagelocation":
+        case "storageLocation": target.getConfiguration().setStorageLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -136,6 +138,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "startScheduler": return boolean.class;
         case "storageclient":
         case "storageClient": return com.google.cloud.storage.Storage.class;
+        case "storagelocation":
+        case "storageLocation": return java.lang.String.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -200,6 +204,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "startScheduler": return target.isStartScheduler();
         case "storageclient":
         case "storageClient": return target.getConfiguration().getStorageClient();
+        case "storagelocation":
+        case "storageLocation": return target.getConfiguration().getStorageLocation();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
