@@ -81,21 +81,6 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * objectName.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param objectName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointConsumerBuilder objectName(
-                String objectName) {
-            doSetProperty("objectName", objectName);
-            return this;
-        }
-        /**
          * Service account key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -188,14 +173,10 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Delete objects from S3 after they have been retrieved. The delete is
-         * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. If this option is false, then the same
-         * objects will be retrieve over and over again on the polls. Therefore
-         * you need to use the Idempotent Consumer EIP in the route to filter
-         * out duplicates. You can filter using the AWS2S3Constants#BUCKET_NAME
-         * and AWS2S3Constants#KEY headers, or only the AWS2S3Constants#KEY
-         * header.
+         * Delete objects from the bucket after they have been retrieved. The
+         * delete is only performed if the Exchange is committed. If a rollback
+         * occurs, the object is not deleted. If this option is false, then the
+         * same objects will be retrieve over and over again on the polls.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -211,14 +192,10 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Delete objects from S3 after they have been retrieved. The delete is
-         * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. If this option is false, then the same
-         * objects will be retrieve over and over again on the polls. Therefore
-         * you need to use the Idempotent Consumer EIP in the route to filter
-         * out duplicates. You can filter using the AWS2S3Constants#BUCKET_NAME
-         * and AWS2S3Constants#KEY headers, or only the AWS2S3Constants#KEY
-         * header.
+         * Delete objects from the bucket after they have been retrieved. The
+         * delete is only performed if the Exchange is committed. If a rollback
+         * occurs, the object is not deleted. If this option is false, then the
+         * same objects will be retrieve over and over again on the polls.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -251,16 +228,9 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * If it is true, the S3Object exchange will be consumed and put into
-         * the body and closed. If false the S3Object stream will be put raw
-         * into the body and the headers will be set with the S3 object
-         * metadata. This option is strongly related to autocloseBody option. In
-         * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
-         * However setting autocloseBody to true when includeBody is false it
-         * will schedule to close the S3Object stream automatically on exchange
-         * completion.
+         * If it is true, the Object exchange will be consumed and put into the
+         * body and closed. If false the Object stream will be put raw into the
+         * body and the headers will be set with the object metadata.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -276,16 +246,9 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * If it is true, the S3Object exchange will be consumed and put into
-         * the body and closed. If false the S3Object stream will be put raw
-         * into the body and the headers will be set with the S3 object
-         * metadata. This option is strongly related to autocloseBody option. In
-         * case of setting includeBody to true because the S3Object stream will
-         * be consumed then it will also be closed in case of includeBody false
-         * then it will be up to the caller to close the S3Object stream.
-         * However setting autocloseBody to true when includeBody is false it
-         * will schedule to close the S3Object stream automatically on exchange
-         * completion.
+         * If it is true, the Object exchange will be consumed and put into the
+         * body and closed. If false the Object stream will be put raw into the
+         * body and the headers will be set with the object metadata.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -302,11 +265,11 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Move objects from S3 bucket to a different bucket after they have
-         * been retrieved. To accomplish the operation the destinationBucket
-         * option must be set. The copy bucket operation is only performed if
-         * the Exchange is committed. If a rollback occurs, the object is not
-         * moved.
+         * Move objects from the origin bucket to a different bucket after they
+         * have been retrieved. To accomplish the operation the
+         * destinationBucket option must be set. The copy bucket operation is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the object is not moved.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -322,11 +285,11 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Move objects from S3 bucket to a different bucket after they have
-         * been retrieved. To accomplish the operation the destinationBucket
-         * option must be set. The copy bucket operation is only performed if
-         * the Exchange is committed. If a rollback occurs, the object is not
-         * moved.
+         * Move objects from the origin bucket to a different bucket after they
+         * have been retrieved. To accomplish the operation the
+         * destinationBucket option must be set. The copy bucket operation is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the object is not moved.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1027,21 +990,6 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * objectName.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param objectName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointProducerBuilder objectName(
-                String objectName) {
-            doSetProperty("objectName", objectName);
-            return this;
-        }
-        /**
          * Service account key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1138,7 +1086,22 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * set the operation for the producer.
+         * Object name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder objectName(
+                String objectName) {
+            doSetProperty("objectName", objectName);
+            return this;
+        }
+        /**
+         * Set the operation for the producer.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations&lt;/code&gt; type.
@@ -1154,7 +1117,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * set the operation for the producer.
+         * Set the operation for the producer.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations&lt;/code&gt; type.
@@ -1223,20 +1186,6 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         default GoogleCloudStorageEndpointBuilder autoCreateBucket(
                 String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * objectName.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param objectName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointBuilder objectName(String objectName) {
-            doSetProperty("objectName", objectName);
             return this;
         }
         /**
