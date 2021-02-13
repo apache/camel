@@ -190,6 +190,24 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the folders/directories will be consumed. If it is
+         * false, they will be ignored, and Exchanges will not be created for
+         * those.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder includeFolders(
+                boolean includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
          * Move objects from the origin bucket to a different bucket after they
          * have been retrieved. To accomplish the operation the
          * destinationBucket option must be set. The copy bucket operation is
@@ -317,6 +335,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "deleteAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDeleteAfterRead((boolean) value); return true;
             case "destinationBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDestinationBucket((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeBody((boolean) value); return true;
+            case "includeFolders": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;
             case "lazyStartProducer": ((GoogleCloudStorageComponent) component).setLazyStartProducer((boolean) value); return true;
             case "objectName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setObjectName((java.lang.String) value); return true;

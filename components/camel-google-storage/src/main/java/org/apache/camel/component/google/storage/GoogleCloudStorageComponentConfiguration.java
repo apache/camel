@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.google.storage;
 
 import com.google.cloud.storage.Storage;
@@ -29,28 +45,18 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
 
     @UriParam(label = "consumer")
     private boolean moveAfterRead;
+
     @UriParam(label = "consumer")
     private String destinationBucket;
-    //    @UriParam(label = "consumer")
-    //    private String destinationBucketPrefix;
-    //    @UriParam(label = "consumer")
-    //    private String destinationBucketSuffix;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
-    /*
-    @UriParam(label = "consumer")
-    private String fileName;
-    @UriParam(label = "consumer")
-    private String prefix;
-    @UriParam(label = "consumer")
-    private String delimiter;
-    @UriParam(label = "consumer")
-    private String doneFileName;
-    */
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
-    //@UriParam(label = "consumer", defaultValue = "true")
-    //private boolean includeFolders = true;
+
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean includeFolders = true;
 
     @UriParam
     private Storage storageClient;
@@ -151,41 +157,18 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
         this.destinationBucket = destinationBucket;
     }
 
-    /*
-    public String getDestinationBucketPrefix() {
-        return destinationBucketPrefix;
-    }
-    
-    /**
-     * Define the destination bucket prefix to use when an object must be moved and moveAfterRead is set to true.
-     *
-    public void setDestinationBucketPrefix(String destinationBucketPrefix) {
-        this.destinationBucketPrefix = destinationBucketPrefix;
-    }
-    
-    public String getDestinationBucketSuffix() {
-        return destinationBucketSuffix;
-    }
-    
-    /**
-     * Define the destination bucket suffix to use when an object must be moved and moveAfterRead is set to true.
-     *
-    public void setDestinationBucketSuffix(String destinationBucketSuffix) {
-        this.destinationBucketSuffix = destinationBucketSuffix;
-    }
-    
     /**
      * If it is true, the folders/directories will be consumed. If it is false, they will be ignored, and Exchanges will
      * not be created for those
-     *
+     */
     public void setIncludeFolders(boolean includeFolders) {
         this.includeFolders = includeFolders;
     }
-    
+
     public boolean isIncludeFolders() {
         return includeFolders;
     }
-    */
+
     public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }

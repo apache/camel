@@ -1,6 +1,23 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.google.storage;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
@@ -120,7 +137,6 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 blob.downloadTo(baos);
                 message.setBody(baos.toByteArray());
-
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
@@ -130,42 +146,26 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
         message.setHeader(GoogleCloudStorageConstants.OBJECT_NAME, key);
         message.setHeader(GoogleCloudStorageConstants.BUCKET_NAME, getConfiguration().getBucketName());
-        /*
-        TODO
-        message.setHeader(AWS2S3Constants.E_TAG, s3Object.response().eTag());
-        message.setHeader(AWS2S3Constants.LAST_MODIFIED, s3Object.response().lastModified());
-        message.setHeader(AWS2S3Constants.VERSION_ID, s3Object.response().versionId());
-        message.setHeader(AWS2S3Constants.CONTENT_TYPE, s3Object.response().contentType());
-        message.setHeader(AWS2S3Constants.CONTENT_LENGTH, s3Object.response().contentLength());
-        message.setHeader(AWS2S3Constants.CONTENT_ENCODING, s3Object.response().contentEncoding());
-        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
-        message.setHeader(AWS2S3Constants.CACHE_CONTROL, s3Object.response().cacheControl());
-        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
-        message.setHeader(AWS2S3Constants.EXPIRATION_TIME, s3Object.response().expiration());
-        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
-        message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
-        message.setHeader(AWS2S3Constants.METADATA, s3Object.response().metadata());
-        */
-        /*
-         * If includeBody == true, it is safe to close the object here because the S3Object
-         * was consumed already. If includeBody != true, the caller is responsible for
-         * closing the stream once the body has been fully consumed or use the autoCloseBody
-         * configuration to automatically schedule the body closing at the end of exchange.
-         */
-        /*
-        if (configuration.isIncludeBody()) {
-            IOHelper.close(s3Object);
-        } else {
-            if (configuration.isAutocloseBody()) {
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                    @Override
-                    public void onDone(Exchange exchange) {
-                        IOHelper.close(s3Object);
-                    }
-                });
-            }
-        }
-        */
+        //OTHER METADATA        
+        message.setHeader(GoogleCloudStorageConstants.CACHE_CONTROL, blob.getCacheControl());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_COMPONENT_COUNT, blob.getComponentCount());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION, blob.getContentDisposition());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, blob.getContentEncoding());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CONTENT_LANGUAGE, blob.getContentLanguage());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_TYPE, blob.getContentType());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CUSTOM_TIME, blob.getCustomTime());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CRC32C_hex, blob.getCrc32cToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_ETAG, blob.getEtag());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_GENERATION, blob.getGeneration());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_BLOB_ID, blob.getBlobId());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_KMS_KEY_NAME, blob.getKmsKeyName());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_MD5, blob.getMd5ToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_MEDIA_LINK, blob.getMediaLink());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_METAGENERATION, blob.getMetageneration());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, blob.getSize());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_STORAGE_CLASS, blob.getStorageClass());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CREATE_TIME, blob.getCreateTime());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_LAST_UPDATE, new Date(blob.getUpdateTime()));
 
         return exchange;
     }

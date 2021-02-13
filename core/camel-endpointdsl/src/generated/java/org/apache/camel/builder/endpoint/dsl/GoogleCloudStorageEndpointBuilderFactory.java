@@ -265,6 +265,43 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the folders/directories will be consumed. If it is
+         * false, they will be ignored, and Exchanges will not be created for
+         * those.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder includeFolders(
+                boolean includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
+         * If it is true, the folders/directories will be consumed. If it is
+         * false, they will be ignored, and Exchanges will not be created for
+         * those.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder includeFolders(
+                String includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
          * Move objects from the origin bucket to a different bucket after they
          * have been retrieved. To accomplish the operation the
          * destinationBucket option must be set. The copy bucket operation is
