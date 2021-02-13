@@ -95,21 +95,26 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
                     return;
                 } else {
                     // creates the new bucket because it doesn't exist yet
-                    final String location = configuration.getStorageLocation();
-                    final StorageClass storageClass = configuration.getStorageClass();
-
-                    Builder bucketBuilder = BucketInfo.newBuilder(configuration.getBucketName())
-                            .setStorageClass(storageClass)
-                            .setLocation(location);
-                    BucketInfo bucketInfo = bucketBuilder.build();
-                    bucket = storageClient.create(bucketInfo);
-                    LOG.trace("Bucket [{}] has been created", bucket.getName());
+                    createNewBucket(configuration.getBucketName(), configuration, this.storageClient);
                 }
             } catch (Exception e) {
                 LOG.error("Error - autocreatebucket", e);
                 throw e;
             }
         }
+    }
+
+    public static Bucket createNewBucket(String bucketName, GoogleCloudStorageComponentConfiguration conf, Storage storage) {
+        final String location = conf.getStorageLocation();
+        final StorageClass storageClass = conf.getStorageClass();
+
+        Builder bucketBuilder = BucketInfo.newBuilder(bucketName)
+                .setStorageClass(storageClass)
+                .setLocation(location);
+        BucketInfo bucketInfo = bucketBuilder.build();
+        Bucket bucket = storage.create(bucketInfo);
+        LOG.trace("Bucket [{}] has been created", bucket.getName());
+        return bucket;
     }
 
     public GoogleCloudStorageComponentConfiguration getConfiguration() {
