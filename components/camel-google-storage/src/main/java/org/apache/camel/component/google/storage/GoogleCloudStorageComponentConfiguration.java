@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.storage;
 
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageClass;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -26,23 +27,27 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleCloudStorageComponentConfiguration implements Cloneable {
 
-    @UriPath(label = "common", description = "Bucket name")
+    @UriPath(label = "common", description = "Bucket name or ARN")
     @Metadata(required = true)
     private String bucketName;
 
-    @UriParam(label = "common", description = "Service account key")
+    @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
     private String serviceAccountKey;
 
     @UriParam(label = "producer",
               enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
     private GoogleCloudStorageComponentOperations operation;
 
-    @UriParam(label = "producer", description = "Object name")
+    @UriParam(label = "producer", description = "The Object name inside the bucket")
     private String objectName;
 
     @UriParam(label = "common", defaultValue = "US-EAST1",
               description = "The Cloud Storage location to use when creating the new buckets")
     private String storageLocation;
+
+    @UriParam(label = "common", defaultValue = "STANDARD",
+              description = "The Cloud Storage class to use when creating the new buckets")
+    private StorageClass storageClass = StorageClass.STANDARD;
 
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
@@ -94,14 +99,10 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     }
 
     /**
-     * The bjectName (the file insisde the bucket)
+     * The ObjectName (the file insisde the bucket)
      */
     public void setObjectName(String objectName) {
         this.objectName = objectName;
-    }
-
-    public Storage getStorageClient() {
-        return storageClient;
     }
 
     public String getStorageLocation() {
@@ -116,8 +117,25 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
         this.storageLocation = storageLocation;
     }
 
+    public StorageClass getStorageClass() {
+        return storageClass;
+    }
+
     /**
-     * Set strage client
+     * The Cloud Storage class to use when creating the new buckets
+     * 
+     * @param storageClass
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass;
+    }
+
+    public Storage getStorageClient() {
+        return storageClient;
+    }
+
+    /**
+     * The storage client
      * 
      * @param storageClient
      */
@@ -200,8 +218,8 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     }
 
     /**
-     * If it is true, the Object exchange will be consumed and put into the body and closed. If false the Object stream
-     * will be put raw into the body and the headers will be set with the object metadata.
+     * If it is true, the Object exchange will be consumed and put into the body. If false the Object stream will be put
+     * raw into the body and the headers will be set with the object metadata.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;

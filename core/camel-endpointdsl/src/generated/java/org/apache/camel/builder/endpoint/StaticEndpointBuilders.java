@@ -6797,7 +6797,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-storage:bucketName</code>
      * 
      * Path parameter: bucketName (required)
-     * Bucket name
+     * Bucket name or ARN
      * 
      * @param path bucketName
      * @return the dsl builder
@@ -6818,7 +6818,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-storage:bucketName</code>
      * 
      * Path parameter: bucketName (required)
-     * Bucket name
+     * Bucket name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

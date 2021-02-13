@@ -53,9 +53,6 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);
 
-    private static final String DEFAULT_LOCATION = "US-EAST1";
-    private static final StorageClass DEFAULT_STORAGE_CLASS = StorageClass.STANDARD;
-
     @UriParam
     private GoogleCloudStorageComponentConfiguration configuration;
 
@@ -98,11 +95,11 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
                     return;
                 } else {
                     // creates the new bucket because it doesn't exist yet
-                    final String location = configuration.getStorageLocation() != null
-                            ? configuration.getStorageLocation() : DEFAULT_LOCATION;
+                    final String location = configuration.getStorageLocation();
+                    final StorageClass storageClass = configuration.getStorageClass();
 
                     Builder bucketBuilder = BucketInfo.newBuilder(configuration.getBucketName())
-                            .setStorageClass(DEFAULT_STORAGE_CLASS)
+                            .setStorageClass(storageClass)
                             .setLocation(location);
                     BucketInfo bucketInfo = bucketBuilder.build();
                     bucket = storageClient.create(bucketInfo);
