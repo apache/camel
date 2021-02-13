@@ -18,7 +18,6 @@
  */
 
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
-def JDK_NAME = env.JDK_NAME ?: 'jdk_1.8_latest'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
@@ -26,10 +25,6 @@ pipeline {
 
     agent {
         label AGENT_LABEL
-    }
-
-    tools {
-        jdk JDK_NAME
     }
 
     environment {
@@ -59,6 +54,9 @@ pipeline {
         }
 
         stage('Build & Deploy') {
+            environment {
+                JAVA_HOME = "/home/jenkins/tools/java/adoptopenjdk-hotspot-8u282-b08"
+            }
             when {
                 branch 'master'
             }
@@ -68,6 +66,9 @@ pipeline {
         }
 
         stage('Website update') {
+            environment {
+                JAVA_HOME = "/home/jenkins/tools/java/adoptopenjdk-hotspot-8u282-b08"
+            }
             when {
                 branch 'master'
                 changeset 'docs/**/*'
@@ -79,6 +80,9 @@ pipeline {
         }
 
         stage('Checks') {
+            environment {
+                JAVA_HOME = "/home/jenkins/tools/java/adoptopenjdk-hotspot-8u282-b08"
+            }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
@@ -86,6 +90,9 @@ pipeline {
         }
 
         stage('Test') {
+            environment {
+                JAVA_HOME = "/home/jenkins/tools/java/adoptopenjdk-hotspot-8u282-b08"
+            }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true clean install"
             }
