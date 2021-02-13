@@ -39,14 +39,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "destinationbucket":
         case "destinationBucket": getOrCreateConfiguration(target).setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
-        case "destinationbucketprefix":
-        case "destinationBucketPrefix": getOrCreateConfiguration(target).setDestinationBucketPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "destinationbucketsuffix":
-        case "destinationBucketSuffix": getOrCreateConfiguration(target).setDestinationBucketSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
-        case "includefolders":
-        case "includeFolders": getOrCreateConfiguration(target).setIncludeFolders(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "moveafterread":
@@ -54,8 +48,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "objectname":
         case "objectName": getOrCreateConfiguration(target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class, value)); return true;
-        case "serviceaccountcredentials":
-        case "serviceAccountCredentials": getOrCreateConfiguration(target).setServiceAccountCredentials(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclient":
         case "storageClient": getOrCreateConfiguration(target).setStorageClient(property(camelContext, com.google.cloud.storage.Storage.class, value)); return true;
         default: return false;
@@ -76,14 +70,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "deleteAfterRead": return boolean.class;
         case "destinationbucket":
         case "destinationBucket": return java.lang.String.class;
-        case "destinationbucketprefix":
-        case "destinationBucketPrefix": return java.lang.String.class;
-        case "destinationbucketsuffix":
-        case "destinationBucketSuffix": return java.lang.String.class;
         case "includebody":
         case "includeBody": return boolean.class;
-        case "includefolders":
-        case "includeFolders": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "moveafterread":
@@ -91,8 +79,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "objectname":
         case "objectName": return java.lang.String.class;
         case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class;
-        case "serviceaccountcredentials":
-        case "serviceAccountCredentials": return java.lang.String.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "storageclient":
         case "storageClient": return com.google.cloud.storage.Storage.class;
         default: return null;
@@ -114,14 +102,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
         case "destinationbucket":
         case "destinationBucket": return getOrCreateConfiguration(target).getDestinationBucket();
-        case "destinationbucketprefix":
-        case "destinationBucketPrefix": return getOrCreateConfiguration(target).getDestinationBucketPrefix();
-        case "destinationbucketsuffix":
-        case "destinationBucketSuffix": return getOrCreateConfiguration(target).getDestinationBucketSuffix();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
-        case "includefolders":
-        case "includeFolders": return getOrCreateConfiguration(target).isIncludeFolders();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "moveafterread":
@@ -129,8 +111,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "objectname":
         case "objectName": return getOrCreateConfiguration(target).getObjectName();
         case "operation": return getOrCreateConfiguration(target).getOperation();
-        case "serviceaccountcredentials":
-        case "serviceAccountCredentials": return getOrCreateConfiguration(target).getServiceAccountCredentials();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "storageclient":
         case "storageClient": return getOrCreateConfiguration(target).getStorageClient();
         default: return null;

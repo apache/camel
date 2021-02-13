@@ -206,16 +206,16 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
      */
     protected boolean includeObject(Blob blob) {
 
-        if (getConfiguration().isIncludeFolders()) {
-            return true;
-        } else {
-            //TODO understand if the object is a directory
+        //    if (getConfiguration().isIncludeFolders()) {
+        //        return true;
+        //    } else {
+        //TODO understand if the object is a directory
 
-            // Config says to ignore folders/directories
-            //return !Optional.of(((GetObjectResponse) s3Object.response()).contentType()).orElse("")
-            //        .toLowerCase().startsWith("application/x-directory");
-            return true;
-        }
+        // Config says to ignore folders/directories
+        //return !Optional.of(((GetObjectResponse) s3Object.response()).contentType()).orElse("")
+        //        .toLowerCase().startsWith("application/x-directory");
+        return true;
+        //}
     }
 
     @Override

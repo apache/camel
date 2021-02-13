@@ -96,18 +96,18 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specify the service account credentials file (json).
+         * Service account key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
-         * @param serviceAccountCredentials the value to set
+         * @param serviceAccountKey the value to set
          * @return the dsl builder
          */
-        default GoogleCloudStorageEndpointConsumerBuilder serviceAccountCredentials(
-                String serviceAccountCredentials) {
-            doSetProperty("serviceAccountCredentials", serviceAccountCredentials);
+        default GoogleCloudStorageEndpointConsumerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -251,38 +251,6 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the destination bucket prefix to use when an object must be
-         * moved and moveAfterRead is set to true.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param destinationBucketPrefix the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointConsumerBuilder destinationBucketPrefix(
-                String destinationBucketPrefix) {
-            doSetProperty("destinationBucketPrefix", destinationBucketPrefix);
-            return this;
-        }
-        /**
-         * Define the destination bucket suffix to use when an object must be
-         * moved and moveAfterRead is set to true.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param destinationBucketSuffix the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointConsumerBuilder destinationBucketSuffix(
-                String destinationBucketSuffix) {
-            doSetProperty("destinationBucketSuffix", destinationBucketSuffix);
-            return this;
-        }
-        /**
          * If it is true, the S3Object exchange will be consumed and put into
          * the body and closed. If false the S3Object stream will be put raw
          * into the body and the headers will be set with the S3 object
@@ -331,43 +299,6 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         default GoogleCloudStorageEndpointConsumerBuilder includeBody(
                 String includeBody) {
             doSetProperty("includeBody", includeBody);
-            return this;
-        }
-        /**
-         * If it is true, the folders/directories will be consumed. If it is
-         * false, they will be ignored, and Exchanges will not be created for
-         * those.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param includeFolders the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointConsumerBuilder includeFolders(
-                boolean includeFolders) {
-            doSetProperty("includeFolders", includeFolders);
-            return this;
-        }
-        /**
-         * If it is true, the folders/directories will be consumed. If it is
-         * false, they will be ignored, and Exchanges will not be created for
-         * those.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param includeFolders the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudStorageEndpointConsumerBuilder includeFolders(
-                String includeFolders) {
-            doSetProperty("includeFolders", includeFolders);
             return this;
         }
         /**
@@ -1111,18 +1042,18 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specify the service account credentials file (json).
+         * Service account key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
-         * @param serviceAccountCredentials the value to set
+         * @param serviceAccountKey the value to set
          * @return the dsl builder
          */
-        default GoogleCloudStorageEndpointProducerBuilder serviceAccountCredentials(
-                String serviceAccountCredentials) {
-            doSetProperty("serviceAccountCredentials", serviceAccountCredentials);
+        default GoogleCloudStorageEndpointProducerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -1309,18 +1240,18 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specify the service account credentials file (json).
+         * Service account key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
-         * @param serviceAccountCredentials the value to set
+         * @param serviceAccountKey the value to set
          * @return the dsl builder
          */
-        default GoogleCloudStorageEndpointBuilder serviceAccountCredentials(
-                String serviceAccountCredentials) {
-            doSetProperty("serviceAccountCredentials", serviceAccountCredentials);
+        default GoogleCloudStorageEndpointBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**

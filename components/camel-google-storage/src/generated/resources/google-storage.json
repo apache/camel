@@ -5,7 +5,7 @@
     "title": "Google Storage",
     "description": "Camel Component for Google Cloud Platform Storage",
     "deprecated": false,
-    "firstVersion": "3.7.0",
+    "firstVersion": "3.8.0",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-storage",

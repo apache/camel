@@ -120,8 +120,8 @@ class FakeStorageRpc extends StorageRpcTestBase {
     public Tuple<String, Iterable<Bucket>> list(Map<Option, ?> options) {
         String pageToken = null;
         String preprefix = "";
-        String delimiter = null;
-        long maxResults = Long.MAX_VALUE;
+        //String delimiter = null;
+        //long maxResults = Long.MAX_VALUE;
         for (Map.Entry<Option, ?> e : options.entrySet()) {
             switch (e.getKey()) {
                 case PAGE_TOKEN:
@@ -134,13 +134,13 @@ class FakeStorageRpc extends StorageRpcTestBase {
                     }
                     break;
                 case DELIMITER:
-                    delimiter = (String) e.getValue();
+                    //delimiter = (String) e.getValue();
                     break;
                 case FIELDS:
                     // ignore and return all the fields
                     break;
                 case MAX_RESULTS:
-                    maxResults = (Long) e.getValue();
+                    //maxResults = (Long) e.getValue();
                     break;
                 case USER_PROJECT:
                     // prevent unsupported operation
