@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.google.storage;
 
 import java.util.LinkedList;
@@ -64,13 +80,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
         String fileName = getConfiguration().getObjectName();
         String bucketName = getConfiguration().getBucketName();
-        //String doneFileName = getConfiguration().getDoneFileName();
         Queue<Exchange> exchanges = new LinkedList<>();
 
-        //TODO ripristinare
-        //if (!doneFileCheckPasses(bucketName, doneFileName)) {
-        //    exchanges = new LinkedList<>();
-        //} else 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
@@ -85,32 +96,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 bloblist.add(blob);
             }
 
-            /*
-            ListObjectsRequest.Builder listObjectsRequest = ListObjectsRequest.builder();
-            listObjectsRequest.bucket(bucketName);
-            listObjectsRequest.prefix(getConfiguration().getPrefix());
-            listObjectsRequest.delimiter(getConfiguration().getDelimiter());
-            
-            if (maxMessagesPerPoll > 0) {
-                listObjectsRequest.maxKeys(maxMessagesPerPoll);
-            }
-            // if there was a marker from previous poll then use that to
-            // continue from where we left last time
-            if (marker != null) {
-                LOG.trace("Resuming from marker: {}", marker);
-                listObjectsRequest.marker(marker);
-            }
-            
-            ListObjectsResponse listObjects = getAmazonS3Client().listObjects(listObjectsRequest.build());
-            
-            if (listObjects.isTruncated()) {
-                marker = listObjects.nextMarker();
-                LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
-            } else {
-                // no more data so clear marker
-                marker = null;
-            }
-            */
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found {} objects in bucket [{}]...", bloblist.size(), bucketName);
             }
@@ -120,30 +105,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
         return processBatch(CastUtils.cast(exchanges));
     }
-
-    /*
-    private boolean doneFileCheckPasses(String bucketName, String doneFileName) {
-        if (doneFileName == null) {
-            return true;
-        } else {
-            return checkFileExists(bucketName, doneFileName);
-        }
-    }
-    */
-
-    /*
-    private boolean checkFileExists(String bucketName, String doneFileName) {
-        HeadObjectRequest.Builder headObjectsRequest = HeadObjectRequest.builder();
-        headObjectsRequest.bucket(bucketName);
-        headObjectsRequest.key(doneFileName);
-        try {
-            getAmazonS3Client().headObject(headObjectsRequest.build());
-            return true;
-        } catch (NoSuchKeyException e) {
-            return false;
-        }
-    }
-    */
 
     protected Queue<Exchange> createExchanges(Blob blob, String key) {
         Queue<Exchange> answer = new LinkedList<>();
@@ -157,41 +118,18 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Received {} messages in this poll", blobList.size());
         }
 
-        //Collection<Blob> blobs = new ArrayList<>();
         Queue<Exchange> answer = new LinkedList<>();
         try {
             for (Blob blob : blobList) {
-                /*
-                Builder getRequest
-                        = GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key());
-                if (getConfiguration().isUseCustomerKey()) {
-                    if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
-                        getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
-                    }
-                    if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
-                        getRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
-                    }
-                    if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
-                        getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
-                    }
-                }*/
-                //ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
 
-                //if (includeS3Object(s3Object)) {
-                //    blobs.add(s3Object);
-                Exchange exchange = getEndpoint().createExchange(blob, blob.getBlobId().getName());
-                answer.add(exchange);
-                //} else {
-                // If includeFolders != true and the object is not included, it is safe to close the object here.
-                // If includeFolders == true, the exchange will close the object.
-                //    IOHelper.close(s3Object);
-                //}
+                if (includeObject(blob)) {
+                    Exchange exchange = getEndpoint().createExchange(blob, blob.getBlobId().getName());
+                    answer.add(exchange);
+                }
+
             }
         } catch (Exception e) {
             LOG.warn("Error getting object due: {}", e.getMessage(), e);
-            // ensure all previous gathered s3 objects are closed
-            // if there was an exception creating the exchanges in this batch
-            //s3Objects.forEach(IOHelper::close);
             throw e;
         }
 
@@ -206,16 +144,11 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
      */
     protected boolean includeObject(Blob blob) {
 
-        //    if (getConfiguration().isIncludeFolders()) {
-        //        return true;
-        //    } else {
-        //TODO understand if the object is a directory
-
+        if (getConfiguration().isIncludeFolders()) {
+            return true;
+        }
         // Config says to ignore folders/directories
-        //return !Optional.of(((GetObjectResponse) s3Object.response()).contentType()).orElse("")
-        //        .toLowerCase().startsWith("application/x-directory");
-        return true;
-        //}
+        return blob.getName().endsWith("/");
     }
 
     @Override
@@ -245,7 +178,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
                 @Override
                 public String toString() {
-                    return "S3ConsumerOnCompletion";
+                    return "ConsumerOnCompletion";
                 }
             });
 

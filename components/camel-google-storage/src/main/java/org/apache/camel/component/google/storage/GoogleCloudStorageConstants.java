@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.google.storage;
 
 public class GoogleCloudStorageConstants {
@@ -15,31 +31,18 @@ public class GoogleCloudStorageConstants {
     public static final String CONTENT_ENCODING = "CamelGoogleCloudStorageContentEncoding";
     public static final String CONTENT_MD5 = "CamelGoogleCloudStorageContentMd5";
 
-    /*
-    public static final String BUCKET = "BUCKET";
-    public static final String CACHE_CONTROL = "CACHE_CONTROL";
-    
-    public static final String COMPONENT_COUNT = "COMPONENT_COUNT";
-    public static final String CONTENT_DISPOSITION = "CONTENT_DISPOSITION";
-    public static final String CONTENT_ENCODING = "CONTENT_ENCODING";
-    public static final String CONTENT_LANGUAGE = "CONTENT_LANGUAGE";
-    public static final String CONTENT_TYPE = "CONTENT_TYPE";
-    public static final String CUSTOM_TIME = "CUSTOM_TIME";
-    public static final String CRC32C = "CRC32C";
-    public static final String CRC32C_HEX_STRING = "CRC32C_HEX_STRING";
-    public static final String ETAG = "ETAG";
-    public static final String GENERATION = "GENERATION";
-    public static final String ID = "ID";
-    public static final String KMS_KEY_NAME = "KMS_KEY_NAME";
-    public static final String MD5_HASH = "MD5_HASH";
-    public static final String MD5_HEX_STRING = "MD5_HEX_STRING";
-    public static final String MEDIA_LINK ="MEDIA_LINK";
-    public static final String METAGENERATION = "METAGENERATION";
-    public static final String NAME = "NAME";
-    public static final String SIZE = "SIZE";
-    public static final String SORAGE_CLASS = "STORAGE_CLASS";
-    public static final String TIME_CREATED = "TIME_CREATED";
-    public static final String LAST_METADATA_UPDATE = "LAST_METADATA_UPDATE";
-    */
+    public static final String METADATA_COMPONENT_COUNT = "CamelGoogleCloudStorageComponentCount";
+    public static final String METADATA_CONTENT_LANGUAGE = "CamelGoogleCloudStorageContentLanguage";
+    public static final String METADATA_CUSTOM_TIME = "CamelGoogleCloudStorageCustomTime";
+    public static final String METADATA_CRC32C_hex = "CamelGoogleCloudStorageCrc32cHex";
+    public static final String METADATA_ETAG = "CamelGoogleCloudStorageETag";
+    public static final String METADATA_GENERATION = "CamelGoogleCloudStorageGeneration";
+    public static final String METADATA_BLOB_ID = "CamelGoogleCloudStorageBlobId";
+    public static final String METADATA_KMS_KEY_NAME = "CamelGoogleCloudStorageKmsKeyName";
+    public static final String METADATA_MEDIA_LINK = "CamelGoogleCloudStorageMediaLink";
+    public static final String METADATA_METAGENERATION = "CamelGoogleCloudStorageMetageneration";
+    public static final String METADATA_STORAGE_CLASS = "CamelGoogleCloudStorageStorageClass";
+    public static final String METADATA_CREATE_TIME = "CamelGoogleCloudStorageCreateTime";
+    public static final String METADATA_LAST_UPDATE = "CamelGoogleCloudStorageLastUpdate";
 
 }

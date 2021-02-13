@@ -41,6 +41,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "destinationBucket": getOrCreateConfiguration(target).setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
+        case "includefolders":
+        case "includeFolders": getOrCreateConfiguration(target).setIncludeFolders(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "moveafterread":
@@ -72,6 +74,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "destinationBucket": return java.lang.String.class;
         case "includebody":
         case "includeBody": return boolean.class;
+        case "includefolders":
+        case "includeFolders": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "moveafterread":
@@ -104,6 +108,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "destinationBucket": return getOrCreateConfiguration(target).getDestinationBucket();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
+        case "includefolders":
+        case "includeFolders": return getOrCreateConfiguration(target).isIncludeFolders();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "moveafterread":
