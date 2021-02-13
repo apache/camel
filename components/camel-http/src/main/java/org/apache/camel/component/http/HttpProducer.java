@@ -33,12 +33,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -130,6 +130,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         // propagate headers as HTTP headers
+        final TypeConverter tc = exchange.getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object headerValue = in.getHeader(key);
@@ -139,12 +140,13 @@ public class HttpProducer extends DefaultProducer {
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the value to add as request header
-                final List<String> values = new ArrayList<>();
+                List<String> multiValues = null;
+                String prev = null;
 
                 // if its a multi value then check each value if we can add it and for multi values they
                 // should be combined into a single value
                 while (it.hasNext()) {
-                    String value = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+                    String value = tc.convertTo(String.class, it.next());
 
                     // we should not add headers for the parameters in the uri if we bridge the endpoint
                     // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
@@ -152,16 +154,27 @@ public class HttpProducer extends DefaultProducer {
                         continue;
                     }
                     if (value != null && strategy != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                        values.add(value);
+                        if (prev == null) {
+                            prev = value;
+                        } else {
+                            // only create array for multi values when really needed
+                            if (multiValues == null) {
+                                multiValues = new ArrayList<>();
+                                multiValues.add(prev);
+                            }
+                            multiValues.add(value);
+                        }
                     }
                 }
 
                 // add the value(s) as a http request header
-                if (!values.isEmpty()) {
+                if (multiValues != null) {
                     // use the default toString of a ArrayList to create in the form [xxx, yyy]
                     // if multi valued, for a single value, then just output the value as is
-                    String s = values.size() > 1 ? values.toString() : values.get(0);
+                    String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
                     httpRequest.addHeader(key, s);
+                } else if (prev != null) {
+                    httpRequest.addHeader(key, prev);
                 }
             }
         }
@@ -173,7 +186,7 @@ public class HttpProducer extends DefaultProducer {
                 String key = entry.getKey();
                 if (!entry.getValue().isEmpty()) {
                     // join multi-values separated by semi-colon
-                    httpRequest.addHeader(key, entry.getValue().stream().collect(Collectors.joining(";")));
+                    httpRequest.addHeader(key, String.join(";", entry.getValue()));
                 }
             }
         }
