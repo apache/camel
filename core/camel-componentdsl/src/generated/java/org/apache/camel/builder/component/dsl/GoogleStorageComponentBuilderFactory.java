@@ -116,6 +116,22 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
+         * The Cloud Storage location to use when creating the new buckets.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: US-EAST1
+         * Group: common
+         * 
+         * @param storageLocation the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder storageLocation(
+                java.lang.String storageLocation) {
+            doSetProperty("storageLocation", storageLocation);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -331,6 +347,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "configuration": ((GoogleCloudStorageComponent) component).setConfiguration((org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration) value); return true;
             case "serviceAccountKey": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "storageClient": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClient((com.google.cloud.storage.Storage) value); return true;
+            case "storageLocation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageLocation((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCloudStorageComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDeleteAfterRead((boolean) value); return true;
             case "destinationBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setDestinationBucket((java.lang.String) value); return true;

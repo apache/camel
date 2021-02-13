@@ -84,7 +84,7 @@ from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-k
 == URI Options
 
 // component options: START
-The Google Storage component supports 14 options, which are listed below.
+The Google Storage component supports 15 options, which are listed below.
 
 
 
@@ -95,6 +95,7 @@ The Google Storage component supports 14 options, which are listed below.
 | *configuration* (common) | The component configuration |  | GoogleCloudStorageComponentConfiguration
 | *serviceAccountKey* (common) | Service account key |  | String
 | *storageClient* (common) | Set strage client |  | Storage
+| *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from the bucket after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. | true | boolean
 | *destinationBucket* (consumer) | Define the destination bucket where an object must be moved when moveAfterRead is set to true. |  | String
@@ -127,7 +128,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -136,6 +137,7 @@ with the following path and query parameters:
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
 | *serviceAccountKey* (common) | Service account key |  | String
 | *storageClient* (common) | Set strage client |  | Storage
+| *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from the bucket after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. | true | boolean
 | *destinationBucket* (consumer) | Define the destination bucket where an object must be moved when moveAfterRead is set to true. |  | String

@@ -40,6 +40,10 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Object name")
     private String objectName;
 
+    @UriParam(label = "common", defaultValue = "US-EAST1",
+              description = "The Cloud Storage location to use when creating the new buckets")
+    private String storageLocation;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
 
@@ -98,6 +102,18 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
 
     public Storage getStorageClient() {
         return storageClient;
+    }
+
+    public String getStorageLocation() {
+        return storageLocation;
+    }
+
+    /**
+     * The Cloud Storage location to use when creating the new buckets. The complete available locations list at
+     * https://cloud.google.com/storage/docs/locations#location-mr
+     */
+    public void setStorageLocation(String storageLocation) {
+        this.storageLocation = storageLocation;
     }
 
     /**

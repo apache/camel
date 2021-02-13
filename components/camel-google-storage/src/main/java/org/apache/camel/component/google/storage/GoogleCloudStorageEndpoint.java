@@ -22,7 +22,9 @@ import java.util.Date;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.Builder;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageClass;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -45,10 +47,14 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @UriEndpoint(firstVersion = "3.7.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
-             category = { Category.CLOUD })
+             category = {
+                     Category.CLOUD })
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);
+
+    private static final String DEFAULT_LOCATION = "US-EAST1";
+    private static final StorageClass DEFAULT_STORAGE_CLASS = StorageClass.STANDARD;
 
     @UriParam
     private GoogleCloudStorageComponentConfiguration configuration;
@@ -92,7 +98,13 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
                     return;
                 } else {
                     // creates the new bucket because it doesn't exist yet
-                    BucketInfo bucketInfo = BucketInfo.newBuilder(configuration.getBucketName()).build();
+                    final String location = configuration.getStorageLocation() != null
+                            ? configuration.getStorageLocation() : DEFAULT_LOCATION;
+
+                    Builder bucketBuilder = BucketInfo.newBuilder(configuration.getBucketName())
+                            .setStorageClass(DEFAULT_STORAGE_CLASS)
+                            .setLocation(location);
+                    BucketInfo bucketInfo = bucketBuilder.build();
                     bucket = storageClient.create(bucketInfo);
                     LOG.trace("Bucket [{}] has been created", bucket.getName());
                 }

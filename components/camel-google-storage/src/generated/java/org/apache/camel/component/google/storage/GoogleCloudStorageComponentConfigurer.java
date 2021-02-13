@@ -54,6 +54,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclient":
         case "storageClient": getOrCreateConfiguration(target).setStorageClient(property(camelContext, com.google.cloud.storage.Storage.class, value)); return true;
+        case "storagelocation":
+        case "storageLocation": getOrCreateConfiguration(target).setStorageLocation(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -87,6 +89,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "serviceAccountKey": return java.lang.String.class;
         case "storageclient":
         case "storageClient": return com.google.cloud.storage.Storage.class;
+        case "storagelocation":
+        case "storageLocation": return java.lang.String.class;
         default: return null;
         }
     }
@@ -121,6 +125,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "storageclient":
         case "storageClient": return getOrCreateConfiguration(target).getStorageClient();
+        case "storagelocation":
+        case "storageLocation": return getOrCreateConfiguration(target).getStorageLocation();
         default: return null;
         }
     }
