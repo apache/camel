@@ -85,7 +85,8 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
-         * Service account key.
+         * Service account key to authenticate an application as a service
+         * account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -100,7 +101,24 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder storageClass(
+                com.google.cloud.storage.StorageClass storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The storage client.
          * 
          * The option is a:
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -190,8 +208,8 @@ public interface GoogleStorageComponentBuilderFactory {
         }
         /**
          * If it is true, the Object exchange will be consumed and put into the
-         * body and closed. If false the Object stream will be put raw into the
-         * body and the headers will be set with the object metadata.
+         * body. If false the Object stream will be put raw into the body and
+         * the headers will be set with the object metadata.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -268,7 +286,7 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
-         * Object name.
+         * The Object name inside the bucket.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -346,6 +364,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "autoCreateBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((GoogleCloudStorageComponent) component).setConfiguration((org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration) value); return true;
             case "serviceAccountKey": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setServiceAccountKey((java.lang.String) value); return true;
+            case "storageClass": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClass((com.google.cloud.storage.StorageClass) value); return true;
             case "storageClient": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClient((com.google.cloud.storage.Storage) value); return true;
             case "storageLocation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageLocation((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCloudStorageComponent) component).setBridgeErrorHandler((boolean) value); return true;

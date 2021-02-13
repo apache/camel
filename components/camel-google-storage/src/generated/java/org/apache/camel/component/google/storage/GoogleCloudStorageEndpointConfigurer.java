@@ -71,6 +71,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "serviceAccountKey": target.getConfiguration().setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "storageclass":
+        case "storageClass": target.getConfiguration().setStorageClass(property(camelContext, com.google.cloud.storage.StorageClass.class, value)); return true;
         case "storageclient":
         case "storageClient": target.getConfiguration().setStorageClient(property(camelContext, com.google.cloud.storage.Storage.class, value)); return true;
         case "storagelocation":
@@ -136,6 +138,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "serviceAccountKey": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
+        case "storageclass":
+        case "storageClass": return com.google.cloud.storage.StorageClass.class;
         case "storageclient":
         case "storageClient": return com.google.cloud.storage.Storage.class;
         case "storagelocation":
@@ -202,6 +206,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "serviceAccountKey": return target.getConfiguration().getServiceAccountKey();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
+        case "storageclass":
+        case "storageClass": return target.getConfiguration().getStorageClass();
         case "storageclient":
         case "storageClient": return target.getConfiguration().getStorageClient();
         case "storagelocation":

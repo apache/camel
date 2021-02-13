@@ -81,7 +81,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Service account key.
+         * Service account key to authenticate an application as a service
+         * account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -96,7 +97,41 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder storageClass(
+                Object storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder storageClass(
+                String storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The storage client.
          * 
          * The option is a:
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -112,7 +147,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The storage client.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -245,8 +280,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         }
         /**
          * If it is true, the Object exchange will be consumed and put into the
-         * body and closed. If false the Object stream will be put raw into the
-         * body and the headers will be set with the object metadata.
+         * body. If false the Object stream will be put raw into the body and
+         * the headers will be set with the object metadata.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -263,8 +298,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         }
         /**
          * If it is true, the Object exchange will be consumed and put into the
-         * body and closed. If false the Object stream will be put raw into the
-         * body and the headers will be set with the object metadata.
+         * body. If false the Object stream will be put raw into the body and
+         * the headers will be set with the object metadata.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1043,7 +1078,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Service account key.
+         * Service account key to authenticate an application as a service
+         * account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1058,7 +1094,41 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder storageClass(
+                Object storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder storageClass(
+                String storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The storage client.
          * 
          * The option is a:
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -1074,7 +1144,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The storage client.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -1155,7 +1225,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Object name.
+         * The Object name inside the bucket.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1258,7 +1328,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Service account key.
+         * Service account key to authenticate an application as a service
+         * account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1273,7 +1344,41 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder storageClass(
+                Object storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The Cloud Storage class to use when creating the new buckets.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.google.cloud.storage.StorageClass&lt;/code&gt; type.
+         * 
+         * Default: STANDARD
+         * Group: common
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder storageClass(
+                String storageClass) {
+            doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * The storage client.
          * 
          * The option is a:
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -1289,7 +1394,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set strage client.
+         * The storage client.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.google.cloud.storage.Storage&lt;/code&gt; type.
@@ -1361,7 +1466,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * Syntax: <code>google-storage:bucketName</code>
          * 
          * Path parameter: bucketName (required)
-         * Bucket name
+         * Bucket name or ARN
          * 
          * @param path bucketName
          * @return the dsl builder
@@ -1381,7 +1486,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * Syntax: <code>google-storage:bucketName</code>
          * 
          * Path parameter: bucketName (required)
-         * Bucket name
+         * Bucket name or ARN
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

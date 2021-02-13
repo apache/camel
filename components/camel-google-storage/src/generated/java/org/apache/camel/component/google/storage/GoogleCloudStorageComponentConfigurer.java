@@ -52,6 +52,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "storageclass":
+        case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, com.google.cloud.storage.StorageClass.class, value)); return true;
         case "storageclient":
         case "storageClient": getOrCreateConfiguration(target).setStorageClient(property(camelContext, com.google.cloud.storage.Storage.class, value)); return true;
         case "storagelocation":
@@ -87,6 +89,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "storageclass":
+        case "storageClass": return com.google.cloud.storage.StorageClass.class;
         case "storageclient":
         case "storageClient": return com.google.cloud.storage.Storage.class;
         case "storagelocation":
@@ -123,6 +127,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "serviceaccountkey":
         case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
+        case "storageclass":
+        case "storageClass": return getOrCreateConfiguration(target).getStorageClass();
         case "storageclient":
         case "storageClient": return getOrCreateConfiguration(target).getStorageClient();
         case "storagelocation":
