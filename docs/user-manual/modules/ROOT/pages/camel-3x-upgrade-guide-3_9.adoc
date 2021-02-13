@@ -28,3 +28,13 @@ Users that do not use Spring XML should not be affected.
 
 In Spring XML `<proxy>` and <remote>` have been removed. They were only available in Spring XML
 and not in the other XML DSLs (Blueprint and CDI).
+
+=== camel-spring-boot-starter vs camel-spring-boot-engine-starter
+
+Based on the modularization of camel-spring we have made two starters available when using Camel on Spring Boot
+
+- camel-spring-boot-starter - The regular starter that includes all the core components (similar to camel-core)
+- camel-spring-boot-engine-starter - A minimal starter with just Camel core engine (similar to camel-core-engine)
+
+We also made all the component -starter JARs not depend on any of the above starters, which means you must pick
+the one to use above, and then add which -starter JARs you want to use in your Camel spring boot applications.
