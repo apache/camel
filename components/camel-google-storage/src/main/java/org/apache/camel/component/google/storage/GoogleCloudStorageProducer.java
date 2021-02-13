@@ -241,6 +241,19 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
         }
 
+        //if bucket does not exsist, create it
+        Bucket destinationBucketCheck = storage.get(bucketNameDestination);
+        if (destinationBucketCheck != null) {
+            LOG.trace("destinationBucketCheck [{}] already exists", destinationBucketCheck.getName());
+        } else {
+            LOG.trace("Destination Bucket [{}] doesn't exist yet", bucketNameDestination);
+            if (getConfiguration().isAutoCreateBucket()) {
+                // creates the new bucket because it doesn't exist yet
+                destinationBucketCheck
+                        = GoogleCloudStorageEndpoint.createNewBucket(bucketNameDestination, getConfiguration(), storage);
+            }
+        }
+
         BlobId sourceBlobId = BlobId.of(bucketName, objectName);
         BlobId targetBlobId = BlobId.of(bucketNameDestination, destinationObjectName);
         CopyRequest request = CopyRequest.of(sourceBlobId, targetBlobId);

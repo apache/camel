@@ -43,7 +43,7 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
 
     @UriParam(label = "common", defaultValue = "US-EAST1",
               description = "The Cloud Storage location to use when creating the new buckets")
-    private String storageLocation;
+    private String storageLocation = "US-EAST1";
 
     @UriParam(label = "common", defaultValue = "STANDARD",
               description = "The Cloud Storage class to use when creating the new buckets")

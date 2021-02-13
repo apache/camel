@@ -23,7 +23,6 @@ import java.util.Queue;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.CopyRequest;
@@ -63,9 +62,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
                 if (getConfiguration().isAutoCreateBucket()) {
                     // creates the new bucket because it doesn't exist yet
-                    BucketInfo bucketInfo = BucketInfo.newBuilder(getConfiguration().getDestinationBucket()).build();
-                    bucket = getStorageClient().create(bucketInfo);
-                    LOG.trace("Destination Bucket created", bucket.getName());
+                    GoogleCloudStorageEndpoint.createNewBucket(getConfiguration().getDestinationBucket(), getConfiguration(),
+                            getStorageClient());
                 }
             }
 
