@@ -25,6 +25,10 @@ When you have the **service account key** you can provide authentication credent
 
 `export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"`
 
+or for windows:
+
+`$Env:GOOGLE_APPLICATION_CREDENTIALS = "/home/user/Downloads/my-key.json"`
+
 or directly through the component endpoint
 
 `from("google-storage://myCamelBucket?serviceAccountCredentials=/home/user/Downloads/my-key.json")`

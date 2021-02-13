@@ -14,11 +14,14 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     @Metadata(required = true)
     private String bucketName;
 
-    @UriParam
-    private String serviceAccountCredentials;  //https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication
+    @UriParam(label = "common", description = "Service account key")
+    private String serviceAccountKey;
+
+    //@UriParam(label = "common", description = "ProjectId")
+    //private String projectId;
 
     @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
+              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
     private GoogleCloudStorageComponentOperations operation;
 
     @UriParam
@@ -31,10 +34,10 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     private boolean moveAfterRead;
     @UriParam(label = "consumer")
     private String destinationBucket;
-    @UriParam(label = "consumer")
-    private String destinationBucketPrefix;
-    @UriParam(label = "consumer")
-    private String destinationBucketSuffix;
+    //    @UriParam(label = "consumer")
+    //    private String destinationBucketPrefix;
+    //    @UriParam(label = "consumer")
+    //    private String destinationBucketSuffix;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
     /*
@@ -49,8 +52,8 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     */
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean includeFolders = true;
+    //@UriParam(label = "consumer", defaultValue = "true")
+    //private boolean includeFolders = true;
 
     @UriParam
     private Storage storageClient;
@@ -66,23 +69,17 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
         this.bucketName = bucketName;
     }
 
-    public String getServiceAccountCredentials() {
-        return serviceAccountCredentials;
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
     }
 
     /**
-     * Specify the service account credentials file (json)
+     * The Service account key that can be used as credentials for the Storage client.
+     * 
+     * @param serviceAccountKey
      */
-    public void setServiceAccountCredentials(String serviceAccountCredentials) {
-        this.serviceAccountCredentials = serviceAccountCredentials;
-    }
-
-    public GoogleCloudStorageComponentConfiguration copy() {
-        try {
-            return (GoogleCloudStorageComponentConfiguration) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
+    public void setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
     }
 
     public String getObjectName() {
@@ -157,40 +154,41 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
         this.destinationBucket = destinationBucket;
     }
 
+    /*
     public String getDestinationBucketPrefix() {
         return destinationBucketPrefix;
     }
-
+    
     /**
      * Define the destination bucket prefix to use when an object must be moved and moveAfterRead is set to true.
-     */
+     *
     public void setDestinationBucketPrefix(String destinationBucketPrefix) {
         this.destinationBucketPrefix = destinationBucketPrefix;
     }
-
+    
     public String getDestinationBucketSuffix() {
         return destinationBucketSuffix;
     }
-
+    
     /**
      * Define the destination bucket suffix to use when an object must be moved and moveAfterRead is set to true.
-     */
+     *
     public void setDestinationBucketSuffix(String destinationBucketSuffix) {
         this.destinationBucketSuffix = destinationBucketSuffix;
     }
-
+    
     /**
      * If it is true, the folders/directories will be consumed. If it is false, they will be ignored, and Exchanges will
      * not be created for those
-     */
+     *
     public void setIncludeFolders(boolean includeFolders) {
         this.includeFolders = includeFolders;
     }
-
+    
     public boolean isIncludeFolders() {
         return includeFolders;
     }
-
+    */
     public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }
@@ -222,5 +220,13 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
 
     public boolean isIncludeBody() {
         return includeBody;
+    }
+
+    public GoogleCloudStorageComponentConfiguration copy() {
+        try {
+            return (GoogleCloudStorageComponentConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

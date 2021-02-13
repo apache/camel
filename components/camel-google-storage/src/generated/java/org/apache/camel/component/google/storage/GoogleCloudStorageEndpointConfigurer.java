@@ -36,10 +36,6 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "deleteAfterRead": target.getConfiguration().setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "destinationbucket":
         case "destinationBucket": target.getConfiguration().setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
-        case "destinationbucketprefix":
-        case "destinationBucketPrefix": target.getConfiguration().setDestinationBucketPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "destinationbucketsuffix":
-        case "destinationBucketSuffix": target.getConfiguration().setDestinationBucketSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -47,8 +43,6 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
-        case "includefolders":
-        case "includeFolders": target.getConfiguration().setIncludeFolders(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -71,8 +65,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "serviceaccountcredentials":
-        case "serviceAccountCredentials": target.getConfiguration().setServiceAccountCredentials(property(camelContext, java.lang.String.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": target.getConfiguration().setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "storageclient":
@@ -103,10 +97,6 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "deleteAfterRead": return boolean.class;
         case "destinationbucket":
         case "destinationBucket": return java.lang.String.class;
-        case "destinationbucketprefix":
-        case "destinationBucketPrefix": return java.lang.String.class;
-        case "destinationbucketsuffix":
-        case "destinationBucketSuffix": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -114,8 +104,6 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "greedy": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
-        case "includefolders":
-        case "includeFolders": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -138,8 +126,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "schedulerProperties": return java.util.Map.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
-        case "serviceaccountcredentials":
-        case "serviceAccountCredentials": return java.lang.String.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "storageclient":
@@ -171,10 +159,6 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "deleteAfterRead": return target.getConfiguration().isDeleteAfterRead();
         case "destinationbucket":
         case "destinationBucket": return target.getConfiguration().getDestinationBucket();
-        case "destinationbucketprefix":
-        case "destinationBucketPrefix": return target.getConfiguration().getDestinationBucketPrefix();
-        case "destinationbucketsuffix":
-        case "destinationBucketSuffix": return target.getConfiguration().getDestinationBucketSuffix();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -182,8 +166,6 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "greedy": return target.isGreedy();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
-        case "includefolders":
-        case "includeFolders": return target.getConfiguration().isIncludeFolders();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
@@ -206,8 +188,8 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
-        case "serviceaccountcredentials":
-        case "serviceAccountCredentials": return target.getConfiguration().getServiceAccountCredentials();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return target.getConfiguration().getServiceAccountKey();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "storageclient":

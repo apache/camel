@@ -33,7 +33,7 @@
   <description>Camel Component for Google Cloud Platform Storage</description>
 
   <properties>
-    <firstVersion>3.7.0</firstVersion>
+    <firstVersion>3.8.0</firstVersion>
   </properties>
 
   <dependencyManagement>

@@ -14,7 +14,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.google.storage.client.StorageInternalClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -60,20 +59,29 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.storageClient = configuration.getStorageClient() != null
-                ? configuration.getStorageClient()
-                : StorageInternalClientFactory.getStorageClient(this.configuration).getGoogleCloudStorage();
+
+        this.storageClient = configuration.getStorageClient();
+        if (this.storageClient == null) {
+            this.storageClient = GoogleCloudStorageConnectionFactory.create(configuration);
+        }
 
         if (configuration.isAutoCreateBucket()) {
-            Bucket bucket = storageClient.get(configuration.getBucketName());
-            if (bucket != null) {
-                LOG.trace("Bucket [{}] already exists", bucket.getName());
-                return;
-            } else {
-                // creates the new bucket because it doesn't exist yet
-                BucketInfo bucketInfo = BucketInfo.newBuilder(configuration.getBucketName()).build();
-                bucket = storageClient.create(bucketInfo);
-                LOG.trace("Bucket [{}] has been created", bucket.getName());
+            LOG.info("getting the bucket {}", configuration.getBucketName());
+            try {
+
+                Bucket bucket = this.storageClient.get(configuration.getBucketName());
+                if (bucket != null) {
+                    LOG.trace("Bucket [{}] already exists", bucket.getName());
+                    return;
+                } else {
+                    // creates the new bucket because it doesn't exist yet
+                    BucketInfo bucketInfo = BucketInfo.newBuilder(configuration.getBucketName()).build();
+                    bucket = storageClient.create(bucketInfo);
+                    LOG.trace("Bucket [{}] has been created", bucket.getName());
+                }
+            } catch (Exception e) {
+                LOG.error("Error - autocreatebucket", e);
+                throw e;
             }
         }
     }
