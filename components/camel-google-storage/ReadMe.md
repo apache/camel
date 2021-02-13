@@ -31,7 +31,7 @@ or for windows:
 
 or directly through the component endpoint
 
-`from("google-storage://myCamelBucket?serviceAccountCredentials=/home/user/Downloads/my-key.json")`
+`from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")`
 
 
 Running tests against Storage instance:
