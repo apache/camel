@@ -208,8 +208,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     private void createDownloadLink(Storage storage, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String objectName = determineObjectName(exchange);
-        Long expirationMillis = exchange.getIn().getHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME,
-                Long.class);
+        Long expirationMillis
+                = exchange.getIn().getHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 300000L, Long.class);
         long milliSeconds = 0;
         if (expirationMillis != null) {
             milliSeconds += expirationMillis;

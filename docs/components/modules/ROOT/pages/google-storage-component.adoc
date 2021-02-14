@@ -286,134 +286,98 @@ This operation will upload the file camel.txt with the content "Camel rocks!" in
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
-
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-          exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");
-      }
+  from("direct:start").process( exchange -> {
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageComponentOperations.copyObject);
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, "myCamelBucket_dest");
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, "camel_copy.txt");
   })
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=copyObject")
+  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket mycamelbucket.
+This operation will copy the object with the name expressed in the header DESTINATION_OBJECT_NAME to the DESTINATION_BUCKET_NAME bucket, from the bucket myCamelBucket.
 
 - DeleteObject: this operation deletes an object from a bucket
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
-
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-      }
+  from("direct:start").process( exchange -> {
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageComponentOperations.deleteObject);
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
   })
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteObject")
+  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will delete the object camelKey from the bucket mycamelbucket.
+This operation will delete the object from the bucket myCamelBucket.
 
 - ListBuckets: this operation list the buckets for this account in this region
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start")
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=listBuckets")
-  .to("mock:result");
+from("direct:start")
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
+.to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will list the buckets for this account
+This operation will list the buckets for this account.
 
 - DeleteBucket: this operation delete the bucket specified as URI parameter or header
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start")
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteBucket")
-  .to("mock:result");
+from("direct:start")
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
+.to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will delete the bucket mycamelbucket
+This operation will delete the bucket myCamelBucket.
 
 - ListObjects: this operation list object in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start")
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=listObjects")
-  .to("mock:result");
+from("direct:start")
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
+.to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will list the objects in the mycamelbucket bucket
+This operation will list the objects in the myCamelBucket bucket.
 
 - GetObject: this operation get a single object in a specific bucket
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
-
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-      }
-  })
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObject")
-  .to("mock:result");
+from("direct:start")
+.process( exchange -> {
+  exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
+})
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
+.to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket.
+This operation will return an Blob objct instance related to the OBJECT_NAME object in myCamelBucket bucket.
 
-- GetObjectRange: this operation get a single object range in a specific bucket
+- CreateDownloadLink: this operation will return a download link
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
-
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-          exchange.getIn().setHeader(S3Constants.RANGE_START, "0");
-          exchange.getIn().setHeader(S3Constants.RANGE_END, "9");
-      }
-  })
-  .to("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObjectRange")
-  .to("mock:result");
+from("direct:start")
+.process( exchange -> {
+  exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
+  exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
+})
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
+.to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket, containing a the bytes from 0 to 9.
-
-- CreateDownloadLink: this operation will return a download link through S3 Presigner
-
-[source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
-
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-      }
-  })
-  .to("google-storage://mycamelbucket?accessKey=xxx&secretKey=yyy&region=region&operation=createDownloadLink")
-  .to("mock:result");
---------------------------------------------------------------------------------
-
-This operation will return a download link url for the file camel-key in the bucket mycamelbucket and region region
+This operation will return a download link url for the file OBJECT_NAME in the bucket myCamelBucket. It's possible to specify the expiration time for the created link through the header DOWNLOAD_LINK_EXPIRATION_TIME. If not specified, by default it is 5 minutes.
 
 == Bucket Autocreation
 
-With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `true`.
-If set to false any operation on a not-existent bucket in AWS won't be successful and an error will be returned.
-
-== Moving stuff between a bucket and another bucket
-
-Some users like to consume stuff from a bucket and move the content in a different one without using the copyObject feature of this component.
-If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will be always overwritten on the same
-original bucket.
+With the option `autoCreateBucket` users are able to avoid the autocreation of a Bucket in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent bucket won't be successful and an error will be returned.
 
 == MoveAfterRead consumer option
 
@@ -422,87 +386,16 @@ This will require specifying the destinationBucket option. As example:
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true&destinationBucket=myothercamelbucket")
+  from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json"
+    + "&autoCreateBucket=true"
+    + "&destinationBucket=myCamelProcessedBucket"
+    + "&moveAfterRead=true"
+    + "&deleteAfterRead=true"
+    + "&includeBody=true"
+  )
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+In this case the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
 
-You have also the possibility of using a key prefix/suffix while moving the file to a different bucket. The options are destinationBucketPrefix and destinationBucketSuffix.
-
-Taking the above example, you could do something like:
-
-[source,java]
---------------------------------------------------------------------------------
-  from("google-storage://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true&destinationBucket=myothercamelbucket&destinationBucketPrefix=RAW(pre-)&destinationBucketSuffix=RAW(-suff)")
-  .to("mock:result");
---------------------------------------------------------------------------------
-
-In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
-
-So if the file name is test, in the myothercamelbucket you should see a file called pre-test-suff.
-
-== Using customer key as encryption
-
-We introduced also the customer key support (an alternative of using KMS). The following code shows an example.
-
-[source,java]
---------------------------------------------------------------------------------
-String key = UUID.randomUUID().toString();
-byte[] secretKey = generateSecretKey();
-String b64Key = Base64.getEncoder().encodeToString(secretKey);
-String b64KeyMd5 = Md5Utils.md5AsBase64(secretKey);
-
-String awsEndpoint = "google-storage://mycamel?autoCreateBucket=false&useCustomerKey=true&customerKeyId=RAW(" + b64Key + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
-
-from("direct:putObject")
-    .setHeader(AWS2S3Constants.KEY, constant("test.txt"))
-    .setBody(constant("Test"))
-    .to(awsEndpoint);
---------------------------------------------------------------------------------
-
-== Using a POJO as body
-
-Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
-In AWS S3 there are multiple operations you can submit, as an example for List brokers request, you can do something like:
-
-------------------------------------------------------------------------------------------------------
-from("direct:google-storage")
-     .setBody(ListObjectsRequest.builder().bucket(bucketName).build())
-     .to("google-storage://test?amazonS3Client=#amazonS3Client&operation=listObjects&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
-
-In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
-
-== Create S3 client and add component to registry
-Sometimes you would want to perform some advanced configuration using AWS2S3Configuration which also allows to set the S3 client.
-You can create and set the S3 client in the component configuration as shown in the following example
-
-[source,java]
---------------------------------------------------------------------------------
-String awsBucketAccessKey = "your_access_key";
-String awsBucketSecretKey = "your_secret_key";
-
-S3Client s3Client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsBucketAccessKey, awsBucketSecretKey)))
-                .region(Region.US_EAST_1).build();
-
-AWS2S3Configuration configuration = new AWS2S3Configuration();
-configuration.setAmazonS3Client(s3Client);
-configuration.setAutoDiscoverClient(true);
-configuration.setBucketName("s3bucket2020");
-configuration.setRegion("us-east-1");
---------------------------------------------------------------------------------
-
-Now you can configure the S3 component (using the configuration object created above) and add it to the registry in the
-configure method before initialization of routes.
-
-[source,java]
---------------------------------------------------------------------------------
-AWS2S3Component s3Component = new AWS2S3Component(getContext());
-s3Component.setConfiguration(configuration);
-s3Component.setLazyStartProducer(true);
-camelContext.addComponent("google-storage", s3Component);
---------------------------------------------------------------------------------
-
-Now your component will be used for all the operations implemented in camel routes.
 
