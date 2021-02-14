@@ -86,7 +86,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
         }
 
         if (configuration.isAutoCreateBucket()) {
-            LOG.info("getting the bucket {}", configuration.getBucketName());
+
             try {
 
                 Bucket bucket = this.storageClient.get(configuration.getBucketName());
