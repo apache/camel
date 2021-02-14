@@ -293,15 +293,22 @@ public class HttpProducer extends DefaultProducer {
         answer.setBody(response);
 
         // propagate HTTP response headers
+        Map<String, List<String>> cookieHeaders = null;
+        if (getEndpoint().getCookieHandler() != null) {
+            cookieHeaders = new HashMap<>();
+        }
         Header[] headers = httpResponse.getAllHeaders();
-        Map<String, List<String>> m = new HashMap<>();
+        boolean found = false;
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
-            m.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
-            if (name.equalsIgnoreCase("content-type")) {
+            if (cookieHeaders != null) {
+                cookieHeaders.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
+            }
+            if (!found && name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                found = true;
             }
             // use http helper to extract parameter value as it may contain multiple values
             Object extracted = HttpHelper.extractHttpParameterValue(value);
@@ -311,7 +318,7 @@ public class HttpProducer extends DefaultProducer {
         }
         // handle cookies
         if (getEndpoint().getCookieHandler() != null) {
-            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), cookieHeaders);
         }
         // endpoint might be configured to copy headers from in to out
         // to avoid overriding existing headers with old values just
