@@ -133,9 +133,19 @@ public class HttpProducer extends DefaultProducer {
         final TypeConverter tc = exchange.getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
             String key = entry.getKey();
-            Object headerValue = in.getHeader(key);
+            Object headerValue = entry.getValue();
 
             if (headerValue != null) {
+
+                if (headerValue instanceof String) {
+                    // optimise for string values
+                    String value = (String) headerValue;
+                    if (strategy == null || !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                        httpRequest.addHeader(key, value);
+                    }
+                    continue;
+                }
+
                 // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
