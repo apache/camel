@@ -275,16 +275,11 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             filter = inFilter;
         }
 
-        String lower = null;
         if (pattern != null) {
             // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
             if (pattern == CAMEL_FILTER_PATTERN) {
-                boolean match = headerName.startsWith("org.apache.camel.") || headerName.startsWith("Camel");
-                if (!match) {
-                    // the default filter is case insensitive so check for lower case starting match
-                    lower = headerName.toLowerCase(Locale.ENGLISH);
-                    match = lower.startsWith("org.apache.camel.") || lower.startsWith("camel");
-                }
+                boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
+                        || headerName.startsWith("org.apache.camel.");
                 if (match) {
                     return filterOnMatch;
                 }
@@ -301,9 +296,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                     }
                 }
             } else if (isLowerCase()) {
-                if (lower == null) {
-                    lower = headerName.toLowerCase(Locale.ENGLISH);
-                }
+                String lower = headerName.toLowerCase(Locale.ENGLISH);
                 if (filter.contains(lower)) {
                     return filterOnMatch;
                 }
