@@ -113,7 +113,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
         } catch (IOException e) {
             throw new StorageException(e);
         }
-        // TODO: crc, etc
+        //  crc, etc
         return object;
     }
 
