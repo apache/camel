@@ -89,7 +89,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Gets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
      * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @return regular expression filter pattern
      */
@@ -100,7 +100,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
      * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param value regular expression filter pattern
      */
@@ -115,7 +115,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "out" direction filter regular expression {@link Pattern}. The "out" direction is referred to copying
      * headers from Camel message to an external message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param pattern regular expression filter pattern
      */
@@ -149,7 +149,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Gets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
      * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @return regular expression filter pattern
      */
@@ -160,7 +160,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
      * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param value regular expression filter pattern
      */
@@ -175,7 +175,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "in" direction filter regular expression {@link Pattern}. The "in" direction is referred to copying
      * headers from an external message to a Camel message. If the pattern matches a header, the header will be filtered
-     * out.
+     * (skipped).
      *
      * @param pattern regular expression filter pattern
      */
@@ -223,6 +223,11 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         return allowNullValues;
     }
 
+    /**
+     * Whether to allow null values.
+     *
+     * By default a header is skipped if its value is null. Setting this to true will preserve the header.
+     */
     public void setAllowNullValues(boolean value) {
         allowNullValues = value;
     }
@@ -238,9 +243,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * When set to true, a match will filter out the header. This is the default value for backwards compatibility.
      *
      * When set to false, the pattern or filter will indicate that the header must be kept; anything not matched will be
-     * filtered out.
+     * filtered (skipped).
      *
-     * @param filterOnMatch <tt>true</tt> if a match filters out the header.
+     * @param filterOnMatch <tt>true</tt> if a match filters (skips) the header.
      */
     public void setFilterOnMatch(boolean filterOnMatch) {
         this.filterOnMatch = filterOnMatch;
