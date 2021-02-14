@@ -98,7 +98,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     private void processFile(Storage storage, Exchange exchange) throws IOException, InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
         final String objectName = determineObjectName(exchange);
-        //LOG.info("processFile, bucketName={}, objectName={}", bucketName, objectName);
+
         Map<String, String> objectMetadata = determineMetadata(exchange);
 
         File filePayload = null;
@@ -327,7 +327,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             key = getConfiguration().getObjectName();
         }
         if (key == null) {
-            throw new IllegalArgumentException("Google Cloud Storage onject name header missing.");
+            throw new IllegalArgumentException("Google Cloud Storage object name header missing.");
         }
         return key;
     }

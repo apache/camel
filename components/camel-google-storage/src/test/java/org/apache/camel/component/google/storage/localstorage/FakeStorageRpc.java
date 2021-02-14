@@ -28,6 +28,7 @@ import com.google.cloud.storage.testing.StorageRpcTestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//this class has been extended from
 //https://github.com/googleapis/java-storage-nio/blob/master/google-cloud-nio/src/main/java/com/google/cloud/storage/contrib/nio/testing/FakeStorageRpc.java
 /**
  * A bare-bones in-memory implementation of StorageRpc, meant for testing.
@@ -43,13 +44,13 @@ import org.slf4j.LoggerFactory;
  * <li>object delete
  * <li>list the contents of a bucket
  * <li>generations
+ * <li>NOW SUPPORTED bucket create
+ * <li>NOW SUPPORTED bucket get
+ * <li>NOW SUPPORTED bucket delete
+ * <li>NOW SUPPORTED list all buckets
  * </ul>
  * <li>Unsupported
  * <ul>
- * <li>bucket create
- * <li>bucket get
- * <li>bucket delete
- * <li>list all buckets
  * <li>file attributes
  * <li>patch
  * <li>continueRewrite
