@@ -4,6 +4,8 @@ import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 
+//this class has been extended from
+//https://github.com/googleapis/java-storage-nio/blob/master/google-cloud-nio/src/main/java/com/google/cloud/storage/contrib/nio/testing/LocalStorageHelper.java
 /**
  * Utility to create an in-memory storage configuration for testing. Storage options can be obtained via the
  * {@link #getOptions()} method. Returned options will point to FakeStorageRpc.
@@ -18,13 +20,13 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
  * <li>object get
  * <li>object delete
  * <li>list the contents of a bucket
+ * <li>bucket create (now supported)
+ * <li>bucket get (now supported)
+ * <li>bucket delete (now supported)
+ * <li>list all buckets (now supported)
  * </ul>
  * <li>Unsupported operations
  * <ul>
- * <li>bucket create
- * <li>bucket get
- * <li>bucket delete
- * <li>list all buckets
  * <li>generations
  * <li>file attributes
  * <li>patch

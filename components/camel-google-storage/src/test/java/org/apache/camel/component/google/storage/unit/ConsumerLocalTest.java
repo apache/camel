@@ -42,7 +42,7 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
                      + "&deleteAfterRead=true"
                      + "&includeBody=true")
                              .startupOrder(2)
-                             .log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}, body=${body}")
+                             //.log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}, body=${body}")
                              .to("mock:consumedObjects");
 
             }
@@ -51,41 +51,25 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
 
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(3);
-        consumedObjects.expectedMessageCount(3);
 
-        //upload a files
+        final int NUMBER_OF_FILES = 3;
 
-        template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setBody("Test");
-        });
+        result.expectedMessageCount(NUMBER_OF_FILES);
+        consumedObjects.expectedMessageCount(NUMBER_OF_FILES);
 
-        template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "test1.txt");
-            exchange.getIn().setBody("Test1");
-        });
+        for (int i = 0; i < NUMBER_OF_FILES; i++) {
+            final String filename = String.format("file_%s.txt", i);
+            final String body = String.format("body_%s", i);
+            //upload a file
+            template.send("direct:putObject", exchange -> {
+                exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, filename);
+                exchange.getIn().setBody(body);
+            });
+        }
 
-        template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "test2.txt");
-            exchange.getIn().setBody("Test2");
-        });
-        /*
-        Exchange listBucketsExchange = template.request("direct:listBucket", exchange -> {
-            // exchange.getIn().setHeader(GoogleCloudStorageConstants.BUCKET_NAME, "myBucket"); not needed
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageComponentOperations.listBuckets);
-        });
-        List<Bucket> bucketsList = listBucketsExchange.getMessage().getBody(List.class);
-        LOG.info("bucketsList {}", bucketsList );
-        
-        
-        Exchange listObjectsExchange = template.request("direct:listObjects", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageComponentOperations.listObjects);
-        });
-        LOG.info("listObjectsExchange.body={}", listObjectsExchange.getMessage().getBody());
-        */
-        Thread.sleep(10000);
+        Thread.sleep(5000);
         assertMockEndpointsSatisfied();
+
     }
 
 }

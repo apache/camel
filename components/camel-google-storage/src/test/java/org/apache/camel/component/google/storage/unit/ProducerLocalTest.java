@@ -69,7 +69,6 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         assertEquals(FILENAME_1, addObject.getName());
 
         Exchange listBucketsExchange = template.request("direct:listBucket", exchange -> {
-            // exchange.getIn().setHeader(GoogleCloudStorageConstants.BUCKET_NAME, "myBucket"); not needed
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
                     GoogleCloudStorageComponentOperations.listBuckets);
         });
@@ -78,7 +77,6 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         assertEquals(1, bucketsList.size());
 
         Exchange listObjectsExchange = template.request("direct:listObjects", exchange -> {
-            // exchange.getIn().setHeader(GoogleCloudStorageConstants.BUCKET_NAME, "myBucket"); not needed
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
                     GoogleCloudStorageComponentOperations.listObjects);
         });
@@ -90,7 +88,6 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         Exchange getObjectExchange = template.request("direct:getObject", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
                     GoogleCloudStorageComponentOperations.getObject);
-            // exchange.getIn().setHeader(GoogleCloudStorageConstants.BUCKET_NAME, "myBucket"); not needed
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILENAME_1);
         });
         Blob getObject = getObjectExchange.getMessage().getBody(Blob.class);
