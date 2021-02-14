@@ -429,12 +429,22 @@ public class HttpProducer extends DefaultProducer {
             }
         } else {
             if (!getEndpoint().isDisableStreamCache()) {
-                // wrap the response in a stream cache so its re-readable
-                InputStream response = null;
-                if (!ignoreResponseBody) {
-                    response = doExtractResponseBodyAsStream(is, exchange);
+                if (ignoreResponseBody) {
+                    // ignore response
+                    return null;
                 }
-                return response;
+                long len = entity.getContentLength();
+                if (len > 0 && len < IOHelper.DEFAULT_BUFFER_SIZE) {
+                    // optimize when we have content-length for small sizes to avoid creating streaming objects
+                    int i = (int) len;
+                    byte[] arr = new byte[i];
+                    is.read(arr, 0, i);
+                    IOHelper.close(is);
+                    return arr;
+                } else {
+                    // else for bigger payloads then wrap the response in a stream cache so its re-readable
+                    return doExtractResponseBodyAsStream(is, exchange);
+                }
             } else {
                 // use the response stream as-is
                 return is;
