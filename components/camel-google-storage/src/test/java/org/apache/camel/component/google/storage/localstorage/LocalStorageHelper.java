@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.google.storage.localstorage;
 
 import com.google.cloud.spi.ServiceRpcFactory;
@@ -44,7 +60,7 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 public final class LocalStorageHelper {
 
     // used for testing. Will throw if you pass it an option.
-    private static final FakeStorageRpc instance = new FakeStorageRpc(true);
+    private static final FakeStorageRpc INSTANCE = new FakeStorageRpc(true);
 
     private LocalStorageHelper() {
     }
@@ -54,14 +70,14 @@ public final class LocalStorageHelper {
      * from a clean slate. That instance will throw if you pass it any option.
      */
     public static StorageOptions getOptions() {
-        instance.reset();
+        INSTANCE.reset();
         return StorageOptions.newBuilder()
                 .setProjectId("dummy-project-for-testing")
                 .setServiceRpcFactory(
                         new ServiceRpcFactory<StorageOptions>() {
                             @Override
                             public StorageRpc create(StorageOptions options) {
-                                return instance;
+                                return INSTANCE;
                             }
                         })
                 .build();

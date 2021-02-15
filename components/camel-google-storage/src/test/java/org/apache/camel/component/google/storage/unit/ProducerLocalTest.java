@@ -69,20 +69,20 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        final String FILENAME_1 = "just_a_file.txt";
+        final String fileName = "just_a_file.txt";
 
         //upload a file
         byte[] payload = "Hi, How are you ?".getBytes();
         ByteArrayInputStream bais = new ByteArrayInputStream(payload);
         Exchange addObjectExchange = template.request("direct:addObject", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILENAME_1);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
             exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
             exchange.getIn().setBody(bais);
         });
         Blob addObject = addObjectExchange.getMessage().getBody(Blob.class);
         LOG.info("addObject {}", addObject);
         assertNotNull(addObject);
-        assertEquals(FILENAME_1, addObject.getName());
+        assertEquals(fileName, addObject.getName());
 
         Exchange listBucketsExchange = template.request("direct:listBucket", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
@@ -99,17 +99,17 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         LOG.info("listObjectsExchange.body={}", listObjectsExchange.getMessage().getBody());
         List<Blob> resp = listObjectsExchange.getMessage().getBody(List.class);
         assertEquals(1, resp.size());
-        assertEquals(FILENAME_1, resp.get(0).getName());
+        assertEquals(fileName, resp.get(0).getName());
 
         Exchange getObjectExchange = template.request("direct:getObject", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
                     GoogleCloudStorageComponentOperations.getObject);
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILENAME_1);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
         });
         Blob getObject = getObjectExchange.getMessage().getBody(Blob.class);
         LOG.info("getObject: {}", getObject);
         assertNotNull(getObject);
-        assertEquals(FILENAME_1, getObject.getName());
+        assertEquals(fileName, getObject.getName());
 
         /*
         //sign url
@@ -126,7 +126,7 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         Exchange deleteObjectExchange = template.send("direct:deleteObject", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
                     GoogleCloudStorageComponentOperations.deleteObject);
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILENAME_1);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
         });
 
         boolean deleteObject = deleteObjectExchange.getMessage().getBody(Boolean.class).booleanValue();

@@ -23,7 +23,13 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class GoogleCloudStorageConnectionFactory {
+public final class GoogleCloudStorageConnectionFactory {
+
+    /**
+     * Prevent instantiation.
+     */
+    private GoogleCloudStorageConnectionFactory() {
+    }
 
     public static Storage create(GoogleCloudStorageComponentConfiguration configuration) throws Exception {
         if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {

@@ -168,7 +168,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
         message.setHeader(GoogleCloudStorageConstants.METADATA_CONTENT_LANGUAGE, blob.getContentLanguage());
         message.setHeader(GoogleCloudStorageConstants.CONTENT_TYPE, blob.getContentType());
         message.setHeader(GoogleCloudStorageConstants.METADATA_CUSTOM_TIME, blob.getCustomTime());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_CRC32C_hex, blob.getCrc32cToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CRC32C_HEX, blob.getCrc32cToHexString());
         message.setHeader(GoogleCloudStorageConstants.METADATA_ETAG, blob.getEtag());
         message.setHeader(GoogleCloudStorageConstants.METADATA_GENERATION, blob.getGeneration());
         message.setHeader(GoogleCloudStorageConstants.METADATA_BLOB_ID, blob.getBlobId());
