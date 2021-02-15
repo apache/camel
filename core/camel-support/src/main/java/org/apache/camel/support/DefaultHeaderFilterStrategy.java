@@ -47,7 +47,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel.</tt>
      */
-    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[]{"Camel", "camel", "org.apache.camel."};
+    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel." };
 
     private Set<String> inFilter;
     private Pattern inFilterPattern;
@@ -97,8 +97,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "out" direction filter by starts with pattern. The "out" direction is referred to copying headers from a Camel message to
-     * an external message.
+     * Sets the "out" direction filter by starts with pattern. The "out" direction is referred to copying headers from a
+     * Camel message to an external message.
      *
      * @param outFilterStartsWith one or more key names to use for filtering using starts with
      */
@@ -167,8 +167,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "in" direction filter by starts with pattern. The "in" direction is referred to copying headers from
-     * an external message to a Camel message.
+     * Sets the "in" direction filter by starts with pattern. The "in" direction is referred to copying headers from an
+     * external message to a Camel message.
      *
      * @param inFilterStartsWith one or more key names to use for filtering using starts with
      */
