@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.smpp;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.apache.camel.Processor;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -26,13 +33,6 @@ import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
@@ -84,7 +84,7 @@ public class SmppConsumerTest {
 
         consumer.doStart();
 
-        verify(session).setEnquireLinkTimer(5000);
+        verify(session).setEnquireLinkTimer(60000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
         verify(session).setMessageReceiverListener(isA(MessageReceiverListener.class));

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.smpp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -29,9 +32,6 @@ import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
@@ -52,7 +52,7 @@ public class SmppConfigurationTest {
         assertEquals(0x00, configuration.getDestAddrNpi());
         assertEquals(0x00, configuration.getDestAddrTon());
         assertEquals("", configuration.getAddressRange());
-        assertEquals(Integer.valueOf(5000), configuration.getEnquireLinkTimer());
+        assertEquals(Integer.valueOf(60000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
         assertEquals(null, configuration.getPassword());
         assertEquals(Integer.valueOf(2775), configuration.getPort());
@@ -87,7 +87,7 @@ public class SmppConfigurationTest {
         assertEquals("1919", configuration.getDestAddr());
         assertEquals(0x08, configuration.getDestAddrNpi());
         assertEquals(0x02, configuration.getDestAddrTon());
-        assertEquals(Integer.valueOf(5001), configuration.getEnquireLinkTimer());
+        assertEquals(Integer.valueOf(60001), configuration.getEnquireLinkTimer());
         assertEquals("127.0.0.1", configuration.getHost());
         assertEquals("secret", configuration.getPassword());
         assertEquals(Integer.valueOf(2776), configuration.getPort());
@@ -179,7 +179,7 @@ public class SmppConfigurationTest {
     public void toStringShouldListAllInstanceVariables() {
         String expected = "SmppConfiguration["
                           + "usingSSL=false, "
-                          + "enquireLinkTimer=5000, "
+                          + "enquireLinkTimer=60000, "
                           + "host=localhost, "
                           + "password=null, "
                           + "port=2775, "
@@ -221,7 +221,7 @@ public class SmppConfigurationTest {
         config.setDestAddr("1919");
         config.setDestAddrNpi(NumberingPlanIndicator.NATIONAL.value());
         config.setDestAddrTon(TypeOfNumber.NATIONAL.value());
-        config.setEnquireLinkTimer(Integer.valueOf(5001));
+        config.setEnquireLinkTimer(Integer.valueOf(60001));
         config.setHost("127.0.0.1");
         config.setPassword("secret");
         config.setPort(Integer.valueOf(2776));

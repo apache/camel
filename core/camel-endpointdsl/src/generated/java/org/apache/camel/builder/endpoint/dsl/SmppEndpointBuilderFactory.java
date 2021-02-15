@@ -611,7 +611,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -630,7 +630,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -1660,7 +1660,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -1679,7 +1679,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -2210,7 +2210,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
@@ -2229,7 +2229,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 60000
          * Group: advanced
          * 
          * @param enquireLinkTimer the value to set
