@@ -18,9 +18,9 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -249,7 +249,7 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
     private String generateRandomString(int targetStringLength) {
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
         StringBuilder buffer = new StringBuilder(targetStringLength);
         for (int i = 0; i < targetStringLength; i++) {
             int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
