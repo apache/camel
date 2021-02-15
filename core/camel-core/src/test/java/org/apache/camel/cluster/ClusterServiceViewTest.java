@@ -16,11 +16,11 @@
  */
 package org.apache.camel.cluster;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -125,7 +125,7 @@ public class ClusterServiceViewTest {
     public void testMultipleViewListeners() throws Exception {
         final TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
         final TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
-        final int events = 1 + new Random().nextInt(10);
+        final int events = 1 + new SecureRandom().nextInt(10);
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events);
 
@@ -146,7 +146,7 @@ public class ClusterServiceViewTest {
     public void testLateViewListeners() throws Exception {
         final TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
         final TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
-        final int events = 1 + new Random().nextInt(10);
+        final int events = 1 + new SecureRandom().nextInt(10);
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events * 2);
 
