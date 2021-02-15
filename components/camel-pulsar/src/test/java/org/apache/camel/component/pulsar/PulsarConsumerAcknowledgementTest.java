@@ -50,14 +50,13 @@ public class PulsarConsumerAcknowledgementTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerAcknowledgementTest.class);
     private static final String TOPIC_URI = "persistent://public/default/camel-topic-";
+    private static int topicId;
 
     private Endpoint from;
 
     private MockEndpoint to;
 
     private Producer<String> producer;
-
-    private static int topicId = 0;
 
     public String getPulsarBrokerUrl() {
         return service.getPulsarBrokerUrl();

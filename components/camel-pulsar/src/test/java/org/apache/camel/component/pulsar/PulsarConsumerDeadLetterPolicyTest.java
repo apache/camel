@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerDeadLetterPolicyTest.class);
     private static final String TOPIC_URI = "persistent://public/default/camel-topic-";
+    private static int topicId;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -50,8 +51,6 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     private MockEndpoint deadLetter;
 
     private Producer<String> producer;
-
-    private static int topicId = 0;
 
     private String topicUri;
 
