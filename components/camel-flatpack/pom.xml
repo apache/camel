@@ -84,16 +84,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-    <version>3.8.0</version>
-    <configuration>
-        <release>16</release>  <!--or <release>10</release>-->
-    </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
