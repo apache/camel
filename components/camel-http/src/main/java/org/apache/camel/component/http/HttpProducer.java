@@ -55,6 +55,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -295,9 +296,12 @@ public class HttpProducer extends DefaultProducer {
         if (getEndpoint().getCookieHandler() != null) {
             cookieHeaders = new HashMap<>();
         }
-        Header[] headers = httpResponse.getAllHeaders();
+
+        // optimize to walk headers with an iterator which does not create a new array as getAllHeaders does
         boolean found = false;
-        for (Header header : headers) {
+        HeaderIterator it = httpResponse.headerIterator();
+        while (it.hasNext()) {
+            Header header = it.nextHeader();
             String name = header.getName();
             String value = header.getValue();
             if (cookieHeaders != null) {
