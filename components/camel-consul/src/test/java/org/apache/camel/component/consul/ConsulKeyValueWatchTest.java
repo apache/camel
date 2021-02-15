@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.consul;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 import com.orbitz.consul.KeyValueClient;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
 public class ConsulKeyValueWatchTest extends ConsulTestSupport {
     private String key;
     private KeyValueClient client;
-    private Random random;
+    private SecureRandom random;
 
     @Override
     public void doPreSetup() {
         key = generateKey();
         client = getConsul().keyValueClient();
-        random = new Random();
+        random = new SecureRandom();
     }
 
     @Test
