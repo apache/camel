@@ -193,11 +193,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      */
     public RouteDefinition route(RouteDefinition route) {
         // must set the error handler if not already set on the route
-        if (route.getErrorHandlerFactory() != null && route.getErrorHandlerRef() != null) {
-            ErrorHandlerFactory handler = getErrorHandlerFactory();
-            if (handler != null) {
-                route.setErrorHandlerFactory(handler);
-            }
+        ErrorHandlerFactory handler = getErrorHandlerFactory();
+        if (handler != null) {
+            route.setErrorHandlerFactoryIfNull(handler);
         }
 
         // must prepare the route before we can add it to the routes list
