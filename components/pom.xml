@@ -218,6 +218,7 @@
         <module>camel-google-mail</module>
         <module>camel-google-pubsub</module>
         <module>camel-google-sheets</module>
+		<module>camel-google-storage</module>
         <module>camel-gora</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
