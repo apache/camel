@@ -68,6 +68,7 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
     private boolean includeFolders = true;
 
     @UriParam
+    @Metadata(autowired = true)
     private Storage storageClient;
 
     public String getBucketName() {

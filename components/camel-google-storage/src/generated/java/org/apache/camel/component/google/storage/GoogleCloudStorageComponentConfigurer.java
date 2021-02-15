@@ -63,6 +63,11 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"storageClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autocreatebucket":

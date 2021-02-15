@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * behavior of Consumer and Producer.
  * 
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
+@UriEndpoint(firstVersion = "3.9.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
              category = {
                      Category.CLOUD })
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {

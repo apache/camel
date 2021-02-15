@@ -3239,7 +3239,7 @@
     "title": "Google Storage",
     "description": "Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.",
     "deprecated": false,
-    "firstVersion": "3.8.0",
+    "firstVersion": "3.9.0",
     "label": "cloud",
     "javaType": "org.apache.camel.component.google.storage.GoogleCloudStorageComponent",
     "supportLevel": "Preview",
