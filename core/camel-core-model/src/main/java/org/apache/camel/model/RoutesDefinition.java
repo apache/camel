@@ -192,9 +192,18 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @return       the builder
      */
     public RouteDefinition route(RouteDefinition route) {
+        // must set the error handler if not already set on the route
+        if (route.getErrorHandlerFactory() != null && route.getErrorHandlerRef() != null) {
+            ErrorHandlerFactory handler = getErrorHandlerFactory();
+            if (handler != null) {
+                route.setErrorHandlerFactory(handler);
+            }
+        }
+
         // must prepare the route before we can add it to the routes list
         RouteDefinitionHelper.prepareRoute(getCamelContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
                 getInterceptSendTos(), getOnCompletions());
+
         getRoutes().add(route);
         // mark this route as prepared
         route.markPrepared();
@@ -253,7 +262,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     /**
      * Adds an on exception
-     * 
+     *
      * @param  exception the exception
      * @return           the builder
      */
