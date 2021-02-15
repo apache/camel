@@ -64,12 +64,12 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
     @Test
     public void sendIn() throws Exception {
 
-        final int NUMBER_OF_FILES = 3;
+        final int numberOfFiles = 3;
 
-        result.expectedMessageCount(NUMBER_OF_FILES);
-        consumedObjects.expectedMessageCount(NUMBER_OF_FILES);
+        result.expectedMessageCount(numberOfFiles);
+        consumedObjects.expectedMessageCount(numberOfFiles);
 
-        for (int i = 0; i < NUMBER_OF_FILES; i++) {
+        for (int i = 0; i < numberOfFiles; i++) {
             final String filename = String.format("file_%s.txt", i);
             final String body = String.format("body_%s", i);
             //upload a file

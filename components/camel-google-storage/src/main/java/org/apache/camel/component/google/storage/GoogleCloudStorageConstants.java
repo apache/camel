@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.storage;
 
-public class GoogleCloudStorageConstants {
+public final class GoogleCloudStorageConstants {
 
     public static final String OPERATION = "CamelGoogleCloudStorageOperation";
     public static final String BUCKET_NAME = "CamelGoogleCloudStorageBucketName";
@@ -34,7 +34,7 @@ public class GoogleCloudStorageConstants {
     public static final String METADATA_COMPONENT_COUNT = "CamelGoogleCloudStorageComponentCount";
     public static final String METADATA_CONTENT_LANGUAGE = "CamelGoogleCloudStorageContentLanguage";
     public static final String METADATA_CUSTOM_TIME = "CamelGoogleCloudStorageCustomTime";
-    public static final String METADATA_CRC32C_hex = "CamelGoogleCloudStorageCrc32cHex";
+    public static final String METADATA_CRC32C_HEX = "CamelGoogleCloudStorageCrc32cHex";
     public static final String METADATA_ETAG = "CamelGoogleCloudStorageETag";
     public static final String METADATA_GENERATION = "CamelGoogleCloudStorageGeneration";
     public static final String METADATA_BLOB_ID = "CamelGoogleCloudStorageBlobId";
@@ -45,4 +45,9 @@ public class GoogleCloudStorageConstants {
     public static final String METADATA_CREATE_TIME = "CamelGoogleCloudStorageCreateTime";
     public static final String METADATA_LAST_UPDATE = "CamelGoogleCloudStorageLastUpdate";
 
+    /**
+     * Prevent instantiation.
+     */
+    private GoogleCloudStorageConstants() {
+    }
 }

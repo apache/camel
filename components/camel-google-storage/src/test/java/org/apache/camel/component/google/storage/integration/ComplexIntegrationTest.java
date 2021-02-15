@@ -90,7 +90,6 @@ public class ComplexIntegrationTest extends CamelTestSupport {
                             + "&operation=createDownloadLink")
                         .log("URL for ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName} =${body}")
                         .to("mock:bucket2");
-                ;
 
                 //list all buckets
                 from("timer:timer1?repeatCount=1&fixedRate=true&period=10000")
