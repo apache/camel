@@ -83,8 +83,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCamelContext extends SimpleCamelContext implements ModelCamelContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
     protected static final ThreadLocal<OptionHolder> OPTIONS = ThreadLocal.withInitial(OptionHolder::new);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
     private Model model = new DefaultModel(this);
 
