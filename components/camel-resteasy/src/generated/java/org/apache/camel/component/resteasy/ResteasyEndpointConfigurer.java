@@ -32,6 +32,12 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "httpmethodrestrict":
         case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": target.setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": target.setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
         case "matchonuriprefix":
         case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "muteexception":
@@ -72,6 +78,12 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "httpmethodrestrict":
         case "httpMethodRestrict": return java.lang.String.class;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": return boolean.class;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": return boolean.class;
         case "matchonuriprefix":
         case "matchOnUriPrefix": return boolean.class;
         case "muteexception":
@@ -113,6 +125,12 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "exchangePattern": return target.getExchangePattern();
         case "httpmethodrestrict":
         case "httpMethodRestrict": return target.getHttpMethodRestrict();
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": return target.isMapHttpMessageBody();
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": return target.isMapHttpMessageFormUrlEncodedBody();
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
         case "matchonuriprefix":
         case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
         case "muteexception":

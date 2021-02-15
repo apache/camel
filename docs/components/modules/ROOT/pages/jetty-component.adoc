@@ -160,12 +160,12 @@ with the following path and query parameters:
 | *filterInitParameters* (consumer) | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server. |  | Map
 | *filters* (consumer) | Allows using a custom filters which is putted into a list and can be find in the Registry. Multiple values can be separated by comma. |  | List
 | *handlers* (consumer) | Specifies a comma-delimited set of Handler instances to lookup in your Registry. These handlers are added to the Jetty servlet context (for example, to add security). Important: You can not use different handlers with different Jetty endpoints using the same port number. The handlers is associated to the port number. If you need different handlers, then use different port numbers. |  | List
+| *mapHttpMessageBody* (consumer) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
+| *mapHttpMessageFormUrlEncoded{zwsp}Body* (consumer) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
+| *mapHttpMessageHeaders* (consumer) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *multipartFilter* (consumer) | Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | Filter
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
-| *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrlEncoded{zwsp}Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
-| *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
