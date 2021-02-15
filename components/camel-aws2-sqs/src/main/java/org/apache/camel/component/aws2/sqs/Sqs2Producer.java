@@ -129,6 +129,22 @@ public class Sqs2Producer extends DefaultProducer {
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+        } else if (exchange.getIn().getBody() instanceof String) {
+            String c = exchange.getIn().getBody(String.class);
+            String[] elements = c.split(getConfiguration().getBatchSeparator());
+            for (String o : elements) {
+                SendMessageBatchRequestEntry.Builder entry = SendMessageBatchRequestEntry.builder();
+                entry.id(UUID.randomUUID().toString());
+                entry.messageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
+                entry.messageBody(o);
+                addDelay(entry, exchange);
+                configureFifoAttributes(entry, exchange);
+                entries.add(entry.build());
+            }
+            request.entries(entries);
+            SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request.build());
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         } else {
             SendMessageBatchRequest req = exchange.getIn().getBody(SendMessageBatchRequest.class);
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(req);

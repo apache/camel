@@ -21,12 +21,12 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.Provider.Service;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -45,7 +45,7 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public final class ApnsUtils {
 
-    private static Random random = new Random();
+    private static SecureRandom random = new SecureRandom();
 
     private ApnsUtils() {
     }

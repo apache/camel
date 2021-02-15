@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.8.0-SNAPSHOT</version>
+        <version>3.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -78,7 +78,7 @@
         <avro-ipc-netty-version>1.10.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.15.79</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.15.81</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -251,7 +251,7 @@
         <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
         <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
-        <icu4j-version>65.1</icu4j-version>
+        <icu4j-version>68.2</icu4j-version>
         <ignite-version>2.9.1</ignite-version>
         <impsort-maven-plugin-version>1.5.0</impsort-maven-plugin-version>
         <infinispan-version>12.0.0.Final</infinispan-version>
@@ -441,12 +441,12 @@
         <ognl-version>3.1.12</ognl-version>
         <openjpa-version>3.1.2</openjpa-version>
         <openstack4j-version>3.8</openstack4j-version>
-        <opentelemetry-version>0.11.0</opentelemetry-version>
+        <opentelemetry-version>0.15.0</opentelemetry-version>
         <!-- cannot upgrade opentracing until https://github.com/eclipse/microprofile-opentracing v2 is released -->
         <opentracing-version>0.31.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
         <optaplanner-version>7.49.0.Final</optaplanner-version>
-        <os-maven-plugin-version>1.6.2</os-maven-plugin-version>
+        <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <osgi-version>6.0.0</osgi-version>
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -533,7 +533,7 @@
         <stringtemplate-version>4.3</stringtemplate-version>
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-        <testcontainers-version>1.15.1</testcontainers-version>
+        <testcontainers-version>1.15.2</testcontainers-version>
         <tika-version>1.25</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
@@ -2392,6 +2392,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-spring-ws</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-xml</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

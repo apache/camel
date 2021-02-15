@@ -314,7 +314,7 @@ from("direct:start")
 
 The property placeholders is also supported in many of the Camel Spring
 XML tags such as
-`<package>, <packageScan>, <contextScan>, <jmxAgent>, <endpoint>, <routeBuilder>, <proxy>`
+`<package>, <packageScan>, <contextScan>, <jmxAgent>, <endpoint>, <routeBuilder>,
 and the others.
 
 The example below has property placeholder in the `<jmxAgent>` tag:

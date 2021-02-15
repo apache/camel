@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.artemis.services;
 
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.messaging.services.MessagingContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -27,11 +28,14 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final int DEFAULT_AMQP_PORT = 5672;
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
+    private static final String FROM_IMAGE_NAME = "fedora:33";
+    private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public ArtemisContainer() {
-        super(new ImageFromDockerfile("apache-artemis:ckc", false)
+        super(new ImageFromDockerfile("localhost/apache-artemis:camel", false)
                 .withFileFromClasspath("Dockerfile",
-                        "org/apache/camel/test/infra/artemis/services/Dockerfile"));
+                        "org/apache/camel/test/infra/artemis/services/Dockerfile")
+                .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME)));
 
         withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
                 DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT);

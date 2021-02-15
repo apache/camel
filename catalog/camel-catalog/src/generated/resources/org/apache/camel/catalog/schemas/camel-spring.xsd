@@ -715,7 +715,13 @@ Evaluate a JsonPath expression against a JSON message body.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="keyStoreParameters" type="tns:keyStoreParametersFactoryBean"/>
+  <xs:element name="keyStoreParameters" type="tns:keyStoreParametersFactoryBean">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+null
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <xs:element name="kubernetesServiceDiscovery" type="tns:kubernetesServiceCallServiceDiscoveryConfiguration">
     <xs:annotation>
@@ -1334,7 +1340,13 @@ Executes a script from a language which does not change the message body.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="secureRandomParameters" type="tns:secureRandomParametersFactoryBean"/>
+  <xs:element name="secureRandomParameters" type="tns:secureRandomParametersFactoryBean">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+null
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <xs:element name="secureXML" type="tns:xmlSecurityDataFormat">
     <xs:annotation>
@@ -1481,7 +1493,13 @@ Splits a single message into many sub-messages.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="sslContextParameters" type="tns:sslContextParametersFactoryBean"/>
+  <xs:element name="sslContextParameters" type="tns:sslContextParametersFactoryBean">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+null
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <xs:element name="staticServiceDiscovery" type="tns:staticServiceCallServiceDiscoveryConfiguration">
     <xs:annotation>
@@ -2795,10 +2813,37 @@ value: false
     <xs:complexContent>
       <xs:extension base="tns:abstractJsseUtilFactoryBean">
         <xs:sequence/>
-        <xs:attribute name="type" type="xs:string"/>
-        <xs:attribute name="password" type="xs:string"/>
-        <xs:attribute name="provider" type="xs:string"/>
-        <xs:attribute name="resource" type="xs:string"/>
+        <xs:attribute name="type" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional type of the key store to load. See Appendix A in the Java
+Cryptography Architecture Standard Algorithm Name Documentation for more
+information on standard names.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional password for reading/opening/verifying the key store.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional provider identifier for instantiating the key store.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resource" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional file path, class path resource, or URL of the resource used to load
+the key store.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -2807,8 +2852,25 @@ value: false
     <xs:complexContent>
       <xs:extension base="tns:abstractJsseUtilFactoryBean">
         <xs:sequence/>
-        <xs:attribute name="algorithm" type="xs:string" use="required"/>
-        <xs:attribute name="provider" type="xs:string"/>
+        <xs:attribute name="algorithm" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The Random Number Generator algorithm identifier for the SecureRandom factory
+method used to create the SecureRandom represented by this object's
+configuration. See Appendix A in the Java Cryptography Architecture API
+Specification and Reference guide for information about standard RNG algorithm
+names.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional provider identifier for the SecureRandom factory method used to
+create the SecureRandom represented by this object's configuration.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -13892,11 +13954,7 @@ password, application or accessCode.
             <xs:element ref="tns:fluentTemplate"/>
             <xs:element ref="tns:consumerTemplate"/>
           </xs:choice>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:proxy"/>
-            <xs:element ref="tns:export"/>
-            <xs:element ref="tns:errorHandler"/>
-          </xs:choice>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:errorHandler"/>
           <xs:element minOccurs="0" name="defaultServiceCallConfiguration" type="tns:serviceCallConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:serviceCallConfiguration"/>
           <xs:element minOccurs="0" name="defaultHystrixConfiguration" type="tns:hystrixConfigurationDefinition"/>
@@ -14537,10 +14595,39 @@ Sets a reference to a thread pool to be used by the error handler.
           <xs:element minOccurs="0" name="clientParameters" type="tns:sslContextClientParametersFactoryBean"/>
           <xs:element minOccurs="0" name="serverParameters" type="tns:sslContextServerParametersFactoryBean"/>
         </xs:all>
-        <xs:attribute name="sessionTimeout" type="xs:string"/>
-        <xs:attribute name="provider" type="xs:string"/>
-        <xs:attribute name="secureSocketProtocol" type="xs:string"/>
-        <xs:attribute name="certAlias" type="xs:string"/>
+        <xs:attribute name="sessionTimeout" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in
+seconds.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional provider identifier for the JSSE implementation to use when
+constructing an SSLContext.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="secureSocketProtocol" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The optional protocol for the secure sockets created by the SSLContext
+represented by this instance's configuration. See Appendix A in the Java Secure
+Socket Extension Reference Guide for information about standard protocol names.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="certAlias" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+An optional certificate alias to use. This is useful when the keystore has
+multiple certificates.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -14577,6 +14664,83 @@ Sets a reference to a thread pool to be used by the error handler.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:simpleType name="beanScope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Singleton"/>
+      <xs:enumeration value="Request"/>
+      <xs:enumeration value="Prototype"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="exchangePattern">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="InOnly"/>
+      <xs:enumeration value="InOut"/>
+      <xs:enumeration value="InOptionalOut"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="loggingLevel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TRACE"/>
+      <xs:enumeration value="DEBUG"/>
+      <xs:enumeration value="INFO"/>
+      <xs:enumeration value="WARN"/>
+      <xs:enumeration value="ERROR"/>
+      <xs:enumeration value="OFF"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="managementStatisticsLevel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Extended"/>
+      <xs:enumeration value="Default"/>
+      <xs:enumeration value="RoutesOnly"/>
+      <xs:enumeration value="Off"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="shutdownRoute">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Default"/>
+      <xs:enumeration value="Defer"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="shutdownRunningTask">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CompleteCurrentTaskOnly"/>
+      <xs:enumeration value="CompleteAllTasks"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="startupSummaryLevel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Classic"/>
+      <xs:enumeration value="Verbose"/>
+      <xs:enumeration value="Default"/>
+      <xs:enumeration value="Brief"/>
+      <xs:enumeration value="Oneline"/>
+      <xs:enumeration value="Off"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="typeConverterExists">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Override"/>
+      <xs:enumeration value="Ignore"/>
+      <xs:enumeration value="Fail"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="waitForTaskToComplete">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Never"/>
+      <xs:enumeration value="IfReplyExpected"/>
+      <xs:enumeration value="Always"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="claimCheckOperation">
     <xs:restriction base="xs:string">
@@ -14692,50 +14856,6 @@ Sets a reference to a thread pool to be used by the error handler.
       <xs:enumeration value="allLocalIp"/>
       <xs:enumeration value="localIp"/>
       <xs:enumeration value="localHostName"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="startupSummaryLevel">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Classic"/>
-      <xs:enumeration value="Verbose"/>
-      <xs:enumeration value="Default"/>
-      <xs:enumeration value="Brief"/>
-      <xs:enumeration value="Oneline"/>
-      <xs:enumeration value="Off"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="shutdownRoute">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Default"/>
-      <xs:enumeration value="Defer"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="shutdownRunningTask">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="CompleteCurrentTaskOnly"/>
-      <xs:enumeration value="CompleteAllTasks"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="typeConverterExists">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Override"/>
-      <xs:enumeration value="Ignore"/>
-      <xs:enumeration value="Fail"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="loggingLevel">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="TRACE"/>
-      <xs:enumeration value="DEBUG"/>
-      <xs:enumeration value="INFO"/>
-      <xs:enumeration value="WARN"/>
-      <xs:enumeration value="ERROR"/>
-      <xs:enumeration value="OFF"/>
     </xs:restriction>
   </xs:simpleType>
 

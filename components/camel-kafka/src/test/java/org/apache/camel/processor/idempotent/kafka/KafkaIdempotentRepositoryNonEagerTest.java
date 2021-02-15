@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
+import java.util.UUID;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
@@ -31,9 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test for non-eager idempotentRepository usage.
  */
 public class KafkaIdempotentRepositoryNonEagerTest extends BaseEmbeddedKafkaTest {
+
+    // Every instance of the repository must use a different topic to guarantee isolation between tests
     @BindToRegistry("kafkaIdempotentRepository")
     private KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_IDEM", getBootstrapServers());
+            = new KafkaIdempotentRepository(
+                    "TEST_NON_EAGER_" + UUID.randomUUID().toString(),
+                    getBootstrapServers());
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;

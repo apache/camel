@@ -27,7 +27,7 @@
   </parent>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-dependencies</artifactId>
-  <version>3.8.0-SNAPSHOT</version>
+  <version>3.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel :: Dependencies</name>
   <description>Camel Dependencies POM</description>
@@ -71,7 +71,7 @@
     <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
     <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-    <aws-java-sdk2-version>2.15.79</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.15.81</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-eventhubs-checkpointstore-blob-version>1.3.1</azure-eventhubs-checkpointstore-blob-version>
@@ -271,7 +271,7 @@
     <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
     <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
-    <icu4j-version>65.1</icu4j-version>
+    <icu4j-version>68.2</icu4j-version>
     <ignite-version>2.9.1</ignite-version>
     <impsort-maven-plugin-version>1.5.0</impsort-maven-plugin-version>
     <infinispan-version>12.0.0.Final</infinispan-version>
@@ -452,13 +452,13 @@
     <olingo4-version>4.8.0</olingo4-version>
     <openjpa-version>3.1.2</openjpa-version>
     <openstack4j-version>3.8</openstack4j-version>
-    <opentelemetry-version>0.11.0</opentelemetry-version>
+    <opentelemetry-version>0.15.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.31.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <optaplanner-version>7.49.0.Final</optaplanner-version>
-    <os-maven-plugin-version>1.6.2</os-maven-plugin-version>
+    <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <osgi-version>6.0.0</osgi-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -544,7 +544,7 @@
     <swagger-java-version>1.6.2</swagger-java-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-    <testcontainers-version>1.15.1</testcontainers-version>
+    <testcontainers-version>1.15.2</testcontainers-version>
     <tika-version>1.25</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>

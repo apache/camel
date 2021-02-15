@@ -17,16 +17,20 @@
 package org.apache.camel.spring;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -37,6 +41,7 @@ import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -262,7 +267,13 @@ public class SpringCamelContext extends DefaultCamelContext
             return endpoint;
         }
 
-        return new ProcessorEndpoint(uri, this, new BeanProcessor(bean, this));
+        BeanProcessorFactory bpf = adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
+        try {
+            Processor bp = bpf.createBeanProcessor(this, bean, null);
+            return new ProcessorEndpoint(uri, this, bp);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     @Override
@@ -272,8 +283,20 @@ public class SpringCamelContext extends DefaultCamelContext
     }
 
     @Override
+
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        return new SpringModelJAXBContextFactory();
+        Optional<ModelJAXBContextFactory> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                ModelJAXBContextFactory.FACTORY + "-spring",
+                ModelJAXBContextFactory.class);
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find ModelJAXBContextFactory on classpath. Add camel-spring-xml to classpath.");
+        }
     }
 
     @Override

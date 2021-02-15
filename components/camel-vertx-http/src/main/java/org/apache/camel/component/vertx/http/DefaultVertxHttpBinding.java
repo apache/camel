@@ -31,6 +31,7 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -81,9 +82,11 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
 
         // Configure query params
-        Map<String, Object> queryParams = URISupport.parseQuery(queryString);
-        for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
-            request.addQueryParam(entry.getKey(), entry.getValue().toString());
+        if (ObjectHelper.isNotEmpty(queryString)) {
+            Map<String, Object> queryParams = URISupport.parseQuery(queryString);
+            for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
+                request.addQueryParam(entry.getKey(), entry.getValue().toString());
+            }
         }
 
         // Configure basic authentication
@@ -115,11 +118,15 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
 
         // Transfer exchange headers to the HTTP request while applying the filter strategy
-        Message message = exchange.getMessage();
-        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
-            String headerValue = message.getHeader(entry.getKey(), String.class);
-            if (strategy != null && !strategy.applyFilterToCamelHeaders(entry.getKey(), headerValue, exchange)) {
-                request.putHeader(entry.getKey(), headerValue);
+        if (strategy != null) {
+            final TypeConverter tc = exchange.getContext().getTypeConverter();
+            for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
+                String key = entry.getKey();
+                Object headerValue = entry.getValue();
+                if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
+                    String str = tc.convertTo(String.class, headerValue);
+                    request.putHeader(key, str);
+                }
             }
         }
     }
@@ -152,10 +159,12 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
         MultiMap headers = response.headers();
 
+        boolean found = false;
         for (String headerName : headers.names()) {
             String name = headerName;
             String value = headers.get(headerName);
-            if (name.equalsIgnoreCase("content-type")) {
+            if (!found && name.equalsIgnoreCase("content-type")) {
+                found = true;
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
             }

@@ -1106,15 +1106,10 @@ public class CamelCatalogTest {
 
     @Test
     public void testSpringCamelContext() throws Exception {
-        String json = catalog.modelJSonSchema("camelContext");
-        assertNotNull(json);
+        String xml = catalog.springSchemaAsXml();
+        assertNotNull(xml);
 
-        // validate we can parse the json
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode tree = mapper.readTree(json);
-        assertNotNull(tree);
-
-        assertTrue(json.contains("CamelContext using XML configuration"));
+        assertTrue(xml.contains("CamelContext using XML configuration"));
     }
 
     @Test

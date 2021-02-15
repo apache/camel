@@ -36,6 +36,7 @@
 ** xref:spring-javaconfig.adoc[Spring Java Configuration]
 ** xref:spring-main.adoc[Spring Main]
 ** xref:spring-security.adoc[Spring Security]
+** xref:spring-xml.adoc[Spring Xml]
 ** xref:swagger-java.adoc[Swagger Java]
 ** xref:test.adoc[Test]
 ** xref:test-cdi.adoc[Test CDI]

@@ -40,6 +40,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batchseparator":
+        case "batchSeparator": getOrCreateConfiguration(target).setBatchSeparator(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -127,6 +129,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoCreateQueue": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batchseparator":
+        case "batchSeparator": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
@@ -210,6 +214,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoCreateQueue": return getOrCreateConfiguration(target).isAutoCreateQueue();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batchseparator":
+        case "batchSeparator": return getOrCreateConfiguration(target).getBatchSeparator();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

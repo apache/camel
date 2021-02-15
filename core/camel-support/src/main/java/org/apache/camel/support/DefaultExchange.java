@@ -281,8 +281,14 @@ public final class DefaultExchange implements ExtendedExchange {
             return false;
         }
 
+        // special optimized
+        if (excludePatterns == null && "*".equals(pattern)) {
+            properties.clear();
+            return true;
+        }
+
         // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
-        Set<String> toBeRemoved = new HashSet<>();
+        Set<String> toBeRemoved = null;
         boolean matches = false;
         for (String key : properties.keySet()) {
             if (PatternHelper.matchPattern(key, pattern)) {
@@ -290,16 +296,21 @@ public final class DefaultExchange implements ExtendedExchange {
                     continue;
                 }
                 matches = true;
+                if (toBeRemoved == null) {
+                    toBeRemoved = new HashSet<>();
+                }
                 toBeRemoved.add(key);
             }
         }
 
-        if (!toBeRemoved.isEmpty()) {
+        if (matches) {
             if (toBeRemoved.size() == properties.size()) {
                 // special optimization when all should be removed
                 properties.clear();
             } else {
-                toBeRemoved.forEach(k -> properties.remove(k));
+                for (String key : toBeRemoved) {
+                    properties.remove(key);
+                }
             }
         }
 

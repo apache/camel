@@ -438,6 +438,23 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the separator when passing a String to send batch message
+         * operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ,
+         * Group: producer
+         * 
+         * @param batchSeparator the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder batchSeparator(
+                java.lang.String batchSeparator) {
+            doSetProperty("batchSeparator", batchSeparator);
+            return this;
+        }
+        /**
          * Delay sending messages for a number of seconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -768,6 +785,7 @@ public interface Aws2SqsComponentBuilderFactory {
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((Sqs2Component) component).setServerSideEncryptionEnabled((boolean) value); return true;
             case "visibilityTimeout": getOrCreateConfiguration((Sqs2Component) component).setVisibilityTimeout((java.lang.Integer) value); return true;
             case "waitTimeSeconds": getOrCreateConfiguration((Sqs2Component) component).setWaitTimeSeconds((java.lang.Integer) value); return true;
+            case "batchSeparator": getOrCreateConfiguration((Sqs2Component) component).setBatchSeparator((java.lang.String) value); return true;
             case "delaySeconds": getOrCreateConfiguration((Sqs2Component) component).setDelaySeconds((java.lang.Integer) value); return true;
             case "lazyStartProducer": ((Sqs2Component) component).setLazyStartProducer((boolean) value); return true;
             case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;

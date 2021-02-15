@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.consul;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import com.orbitz.consul.AgentClient;
@@ -67,7 +67,7 @@ public class ConsulHealthTest extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
 
         this.service = UUID.randomUUID().toString();
         this.client = getConsul().agentClient();

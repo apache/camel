@@ -6,7 +6,7 @@
 :artifactId: camel-csimple-joor
 :description: jOOR compiler for csimple language
 :since: 3.7
-:supportLevel: Preview
+:supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/csimple-joor.adoc[opts=optional]
 
 *Since Camel {since}*

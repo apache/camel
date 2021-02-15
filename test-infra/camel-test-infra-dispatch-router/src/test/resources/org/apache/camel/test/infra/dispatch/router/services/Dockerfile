@@ -12,7 +12,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-FROM fedora:33
+ARG FROMIMAGE
+FROM $FROMIMAGE
 LABEL maintainer="orpiske@apache.org"
 EXPOSE 5672
 RUN dnf install -y qpid-dispatch-router && dnf clean all

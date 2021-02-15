@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.TracerSdkProvider;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
@@ -51,7 +51,7 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     private SpanTestData[] testdata;
     private Tracer tracer;
     private OpenTelemetryTracer ottracer;
-    private TracerSdkProvider tracerFactory = TracerSdkProvider.builder().build();
+    private SdkTracerProvider tracerFactory;
 
     public CamelOpenTelemetryTestSupport(SpanTestData[] testdata) {
         this.testdata = testdata;
@@ -61,7 +61,10 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         ottracer = new OpenTelemetryTracer();
-        tracerFactory.addSpanProcessor(SimpleSpanProcessor.builder(inMemorySpanExporter).build());
+
+        tracerFactory = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter)).build();
+
         tracer = tracerFactory.get("tracerTest");
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
