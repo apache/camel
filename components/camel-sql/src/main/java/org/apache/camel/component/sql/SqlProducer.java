@@ -152,7 +152,6 @@ public class SqlProducer extends DefaultProducer {
                     populateStatement(ps, exchange, sql, preparedQuery);
                     boolean isResultSet = false;
 
-                    // execute the prepared statement and populate the outgoing message
                     if (batch) {
                         int[] updateCounts = ps.executeBatch();
                         int total = 0;
@@ -199,7 +198,6 @@ public class SqlProducer extends DefaultProducer {
                         }
                     }
 
-                    // data is set on exchange so return null
                     return data;
                 } finally {
                     closeResultSet(rs);
