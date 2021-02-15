@@ -17,7 +17,7 @@
 package org.apache.camel.component.leveldb;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -43,11 +43,11 @@ public class LevelDBBinaryTest extends LevelDBTestSupport {
     public void testLevelDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         byte[] a = new byte[10];
-        new Random().nextBytes(a);
+        new SecureRandom().nextBytes(a);
         byte[] b = new byte[10];
-        new Random().nextBytes(b);
+        new SecureRandom().nextBytes(b);
         byte[] c = new byte[10];
-        new Random().nextBytes(c);
+        new SecureRandom().nextBytes(c);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             outputStream.write(a);
