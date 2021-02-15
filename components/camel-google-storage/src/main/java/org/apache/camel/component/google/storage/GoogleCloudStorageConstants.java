@@ -30,7 +30,6 @@ public final class GoogleCloudStorageConstants {
     public static final String CONTENT_DISPOSITION = "CamelGoogleCloudStorageContentDisposition";
     public static final String CONTENT_ENCODING = "CamelGoogleCloudStorageContentEncoding";
     public static final String CONTENT_MD5 = "CamelGoogleCloudStorageContentMd5";
-
     public static final String METADATA_COMPONENT_COUNT = "CamelGoogleCloudStorageComponentCount";
     public static final String METADATA_CONTENT_LANGUAGE = "CamelGoogleCloudStorageContentLanguage";
     public static final String METADATA_CUSTOM_TIME = "CamelGoogleCloudStorageCustomTime";
