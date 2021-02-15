@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xquery;
 
-import java.util.Random;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.apache.camel.test.junit5.TestSupport.bodyAs;
+
+import java.security.SecureRandom;
 
 /**
  * Concurrency test of XQuery using classpath resources (to).
@@ -50,7 +51,7 @@ public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
                     for (int i = 0; i < 200; i++) {
                         try {
                             // do some random sleep to simulate spread in user activity
-                            Thread.sleep(new Random().nextInt(10));
+                            Thread.sleep(new SecureRandom().nextInt(10));
                         } catch (InterruptedException e) {
                             // ignore
                         }
