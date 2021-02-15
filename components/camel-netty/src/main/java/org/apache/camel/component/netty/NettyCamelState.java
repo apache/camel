@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 
@@ -30,14 +32,28 @@ public final class NettyCamelState {
 
     private final Exchange exchange;
     private final AsyncCallback callback;
+    // It is never a good idea to call the same callback twice
+    private final AtomicBoolean callbackCalled;
 
     public NettyCamelState(AsyncCallback callback, Exchange exchange) {
         this.callback = callback;
         this.exchange = exchange;
+        this.callbackCalled = new AtomicBoolean();
     }
 
     public AsyncCallback getCallback() {
         return callback;
+    }
+
+    public boolean isDone() {
+        return callbackCalled.get();
+    }
+
+    public void callbackDoneOnce(boolean doneSync) {
+        if (!callbackCalled.getAndSet(true)) {
+            // this is the first time we call the callback
+            callback.done(doneSync);
+        }
     }
 
     public Exchange getExchange() {
