@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.security.SecureRandom;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,8 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.apache.camel.test.junit5.TestSupport.bodyAs;
-
-import java.security.SecureRandom;
 
 /**
  * Concurrency test of XQuery using classpath resources (to).
