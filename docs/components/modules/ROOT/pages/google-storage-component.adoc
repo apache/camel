@@ -5,7 +5,7 @@
 :docTitle: Google Storage
 :artifactId: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
-:since: 3.8
+:since: 3.9
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-storage.adoc[opts=optional]
@@ -91,7 +91,7 @@ The Google Storage component supports 16 options, which are listed below.
 | *configuration* (common) | The component configuration |  | GoogleCloudStorageComponentConfiguration
 | *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
 | *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
-| *storageClient* (common) | The storage client |  | Storage
+| *storageClient* (common) | *Autowired* The storage client |  | Storage
 | *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from the bucket after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. | true | boolean
@@ -134,7 +134,7 @@ with the following path and query parameters:
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
 | *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
 | *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
-| *storageClient* (common) | The storage client |  | Storage
+| *storageClient* (common) | *Autowired* The storage client |  | Storage
 | *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deleteAfterRead* (consumer) | Delete objects from the bucket after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. | true | boolean
@@ -397,5 +397,3 @@ This will require specifying the destinationBucket option. As example:
 --------------------------------------------------------------------------------
 
 In this case the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
-
-

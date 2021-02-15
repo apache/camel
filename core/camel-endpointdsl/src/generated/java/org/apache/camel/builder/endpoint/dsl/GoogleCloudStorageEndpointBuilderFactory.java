@@ -1460,7 +1460,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * the google-cloud-storage library.
          * 
          * Category: cloud
-         * Since: 3.8
+         * Since: 3.9
          * Maven coordinates: org.apache.camel:camel-google-storage
          * 
          * Syntax: <code>google-storage:bucketName</code>
@@ -1480,7 +1480,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * the google-cloud-storage library.
          * 
          * Category: cloud
-         * Since: 3.8
+         * Since: 3.9
          * Maven coordinates: org.apache.camel:camel-google-storage
          * 
          * Syntax: <code>google-storage:bucketName</code>
