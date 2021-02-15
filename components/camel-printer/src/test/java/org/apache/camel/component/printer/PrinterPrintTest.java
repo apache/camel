@@ -57,6 +57,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PrinterPrintTest extends CamelTestSupport {
+    Class<?> printServiceLookupServicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
+    Object printServiceLookup;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -399,9 +401,6 @@ public class PrinterPrintTest extends CamelTestSupport {
         assertNotNull(attribute);
         assertEquals("reverse-landscape", attribute.toString());
     }
-
-    Class<?> printServiceLookupServicesClass = PrintServiceLookup.class.getDeclaredClasses()[0];
-    Object printServiceLookup;
 
     protected void setupJavaPrint() throws Exception {
         // save the current print services
