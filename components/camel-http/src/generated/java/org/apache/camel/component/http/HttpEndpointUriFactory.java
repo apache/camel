@@ -21,7 +21,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(52);
+        Set<String> props = new HashSet<>(49);
         props.add("clientBuilder");
         props.add("authMethodPriority");
         props.add("ignoreResponseBody");
@@ -40,7 +40,6 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("authHost");
         props.add("proxyAuthUsername");
         props.add("connectionClose");
-        props.add("mapHttpMessageFormUrlEncodedBody");
         props.add("proxyHost");
         props.add("authPassword");
         props.add("lazyStartProducer");
@@ -54,7 +53,6 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("maxTotalConnections");
         props.add("proxyAuthScheme");
         props.add("sslContextParameters");
-        props.add("mapHttpMessageBody");
         props.add("httpMethod");
         props.add("deleteWithBody");
         props.add("httpUri");
@@ -71,7 +69,6 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("proxyAuthHost");
         props.add("authUsername");
         props.add("x509HostnameVerifier");
-        props.add("mapHttpMessageHeaders");
         props.add("authMethod");
         props.add("cookieStore");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

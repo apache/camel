@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (51 parameters):
+=== Query Parameters (48 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -153,9 +153,6 @@ with the following path and query parameters:
 | *httpClientConfigurer* (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc. |  | HttpClientConfigurer
 | *httpClientOptions* (advanced) | To configure the HttpClient using the key/values from the Map. |  | Map
 | *httpContext* (advanced) | To use a custom HttpContext instance |  | HttpContext
-| *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrlEncoded{zwsp}Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
-| *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
