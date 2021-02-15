@@ -448,18 +448,20 @@ public class HttpProducer extends DefaultProducer {
                     // ignore response
                     return null;
                 }
-                long len = entity.getContentLength();
-                if (len > 0 && len < IOHelper.DEFAULT_BUFFER_SIZE) {
+                int max = getEndpoint().getComponent().getResponsePayloadStreamingThreshold();
+                if (max > 0) {
                     // optimize when we have content-length for small sizes to avoid creating streaming objects
-                    int i = (int) len;
-                    byte[] arr = new byte[i];
-                    is.read(arr, 0, i);
-                    IOHelper.close(is);
-                    return arr;
-                } else {
-                    // else for bigger payloads then wrap the response in a stream cache so its re-readable
-                    return doExtractResponseBodyAsStream(is, exchange);
+                    long len = entity.getContentLength();
+                    if (len > 0 && len <= max) {
+                        int i = (int) len;
+                        byte[] arr = new byte[i];
+                        is.read(arr, 0, i);
+                        IOHelper.close(is);
+                        return arr;
+                    }
                 }
+                // else for bigger payloads then wrap the response in a stream cache so its re-readable
+                return doExtractResponseBodyAsStream(is, exchange);
             } else {
                 // use the response stream as-is
                 return is;
