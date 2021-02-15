@@ -9,8 +9,7 @@ when used with xref:components::mock-component.adoc[Mock] endpoints; see the
 xref:spring-testing.adoc[Spring Testing] for an example.
 * xref:producertemplate.adoc[ProducerTemplate] instances for
 xref:pojo-producing.adoc[POJO Producing]
-* client side proxies for xref:pojo-producing.adoc[POJO Producing] which
-is a simple approach to xref:spring-remoting.adoc[Spring Remoting]
+* client side proxies for xref:pojo-producing.adoc[POJO Producing] 
 
 [[BeanInjection-Using-BeanInject]]
 == Using @BeanInject

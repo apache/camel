@@ -33,12 +33,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -130,38 +130,71 @@ public class HttpProducer extends DefaultProducer {
         }
 
         // propagate headers as HTTP headers
-        for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
-            String key = entry.getKey();
-            Object headerValue = in.getHeader(key);
+        if (strategy != null) {
+            final TypeConverter tc = exchange.getContext().getTypeConverter();
+            for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
+                String key = entry.getKey();
+                Object headerValue = entry.getValue();
 
-            if (headerValue != null) {
-                // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
-                final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
+                if (headerValue != null) {
 
-                // the value to add as request header
-                final List<String> values = new ArrayList<>();
-
-                // if its a multi value then check each value if we can add it and for multi values they
-                // should be combined into a single value
-                while (it.hasNext()) {
-                    String value = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
-
-                    // we should not add headers for the parameters in the uri if we bridge the endpoint
-                    // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
-                    if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                    if (headerValue instanceof String) {
+                        // optimise for string values
+                        String value = (String) headerValue;
+                        if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                            httpRequest.addHeader(key, value);
+                        }
+                        continue;
+                    } else if (headerValue instanceof Long || headerValue instanceof Integer
+                            || headerValue instanceof Boolean) {
+                        // optimise for other common types
+                        String value = tc.convertTo(String.class, exchange, headerValue);
+                        if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                            httpRequest.addHeader(key, value);
+                        }
                         continue;
                     }
-                    if (value != null && strategy != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                        values.add(value);
-                    }
-                }
 
-                // add the value(s) as a http request header
-                if (!values.isEmpty()) {
-                    // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                    // if multi valued, for a single value, then just output the value as is
-                    String s = values.size() > 1 ? values.toString() : values.get(0);
-                    httpRequest.addHeader(key, s);
+                    // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
+                    final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
+
+                    // the value to add as request header
+                    List<String> multiValues = null;
+                    String prev = null;
+
+                    // if its a multi value then check each value if we can add it and for multi values they
+                    // should be combined into a single value
+                    while (it.hasNext()) {
+                        String value = tc.convertTo(String.class, it.next());
+
+                        // we should not add headers for the parameters in the uri if we bridge the endpoint
+                        // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
+                        if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                            continue;
+                        }
+                        if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                            if (prev == null) {
+                                prev = value;
+                            } else {
+                                // only create array for multi values when really needed
+                                if (multiValues == null) {
+                                    multiValues = new ArrayList<>();
+                                    multiValues.add(prev);
+                                }
+                                multiValues.add(value);
+                            }
+                        }
+                    }
+
+                    // add the value(s) as a http request header
+                    if (multiValues != null) {
+                        // use the default toString of a ArrayList to create in the form [xxx, yyy]
+                        // if multi valued, for a single value, then just output the value as is
+                        String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
+                        httpRequest.addHeader(key, s);
+                    } else if (prev != null) {
+                        httpRequest.addHeader(key, prev);
+                    }
                 }
             }
         }
@@ -173,7 +206,7 @@ public class HttpProducer extends DefaultProducer {
                 String key = entry.getKey();
                 if (!entry.getValue().isEmpty()) {
                     // join multi-values separated by semi-colon
-                    httpRequest.addHeader(key, entry.getValue().stream().collect(Collectors.joining(";")));
+                    httpRequest.addHeader(key, String.join(";", entry.getValue()));
                 }
             }
         }
@@ -260,15 +293,22 @@ public class HttpProducer extends DefaultProducer {
         answer.setBody(response);
 
         // propagate HTTP response headers
+        Map<String, List<String>> cookieHeaders = null;
+        if (getEndpoint().getCookieHandler() != null) {
+            cookieHeaders = new HashMap<>();
+        }
         Header[] headers = httpResponse.getAllHeaders();
-        Map<String, List<String>> m = new HashMap<>();
+        boolean found = false;
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
-            m.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
-            if (name.equalsIgnoreCase("content-type")) {
+            if (cookieHeaders != null) {
+                cookieHeaders.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
+            }
+            if (!found && name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                found = true;
             }
             // use http helper to extract parameter value as it may contain multiple values
             Object extracted = HttpHelper.extractHttpParameterValue(value);
@@ -278,7 +318,7 @@ public class HttpProducer extends DefaultProducer {
         }
         // handle cookies
         if (getEndpoint().getCookieHandler() != null) {
-            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), cookieHeaders);
         }
         // endpoint might be configured to copy headers from in to out
         // to avoid overriding existing headers with old values just
@@ -406,12 +446,22 @@ public class HttpProducer extends DefaultProducer {
             }
         } else {
             if (!getEndpoint().isDisableStreamCache()) {
-                // wrap the response in a stream cache so its re-readable
-                InputStream response = null;
-                if (!ignoreResponseBody) {
-                    response = doExtractResponseBodyAsStream(is, exchange);
+                if (ignoreResponseBody) {
+                    // ignore response
+                    return null;
                 }
-                return response;
+                long len = entity.getContentLength();
+                if (len > 0 && len < IOHelper.DEFAULT_BUFFER_SIZE) {
+                    // optimize when we have content-length for small sizes to avoid creating streaming objects
+                    int i = (int) len;
+                    byte[] arr = new byte[i];
+                    is.read(arr, 0, i);
+                    IOHelper.close(is);
+                    return arr;
+                } else {
+                    // else for bigger payloads then wrap the response in a stream cache so its re-readable
+                    return doExtractResponseBodyAsStream(is, exchange);
+                }
             } else {
                 // use the response stream as-is
                 return is;

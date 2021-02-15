@@ -67,8 +67,7 @@ public class MyBean {
 Here Camel will automatically inject a smart client side proxy at
 the *`@Produce`* annotation - an instance of the *`MyListener`*
 instance. When we invoke methods on this interface the method call is
-turned into an object and using the Camel
-xref:spring-remoting.adoc[Spring Remoting] mechanism it is sent to the
+turned into an object and it is sent to the
 endpoint - in this case the xref:components::activemq-component.adoc[ActiveMQ] endpoint to
 queue *`foo`*; then the caller blocks for a response.
 

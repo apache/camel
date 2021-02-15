@@ -71,7 +71,7 @@
     <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
     <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-    <aws-java-sdk2-version>2.15.80</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.15.81</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-eventhubs-checkpointstore-blob-version>1.3.1</azure-eventhubs-checkpointstore-blob-version>
@@ -271,7 +271,7 @@
     <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
     <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
-    <icu4j-version>65.1</icu4j-version>
+    <icu4j-version>68.2</icu4j-version>
     <ignite-version>2.9.1</ignite-version>
     <impsort-maven-plugin-version>1.5.0</impsort-maven-plugin-version>
     <infinispan-version>12.0.0.Final</infinispan-version>

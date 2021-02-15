@@ -69,6 +69,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
@@ -177,6 +178,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isUseAwsKMS()) {
             createMultipartUploadRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
+            createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
         }
 
         if (getConfiguration().isUseCustomerKey()) {
@@ -305,6 +307,7 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isUseAwsKMS()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
                 putObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
+                putObjectRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
             }
         }
 
@@ -367,6 +370,7 @@ public class AWS2S3Producer extends DefaultProducer {
             if (getConfiguration().isUseAwsKMS()) {
                 if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
                     copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
+                    copyObjectRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
                 }
             }
 

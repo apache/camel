@@ -29,6 +29,7 @@ import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfigurat
 import org.apache.camel.component.vertx.kafka.operations.VertxKafkaConsumerOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +37,17 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxKafkaConsumer.class);
 
+    private Synchronization onCompletion;
     private KafkaConsumer<Object, Object> kafkaConsumer;
 
     public VertxKafkaConsumer(final VertxKafkaEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        this.onCompletion = new ConsumerOnCompletion();
     }
 
     @Override
@@ -105,33 +113,13 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
         propagatedHeaders.forEach((key, value) -> exchange.getIn().setHeader(key, value));
 
         // add exchange callback
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-            @Override
-            public void onComplete(Exchange exchange) {
-                // at the moment we don't commit the offsets manually, we can add it in the future
-            }
-
-            @Override
-            public void onFailure(Exchange exchange) {
-                // we do nothing here
-                processRollback(exchange);
-            }
-        });
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
         // send message to next processor in the route
         getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
     }
 
     private void onErrorListener(final Throwable error) {
-        final Exchange exchange = getEndpoint().createExchange();
-
-        // set the thrown exception
-        exchange.setException(error);
-
-        // log exception if an exception occurred and was not handled
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange,
-                    exchange.getException());
-        }
+        getExceptionHandler().handleException("Error from Kafka consumer.", error);
     }
 
     /**
@@ -139,10 +127,18 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
      *
      * @param exchange the exchange
      */
-    private void processRollback(Exchange exchange) {
+    protected void processRollback(Exchange exchange) {
         final Exception cause = exchange.getException();
         if (cause != null) {
             getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
+        }
+    }
+
+    private class ConsumerOnCompletion extends SynchronizationAdapter {
+
+        @Override
+        public void onFailure(Exchange exchange) {
+            processRollback(exchange);
         }
     }
 }

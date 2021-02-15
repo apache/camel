@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -65,7 +65,7 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
                 from(getFtpUrl()).threads(10).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // simulate some work with random time to complete
-                        Random ran = new Random();
+                        SecureRandom ran = new SecureRandom();
                         int delay = ran.nextInt(500) + 10;
                         Thread.sleep(delay);
                     }

@@ -70,8 +70,7 @@ headers and so forth.
 *Bean binding*
 
 Whenever Camel invokes a bean method via one of the above methods
-(xref:components::bean-component.adoc[Bean] component, xref:spring-remoting.adoc[Spring
-Remoting] or POJO Consuming) then the
+(xref:components::bean-component.adoc[Bean] component, or POJO Consuming) then the
 *Bean Binding* mechanism is used to figure out
 what method to use (if it is not explicit) and how to bind the
 Message to the parameters possibly using the
