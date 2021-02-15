@@ -42,7 +42,6 @@
  ** xref:routes.adoc[Routes]
  ** xref:transformer.adoc[Transformer]
  ** xref:validator.adoc[Validator]
- ** xref:spring-remoting.adoc[Spring Remoting]
  ** xref:hiding-middleware.adoc[Hiding Middleware]
  ** xref:health-check.adoc[Health Checks]
 * Domain Specific Languages

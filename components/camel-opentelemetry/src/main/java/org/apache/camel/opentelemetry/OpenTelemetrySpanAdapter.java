@@ -21,11 +21,10 @@ import java.util.Map;
 
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
-import io.opentelemetry.api.baggage.EntryMetadata;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.api.trace.attributes.SemanticAttributes;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
@@ -147,7 +146,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         if (baggage != null) {
             builder = builder.setParent(Context.current().with(baggage));
         }
-        baggage = builder.put(key, value, EntryMetadata.EMPTY).build();
+        baggage = builder.put(key, value).build();
     }
 
     public String getContextPropagationItem(String key) {

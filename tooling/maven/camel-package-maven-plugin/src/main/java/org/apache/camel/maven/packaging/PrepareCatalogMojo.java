@@ -67,7 +67,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     private static final String[] EXCLUDE_DOC_FILES
             = {
                     "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
-                    "camel-debezium-common" };
+                    "camel-debezium-common", "camel-infinispan-common" };
 
     private static final int UNUSED_LABELS_WARN = 15;
 
@@ -177,7 +177,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The directory where the camel-spring XML models are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring")
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml")
     protected File springDir;
 
     /**
@@ -189,14 +189,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The directory where the camel-spring XML schema are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring/target/schema")
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml/target/schema")
     protected File springSchemaDir;
-
-    /**
-     * The directory where the camel-blueprint XML schema are
-     */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-blueprint/target/schema")
-    protected File blueprintSchemaDir;
 
     /**
      * The directory where the camel-main metadata are
@@ -658,12 +652,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected void executeXmlSchemas() throws Exception {
         Path schemasOutDir = this.schemasOutDir.toPath();
         Path springSchemaDir = this.springSchemaDir.toPath();
-        Path blueprintSchemaDir = this.blueprintSchemaDir.toPath();
 
-        getLog().info("Copying Spring/Blueprint XML schemas");
+        getLog().info("Copying Spring XML schema");
 
         copyFile(springSchemaDir.resolve("camel-spring.xsd"), schemasOutDir);
-        copyFile(blueprintSchemaDir.resolve("camel-blueprint.xsd"), schemasOutDir);
     }
 
     protected void executeMain() throws Exception {

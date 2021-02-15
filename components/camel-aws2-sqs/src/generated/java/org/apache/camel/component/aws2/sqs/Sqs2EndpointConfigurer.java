@@ -37,6 +37,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "batchseparator":
+        case "batchSeparator": target.getConfiguration().setBatchSeparator(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -158,6 +160,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
+        case "batchseparator":
+        case "batchSeparator": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
@@ -275,6 +279,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
+        case "batchseparator":
+        case "batchSeparator": return target.getConfiguration().getBatchSeparator();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

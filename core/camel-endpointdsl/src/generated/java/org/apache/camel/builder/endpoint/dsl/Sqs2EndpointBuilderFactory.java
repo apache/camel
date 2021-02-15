@@ -1918,6 +1918,22 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the separator when passing a String to send batch message
+         * operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ,
+         * Group: producer
+         * 
+         * @param batchSeparator the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder batchSeparator(String batchSeparator) {
+            doSetProperty("batchSeparator", batchSeparator);
+            return this;
+        }
+        /**
          * Delay sending messages for a number of seconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.

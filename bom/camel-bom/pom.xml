@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.8.0-SNAPSHOT</version>
+    <version>3.9.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>camel-bom</artifactId>
@@ -1801,6 +1801,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-ws</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-xml</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

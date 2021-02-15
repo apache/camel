@@ -6,3 +6,35 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.8 to 3.9
 
+=== Modularized camel-spring
+
+The `camel-spring` component has been modularized into:
+
+- `camel-spring` - Core module for Camel Spring support
+- `camel-spring-xml` - XML DSL when using Spring XML (eg `<beans>`)
+
+And also for Camel on Spring Boot:
+
+- `camel-spring-boot-starter` - Camel with Spring Boot
+- `camel-spring-boot-xml-starter` - XML DSL when using Spring XML (eg `<beans>`) with Spring Boot
+
+The motivation is to move out the XML DSL from `camel-spring` which reduces the number of dependencies and makes
+the module lighter.
+
+Users that use the Spring XML DSL (eg the top XML tag is Spring `<beans>`) should migrate from using `camel-spring`
+to `camel-spring-xml` as dependency.
+
+Users that do not use Spring XML should not be affected.
+
+In Spring XML `<proxy>` and <remote>` have been removed. They were only available in Spring XML
+and not in the other XML DSLs (Blueprint and CDI).
+
+=== camel-spring-boot-starter vs camel-spring-boot-engine-starter
+
+Based on the modularization of camel-spring we have made two starters available when using Camel on Spring Boot
+
+- camel-spring-boot-starter - The regular starter that includes all the core components (similar to camel-core)
+- camel-spring-boot-engine-starter - A minimal starter with just Camel core engine (similar to camel-core-engine)
+
+We also made all the component -starter JARs not depend on any of the above starters, which means you must pick
+the one to use above, and then add which -starter JARs you want to use in your Camel spring boot applications.
