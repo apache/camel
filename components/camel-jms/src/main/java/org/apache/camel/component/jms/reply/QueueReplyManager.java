@@ -17,7 +17,7 @@
 package org.apache.camel.component.jms.reply;
 
 import java.math.BigInteger;
-import java.security.SecureRandom;
+import java.util.Random;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -135,7 +135,8 @@ public class QueueReplyManager extends ReplyManagerSupport {
             String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
             if (replyToSelectorName != null) {
                 // create a random selector value we will use for the reply queue
-                replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new SecureRandom()).toString(16);
+                // NOSONAR
+                replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
                 String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 // must use cache level consumer for fixed message selector

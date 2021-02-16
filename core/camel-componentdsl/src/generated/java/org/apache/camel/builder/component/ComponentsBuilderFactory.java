@@ -558,20 +558,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.awsSwf();
     }
     /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.AwsTranslateComponentBuilder awsTranslate() {
-        return org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.awsTranslate();
-    }
-    /**
      * AWS 2 Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
