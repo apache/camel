@@ -17,12 +17,12 @@
 package org.apache.camel.component.google.sheets;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -63,7 +63,7 @@ public class AbstractGoogleSheetsTestSupport extends CamelTestSupport {
     private void createTestSpreadsheet() {
         Spreadsheet spreadsheet = new Spreadsheet();
         SpreadsheetProperties spreadsheetProperties = new SpreadsheetProperties();
-        spreadsheetProperties.setTitle("camel-sheets-" + new Random().nextInt(Integer.MAX_VALUE));
+        spreadsheetProperties.setTitle("camel-sheets-" + new SecureRandom().nextInt(Integer.MAX_VALUE));
 
         spreadsheet.setProperties(spreadsheetProperties);
 

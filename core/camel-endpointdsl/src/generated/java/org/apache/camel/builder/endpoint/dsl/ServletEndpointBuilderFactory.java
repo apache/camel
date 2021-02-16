@@ -639,6 +639,117 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange Body of the exchange will be
+         * mapped to HTTP body. Setting this to false will avoid the HTTP
+         * mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder mapHttpMessageBody(
+                boolean mapHttpMessageBody) {
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Body of the exchange will be
+         * mapped to HTTP body. Setting this to false will avoid the HTTP
+         * mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder mapHttpMessageBody(
+                String mapHttpMessageBody) {
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Form Encoded body of the
+         * exchange will be mapped to HTTP. Setting this to false will avoid the
+         * HTTP Form Encoded body mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+                boolean mapHttpMessageFormUrlEncodedBody) {
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Form Encoded body of the
+         * exchange will be mapped to HTTP. Setting this to false will avoid the
+         * HTTP Form Encoded body mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+                String mapHttpMessageFormUrlEncodedBody) {
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Headers of the exchange will
+         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
+         * Headers mapping.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
+                boolean mapHttpMessageHeaders) {
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange Headers of the exchange will
+         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
+         * Headers mapping.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
+                String mapHttpMessageHeaders) {
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            return this;
+        }
+        /**
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
@@ -704,117 +815,6 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder traceEnabled(String traceEnabled) {
             doSetProperty("traceEnabled", traceEnabled);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServletEndpointBuilder mapHttpMessageBody(
-                boolean mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServletEndpointBuilder mapHttpMessageBody(
-                String mapHttpMessageBody) {
-            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                boolean mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Form Encoded body of the
-         * exchange will be mapped to HTTP. Setting this to false will avoid the
-         * HTTP Form Encoded body mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageFormUrlEncodedBody the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
-                String mapHttpMessageFormUrlEncodedBody) {
-            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
-                boolean mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange Headers of the exchange will
-         * be mapped to HTTP headers. Setting this to false will avoid the HTTP
-         * Headers mapping.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param mapHttpMessageHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
-                String mapHttpMessageHeaders) {
-            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
     }

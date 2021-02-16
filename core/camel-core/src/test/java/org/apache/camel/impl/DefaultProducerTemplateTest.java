@@ -55,6 +55,22 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testInTwice() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World", "Bye World");
+
+        Object result = template.requestBody("direct:in", "Hello World");
+        Object result2 = template.requestBody("direct:in", "Hello World Again");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+        assertEquals("Bye World", result2);
+
+        assertSame(context, template.getCamelContext());
+    }
+
+    @Test
     public void testInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Bye World");

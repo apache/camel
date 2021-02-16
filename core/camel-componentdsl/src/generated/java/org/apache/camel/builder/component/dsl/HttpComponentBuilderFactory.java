@@ -92,6 +92,24 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
+         * This threshold in bytes controls whether the response payload should
+         * be stored in memory as a byte array or be streaming based. Set this
+         * to -1 to always use streaming mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8192
+         * Group: producer
+         * 
+         * @param responsePayloadStreamingThreshold the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder responsePayloadStreamingThreshold(
+                int responsePayloadStreamingThreshold) {
+            doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
+            return this;
+        }
+        /**
          * Whether to allow java serialization when a request uses
          * context-type=application/x-java-serialized-object. This is by default
          * turned off. If you enable this then be aware that Java will
@@ -516,6 +534,7 @@ public interface HttpComponentBuilderFactory {
             switch (name) {
             case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.http.client.CookieStore) value); return true;
             case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "responsePayloadStreamingThreshold": ((HttpComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "autowiredEnabled": ((HttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientConnectionManager": ((HttpComponent) component).setClientConnectionManager((org.apache.http.conn.HttpClientConnectionManager) value); return true;

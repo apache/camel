@@ -16,30 +16,19 @@
  */
 package org.apache.camel.component.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.handler.DrinkValidationHandler;
-import org.apache.camel.util.StopWatch;
+import org.apache.camel.component.http.handler.DrinkQueryValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//@Disabled("Manual test")
-public class HttpProducerLoadTest extends BaseHttpTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProducerLoadTest.class);
+public class HttpQueryParameterTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
@@ -49,7 +38,8 @@ public class HttpProducerLoadTest extends BaseHttpTest {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/echo", new DrinkValidationHandler(GET.name(), null, null, "myHeader")).create();
+                .registerHandler("/moes", new DrinkQueryValidationHandler(GET.name(), null, null, "drink"))
+                .registerHandler("/joes", new DrinkQueryValidationHandler(GET.name(), null, null, "drink")).create();
         localServer.start();
 
         super.setUp();
@@ -70,37 +60,24 @@ public class HttpProducerLoadTest extends BaseHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:echo")
-                        .to("http://localhost:5678?copyHeaders=false");
+                from("direct:moes")
+                        .to("http://localhost:" + localServer.getLocalPort()
+                            + "/moes?drink=beer");
+
+                from("direct:joes")
+                        .to("http://localhost:" + localServer.getLocalPort()
+                            + "/joes?drink=wine");
             }
         };
     }
 
     @Test
-    public void testProducerLoad() throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        for (int i = 0; i < 40; i++) {
-            map.put("mykey" + i, "myvalue" + i);
-        }
+    public void testQueryParameter() throws Exception {
+        String out = fluentTemplate.to("direct:moes").request(String.class);
+        assertEquals("Drinking /moes?drink=beer", out);
 
-        StopWatch watch = new StopWatch();
-
-        // do not use template but reuse exchange/producer to be light-weight
-        // and not create additional objects in the JVM as we want to analyze
-        // the "raw" http producer
-        Endpoint to = getMandatoryEndpoint("direct:echo");
-        Producer producer = to.createProducer();
-        producer.start();
-
-        Exchange exchange = to.createExchange();
-        exchange.getMessage().setHeaders(map);
-        for (int i = 0; i < 10000000; i++) {
-            exchange.getMessage().setBody("Message " + i);
-            producer.process(exchange);
-        }
-        producer.stop();
-
-        LOG.info("Took {} ms", watch.taken());
+        out = fluentTemplate.to("direct:joes").request(String.class);
+        assertEquals("Drinking /joes?drink=wine", out);
     }
 
 }

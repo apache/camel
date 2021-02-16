@@ -53,8 +53,11 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -86,6 +89,9 @@ public class HttpProducer extends DefaultProducer {
     private boolean throwException;
     private boolean transferException;
     private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
+    private int minOkRange;
+    private int maxOkRange;
+    private String defaultUrl;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -96,8 +102,33 @@ public class HttpProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
 
+        String range = getEndpoint().getOkStatusCodeRange();
+        if (!range.contains(",")) {
+            // default is 200-299 so lets optimize for this
+            minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
+            maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+        }
+
+        // optimize and build default url when there are no override headers
+        String url = getEndpoint().getHttpUri().toASCIIString();
+        url = UnsafeUriCharactersEncoder.encodeHttpURI(url);
+        URI uri = new URI(url);
+        String queryString = getEndpoint().getHttpUri().getRawQuery();
+        if (queryString == null) {
+            queryString = uri.getRawQuery();
+        }
+        if (queryString != null) {
+            queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
+            uri = URISupport.createURIWithQuery(uri, queryString);
+        }
+        defaultUrl = uri.toASCIIString();
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
         if (getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {
             // create the cookies before the invocation
             getEndpoint().getCookieStore().clearExpired(new Date());
@@ -134,10 +165,14 @@ public class HttpProducer extends DefaultProducer {
             final TypeConverter tc = exchange.getContext().getTypeConverter();
             for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
                 String key = entry.getKey();
+                // we should not add headers for the parameters in the uri if we bridge the endpoint
+                // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
+                if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                    continue;
+                }
                 Object headerValue = entry.getValue();
 
                 if (headerValue != null) {
-
                     if (headerValue instanceof String) {
                         // optimise for string values
                         String value = (String) headerValue;
@@ -166,12 +201,6 @@ public class HttpProducer extends DefaultProducer {
                     // should be combined into a single value
                     while (it.hasNext()) {
                         String value = tc.convertTo(String.class, it.next());
-
-                        // we should not add headers for the parameters in the uri if we bridge the endpoint
-                        // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
-                        if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
-                            continue;
-                        }
                         if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
                             if (prev == null) {
                                 prev = value;
@@ -233,13 +262,20 @@ public class HttpProducer extends DefaultProducer {
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
-            LOG.debug("Http responseCode: {}", responseCode);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Http responseCode: {}", responseCode);
+            }
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
                 populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
             } else {
-                boolean ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                boolean ok;
+                if (minOkRange > 0) {
+                    ok = responseCode >= minOkRange && responseCode <= maxOkRange;
+                } else {
+                    ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                }
                 if (ok) {
                     // only populate response for OK response
                     populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
@@ -297,9 +333,12 @@ public class HttpProducer extends DefaultProducer {
         if (getEndpoint().getCookieHandler() != null) {
             cookieHeaders = new HashMap<>();
         }
-        Header[] headers = httpResponse.getAllHeaders();
+
+        // optimize to walk headers with an iterator which does not create a new array as getAllHeaders does
         boolean found = false;
-        for (Header header : headers) {
+        HeaderIterator it = httpResponse.headerIterator();
+        while (it.hasNext()) {
+            Header header = it.nextHeader();
             String name = header.getName();
             String value = header.getValue();
             if (cookieHeaders != null) {
@@ -450,18 +489,20 @@ public class HttpProducer extends DefaultProducer {
                     // ignore response
                     return null;
                 }
-                long len = entity.getContentLength();
-                if (len > 0 && len < IOHelper.DEFAULT_BUFFER_SIZE) {
+                int max = getEndpoint().getComponent().getResponsePayloadStreamingThreshold();
+                if (max > 0) {
                     // optimize when we have content-length for small sizes to avoid creating streaming objects
-                    int i = (int) len;
-                    byte[] arr = new byte[i];
-                    is.read(arr, 0, i);
-                    IOHelper.close(is);
-                    return arr;
-                } else {
-                    // else for bigger payloads then wrap the response in a stream cache so its re-readable
-                    return doExtractResponseBodyAsStream(is, exchange);
+                    long len = entity.getContentLength();
+                    if (len > 0 && len <= max) {
+                        int i = (int) len;
+                        byte[] arr = new byte[i];
+                        is.read(arr, 0, i);
+                        IOHelper.close(is);
+                        return arr;
+                    }
                 }
+                // else for bigger payloads then wrap the response in a stream cache so its re-readable
+                return doExtractResponseBodyAsStream(is, exchange);
             } else {
                 // use the response stream as-is
                 return is;
@@ -501,11 +542,36 @@ public class HttpProducer extends DefaultProducer {
      * @throws Exception          is thrown if error creating RequestEntity
      */
     protected HttpRequestBase createMethod(Exchange exchange) throws Exception {
-        // creating the url to use takes 2-steps
-        String url = HttpHelper.createURL(exchange, getEndpoint());
-        URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
-        // get the url from the uri
-        url = uri.toASCIIString();
+        if (defaultUrl == null) {
+            throw new IllegalArgumentException("Producer must be started");
+        }
+        String url = defaultUrl;
+
+        // the exchange can have some headers that override the default url and forces to create
+        // a new url that is dynamic based on header values
+        // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
+        boolean create = false;
+        if (exchange.getIn().getHeader("CamelRestHttpUri") != null) {
+            create = true;
+        } else if (exchange.getIn().getHeader("CamelHttpUri") != null && !getEndpoint().isBridgeEndpoint()) {
+            create = true;
+        } else if (exchange.getIn().getHeader("CamelHttpPath") != null) {
+            create = true;
+        } else if (exchange.getIn().getHeader("CamelRestHttpQuery") != null) {
+            create = true;
+        } else if (exchange.getIn().getHeader("CamelHttpRawQuery") != null) {
+            create = true;
+        } else if (exchange.getIn().getHeader("CamelHttpQuery") != null) {
+            create = true;
+        }
+
+        if (create) {
+            // creating the url to use takes 2-steps
+            url = HttpHelper.createURL(exchange, getEndpoint());
+            URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
+            // get the url from the uri
+            url = uri.toASCIIString();
+        }
 
         // create http holder objects for the request
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint());
@@ -534,7 +600,7 @@ public class HttpProducer extends DefaultProducer {
         // there must be a host on the method
         if (method.getURI().getScheme() == null || method.getURI().getHost() == null) {
             throw new IllegalArgumentException(
-                    "Invalid uri: " + uri
+                    "Invalid url: " + url
                                                + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
                                                + getEndpoint());
         }

@@ -159,10 +159,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-sdb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-ses</artifactId>
 		</dependency>
 		<dependency>
@@ -176,10 +172,6 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-swf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-translate</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>

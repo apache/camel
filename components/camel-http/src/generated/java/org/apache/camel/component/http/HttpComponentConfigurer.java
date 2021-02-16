@@ -65,6 +65,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPort": target.setProxyAuthPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyauthusername":
         case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsepayloadstreamingthreshold":
+        case "responsePayloadStreamingThreshold": target.setResponsePayloadStreamingThreshold(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
@@ -124,6 +126,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPort": return java.lang.Integer.class;
         case "proxyauthusername":
         case "proxyAuthUsername": return java.lang.String.class;
+        case "responsepayloadstreamingthreshold":
+        case "responsePayloadStreamingThreshold": return int.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
         case "sslcontextparameters":
@@ -184,6 +188,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPort": return target.getProxyAuthPort();
         case "proxyauthusername":
         case "proxyAuthUsername": return target.getProxyAuthUsername();
+        case "responsepayloadstreamingthreshold":
+        case "responsePayloadStreamingThreshold": return target.getResponsePayloadStreamingThreshold();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":

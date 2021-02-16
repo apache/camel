@@ -84,7 +84,9 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
             // check for error if so we should break out
             if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
-                break;
+                // okay there was an error in the predicate so we should exit
+                choiceCallback.done(true);
+                return true;
             }
 
             // if we did not match then continue to next filter

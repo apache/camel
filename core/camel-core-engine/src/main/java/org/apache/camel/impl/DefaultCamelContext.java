@@ -17,9 +17,11 @@
 package org.apache.camel.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StartupStep;
 import org.apache.camel.ValueHolder;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
@@ -38,6 +41,8 @@ import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.impl.engine.TransformerKey;
 import org.apache.camel.impl.engine.ValidatorKey;
+import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
+import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -60,6 +65,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -68,6 +74,7 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +83,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCamelContext extends SimpleCamelContext implements ModelCamelContext {
 
+    protected static final ThreadLocal<OptionHolder> OPTIONS = ThreadLocal.withInitial(OptionHolder::new);
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
     private Model model = new DefaultModel(this);
@@ -111,6 +119,73 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     public DefaultCamelContext(boolean init) {
         super(init);
+        if (isDisableJmx()) {
+            disableJMX();
+        }
+    }
+
+    public static void setNoStart(boolean b) {
+        getOptions().noStart = b;
+    }
+
+    public static boolean isNoStart() {
+        return getOptions().noStart;
+    }
+
+    public static void setDisableJmx(boolean b) {
+        getOptions().disableJmx = b;
+    }
+
+    public static boolean isDisableJmx() {
+        return getOptions().disableJmx;
+    }
+
+    public static String getExcludeRoutes() {
+        return getOptions().excludeRoutes;
+    }
+
+    public static void setExcludeRoutes(String s) {
+        getOptions().excludeRoutes = s;
+    }
+
+    public static void clearOptions() {
+        OPTIONS.set(new OptionHolder());
+    }
+
+    private static OptionHolder getOptions() {
+        return OPTIONS.get();
+    }
+
+    @Override
+    public void start() {
+        // for example from unit testing we want to start Camel later (manually)
+        if (isNoStart()) {
+            LOG.trace("Ignoring start() as NO_START is false");
+            return;
+        }
+
+        if (!isStarted() && !isStarting()) {
+            StopWatch watch = new StopWatch();
+            super.start();
+            LOG.debug("start() took {} millis", watch.taken());
+        } else {
+            // ignore as Camel is already started
+            LOG.trace("Ignoring start() as Camel is already started");
+        }
+    }
+
+    @Override
+    protected PackageScanClassResolver createPackageScanClassResolver() {
+        PackageScanClassResolver resolver = super.createPackageScanClassResolver();
+        String excluded = getExcludeRoutes();
+        if (ObjectHelper.isNotEmpty(excluded)) {
+            Set<Class<?>> excludedClasses = new HashSet<>();
+            for (String str : excluded.split(",")) {
+                excludedClasses.add(getClassResolver().resolveClass(str));
+            }
+            resolver.addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
+        }
+        return resolver;
     }
 
     @Override
@@ -680,5 +755,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         return ObjectHelper.isNotEmpty(def.getScheme())
                 ? new TransformerKey(def.getScheme())
                 : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+    }
+
+    protected static class OptionHolder {
+        public boolean noStart;
+        public boolean disableJmx = Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED);
+        public String excludeRoutes;
     }
 }

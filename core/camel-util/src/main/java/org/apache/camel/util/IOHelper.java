@@ -462,27 +462,36 @@ public final class IOHelper {
     /**
      * Get the charset name from the content type string
      *
-     * @param  contentType
+     * @param  contentType the content type
      * @return             the charset name, or <tt>UTF-8</tt> if no found
      */
     public static String getCharsetNameFromContentType(String contentType) {
-        String[] values = contentType.split(";");
-        String charset = "";
+        // try optimized for direct match without using splitting
+        int pos = contentType.indexOf("charset=");
+        if (pos != -1) {
+            int end = contentType.indexOf(';', pos);
+            String charset;
+            if (end > pos) {
+                charset = contentType.substring(pos + 8, end);
+            } else {
+                charset = contentType.substring(pos + 8);
+            }
+            return normalizeCharset(charset);
+        }
 
+        String[] values = contentType.split(";");
         for (String value : values) {
             value = value.trim();
             // Perform a case insensitive "startsWith" check that works for different locales
             String prefix = "charset=";
             if (value.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 // Take the charset name
-                charset = value.substring(8);
+                String charset = value.substring(8);
+                return normalizeCharset(charset);
             }
         }
-        if ("".equals(charset)) {
-            charset = "UTF-8";
-        }
-        return normalizeCharset(charset);
-
+        // use UTF-8 as default
+        return "UTF-8";
     }
 
     /**
@@ -490,14 +499,17 @@ public final class IOHelper {
      */
     public static String normalizeCharset(String charset) {
         if (charset != null) {
+            boolean trim = false;
             String answer = charset.trim();
             if (answer.startsWith("'") || answer.startsWith("\"")) {
                 answer = answer.substring(1);
+                trim = true;
             }
             if (answer.endsWith("'") || answer.endsWith("\"")) {
                 answer = answer.substring(0, answer.length() - 1);
+                trim = true;
             }
-            return answer.trim();
+            return trim ? answer.trim() : answer;
         } else {
             return null;
         }

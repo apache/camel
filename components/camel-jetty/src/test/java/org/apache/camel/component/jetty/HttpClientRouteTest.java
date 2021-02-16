@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +116,8 @@ public class HttpClientRouteTest extends BaseJettyTest {
 
                 Processor clientProc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertIsInstanceOf(InputStream.class, exchange.getIn().getBody());
+                        // small payloads is optimized to be byte array for http component
+                        assertIsInstanceOf(byte[].class, exchange.getIn().getBody());
                     }
                 };
 

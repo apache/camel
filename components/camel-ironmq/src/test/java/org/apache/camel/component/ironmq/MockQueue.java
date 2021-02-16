@@ -19,13 +19,13 @@ package org.apache.camel.component.ironmq;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.UUID;
 
 import io.iron.ironmq.Client;
@@ -46,7 +46,7 @@ public class MockQueue extends Queue {
 
     @Override
     public String push(String msg, long delay) throws IOException {
-        String randint = new BigInteger(24 * 8, new Random()).toString(16);
+        String randint = new BigInteger(24 * 8, new SecureRandom()).toString(16);
         Message message = new Message();
         message.setBody(msg);
         message.setDelay(delay);
@@ -62,7 +62,7 @@ public class MockQueue extends Queue {
             Message message = new Message();
             message.setBody(messageName);
             message.setDelay(delay);
-            String randint = new BigInteger(24 * 8, new Random()).toString(16);
+            String randint = new BigInteger(24 * 8, new SecureRandom()).toString(16);
             message.setId(randint);
             message.setReservationId(UUID.randomUUID().toString());
             messages.put(randint, message);

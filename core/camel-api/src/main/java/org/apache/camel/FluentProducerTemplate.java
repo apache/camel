@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
@@ -146,6 +147,13 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate clearAll();
 
     /**
+     * Set the headers
+     *
+     * @param headers the headers
+     */
+    FluentProducerTemplate withHeaders(Map<String, Object> headers);
+
+    /**
      * Set the header
      *
      * @param key   the key of the header
@@ -254,6 +262,27 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate withProcessor(Supplier<Processor> processorSupplier);
 
     /**
+     * Sets the default endpoint
+     *
+     * @param endpointUri the endpoint URI to send to
+     */
+    FluentProducerTemplate withDefaultEndpoint(String endpointUri);
+
+    /**
+     * Sets the default endpoint
+     *
+     * @param resolver the {@link EndpointProducerResolver} that supply the endpoint to send to.
+     */
+    FluentProducerTemplate withDefaultEndpoint(EndpointProducerResolver resolver);
+
+    /**
+     * Sets the default endpoint
+     *
+     * @param endpoint the endpoint to send to
+     */
+    FluentProducerTemplate withDefaultEndpoint(Endpoint endpoint);
+
+    /**
      * Endpoint to send to
      *
      * @param endpointUri the endpoint URI to send to
@@ -277,7 +306,7 @@ public interface FluentProducerTemplate extends Service {
     /**
      * Endpoint to send to
      *
-     * @param resolver the {@link EndpointConsumerResolver} that supply the endpoint to send to.
+     * @param resolver the {@link EndpointProducerResolver} that supply the endpoint to send to.
      */
     default FluentProducerTemplate to(EndpointProducerResolver resolver) {
         final CamelContext context = ObjectHelper.notNull(getCamelContext(), "camel context");

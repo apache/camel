@@ -14,9 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.translate;
+package org.apache.camel.component.http.handler;
 
-public enum TranslateOperations {
+import org.apache.http.HttpRequest;
 
-    translateText
+public class DrinkQueryValidationHandler extends BasicValidationHandler {
+
+    private final String name;
+
+    public DrinkQueryValidationHandler(String expectedMethod, String expectedQuery, Object expectedContent, String name) {
+        super(expectedMethod, expectedQuery, expectedContent, null);
+        this.name = name;
+    }
+
+    @Override
+    protected String buildResponse(HttpRequest request) {
+        return "Drinking " + request.getRequestLine().getUri();
+    }
 }

@@ -2462,51 +2462,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS SimpleDB (camel-aws-sdb)
-     * Store and Retrieve data from/to AWS SDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-sdb
-     * 
-     * Syntax: <code>aws-sdb:domainName</code>
-     * 
-     * Path parameter: domainName (required)
-     * The name of the domain currently worked with.
-     * 
-     * @param path domainName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbEndpointBuilder awsSdb(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.endpointBuilder("aws-sdb", path);
-    }
-    /**
-     * AWS SimpleDB (camel-aws-sdb)
-     * Store and Retrieve data from/to AWS SDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-sdb
-     * 
-     * Syntax: <code>aws-sdb:domainName</code>
-     * 
-     * Path parameter: domainName (required)
-     * The name of the domain currently worked with.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path domainName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbEndpointBuilder awsSdb(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS Simple Email Service (SES) (camel-aws-ses)
      * Send e-mails through AWS SES service.
      * 
@@ -2687,51 +2642,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * Syntax: <code>aws-translate:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder("aws-translate", path);
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * Syntax: <code>aws-translate:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Azure Storage Blob Service (Deprecated) (camel-azure)

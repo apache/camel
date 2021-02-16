@@ -14,18 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.translate;
+package org.apache.camel.component.properties;
 
-import com.amazonaws.services.translate.AbstractAmazonTranslate;
-import com.amazonaws.services.translate.model.TranslateTextRequest;
-import com.amazonaws.services.translate.model.TranslateTextResult;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
-public class AmazonAWSTranslateMock extends AbstractAmazonTranslate {
+public class PropertyPlaceholderDefaultValueTest extends ContextTestSupport {
+
+    @Test
+    public void testUsingDefaultValue() throws Exception {
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
+
+        template.sendBody("direct:start", "Hello Camel");
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
-    public TranslateTextResult translateText(TranslateTextRequest request) {
-        TranslateTextResult result = new TranslateTextResult();
-        result.setTranslatedText("Hello");
-        return result;
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("mock:{{foo:bar}}");
+            }
+        };
     }
 }

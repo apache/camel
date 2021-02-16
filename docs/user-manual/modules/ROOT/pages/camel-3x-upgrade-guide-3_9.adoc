@@ -38,3 +38,8 @@ Based on the modularization of camel-spring we have made two starters available 
 
 We also made all the component -starter JARs not depend on any of the above starters, which means you must pick
 the one to use above, and then add which -starter JARs you want to use in your Camel spring boot applications.
+
+=== Camel-AWS components removed
+
+- Camel-AWS-SDB has been removed. There will be no substitution for this, because there isn't a SDK v2 client for this and furthermore the service is not listed in the AWS console anymore.
+- Camel-AWS-Translate has been removed. Please switch to Camel-AWS2-Translate.

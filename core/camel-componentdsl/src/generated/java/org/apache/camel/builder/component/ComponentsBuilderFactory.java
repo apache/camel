@@ -502,20 +502,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.awsS3();
     }
     /**
-     * AWS SimpleDB (camel-aws-sdb)
-     * Store and Retrieve data from/to AWS SDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-sdb
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSdbComponentBuilderFactory.AwsSdbComponentBuilder awsSdb() {
-        return org.apache.camel.builder.component.dsl.AwsSdbComponentBuilderFactory.awsSdb();
-    }
-    /**
      * AWS Simple Email Service (SES) (camel-aws-ses)
      * Send e-mails through AWS SES service.
      * 
@@ -570,20 +556,6 @@ public interface ComponentsBuilderFactory {
     @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.AwsSwfComponentBuilder awsSwf() {
         return org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.awsSwf();
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.AwsTranslateComponentBuilder awsTranslate() {
-        return org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.awsTranslate();
     }
     /**
      * AWS 2 Athena (camel-aws2-athena)

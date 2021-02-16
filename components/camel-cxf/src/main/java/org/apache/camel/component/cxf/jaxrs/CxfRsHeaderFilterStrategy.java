@@ -34,7 +34,7 @@ public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         setLowerCase(true);
 
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern(CAMEL_FILTER_PATTERN);
+        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
 
     }
 

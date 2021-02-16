@@ -56,8 +56,8 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         props.add("preserveHostHeader");
         props.add("disableStreamCache");
         props.add("resteasyMethod");
-        props.add("optionsEnabled");
         props.add("mapHttpMessageHeaders");
+        props.add("optionsEnabled");
         props.add("traceEnabled");
         props.add("cookieHandler");
         props.add("exceptionHandler");

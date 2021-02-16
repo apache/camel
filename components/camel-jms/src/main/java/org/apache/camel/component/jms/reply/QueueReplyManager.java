@@ -135,6 +135,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
             if (replyToSelectorName != null) {
                 // create a random selector value we will use for the reply queue
+                // NOSONAR
                 replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
                 String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);

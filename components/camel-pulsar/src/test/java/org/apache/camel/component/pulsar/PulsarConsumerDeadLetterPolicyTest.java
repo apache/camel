@@ -41,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerDeadLetterPolicyTest.class);
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic-";
+    private static int topicId;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -50,6 +51,8 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     private MockEndpoint deadLetter;
 
     private Producer<String> producer;
+
+    private String topicUri;
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
@@ -81,7 +84,8 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         }
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
 
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(TOPIC_URI).create();
+        topicUri = PulsarConsumerDeadLetterPolicyTest.TOPIC_URI + ++topicId;
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
     }
 
     @AfterEach
@@ -97,7 +101,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
     public void givenNoMaxRedeliverCountAndDeadLetterTopicverifyValuesAreNull() throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar:" + TOPIC_URI);
+        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar:" + topicUri);
 
         assertNull(endpoint.getPulsarConfiguration().getMaxRedeliverCount());
         assertNull(endpoint.getPulsarConfiguration().getDeadLetterTopic());
@@ -109,9 +113,9 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
         PulsarEndpoint from = (PulsarEndpoint) component
-                .createEndpoint("pulsar:" + TOPIC_URI
+                .createEndpoint("pulsar:" + topicUri
                                 + "?maxRedeliverCount=5&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
-        PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:" + TOPIC_URI + "-subs-DLQ");
+        PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:" + topicUri + "-subs-DLQ");
 
         to.expectedMessageCount(5);
         deadLetter.expectedMessageCount(1);
@@ -134,7 +138,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
         PulsarEndpoint from = (PulsarEndpoint) component
-                .createEndpoint("pulsar:" + TOPIC_URI
+                .createEndpoint("pulsar:" + topicUri
                                 + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
         PulsarEndpoint deadLetterFrom
                 = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
@@ -159,7 +163,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
         PulsarEndpoint from = (PulsarEndpoint) component
-                .createEndpoint("pulsar:" + TOPIC_URI
+                .createEndpoint("pulsar:" + topicUri
                                 + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
         PulsarEndpoint deadLetterFrom
                 = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
