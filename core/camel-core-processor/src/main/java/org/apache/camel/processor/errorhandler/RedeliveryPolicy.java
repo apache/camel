@@ -231,6 +231,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
              * First random determines +/-, second random determines how far to
              * go in that direction. -cgs
              */
+            // NOSONAR
             Random random = getRandomNumberGenerator();
             double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
                               * random.nextDouble();
@@ -563,6 +564,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     protected static synchronized Random getRandomNumberGenerator() {
         if (randomNumberGenerator == null) {
+            // NOSONAR
             randomNumberGenerator = new Random();
         }
         return randomNumberGenerator;

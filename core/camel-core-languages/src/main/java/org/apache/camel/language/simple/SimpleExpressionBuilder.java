@@ -190,6 +190,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 int num1 = exp1.evaluate(exchange, Integer.class);
                 int num2 = exp2.evaluate(exchange, Integer.class);
+                // NOSONAR
                 Random random = new Random();
                 int randomNum = random.nextInt(num2 - num1) + num1;
                 return randomNum;
@@ -223,6 +224,7 @@ public final class SimpleExpressionBuilder {
     public static Expression randomExpression(final int min, final int max) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // NOSONAR
                 Random random = new Random();
                 int randomNum = random.nextInt(max - min) + min;
                 return randomNum;

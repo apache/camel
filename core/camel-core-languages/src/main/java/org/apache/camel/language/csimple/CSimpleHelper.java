@@ -465,6 +465,7 @@ public final class CSimpleHelper {
     public static int random(Exchange exchange, Object min, Object max) {
         int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
         int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);
+        // NOSONAR
         Random random = new Random();
         return random.nextInt(num2 - num1) + num1;
     }
