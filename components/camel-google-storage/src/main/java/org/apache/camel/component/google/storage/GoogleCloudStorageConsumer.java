@@ -41,9 +41,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageConsumer.class);
 
-    //private String marker;
-    //private transient String consumerToString;
-
     public GoogleCloudStorageConsumer(GoogleCloudStorageEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
@@ -198,7 +195,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
      * @param exchange the exchange
      */
     protected void processCommit(Exchange exchange) {
-        //LOG.info("processCommit");
         try {
             if (getConfiguration().isMoveAfterRead()) {
                 String bucketName = exchange.getIn().getHeader(GoogleCloudStorageConstants.BUCKET_NAME, String.class);
