@@ -230,7 +230,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             /*
              * First random determines +/-, second random determines how far to
              * go in that direction. -cgs
-             */ 
+             */
             Random random = getRandomNumberGenerator(); // NOSONAR
             double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
                               * random.nextDouble();
