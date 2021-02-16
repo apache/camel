@@ -61,7 +61,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        GoogleCloudStorageComponentOperations operation = determineOperation(exchange);
+        GoogleCloudStorageOperations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
             processFile(getEndpoint().getStorageClient(), exchange);
         } else {
@@ -344,10 +344,10 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         return exchange.getMessage();
     }
 
-    private GoogleCloudStorageComponentOperations determineOperation(Exchange exchange) {
-        GoogleCloudStorageComponentOperations operation = exchange.getIn().getHeader(
+    private GoogleCloudStorageOperations determineOperation(Exchange exchange) {
+        GoogleCloudStorageOperations operation = exchange.getIn().getHeader(
                 GoogleCloudStorageConstants.OPERATION,
-                GoogleCloudStorageComponentOperations.class);
+                GoogleCloudStorageOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -359,7 +359,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         return (GoogleCloudStorageEndpoint) super.getEndpoint();
     }
 
-    private GoogleCloudStorageComponentConfiguration getConfiguration() {
+    private GoogleCloudStorageConfiguration getConfiguration() {
         return this.endpoint.getConfiguration();
     }
 

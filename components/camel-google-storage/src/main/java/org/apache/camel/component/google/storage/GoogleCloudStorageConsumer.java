@@ -241,7 +241,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    protected GoogleCloudStorageComponentConfiguration getConfiguration() {
+    protected GoogleCloudStorageConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 

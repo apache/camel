@@ -17,7 +17,7 @@
 package org.apache.camel.component.google.storage.unit;
 
 import org.apache.camel.component.google.storage.GoogleCloudStorageComponent;
-import org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration;
+import org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration;
 import org.apache.camel.component.google.storage.GoogleCloudStorageEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSuppo
                         bucketName, serviceAccountKeyFile, moveAfterRead, destinationBucket, autoCreateBucket,
                         deleteAfterRead, includeBody));
 
-        GoogleCloudStorageComponentConfiguration configuration = endpoint.getConfiguration();
+        GoogleCloudStorageConfiguration configuration = endpoint.getConfiguration();
         assertEquals(configuration.getBucketName(), bucketName);
         assertEquals(configuration.getServiceAccountKey(), serviceAccountKeyFile);
         assertEquals(configuration.isMoveAfterRead(), moveAfterRead);

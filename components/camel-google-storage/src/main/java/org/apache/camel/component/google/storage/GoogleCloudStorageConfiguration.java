@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleCloudStorageComponentConfiguration implements Cloneable {
+public class GoogleCloudStorageConfiguration implements Cloneable {
 
     @UriPath(label = "common", description = "Bucket name or ARN")
     @Metadata(required = true)
@@ -36,7 +36,7 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
 
     @UriParam(label = "producer",
               enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
-    private GoogleCloudStorageComponentOperations operation;
+    private GoogleCloudStorageOperations operation;
 
     @UriParam(label = "producer", description = "The Object name inside the bucket")
     private String objectName;
@@ -144,7 +144,7 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
         this.storageClient = storageClient;
     }
 
-    public GoogleCloudStorageComponentOperations getOperation() {
+    public GoogleCloudStorageOperations getOperation() {
         return operation;
     }
 
@@ -153,7 +153,7 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
      * 
      * @param operation
      */
-    public void setOperation(GoogleCloudStorageComponentOperations operation) {
+    public void setOperation(GoogleCloudStorageOperations operation) {
         this.operation = operation;
     }
 
@@ -230,9 +230,9 @@ public class GoogleCloudStorageComponentConfiguration implements Cloneable {
         return includeBody;
     }
 
-    public GoogleCloudStorageComponentConfiguration copy() {
+    public GoogleCloudStorageConfiguration copy() {
         try {
-            return (GoogleCloudStorageComponentConfiguration) super.clone();
+            return (GoogleCloudStorageConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

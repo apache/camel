@@ -54,12 +54,12 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);
 
     @UriParam
-    private GoogleCloudStorageComponentConfiguration configuration;
+    private GoogleCloudStorageConfiguration configuration;
 
     private Storage storageClient;
 
     public GoogleCloudStorageEndpoint(String uri, GoogleCloudStorageComponent component,
-                                      GoogleCloudStorageComponentConfiguration configuration) {
+                                      GoogleCloudStorageConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -104,7 +104,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    public static Bucket createNewBucket(String bucketName, GoogleCloudStorageComponentConfiguration conf, Storage storage) {
+    public static Bucket createNewBucket(String bucketName, GoogleCloudStorageConfiguration conf, Storage storage) {
         final String location = conf.getStorageLocation();
         final StorageClass storageClass = conf.getStorageClass();
 
@@ -117,7 +117,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
         return bucket;
     }
 
-    public GoogleCloudStorageComponentConfiguration getConfiguration() {
+    public GoogleCloudStorageConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -126,7 +126,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
      * 
      * @param configuration
      */
-    public void setConfiguration(GoogleCloudStorageComponentConfiguration configuration) {
+    public void setConfiguration(GoogleCloudStorageConfiguration configuration) {
         this.configuration = configuration;
     }
 

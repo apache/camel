@@ -1243,7 +1243,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * Set the operation for the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageOperations&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -1251,7 +1251,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleCloudStorageEndpointProducerBuilder operation(
-                GoogleCloudStorageComponentOperations operation) {
+                GoogleCloudStorageOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -1259,7 +1259,7 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * Set the operation for the producer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageOperations&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -1441,9 +1441,9 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations</code> enum.
+     * <code>org.apache.camel.component.google.storage.GoogleCloudStorageOperations</code> enum.
      */
-    enum GoogleCloudStorageComponentOperations {
+    enum GoogleCloudStorageOperations {
         copyObject,
         listObjects,
         deleteObject,
