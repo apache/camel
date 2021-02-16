@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 public class GoogleCloudStorageComponent extends DefaultComponent {
 
     @Metadata
-    private GoogleCloudStorageComponentConfiguration configuration = new GoogleCloudStorageComponentConfiguration();
+    private GoogleCloudStorageConfiguration configuration = new GoogleCloudStorageConfiguration();
 
     public GoogleCloudStorageComponent() {
         this(null);
@@ -46,8 +46,8 @@ public class GoogleCloudStorageComponent extends DefaultComponent {
         if (remaining.startsWith("arn:")) {
             remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
-        final GoogleCloudStorageComponentConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new GoogleCloudStorageComponentConfiguration();
+        final GoogleCloudStorageConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new GoogleCloudStorageConfiguration();
         setProperties(configuration, parameters);
         configuration.setBucketName(remaining);
         Endpoint endpoint = new GoogleCloudStorageEndpoint(uri, this, configuration);
@@ -55,14 +55,14 @@ public class GoogleCloudStorageComponent extends DefaultComponent {
         return endpoint;
     }
 
-    public GoogleCloudStorageComponentConfiguration getConfiguration() {
+    public GoogleCloudStorageConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
      * The component configuration
      */
-    public void setConfiguration(GoogleCloudStorageComponentConfiguration configuration) {
+    public void setConfiguration(GoogleCloudStorageConfiguration configuration) {
         this.configuration = configuration;
     }
 

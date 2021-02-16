@@ -72,7 +72,7 @@ public interface GoogleStorageComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -80,7 +80,7 @@ public interface GoogleStorageComponentBuilderFactory {
          * @return the dsl builder
          */
         default GoogleStorageComponentBuilder configuration(
-                org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration configuration) {
+                org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -304,7 +304,7 @@ public interface GoogleStorageComponentBuilderFactory {
          * Set the operation for the producer.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.google.storage.GoogleCloudStorageOperations&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -312,7 +312,7 @@ public interface GoogleStorageComponentBuilderFactory {
          * @return the dsl builder
          */
         default GoogleStorageComponentBuilder operation(
-                org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations operation) {
+                org.apache.camel.component.google.storage.GoogleCloudStorageOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -348,10 +348,10 @@ public interface GoogleStorageComponentBuilderFactory {
         protected GoogleCloudStorageComponent buildConcreteComponent() {
             return new GoogleCloudStorageComponent();
         }
-        private org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration getOrCreateConfiguration(
+        private org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration getOrCreateConfiguration(
                 org.apache.camel.component.google.storage.GoogleCloudStorageComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration());
+                component.setConfiguration(new org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration());
             }
             return component.getConfiguration();
         }
@@ -362,7 +362,7 @@ public interface GoogleStorageComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "autoCreateBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setAutoCreateBucket((boolean) value); return true;
-            case "configuration": ((GoogleCloudStorageComponent) component).setConfiguration((org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration) value); return true;
+            case "configuration": ((GoogleCloudStorageComponent) component).setConfiguration((org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration) value); return true;
             case "serviceAccountKey": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "storageClass": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClass((com.google.cloud.storage.StorageClass) value); return true;
             case "storageClient": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClient((com.google.cloud.storage.Storage) value); return true;
@@ -375,7 +375,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;
             case "lazyStartProducer": ((GoogleCloudStorageComponent) component).setLazyStartProducer((boolean) value); return true;
             case "objectName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setObjectName((java.lang.String) value); return true;
-            case "operation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setOperation((org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations) value); return true;
+            case "operation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setOperation((org.apache.camel.component.google.storage.GoogleCloudStorageOperations) value); return true;
             case "autowiredEnabled": ((GoogleCloudStorageComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }

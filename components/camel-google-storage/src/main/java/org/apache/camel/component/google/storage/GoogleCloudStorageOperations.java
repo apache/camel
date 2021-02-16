@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.storage;
 
-public enum GoogleCloudStorageComponentOperations {
+public enum GoogleCloudStorageOperations {
     copyObject,
     listObjects,
     deleteObject,

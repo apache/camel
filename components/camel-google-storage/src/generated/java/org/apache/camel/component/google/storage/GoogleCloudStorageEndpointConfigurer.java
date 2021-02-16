@@ -53,7 +53,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "moveAfterRead": target.getConfiguration().setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "objectname":
         case "objectName": target.getConfiguration().setObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
@@ -125,7 +125,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "moveAfterRead": return boolean.class;
         case "objectname":
         case "objectName": return java.lang.String.class;
-        case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class;
+        case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "repeatcount":

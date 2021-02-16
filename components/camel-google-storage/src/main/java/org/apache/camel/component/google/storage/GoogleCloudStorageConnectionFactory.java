@@ -31,7 +31,7 @@ public final class GoogleCloudStorageConnectionFactory {
     private GoogleCloudStorageConnectionFactory() {
     }
 
-    public static Storage create(GoogleCloudStorageComponentConfiguration configuration) throws Exception {
+    public static Storage create(GoogleCloudStorageConfiguration configuration) throws Exception {
         if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
             Storage storage = StorageOptions.newBuilder()
                     .setCredentials(

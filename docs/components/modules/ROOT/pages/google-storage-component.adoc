@@ -88,7 +88,7 @@ The Google Storage component supports 16 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
-| *configuration* (common) | The component configuration |  | GoogleCloudStorageComponentConfiguration
+| *configuration* (common) | The component configuration |  | GoogleCloudStorageConfiguration
 | *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
 | *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
 | *storageClient* (common) | *Autowired* The storage client |  | Storage
@@ -101,7 +101,7 @@ The Google Storage component supports 16 options, which are listed below.
 | *moveAfterRead* (consumer) | Move objects from the origin bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *objectName* (producer) | The Object name inside the bucket |  | String
-| *operation* (producer) | Set the operation for the producer. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, createDownloadLink |  | GoogleCloudStorageComponentOperations
+| *operation* (producer) | Set the operation for the producer. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, createDownloadLink |  | GoogleCloudStorageOperations
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
@@ -148,7 +148,7 @@ with the following path and query parameters:
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *objectName* (producer) | The Object name inside the bucket |  | String
-| *operation* (producer) | Set the operation for the producer. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, createDownloadLink |  | GoogleCloudStorageComponentOperations
+| *operation* (producer) | Set the operation for the producer. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, createDownloadLink |  | GoogleCloudStorageOperations
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
@@ -287,7 +287,7 @@ This operation will upload the file camel.txt with the content "Camel rocks!" in
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process( exchange -> {
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageComponentOperations.copyObject);
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.copyObject);
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
     exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, "myCamelBucket_dest");
     exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, "camel_copy.txt");
@@ -303,7 +303,7 @@ This operation will copy the object with the name expressed in the header DESTIN
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process( exchange -> {
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageComponentOperations.deleteObject);
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteObject);
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
   })
   .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")

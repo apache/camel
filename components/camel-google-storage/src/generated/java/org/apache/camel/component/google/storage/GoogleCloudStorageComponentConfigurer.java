@@ -17,9 +17,9 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration getOrCreateConfiguration(GoogleCloudStorageComponent target) {
+    private org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration getOrCreateConfiguration(GoogleCloudStorageComponent target) {
         if (target.getConfiguration() == null) {
-            target.setConfiguration(new org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration());
+            target.setConfiguration(new org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration());
         }
         return target.getConfiguration();
     }
@@ -34,7 +34,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "destinationbucket":
@@ -49,7 +49,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "moveAfterRead": getOrCreateConfiguration(target).setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "objectname":
         case "objectName": getOrCreateConfiguration(target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
@@ -76,7 +76,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "configuration": return org.apache.camel.component.google.storage.GoogleCloudStorageComponentConfiguration.class;
+        case "configuration": return org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration.class;
         case "deleteafterread":
         case "deleteAfterRead": return boolean.class;
         case "destinationbucket":
@@ -91,7 +91,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "moveAfterRead": return boolean.class;
         case "objectname":
         case "objectName": return java.lang.String.class;
-        case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageComponentOperations.class;
+        case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "storageclass":
