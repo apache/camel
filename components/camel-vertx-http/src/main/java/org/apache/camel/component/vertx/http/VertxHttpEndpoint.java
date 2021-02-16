@@ -26,11 +26,13 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
              category = { Category.HTTP }, producerOnly = true, lenientProperties = true)
@@ -40,6 +42,8 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
     private VertxHttpConfiguration configuration;
 
     private WebClient webClient;
+    private int minOkRange;
+    private int maxOkRange;
 
     public VertxHttpEndpoint(String uri, VertxHttpComponent component, VertxHttpConfiguration configuration) {
         super(uri, component);
@@ -49,6 +53,15 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
     @Override
     public VertxHttpComponent getComponent() {
         return (VertxHttpComponent) super.getComponent();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (!configuration.getOkStatusCodeRange().contains(",")) {
+            // default is 200-299 so lets optimize for this
+            minOkRange = Integer.parseInt(StringHelper.before(configuration.getOkStatusCodeRange(), "-"));
+            maxOkRange = Integer.parseInt(StringHelper.after(configuration.getOkStatusCodeRange(), "-"));
+        }
     }
 
     @Override
@@ -111,6 +124,14 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
 
     protected WebClient getWebClient() {
         return this.webClient;
+    }
+
+    protected boolean isStatusCodeOk(int responseCode) {
+        if (minOkRange > 0) {
+            return responseCode >= minOkRange && responseCode <= maxOkRange;
+        } else {
+            return HttpHelper.isStatusCodeOk(responseCode, configuration.getOkStatusCodeRange());
+        }
     }
 
     private void configureProxyOptionsIfRequired(WebClientOptions options) {
