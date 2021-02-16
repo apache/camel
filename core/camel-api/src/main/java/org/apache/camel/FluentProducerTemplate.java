@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
@@ -144,6 +145,13 @@ public interface FluentProducerTemplate extends Service {
      */
     @Deprecated
     FluentProducerTemplate clearAll();
+
+    /**
+     * Set the headers
+     *
+     * @param headers the headers
+     */
+    FluentProducerTemplate withHeaders(Map<String, Object> headers);
 
     /**
      * Set the header

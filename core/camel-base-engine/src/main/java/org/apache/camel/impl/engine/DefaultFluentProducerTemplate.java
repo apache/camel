@@ -174,6 +174,19 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     @Override
+    public FluentProducerTemplate withHeaders(Map<String, Object> headers) {
+        DefaultFluentProducerTemplate clone = checkCloned();
+
+        Map<String, Object> map = clone.headers;
+        if (map == null) {
+            map = new LinkedHashMap<>();
+            clone.headers = map;
+        }
+        map.putAll(headers);
+        return clone;
+    }
+
+    @Override
     public FluentProducerTemplate withHeader(String key, Object value) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
