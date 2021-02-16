@@ -26,14 +26,13 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointProducerResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.service.ServiceHelper;
@@ -45,23 +44,23 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     // transient state of endpoint, headers and body which needs to be thread local scoped to be thread-safe
     private Map<String, Object> headers;
     private Object body;
-    private Endpoint endpoint;
     private Supplier<Exchange> exchangeSupplier;
     private Supplier<Processor> processorSupplier;
     private Consumer<ProducerTemplate> templateCustomizer;
 
     private final CamelContext context;
-    private final ProcessorFactory processorFactory;
     private final ClassValue<Processor> resultProcessors;
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
     private boolean eventNotifierEnabled;
+    private volatile DefaultFluentProducerTemplate parent;
+    private volatile Endpoint endpoint;
+    private volatile String endpointUri;
     private volatile ProducerTemplate template;
     private volatile boolean cloned;
 
     public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
-        this.processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
         this.eventNotifierEnabled = true;
         this.resultProcessors = new ClassValue<Processor>() {
             @Override
@@ -71,22 +70,27 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         };
     }
 
-    private DefaultFluentProducerTemplate(CamelContext context, ClassValue<Processor> resultProcessors,
+    private DefaultFluentProducerTemplate(DefaultFluentProducerTemplate parent, CamelContext context,
+                                          ClassValue<Processor> resultProcessors,
                                           Endpoint defaultEndpoint, int maximumCacheSize, boolean eventNotifierEnabled,
-                                          ProducerTemplate template) {
+                                          ProducerTemplate template, Endpoint endpoint, String endpointUri) {
+        this.parent = parent;
         this.context = context;
-        this.processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
         this.resultProcessors = resultProcessors;
         this.defaultEndpoint = defaultEndpoint;
         this.maximumCacheSize = maximumCacheSize;
         this.eventNotifierEnabled = eventNotifierEnabled;
         this.template = template;
+        this.endpoint = endpoint;
+        this.endpointUri = endpointUri;
         this.cloned = true;
     }
 
     private DefaultFluentProducerTemplate newClone() {
+        this.cloned = true;
         return new DefaultFluentProducerTemplate(
-                context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template);
+                this, context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template, endpoint,
+                endpointUri);
     }
 
     private DefaultFluentProducerTemplate checkCloned() {
@@ -220,6 +224,33 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     @Override
+    public FluentProducerTemplate withDefaultEndpoint(String endpointUri) {
+        if (cloned) {
+            throw new IllegalArgumentException("Default endpoint must be set before template has been used");
+        }
+        this.defaultEndpoint = getCamelContext().getEndpoint(endpointUri);
+        return this;
+    }
+
+    @Override
+    public FluentProducerTemplate withDefaultEndpoint(EndpointProducerResolver resolver) {
+        if (cloned) {
+            throw new IllegalArgumentException("Default endpoint must be set before template has been used");
+        }
+        this.defaultEndpoint = resolver.resolve(getCamelContext());
+        return this;
+    }
+
+    @Override
+    public FluentProducerTemplate withDefaultEndpoint(Endpoint endpoint) {
+        if (cloned) {
+            throw new IllegalArgumentException("Default endpoint must be set before template has been used");
+        }
+        this.defaultEndpoint = endpoint;
+        return this;
+    }
+
+    @Override
     public FluentProducerTemplate withTemplateCustomizer(final Consumer<ProducerTemplate> templateCustomizer) {
         if (this.templateCustomizer != null && isStarted()) {
             throw new IllegalArgumentException("Not allowed after template has been started");
@@ -264,7 +295,24 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public FluentProducerTemplate to(String endpointUri) {
-        return to(context.getEndpoint(endpointUri));
+        DefaultFluentProducerTemplate clone = checkCloned();
+
+        // optimize if we send to the same endpoint as before
+        if (clone.endpoint != null && clone.endpointUri != null && clone.endpointUri.equals(endpointUri)) {
+            return clone;
+        } else {
+            // store state of this endpoint so we can potentially reuse it again if sending to same endpoint next time
+            clone.endpointUri = endpointUri;
+            clone.endpoint = context.getEndpoint(endpointUri);
+            if (this.parent != null) {
+                this.parent.endpointUri = endpointUri;
+                this.parent.endpoint = clone.endpoint;
+            } else {
+                this.endpointUri = endpointUri;
+                this.endpoint = clone.endpoint;
+            }
+            return clone;
+        }
     }
 
     @Override
@@ -415,8 +463,6 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public static FluentProducerTemplate on(CamelContext context) {
         DefaultFluentProducerTemplate fluent = new DefaultFluentProducerTemplate(context);
         fluent.start();
-        // mark it as cloned as its started
-        fluent.cloned = true;
         return fluent;
     }
 
@@ -479,7 +525,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     protected void doStop() throws Exception {
         clearAll();
+        this.parent = null;
         this.endpoint = null;
+        this.endpointUri = null;
         this.exchangeSupplier = null;
         this.processorSupplier = null;
         this.templateCustomizer = null;
