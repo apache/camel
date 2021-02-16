@@ -147,7 +147,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
     protected long connectionTimeToLive = -1;
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
-    private boolean useGlobalSslContextParameters;
+    protected boolean useGlobalSslContextParameters;
     @Metadata(label = "producer", defaultValue = "8192",
               description = "This threshold in bytes controls whether the response payload"
                             + " should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode.")
