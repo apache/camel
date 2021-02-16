@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.DrinkValidationHandler;
@@ -85,10 +87,20 @@ public class HttpProducerLoadTest extends BaseHttpTest {
 
         StopWatch watch = new StopWatch();
 
+        // do not use template but reuse exchange/producer to be light-weight
+        // and not create additional objects in the JVM as we want to analyze
+        // the "raw" http producer
         Endpoint to = getMandatoryEndpoint("direct:echo");
+        Producer producer = to.createProducer();
+        producer.start();
+
+        Exchange exchange = to.createExchange();
+        exchange.getMessage().setHeaders(map);
         for (int i = 0; i < 10000000; i++) {
-            template.sendBodyAndHeaders(to, "Message " + i, map);
+            exchange.getMessage().setBody("Message " + i);
+            producer.process(exchange);
         }
+        producer.stop();
 
         LOG.info("Took {} ms", watch.taken());
     }
