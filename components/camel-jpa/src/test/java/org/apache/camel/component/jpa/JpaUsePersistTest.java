@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import javax.persistence.PersistenceException;
 
@@ -40,7 +40,7 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
     public void produceExistingEntityShouldThrowAnException() throws Exception {
         setUp("jpa://" + Order.class.getName() + "?usePersist=true");
 
-        long id = new Random().nextLong();
+        long id = new SecureRandom().nextLong();
         Order order2 = new Order();
         order2.setId(id);
         order2.setProductName("Beer");

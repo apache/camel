@@ -16,25 +16,19 @@
  */
 package org.apache.camel.spring;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
-import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextBeanRepository;
 import org.apache.camel.spring.spi.SpringInjector;
@@ -42,8 +36,6 @@ import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -72,30 +64,18 @@ public class SpringCamelContext extends DefaultCamelContext
     public static final String EXCLUDE_ROUTES = "CamelTestSpringExcludeRoutes";
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
-    private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<>();
     private ApplicationContext applicationContext;
     private EventComponent eventComponent;
     private boolean shutdownEager = true;
 
     public SpringCamelContext() {
         super(false);
-        if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            disableJMX();
-        }
         setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {
         this();
         setApplicationContext(applicationContext);
-    }
-
-    public static void setNoStart(boolean b) {
-        if (b) {
-            NO_START.set(true);
-        } else {
-            NO_START.set(null);
-        }
     }
 
     /**
@@ -123,23 +103,10 @@ public class SpringCamelContext extends DefaultCamelContext
 
     @Override
     public void start() {
-        // for example from unit testing we want to start Camel later (manually)
-        if (Boolean.TRUE.equals(NO_START.get())) {
-            LOG.trace("Ignoring start() as NO_START is false");
-            return;
-        }
-
-        if (!isStarted() && !isStarting()) {
-            try {
-                StopWatch watch = new StopWatch();
-                super.start();
-                LOG.debug("start() took {} millis", watch.taken());
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
-        } else {
-            // ignore as Camel is already started
-            LOG.trace("Ignoring start() as Camel is already started");
+        try {
+            super.start();
+        } catch (Exception e) {
+            throw wrapRuntimeCamelException(e);
         }
     }
 
@@ -327,19 +294,6 @@ public class SpringCamelContext extends DefaultCamelContext
     @Override
     public boolean isRunning() {
         return !isStopping() && !isStopped();
-    }
-
-    protected PackageScanClassResolver createPackageScanClassResolver() {
-        PackageScanClassResolver resolver = super.createPackageScanClassResolver();
-        String excluded = System.getProperty(EXCLUDE_ROUTES);
-        if (ObjectHelper.isNotEmpty(excluded)) {
-            Set<Class<?>> excludedClasses = new HashSet<>();
-            for (String str : excluded.split(",")) {
-                excludedClasses.add(getClassResolver().resolveClass(str));
-            }
-            resolver.addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
-        }
-        return resolver;
     }
 
 }

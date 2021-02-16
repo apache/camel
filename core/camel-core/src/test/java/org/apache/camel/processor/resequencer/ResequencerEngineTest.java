@@ -16,9 +16,9 @@
  */
 package org.apache.camel.processor.resequencer;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TestSupport;
@@ -104,7 +104,7 @@ public class ResequencerEngineTest extends TestSupport {
         for (int i = 0; i < input; i++) {
             list.add(i);
         }
-        Random random = new Random(System.currentTimeMillis());
+        SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder(4000);
         sb.append("Input sequence: ");
         long millis = System.currentTimeMillis();

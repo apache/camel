@@ -84,7 +84,7 @@ public class SmppConsumerTest {
 
         consumer.doStart();
 
-        verify(session).setEnquireLinkTimer(5000);
+        verify(session).setEnquireLinkTimer(60000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
         verify(session).setMessageReceiverListener(isA(MessageReceiverListener.class));

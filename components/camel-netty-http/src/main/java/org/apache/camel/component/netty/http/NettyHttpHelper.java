@@ -280,11 +280,11 @@ public final class NettyHttpHelper {
         for (String range : ranges) {
             boolean ok;
             if (range.contains("-")) {
-                int from = Integer.valueOf(StringHelper.before(range, "-"));
-                int to = Integer.valueOf(StringHelper.after(range, "-"));
+                int from = Integer.parseInt(StringHelper.before(range, "-"));
+                int to = Integer.parseInt(StringHelper.after(range, "-"));
                 ok = statusCode >= from && statusCode <= to;
             } else {
-                int exact = Integer.valueOf(range);
+                int exact = Integer.parseInt(range);
                 ok = exact == statusCode;
             }
             if (ok) {

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Channel;
@@ -134,14 +134,14 @@ public class StreamResequencerTest extends ContextTestSupport {
         private final int start;
         private final int end;
         private final int increment;
-        private final Random random;
+        private final SecureRandom random;
 
         Sender(ProducerTemplate template, int start, int end, int increment) {
             this.template = template;
             this.start = start;
             this.end = end;
             this.increment = increment;
-            random = new Random();
+            random = new SecureRandom();
         }
 
         @Override
