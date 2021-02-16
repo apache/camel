@@ -53,6 +53,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -87,6 +88,8 @@ public class HttpProducer extends DefaultProducer {
     private boolean throwException;
     private boolean transferException;
     private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
+    private int minOkRange;
+    private int maxOkRange;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -94,6 +97,18 @@ public class HttpProducer extends DefaultProducer {
         this.httpContext = endpoint.getHttpContext();
         this.throwException = endpoint.isThrowExceptionOnFailure();
         this.transferException = endpoint.isTransferException();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        String range = getEndpoint().getOkStatusCodeRange();
+        if (!range.contains(",")) {
+            // default is 200-299 so lets optimize for this
+            minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
+            maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
+        }
     }
 
     @Override
@@ -238,7 +253,12 @@ public class HttpProducer extends DefaultProducer {
                 // if we do not use failed exception then populate response for all response codes
                 populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
             } else {
-                boolean ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                boolean ok;
+                if (minOkRange > 0) {
+                    ok = responseCode >= minOkRange && responseCode <= maxOkRange;
+                } else {
+                    ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
+                }
                 if (ok) {
                     // only populate response for OK response
                     populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
