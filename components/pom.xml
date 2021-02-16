@@ -123,7 +123,6 @@
         <module>camel-aws-sns</module>
         <module>camel-aws-sqs</module>
         <module>camel-aws-swf</module>
-        <module>camel-aws-translate</module>
         <module>camel-aws2-athena</module>
         <module>camel-aws2-cw</module>
         <module>camel-aws2-ddb</module>
