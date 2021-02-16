@@ -30,13 +30,14 @@ import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
-//@Disabled("Manual test")
+@Disabled("Manual test")
 public class HttpProducerLoadTest extends BaseHttpTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducerLoadTest.class);
@@ -71,7 +72,8 @@ public class HttpProducerLoadTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:echo")
-                        .to("http://localhost:5678?copyHeaders=false");
+                        .to("http://localhost:" + localServer.getLocalPort()
+                                + "/echo?throwExceptionOnFailure=false");
             }
         };
     }
