@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms.support;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -93,7 +93,7 @@ public class MyInOutTestConsumer implements MessageListener {
     }
 
     private String createRandomString() {
-        Random random = new Random(System.currentTimeMillis());
+        SecureRandom random = new SecureRandom();
         long randomLong = random.nextLong();
         return Long.toHexString(randomLong);
     }

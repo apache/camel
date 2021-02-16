@@ -40,7 +40,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWith;
@@ -983,14 +982,14 @@ public abstract class CamelTestSupport
      * Disables the JMX agent. Must be called before the {@link #setUp()} method.
      */
     protected void disableJMX() {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+        DefaultCamelContext.setDisableJmx(true);
     }
 
     /**
      * Enables the JMX agent. Must be called before the {@link #setUp()} method.
      */
     protected void enableJMX() {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
+        DefaultCamelContext.setDisableJmx(false);
     }
 
     /**

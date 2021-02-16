@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
@@ -50,7 +50,7 @@ public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestS
 
     @Test
     public void testCreate() throws Exception {
-        String title = "camel-sheets-" + new Random().nextInt(Integer.MAX_VALUE);
+        String title = "camel-sheets-" + new SecureRandom().nextInt(Integer.MAX_VALUE);
         Spreadsheet sheetToCreate = new Spreadsheet();
         SpreadsheetProperties sheetProperties = new SpreadsheetProperties();
         sheetProperties.setTitle(title);

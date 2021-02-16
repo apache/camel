@@ -138,9 +138,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         if (response.succeeded()) {
             Message message = exchange.getMessage();
             VertxHttpConfiguration configuration = endpoint.getConfiguration();
-            boolean statusCodeOk = HttpHelper.isStatusCodeOk(result.statusCode(), configuration.getOkStatusCodeRange());
-
-            if ((!configuration.isThrowExceptionOnFailure()) || (configuration.isThrowExceptionOnFailure() && statusCodeOk)) {
+            boolean ok = endpoint.isStatusCodeOk(result.statusCode());
+            if ((!configuration.isThrowExceptionOnFailure()) || (configuration.isThrowExceptionOnFailure() && ok)) {
                 populateResponseHeaders(exchange, result, configuration.getHeaderFilterStrategy());
                 message.setBody(processResponseBody(endpoint, exchange, result));
             } else {
@@ -239,4 +238,5 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
         return exception;
     }
+
 }

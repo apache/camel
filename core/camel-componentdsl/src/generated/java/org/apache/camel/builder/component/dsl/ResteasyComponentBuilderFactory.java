@@ -113,6 +113,24 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * This threshold in bytes controls whether the response payload should
+         * be stored in memory as a byte array or be streaming based. Set this
+         * to -1 to always use streaming mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8192
+         * Group: producer
+         * 
+         * @param responsePayloadStreamingThreshold the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder responsePayloadStreamingThreshold(
+                int responsePayloadStreamingThreshold) {
+            doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
+            return this;
+        }
+        /**
          * Whether to allow java serialization when a request uses
          * context-type=application/x-java-serialized-object. This is by default
          * turned off. If you enable this then be aware that Java will
@@ -191,6 +209,7 @@ public interface ResteasyComponentBuilderFactory {
             case "bridgeErrorHandler": ((ResteasyComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "responsePayloadStreamingThreshold": ((ResteasyComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "autowiredEnabled": ((ResteasyComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "headerFilterStrategy": ((ResteasyComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;

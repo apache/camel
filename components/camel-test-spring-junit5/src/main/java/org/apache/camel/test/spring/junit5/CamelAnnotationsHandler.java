@@ -27,10 +27,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
@@ -57,20 +57,7 @@ public final class CamelAnnotationsHandler {
      * @param testClass the test class being executed
      */
     public static void cleanup(Class<?> testClass) {
-        SpringCamelContext.setNoStart(false);
-
-        if (CamelSpringTestHelper.getOriginalJmxDisabled() == null) {
-            System.clearProperty(JmxSystemPropertyKeys.DISABLED);
-        } else {
-            System.setProperty(JmxSystemPropertyKeys.DISABLED,
-                    CamelSpringTestHelper.getOriginalJmxDisabled());
-        }
-        if (CamelSpringTestHelper.getOriginalExcludeRoutes() == null) {
-            System.clearProperty(SpringCamelContext.EXCLUDE_ROUTES);
-        } else {
-            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES,
-                    CamelSpringTestHelper.getOriginalExcludeRoutes());
-        }
+        DefaultCamelContext.clearOptions();
     }
 
     /**
@@ -80,25 +67,22 @@ public final class CamelAnnotationsHandler {
      * @param testClass the test class being executed
      */
     public static void handleExcludeRoutes(ConfigurableApplicationContext context, Class<?> testClass) {
-        CamelSpringTestHelper.setOriginalExcludeRoutesValue(System.getProperty(SpringCamelContext.EXCLUDE_ROUTES));
+        String key = SpringCamelContext.EXCLUDE_ROUTES;
+        String exists = System.getProperty(key);
+        if (exists != null) {
+            LOGGER.warn("The JVM property " + key + " is set, but not supported anymore.");
+        }
 
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
-            Class[] routes = testClass.getAnnotation(ExcludeRoutes.class).value();
+            Class<?>[] routes = testClass.getAnnotation(ExcludeRoutes.class).value();
             // need to setup this as a JVM system property
             StringJoiner routesBuilder = new StringJoiner(",");
-            for (Class clazz : routes) {
+            for (Class<?> clazz : routes) {
                 routesBuilder.add(clazz.getName());
             }
-            String key = SpringCamelContext.EXCLUDE_ROUTES;
             String value = routesBuilder.toString();
-
-            String exists = System.getProperty(key);
-            if (exists != null) {
-                LOGGER.warn("Cannot use @ExcludeRoutes as JVM property " + key + " has already been set.");
-            } else {
-                LOGGER.info("@ExcludeRoutes annotation found. Setting up JVM property {}={}", key, value);
-                System.setProperty(key, value);
-            }
+            LOGGER.info("@ExcludeRoutes annotation found. Setting up JVM property {}={}", key, value);
+            DefaultCamelContext.setExcludeRoutes(value);
         }
     }
 
@@ -109,29 +93,27 @@ public final class CamelAnnotationsHandler {
      * @param testClass the test class being executed
      */
     public static void handleDisableJmx(ConfigurableApplicationContext context, Class<?> testClass) {
-        CamelSpringTestHelper.setOriginalJmxDisabledValue(System.getProperty(JmxSystemPropertyKeys.DISABLED));
-
         if (testClass.isAnnotationPresent(DisableJmx.class)) {
             if (testClass.getAnnotation(DisableJmx.class).value()) {
                 LOGGER.info("Disabling Camel JMX globally as DisableJmx annotation was found and disableJmx is set to true.");
-                System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+                DefaultCamelContext.setDisableJmx(true);
             } else {
                 LOGGER.info("Enabling Camel JMX as DisableJmx annotation was found and disableJmx is set to false.");
-                System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+                DefaultCamelContext.setDisableJmx(false);
             }
         } else if (!testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
             // route coverage need JMX so do not disable it by default
             LOGGER.info(
                     "Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting.");
-            System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+            DefaultCamelContext.setDisableJmx(true);
         } else {
             LOGGER.info("Enabling Camel JMX as EnableRouteCoverage is used.");
-            System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
+            DefaultCamelContext.setDisableJmx(false);
         }
     }
 
     /**
-     * Handles disabling of JMX on Camel contexts based on {@link DisableJmx}.
+     * Handles disabling of JMX on Camel contexts based on {@link EnableRouteCoverage}.
      *
      * @param context   the initialized Spring context
      * @param testClass the test class being executed

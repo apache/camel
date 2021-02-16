@@ -38,14 +38,24 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel.</tt>
+     *
+     * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
+    @Deprecated
     public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+
+    /**
+     * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel.</tt>
+     */
+    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel." };
 
     private Set<String> inFilter;
     private Pattern inFilterPattern;
+    private String[] inFilterStartsWith;
 
     private Set<String> outFilter;
     private Pattern outFilterPattern;
+    private String[] outFilterStartsWith;
 
     private boolean lowerCase;
     private boolean allowNullValues;
@@ -84,6 +94,16 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      */
     public void setOutFilter(Set<String> value) {
         outFilter = value;
+    }
+
+    /**
+     * Sets the "out" direction filter by starts with pattern. The "out" direction is referred to copying headers from a
+     * Camel message to an external message.
+     *
+     * @param outFilterStartsWith one or more key names to use for filtering using starts with
+     */
+    public void setOutFilterStartsWith(String... outFilterStartsWith) {
+        this.outFilterStartsWith = outFilterStartsWith;
     }
 
     /**
@@ -144,6 +164,16 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      */
     public void setInFilter(Set<String> value) {
         inFilter = value;
+    }
+
+    /**
+     * Sets the "in" direction filter by starts with pattern. The "in" direction is referred to copying headers from an
+     * external message to a Camel message.
+     *
+     * @param inFilterStartsWith one or more key names to use for filtering using starts with
+     */
+    public void setInFilterStartsWith(String... inFilterStartsWith) {
+        this.inFilterStartsWith = inFilterStartsWith;
     }
 
     /**
@@ -266,13 +296,25 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
         Pattern pattern = null;
         Set<String> filter = null;
+        String[] startsWith = null;
 
         if (Direction.OUT == direction) {
             pattern = outFilterPattern;
             filter = outFilter;
+            startsWith = outFilterStartsWith;
         } else if (Direction.IN == direction) {
             pattern = inFilterPattern;
             filter = inFilter;
+            startsWith = inFilterStartsWith;
+        }
+
+        if (startsWith != null) {
+            for (String s : startsWith) {
+                boolean match = headerName.startsWith(s);
+                if (match) {
+                    return filterOnMatch;
+                }
+            }
         }
 
         if (pattern != null) {

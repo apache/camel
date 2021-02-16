@@ -28,7 +28,10 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.Block;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.OutputNode;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -40,7 +43,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> {
+public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
 
     @XmlAttribute
     private String method;
@@ -127,6 +130,15 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         } else {
             return "verb";
         }
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition<?> processorDefinition) {
+        if (route == null) {
+            route = new RouteDefinition();
+        }
+
+        route.addOutput(processorDefinition);
     }
 
     public List<RestOperationParamDefinition> getParams() {

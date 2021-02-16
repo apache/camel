@@ -17,11 +17,11 @@
 package org.apache.camel.processor;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Future;
 
 import org.apache.camel.AggregationStrategy;
@@ -127,7 +127,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 
             // emulate some processing
-            Random random = new Random(System.currentTimeMillis());
+            SecureRandom random = new SecureRandom();
             for (int i = 0; i < 10000; i++) {
                 random.nextGaussian();
             }

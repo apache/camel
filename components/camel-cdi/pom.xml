@@ -448,7 +448,7 @@
         </profile>
 
         <profile>
-            <id>jdk9+-weld-3.0</id>
+            <id>jdk9s-weld-3.0</id>
             <activation>
                 <jdk>[9,)</jdk>
             </activation>

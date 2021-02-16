@@ -56,8 +56,8 @@ public class SmppConfiguration implements Cloneable {
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
     @UriParam(label = "codec", defaultValue = "ISO-8859-1")
     private String encoding = "ISO-8859-1";
-    @UriParam(label = "advanced", defaultValue = "5000")
-    private Integer enquireLinkTimer = 5000;
+    @UriParam(label = "advanced", defaultValue = "60000")
+    private Integer enquireLinkTimer = 60000;
     @UriParam(label = "advanced", defaultValue = "10000")
     private Integer transactionTimer = 10000;
     @UriParam(label = "producer", enums = "0,1,2")

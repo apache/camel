@@ -301,7 +301,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.SchedulerBuilders,
             org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.SchematronBuilders,
             org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.ScpBuilders,
-            org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbBuilders,
             org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.SedaBuilders,
             org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.ServerBuilders,
             org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.ServiceBuilders,

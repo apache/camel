@@ -121,7 +121,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         assertTrue(has, "Should have type converter");
 
         has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter",
-                new Object[] { "java.math.BigInteger", "java.util.Random" },
+                new Object[] { "java.math.BigInteger", "java.security.SecureRandom" },
                 new String[] { "java.lang.String", "java.lang.String" });
         assertFalse(has, "Should not have type converter");
     }
