@@ -247,7 +247,9 @@ public class HttpProducer extends DefaultProducer {
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
-            LOG.debug("Http responseCode: {}", responseCode);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Http responseCode: {}", responseCode);
+            }
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
