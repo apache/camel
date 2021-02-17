@@ -214,7 +214,11 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                     }
                 }
             } else {
-                return responseBody.getBytes();
+                if (endpoint.getConfiguration().isResponsePayloadAsByteArray()) {
+                    return responseBody.getBytes();
+                } else {
+                    return responseBody;
+                }
             }
         }
         return null;

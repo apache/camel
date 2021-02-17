@@ -20,7 +20,7 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(24);
         props.add("throwExceptionOnFailure");
         props.add("proxyUsername");
         props.add("sessionManagement");
@@ -33,6 +33,7 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("useCompression");
         props.add("vertxHttpBinding");
         props.add("okStatusCodeRange");
+        props.add("responsePayloadAsByteArray");
         props.add("proxyHost");
         props.add("timeout");
         props.add("proxyPort");

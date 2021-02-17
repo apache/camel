@@ -35,6 +35,8 @@ public final class VertxBufferConverterLoader implements TypeConverterLoader {
             (type, exchange, value) -> org.apache.camel.component.vertx.http.VertxBufferConverter.toBuffer((java.io.InputStream) value));
         addTypeConverter(registry, io.vertx.core.buffer.Buffer.class, java.lang.String.class, false,
             (type, exchange, value) -> org.apache.camel.component.vertx.http.VertxBufferConverter.toBuffer((java.lang.String) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, io.vertx.core.buffer.Buffer.class, false,
+            (type, exchange, value) -> org.apache.camel.component.vertx.http.VertxBufferConverter.toInputStream((io.vertx.core.buffer.Buffer) value));
         addTypeConverter(registry, java.lang.String.class, io.vertx.core.buffer.Buffer.class, false,
             (type, exchange, value) -> org.apache.camel.component.vertx.http.VertxBufferConverter.toString((io.vertx.core.buffer.Buffer) value, exchange));
     }

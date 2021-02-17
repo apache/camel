@@ -58,6 +58,8 @@ public class VertxHttpConfiguration {
     private CookieStore cookieStore;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean useCompression;
+    @UriParam(label = "producer", defaultValue = "true")
+    protected boolean responsePayloadAsByteArray = true;
     @UriParam(label = "security")
     private String basicAuthUsername;
     @UriParam(label = "security")
@@ -223,6 +225,17 @@ public class VertxHttpConfiguration {
 
     public boolean isUseCompression() {
         return useCompression;
+    }
+
+    public boolean isResponsePayloadAsByteArray() {
+        return responsePayloadAsByteArray;
+    }
+
+    /**
+     * Whether the response body should be byte[] or as io.vertx.core.buffer.Buffer
+     */
+    public void setResponsePayloadAsByteArray(boolean responsePayloadAsByteArray) {
+        this.responsePayloadAsByteArray = responsePayloadAsByteArray;
     }
 
     /**
