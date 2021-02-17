@@ -59,7 +59,7 @@ public class VertxHttpConfiguration {
     @UriParam(label = "producer", defaultValue = "false")
     private boolean useCompression;
     @UriParam(label = "producer", defaultValue = "true")
-    protected boolean responsePayloadAsByteArray = true;
+    private boolean responsePayloadAsByteArray = true;
     @UriParam(label = "security")
     private String basicAuthUsername;
     @UriParam(label = "security")

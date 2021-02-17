@@ -78,7 +78,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
     @Metadata(label = "producer", defaultValue = "true")
-    protected boolean responsePayloadAsByteArray = true;
+    private boolean responsePayloadAsByteArray = true;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

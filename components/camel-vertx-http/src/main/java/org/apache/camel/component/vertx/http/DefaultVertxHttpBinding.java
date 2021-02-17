@@ -172,7 +172,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
         MultiMap headers = response.headers();
         headers.forEach(new Consumer<Map.Entry<String, String>>() {
-            boolean found = false;
+            boolean found;
 
             @Override
             public void accept(Map.Entry<String, String> entry) {
