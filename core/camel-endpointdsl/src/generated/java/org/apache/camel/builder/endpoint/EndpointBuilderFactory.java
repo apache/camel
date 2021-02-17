@@ -333,7 +333,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.SqlBuilders,
             org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.SqlStoredBuilders,
             org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2Builders,
-            org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsBuilders,
             org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.SshBuilders,
             org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.StAXBuilders,
             org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchBuilders,

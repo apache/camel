@@ -2552,51 +2552,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * Syntax: <code>aws-sqs:queueNameOrArn</code>
-     * 
-     * Path parameter: queueNameOrArn (required)
-     * Queue name or ARN
-     * 
-     * @param path queueNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.endpointBuilder("aws-sqs", path);
-    }
-    /**
-     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * Syntax: <code>aws-sqs:queueNameOrArn</code>
-     * 
-     * Path parameter: queueNameOrArn (required)
-     * Queue name or ARN
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path queueNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 

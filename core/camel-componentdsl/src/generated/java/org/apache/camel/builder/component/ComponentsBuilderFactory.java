@@ -530,20 +530,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.awsSns();
     }
     /**
-     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.AwsSqsComponentBuilder awsSqs() {
-        return org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.awsSqs();
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 
