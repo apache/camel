@@ -33,7 +33,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
@@ -41,8 +41,11 @@ import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_T
 
 public class VertxHttpProducer extends DefaultAsyncProducer {
 
+    private final VertxHttpBinding vertxHttpBinding;
+
     public VertxHttpProducer(VertxHttpEndpoint endpoint) {
         super(endpoint);
+        this.vertxHttpBinding = endpoint.getConfiguration().getVertxHttpBinding();
     }
 
     @Override
@@ -59,7 +62,6 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
         Message message = exchange.getMessage();
 
         try {
-            VertxHttpBinding vertxHttpBinding = getEndpoint().getConfiguration().getVertxHttpBinding();
             HttpRequest<Buffer> request = vertxHttpBinding.prepareHttpRequest(getEndpoint(), exchange);
             Handler<AsyncResult<HttpResponse<Buffer>>> resultHandler = createResultHandler(exchange, callback);
 
@@ -67,6 +69,8 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
             if (body == null) {
                 request.send(resultHandler);
             } else {
+                String contentType = MessageHelper.getContentType(message);
+
                 // Handle the request body payload
                 if (body instanceof MultiMap) {
                     request.sendForm((MultiMap) body, resultHandler);
@@ -76,27 +80,21 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                     request.sendStream((ReadStream<Buffer>) body, resultHandler);
                 } else if (body instanceof String) {
                     // Try to extract URL encoded form data from the message body
-                    if (VertxHttpHelper.isContentTypeMatching(exchange, CONTENT_TYPE_FORM_URLENCODED)) {
+                    if (CONTENT_TYPE_FORM_URLENCODED.equals(contentType)) {
                         MultiMap map = MultiMap.caseInsensitiveMultiMap();
                         Map<String, Object> formParams = URISupport.parseQuery((String) body);
                         formParams.keySet().forEach(key -> map.add(key, String.valueOf(formParams.get(key))));
                         request.sendForm(map, resultHandler);
                     } else {
                         // Fallback to send as Buffer
-                        Buffer buffer;
-                        String charset = VertxHttpHelper.getCharsetFromExchange(exchange);
-                        if (ObjectHelper.isNotEmpty(charset)) {
-                            buffer = Buffer.buffer((String) body, charset);
-                        } else {
-                            buffer = Buffer.buffer((String) body);
-                        }
+                        Buffer buffer = VertxBufferConverter.toBuffer((String) body, exchange);
                         request.sendBuffer(buffer, resultHandler);
                     }
                 } else if (body instanceof Buffer) {
                     request.sendBuffer((Buffer) body, resultHandler);
                 } else {
                     // Handle x-java-serialized-object Content-Type
-                    if (VertxHttpHelper.isContentTypeMatching(exchange, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
+                    if (CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                         if (!getComponent().isAllowJavaSerializedObject()) {
                             throw new CamelExchangeException(
                                     "Content-type " + CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
@@ -126,9 +124,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
     private Handler<AsyncResult<HttpResponse<Buffer>>> createResultHandler(Exchange exchange, AsyncCallback callback) {
         return response -> {
             try {
-                VertxHttpEndpoint endpoint = getEndpoint();
-                VertxHttpBinding vertxHttpBinding = endpoint.getConfiguration().getVertxHttpBinding();
-                vertxHttpBinding.handleResponse(endpoint, exchange, response);
+                vertxHttpBinding.handleResponse(getEndpoint(), exchange, response);
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {

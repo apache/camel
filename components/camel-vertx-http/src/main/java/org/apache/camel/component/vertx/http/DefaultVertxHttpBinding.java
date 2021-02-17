@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.MultiMap;
@@ -44,6 +45,8 @@ import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_T
 
 public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
+    private volatile Map<String, Object> defaultQueryParams;
+
     @Override
     public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) throws Exception {
         VertxHttpConfiguration configuration = endpoint.getConfiguration();
@@ -51,8 +54,14 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
         // Resolve query string from the HTTP_QUERY header or default to those provided on the endpoint HTTP URI
         String queryString = VertxHttpHelper.resolveQueryString(exchange);
+        Map<String, Object> queryParams = null;
         if (ObjectHelper.isEmpty(queryString)) {
+            // use default query string from endpoint configuration
             queryString = configuration.getHttpUri().getQuery();
+            if (defaultQueryParams == null) {
+                defaultQueryParams = URISupport.parseQuery(queryString);
+            }
+            queryParams = defaultQueryParams;
         }
 
         // Determine the HTTP method to use if not specified in the HTTP_METHOD header
@@ -83,7 +92,9 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
         // Configure query params
         if (ObjectHelper.isNotEmpty(queryString)) {
-            Map<String, Object> queryParams = URISupport.parseQuery(queryString);
+            if (queryParams == null) {
+                queryParams = URISupport.parseQuery(queryString);
+            }
             for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
                 request.addQueryParam(entry.getKey(), entry.getValue().toString());
             }
@@ -111,10 +122,13 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
     @Override
     public void populateRequestHeaders(Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy) {
+        // optimize to use add on MultiMap as putHeader on request does a remove/add
+        MultiMap headers = request.headers();
+
         // Ensure the Content-Type header is always added if the corresponding exchange header is present
         String contentType = ExchangeHelper.getContentType(exchange);
         if (ObjectHelper.isNotEmpty(contentType)) {
-            request.putHeader(Exchange.CONTENT_TYPE, contentType);
+            headers.add(Exchange.CONTENT_TYPE, contentType);
         }
 
         // Transfer exchange headers to the HTTP request while applying the filter strategy
@@ -125,7 +139,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                 Object headerValue = entry.getValue();
                 if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     String str = tc.convertTo(String.class, headerValue);
-                    request.putHeader(key, str);
+                    headers.add(key, str);
                 }
             }
         }
@@ -157,21 +171,24 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         message.setHeader(Exchange.HTTP_RESPONSE_TEXT, response.statusMessage());
 
         MultiMap headers = response.headers();
+        headers.forEach(new Consumer<Map.Entry<String, String>>() {
+            boolean found = false;
 
-        boolean found = false;
-        for (String headerName : headers.names()) {
-            String name = headerName;
-            String value = headers.get(headerName);
-            if (!found && name.equalsIgnoreCase("content-type")) {
-                found = true;
-                name = Exchange.CONTENT_TYPE;
-                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+            @Override
+            public void accept(Map.Entry<String, String> entry) {
+                String name = entry.getKey();
+                String value = entry.getValue();
+                if (!found && name.equalsIgnoreCase("content-type")) {
+                    found = true;
+                    name = Exchange.CONTENT_TYPE;
+                    exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                }
+                Object extracted = HttpHelper.extractHttpParameterValue(value);
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, extracted, exchange)) {
+                    HttpHelper.appendHeader(message.getHeaders(), name, extracted);
+                }
             }
-            Object extracted = HttpHelper.extractHttpParameterValue(value);
-            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, extracted, exchange)) {
-                HttpHelper.appendHeader(message.getHeaders(), name, extracted);
-            }
-        }
+        });
     }
 
     @Override
@@ -181,7 +198,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         Buffer responseBody = result.body();
         if (responseBody != null) {
             String contentType = result.getHeader(Exchange.CONTENT_TYPE);
-            if (VertxHttpHelper.isContentTypeMatching(CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, contentType)) {
+            if (CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                 boolean transferException = endpoint.getConfiguration().isTransferException();
                 boolean allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
 
