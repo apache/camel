@@ -101,8 +101,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
 
-        File filePayload = null;
-        InputStream is = null;
+        File filePayload;
+        InputStream is;
         ByteArrayOutputStream baos = null;
         Object obj = exchange.getIn().getMandatoryBody();
 
@@ -133,7 +133,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             }
         }
 
-        Blob createdBlob = null;
+        Blob createdBlob;
         BlobId blobId = BlobId.of(bucketName, objectName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(objectMetadata).build();
         if (baos.size() > 1_000_000) {
@@ -155,7 +155,6 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         IOHelper.close(baos);
         IOHelper.close(is);
-
     }
 
     private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
@@ -178,28 +177,28 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         String contentType = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_TYPE, String.class);
         if (contentType != null) {
-            objectMetadata.put("Content-Type", String.valueOf(contentType));
+            objectMetadata.put("Content-Type", contentType);
         }
 
         String cacheControl = exchange.getIn().getHeader(GoogleCloudStorageConstants.CACHE_CONTROL, String.class);
         if (cacheControl != null) {
-            objectMetadata.put("Cache-Control", String.valueOf(cacheControl));
+            objectMetadata.put("Cache-Control", cacheControl);
         }
 
         String contentDisposition = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION,
                 String.class);
         if (contentDisposition != null) {
-            objectMetadata.put("Content-Disposition", String.valueOf(contentDisposition));
+            objectMetadata.put("Content-Disposition", contentDisposition);
         }
 
         String contentEncoding = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, String.class);
         if (contentEncoding != null) {
-            objectMetadata.put("Content-Encoding", String.valueOf(contentEncoding));
+            objectMetadata.put("Content-Encoding", contentEncoding);
         }
 
         String contentMD5 = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_MD5, String.class);
         if (contentMD5 != null) {
-            objectMetadata.put("Content-Md5", String.valueOf(contentMD5));
+            objectMetadata.put("Content-Md5", contentMD5);
         }
 
         return objectMetadata;

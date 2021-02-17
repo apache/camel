@@ -39,19 +39,18 @@ public class GoogleCloudStorageComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
         if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
+            remaining = remaining.substring(remaining.lastIndexOf(':') + 1);
         }
         final GoogleCloudStorageConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new GoogleCloudStorageConfiguration();
-        setProperties(configuration, parameters);
         configuration.setBucketName(remaining);
-        Endpoint endpoint = new GoogleCloudStorageEndpoint(uri, this, configuration);
 
+        Endpoint endpoint = new GoogleCloudStorageEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 

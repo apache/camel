@@ -44,11 +44,9 @@ import org.slf4j.LoggerFactory;
  * 
  * Google Storage Endpoint definition represents a bucket within the storage and contains configuration to customize the
  * behavior of Consumer and Producer.
- * 
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "google-storage", title = "Google Storage", syntax = "google-storage:bucketName",
-             category = {
-                     Category.CLOUD })
+             category = { Category.CLOUD })
 public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudStorageEndpoint.class);
@@ -86,20 +84,13 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
         }
 
         if (configuration.isAutoCreateBucket()) {
-
-            try {
-
-                Bucket bucket = this.storageClient.get(configuration.getBucketName());
-                if (bucket != null) {
-                    LOG.trace("Bucket [{}] already exists", bucket.getName());
-                    return;
-                } else {
-                    // creates the new bucket because it doesn't exist yet
-                    createNewBucket(configuration.getBucketName(), configuration, this.storageClient);
-                }
-            } catch (Exception e) {
-                LOG.error("Error - autocreatebucket", e);
-                throw e;
+            Bucket bucket = this.storageClient.get(configuration.getBucketName());
+            if (bucket != null) {
+                LOG.trace("Bucket [{}] already exists", bucket.getName());
+                return;
+            } else {
+                // creates the new bucket because it doesn't exist yet
+                createNewBucket(configuration.getBucketName(), configuration, this.storageClient);
             }
         }
     }
@@ -123,8 +114,6 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
     /**
      * Setup configuration
-     * 
-     * @param configuration
      */
     public void setConfiguration(GoogleCloudStorageConfiguration configuration) {
         this.configuration = configuration;
@@ -139,9 +128,10 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern, Blob blob, String key) {
-        LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
-
-        LOG.trace("Got object [{}]", blob);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
+            LOG.trace("Got object [{}]", blob);
+        }
 
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();

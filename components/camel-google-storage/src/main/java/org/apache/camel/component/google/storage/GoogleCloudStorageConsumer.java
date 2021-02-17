@@ -50,7 +50,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         super.doStart();
 
         if (getConfiguration().isMoveAfterRead()) {
-
             Bucket bucket = getStorageClient().get(getConfiguration().getDestinationBucket());
             if (bucket != null) {
                 LOG.trace("Bucket [{}] already exists", bucket.getName());
@@ -63,7 +62,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
                             getStorageClient());
                 }
             }
-
         }
     }
 
@@ -116,12 +114,10 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> answer = new LinkedList<>();
         try {
             for (Blob blob : blobList) {
-
                 if (includeObject(blob)) {
                     Exchange exchange = getEndpoint().createExchange(blob, blob.getBlobId().getName());
                     answer.add(exchange);
                 }
-
             }
         } catch (Exception e) {
             LOG.warn("Error getting object due: {}", e.getMessage(), e);
@@ -134,11 +130,10 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Decide whether to include the Objects in the results
      *
-     * @param  Object
-     * @return        true to include, false to exclude
+     * @param  blob the blob
+     * @return      true to include, false to exclude
      */
     protected boolean includeObject(Blob blob) {
-
         if (getConfiguration().isIncludeFolders()) {
             return true;
         }
