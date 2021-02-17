@@ -73,7 +73,7 @@ public class HttpProducerLoadTest extends BaseHttpTest {
             public void configure() throws Exception {
                 from("direct:echo")
                         .to("http://localhost:" + localServer.getLocalPort()
-                                + "/echo?throwExceptionOnFailure=false");
+                            + "/echo?throwExceptionOnFailure=false");
             }
         };
     }
