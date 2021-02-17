@@ -616,12 +616,25 @@ public class HttpProducer extends DefaultProducer {
      * @throws CamelExchangeException is thrown if error creating RequestEntity
      */
     protected HttpEntity createRequestEntity(Exchange exchange) throws CamelExchangeException {
+        HttpEntity answer = null;
+
         Message in = exchange.getIn();
-        if (in.getBody() == null) {
-            return null;
+        Object body = in.getBody();
+        try {
+            if (body == null) {
+                return null;
+            // special optimized for using these 3 type converters for common message payload types
+            } else if (body instanceof byte[]) {
+                answer = HttpEntityConverter.toHttpEntity((byte[]) body, exchange);
+            } else if (body instanceof InputStream) {
+                answer = HttpEntityConverter.toHttpEntity((InputStream) body, exchange);
+            } else if (body instanceof String) {
+                answer = HttpEntityConverter.toHttpEntity((String) body, exchange);
+            }
+        } catch (Exception e) {
+            throw new CamelExchangeException("Error creating RequestEntity from message body", exchange, e);
         }
 
-        HttpEntity answer = in.getBody(HttpEntity.class);
         if (answer == null) {
             try {
                 Object data = in.getBody();
