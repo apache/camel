@@ -369,14 +369,11 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
 
     @Override
     public ObjectName getObjectNameForRoute(org.apache.camel.Route route) throws MalformedObjectNameException {
-        Endpoint ep = route.getEndpoint();
-        String id = route.getId();
-
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(route.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(route.getId()));
         return createObjectName(buffer);
     }
 
