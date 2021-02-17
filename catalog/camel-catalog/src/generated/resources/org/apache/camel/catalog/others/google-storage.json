@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "google-storage",
+    "title": "Google Storage",
+    "description": "Camel Component for Google Cloud Platform Storage",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-storage",
+    "version": "3.9.0-SNAPSHOT"
+  }
+}
