@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.handlers;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -83,10 +82,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         NettyCamelState state = getState(ctx, cause);
         Exchange exchange = state != null ? state.getExchange() : null;
-        AsyncCallback callback = state != null ? state.getCallback() : null;
 
         // the state may not be set
-        if (exchange != null && callback != null) {
+        if (exchange != null) {
             Throwable initialCause = exchange.getException();
             if (initialCause != null && initialCause.getCause() == null) {
                 initialCause.initCause(cause);
@@ -99,7 +97,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             NettyHelper.close(ctx.channel());
 
             // signal callback
-            callback.done(false);
+            state.callbackDoneOnce(false);
         }
     }
 
@@ -111,7 +109,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         NettyCamelState state = getState(ctx, null);
         Exchange exchange = state != null ? state.getExchange() : null;
-        AsyncCallback callback = state != null ? state.getCallback() : null;
+        // this channel is maybe closing graceful and the callback could already have been called
+        // and if so we should not trigger an exception nor invoke callback second time
+        boolean doneUoW = state != null ? state.isDone() : false;
 
         // remove state
         producer.getCorrelationManager().removeState(ctx, ctx.channel());
@@ -120,10 +120,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         producer.getAllChannels().remove(ctx.channel());
 
         if (exchange != null && !disconnecting) {
-            // this channel is maybe closing graceful and the exchange is already done
-            // and if so we should not trigger an exception
-            boolean doneUoW = exchange.getUnitOfWork() == null;
-
             NettyConfiguration configuration = producer.getConfiguration();
             if (configuration.isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
                 // To avoid call the callback.done twice
@@ -140,7 +136,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                             new CamelExchangeException("No response received from remote server: " + address, exchange));
                 }
                 // signal callback
-                callback.done(false);
+                state.callbackDoneOnce(false);
             }
         }
 
@@ -171,14 +167,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // we just ignore the received message as the channel is closed
             return;
         }
-        AsyncCallback callback = state.getCallback();
 
         Message message;
         try {
             message = getResponseMessage(exchange, ctx, msg);
         } catch (Exception e) {
             exchange.setException(e);
-            callback.done(false);
+            state.callbackDoneOnce(false);
             return;
         }
 
@@ -225,8 +220,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 NettyHelper.close(ctx.channel());
             }
         } finally {
-            // signal callback
-            callback.done(false);
+            state.callbackDoneOnce(false);
         }
     }
 
