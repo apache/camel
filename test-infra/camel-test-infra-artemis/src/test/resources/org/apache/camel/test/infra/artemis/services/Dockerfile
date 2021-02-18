@@ -16,17 +16,17 @@ ARG FROMIMAGE
 FROM $FROMIMAGE as artemis-base
 LABEL maintainer="orpiske@apache.org"
 ARG ARTEMIS_VERSION
-ENV ARTEMIS_VERSION ${ARTEMIS_VERSION:-2.7.0}
+ENV ARTEMIS_VERSION ${ARTEMIS_VERSION:-2.17.0}
 ARG ARTEMIS_JOURNAL
 ENV ARTEMIS_JOURNAL ${ARTEMIS_JOURNAL:-aio}
 ENV JMS_BROKER_ROOT /opt/camel-kafka-connector/artemis/
 EXPOSE 1883 5672 8161 61616
-RUN dnf install -y java-1.8.0-openjdk-headless libaio tar gzip && \
+RUN dnf install -y java-11-openjdk-headless libaio tar gzip && \
     dnf clean all && \
     mkdir -p ${JMS_BROKER_ROOT} && \
     cd ${JMS_BROKER_ROOT} && \
     curl https://archive.apache.org/dist/activemq/activemq-artemis/${ARTEMIS_VERSION}/apache-artemis-${ARTEMIS_VERSION}-bin.tar.gz -o apache-artemis.tar.gz && \
-    mkdir -p apache-artemis && tar --strip-components=1 -xvf apache-artemis.tar.gz -C apache-artemis && \
+    mkdir -p apache-artemis && tar --strip-components=1 --exclude=examples/* -xvf apache-artemis.tar.gz -C apache-artemis && \
     rm -f apache-artemis.tar.gz
 WORKDIR ${JMS_BROKER_ROOT}
 ENV JAVA_HOME /etc/alternatives/jre
