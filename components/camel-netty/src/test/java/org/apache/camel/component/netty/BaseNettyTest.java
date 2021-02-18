@@ -58,7 +58,7 @@ public class BaseNettyTest extends CamelTestSupport {
         System.gc();
         // Kick leak detection logging
         ByteBufAllocator.DEFAULT.buffer(1).release();
-        Collection<LogEvent> events = LogCaptureAppender.getEvents();
+        Collection<LogEvent> events = LogCaptureAppender.getEvents(ResourceLeakDetector.class);
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
             // Just write the message into log to help debug
