@@ -623,6 +623,8 @@ public class HttpProducer extends DefaultProducer {
         try {
             if (body == null) {
                 return null;
+            } else if (body instanceof HttpEntity) {
+                answer = (HttpEntity) body;
                 // special optimized for using these 3 type converters for common message payload types
             } else if (body instanceof byte[]) {
                 answer = HttpEntityConverter.toHttpEntity((byte[]) body, exchange);
