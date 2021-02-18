@@ -37,7 +37,6 @@
 *** xref:aws-mq-component.adoc[AWS MQ]
 *** xref:aws-s3-component.adoc[AWS S3 Storage Service]
 *** xref:aws-ses-component.adoc[AWS Simple Email Service (SES)]
-*** xref:aws-sns-component.adoc[AWS Simple Notification System (SNS)]
 *** xref:aws-swf-component.adoc[AWS Simple Workflow (SWF)]
 ** xref:aws2-summary.adoc[AWS 2]
 *** xref:aws2-athena-component.adoc[AWS 2 Athena]

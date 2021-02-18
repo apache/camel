@@ -516,20 +516,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.awsSes();
     }
     /**
-     * AWS Simple Notification System (SNS) (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,messaging,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.AwsSnsComponentBuilder awsSns() {
-        return org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.awsSns();
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 
