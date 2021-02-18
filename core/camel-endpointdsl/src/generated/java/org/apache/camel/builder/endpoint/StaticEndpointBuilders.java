@@ -2507,51 +2507,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Simple Notification System (SNS) (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,messaging,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * Syntax: <code>aws-sns:topicNameOrArn</code>
-     * 
-     * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
-     * 
-     * @param path topicNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
-    }
-    /**
-     * AWS Simple Notification System (SNS) (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,messaging,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * Syntax: <code>aws-sns:topicNameOrArn</code>
-     * 
-     * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path topicNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 

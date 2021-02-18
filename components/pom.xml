@@ -120,7 +120,6 @@
         <module>camel-aws-msk</module>
         <module>camel-aws-s3</module>
         <module>camel-aws-ses</module>
-        <module>camel-aws-sns</module>
         <module>camel-aws-swf</module>
         <module>camel-aws2-athena</module>
         <module>camel-aws2-cw</module>
