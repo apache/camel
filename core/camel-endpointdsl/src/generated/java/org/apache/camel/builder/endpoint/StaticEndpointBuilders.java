@@ -2462,51 +2462,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Simple Email Service (SES) (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * Syntax: <code>aws-ses:from</code>
-     * 
-     * Path parameter: from (required)
-     * The sender's email address.
-     * 
-     * @param path from
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder("aws-ses", path);
-    }
-    /**
-     * AWS Simple Email Service (SES) (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * Syntax: <code>aws-ses:from</code>
-     * 
-     * Path parameter: from (required)
-     * The sender's email address.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path from
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 

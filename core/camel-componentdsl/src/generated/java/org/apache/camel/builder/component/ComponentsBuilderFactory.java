@@ -502,20 +502,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.awsS3();
     }
     /**
-     * AWS Simple Email Service (SES) (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.AwsSesComponentBuilder awsSes() {
-        return org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.awsSes();
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 

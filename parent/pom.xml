@@ -919,11 +919,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-ses</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-aws-swf</artifactId>
 				<version>${project.version}</version>
 			</dependency>
