@@ -306,7 +306,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory,
