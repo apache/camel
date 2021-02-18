@@ -393,9 +393,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
+        final boolean useSystemProperties = CamelContextHelper.mandatoryConvertTo(this.getCamelContext(), boolean.class,
+                parameters.get("useSystemProperties"));
 
         final Registry<ConnectionSocketFactory> connectionRegistry
-                = createConnectionRegistry(hostnameVerifier, sslContextParameters);
+                = createConnectionRegistry(hostnameVerifier, sslContextParameters, useSystemProperties);
 
         return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute);
     }
@@ -421,7 +423,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(
-            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
+            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams,
+            boolean useSystemProperties)
             throws GeneralSecurityException, IOException {
         // create the default connection registry to use
         RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory> create();
@@ -430,7 +433,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             builder.register("https",
                     new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
-            builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
+            builder.register("https", new SSLConnectionSocketFactory(
+                    useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault(),
+                    x509HostnameVerifier));
         }
         return builder.build();
     }
