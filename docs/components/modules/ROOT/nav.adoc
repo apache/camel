@@ -33,7 +33,6 @@
 *** xref:aws-kinesis-component.adoc[AWS Kinesis]
 *** xref:aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose]
 *** xref:aws-lambda-component.adoc[AWS Lambda]
-*** xref:aws-msk-component.adoc[AWS Managed Streaming for Apache Kafka (MSK)]
 *** xref:aws-mq-component.adoc[AWS MQ]
 *** xref:aws-s3-component.adoc[AWS S3 Storage Service]
 *** xref:aws-swf-component.adoc[AWS Simple Workflow (SWF)]

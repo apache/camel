@@ -235,7 +235,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory,
