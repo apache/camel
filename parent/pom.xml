@@ -187,7 +187,7 @@
         <flink-version>1.12.1</flink-version>
         <fop-version>2.6</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
-        <freemarker-version>2.3.30</freemarker-version>
+        <freemarker-version>2.3.31</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
