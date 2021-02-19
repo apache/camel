@@ -63,8 +63,8 @@ public class NettyHttpRedeliveryTest extends BaseNettyTest {
                                     }
                                 });
 
-                from("timer:foo").routeId("foo")
-                        .to("netty-http:http://0.0.0.0:{{port}}/bar?keepAlive=false&disconnect=true")
+                from("timer:foo?repeatCount=1").routeId("foo")
+                        .to("netty-http:http://0.0.0.0:{{port}}/bar?keepAlive=false&disconnect=true&connectTimeout=100ms")
                         .to("mock:result");
 
                 from("netty-http:http://0.0.0.0:{{port}}/bar").routeId("bar").autoStartup(false)
