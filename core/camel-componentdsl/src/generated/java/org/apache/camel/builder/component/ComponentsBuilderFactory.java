@@ -474,20 +474,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.awsMq();
     }
     /**
-     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
-     * Manage AWS MSK instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsMskComponentBuilderFactory.AwsMskComponentBuilder awsMsk() {
-        return org.apache.camel.builder.component.dsl.AwsMskComponentBuilderFactory.awsMsk();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 

@@ -2372,51 +2372,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
-     * Manage AWS MSK instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     * 
-     * Syntax: <code>aws-msk:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
-    }
-    /**
-     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
-     * Manage AWS MSK instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     * 
-     * Syntax: <code>aws-msk:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
