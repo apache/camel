@@ -2327,51 +2327,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * Syntax: <code>aws-mq:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder("aws-mq", path);
-    }
-    /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * Syntax: <code>aws-mq:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 

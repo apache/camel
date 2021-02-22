@@ -460,20 +460,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.awsLambda();
     }
     /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.AwsMqComponentBuilder awsMq() {
-        return org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.awsMq();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
