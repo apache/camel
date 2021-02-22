@@ -2282,51 +2282,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * Syntax: <code>aws-lambda:function</code>
-     * 
-     * Path parameter: function (required)
-     * Name of the Lambda function.
-     * 
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
-    }
-    /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * Syntax: <code>aws-lambda:function</code>
-     * 
-     * Path parameter: function (required)
-     * Name of the Lambda function.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 

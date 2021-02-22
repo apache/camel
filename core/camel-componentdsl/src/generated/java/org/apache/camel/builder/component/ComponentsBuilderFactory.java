@@ -446,20 +446,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.awsKms();
     }
     /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.AwsLambdaComponentBuilder awsLambda() {
-        return org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.awsLambda();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
