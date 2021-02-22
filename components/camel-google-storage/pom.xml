@@ -38,7 +38,12 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Google cloud libraries -->
+      <!-- Override the android JDK 7 guava in libraries-bom -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${google-cloud-guava-version}</version>
+      </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>libraries-bom</artifactId>
@@ -50,20 +55,18 @@
   </dependencyManagement>
 
   <dependencies>
-
-    <!-- more info at https://github.com/googleapis/google-cloud-java -->
-    <!-- google-cloud-storage libraries -->
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-storage</artifactId>
-    </dependency>
-
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-junit5</artifactId>
