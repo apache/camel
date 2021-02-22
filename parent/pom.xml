@@ -43,7 +43,7 @@
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.16.1</activemq-version>
-        <activemq-artemis-version>2.16.0</activemq-artemis-version>
+        <activemq-artemis-version>2.17.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.2</ahc-version>
         <android-annotations-version>4.1.1.4</android-annotations-version>
@@ -51,7 +51,7 @@
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.18.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
-        <arangodb-java-version>6.8.2</arangodb-java-version>
+        <arangodb-java-version>6.9.0</arangodb-java-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
         <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
         <aries-blueprint-core-version>1.10.0</aries-blueprint-core-version>
@@ -78,7 +78,7 @@
         <avro-ipc-netty-version>1.10.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.15.82</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.16.3</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -97,8 +97,8 @@
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
-        <caffeine-version>2.8.8</caffeine-version>
-        <californium-version>2.6.0</californium-version>
+        <caffeine-version>2.9.0</caffeine-version>
+        <californium-version>2.6.1</californium-version>
         <cassandra-driver-version>4.10.0</cassandra-driver-version>
         <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
         <cassandra-version>3.11.8</cassandra-version>
@@ -159,7 +159,6 @@
         <djl-tensorflow-native-version>2.3.1</djl-tensorflow-native-version>
         <docker-java-version>3.2.7</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
-        <drools-version>7.49.0.Final</drools-version>
         <dropbox-version>3.1.5</dropbox-version>
         <debezium-version>1.4.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.22</debezium-mysql-connector-version>
@@ -188,7 +187,7 @@
         <flink-version>1.12.1</flink-version>
         <fop-version>2.6</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
-        <freemarker-version>2.3.30</freemarker-version>
+        <freemarker-version>2.3.31</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
@@ -356,9 +355,8 @@
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <kafka-version>2.7.0</kafka-version>
-        <kie-version>7.49.0.Final</kie-version>
-        <kubernetes-client-version>5.0.2</kubernetes-client-version>
-        <kubernetes-model-version>5.0.2</kubernetes-model-version>
+        <kubernetes-client-version>5.1.0</kubernetes-client-version>
+        <kubernetes-model-version>5.1.0</kubernetes-model-version>
         <kudu-version>1.14.0</kudu-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.10</leveldb-api-version>
@@ -383,7 +381,7 @@
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.40</maven-checkstyle-version>
-        <maven-owasp-plugin-version>6.1.0</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>6.1.1</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
@@ -411,7 +409,7 @@
         <mina-version>2.1.4</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
-        <minio-version>8.0.3</minio-version>
+        <minio-version>8.1.0</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.8</mockwebserver-version>
         <mockito-version>3.7.7</mockito-version>
@@ -460,7 +458,7 @@
         <protonpack-version>1.8</protonpack-version>
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.7.0</pulsar-version>
-        <qpid-broker-version>8.0.3</qpid-broker-version>
+        <qpid-broker-version>8.0.4</qpid-broker-version>
         <qpid-proton-j-version>0.33.8</qpid-proton-j-version>
         <qpid-jms-client-version>0.56.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
@@ -503,7 +501,7 @@
         <smallrye-health-version>2.2.5</smallrye-health-version>
         <smallrye-fault-tolerance-version>4.3.2</smallrye-fault-tolerance-version>
         <snakeyaml-version>1.27</snakeyaml-version>
-        <snakeyaml-engine-version>2.1</snakeyaml-engine-version>
+        <snakeyaml-engine-version>2.2.1</snakeyaml-engine-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
         <solr-version>8.6.1</solr-version>
@@ -516,7 +514,7 @@
         <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.3</spring5-version>
+        <spring5-version>5.3.4</spring5-version>
         <spring-security-version>5.4.2</spring-security-version>
         <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
@@ -891,57 +889,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-kinesis</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-kms</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-lambda</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-mq</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-msk</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-aws-s3</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-ses</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-sns</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-sqs</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-aws-swf</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-aws-translate</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -1492,6 +1445,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-google-sheets</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-google-storage</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

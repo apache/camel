@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.stress;
 
-import java.security.SecureRandom;
+import java.util.Random;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,7 +39,7 @@ public class FileAsyncStressReadLockLockFileTest extends FileAsyncStressTest {
                         .threads(10).process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate some work with random time to complete
-                                SecureRandom ran = new SecureRandom();
+                                Random ran = new Random();
                                 int delay = ran.nextInt(250) + 10;
                                 Thread.sleep(delay);
                             }

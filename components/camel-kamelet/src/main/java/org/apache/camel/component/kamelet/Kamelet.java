@@ -110,10 +110,8 @@ public final class Kamelet {
 
     public static RouteDefinition templateToRoute(RouteTemplateDefinition in, Map<String, Object> parameters) {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
-        final String tid = (String) parameters.get(PARAM_TEMPLATE_ID);
 
         ObjectHelper.notNull(rid, PARAM_ROUTE_ID);
-        ObjectHelper.notNull(tid, PARAM_TEMPLATE_ID);
 
         RouteDefinition def = in.asRouteDefinition();
         def.setId(rid);

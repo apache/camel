@@ -17,9 +17,9 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -322,7 +322,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     private String generateRandomString(int targetStringLength) {
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
-        SecureRandom random = new SecureRandom();
+        Random random = new Random();
         StringBuilder buffer = new StringBuilder(targetStringLength);
         for (int i = 0; i < targetStringLength; i++) {
             int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));

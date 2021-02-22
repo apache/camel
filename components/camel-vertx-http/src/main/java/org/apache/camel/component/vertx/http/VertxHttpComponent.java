@@ -77,10 +77,13 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
+    @Metadata(label = "producer", defaultValue = "true")
+    private boolean responsePayloadAsByteArray = true;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         VertxHttpConfiguration configuration = new VertxHttpConfiguration();
+        configuration.setResponsePayloadAsByteArray(responsePayloadAsByteArray);
 
         URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
 
@@ -296,6 +299,17 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
+    public boolean isResponsePayloadAsByteArray() {
+        return responsePayloadAsByteArray;
+    }
+
+    /**
+     * Whether the response body should be byte[] or as io.vertx.core.buffer.Buffer
+     */
+    public void setResponsePayloadAsByteArray(boolean responsePayloadAsByteArray) {
+        this.responsePayloadAsByteArray = responsePayloadAsByteArray;
+    }
+
     /**
      * The proxy server host address
      */
@@ -394,5 +408,4 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
-
 }

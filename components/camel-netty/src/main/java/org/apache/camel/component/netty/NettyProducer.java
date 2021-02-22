@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +37,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.AsyncCallback;
@@ -59,6 +61,9 @@ import org.slf4j.LoggerFactory;
 public class NettyProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
+
+    private static final AttributeKey<NettyCamelStateCorrelationManager> CORRELATION_MANAGER_ATTR
+            = AttributeKey.valueOf("NettyCamelStateCorrelationManager");
 
     private ChannelGroup allChannels;
     private CamelContext context;
@@ -269,6 +274,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         // remember channel so we can reuse it
         final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
+            // remember correlation manager for this channel
+            // for use when sending subsequent messages reusing this channel
+            channel.attr(CORRELATION_MANAGER_ATTR).set(correlationManager);
             exchange.setProperty(NettyConstants.NETTY_CHANNEL, channel);
             // and defer closing the channel until we are done routing the exchange
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
@@ -298,6 +306,12 @@ public class NettyProducer extends DefaultAsyncProducer {
             });
         }
 
+        // Get appropriate correlation manager.
+        // If we reuse channel then get it from channel. CORRELATION_MANAGER_ATTR should be set at this point.
+        // Otherwise use correlation manager for this producer.
+        final NettyCamelStateCorrelationManager channelCorrelationManager
+                = Optional.ofNullable(channel.attr(CORRELATION_MANAGER_ATTR).get()).orElse(correlationManager);
+
         if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
             long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
             ChannelHandler oldHandler = channel.pipeline().get("timeout");
@@ -321,7 +335,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup state as attachment on the channel, so we can access the state later when needed
-        correlationManager.putState(channel, new NettyCamelState(producerCallback, exchange));
+        channelCorrelationManager.putState(channel, new NettyCamelState(producerCallback, exchange));
         // here we need to setup the remote address information here
         InetSocketAddress remoteAddress = null;
         if (!isTcp()) {

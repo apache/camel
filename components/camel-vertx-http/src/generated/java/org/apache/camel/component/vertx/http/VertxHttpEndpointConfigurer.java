@@ -49,6 +49,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyType": target.getConfiguration().setProxyType(property(camelContext, io.vertx.core.net.ProxyType.class, value)); return true;
         case "proxyusername":
         case "proxyUsername": target.getConfiguration().setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsepayloadasbytearray":
+        case "responsePayloadAsByteArray": target.getConfiguration().setResponsePayloadAsByteArray(property(camelContext, boolean.class, value)); return true;
         case "sessionmanagement":
         case "sessionManagement": target.getConfiguration().setSessionManagement(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -99,6 +101,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyType": return io.vertx.core.net.ProxyType.class;
         case "proxyusername":
         case "proxyUsername": return java.lang.String.class;
+        case "responsepayloadasbytearray":
+        case "responsePayloadAsByteArray": return boolean.class;
         case "sessionmanagement":
         case "sessionManagement": return boolean.class;
         case "sslcontextparameters":
@@ -150,6 +154,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyType": return target.getConfiguration().getProxyType();
         case "proxyusername":
         case "proxyUsername": return target.getConfiguration().getProxyUsername();
+        case "responsepayloadasbytearray":
+        case "responsePayloadAsByteArray": return target.getConfiguration().isResponsePayloadAsByteArray();
         case "sessionmanagement":
         case "sessionManagement": return target.getConfiguration().isSessionManagement();
         case "sslcontextparameters":

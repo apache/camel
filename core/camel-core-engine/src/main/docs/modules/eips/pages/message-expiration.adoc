@@ -13,7 +13,6 @@ Set the Message Expiration to specify a time limit how long the message is viabl
 
 Message expiration is supported by some Camel components such as xref:components::jms-component.adoc[JMS]
 or which allows to set a time-to-live value on messages sent to the broker.
-The xref:components::aws-sqs-component.adoc[AWS SQS] supports message expiration using its _message visibility_ settings.
 
 TIP: When using message expiration then mind about keeping clock's synchronized among the systems.
 

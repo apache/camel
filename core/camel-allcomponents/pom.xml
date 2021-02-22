@@ -135,47 +135,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-kinesis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-kms</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-lambda</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-mq</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-msk</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-s3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-ses</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-sns</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-sqs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-swf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws-translate</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -600,6 +564,10 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-sheets</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-google-storage</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>

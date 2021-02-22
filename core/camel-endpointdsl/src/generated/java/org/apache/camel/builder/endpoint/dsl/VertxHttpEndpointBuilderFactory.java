@@ -242,6 +242,41 @@ public interface VertxHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the response body should be byte or as
+         * io.vertx.core.buffer.Buffer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param responsePayloadAsByteArray the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder responsePayloadAsByteArray(
+                boolean responsePayloadAsByteArray) {
+            doSetProperty("responsePayloadAsByteArray", responsePayloadAsByteArray);
+            return this;
+        }
+        /**
+         * Whether the response body should be byte or as
+         * io.vertx.core.buffer.Buffer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param responsePayloadAsByteArray the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder responsePayloadAsByteArray(
+                String responsePayloadAsByteArray) {
+            doSetProperty("responsePayloadAsByteArray", responsePayloadAsByteArray);
+            return this;
+        }
+        /**
          * Enables session management via WebClientSession. By default the
          * client is configured to use an in-memory CookieStore. The cookieStore
          * option can be used to override this.

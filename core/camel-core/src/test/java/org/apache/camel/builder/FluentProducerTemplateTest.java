@@ -104,6 +104,22 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testWithDefaultEndpoint() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context).withDefaultEndpoint("direct:in");
+
+        Object result = template.withBody("Hello World").request();
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+
+        assertSame(context, template.getCamelContext());
+    }
+
+    @Test
     public void testIn() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -113,6 +129,24 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("Bye World", result);
+
+        assertSame(context, template.getCamelContext());
+    }
+
+    @Test
+    public void testInTwice() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World", "Bye World");
+
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
+
+        Object result = template.withBody("Hello World").to("direct:in").request();
+        Object result2 = template.withBody("Hello World Again").to("direct:in").request();
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+        assertEquals("Bye World", result2);
 
         assertSame(context, template.getCamelContext());
     }

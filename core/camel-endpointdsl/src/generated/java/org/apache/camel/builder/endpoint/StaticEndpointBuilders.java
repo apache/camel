@@ -2147,276 +2147,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Kinesis (camel-aws-kinesis)
-     * Consume and produce records from AWS Kinesis Streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * Syntax: <code>aws-kinesis:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     * 
-     * @param path streamName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.KinesisEndpointBuilder awsKinesis(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.endpointBuilder("aws-kinesis", path);
-    }
-    /**
-     * AWS Kinesis (camel-aws-kinesis)
-     * Consume and produce records from AWS Kinesis Streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * Syntax: <code>aws-kinesis:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path streamName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.KinesisEndpointBuilder awsKinesis(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Kinesis Firehose (camel-aws-kinesis)
-     * Consume data from AWS Kinesis Firehose streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * Syntax: <code>aws-kinesis-firehose:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     * 
-     * @param path streamName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.endpointBuilder("aws-kinesis-firehose", path);
-    }
-    /**
-     * AWS Kinesis Firehose (camel-aws-kinesis)
-     * Consume data from AWS Kinesis Firehose streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * Syntax: <code>aws-kinesis-firehose:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path streamName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Key Management Service (KMS) (camel-aws-kms)
-     * Manage keys stored in AWS KMS instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-kms
-     * 
-     * Syntax: <code>aws-kms:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder("aws-kms", path);
-    }
-    /**
-     * AWS Key Management Service (KMS) (camel-aws-kms)
-     * Manage keys stored in AWS KMS instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-kms
-     * 
-     * Syntax: <code>aws-kms:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * Syntax: <code>aws-lambda:function</code>
-     * 
-     * Path parameter: function (required)
-     * Name of the Lambda function.
-     * 
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
-    }
-    /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * Syntax: <code>aws-lambda:function</code>
-     * 
-     * Path parameter: function (required)
-     * Name of the Lambda function.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * Syntax: <code>aws-mq:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder("aws-mq", path);
-    }
-    /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * Syntax: <code>aws-mq:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
-     * Manage AWS MSK instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     * 
-     * Syntax: <code>aws-msk:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
-    }
-    /**
-     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
-     * Manage AWS MSK instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     * 
-     * Syntax: <code>aws-msk:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
@@ -2460,141 +2190,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Simple Email Service (SES) (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * Syntax: <code>aws-ses:from</code>
-     * 
-     * Path parameter: from (required)
-     * The sender's email address.
-     * 
-     * @param path from
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder("aws-ses", path);
-    }
-    /**
-     * AWS Simple Email Service (SES) (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * Syntax: <code>aws-ses:from</code>
-     * 
-     * Path parameter: from (required)
-     * The sender's email address.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path from
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Simple Notification System (SNS) (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,messaging,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * Syntax: <code>aws-sns:topicNameOrArn</code>
-     * 
-     * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
-     * 
-     * @param path topicNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
-    }
-    /**
-     * AWS Simple Notification System (SNS) (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,messaging,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * Syntax: <code>aws-sns:topicNameOrArn</code>
-     * 
-     * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path topicNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * Syntax: <code>aws-sqs:queueNameOrArn</code>
-     * 
-     * Path parameter: queueNameOrArn (required)
-     * Queue name or ARN
-     * 
-     * @param path queueNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.endpointBuilder("aws-sqs", path);
-    }
-    /**
-     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * Syntax: <code>aws-sqs:queueNameOrArn</code>
-     * 
-     * Path parameter: queueNameOrArn (required)
-     * Queue name or ARN
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path queueNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
@@ -2642,51 +2237,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * Syntax: <code>aws-translate:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder("aws-translate", path);
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * Syntax: <code>aws-translate:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Azure Storage Blob Service (Deprecated) (camel-azure)
@@ -6739,6 +6289,51 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Google Storage (camel-google-storage)
+     * Store and retrieve objects from Google Cloud Storage Service using the
+     * google-cloud-storage library.
+     * 
+     * Category: cloud
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-google-storage
+     * 
+     * Syntax: <code>google-storage:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name or ARN
+     * 
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.endpointBuilder("google-storage", path);
+    }
+    /**
+     * Google Storage (camel-google-storage)
+     * Store and retrieve objects from Google Cloud Storage Service using the
+     * google-cloud-storage library.
+     * 
+     * Category: cloud
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-google-storage
+     * 
+     * Syntax: <code>google-storage:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name or ARN
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Gora (camel-gora)

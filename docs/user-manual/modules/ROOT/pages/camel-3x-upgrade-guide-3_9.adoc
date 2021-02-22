@@ -41,4 +41,12 @@ the one to use above, and then add which -starter JARs you want to use in your C
 
 === Camel-AWS components removed
 
-- Camel-AWS-SDB has been removed. There will be no substitution for this, because there isn't a SDK v2 client for this and furthermore the service is not listed in the AWS console anymore
+- Camel-AWS-SDB has been removed. There will be no substitution for this, because there isn't a SDK v2 client for this and furthermore the service is not listed in the AWS console anymore.
+- Camel-AWS-Translate has been removed. Please switch to Camel-AWS2-Translate.
+- Camel-AWS-SQS has been removed. Please switch to Camel-AWS2-SQS.
+- Camel-AWS-SNS has been removed. Please switch to Camel-AWS2-SNS.
+- Camel-AWS-MSK has been removed. Please switch to Camel-AWS2-MSK.
+- Camel-AWS-MQ has been removed. Please switch to Camel-AWS2-MQ.
+- Camel-AWS-KMS has been removed. Please switch to Camel-AWS2-KMS.
+- Camel-AWS-Kinesis has been removed. Please switch to Camel-AWS2-Kinesis.
+- Camel-AWS-Kinesis Firehose has been removed. Please switch to Camel-AWS2-Kinesis-firehose.

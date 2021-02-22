@@ -28,15 +28,16 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
-import static org.apache.camel.xml.jaxb.JaxbHelper.*;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
 
 @ManagedResource(description = "Managed JAXB XML RoutesBuilderLoader")
-@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + JaxbXmlRoutesBuilderLoader.EXTENSION)
+@RoutesLoader(JaxbXmlRoutesBuilderLoader.EXTENSION)
 public class JaxbXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "xml";

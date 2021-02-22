@@ -404,90 +404,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.awsIam();
     }
     /**
-     * AWS Kinesis (camel-aws-kinesis)
-     * Consume and produce records from AWS Kinesis Streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsKinesisComponentBuilderFactory.AwsKinesisComponentBuilder awsKinesis() {
-        return org.apache.camel.builder.component.dsl.AwsKinesisComponentBuilderFactory.awsKinesis();
-    }
-    /**
-     * AWS Kinesis Firehose (camel-aws-kinesis)
-     * Consume data from AWS Kinesis Firehose streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.AwsKinesisFirehoseComponentBuilder awsKinesisFirehose() {
-        return org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
-    }
-    /**
-     * AWS Key Management Service (KMS) (camel-aws-kms)
-     * Manage keys stored in AWS KMS instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-kms
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.AwsKmsComponentBuilder awsKms() {
-        return org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.awsKms();
-    }
-    /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.AwsLambdaComponentBuilder awsLambda() {
-        return org.apache.camel.builder.component.dsl.AwsLambdaComponentBuilderFactory.awsLambda();
-    }
-    /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.AwsMqComponentBuilder awsMq() {
-        return org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.awsMq();
-    }
-    /**
-     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
-     * Manage AWS MSK instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsMskComponentBuilderFactory.AwsMskComponentBuilder awsMsk() {
-        return org.apache.camel.builder.component.dsl.AwsMskComponentBuilderFactory.awsMsk();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
@@ -502,48 +418,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.awsS3();
     }
     /**
-     * AWS Simple Email Service (SES) (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.AwsSesComponentBuilder awsSes() {
-        return org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.awsSes();
-    }
-    /**
-     * AWS Simple Notification System (SNS) (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,messaging,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.AwsSnsComponentBuilder awsSns() {
-        return org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.awsSns();
-    }
-    /**
-     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.AwsSqsComponentBuilder awsSqs() {
-        return org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.awsSqs();
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 
@@ -556,20 +430,6 @@ public interface ComponentsBuilderFactory {
     @Deprecated
     static org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.AwsSwfComponentBuilder awsSwf() {
         return org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.awsSwf();
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.AwsTranslateComponentBuilder awsTranslate() {
-        return org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.awsTranslate();
     }
     /**
      * AWS 2 Athena (camel-aws2-athena)
@@ -1996,6 +1856,20 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.GoogleSheetsStreamComponentBuilderFactory.GoogleSheetsStreamComponentBuilder googleSheetsStream() {
         return org.apache.camel.builder.component.dsl.GoogleSheetsStreamComponentBuilderFactory.googleSheetsStream();
+    }
+    /**
+     * Google Storage (camel-google-storage)
+     * Store and retrieve objects from Google Cloud Storage Service using the
+     * google-cloud-storage library.
+     * 
+     * Category: cloud
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-google-storage
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.GoogleStorageComponentBuilderFactory.GoogleStorageComponentBuilder googleStorage() {
+        return org.apache.camel.builder.component.dsl.GoogleStorageComponentBuilderFactory.googleStorage();
     }
     /**
      * Gora (camel-gora)

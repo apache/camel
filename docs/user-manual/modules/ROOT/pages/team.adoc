@@ -14,6 +14,7 @@ sort it in alphabetical order.
 |Babak Vahdat |bvahdat |Cyberlogic Consulting GmbH
 |Ben O'Day |boday |Initek Consulting
 |Bilgin Ibryam |bibryam |Red Hat
+|Bob Paulin |bob |
 |Bruce Snyder |bsnyder | 
 |Charles Moulliard |cmoulliard |Red Hat
 |Christian Mueller |cmueller |Amazon Web Services

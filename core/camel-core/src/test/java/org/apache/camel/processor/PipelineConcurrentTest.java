@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import java.security.SecureRandom;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -51,7 +51,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                         try {
                             // do some random sleep to simulate spread in user
                             // activity
-                            Thread.sleep(new SecureRandom().nextInt(10));
+                            Thread.sleep(new Random().nextInt(10));
                         } catch (InterruptedException e) {
                             // ignore
                         }

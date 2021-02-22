@@ -148,6 +148,8 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     /**
      * Creates a new route
      *
+     * Prefer to use the from methods when creating a new route.
+     *
      * @return the builder
      */
     public RouteDefinition route() {
@@ -186,7 +188,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates a new route using the given route
+     * Creates a new route using the given route.
+     * <p/>
+     * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      *
      * @param  route the route
      * @return       the builder

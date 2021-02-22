@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,5 +79,10 @@ public final class VertxBufferConverter {
     @Converter
     public static byte[] toBytes(Buffer buffer) {
         return buffer.getBytes();
+    }
+
+    @Converter
+    public static InputStream toInputStream(Buffer buffer) {
+        return new ByteArrayInputStream(buffer.getBytes());
     }
 }

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -323,14 +324,19 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
                 Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
+                set = set.stream().filter(om -> om.getFactory() instanceof CBORFactory).collect(Collectors.toSet());
                 if (set.size() == 1) {
                     objectMapper = set.iterator().next();
-                    LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
-                } else if (set.size() > 1) {
-                    LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.",
+                    LOG.info(
+                            "Found a single ObjectMapper with a CBORFactory in the registry, so promoting it as the default ObjectMapper: {}",
+                            objectMapper);
+                } else {
+                    LOG.debug(
+                            "Found {} ObjectMapper with a CBORFactory in the registry, so cannot promote any as the default ObjectMapper.",
                             set.size());
                 }
             }
+            // use a fallback object mapper in last resort
             if (objectMapper == null) {
                 CBORFactory factory = new CBORFactory();
                 objectMapper = new ObjectMapper(factory);

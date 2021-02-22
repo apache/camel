@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.vertx.http;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
@@ -46,51 +52,28 @@ public class VertxHttpProducerLoadTest extends VertxHttpTestSupport {
 
     @Test
     public void testProducerLoad() throws Exception {
-        StopWatch watch = new StopWatch();
-        for (int i = 0; i < 10000000; i++) {
-            fluentTemplate.to("direct:echo")
-                    .withHeader("a", "aaa")
-                    .withHeader("b", "bbb")
-                    .withHeader("c", "ccc")
-                    .withHeader("d", "ddd")
-                    .withHeader("e", "eee")
-                    .withHeader("f", "fff")
-                    .withHeader("g", "ggg")
-                    .withHeader("h", "hhh")
-                    .withHeader("i", "iii")
-                    .withHeader("j", "jjj")
-                    .withHeader("a2", "aaa")
-                    .withHeader("b2", "bbb")
-                    .withHeader("c2", "ccc")
-                    .withHeader("d2", "ddd")
-                    .withHeader("e2", "eee")
-                    .withHeader("f2", "fff")
-                    .withHeader("g2", "ggg")
-                    .withHeader("h2", "hhh")
-                    .withHeader("i2", "iii")
-                    .withHeader("j2", "jjj")
-                    .withHeader("a3", "aaa")
-                    .withHeader("b3", "bbb")
-                    .withHeader("c3", "ccc")
-                    .withHeader("d3", "ddd")
-                    .withHeader("e3", "eee")
-                    .withHeader("f3", "fff")
-                    .withHeader("g3", "ggg")
-                    .withHeader("h3", "hhh")
-                    .withHeader("i3", "iii")
-                    .withHeader("j3", "jjj")
-                    .withHeader("a4", "aaa")
-                    .withHeader("b4", "bbb")
-                    .withHeader("c4", "ccc")
-                    .withHeader("d4", "ddd")
-                    .withHeader("e4", "eee")
-                    .withHeader("f4", "fff")
-                    .withHeader("g4", "ggg")
-                    .withHeader("h4", "hhh")
-                    .withHeader("i4", "iii")
-                    .withHeader("j4", "jjj")
-                    .withHeader("myHeader", "msg" + i).send();
+        Map<String, Object> map = new HashMap<>();
+        for (int i = 0; i < 40; i++) {
+            map.put("mykey" + i, "myvalue" + i);
         }
+
+        StopWatch watch = new StopWatch();
+
+        // do not use template but reuse exchange/producer to be light-weight
+        // and not create additional objects in the JVM as we want to analyze
+        // the "raw" http producer
+        Endpoint to = getMandatoryEndpoint("direct:echo");
+        Producer producer = to.createProducer();
+        producer.start();
+
+        Exchange exchange = to.createExchange();
+        exchange.getMessage().setHeaders(map);
+        for (int i = 0; i < 10000000; i++) {
+            exchange.getMessage().setBody("Message " + i);
+            producer.process(exchange);
+        }
+        producer.stop();
+
         LOG.info("Took {} ms", watch.taken());
     }
 

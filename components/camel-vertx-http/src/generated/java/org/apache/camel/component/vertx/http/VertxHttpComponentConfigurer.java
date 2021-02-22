@@ -45,6 +45,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "proxyType": target.setProxyType(property(camelContext, io.vertx.core.net.ProxyType.class, value)); return true;
         case "proxyusername":
         case "proxyUsername": target.setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsepayloadasbytearray":
+        case "responsePayloadAsByteArray": target.setResponsePayloadAsByteArray(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -85,6 +87,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "proxyType": return io.vertx.core.net.ProxyType.class;
         case "proxyusername":
         case "proxyUsername": return java.lang.String.class;
+        case "responsepayloadasbytearray":
+        case "responsePayloadAsByteArray": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":
@@ -126,6 +130,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "proxyType": return target.getProxyType();
         case "proxyusername":
         case "proxyUsername": return target.getProxyUsername();
+        case "responsepayloadasbytearray":
+        case "responsePayloadAsByteArray": return target.isResponsePayloadAsByteArray();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":

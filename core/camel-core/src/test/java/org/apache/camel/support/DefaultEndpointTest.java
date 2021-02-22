@@ -41,8 +41,6 @@ public class DefaultEndpointTest extends ContextTestSupport {
                 "sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=xxxxxx&knownHostsFile=hosts.list",
                 URISupport.sanitizeUri(
                         "sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
-        assertEquals("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=xxxxxx",
-                URISupport.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
     }
 
     @Test

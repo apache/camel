@@ -34,7 +34,6 @@ import io.vertx.core.net.TCPSSLOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.http.base.HttpHelper;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
@@ -129,27 +128,16 @@ public final class VertxHttpHelper {
     }
 
     /**
-     * Verifies whether the Content-Type exchange header value matches an expected value
-     */
-    public static boolean isContentTypeMatching(Exchange exchange, String expected) {
-        return isContentTypeMatching(expected, ExchangeHelper.getContentType(exchange));
-    }
-
-    /**
-     * Verifies whether the expected Content-Type value matches an expected value
-     */
-    public static boolean isContentTypeMatching(String expected, String actual) {
-        return actual != null && expected.equals(actual);
-    }
-
-    /**
      * Writes the given target object to an {@link ObjectOutputStream}
      */
     public static void writeObjectToStream(OutputStream stream, Object target) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(stream);
-        oos.writeObject(target);
-        oos.flush();
-        IOHelper.close(oos);
+        try {
+            oos.writeObject(target);
+            oos.flush();
+        } finally {
+            IOHelper.close(oos);
+        }
     }
 
     /**

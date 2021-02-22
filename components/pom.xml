@@ -113,17 +113,8 @@
         <module>camel-aws-ecs</module>
         <module>camel-aws-eks</module>
         <module>camel-aws-iam</module>
-        <module>camel-aws-kinesis</module>
-        <module>camel-aws-kms</module>
-        <module>camel-aws-lambda</module>
-        <module>camel-aws-mq</module>
-        <module>camel-aws-msk</module>
         <module>camel-aws-s3</module>
-        <module>camel-aws-ses</module>
-        <module>camel-aws-sns</module>
-        <module>camel-aws-sqs</module>
         <module>camel-aws-swf</module>
-        <module>camel-aws-translate</module>
         <module>camel-aws2-athena</module>
         <module>camel-aws2-cw</module>
         <module>camel-aws2-ddb</module>
@@ -217,6 +208,7 @@
         <module>camel-google-mail</module>
         <module>camel-google-pubsub</module>
         <module>camel-google-sheets</module>
+		<module>camel-google-storage</module>
         <module>camel-gora</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
