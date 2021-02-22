@@ -432,20 +432,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
     }
     /**
-     * AWS Key Management Service (KMS) (camel-aws-kms)
-     * Manage keys stored in AWS KMS instances.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-kms
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.AwsKmsComponentBuilder awsKms() {
-        return org.apache.camel.builder.component.dsl.AwsKmsComponentBuilderFactory.awsKms();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
