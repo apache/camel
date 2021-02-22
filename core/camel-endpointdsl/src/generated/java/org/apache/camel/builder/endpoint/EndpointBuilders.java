@@ -200,7 +200,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory,

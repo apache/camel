@@ -29,7 +29,6 @@
 *** xref:aws-ecs-component.adoc[AWS Elastic Container Service (ECS)]
 *** xref:aws-eks-component.adoc[AWS Elastic Kubernetes Service (EKS)]
 *** xref:aws-iam-component.adoc[AWS Identity and Access Management (IAM)]
-*** xref:aws-kms-component.adoc[AWS Key Management Service (KMS)]
 *** xref:aws-kinesis-component.adoc[AWS Kinesis]
 *** xref:aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose]
 *** xref:aws-s3-component.adoc[AWS S3 Storage Service]
