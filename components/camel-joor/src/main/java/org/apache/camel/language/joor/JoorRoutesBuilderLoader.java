@@ -26,9 +26,8 @@ import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.util.FileUtil;
@@ -36,7 +35,7 @@ import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
-@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + JoorRoutesBuilderLoader.EXTENSION)
+@RoutesLoader(JoorRoutesBuilderLoader.EXTENSION)
 public class JoorRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     public static final String EXTENSION = "java";
     public static final Pattern PACKAGE_PATTERN = Pattern.compile(

@@ -25,13 +25,12 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
 @ManagedResource(description = "Managed XML RoutesBuilderLoader")
-@JdkService(RoutesBuilderLoader.FACTORY_GROUP + "/" + XmlRoutesBuilderLoader.EXTENSION)
+@RoutesLoader(XmlRoutesBuilderLoader.EXTENSION)
 public class XmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "xml";
