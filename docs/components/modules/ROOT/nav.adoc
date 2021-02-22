@@ -32,7 +32,6 @@
 *** xref:aws-kms-component.adoc[AWS Key Management Service (KMS)]
 *** xref:aws-kinesis-component.adoc[AWS Kinesis]
 *** xref:aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose]
-*** xref:aws-lambda-component.adoc[AWS Lambda]
 *** xref:aws-s3-component.adoc[AWS S3 Storage Service]
 *** xref:aws-swf-component.adoc[AWS Simple Workflow (SWF)]
 ** xref:aws2-summary.adoc[AWS 2]
