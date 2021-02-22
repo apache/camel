@@ -404,34 +404,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.awsIam();
     }
     /**
-     * AWS Kinesis (camel-aws-kinesis)
-     * Consume and produce records from AWS Kinesis Streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsKinesisComponentBuilderFactory.AwsKinesisComponentBuilder awsKinesis() {
-        return org.apache.camel.builder.component.dsl.AwsKinesisComponentBuilderFactory.awsKinesis();
-    }
-    /**
-     * AWS Kinesis Firehose (camel-aws-kinesis)
-     * Consume data from AWS Kinesis Firehose streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.AwsKinesisFirehoseComponentBuilder awsKinesisFirehose() {
-        return org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
