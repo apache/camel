@@ -116,7 +116,6 @@
         <module>camel-aws-kinesis</module>
         <module>camel-aws-kms</module>
         <module>camel-aws-lambda</module>
-        <module>camel-aws-mq</module>
         <module>camel-aws-s3</module>
         <module>camel-aws-swf</module>
         <module>camel-aws2-athena</module>
