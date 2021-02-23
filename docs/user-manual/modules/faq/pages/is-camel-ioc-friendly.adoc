@@ -42,7 +42,7 @@ The current mechanism for hooking into other IoC containers
 are:
 
 * xref:ROOT:injector.adoc[Injector] is used to perform dependency injection
-on a type when sing the
+on a type when using the
 xref:ROOT:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control
 With Smart Defaults] pattern
 * xref:ROOT:registry.adoc[Registry] this strategy is used to abstract away
