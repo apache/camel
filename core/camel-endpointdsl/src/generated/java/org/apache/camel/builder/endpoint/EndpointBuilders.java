@@ -104,7 +104,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory,
