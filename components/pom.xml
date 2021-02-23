@@ -112,7 +112,6 @@
         <module>camel-aws-ec2</module>
         <module>camel-aws-ecs</module>
         <module>camel-aws-eks</module>
-        <module>camel-aws-iam</module>
         <module>camel-aws-s3</module>
         <module>camel-aws-swf</module>
         <module>camel-aws2-athena</module>
