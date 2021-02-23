@@ -1,7 +1,7 @@
 [[google-storage-other]]
 = Google Storage Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-google-storagesrcmaindocsgoogle-storage.adoc
+:page-source: components/camel-google-storage/src/main/docs/google-storage.adoc
 :docTitle: Google Storage
 :artifactId: camel-google-storage
 :description: Camel Component for Google Cloud Platform Storage
