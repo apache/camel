@@ -376,20 +376,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.awsEcs();
     }
     /**
-     * AWS Elastic Kubernetes Service (EKS) (camel-aws-eks)
-     * Manage AWS EKS cluster instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-eks
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.AwsEksComponentBuilder awsEks() {
-        return org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.awsEks();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
