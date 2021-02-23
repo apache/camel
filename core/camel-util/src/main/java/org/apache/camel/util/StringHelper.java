@@ -470,14 +470,14 @@ public final class StringHelper {
         }
 
         StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '-') {
-                i++;
-                sb.append(Character.toUpperCase(text.charAt(i)));
-            } else {
-                sb.append(c);
+        String[] splittedString = text.split("\\-");
+        for (int i = 0; i < splittedString.length; i++) {
+            String currentToken = splittedString[i];
+            if (i == 0) {
+                sb.append(currentToken);
+            } else if (!currentToken.isEmpty()) {
+                sb.append(Character.toUpperCase(currentToken.charAt(0)));
+                sb.append(currentToken.substring(1));
             }
         }
         return sb.toString();
