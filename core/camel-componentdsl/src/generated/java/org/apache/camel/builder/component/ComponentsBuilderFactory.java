@@ -390,20 +390,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.awsEks();
     }
     /**
-     * AWS Identity and Access Management (IAM) (camel-aws-iam)
-     * Manage AWS IAM instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-aws-iam
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.AwsIamComponentBuilder awsIam() {
-        return org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.awsIam();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
