@@ -51,3 +51,4 @@ the one to use above, and then add which -starter JARs you want to use in your C
 - Camel-AWS-Kinesis has been removed. Please switch to Camel-AWS2-Kinesis.
 - Camel-AWS-Kinesis Firehose has been removed. Please switch to Camel-AWS2-Kinesis-firehose.
 - Camel-AWS-IAM has been removed. Please switch to Camel-AWS2-IAM.
+- Camel-AWS-EKS has been removed. Please switch to Camel-AWS2-EKS.
