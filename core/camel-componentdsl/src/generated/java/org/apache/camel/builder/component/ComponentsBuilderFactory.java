@@ -362,20 +362,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.awsEc2();
     }
     /**
-     * AWS Elastic Container Service (ECS) (camel-aws-ecs)
-     * Manage AWS ECS cluster instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-ecs
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.AwsEcsComponentBuilder awsEcs() {
-        return org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.awsEcs();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
