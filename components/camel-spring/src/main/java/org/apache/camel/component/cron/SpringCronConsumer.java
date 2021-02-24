@@ -29,7 +29,7 @@ public class SpringCronConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         getProcessor().process(exchange);
         return 1;
     }

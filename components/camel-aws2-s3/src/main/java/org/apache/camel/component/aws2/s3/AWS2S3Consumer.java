@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.s3;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,11 +26,14 @@ import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
-import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -52,6 +56,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Storage Service <a href="http://aws.amazon.com/s3/">AWS
@@ -64,7 +69,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     private String marker;
     private transient String s3ConsumerToString;
 
-    public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
+    public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
@@ -180,7 +185,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
     protected Queue<Exchange> createExchanges(ResponseInputStream<GetObjectResponse> s3Object, String key) {
         Queue<Exchange> answer = new LinkedList<>();
-        Exchange exchange = getEndpoint().createExchange(s3Object, key);
+        Exchange exchange = createExchange(s3Object, key);
         answer.add(exchange);
         return answer;
     }
@@ -212,7 +217,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 if (includeS3Object(s3Object)) {
                     s3Objects.add(s3Object);
-                    Exchange exchange = getEndpoint().createExchange(s3Object, s3ObjectSummary.key());
+                    Exchange exchange = createExchange(s3Object, s3ObjectSummary.key());
                     answer.add(exchange);
                 } else {
                     // If includeFolders != true and the object is not included, it is safe to close the object here.
@@ -238,7 +243,6 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
      * @return          true to include, false to exclude
      */
     protected boolean includeS3Object(ResponseInputStream<GetObjectResponse> s3Object) {
-
         if (getConfiguration().isIncludeFolders()) {
             return true;
         } else {
@@ -363,6 +367,67 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public AWS2S3Endpoint getEndpoint() {
         return (AWS2S3Endpoint) super.getEndpoint();
+    }
+
+    public Exchange createExchange(ResponseInputStream<GetObjectResponse> s3Object, String key) {
+        return createExchange(getEndpoint().getExchangePattern(), s3Object, key);
+    }
+
+    public Exchange createExchange(ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
+        LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
+
+        LOG.trace("Got object [{}]", s3Object);
+
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(pattern);
+        Message message = exchange.getIn();
+
+        if (getConfiguration().isIncludeBody()) {
+            try {
+                message.setBody(IoUtils.toByteArray(s3Object));
+            } catch (IOException e) {
+                throw new RuntimeCamelException(e);
+            }
+        } else {
+            message.setBody(s3Object);
+        }
+
+        message.setHeader(AWS2S3Constants.KEY, key);
+        message.setHeader(AWS2S3Constants.BUCKET_NAME, getConfiguration().getBucketName());
+        message.setHeader(AWS2S3Constants.E_TAG, s3Object.response().eTag());
+        message.setHeader(AWS2S3Constants.LAST_MODIFIED, s3Object.response().lastModified());
+        message.setHeader(AWS2S3Constants.VERSION_ID, s3Object.response().versionId());
+        message.setHeader(AWS2S3Constants.CONTENT_TYPE, s3Object.response().contentType());
+        message.setHeader(AWS2S3Constants.CONTENT_LENGTH, s3Object.response().contentLength());
+        message.setHeader(AWS2S3Constants.CONTENT_ENCODING, s3Object.response().contentEncoding());
+        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
+        message.setHeader(AWS2S3Constants.CACHE_CONTROL, s3Object.response().cacheControl());
+        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
+        message.setHeader(AWS2S3Constants.EXPIRATION_TIME, s3Object.response().expiration());
+        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
+        message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
+        message.setHeader(AWS2S3Constants.METADATA, s3Object.response().metadata());
+
+        /*
+         * If includeBody == true, it is safe to close the object here because the S3Object
+         * was consumed already. If includeBody != true, the caller is responsible for
+         * closing the stream once the body has been fully consumed or use the autoCloseBody
+         * configuration to automatically schedule the body closing at the end of exchange.
+         */
+        if (getConfiguration().isIncludeBody()) {
+            IOHelper.close(s3Object);
+        } else {
+            if (getConfiguration().isAutocloseBody()) {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        IOHelper.close(s3Object);
+                    }
+                });
+            }
+        }
+
+        return exchange;
     }
 
     @Override

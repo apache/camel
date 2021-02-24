@@ -88,7 +88,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
 
         // create Exchange and let the consumer process it
-        final Exchange exchange = consumer.getEndpoint().createExchange(ctx, msg);
+        final Exchange exchange = createExchange(ctx, msg);
         if (consumer.getConfiguration().isSync()) {
             exchange.setPattern(ExchangePattern.InOut);
         }
@@ -114,6 +114,13 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
+    protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
+        Exchange exchange = consumer.createExchange(false);
+        consumer.getEndpoint().updateMessageHeader(exchange.getIn(), ctx);
+        NettyPayloadHelper.setIn(exchange, message);
+        return exchange;
+    }
+
     /**
      * Allows any custom logic before the {@link Exchange} is processed by the routing engine.
      *
@@ -135,6 +142,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             consumer.getExceptionHandler().handleException(e);
         } finally {
             consumer.doneUoW(exchange);
+            consumer.releaseExchange(exchange, false);
         }
     }
 
@@ -151,6 +159,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
                     consumer.getExceptionHandler().handleException(e);
                 } finally {
                     consumer.doneUoW(exchange);
+                    consumer.releaseExchange(exchange, false);
                 }
             }
         });

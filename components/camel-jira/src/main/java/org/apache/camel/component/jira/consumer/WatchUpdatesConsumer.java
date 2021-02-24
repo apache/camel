@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.jira.JiraConstants;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,11 +108,11 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     }
 
     private void processExchange(Object body, String issueKey, String changed) throws Exception {
-        Exchange e = getEndpoint().createExchange();
+        Exchange e = createExchange(true);
         e.getIn().setBody(body);
-        e.getIn().setHeader("issueKey", issueKey);
-        e.getIn().setHeader("changed", changed);
-        e.getIn().setHeader("watchedIssues", watchedIssuesKeys);
+        e.getIn().setHeader(JiraConstants.ISSUE_KEY, issueKey);
+        e.getIn().setHeader(JiraConstants.ISSUE_CHANGED, changed);
+        e.getIn().setHeader(JiraConstants.ISSUE_WATCHED_ISSUES, watchedIssuesKeys);
         LOG.debug(" {}: {} changed to {}", issueKey, changed, body);
         getProcessor().process(e);
     }

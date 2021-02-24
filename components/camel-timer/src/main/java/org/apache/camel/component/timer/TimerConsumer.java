@@ -22,12 +22,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.StartupListener;
-import org.apache.camel.Suspendable;
+import org.apache.camel.*;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +180,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     }
 
     protected void sendTimerExchange(long counter) {
-        final Exchange exchange = endpoint.createExchange();
+        final Exchange exchange = createExchange(false);
 
         if (endpoint.isIncludeMetadata()) {
             exchange.setProperty(Exchange.TIMER_COUNTER, counter);
@@ -206,10 +201,15 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         if (!endpoint.isSynchronous()) {
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
-                public void done(boolean doneSync) {
+                public void done(boolean cbDoneSync) {
                     // handle any thrown exception
                     if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                        TimerConsumer.this.getExceptionHandler().handleException("Error processing exchange", exchange,
+                                exchange.getException());
+                    }
+                    // sync wil release outside this callback
+                    if (!cbDoneSync) {
+                        TimerConsumer.this.releaseExchange(exchange, false);
                     }
                 }
             });
@@ -221,8 +221,12 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             }
 
             // handle any thrown exception
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            try {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

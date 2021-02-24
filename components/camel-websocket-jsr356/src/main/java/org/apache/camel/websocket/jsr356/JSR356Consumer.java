@@ -34,7 +34,7 @@ public class JSR356Consumer extends DefaultConsumer {
     private Runnable closeTask;
 
     private final BiConsumer<Session, Object> onMessage = (session, message) -> {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(JSR356Constants.SESSION, session);
         exchange.getIn().setBody(message);
         getAsyncProcessor().process(exchange, doneSync -> {

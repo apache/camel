@@ -69,4 +69,5 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
         changeStreamsThread.init();
         executor.execute(changeStreamsThread);
     }
+
 }

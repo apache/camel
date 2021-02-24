@@ -24,7 +24,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Envelope;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
@@ -124,6 +127,13 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     private void createConsumer() throws IOException {
         RabbitConsumer consumer = new RabbitConsumer(this);
         this.consumers.add(consumer);
+    }
+
+    public Exchange createExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+        Exchange exchange = createExchange(false);
+        endpoint.getMessageConverter().populateRabbitExchange(exchange, envelope, properties, body, false,
+                endpoint.isAllowMessageBodySerialization());
+        return exchange;
     }
 
     private synchronized void reconnect() {

@@ -44,6 +44,12 @@ public class SpringIntegrationMessage extends DefaultMessage {
         this.siMessage = message;
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+        siMessage = null;
+    }
+
     public void setMessage(org.springframework.messaging.Message<?> message) {
         this.siMessage = message;
     }

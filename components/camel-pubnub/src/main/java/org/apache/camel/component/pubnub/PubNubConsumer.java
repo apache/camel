@@ -103,7 +103,7 @@ public class PubNubConsumer extends DefaultConsumer {
 
         @Override
         public void message(PubNub pubnub, PNMessageResult message) {
-            Exchange exchange = endpoint.createExchange();
+            Exchange exchange = createExchange(true);
             Message inmessage = exchange.getIn();
             inmessage.setBody(message);
             inmessage.setHeader(TIMETOKEN, message.getTimetoken());
@@ -111,13 +111,13 @@ public class PubNubConsumer extends DefaultConsumer {
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                getExceptionHandler().handleException("Error processing exchange", e);
             }
         }
 
         @Override
         public void presence(PubNub pubnub, PNPresenceEventResult presence) {
-            Exchange exchange = endpoint.createExchange();
+            Exchange exchange = createExchange(true);
             Message inmessage = exchange.getIn();
             inmessage.setBody(presence);
             inmessage.setHeader(TIMETOKEN, presence.getTimetoken());
@@ -125,8 +125,7 @@ public class PubNubConsumer extends DefaultConsumer {
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                exchange.setException(e);
-                getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                getExceptionHandler().handleException("Error processing exchange", e);
             }
         }
 

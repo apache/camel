@@ -31,8 +31,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -316,16 +314,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         } catch (IOException e) {
             throw new CamelMongoDbException("createIndex failed", e);
         }
-    }
-
-    public Exchange createMongoDbExchange(Document dbObj) {
-        Exchange exchange = super.createExchange();
-        Message message = exchange.getIn();
-        message.setHeader(MongoDbConstants.DATABASE, database);
-        message.setHeader(MongoDbConstants.COLLECTION, collection);
-        message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
-        message.setBody(dbObj);
-        return exchange;
     }
 
     @Override

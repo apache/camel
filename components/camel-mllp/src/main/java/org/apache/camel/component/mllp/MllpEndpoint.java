@@ -109,7 +109,7 @@ public class MllpEndpoint extends DefaultEndpoint {
         super.setBridgeErrorHandler(configuration.isBridgeErrorHandler());
     }
 
-    private void setExchangeProperties(Exchange mllpExchange) {
+    void setExchangeProperties(Exchange mllpExchange) {
         if (configuration.hasCharsetName()) {
             mllpExchange.setProperty(Exchange.CHARSET_NAME, configuration.getCharsetName());
         }

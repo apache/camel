@@ -144,12 +144,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private boolean copyOnExchange = true;
 
     public MockEndpoint() {
-        init();
+        reset();
     }
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        init();
+        reset();
     }
 
     /**
@@ -308,7 +308,28 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public void reset() {
-        doInit();
+        expectedCount = -1;
+        counter = 0;
+        defaultProcessor = null;
+        processors = new HashMap<>();
+        receivedExchanges = new CopyOnWriteArrayList<>();
+        failures = new CopyOnWriteArrayList<>();
+        tests = new CopyOnWriteArrayList<>();
+        latch = null;
+        failFastAssertionError = null;
+        sleepForEmptyTest = 0;
+        resultWaitTime = 0;
+        resultMinimumWaitTime = 0L;
+        assertPeriod = 0L;
+        expectedMinimumCount = -1;
+        expectedBodyValues = null;
+        actualBodyValues = new ArrayList<>();
+        expectedHeaderValues = null;
+        actualHeaderValues = null;
+        expectedPropertyValues = null;
+        actualPropertyValues = null;
+        retainFirst = -1;
+        retainLast = -1;
     }
 
     // Testing API
@@ -1516,31 +1537,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    @Override
-    protected void doInit() {
-        expectedCount = -1;
-        counter = 0;
-        defaultProcessor = null;
-        processors = new HashMap<>();
-        receivedExchanges = new CopyOnWriteArrayList<>();
-        failures = new CopyOnWriteArrayList<>();
-        tests = new CopyOnWriteArrayList<>();
-        latch = null;
-        failFastAssertionError = null;
-        sleepForEmptyTest = 0;
-        resultWaitTime = 0;
-        resultMinimumWaitTime = 0L;
-        assertPeriod = 0L;
-        expectedMinimumCount = -1;
-        expectedBodyValues = null;
-        actualBodyValues = new ArrayList<>();
-        expectedHeaderValues = null;
-        actualHeaderValues = null;
-        expectedPropertyValues = null;
-        actualPropertyValues = null;
-        retainFirst = -1;
-        retainLast = -1;
-    }
 
     protected synchronized void onExchange(Exchange exchange) {
         try {

@@ -110,7 +110,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, ConfigMap resource) {
                     ConfigMapEvent de = new ConfigMapEvent(action, resource);
-                    Exchange exchange = getEndpoint().createExchange();
+                    Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(de.getConfigMap());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, de.getAction());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
@@ -118,6 +118,8 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                         processor.process(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error during processing", exchange, e);
+                    } finally {
+                        releaseExchange(exchange, false);
                     }
                 }
 

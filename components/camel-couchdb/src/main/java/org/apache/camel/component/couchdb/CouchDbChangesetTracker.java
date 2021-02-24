@@ -73,7 +73,7 @@ public class CouchDbChangesetTracker implements Runnable {
                         lastSequence = feed.getSeq();
                         JsonObject doc = feed.getDoc();
 
-                        Exchange exchange = endpoint.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
+                        Exchange exchange = consumer.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Created exchange [exchange={}, _id={}, seq={}",
                                     new Object[] { exchange, feed.getId(), lastSequence });
@@ -83,6 +83,8 @@ public class CouchDbChangesetTracker implements Runnable {
                             consumer.getProcessor().process(exchange);
                         } catch (Exception e) {
                             consumer.getExceptionHandler().handleException("Error processing exchange.", exchange, e);
+                        } finally {
+                            consumer.releaseExchange(exchange, false);
                         }
                     }
 
@@ -139,7 +141,4 @@ public class CouchDbChangesetTracker implements Runnable {
         changes.stop();
     }
 
-    public boolean isStopped() {
-        return stopped;
-    }
 }

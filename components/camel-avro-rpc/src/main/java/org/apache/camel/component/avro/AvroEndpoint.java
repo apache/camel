@@ -21,14 +21,11 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.avro.Protocol;
-import org.apache.avro.Schema;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -52,17 +49,6 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
     @Override
     public boolean isSingletonProducer() {
         return false;
-    }
-
-    public Exchange createExchange(Protocol.Message message, Object request) {
-        ExchangePattern pattern = ExchangePattern.InOut;
-        if (message.getResponse().getType().equals(Schema.Type.NULL)) {
-            pattern = ExchangePattern.InOnly;
-        }
-        Exchange exchange = createExchange(pattern);
-        exchange.getIn().setBody(request);
-        exchange.getIn().setHeader(AvroConstants.AVRO_MESSAGE_NAME, message.getName());
-        return exchange;
     }
 
     @Override

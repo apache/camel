@@ -348,7 +348,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer();
-        RabbitMQConsumer consumer = new RabbitMQConsumer(this, processor, listenerContainer);
+        SpringRabbitMQConsumer consumer = new SpringRabbitMQConsumer(this, processor, listenerContainer);
         configureConsumer(consumer);
         return consumer;
     }

@@ -40,9 +40,6 @@ public class HazelcastSetConsumer extends HazelcastDefaultConsumer {
         set = hazelcastInstance.getSet(cacheName);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -50,9 +47,6 @@ public class HazelcastSetConsumer extends HazelcastDefaultConsumer {
         listener = set.addItemListener(new CamelItemListener(this, cacheName), true);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStop()
-     */
     @Override
     protected void doStop() throws Exception {
         set.removeItemListener(listener);

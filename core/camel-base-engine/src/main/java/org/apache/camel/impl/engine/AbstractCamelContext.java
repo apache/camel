@@ -101,6 +101,8 @@ import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -264,6 +266,8 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile String version;
     private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
+    private volatile ExchangeFactoryManager exchangeFactoryManager;
+    private volatile ExchangeFactory exchangeFactory;
     private volatile ReactiveExecutor reactiveExecutor;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile Registry registry;
@@ -3622,6 +3626,7 @@ public abstract class AbstractCamelContext extends BaseService
         getDataFormatResolver();
 
         getExecutorServiceManager();
+        getExchangeFactory();
         getShutdownStrategy();
         getUuidGenerator();
 
@@ -3680,6 +3685,8 @@ public abstract class AbstractCamelContext extends BaseService
         typeConverter = null;
         reactiveExecutor = null;
         asyncProcessorAwaitManager = null;
+        exchangeFactory = null;
+        exchangeFactoryManager = null;
     }
 
     /**
@@ -4640,6 +4647,42 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public ExchangeFactory getExchangeFactory() {
+        if (exchangeFactory == null) {
+            synchronized (lock) {
+                if (exchangeFactory == null) {
+                    setExchangeFactory(createExchangeFactory());
+                }
+            }
+        }
+        return exchangeFactory;
+    }
+
+    @Override
+    public void setExchangeFactory(ExchangeFactory exchangeFactory) {
+        // automatic inject camel context
+        exchangeFactory.setCamelContext(this);
+        this.exchangeFactory = exchangeFactory;
+    }
+
+    @Override
+    public ExchangeFactoryManager getExchangeFactoryManager() {
+        if (exchangeFactoryManager == null) {
+            synchronized (lock) {
+                if (exchangeFactoryManager == null) {
+                    setExchangeFactoryManager(createExchangeFactoryManager());
+                }
+            }
+        }
+        return exchangeFactoryManager;
+    }
+
+    @Override
+    public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
+        this.exchangeFactoryManager = doAddService(exchangeFactoryManager);
+    }
+
+    @Override
     public ReactiveExecutor getReactiveExecutor() {
         if (reactiveExecutor == null) {
             synchronized (lock) {
@@ -4730,6 +4773,10 @@ public abstract class AbstractCamelContext extends BaseService
     public String toString() {
         return "CamelContext(" + getName() + ")";
     }
+
+    protected abstract ExchangeFactory createExchangeFactory();
+
+    protected abstract ExchangeFactoryManager createExchangeFactoryManager();
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
 

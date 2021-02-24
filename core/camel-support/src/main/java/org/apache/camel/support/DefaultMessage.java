@@ -52,6 +52,14 @@ public class DefaultMessage extends MessageSupport {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        if (headers != null) {
+            headers.clear();
+        }
+    }
+
+    @Override
     public Object getHeader(String name) {
         if (headers == null) {
             // force creating headers

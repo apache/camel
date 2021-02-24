@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
@@ -56,20 +55,11 @@ public final class UnitOfWorkHelper {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
                     exchange, e);
         }
-        // stop
-        try {
-            uow.stop();
-        } catch (Throwable e) {
-            LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: {}. This exception will be ignored.",
-                    exchange, e);
-        }
-        // MUST clear and set uow to null on exchange after done
-        ExtendedExchange ee = (ExtendedExchange) exchange;
-        ee.setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         if (synchronizations != null && !synchronizations.isEmpty()) {
+            // TODO: only copy/sort if there is > 1 (if 1 then use directly (no for loop)
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
             List<Synchronization> copy = new ArrayList<>(synchronizations);
 

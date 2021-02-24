@@ -57,6 +57,15 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     @Override
+    protected Exchange createExchange(GenericFile<File> file) {
+        Exchange exchange = createExchange(true);
+        if (file != null) {
+            file.bindToExchange(exchange, getEndpoint().isProbeContentType());
+        }
+        return exchange;
+    }
+
+    @Override
     protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
         LOG.trace("pollDirectory from fileName: {}", fileName);
 

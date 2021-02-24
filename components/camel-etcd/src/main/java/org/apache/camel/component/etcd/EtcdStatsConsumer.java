@@ -35,7 +35,7 @@ public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
         Object answer = endpoint.getStats(getClient());
 
         if (answer != null) {
-            Exchange exchange = endpoint.createExchange();
+            Exchange exchange = createExchange(true);
             exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "stats");
             exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, endpoint.getPath());
             exchange.getIn().setBody(answer);

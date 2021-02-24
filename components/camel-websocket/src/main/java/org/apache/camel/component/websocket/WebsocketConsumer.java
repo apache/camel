@@ -65,7 +65,7 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
             final Object message,
             final InetSocketAddress remote) {
 
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // set header and body
         exchange.getIn().setHeader(WebsocketConstants.REMOTE_ADDRESS, remote);

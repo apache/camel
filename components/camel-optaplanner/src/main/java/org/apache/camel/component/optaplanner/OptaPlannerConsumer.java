@@ -59,22 +59,22 @@ public class OptaPlannerConsumer extends DefaultConsumer {
     }
 
     public void processEvent(BestSolutionChangedEvent<Object> event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getMessage().setHeader(OptaPlannerConstants.BEST_SOLUTION, event.getNewBestSolution());
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOG.error("Error processing event ", e);
+            getExceptionHandler().handleException(e);
         }
     }
 
     public void processSolverJobEvent(OptaplannerSolutionEvent event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getMessage().setHeader(OptaPlannerConstants.BEST_SOLUTION, event.getBestSolution());
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOG.error("Error processing event ", e);
+            getExceptionHandler().handleException(e);
         }
     }
 

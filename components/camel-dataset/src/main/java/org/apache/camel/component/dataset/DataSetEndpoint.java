@@ -102,7 +102,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     @Override
     public void reset() {
         super.reset();
-        receivedCounter.set(0);
+        if (receivedCounter != null) {
+            receivedCounter.set(0);
+        }
     }
 
     @Override

@@ -40,7 +40,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class GooglePubsubConsumer extends DefaultConsumer {
+public class GooglePubsubConsumer extends DefaultConsumer {
 
     private Logger localLog;
 
@@ -123,7 +123,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
         private void asynchronousPull(String subscriptionName) {
             while (isRunAllowed() && !isSuspendingOrSuspended()) {
-                MessageReceiver messageReceiver = new CamelMessageReceiver(endpoint, processor);
+                MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver);
                 try {
@@ -152,7 +152,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                     PullResponse pullResponse = subscriber.pullCallable().call(pullRequest);
                     for (ReceivedMessage message : pullResponse.getReceivedMessagesList()) {
                         PubsubMessage pubsubMessage = message.getMessage();
-                        Exchange exchange = endpoint.createExchange();
+                        Exchange exchange = createExchange(true);
                         exchange.getIn().setBody(pubsubMessage.getData().toByteArray());
 
                         exchange.getIn().setHeader(GooglePubsubConstants.ACK_ID, message.getAckId());
@@ -171,7 +171,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         try {
                             processor.process(exchange);
                         } catch (Exception e) {
-                            exchange.setException(e);
+                            getExceptionHandler().handleException(e);
                         }
                     }
                 } catch (IOException e) {

@@ -29,8 +29,8 @@ import org.apache.camel.support.DefaultMessage;
  */
 public class NettyHttpMessage extends DefaultMessage {
 
-    private final transient FullHttpRequest httpRequest;
-    private final transient FullHttpResponse httpResponse;
+    private FullHttpRequest httpRequest;
+    private FullHttpResponse httpResponse;
 
     public NettyHttpMessage(CamelContext camelContext, FullHttpRequest httpRequest, FullHttpResponse httpResponse) {
         super(camelContext);
@@ -38,12 +38,27 @@ public class NettyHttpMessage extends DefaultMessage {
         this.httpResponse = httpResponse;
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+        httpRequest = null;
+        httpResponse = null;
+    }
+
     public FullHttpRequest getHttpRequest() {
         return httpRequest;
     }
 
+    public void setHttpRequest(FullHttpRequest httpRequest) {
+        this.httpRequest = httpRequest;
+    }
+
     public FullHttpResponse getHttpResponse() {
         return httpResponse;
+    }
+
+    public void setHttpResponse(FullHttpResponse httpResponse) {
+        this.httpResponse = httpResponse;
     }
 
     @Override

@@ -88,24 +88,19 @@ public class DockerEventsConsumer extends DefaultConsumer {
         public void onNext(Event event) {
             LOG.debug("Received Docker Event: {}", event);
 
-            final Exchange exchange = getEndpoint().createExchange();
+            final Exchange exchange = createExchange(true);
             Message message = exchange.getIn();
             message.setBody(event);
 
-            try {
-                LOG.trace("Processing exchange [{}]...", exchange);
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        LOG.trace("Done processing exchange [{}]...", exchange);
+            LOG.trace("Processing exchange [{}]...", exchange);
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    if (exchange.getException() != null) {
+                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                     }
-                });
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
+                }
+            });
         }
     }
 }

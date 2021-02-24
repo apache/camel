@@ -63,8 +63,13 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
                 "DebeziumConsumer");
     }
 
-    public Exchange createDbzExchange(final SourceRecord record) {
-        final Exchange exchange = super.createExchange();
+    public Exchange createDbzExchange(DebeziumConsumer consumer, final SourceRecord record) {
+        final Exchange exchange;
+        if (consumer != null) {
+            exchange = consumer.createExchange(false);
+        } else {
+            exchange = super.createExchange();
+        }
 
         final Message message = exchange.getIn();
 

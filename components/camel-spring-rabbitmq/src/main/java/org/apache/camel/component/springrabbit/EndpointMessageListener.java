@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.Map;
+
 import com.rabbitmq.client.Channel;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -32,6 +34,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.amqp.support.converter.MessageConverter;
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
@@ -39,15 +42,21 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
 
+    private final SpringRabbitMQConsumer consumer;
     private final SpringRabbitMQEndpoint endpoint;
     private final AsyncProcessor processor;
+    private final MessagePropertiesConverter messagePropertiesConverter;
+    private final MessageConverter messageConverter;
     private RabbitTemplate template;
     private boolean disableReplyTo;
     private boolean async;
 
-    public EndpointMessageListener(SpringRabbitMQEndpoint endpoint, Processor processor) {
+    public EndpointMessageListener(SpringRabbitMQConsumer consumer, SpringRabbitMQEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
+        this.messagePropertiesConverter = endpoint.getMessagePropertiesConverter();
+        this.messageConverter = endpoint.getMessageConverter();
     }
 
     public boolean isAsync() {
@@ -132,6 +141,9 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
 
+            // the exchange is now done so release it
+            consumer.releaseExchange(exchange, false);
+
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
@@ -148,7 +160,18 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
     }
 
     protected Exchange createExchange(Message message, Channel channel, Object replyDestination) {
-        Exchange exchange = endpoint.createExchange(message);
+        Exchange exchange = consumer.createExchange(false);
+
+        Object body = messageConverter.fromMessage(message);
+        exchange.getMessage().setBody(body);
+
+        // TODO: optimize to use existing headers map
+        Map<String, Object> headers
+                = messagePropertiesConverter.fromMessageProperties(message.getMessageProperties(), exchange);
+        if (!headers.isEmpty()) {
+            exchange.getMessage().setHeaders(headers);
+        }
+
         exchange.setProperty(SpringRabbitMQConstants.CHANNEL, channel);
 
         // lets set to an InOut if we have some kind of reply-to destination
@@ -237,6 +260,12 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                         endpoint.getExceptionHandler().handleException(rce);
                     }
                 }
+            }
+
+            // if we completed from async processing then we should release the exchange
+            // the sync processing will release the exchange outside this callback
+            if (!doneSync) {
+                consumer.releaseExchange(exchange, false);
             }
         }
 

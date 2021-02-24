@@ -75,7 +75,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
         // May cache the last successful sequence number, and pass it to the
         // getRecords request. That way, on the next poll, we start from where
         // we left off, however, I don't know what happens to subsequent
-        // exchanges when an earlier echangee fails.
+        // exchanges when an earlier exchange fails.
 
         currentShardIterator = result.nextShardIterator();
         if (isShardClosed) {
@@ -178,9 +178,18 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
     private Queue<Exchange> createExchanges(List<Record> records) {
         Queue<Exchange> exchanges = new ArrayDeque<>();
         for (Record record : records) {
-            exchanges.add(getEndpoint().createExchange(record));
+            exchanges.add(createExchange(record));
         }
         return exchanges;
+    }
+
+    protected Exchange createExchange(Record record) {
+        Exchange exchange = createExchange(true);
+        exchange.getIn().setBody(record);
+        exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, record.approximateArrivalTimestamp());
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, record.partitionKey());
+        exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, record.sequenceNumber());
+        return exchange;
     }
 
     private boolean hasSequenceNumber() {

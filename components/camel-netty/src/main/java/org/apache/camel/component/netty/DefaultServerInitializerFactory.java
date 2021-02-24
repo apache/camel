@@ -189,5 +189,4 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
     public ServerInitializerFactory createPipelineFactory(NettyConsumer consumer) {
         return new DefaultServerInitializerFactory(consumer);
     }
-
 }

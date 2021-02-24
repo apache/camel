@@ -113,6 +113,11 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     }
 
     @Override
+    public void configureExchange(Exchange exchange) {
+        delegate.configureExchange(exchange);
+    }
+
+    @Override
     public CamelContext getCamelContext() {
         return delegate.getCamelContext();
     }

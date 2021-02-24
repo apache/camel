@@ -81,7 +81,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         final BlobClientWrapper clientWrapper
                 = new BlobClientWrapper(blobContainerClient.getBlobClient(blobName));
         final BlobOperations operations = new BlobOperations(getEndpoint().getConfiguration(), clientWrapper);
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         BlobOperationResponse response;
         if (!ObjectHelper.isEmpty(getEndpoint().getConfiguration().getFileDir())) {

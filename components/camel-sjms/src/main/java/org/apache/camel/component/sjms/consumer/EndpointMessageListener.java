@@ -29,13 +29,16 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.SessionCallback;
 import org.apache.camel.component.sjms.SessionMessageListener;
 import org.apache.camel.component.sjms.SjmsConstants;
+import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.component.sjms.SjmsMessage;
 import org.apache.camel.component.sjms.SjmsTemplate;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -54,6 +57,7 @@ public class EndpointMessageListener implements SessionMessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
 
+    private final SjmsConsumer consumer;
     private final SjmsEndpoint endpoint;
     private final AsyncProcessor processor;
     private Object replyToDestination;
@@ -63,7 +67,8 @@ public class EndpointMessageListener implements SessionMessageListener {
     private String eagerPoisonBody;
     private volatile SjmsTemplate template;
 
-    public EndpointMessageListener(SjmsEndpoint endpoint, Processor processor) {
+    public EndpointMessageListener(SjmsConsumer consumer, SjmsEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
@@ -207,6 +212,9 @@ public class EndpointMessageListener implements SessionMessageListener {
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
 
+            // the exchange is now done so release it
+            consumer.releaseExchange(exchange, false);
+
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
@@ -234,7 +242,18 @@ public class EndpointMessageListener implements SessionMessageListener {
     }
 
     public Exchange createExchange(Message message, Session session, Object replyDestination) {
-        Exchange exchange = endpoint.createExchange(message, session);
+        Exchange exchange = consumer.createExchange(false);
+
+        // optimize: either create a new SjmsMessage or reuse existing if exists
+        SjmsMessage msg = exchange.adapt(ExtendedExchange.class).getInOrNull(SjmsMessage.class);
+        if (msg == null) {
+            msg = new SjmsMessage(exchange, message, session, endpoint.getBinding());
+            exchange.setIn(msg);
+        } else {
+            msg.setJmsMessage(message);
+            msg.setJmsSession(session);
+            msg.setBinding(endpoint.getBinding());
+        }
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
@@ -454,6 +473,12 @@ public class EndpointMessageListener implements SessionMessageListener {
                         endpoint.getExceptionHandler().handleException(rce);
                     }
                 }
+            }
+
+            // if we completed from async processing then we should release the exchange
+            // the sync processing will release the exchange outside this callback
+            if (!doneSync) {
+                consumer.releaseExchange(exchange, false);
             }
         }
     }

@@ -59,6 +59,15 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     @Override
+    protected Exchange createExchange(GenericFile<T> file) {
+        Exchange answer = createExchange(true);
+        if (file != null) {
+            file.bindToExchange(answer);
+        }
+        return answer;
+    }
+
+    @Override
     protected boolean prePollCheck() throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());

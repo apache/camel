@@ -38,9 +38,6 @@ public class HazelcastMultimapConsumer extends HazelcastDefaultConsumer {
         cache = hazelcastInstance.getMultiMap(cacheName);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStart()
-     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -48,9 +45,6 @@ public class HazelcastMultimapConsumer extends HazelcastDefaultConsumer {
         listener = cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
     }
 
-    /**
-     * @see org.apache.camel.support.DefaultConsumer#doStop()
-     */
     @Override
     protected void doStop() throws Exception {
         cache.removeEntryListener(listener);

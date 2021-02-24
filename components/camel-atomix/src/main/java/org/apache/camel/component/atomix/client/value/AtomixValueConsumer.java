@@ -73,7 +73,7 @@ public final class AtomixValueConsumer extends AbstractAtomixClientConsumer<Atom
     // ********************************************
 
     private void onEvent(DistributedValue.ChangeEvent<Object> event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getIn().setHeader(AtomixClientConstants.EVENT_TYPE, event.type());
         exchange.getIn().setHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, event.oldValue());
 

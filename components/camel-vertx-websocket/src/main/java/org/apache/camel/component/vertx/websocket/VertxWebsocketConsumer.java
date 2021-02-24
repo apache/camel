@@ -59,7 +59,7 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     public void onMessage(String connectionKey, Object message) {
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = createExchange(true);
         exchange.getMessage().setHeader(VertxWebsocketContants.CONNECTION_KEY, connectionKey);
         exchange.getMessage().setBody(message);
 
@@ -73,8 +73,9 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     public void onException(String connectionKey, Throwable cause) {
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = createExchange(false);
         exchange.getMessage().setHeader(VertxWebsocketContants.CONNECTION_KEY, connectionKey);
         getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+        releaseExchange(exchange, false);
     }
 }

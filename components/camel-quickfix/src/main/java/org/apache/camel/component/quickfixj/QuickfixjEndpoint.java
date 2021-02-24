@@ -133,10 +133,15 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         if (this.sessionID == null || isMatching(sessionID)) {
             for (QuickfixjConsumer consumer : consumers) {
                 Exchange exchange
-                        = QuickfixjConverters.toExchange(this, sessionID, message, eventCategory, getExchangePattern());
-                consumer.onExchange(exchange);
-                if (exchange.getException() != null) {
-                    throw exchange.getException();
+                        = QuickfixjConverters.toExchange(consumer, sessionID, message, eventCategory, getExchangePattern());
+                try {
+                    consumer.onExchange(exchange);
+                    Exception cause = exchange.getException();
+                    if (cause != null) {
+                        throw cause;
+                    }
+                } finally {
+                    consumer.releaseExchange(exchange, false);
                 }
             }
         }

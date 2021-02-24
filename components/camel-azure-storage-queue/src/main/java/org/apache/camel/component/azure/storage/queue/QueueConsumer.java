@@ -27,6 +27,7 @@ import com.azure.storage.queue.models.QueueMessageItem;
 import com.azure.storage.queue.models.QueueStorageException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
 import org.apache.camel.component.azure.storage.queue.operations.QueueOperations;
@@ -79,7 +80,7 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     private Queue<Exchange> createExchanges(final List<QueueMessageItem> messageItems) {
         return messageItems
                 .stream()
-                .map(queueMessageItem -> getEndpoint().createExchange(queueMessageItem))
+                .map(this::createExchange)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
@@ -140,6 +141,16 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
             getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
         }
         return total;
+    }
+
+    private Exchange createExchange(final QueueMessageItem messageItem) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
+        message.setBody(messageItem.getMessageText());
+        message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
+
+        return exchange;
     }
 
     /**

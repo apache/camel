@@ -31,6 +31,7 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -119,6 +120,11 @@ public final class DefaultConfigurationConfigurer {
             ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
         ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
+
+        if ("pooled".equals(config.getExchangeFactory())) {
+            ecc.setExchangeFactory(new PooledExchangeFactory());
+        }
+        ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();

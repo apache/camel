@@ -78,24 +78,19 @@ public class DockerStatsConsumer extends DefaultConsumer {
         public void onNext(Statistics statistics) {
             LOGGER.debug("Received Docker Statistics Event: {}", statistics);
 
-            final Exchange exchange = getEndpoint().createExchange();
+            final Exchange exchange = createExchange(true);
             Message message = exchange.getIn();
             message.setBody(statistics);
 
-            try {
-                LOGGER.trace("Processing exchange [{}]...", exchange);
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        LOGGER.trace("Done processing exchange [{}]...", exchange);
+            LOGGER.trace("Processing exchange [{}]...", exchange);
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    if (exchange.getException() != null) {
+                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                     }
-                });
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
+                }
+            });
         }
     }
 }

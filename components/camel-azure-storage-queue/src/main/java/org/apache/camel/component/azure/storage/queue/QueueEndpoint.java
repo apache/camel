@@ -17,12 +17,9 @@
 package org.apache.camel.component.azure.storage.queue;
 
 import com.azure.storage.queue.QueueServiceClient;
-import com.azure.storage.queue.models.QueueMessageItem;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
@@ -68,16 +65,6 @@ public class QueueEndpoint extends DefaultEndpoint {
 
         queueServiceClient = configuration.getServiceClient() != null
                 ? configuration.getServiceClient() : QueueClientFactory.createQueueServiceClient(configuration);
-    }
-
-    public Exchange createExchange(final QueueMessageItem messageItem) {
-        final Exchange exchange = createExchange();
-        final Message message = exchange.getIn();
-
-        message.setBody(messageItem.getMessageText());
-        message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
-
-        return exchange;
     }
 
     /**

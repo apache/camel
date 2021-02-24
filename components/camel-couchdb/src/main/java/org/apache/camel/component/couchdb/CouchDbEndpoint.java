@@ -18,10 +18,8 @@ package org.apache.camel.component.couchdb;
 
 import java.net.URI;
 
-import com.google.gson.JsonObject;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -110,17 +108,6 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new CouchDbProducer(this, createClient());
-    }
-
-    public Exchange createExchange(String seq, String id, JsonObject obj, boolean deleted) {
-        Exchange exchange = super.createExchange();
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_DATABASE, database);
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_SEQ, seq);
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, id);
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, obj.get("_rev").getAsString());
-        exchange.getIn().setHeader(CouchDbConstants.HEADER_METHOD, deleted ? "DELETE" : "UPDATE");
-        exchange.getIn().setBody(obj);
-        return exchange;
     }
 
     protected CouchDbClientWrapper createClient() {

@@ -30,7 +30,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
@@ -136,19 +135,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public Exchange createExchange(PDU pdu) {
         Exchange exchange = super.createExchange();
         exchange.setIn(new SnmpMessage(getCamelContext(), pdu));
-        return exchange;
-    }
-
-    /**
-     * creates an exchange for the given message
-     *
-     * @param  pdu   the pdu
-     * @param  event a snmp4j CommandResponderEvent
-     * @return       an exchange
-     */
-    public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
-        Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(getCamelContext(), pdu, event));
         return exchange;
     }
 

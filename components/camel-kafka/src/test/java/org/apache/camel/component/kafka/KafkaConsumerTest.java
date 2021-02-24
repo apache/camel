@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.kafka;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ExchangeFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,9 +33,15 @@ public class KafkaConsumerTest {
     private KafkaComponent component = mock(KafkaComponent.class);
     private KafkaEndpoint endpoint = mock(KafkaEndpoint.class);
     private Processor processor = mock(Processor.class);
+    private ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
+    private ExchangeFactory ef = mock(ExchangeFactory.class);
 
     @Test
     public void consumerRequiresBootstrapServers() throws Exception {
+        when(endpoint.getCamelContext()).thenReturn(ecc);
+        when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(ef);
+        when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
@@ -45,6 +53,10 @@ public class KafkaConsumerTest {
 
     @Test
     public void consumerOnlyRequiresBootstrapServers() throws Exception {
+        when(endpoint.getCamelContext()).thenReturn(ecc);
+        when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(ef);
+        when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getBrokers()).thenReturn("localhost:2181");

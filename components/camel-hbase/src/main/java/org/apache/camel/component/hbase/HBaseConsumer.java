@@ -29,6 +29,7 @@ import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -94,7 +95,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             ResultScanner scanner = table.getScanner(scan);
             int exchangeCount = 0;
             // The next three statements are used just to get a reference to the BodyCellMappingStrategy instance.
-            Exchange exchange = endpoint.createExchange();
+            Exchange exchange = new DefaultExchange(endpoint);
             exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
             CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
             for (Result result = scanner.next();
@@ -137,7 +138,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                     }
 
                     data.getRows().add(resultRow);
-                    exchange = endpoint.createExchange();
+                    exchange = createExchange(true);
                     // Probably overkill but kept it here for consistency.
                     exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
                     mappingStrategy.applyScanResults(exchange.getIn(), data);

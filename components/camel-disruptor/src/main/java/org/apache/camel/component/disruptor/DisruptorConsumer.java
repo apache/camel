@@ -192,6 +192,17 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         }
     }
 
+    @Override
+    public Exchange createExchange(boolean autoRelease) {
+        // noop
+        return null;
+    }
+
+    @Override
+    public void releaseExchange(Exchange exchange, boolean autoRelease) {
+        // noop
+    }
+
     /**
      * Implementation of the {@link LifecycleAwareExchangeEventHandler} interface that passes all Exchanges to the
      * {@link Processor} registered at this {@link DisruptorConsumer}.

@@ -86,7 +86,7 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
                     return new DefaultConsumer(this, processor) {
                         @Override
                         public void start() {
-                            Exchange exchange = createExchange();
+                            Exchange exchange = createExchange(true);
                             exchange.getMessage().setHeader("foo", foo);
                             exchange.getMessage().setHeader("bar", bar);
                             try {
