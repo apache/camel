@@ -4009,6 +4009,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SpringEventComponentBuilderFactory.springEvent();
     }
     /**
+     * Spring Integration (camel-spring-integration)
+     * Bridge Camel with Spring Integration.
+     * 
+     * Category: spring,eventbus
+     * Since: 1.4
+     * Maven coordinates: org.apache.camel:camel-spring-integration
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.SpringIntegrationComponentBuilder springIntegration() {
+        return org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.springIntegration();
+    }
+    /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
      * 
