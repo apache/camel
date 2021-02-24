@@ -1832,51 +1832,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS CloudWatch (camel-aws-cw)
-     * Send metrics to AWS CloudWatch.
-     * 
-     * Category: cloud,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-aws-cw
-     * 
-     * Syntax: <code>aws-cw:namespace</code>
-     * 
-     * Path parameter: namespace (required)
-     * The metric namespace
-     * 
-     * @param path namespace
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.CwEndpointBuilder awsCw(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.endpointBuilder("aws-cw", path);
-    }
-    /**
-     * AWS CloudWatch (camel-aws-cw)
-     * Send metrics to AWS CloudWatch.
-     * 
-     * Category: cloud,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-aws-cw
-     * 
-     * Syntax: <code>aws-cw:namespace</code>
-     * 
-     * Path parameter: namespace (required)
-     * The metric namespace
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path namespace
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.CwEndpointBuilder awsCw(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 

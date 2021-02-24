@@ -306,20 +306,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
-     * AWS CloudWatch (camel-aws-cw)
-     * Send metrics to AWS CloudWatch.
-     * 
-     * Category: cloud,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-aws-cw
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.AwsCwComponentBuilder awsCw() {
-        return org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.awsCw();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
