@@ -348,20 +348,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.awsDdbstream();
     }
     /**
-     * AWS Elastic Compute Cloud (EC2) (camel-aws-ec2)
-     * Manage AWS EC2 instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-aws-ec2
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.AwsEc2ComponentBuilder awsEc2() {
-        return org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.awsEc2();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 

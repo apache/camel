@@ -1967,51 +1967,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Elastic Compute Cloud (EC2) (camel-aws-ec2)
-     * Manage AWS EC2 instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-aws-ec2
-     * 
-     * Syntax: <code>aws-ec2:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.EC2EndpointBuilder awsEc2(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.endpointBuilder("aws-ec2", path);
-    }
-    /**
-     * AWS Elastic Compute Cloud (EC2) (camel-aws-ec2)
-     * Manage AWS EC2 instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-aws-ec2
-     * 
-     * Syntax: <code>aws-ec2:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path label
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.EC2EndpointBuilder awsEc2(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
