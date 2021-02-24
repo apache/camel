@@ -45,6 +45,32 @@ public class DebeziumTypeConverterTest {
         assertTrue((boolean) outputValue.get("valid"));
     }
 
+    @Test
+    void testToMapNestedStruct() {
+        Schema detailsSchema = SchemaBuilder.struct().field("age", SchemaBuilder.INT32_SCHEMA).build();
+
+        Schema valueSchema = SchemaBuilder.struct()
+                .name("valueSchema")
+                .field("id", SchemaBuilder.INT32_SCHEMA)
+                .field("name", SchemaBuilder.STRING_SCHEMA)
+                .field("isAdult", SchemaBuilder.BOOLEAN_SCHEMA)
+                .field("details", detailsSchema)
+                .build();
+
+        Struct inputValue = new Struct(valueSchema)
+                .put("id", 12)
+                .put("name", "jane doe")
+                .put("isAdult", true)
+                .put("details", new Struct(detailsSchema).put("age", 30));
+
+        final Map<String, Object> outputValue = DebeziumTypeConverter.toMap(inputValue);
+
+        assertEquals("jane doe", outputValue.get("name"));
+        assertEquals(12, outputValue.get("id"));
+        assertTrue((Boolean) outputValue.get("isAdult"));
+        assertEquals(30, ((Map) outputValue.get("details")).get("age"));
+    }
+
     private Struct createTestStruct(final int id, final String name, final boolean valid) {
         final Schema schema = SchemaBuilder.struct()
                 .field("id", Schema.INT32_SCHEMA)
