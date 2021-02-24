@@ -40,8 +40,6 @@ public final class SensitiveUtils {
                     "connectionstring",
                     "consumerkey",
                     "consumersecret",
-                    "credentialsaccountkey",
-                    "credentialsaccountname",
                     "emailaddress",
                     "fulltokenid",
                     "httpproxypassword",
