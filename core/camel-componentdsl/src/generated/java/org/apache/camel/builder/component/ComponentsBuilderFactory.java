@@ -320,34 +320,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.awsCw();
     }
     /**
-     * AWS DynamoDB (camel-aws-ddb)
-     * Store and retrieve data from AWS DynamoDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsDdbComponentBuilderFactory.AwsDdbComponentBuilder awsDdb() {
-        return org.apache.camel.builder.component.dsl.AwsDdbComponentBuilderFactory.awsDdb();
-    }
-    /**
-     * AWS DynamoDB Streams (camel-aws-ddb)
-     * Receive messages from AWS DynamoDB Stream service.
-     * 
-     * Category: cloud,messaging,streams
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.AwsDdbstreamComponentBuilder awsDdbstream() {
-        return org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.awsDdbstream();
-    }
-    /**
      * AWS S3 Storage Service (camel-aws-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
