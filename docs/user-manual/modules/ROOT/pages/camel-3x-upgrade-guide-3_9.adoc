@@ -56,3 +56,4 @@ the one to use above, and then add which -starter JARs you want to use in your C
 - Camel-AWS-EC2 has been removed. Please switch to Camel-AWS2-EC2.
 - Camel-AWS-DDB has been removed. Please switch to Camel-AWS2-DDB.
 - Camel-AWS-DDB Streams has been removed. Please switch to Camel-AWS2-DDB Streams.
+- Camel-AWS-CW has been removed. Please switch to Camel-AWS2-CW.
