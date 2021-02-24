@@ -1924,51 +1924,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Azure Storage Blob Service (Deprecated) (camel-azure)
-     * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * Syntax: <code>azure-blob:containerOrBlobUri</code>
-     * 
-     * Path parameter: containerOrBlobUri (required)
-     * Container or Blob compact Uri
-     * 
-     * @param path containerOrBlobUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder("azure-blob", path);
-    }
-    /**
-     * Azure Storage Blob Service (Deprecated) (camel-azure)
-     * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * Syntax: <code>azure-blob:containerOrBlobUri</code>
-     * 
-     * Path parameter: containerOrBlobUri (required)
-     * Container or Blob compact Uri
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path containerOrBlobUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service
