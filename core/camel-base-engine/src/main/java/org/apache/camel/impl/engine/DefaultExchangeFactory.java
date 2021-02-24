@@ -179,8 +179,7 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
      */
     final class UtilizationStatistics implements ExchangeFactory.Statistics {
 
-        private boolean statisticsEnabled;
-
+        boolean statisticsEnabled;
         final LongAdder created = new LongAdder();
         final LongAdder acquired = new LongAdder();
         final LongAdder released = new LongAdder();

@@ -25,7 +25,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.apache.camel.*;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
+import org.apache.camel.PooledExchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
