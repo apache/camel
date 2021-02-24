@@ -83,7 +83,6 @@
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-identity-version>1.1.3</azure-identity-version>
-        <azure-storage-java-sdk-version>8.6.0</azure-storage-java-sdk-version>
         <azure-storage-blob-java-sdk12-version>12.10.0</azure-storage-blob-java-sdk12-version>
         <azure-storage-datalake-java-sdk12-version>12.3.0</azure-storage-datalake-java-sdk12-version>
         <azure-storage-queue-java-sdk12-version>12.8.0</azure-storage-queue-java-sdk12-version>
@@ -984,11 +983,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-azure-storage-queue</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-azure</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
