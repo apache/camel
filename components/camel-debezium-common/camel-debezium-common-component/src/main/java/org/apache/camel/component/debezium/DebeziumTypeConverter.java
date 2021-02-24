@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.Converter;
 import org.apache.kafka.connect.data.Struct;
-import org.apache.kafka.connect.errors.DataException;
 
 @Converter(generateLoader = true)
 public final class DebeziumTypeConverter {
@@ -41,10 +40,13 @@ public final class DebeziumTypeConverter {
         final HashMap<String, Object> fieldsToValues = new HashMap<>();
 
         struct.schema().fields().forEach(field -> {
-            try {
-                fieldsToValues.put(field.name(), struct.get(field));
-            } catch (DataException e) {
-                fieldsToValues.put(field.name(), null);
+            Object value = struct.get(field);
+
+            // recursive call if we have nested structs
+            if (value instanceof Struct) {
+                fieldsToValues.put(field.name(), toMap((Struct) value));
+            } else {
+                fieldsToValues.put(field.name(), value);
             }
         });
 
