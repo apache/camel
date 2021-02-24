@@ -2142,6 +2142,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.IgniteSetComponentBuilderFactory.igniteSet();
     }
     /**
+     * IMAP (camel-mail)
+     * Send and receive emails using imap, pop3 and smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ImapComponentBuilderFactory.ImapComponentBuilder imap() {
+        return org.apache.camel.builder.component.dsl.ImapComponentBuilderFactory.imap();
+    }
+    /**
      * IMAPS (Secure) (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
      * 
@@ -2676,6 +2689,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KubernetesReplicationControllersComponentBuilderFactory.KubernetesReplicationControllersComponentBuilder kubernetesReplicationControllers() {
         return org.apache.camel.builder.component.dsl.KubernetesReplicationControllersComponentBuilderFactory.kubernetesReplicationControllers();
+    }
+    /**
+     * Kubernetes Resources Quota (camel-kubernetes)
+     * Perform operations on Kubernetes Resources Quotas.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesResourcesQuotaComponentBuilderFactory.KubernetesResourcesQuotaComponentBuilder kubernetesResourcesQuota() {
+        return org.apache.camel.builder.component.dsl.KubernetesResourcesQuotaComponentBuilderFactory.kubernetesResourcesQuota();
     }
     /**
      * Kubernetes Secrets (camel-kubernetes)
@@ -4310,6 +4336,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.VertxComponentBuilderFactory.VertxComponentBuilder vertx() {
         return org.apache.camel.builder.component.dsl.VertxComponentBuilderFactory.vertx();
+    }
+    /**
+     * Vert.x HTTP Client (camel-vertx-http)
+     * Send requests to external HTTP servers using Vert.x
+     * 
+     * Category: http
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-vertx-http
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.VertxHttpComponentBuilderFactory.VertxHttpComponentBuilder vertxHttp() {
+        return org.apache.camel.builder.component.dsl.VertxHttpComponentBuilderFactory.vertxHttp();
     }
     /**
      * Vert.x Kafka (camel-vertx-kafka)
