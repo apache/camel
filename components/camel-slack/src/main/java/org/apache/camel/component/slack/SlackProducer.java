@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.slack.api.model.Message;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -35,6 +37,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 public class SlackProducer extends DefaultAsyncProducer {
+
+    private static final Gson gson = new Gson();
 
     private final SlackEndpoint slackEndpoint;
     private CloseableHttpClient client;
@@ -67,24 +71,22 @@ public class SlackProducer extends DefaultAsyncProducer {
         HttpPost httpPost = new HttpPost(slackEndpoint.getWebhookUrl());
 
         // Build Helper object
-        SlackMessage slackMessage;
+        String json;
         Object payload = exchange.getIn().getBody();
         if (payload instanceof SlackMessage) {
-            slackMessage = (SlackMessage) payload;
+            json = asJson(addEndPointOptions((SlackMessage) payload));
+        } else if (payload instanceof Message) {
+            json = gson.toJson(addEndPointOptions((Message) payload));
         } else {
-            slackMessage = new SlackMessage();
+            SlackMessage slackMessage = new SlackMessage();
             slackMessage.setText(exchange.getIn().getBody(String.class));
+            json = asJson(addEndPointOptions(slackMessage));
         }
-        slackMessage.setChannel(slackEndpoint.getChannel());
-        slackMessage.setUsername(slackEndpoint.getUsername());
-        slackMessage.setIconUrl(slackEndpoint.getIconUrl());
-        slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
 
         // use charset from exchange or fallback to the default charset
         String charset = ExchangeHelper.getCharsetName(exchange, true);
 
         // Set the post body
-        String json = asJson(slackMessage);
         StringEntity body = new StringEntity(json, charset);
 
         // Do the post
@@ -111,6 +113,20 @@ public class SlackProducer extends DefaultAsyncProducer {
         }
 
         return false;
+    }
+
+    private Message addEndPointOptions(Message slackMessage) {
+        slackMessage.setChannel(slackEndpoint.getChannel());
+        slackMessage.setUsername(slackEndpoint.getUsername());
+        return slackMessage;
+    }
+
+    private SlackMessage addEndPointOptions(SlackMessage slackMessage) {
+        slackMessage.setChannel(slackEndpoint.getChannel());
+        slackMessage.setUsername(slackEndpoint.getUsername());
+        slackMessage.setIconUrl(slackEndpoint.getIconUrl());
+        slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
+        return slackMessage;
     }
 
     /**

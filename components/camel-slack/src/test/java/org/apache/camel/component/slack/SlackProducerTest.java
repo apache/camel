@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.slack;
 
+import java.util.Collections;
+
+import com.slack.api.model.Message;
+import com.slack.api.model.block.SectionBlock;
+import com.slack.api.model.block.composition.MarkdownTextObject;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
@@ -39,6 +44,24 @@ public class SlackProducerTest extends CamelTestSupport {
         errors.expectedMessageCount(0);
 
         template.sendBody(test, "Hello from Camel!");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSlackAPIModelMessage() throws Exception {
+        errors.expectedMessageCount(0);
+
+        Message message = new Message();
+        message.setBlocks(Collections.singletonList(SectionBlock
+                .builder()
+                .text(MarkdownTextObject
+                        .builder()
+                        .text("*Hello from Camel!*")
+                        .build())
+                .build()));
+
+        template.sendBody(test, message);
 
         assertMockEndpointsSatisfied();
     }
