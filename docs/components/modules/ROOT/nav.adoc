@@ -25,7 +25,6 @@
 *** xref:aws-cw-component.adoc[AWS CloudWatch]
 *** xref:aws-ddb-component.adoc[AWS DynamoDB]
 *** xref:aws-ddbstream-component.adoc[AWS DynamoDB Streams]
-*** xref:aws-ec2-component.adoc[AWS Elastic Compute Cloud (EC2)]
 *** xref:aws-s3-component.adoc[AWS S3 Storage Service]
 *** xref:aws-swf-component.adoc[AWS Simple Workflow (SWF)]
 ** xref:aws2-summary.adoc[AWS 2]
