@@ -223,6 +223,7 @@
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <glassfish-javax-json>1.0.4</glassfish-javax-json>
     <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
+    <gmavenplus-plugin-version>1.12.0</gmavenplus-plugin-version>
     <gmetric4j-version>1.0.10</gmetric4j-version>
     <google-api-client-version>1.22.0</google-api-client-version>
     <google-api-services-calendar-version>v3-rev291-1.22.0</google-api-services-calendar-version>
@@ -355,6 +356,7 @@
     <json-accessors-smart-version>1.2</json-accessors-smart-version>
     <json-api>1.0</json-api>
     <json-path-version>2.4.0</json-path-version>
+    <json-schema-validator-version>2.2.14</json-schema-validator-version>
     <json-simple-version>1.1.1</json-simple-version>
     <json-smart-version>2.3</json-smart-version>
     <jsonassert-version>1.5.0</jsonassert-version>
@@ -519,6 +521,7 @@
     <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
+    <spock-version>2.0-M4-groovy-3.0</spock-version>
     <spring-batch-version>4.3.1</spring-batch-version>
     <spring-data-redis-version>2.4.3</spring-data-redis-version>
     <spring-integration-version>5.4.3</spring-integration-version>
