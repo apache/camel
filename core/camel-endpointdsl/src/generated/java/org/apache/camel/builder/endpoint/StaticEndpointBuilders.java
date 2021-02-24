@@ -1979,51 +1979,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Azure Storage Queue Service (Deprecated) (camel-azure)
-     * Store and retrieve messages from Azure Storage Queue Service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * Syntax: <code>azure-queue:containerAndQueueUri</code>
-     * 
-     * Path parameter: containerAndQueueUri (required)
-     * Container Queue compact Uri
-     * 
-     * @param path containerAndQueueUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.endpointBuilder("azure-queue", path);
-    }
-    /**
-     * Azure Storage Queue Service (Deprecated) (camel-azure)
-     * Store and retrieve messages from Azure Storage Queue Service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * Syntax: <code>azure-queue:containerAndQueueUri</code>
-     * 
-     * Path parameter: containerAndQueueUri (required)
-     * Container Queue compact Uri
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path containerAndQueueUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
      * 
