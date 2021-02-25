@@ -85,7 +85,6 @@ import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TransformDefinition;
@@ -13974,59 +13973,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "omit-xml-declaration": {
                     String val = asText(node);
                     target.setOmitXmlDeclaration(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            inline = true,
-            types = org.apache.camel.model.ToDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "to",
-            properties = {
-                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", required = true)
-            }
-    )
-    public static class ToDefinitionDeserializer extends YamlDeserializerBase<ToDefinition> {
-        public ToDefinitionDeserializer() {
-            super(ToDefinition.class);
-        }
-
-        @Override
-        protected ToDefinition newInstance() {
-            return new ToDefinition();
-        }
-
-        @Override
-        protected ToDefinition newInstance(String value) {
-            return new ToDefinition(value);
-        }
-
-        @Override
-        protected boolean setProperty(ToDefinition target, String propertyKey, String propertyName,
-                Node node) {
-            switch(propertyKey) {
-                case "inherit-error-handler": {
-                    String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "pattern": {
-                    String val = asText(node);
-                    target.setPattern(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
                     break;
                 }
                 default: {

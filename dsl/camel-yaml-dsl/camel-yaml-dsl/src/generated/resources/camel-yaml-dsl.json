@@ -164,9 +164,6 @@
           "throw-exception" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ThrowExceptionDefinition"
           },
-          "to" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
           "to-d" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
@@ -2373,11 +2370,8 @@
         }, {
           "type" : "object",
           "properties" : {
-            "inherit-error-handler" : {
-              "type" : "boolean"
-            },
-            "pattern" : {
-              "type" : "string"
+            "properties" : {
+              "type" : "object"
             },
             "uri" : {
               "type" : "string"

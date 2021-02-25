@@ -125,6 +125,7 @@
                             <packageName>org.apache.camel.dsl.yaml.deserializers</packageName>
                             <bannedDefinitions>
                                 <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.ToDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.language.ExpressionDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.ExpressionSubElementDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.PropertyDefinitions</bannedDefinition>

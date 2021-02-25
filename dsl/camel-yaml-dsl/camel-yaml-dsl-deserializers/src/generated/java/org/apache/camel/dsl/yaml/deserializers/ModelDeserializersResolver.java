@@ -368,8 +368,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ThrowExceptionDefinition": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
             case "tidy-markup": return new ModelDeserializers.TidyMarkupDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.TidyMarkupDataFormat": return new ModelDeserializers.TidyMarkupDataFormatDeserializer();
-            case "to": return new ModelDeserializers.ToDefinitionDeserializer();
-            case "org.apache.camel.model.ToDefinition": return new ModelDeserializers.ToDefinitionDeserializer();
             case "to-d": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "org.apache.camel.model.ToDynamicDefinition": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "tokenize": return new ModelDeserializers.TokenizerExpressionDeserializer();
