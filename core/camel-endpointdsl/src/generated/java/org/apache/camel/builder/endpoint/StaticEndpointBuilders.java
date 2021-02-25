@@ -1832,51 +1832,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrieve objects from AWS S3 Storage Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-s3
-     * 
-     * Syntax: <code>aws-s3://bucketNameOrArn</code>
-     * 
-     * Path parameter: bucketNameOrArn (required)
-     * Bucket name or ARN
-     * 
-     * @param path //bucketNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder("aws-s3", path);
-    }
-    /**
-     * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrieve objects from AWS S3 Storage Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-s3
-     * 
-     * Syntax: <code>aws-s3://bucketNameOrArn</code>
-     * 
-     * Path parameter: bucketNameOrArn (required)
-     * Bucket name or ARN
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path //bucketNameOrArn
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 

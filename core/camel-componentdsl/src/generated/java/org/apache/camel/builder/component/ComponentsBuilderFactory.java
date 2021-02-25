@@ -306,20 +306,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
-     * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrieve objects from AWS S3 Storage Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-s3
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.AwsS3ComponentBuilder awsS3() {
-        return org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.awsS3();
-    }
-    /**
      * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 
