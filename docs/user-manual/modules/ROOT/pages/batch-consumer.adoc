@@ -22,7 +22,6 @@ Consumer] by its consumer:
 * xref:components::mybatis-component.adoc[MyBatis]
 * xref:components::snmp-component.adoc[SNMP]
 * xref:components::sql-component.adoc[SQL]
-* xref:components::aws-s3-component.adoc[S3]
 
 [[BatchConsumer-ConsumerOptions]]
 == Consumer Options
