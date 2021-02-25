@@ -25,7 +25,7 @@ RUN dnf install -y java-11-openjdk-headless libaio tar gzip && \
     dnf clean all && \
     mkdir -p ${JMS_BROKER_ROOT} && \
     cd ${JMS_BROKER_ROOT} && \
-    curl https://archive.apache.org/dist/activemq/activemq-artemis/${ARTEMIS_VERSION}/apache-artemis-${ARTEMIS_VERSION}-bin.tar.gz -o apache-artemis.tar.gz && \
+    curl --retry 3 --retry-connrefused https://archive.apache.org/dist/activemq/activemq-artemis/${ARTEMIS_VERSION}/apache-artemis-${ARTEMIS_VERSION}-bin.tar.gz -o apache-artemis.tar.gz && \
     mkdir -p apache-artemis && tar --strip-components=1 --exclude=examples/* -xvf apache-artemis.tar.gz -C apache-artemis && \
     rm -f apache-artemis.tar.gz
 WORKDIR ${JMS_BROKER_ROOT}
