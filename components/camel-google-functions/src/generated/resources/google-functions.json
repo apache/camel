@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "google-functions",
+    "title": "Google Functions",
+    "description": "Camel Component for Google Cloud Platform Functions",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-functions",
+    "version": "3.9.0-SNAPSHOT"
+  }
+}

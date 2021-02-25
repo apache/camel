@@ -2663,6 +2663,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "GoogleFunctionsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "google-functions",
+    "title": "GoogleCloudFunctions",
+    "description": "Store and retrieve objects from Google Cloud Functions Service using the google-cloud-storage library.",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "cloud",
+    "javaType": "org.apache.camel.component.google.functions.GoogleCloudFunctionsComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-functions",
+    "version": "3.9.0-SNAPSHOT",
+    "scheme": "google-functions",
+    "extendsScheme": "",
+    "syntax": "google-functions:name",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "GoogleMailComponentBuilderFactory": {
     "kind": "component",
     "name": "google-mail",

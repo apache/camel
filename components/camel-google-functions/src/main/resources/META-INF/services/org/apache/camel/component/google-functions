@@ -1,1 +1,1 @@
-class=org.apache.camel.GoogleCloudFunctionsComponent
+class=org.apache.camel.component.google.functions.GoogleCloudFunctionsComponent
