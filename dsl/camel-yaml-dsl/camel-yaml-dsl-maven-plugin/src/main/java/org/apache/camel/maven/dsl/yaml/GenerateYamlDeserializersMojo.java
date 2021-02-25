@@ -376,7 +376,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             .distinct()
             .forEach(scheme -> sw.add("case $S:\n", scheme));
 
-        sw.addStatement("return org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpointConstructor(id, $L::new)", superClass);
+        sw.addStatement("return org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpointUri(id, node)", superClass);
         sw.endControlFlow();
         sw.addStatement("return null");
 
@@ -388,10 +388,11 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 .addStatement("return YamlDeserializerResolver.ORDER_LOWEST")
                 .build());
         resolver.addMethod(
-            MethodSpec.methodBuilder("resolveEndpointConstructor")
+            MethodSpec.methodBuilder("resolveEndpointUri")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(String.class, "id")
-                .returns(ConstructNode.class)
+                .addParameter(Node.class, "node")
+                .returns(String.class)
                 .addCode(sw.build())
                 .build());
         resolver.addMethod(
@@ -400,7 +401,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 .addAnnotation(Override.class)
                 .addParameter(String.class, "id")
                 .returns(ConstructNode.class)
-                .addStatement("return resolveEndpointConstructor(id)")
+                .addStatement("return node -> org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpoint(id, node, $L::new)", superClass)
                 .build());
 
         return Arrays.asList(
@@ -499,7 +500,35 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             );
         }
 
-        if (implementType(info, HAS_EXPRESSION_TYPE_CLASS)) {
+        if (extendsType(info, SEND_DEFINITION_CLASS)) {
+            setProperty.beginControlFlow("case $S:", "properties");
+            setProperty.beginControlFlow("if (target.getUri() == null)");
+            setProperty.addStatement("throw new IllegalStateException(\"url must be set before setting properties\")");
+            setProperty.endControlFlow();
+            setProperty.addStatement("java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node))");
+            setProperty.addStatement("$T dc = getDeserializationContext(node)", CN_DESERIALIZATION_CONTEXT);
+            setProperty.addStatement("String uri = $T.createEndpointUri(dc.getCamelContext(), target.getUri(), properties)", CN_YAML_SUPPORT);
+            setProperty.addStatement("target.setUri(uri)");
+            setProperty.addStatement("break");
+            setProperty.endControlFlow();
+
+            setProperty.beginControlFlow("default:");
+            setProperty.addStatement("String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node)");
+            setProperty.beginControlFlow("if (uri == null)");
+            setProperty.addStatement("return false");
+            setProperty.endControlFlow();
+            setProperty.beginControlFlow("if (target.getUri() != null)");
+            setProperty.addStatement("throw new IllegalStateException(\"url must not be set when using Endpoint DSL\")");
+            setProperty.endControlFlow();
+            setProperty.addStatement("target.setUri(uri)");
+            setProperty.endControlFlow();
+
+            properties.add(
+                yamlProperty(
+                    "properties",
+                    "object")
+            );
+        } else if (implementType(info, HAS_EXPRESSION_TYPE_CLASS)) {
             setProperty.beginControlFlow("default:");
             setProperty.addStatement("$T ed = target.getExpressionType()", CN_EXPRESSION_DEFINITION);
             setProperty.beginControlFlow("if (ed != null)");
@@ -512,7 +541,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.addStatement("return false");
             setProperty.endControlFlow();
             setProperty.endControlFlow();
-
 
             if (!extendsType(info, EXPRESSION_DEFINITION_CLASS)) {
                 properties.add(

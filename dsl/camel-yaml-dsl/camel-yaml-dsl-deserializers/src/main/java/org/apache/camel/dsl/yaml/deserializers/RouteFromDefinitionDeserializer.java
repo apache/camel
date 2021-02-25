@@ -29,7 +29,6 @@ import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.util.ObjectHelper;
-import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -85,12 +84,12 @@ public class RouteFromDefinitionDeserializer extends YamlDeserializerBase<Output
                     properties = asScalarMap(tuple.getValueNode());
                     break;
                 default:
-                    ConstructNode cn = EndpointConsumerDeserializersResolver.resolveEndpointConstructor(key);
-                    if (cn != null) {
+                    String endpointUri = EndpointConsumerDeserializersResolver.resolveEndpointUri(key, val);
+                    if (endpointUri != null) {
                         if (uri != null || properties != null) {
                             throw new IllegalArgumentException("uri and properties are not supported when using Endpoint DSL ");
                         }
-                        target.setDelegate((FromDefinition) cn.construct(val));
+                        target.setDelegate(new FromDefinition(endpointUri));
                     } else {
                         throw new IllegalArgumentException("Unsupported field: " + key);
                     }

@@ -19,9 +19,11 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteDefinition
+import spock.lang.Ignore
 
 class RoutesTest extends YamlTestSupport {
 
+    @Ignore
     def "load from"() {
         when:
             loadRoutes '''
@@ -41,7 +43,7 @@ class RoutesTest extends YamlTestSupport {
                 }
             }
     }
-
+    @Ignore
     def "load multi from "() {
         when:
             loadRoutes '''

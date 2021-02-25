@@ -302,6 +302,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.RoutingSlipDefinition": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "rss": return new ModelDeserializers.RssDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.RssDataFormat": return new ModelDeserializers.RssDataFormatDeserializer();
+            case "org.apache.camel.model.SagaActionUriDefinition": return new ModelDeserializers.SagaActionUriDefinitionDeserializer();
             case "saga": return new ModelDeserializers.SagaDefinitionDeserializer();
             case "org.apache.camel.model.SagaDefinition": return new ModelDeserializers.SagaDefinitionDeserializer();
             case "org.apache.camel.model.SagaOptionDefinition": return new ModelDeserializers.SagaOptionDefinitionDeserializer();
@@ -369,6 +370,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ThrowExceptionDefinition": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
             case "tidy-markup": return new ModelDeserializers.TidyMarkupDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.TidyMarkupDataFormat": return new ModelDeserializers.TidyMarkupDataFormatDeserializer();
+            case "to": return new ModelDeserializers.ToDefinitionDeserializer();
+            case "org.apache.camel.model.ToDefinition": return new ModelDeserializers.ToDefinitionDeserializer();
             case "to-d": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "org.apache.camel.model.ToDynamicDefinition": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "tokenize": return new ModelDeserializers.TokenizerExpressionDeserializer();

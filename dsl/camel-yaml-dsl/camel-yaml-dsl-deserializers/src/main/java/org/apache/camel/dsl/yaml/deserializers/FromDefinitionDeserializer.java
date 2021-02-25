@@ -16,25 +16,13 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
-import java.util.Map;
-
-import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
-import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
-import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
-import org.snakeyaml.engine.v2.nodes.NodeTuple;
-import org.snakeyaml.engine.v2.nodes.NodeType;
-
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asScalarMap;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 @YamlType(
           inline = true,
@@ -51,48 +39,11 @@ public class FromDefinitionDeserializer implements ConstructNode {
     }
 
     public static FromDefinition constructFromDefinition(Node node) {
-        if (node.getNodeType() == NodeType.SCALAR) {
-            return new FromDefinition(asText(node));
-        } else if (node.getNodeType() == NodeType.MAPPING) {
-            final MappingNode mn = (MappingNode) node;
-            final YamlDeserializationContext dc = getDeserializationContext(node);
-
-            String uri = null;
-            Map<String, Object> properties = null;
-
-            for (NodeTuple tuple : mn.getValue()) {
-                final String key = asText(tuple.getKeyNode());
-                final Node val = tuple.getValueNode();
-
-                setDeserializationContext(val, dc);
-
-                switch (key) {
-                    case "uri":
-                        uri = asText(val);
-                        break;
-                    case "properties":
-                        properties = asScalarMap(tuple.getValueNode());
-                        break;
-                    default:
-                        ConstructNode cn = EndpointConsumerDeserializersResolver.resolveEndpointConstructor(key);
-                        if (cn != null) {
-                            if (uri != null || properties != null) {
-                                throw new IllegalArgumentException(
-                                        "uri and properties are not supported when using Endpoint DSL ");
-                            }
-                            return (FromDefinition) cn.construct(val);
-                        } else {
-                            throw new IllegalArgumentException("Unsupported field: " + key);
-                        }
-                }
-
-                ObjectHelper.notNull("uri", "The uri must set");
-            }
-
-            return new FromDefinition(
-                    YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties));
+        String uri = YamlSupport.creteEndpointUri(node, EndpointConsumerDeserializersResolver::resolveEndpointUri);
+        if (uri == null) {
+            throw new IllegalStateException("The endpoint URI must be set");
         }
 
-        return null;
+        return new FromDefinition(uri);
     }
 }
