@@ -76,6 +76,7 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
     public ExchangeFactory newExchangeFactory(Consumer consumer) {
         DefaultExchangeFactory answer = new DefaultExchangeFactory(consumer);
         answer.setStatisticsEnabled(statistics.isStatisticsEnabled());
+        answer.setCapacity(getCapacity());
         answer.setCamelContext(camelContext);
         return answer;
     }

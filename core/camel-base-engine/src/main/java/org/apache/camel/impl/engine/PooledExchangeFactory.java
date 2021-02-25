@@ -36,27 +36,20 @@ public final class PooledExchangeFactory extends DefaultExchangeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PooledExchangeFactory.class);
 
     private final ReleaseOnDoneTask onDone = new ReleaseOnDoneTask();
-    private final Consumer consumer;
     private BlockingQueue<Exchange> pool;
     private int capacity = 100;
 
     public PooledExchangeFactory() {
-        this.consumer = null;
     }
 
     public PooledExchangeFactory(Consumer consumer) {
-        this.consumer = consumer;
+        super(consumer);
     }
 
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
         this.pool = new ArrayBlockingQueue<>(capacity);
-    }
-
-    @Override
-    public Consumer getConsumer() {
-        return consumer;
     }
 
     @Override
