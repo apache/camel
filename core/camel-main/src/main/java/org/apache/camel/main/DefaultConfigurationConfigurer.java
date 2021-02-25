@@ -31,6 +31,7 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.DefaultExchangeFactory;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -41,6 +42,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -123,8 +125,17 @@ public final class DefaultConfigurationConfigurer {
 
         if ("pooled".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PooledExchangeFactory());
+        } else if ("default".equals(config.getExchangeFactory())) {
+            ecc.setExchangeFactory(new DefaultExchangeFactory());
+        } else {
+            ExchangeFactory ef
+                    = camelContext.getRegistry().lookupByNameAndType(config.getExchangeFactory(), ExchangeFactory.class);
+            if (ef != null) {
+                ecc.setExchangeFactory(ef);
+            }
         }
         ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
+        ecc.getExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
@@ -485,16 +496,6 @@ public final class DefaultConfigurationConfigurer {
                 propertySetter.accept(bean);
             }
         });
-    }
-
-    private static <T> Consumer<T> addServiceToContext(final CamelContext camelContext) {
-        return service -> {
-            try {
-                camelContext.addService(service);
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to add service to Camel context", e);
-            }
-        };
     }
 
     private static void initThreadPoolProfiles(Registry registry, CamelContext camelContext) {
