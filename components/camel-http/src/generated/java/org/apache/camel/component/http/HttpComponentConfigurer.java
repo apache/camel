@@ -23,6 +23,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
+        case "authcachingdisabled":
+        case "authCachingDisabled": target.setAuthCachingDisabled(property(camelContext, boolean.class, value)); return true;
+        case "automaticretriesdisabled":
+        case "automaticRetriesDisabled": target.setAutomaticRetriesDisabled(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "clientconnectionmanager":
@@ -31,12 +35,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectTimeout": target.setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, int.class, value)); return true;
+        case "connectionstatedisabled":
+        case "connectionStateDisabled": target.setConnectionStateDisabled(property(camelContext, boolean.class, value)); return true;
         case "connectiontimetolive":
         case "connectionTimeToLive": target.setConnectionTimeToLive(property(camelContext, long.class, value)); return true;
         case "connectionsperroute":
         case "connectionsPerRoute": target.setConnectionsPerRoute(property(camelContext, int.class, value)); return true;
+        case "contentcompressiondisabled":
+        case "contentCompressionDisabled": target.setContentCompressionDisabled(property(camelContext, boolean.class, value)); return true;
+        case "cookiemanagementdisabled":
+        case "cookieManagementDisabled": target.setCookieManagementDisabled(property(camelContext, boolean.class, value)); return true;
         case "cookiestore":
         case "cookieStore": target.setCookieStore(property(camelContext, org.apache.http.client.CookieStore.class, value)); return true;
+        case "defaultuseragentdisabled":
+        case "defaultUserAgentDisabled": target.setDefaultUserAgentDisabled(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpbinding":
@@ -65,6 +77,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPort": target.setProxyAuthPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyauthusername":
         case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "redirecthandlingdisabled":
+        case "redirectHandlingDisabled": target.setRedirectHandlingDisabled(property(camelContext, boolean.class, value)); return true;
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": target.setResponsePayloadStreamingThreshold(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
@@ -84,6 +98,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return boolean.class;
+        case "authcachingdisabled":
+        case "authCachingDisabled": return boolean.class;
+        case "automaticretriesdisabled":
+        case "automaticRetriesDisabled": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "clientconnectionmanager":
@@ -92,12 +110,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectTimeout": return int.class;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return int.class;
+        case "connectionstatedisabled":
+        case "connectionStateDisabled": return boolean.class;
         case "connectiontimetolive":
         case "connectionTimeToLive": return long.class;
         case "connectionsperroute":
         case "connectionsPerRoute": return int.class;
+        case "contentcompressiondisabled":
+        case "contentCompressionDisabled": return boolean.class;
+        case "cookiemanagementdisabled":
+        case "cookieManagementDisabled": return boolean.class;
         case "cookiestore":
         case "cookieStore": return org.apache.http.client.CookieStore.class;
+        case "defaultuseragentdisabled":
+        case "defaultUserAgentDisabled": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpbinding":
@@ -126,6 +152,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPort": return java.lang.Integer.class;
         case "proxyauthusername":
         case "proxyAuthUsername": return java.lang.String.class;
+        case "redirecthandlingdisabled":
+        case "redirectHandlingDisabled": return boolean.class;
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return int.class;
         case "sockettimeout":
@@ -146,6 +174,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
+        case "authcachingdisabled":
+        case "authCachingDisabled": return target.isAuthCachingDisabled();
+        case "automaticretriesdisabled":
+        case "automaticRetriesDisabled": return target.isAutomaticRetriesDisabled();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "clientconnectionmanager":
@@ -154,12 +186,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectTimeout": return target.getConnectTimeout();
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return target.getConnectionRequestTimeout();
+        case "connectionstatedisabled":
+        case "connectionStateDisabled": return target.isConnectionStateDisabled();
         case "connectiontimetolive":
         case "connectionTimeToLive": return target.getConnectionTimeToLive();
         case "connectionsperroute":
         case "connectionsPerRoute": return target.getConnectionsPerRoute();
+        case "contentcompressiondisabled":
+        case "contentCompressionDisabled": return target.isContentCompressionDisabled();
+        case "cookiemanagementdisabled":
+        case "cookieManagementDisabled": return target.isCookieManagementDisabled();
         case "cookiestore":
         case "cookieStore": return target.getCookieStore();
+        case "defaultuseragentdisabled":
+        case "defaultUserAgentDisabled": return target.isDefaultUserAgentDisabled();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
@@ -188,6 +228,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPort": return target.getProxyAuthPort();
         case "proxyauthusername":
         case "proxyAuthUsername": return target.getProxyAuthUsername();
+        case "redirecthandlingdisabled":
+        case "redirectHandlingDisabled": return target.isRedirectHandlingDisabled();
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return target.getResponsePayloadStreamingThreshold();
         case "sockettimeout":

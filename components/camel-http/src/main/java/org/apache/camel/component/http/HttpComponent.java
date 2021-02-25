@@ -152,6 +152,21 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "This threshold in bytes controls whether the response payload"
                             + " should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode.")
     protected int responsePayloadStreamingThreshold = 8192;
+    @Metadata(label = "advanced", description = "Disables automatic redirect handling")
+    private boolean redirectHandlingDisabled;
+    @Metadata(label = "advanced", description = "Disables automatic request recovery and re-execution")
+    private boolean automaticRetriesDisabled;
+    @Metadata(label = "advanced", description = "Disables automatic content decompression")
+    private boolean contentCompressionDisabled;
+    @Metadata(label = "advanced", description = "Disables state (cookie) management")
+    private boolean cookieManagementDisabled;
+    @Metadata(label = "advanced", description = "Disables authentication scheme caching")
+    private boolean authCachingDisabled;
+    @Metadata(label = "advanced", description = "Disables connection state tracking")
+    private boolean connectionStateDisabled;
+    @Metadata(label = "advanced",
+              description = "Disables the default user agent set by this builder if none has been provided by the user")
+    private boolean defaultUserAgentDisabled;
 
     public HttpComponent() {
         this(HttpEndpoint.class);
@@ -418,6 +433,28 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, httpClientOptions, null);
+
+        if (redirectHandlingDisabled) {
+            clientBuilder.disableRedirectHandling();
+        }
+        if (automaticRetriesDisabled) {
+            clientBuilder.disableRedirectHandling();
+        }
+        if (contentCompressionDisabled) {
+            clientBuilder.disableContentCompression();
+        }
+        if (cookieManagementDisabled) {
+            clientBuilder.disableCookieManagement();
+        }
+        if (authCachingDisabled) {
+            clientBuilder.disableAuthCaching();
+        }
+        if (connectionStateDisabled) {
+            clientBuilder.disableConnectionState();
+        }
+        if (defaultUserAgentDisabled) {
+            clientBuilder.disableDefaultUserAgent();
+        }
 
         return clientBuilder;
     }
@@ -775,6 +812,62 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setResponsePayloadStreamingThreshold(int responsePayloadStreamingThreshold) {
         this.responsePayloadStreamingThreshold = responsePayloadStreamingThreshold;
+    }
+
+    public boolean isRedirectHandlingDisabled() {
+        return redirectHandlingDisabled;
+    }
+
+    public void setRedirectHandlingDisabled(boolean redirectHandlingDisabled) {
+        this.redirectHandlingDisabled = redirectHandlingDisabled;
+    }
+
+    public boolean isAutomaticRetriesDisabled() {
+        return automaticRetriesDisabled;
+    }
+
+    public void setAutomaticRetriesDisabled(boolean automaticRetriesDisabled) {
+        this.automaticRetriesDisabled = automaticRetriesDisabled;
+    }
+
+    public boolean isContentCompressionDisabled() {
+        return contentCompressionDisabled;
+    }
+
+    public void setContentCompressionDisabled(boolean contentCompressionDisabled) {
+        this.contentCompressionDisabled = contentCompressionDisabled;
+    }
+
+    public boolean isCookieManagementDisabled() {
+        return cookieManagementDisabled;
+    }
+
+    public void setCookieManagementDisabled(boolean cookieManagementDisabled) {
+        this.cookieManagementDisabled = cookieManagementDisabled;
+    }
+
+    public boolean isAuthCachingDisabled() {
+        return authCachingDisabled;
+    }
+
+    public void setAuthCachingDisabled(boolean authCachingDisabled) {
+        this.authCachingDisabled = authCachingDisabled;
+    }
+
+    public boolean isConnectionStateDisabled() {
+        return connectionStateDisabled;
+    }
+
+    public void setConnectionStateDisabled(boolean connectionStateDisabled) {
+        this.connectionStateDisabled = connectionStateDisabled;
+    }
+
+    public boolean isDefaultUserAgentDisabled() {
+        return defaultUserAgentDisabled;
+    }
+
+    public void setDefaultUserAgentDisabled(boolean defaultUserAgentDisabled) {
+        this.defaultUserAgentDisabled = defaultUserAgentDisabled;
     }
 
     @Override
