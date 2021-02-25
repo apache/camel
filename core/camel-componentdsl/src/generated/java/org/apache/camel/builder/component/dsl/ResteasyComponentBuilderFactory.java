@@ -151,6 +151,38 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * Disables authentication scheme caching.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param authCachingDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder authCachingDisabled(
+                boolean authCachingDisabled) {
+            doSetProperty("authCachingDisabled", authCachingDisabled);
+            return this;
+        }
+        /**
+         * Disables automatic request recovery and re-execution.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param automaticRetriesDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder automaticRetriesDisabled(
+                boolean automaticRetriesDisabled) {
+            doSetProperty("automaticRetriesDisabled", automaticRetriesDisabled);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -169,6 +201,87 @@ public interface ResteasyComponentBuilderFactory {
         default ResteasyComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+        /**
+         * Disables connection state tracking.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param connectionStateDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder connectionStateDisabled(
+                boolean connectionStateDisabled) {
+            doSetProperty("connectionStateDisabled", connectionStateDisabled);
+            return this;
+        }
+        /**
+         * Disables automatic content decompression.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param contentCompressionDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder contentCompressionDisabled(
+                boolean contentCompressionDisabled) {
+            doSetProperty("contentCompressionDisabled", contentCompressionDisabled);
+            return this;
+        }
+        /**
+         * Disables state (cookie) management.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param cookieManagementDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder cookieManagementDisabled(
+                boolean cookieManagementDisabled) {
+            doSetProperty("cookieManagementDisabled", cookieManagementDisabled);
+            return this;
+        }
+        /**
+         * Disables the default user agent set by this builder if none has been
+         * provided by the user.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param defaultUserAgentDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder defaultUserAgentDisabled(
+                boolean defaultUserAgentDisabled) {
+            doSetProperty("defaultUserAgentDisabled", defaultUserAgentDisabled);
+            return this;
+        }
+        /**
+         * Disables automatic redirect handling.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param redirectHandlingDisabled the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder redirectHandlingDisabled(
+                boolean redirectHandlingDisabled) {
+            doSetProperty("redirectHandlingDisabled", redirectHandlingDisabled);
             return this;
         }
         /**
@@ -211,7 +324,14 @@ public interface ResteasyComponentBuilderFactory {
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "responsePayloadStreamingThreshold": ((ResteasyComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "authCachingDisabled": ((ResteasyComponent) component).setAuthCachingDisabled((boolean) value); return true;
+            case "automaticRetriesDisabled": ((ResteasyComponent) component).setAutomaticRetriesDisabled((boolean) value); return true;
             case "autowiredEnabled": ((ResteasyComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "connectionStateDisabled": ((ResteasyComponent) component).setConnectionStateDisabled((boolean) value); return true;
+            case "contentCompressionDisabled": ((ResteasyComponent) component).setContentCompressionDisabled((boolean) value); return true;
+            case "cookieManagementDisabled": ((ResteasyComponent) component).setCookieManagementDisabled((boolean) value); return true;
+            case "defaultUserAgentDisabled": ((ResteasyComponent) component).setDefaultUserAgentDisabled((boolean) value); return true;
+            case "redirectHandlingDisabled": ((ResteasyComponent) component).setRedirectHandlingDisabled((boolean) value); return true;
             case "headerFilterStrategy": ((ResteasyComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
