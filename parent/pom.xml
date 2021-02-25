@@ -498,7 +498,7 @@
         <smallrye-metrics-version>2.4.5</smallrye-metrics-version>
         <smallrye-health-version>2.2.5</smallrye-health-version>
         <smallrye-fault-tolerance-version>4.3.2</smallrye-fault-tolerance-version>
-        <snakeyaml-version>1.27</snakeyaml-version>
+        <snakeyaml-version>1.28</snakeyaml-version>
         <snakeyaml-engine-version>2.2.1</snakeyaml-engine-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
