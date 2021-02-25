@@ -71,6 +71,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaDefinition;
+import org.apache.camel.model.SagaOptionDefinition;
 import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
@@ -557,7 +558,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "avro",
             properties = {
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "instance-class-name", type = "string")
+                    @YamlProperty(name = "instance-class-name", type = "string", required = true)
             }
     )
     public static class AvroDataFormatDeserializer extends YamlDeserializerBase<AvroDataFormat> {
@@ -850,8 +851,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignore-invalid-records", type = "boolean"),
                     @YamlProperty(name = "ignore-unexpected-records", type = "boolean"),
                     @YamlProperty(name = "ignore-unidentified-records", type = "boolean"),
-                    @YamlProperty(name = "mapping", type = "string"),
-                    @YamlProperty(name = "stream-name", type = "string"),
+                    @YamlProperty(name = "mapping", type = "string", required = true),
+                    @YamlProperty(name = "stream-name", type = "string", required = true),
                     @YamlProperty(name = "unmarshal-single-object", type = "boolean")
             }
     )
@@ -1481,7 +1482,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "filter", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "key", type = "string"),
-                    @YamlProperty(name = "operation", type = "string")
+                    @YamlProperty(name = "operation", type = "string", required = true)
             }
     )
     public static class ClaimCheckDefinitionDeserializer extends YamlDeserializerBase<ClaimCheckDefinition> {
@@ -1950,7 +1951,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "charset", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "type", type = "string")
+                    @YamlProperty(name = "type", type = "string", required = true)
             }
     )
     public static class ConvertBodyDefinitionDeserializer extends YamlDeserializerBase<ConvertBodyDefinition> {
@@ -2300,7 +2301,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "custom-data-format",
             properties = {
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "ref", type = "string")
+                    @YamlProperty(name = "ref", type = "string", required = true)
             }
     )
     public static class CustomDataFormatDeserializer extends YamlDeserializerBase<CustomDataFormat> {
@@ -2347,7 +2348,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "custom-load-balancer",
             properties = {
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "ref", type = "string")
+                    @YamlProperty(name = "ref", type = "string", required = true)
             }
     )
     public static class CustomLoadBalancerDefinitionDeserializer extends YamlDeserializerBase<CustomLoadBalancerDefinition> {
@@ -4931,8 +4932,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "global-option",
             properties = {
-                    @YamlProperty(name = "key", type = "string"),
-                    @YamlProperty(name = "value", type = "string")
+                    @YamlProperty(name = "key", type = "string", required = true),
+                    @YamlProperty(name = "value", type = "string", required = true)
             }
     )
     public static class GlobalOptionDefinitionDeserializer extends YamlDeserializerBase<GlobalOptionDefinition> {
@@ -5009,7 +5010,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "flattened", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "named-only", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "string")
+                    @YamlProperty(name = "pattern", type = "string", required = true)
             }
     )
     public static class GrokDataFormatDeserializer extends YamlDeserializerBase<GrokDataFormat> {
@@ -5780,7 +5781,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "eager", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "message-id-repository-ref", type = "string"),
+                    @YamlProperty(name = "message-id-repository-ref", type = "string", required = true),
                     @YamlProperty(name = "remove-on-failure", type = "boolean"),
                     @YamlProperty(name = "skip-duplicate", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
@@ -6099,7 +6100,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "after-uri", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "skip-send-to-original-endpoint", type = "string"),
-                    @YamlProperty(name = "uri", type = "string"),
+                    @YamlProperty(name = "uri", type = "string", required = true),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
             }
     )
@@ -6287,7 +6288,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "jaxb",
             properties = {
                     @YamlProperty(name = "content-type-header", type = "boolean"),
-                    @YamlProperty(name = "context-path", type = "string"),
+                    @YamlProperty(name = "context-path", type = "string", required = true),
                     @YamlProperty(name = "context-path-is-class-name", type = "boolean"),
                     @YamlProperty(name = "encoding", type = "string"),
                     @YamlProperty(name = "filter-non-xml-chars", type = "boolean"),
@@ -7017,7 +7018,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "language", type = "string"),
+                    @YamlProperty(name = "language", type = "string", required = true),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -7204,7 +7205,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "logging-level", type = "string"),
                     @YamlProperty(name = "marker", type = "string"),
-                    @YamlProperty(name = "message", type = "string")
+                    @YamlProperty(name = "message", type = "string", required = true)
             }
     )
     public static class LogDefinitionDeserializer extends YamlDeserializerBase<LogDefinition> {
@@ -8843,7 +8844,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "policy",
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "ref", type = "string"),
+                    @YamlProperty(name = "ref", type = "string", required = true),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
             }
     )
@@ -9173,7 +9174,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "process",
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "ref", type = "string")
+                    @YamlProperty(name = "ref", type = "string", required = true)
             }
     )
     public static class ProcessDefinitionDeserializer extends YamlDeserializerBase<ProcessDefinition> {
@@ -9213,8 +9214,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "property",
             properties = {
-                    @YamlProperty(name = "key", type = "string"),
-                    @YamlProperty(name = "value", type = "string")
+                    @YamlProperty(name = "key", type = "string", required = true),
+                    @YamlProperty(name = "value", type = "string", required = true)
             }
     )
     public static class PropertyDefinitionDeserializer extends YamlDeserializerBase<PropertyDefinition> {
@@ -9872,7 +9873,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "remove-header",
             properties = {
-                    @YamlProperty(name = "header-name", type = "string"),
+                    @YamlProperty(name = "header-name", type = "string", required = true),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
             }
     )
@@ -9921,7 +9922,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "exclude-pattern", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "string")
+                    @YamlProperty(name = "pattern", type = "string", required = true)
             }
     )
     public static class RemoveHeadersDefinitionDeserializer extends YamlDeserializerBase<RemoveHeadersDefinition> {
@@ -9974,7 +9975,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "exclude-pattern", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "string")
+                    @YamlProperty(name = "pattern", type = "string", required = true)
             }
     )
     public static class RemovePropertiesDefinitionDeserializer extends YamlDeserializerBase<RemovePropertiesDefinition> {
@@ -10026,7 +10027,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "remove-property",
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "property-name", type = "string")
+                    @YamlProperty(name = "property-name", type = "string", required = true)
             }
     )
     public static class RemovePropertyDefinitionDeserializer extends YamlDeserializerBase<RemovePropertyDefinition> {
@@ -10530,7 +10531,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "rest-context-ref",
-            properties = @YamlProperty(name = "ref", type = "string")
+            properties = @YamlProperty(name = "ref", type = "string", required = true)
     )
     public static class RestContextRefDefinitionDeserializer extends YamlDeserializerBase<RestContextRefDefinition> {
         public RestContextRefDefinitionDeserializer() {
@@ -10668,9 +10669,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "default-value", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
-                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "required", type = "boolean"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true)
             }
     )
     public static class RestOperationParamDefinitionDeserializer extends YamlDeserializerBase<RestOperationParamDefinition> {
@@ -10760,7 +10761,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "data-type", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "example", type = "string"),
-                    @YamlProperty(name = "name", type = "string")
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class RestOperationResponseHeaderDefinitionDeserializer extends YamlDeserializerBase<RestOperationResponseHeaderDefinition> {
@@ -10832,7 +10833,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "code", type = "string"),
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "header", type = "array:org.apache.camel.model.rest.RestOperationResponseHeaderDefinition"),
-                    @YamlProperty(name = "message", type = "string"),
+                    @YamlProperty(name = "message", type = "string", required = true),
                     @YamlProperty(name = "response-model", type = "string")
             }
     )
@@ -10888,8 +10889,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "rest-property",
             properties = {
-                    @YamlProperty(name = "key", type = "string"),
-                    @YamlProperty(name = "value", type = "string")
+                    @YamlProperty(name = "key", type = "string", required = true),
+                    @YamlProperty(name = "value", type = "string", required = true)
             }
     )
     public static class RestPropertyDefinitionDeserializer extends YamlDeserializerBase<RestPropertyDefinition> {
@@ -11353,7 +11354,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "route-builder",
             properties = {
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "ref", type = "string")
+                    @YamlProperty(name = "ref", type = "string", required = true)
             }
     )
     public static class RouteBuilderDefinitionDeserializer extends YamlDeserializerBase<RouteBuilderDefinition> {
@@ -11397,7 +11398,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "route-context-ref",
-            properties = @YamlProperty(name = "ref", type = "string")
+            properties = @YamlProperty(name = "ref", type = "string", required = true)
     )
     public static class RouteContextRefDefinitionDeserializer extends YamlDeserializerBase<RouteContextRefDefinition> {
         public RouteContextRefDefinitionDeserializer() {
@@ -11478,7 +11479,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteTemplateContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "route-template-context-ref",
-            properties = @YamlProperty(name = "ref", type = "string")
+            properties = @YamlProperty(name = "ref", type = "string", required = true)
     )
     public static class RouteTemplateContextRefDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateContextRefDefinition> {
         public RouteTemplateContextRefDefinitionDeserializer() {
@@ -11555,7 +11556,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "default-value", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "name", type = "string")
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class RouteTemplateParameterDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateParameterDefinition> {
@@ -11853,6 +11854,56 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.SagaOptionDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
+                    @YamlProperty(name = "option-name", type = "string", required = true),
+                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition")
+            }
+    )
+    public static class SagaOptionDefinitionDeserializer extends YamlDeserializerBase<SagaOptionDefinition> {
+        public SagaOptionDefinitionDeserializer() {
+            super(SagaOptionDefinition.class);
+        }
+
+        @Override
+        protected SagaOptionDefinition newInstance() {
+            return new SagaOptionDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SagaOptionDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "expression": {
+                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
+                    target.setExpression(val);
+                    break;
+                }
+                case "option-name": {
+                    String val = asText(node);
+                    target.setOptionName(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -12738,7 +12789,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition")
             }
     )
@@ -12795,7 +12846,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition")
             }
     )
@@ -12919,7 +12970,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "soapjaxb",
             properties = {
-                    @YamlProperty(name = "context-path", type = "string"),
+                    @YamlProperty(name = "context-path", type = "string", required = true),
                     @YamlProperty(name = "element-name-strategy-ref", type = "string"),
                     @YamlProperty(name = "encoding", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
@@ -14076,7 +14127,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-namespace-tag-name", type = "string"),
                     @YamlProperty(name = "regex", type = "boolean"),
                     @YamlProperty(name = "skip-first", type = "boolean"),
-                    @YamlProperty(name = "token", type = "string"),
+                    @YamlProperty(name = "token", type = "string", required = true),
                     @YamlProperty(name = "trim", type = "boolean"),
                     @YamlProperty(name = "xml", type = "boolean")
             }
@@ -15427,7 +15478,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "weighted",
             properties = {
-                    @YamlProperty(name = "distribution-ratio", type = "string"),
+                    @YamlProperty(name = "distribution-ratio", type = "string", required = true),
                     @YamlProperty(name = "distribution-ratio-delimiter", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "round-robin", type = "string")
@@ -16481,11 +16532,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "zookeeper-service-discovery",
             properties = {
-                    @YamlProperty(name = "base-path", type = "string"),
+                    @YamlProperty(name = "base-path", type = "string", required = true),
                     @YamlProperty(name = "connection-timeout", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "namespace", type = "string"),
-                    @YamlProperty(name = "nodes", type = "string"),
+                    @YamlProperty(name = "nodes", type = "string", required = true),
                     @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "reconnect-base-sleep-time", type = "string"),
                     @YamlProperty(name = "reconnect-max-retries", type = "string"),

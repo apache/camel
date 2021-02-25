@@ -130,6 +130,9 @@
                                 <bannedDefinition>org.apache.camel.model.ExpressionSubElementDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.PropertyDefinitions</bannedDefinition>
                             </bannedDefinitions>
+                            <additionalDefinitions>
+                                <additionalDefinition>org.apache.camel.model.SagaOptionDefinition</additionalDefinition>
+                            </additionalDefinitions>
                         </configuration>
                     </execution>
                 </executions>
