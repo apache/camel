@@ -44,7 +44,7 @@ You can append query options to the URI in the following format:
 === Options
 
 // component options: START
-The Resteasy component supports 7 options, which are listed below.
+The Resteasy component supports 14 options, which are listed below.
 
 
 
@@ -56,7 +56,14 @@ The Resteasy component supports 7 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *responsePayloadStreaming{zwsp}Threshold* (producer) | This threshold in bytes controls whether the response payload should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode. | 8192 | int
 | *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *authCachingDisabled* (advanced) | Disables authentication scheme caching | false | boolean
+| *automaticRetriesDisabled* (advanced) | Disables automatic request recovery and re-execution | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *connectionStateDisabled* (advanced) | Disables connection state tracking | false | boolean
+| *contentCompressionDisabled* (advanced) | Disables automatic content decompression | false | boolean
+| *cookieManagementDisabled* (advanced) | Disables state (cookie) management | false | boolean
+| *defaultUserAgentDisabled* (advanced) | Disables the default user agent set by this builder if none has been provided by the user | false | boolean
+| *redirectHandlingDisabled* (advanced) | Disables automatic redirect handling | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 |===
 // component options: END
