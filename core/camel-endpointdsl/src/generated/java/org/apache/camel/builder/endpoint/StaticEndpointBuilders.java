@@ -5588,6 +5588,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * GoogleCloudFunctions (camel-google-functions)
+     * Store and retrieve objects from Google Cloud Functions Service using the
+     * google-cloud-storage library.
+     * 
+     * Category: cloud
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-google-functions
+     * 
+     * Syntax: <code>google-functions:name</code>
+     * 
+     * Path parameter: functionName (required)
+     * Function name
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.endpointBuilder("google-functions", path);
+    }
+    /**
+     * GoogleCloudFunctions (camel-google-functions)
+     * Store and retrieve objects from Google Cloud Functions Service using the
+     * google-cloud-storage library.
+     * 
+     * Category: cloud
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-google-functions
+     * 
+     * Syntax: <code>google-functions:name</code>
+     * 
+     * Path parameter: functionName (required)
+     * Function name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
      * 

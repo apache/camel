@@ -1652,6 +1652,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GoogleDriveComponentBuilderFactory.googleDrive();
     }
     /**
+     * GoogleCloudFunctions (camel-google-functions)
+     * Store and retrieve objects from Google Cloud Functions Service using the
+     * google-cloud-storage library.
+     * 
+     * Category: cloud
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-google-functions
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.GoogleFunctionsComponentBuilderFactory.GoogleFunctionsComponentBuilder googleFunctions() {
+        return org.apache.camel.builder.component.dsl.GoogleFunctionsComponentBuilderFactory.googleFunctions();
+    }
+    /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
      * 
