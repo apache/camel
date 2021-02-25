@@ -388,7 +388,7 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           },
-          "when-clauses" : {
+          "when" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
@@ -1977,7 +1977,7 @@
       "org.apache.camel.model.RouteTemplatesDefinition" : {
         "type" : "object",
         "properties" : {
-          "route-templates" : {
+          "route-template" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
@@ -1988,7 +1988,7 @@
       "org.apache.camel.model.RoutesDefinition" : {
         "type" : "object",
         "properties" : {
-          "routes" : {
+          "route" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
@@ -2497,7 +2497,10 @@
         "type" : "object",
         "properties" : {
           "do-catch" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
+            }
           },
           "do-finally" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FinallyDefinition"
@@ -2722,12 +2725,6 @@
           "executor-service-ref" : {
             "type" : "string"
           },
-          "headers" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
-            }
-          },
           "ignore-invalid-endpoint" : {
             "type" : "boolean"
           },
@@ -2742,6 +2739,12 @@
           },
           "processor-ref" : {
             "type" : "string"
+          },
+          "set-header" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.SetHeaderDefinition"
+            }
           },
           "uri" : {
             "type" : "string"
@@ -4559,12 +4562,6 @@
           "header-extraction-enabled" : {
             "type" : "boolean"
           },
-          "headers" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityHeader"
-            }
-          },
           "headers-disabled" : {
             "type" : "boolean"
           },
@@ -4603,6 +4600,12 @@
           },
           "skip-empty-lines" : {
             "type" : "boolean"
+          },
+          "univocity-header" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityHeader"
+            }
           }
         }
       },
@@ -4620,12 +4623,6 @@
           },
           "header-extraction-enabled" : {
             "type" : "boolean"
-          },
-          "headers" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityHeader"
-            }
           },
           "headers-disabled" : {
             "type" : "boolean"
@@ -4665,6 +4662,12 @@
           },
           "skip-trailing-chars-until-newline" : {
             "type" : "boolean"
+          },
+          "univocity-header" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityHeader"
+            }
           }
         }
       },
@@ -4697,12 +4700,6 @@
           "header-extraction-enabled" : {
             "type" : "boolean"
           },
-          "headers" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityHeader"
-            }
-          },
           "headers-disabled" : {
             "type" : "boolean"
           },
@@ -4732,6 +4729,12 @@
           },
           "skip-empty-lines" : {
             "type" : "boolean"
+          },
+          "univocity-header" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityHeader"
+            }
           }
         }
       },
@@ -5629,7 +5632,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -5638,7 +5641,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
@@ -5703,7 +5706,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -5712,7 +5715,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
@@ -5777,7 +5780,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -5786,7 +5789,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
@@ -5851,7 +5854,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -5860,7 +5863,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
@@ -5925,7 +5928,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -5934,7 +5937,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
@@ -5999,7 +6002,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -6008,7 +6011,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
@@ -6223,7 +6226,7 @@
           "tag" : {
             "type" : "string"
           },
-          "verbs" : {
+          "verb" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.VerbDefinition"
@@ -6428,7 +6431,7 @@
       "org.apache.camel.model.rest.RestsDefinition" : {
         "type" : "object",
         "properties" : {
-          "rests" : {
+          "rest" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
@@ -6472,7 +6475,7 @@
           "out-type" : {
             "type" : "string"
           },
-          "params" : {
+          "param" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
@@ -6481,7 +6484,7 @@
           "produces" : {
             "type" : "string"
           },
-          "response-msgs" : {
+          "response-message" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"

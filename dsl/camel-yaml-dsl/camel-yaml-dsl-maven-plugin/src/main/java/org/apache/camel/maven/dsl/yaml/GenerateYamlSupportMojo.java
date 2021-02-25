@@ -34,6 +34,7 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import org.apache.camel.maven.dsl.yaml.support.IndexerSupport;
 import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -101,6 +102,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlIn");
     public static final DotName YAML_OUT_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlOut");
+    public static final DotName DSL_PROPERTY_ANNOTATION
+         = DotName.createSimple("org.apache.camel.spi.annotations.DslProperty");
 
     public static final ClassName CN_DESERIALIZER_RESOLVER
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerResolver");
@@ -156,14 +159,23 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     // **************************
 
     protected static boolean hasAnnotation(ClassInfo target, DotName annotationName) {
+        if (target == null) {
+            return false;
+        }
         return target.classAnnotation(annotationName) != null;
     }
 
     protected static boolean hasAnnotation(FieldInfo target, DotName annotationName) {
+        if (target == null) {
+            return false;
+        }
         return target.annotation(annotationName) != null;
     }
 
     protected static boolean hasAnnotationValue(ClassInfo target, DotName annotationName, String name) {
+        if (target == null) {
+            return false;
+        }
         return annotationValue(
                 target.classAnnotation(annotationName),
                 name).isPresent();
@@ -176,18 +188,27 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected static Optional<AnnotationValue> annotationValue(ClassInfo target, DotName annotationName, String name) {
+        if (target == null) {
+            return Optional.empty();
+        }
         return annotationValue(
                 target.classAnnotation(annotationName),
                 name);
     }
 
     protected static Optional<AnnotationValue> annotationValue(FieldInfo target, DotName annotationName, String name) {
+        if (target == null) {
+            return Optional.empty();
+        }
         return annotationValue(
                 target.annotation(annotationName),
                 name);
     }
 
     protected static Optional<AnnotationValue> annotationValue(MethodInfo target, DotName annotationName, String name) {
+        if (target == null) {
+            return Optional.empty();
+        }
         return annotationValue(
                 target.annotation(annotationName),
                 name);
@@ -510,7 +531,12 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected String fieldName(FieldInfo field) {
+        ClassInfo ct = view.getClassByName(field.type().name());
+
         return firstPresent(
+                annotationValue(field, DSL_PROPERTY_ANNOTATION, "name")
+                        .map(AnnotationValue::asString)
+                        .filter(value -> ObjectHelper.isNotEmpty(value)),
                 annotationValue(field, XML_VALUE_ANNOTATION_CLASS, "name")
                         .map(AnnotationValue::asString)
                         .filter(value -> !"##default".equals(value)),
@@ -519,7 +545,11 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                         .filter(value -> !"##default".equals(value)),
                 annotationValue(field, XML_ELEMENT_ANNOTATION_CLASS, "name")
                         .map(AnnotationValue::asString)
-                        .filter(value -> !"##default".equals(value))).orElseGet(field::name);
+                        .filter(value -> !"##default".equals(value)),
+                annotationValue(ct, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
+                        .map(AnnotationValue::asString)
+                        .filter(value -> !"##default".equals(value)))
+            .orElseGet(field::name);
     }
 
     protected boolean isRequired(FieldInfo fi) {
