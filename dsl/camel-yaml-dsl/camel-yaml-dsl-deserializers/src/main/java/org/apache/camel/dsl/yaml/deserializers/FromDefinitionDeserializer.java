@@ -35,10 +35,6 @@ import org.snakeyaml.engine.v2.nodes.Node;
 public class FromDefinitionDeserializer implements ConstructNode {
     @Override
     public Object construct(Node node) {
-        return constructFromDefinition(node);
-    }
-
-    public static FromDefinition constructFromDefinition(Node node) {
         String uri = YamlSupport.creteEndpointUri(node, EndpointConsumerDeserializersResolver::resolveEndpointUri);
         if (uri == null) {
             throw new IllegalStateException("The endpoint URI must be set");
