@@ -1,4 +1,4 @@
-[[Azure-CamelComponentsforWindowsAzureServices]]
+[[Azure-CamelComponentsforMicrosoftAzureServices]]
 = Camel Components for Microsoft Azure Services
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-azure-storage-blob/src/main/docs/azure-summary.adoc

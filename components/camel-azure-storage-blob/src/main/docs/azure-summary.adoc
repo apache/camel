@@ -1,4 +1,4 @@
-[[Azure-CamelComponentsforWindowsAzureServices]]
+[[Azure-CamelComponentsforMicrosoftAzureServices]]
 = Camel Components for Microsoft Azure Services
 //attributes written by hand, not generated
 :docTitle: Azure
