@@ -27,15 +27,15 @@ import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
-public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
+public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SpringRabbitMQConsumer.class);
 
     private AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
 
-    public RabbitMQConsumer(Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
+    public SpringRabbitMQConsumer(Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
         this.listenerContainer = listenerContainer;
         this.listenerContainer.setMessageListener(getEndpointMessageListener());
@@ -54,7 +54,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     }
 
     protected void createMessageListener(SpringRabbitMQEndpoint endpoint, Processor processor) {
-        messageListener = new EndpointMessageListener(endpoint, processor);
+        messageListener = new EndpointMessageListener(this, endpoint, processor);
         endpoint.configureMessageListener(messageListener);
     }
 

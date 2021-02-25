@@ -27,6 +27,7 @@ public interface JiraConstants {
     String ISSUE_ASSIGNEE = "IssueAssignee";
     String ISSUE_COMPONENTS = "IssueComponents";
     String ISSUE_COMMENT = "IssueComment";
+    String ISSUE_CHANGED = "IssueChanged";
     String ISSUE_KEY = "IssueKey";
     String ISSUE_PRIORITY_ID = "IssuePriorityId";
     String ISSUE_PRIORITY_NAME = "IssuePriorityName";
@@ -35,6 +36,7 @@ public interface JiraConstants {
     String ISSUE_TRANSITION_ID = "IssueTransitionId";
     String ISSUE_TYPE_ID = "IssueTypeId";
     String ISSUE_TYPE_NAME = "IssueTypeName";
+    String ISSUE_WATCHED_ISSUES = "IssueWatchedIssues";
     String ISSUE_WATCHERS_ADD = "IssueWatchersAdd";
     String ISSUE_WATCHERS_REMOVE = "IssueWatchersRemove";
     String JIRA_REST_CLIENT_FACTORY = "JiraRestClientFactory";

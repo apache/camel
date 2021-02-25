@@ -19,8 +19,10 @@ package org.apache.camel.component.cometd;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cometd.CometdConsumer.ConsumerService;
+import org.apache.camel.spi.ExchangeFactory;
 import org.cometd.bayeux.MarkedReference;
 import org.cometd.bayeux.server.LocalSession;
 import org.cometd.bayeux.server.ServerChannel;
@@ -35,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +45,10 @@ public class CometdConsumerTest {
 
     private static final String USER_NAME = "userName";
     private CometdConsumer testObj;
+    @Mock
+    private ExtendedCamelContext context;
+    @Mock
+    private ExchangeFactory exchangeFactory;
     @Mock
     private CometdEndpoint endpoint;
     @Mock
@@ -64,6 +71,11 @@ public class CometdConsumerTest {
         when(bayeuxServerImpl.newLocalSession(ArgumentMatchers.isNull())).thenReturn(localSession);
         when(bayeuxServerImpl.createChannelIfAbsent(ArgumentMatchers.isNull())).thenReturn(markedReferenceServerChannel);
         when(markedReferenceServerChannel.getReference()).thenReturn(serverChannel);
+
+        when(endpoint.getCamelContext()).thenReturn(context);
+        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
+        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 
         testObj = new CometdConsumer(endpoint, processor);
         testObj.setBayeux(bayeuxServerImpl);

@@ -28,6 +28,7 @@ import org.apache.avro.ipc.netty.NettyServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.specific.SpecificData;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.log.Log;
@@ -181,7 +182,7 @@ public class AvroListener {
      */
     private static Object processExchange(AvroConsumer consumer, Protocol.Message message, Object params) throws Exception {
         Object response;
-        Exchange exchange = consumer.getEndpoint().createExchange(message, params);
+        Exchange exchange = createExchange(consumer, message, params);
 
         try {
             consumer.getProcessor().process(exchange);
@@ -206,4 +207,17 @@ public class AvroListener {
         }
         return response;
     }
+
+    protected static Exchange createExchange(AvroConsumer consumer, Protocol.Message message, Object request) {
+        ExchangePattern pattern = ExchangePattern.InOut;
+        if (message.getResponse().getType().equals(Schema.Type.NULL)) {
+            pattern = ExchangePattern.InOnly;
+        }
+        Exchange exchange = consumer.createExchange(true);
+        exchange.setPattern(pattern);
+        exchange.getIn().setBody(request);
+        exchange.getIn().setHeader(AvroConstants.AVRO_MESSAGE_NAME, message.getName());
+        return exchange;
+    }
+
 }

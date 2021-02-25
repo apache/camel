@@ -102,6 +102,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Creates the exchange from the polled file
+     */
+    protected abstract Exchange createExchange(GenericFile<T> file);
+
+    /**
      * Poll for files
      */
     @Override
@@ -164,7 +169,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // use a linked list so we can dequeue the exchanges
         LinkedList<Exchange> exchanges = new LinkedList<>();
         for (GenericFile<T> file : files) {
-            Exchange exchange = endpoint.createExchange(file);
+            Exchange exchange = createExchange(file);
             endpoint.configureExchange(exchange);
             endpoint.configureMessage(file, exchange.getIn());
             exchanges.add(exchange);
@@ -267,6 +272,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             GenericFile<?> file = exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE, GenericFile.class);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
+            releaseExchange(exchange, true);
         }
     }
 

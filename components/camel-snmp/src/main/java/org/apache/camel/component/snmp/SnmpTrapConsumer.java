@@ -137,7 +137,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received trap event for {} : {}", this.endpoint.getAddress(), pdu);
         }
-        Exchange exchange = endpoint.createExchange(pdu, event);
+        Exchange exchange = createExchange(pdu, event);
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
@@ -146,5 +146,20 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (exchange.getException() != null) {
             getExceptionHandler().handleException(exchange.getException());
         }
+        releaseExchange(exchange, false);
     }
+
+    /**
+     * creates an exchange for the given message
+     *
+     * @param  pdu   the pdu
+     * @param  event a snmp4j CommandResponderEvent
+     * @return       an exchange
+     */
+    public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
+        Exchange exchange = createExchange(false);
+        exchange.setIn(new SnmpMessage(getEndpoint().getCamelContext(), pdu, event));
+        return exchange;
+    }
+
 }

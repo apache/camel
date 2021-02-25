@@ -65,6 +65,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ErrorHandlerFactory": target.setErrorHandlerFactory(property(camelContext, org.apache.camel.ErrorHandlerFactory.class, value)); return true;
         case "eventnotificationapplicable":
         case "EventNotificationApplicable": target.setEventNotificationApplicable(property(camelContext, boolean.class, value)); return true;
+        case "exchangefactory":
+        case "ExchangeFactory": target.setExchangeFactory(property(camelContext, org.apache.camel.spi.ExchangeFactory.class, value)); return true;
+        case "exchangefactorymanager":
+        case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "executorservicemanager":
         case "ExecutorServiceManager": target.setExecutorServiceManager(property(camelContext, org.apache.camel.spi.ExecutorServiceManager.class, value)); return true;
         case "factoryfinderresolver":
@@ -232,6 +236,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ErrorHandlerFactory": return org.apache.camel.ErrorHandlerFactory.class;
         case "eventnotificationapplicable":
         case "EventNotificationApplicable": return boolean.class;
+        case "exchangefactory":
+        case "ExchangeFactory": return org.apache.camel.spi.ExchangeFactory.class;
+        case "exchangefactorymanager":
+        case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "executorservicemanager":
         case "ExecutorServiceManager": return org.apache.camel.spi.ExecutorServiceManager.class;
         case "factoryfinderresolver":
@@ -400,6 +408,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ErrorHandlerFactory": return target.getErrorHandlerFactory();
         case "eventnotificationapplicable":
         case "EventNotificationApplicable": return target.isEventNotificationApplicable();
+        case "exchangefactory":
+        case "ExchangeFactory": return target.getExchangeFactory();
+        case "exchangefactorymanager":
+        case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "executorservicemanager":
         case "ExecutorServiceManager": return target.getExecutorServiceManager();
         case "factoryfinderresolver":

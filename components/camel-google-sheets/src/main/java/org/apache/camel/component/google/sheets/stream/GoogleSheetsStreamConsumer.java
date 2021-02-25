@@ -19,6 +19,7 @@ package org.apache.camel.component.google.sheets.stream;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -89,12 +91,12 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
                         if (getConfiguration().getMaxResults() > 0) {
                             valueRange.getValues().stream()
                                     .limit(getConfiguration().getMaxResults())
-                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
+                                    .map(values -> createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
                                             valueRange.getRange(), valueRange.getMajorDimension(), values))
                                     .forEach(answer::add);
                         } else {
                             valueRange.getValues().stream()
-                                    .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
+                                    .map(values -> createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
                                             valueRange.getRange(), valueRange.getMajorDimension(), values))
                                     .forEach(answer::add);
                         }
@@ -112,7 +114,7 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
                                             .collect(Collectors.toList()));
                                 }
                             })
-                            .map(valueRange -> getEndpoint().createExchange(rangeIndex.incrementAndGet(), valueRange))
+                            .map(valueRange -> createExchange(rangeIndex.incrementAndGet(), valueRange))
                             .forEach(answer::add);
                 }
             }
@@ -122,7 +124,7 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
             request.setIncludeGridData(getConfiguration().isIncludeGridData());
 
             Spreadsheet spreadsheet = request.execute();
-            answer.add(getEndpoint().createExchange(spreadsheet));
+            answer.add(createExchange(spreadsheet));
         }
 
         return processBatch(CastUtils.cast(answer));
@@ -148,4 +150,42 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
 
         return total;
     }
+
+    public Exchange createExchange(int rangeIndex, ValueRange valueRange) {
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(getEndpoint().getExchangePattern());
+        Message message = exchange.getIn();
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID,
+                getEndpoint().getConfiguration().getSpreadsheetId());
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.RANGE, valueRange.getRange());
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.RANGE_INDEX, rangeIndex);
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION, valueRange.getMajorDimension());
+        message.setBody(valueRange);
+        return exchange;
+    }
+
+    public Exchange createExchange(int rangeIndex, int valueIndex, String range, String majorDimension, List<Object> values) {
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(getEndpoint().getExchangePattern());
+        Message message = exchange.getIn();
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID,
+                getEndpoint().getConfiguration().getSpreadsheetId());
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.RANGE_INDEX, rangeIndex);
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.VALUE_INDEX, valueIndex);
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.RANGE, range);
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION, majorDimension);
+        message.setBody(values);
+        return exchange;
+    }
+
+    public Exchange createExchange(Spreadsheet spreadsheet) {
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(getEndpoint().getExchangePattern());
+        Message message = exchange.getIn();
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID, spreadsheet.getSpreadsheetId());
+        exchange.getIn().setHeader(GoogleSheetsStreamConstants.SPREADSHEET_URL, spreadsheet.getSpreadsheetUrl());
+        message.setBody(spreadsheet);
+        return exchange;
+    }
+
 }

@@ -93,18 +93,18 @@ public class CouchDbChangesetTrackerTest {
         when(row3.getId()).thenReturn("id3");
         when(changes.hasNext()).thenReturn(true, true, true, false);
         when(changes.next()).thenReturn(row1, row2, row3);
-        when(endpoint.createExchange("seq1", "id1", null, false)).thenReturn(exchange1);
-        when(endpoint.createExchange("seq2", "id2", null, false)).thenReturn(exchange2);
-        when(endpoint.createExchange("seq3", "id3", null, false)).thenReturn(exchange3);
+        when(consumer.createExchange("seq1", "id1", null, false)).thenReturn(exchange1);
+        when(consumer.createExchange("seq2", "id2", null, false)).thenReturn(exchange2);
+        when(consumer.createExchange("seq3", "id3", null, false)).thenReturn(exchange3);
         when(consumer.getProcessor()).thenReturn(processor);
 
         tracker.run();
 
-        verify(endpoint).createExchange("seq1", "id1", null, false);
+        verify(consumer).createExchange("seq1", "id1", null, false);
         verify(processor).process(exchange1);
-        verify(endpoint).createExchange("seq2", "id2", null, false);
+        verify(consumer).createExchange("seq2", "id2", null, false);
         verify(processor).process(exchange2);
-        verify(endpoint).createExchange("seq3", "id3", null, false);
+        verify(consumer).createExchange("seq3", "id3", null, false);
         verify(processor).process(exchange3);
     }
 
@@ -116,7 +116,7 @@ public class CouchDbChangesetTrackerTest {
 
         tracker.run();
 
-        verify(endpoint).createExchange("seq1", "id1", null, false);
+        verify(consumer).createExchange("seq1", "id1", null, false);
         verify(processor).process(ArgumentMatchers.isNull());
     }
 }

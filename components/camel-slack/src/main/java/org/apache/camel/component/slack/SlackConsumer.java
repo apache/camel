@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -109,7 +111,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
                     timestamp = (String) singleMess.get("ts");
                 }
                 i++;
-                Exchange exchange = slackEndpoint.createExchange(singleMess);
+                Exchange exchange = createExchange(singleMess);
                 answer.add(exchange);
             }
         }
@@ -183,6 +185,24 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
             throw new RuntimeCamelException(String.format("API request to Slack failed: %s", errorMessage));
         }
+    }
+
+    public Exchange createExchange(JsonObject object) {
+        Exchange exchange = createExchange(true);
+        SlackMessage slackMessage = new SlackMessage();
+        String text = object.getString(SlackConstants.SLACK_TEXT_FIELD);
+        String user = object.getString("user");
+        slackMessage.setText(text);
+        slackMessage.setUser(user);
+        if (ObjectHelper.isNotEmpty(object.get("icons"))) {
+            JsonObject icons = object.getMap("icons");
+            if (ObjectHelper.isNotEmpty(icons.get("emoji"))) {
+                slackMessage.setIconEmoji(icons.getString("emoji"));
+            }
+        }
+        Message message = exchange.getIn();
+        message.setBody(slackMessage);
+        return exchange;
     }
 
 }

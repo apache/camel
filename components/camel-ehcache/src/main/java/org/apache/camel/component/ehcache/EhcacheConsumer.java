@@ -72,7 +72,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     @Override
     public void onEvent(CacheEvent<?, ?> event) {
         if (isRunAllowed()) {
-            final Exchange exchange = getEndpoint().createExchange();
+            final Exchange exchange = createExchange(false);
             final Message message = exchange.getIn();
 
             message.setHeader(EhcacheConstants.KEY, event.getKey());
@@ -84,6 +84,8 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

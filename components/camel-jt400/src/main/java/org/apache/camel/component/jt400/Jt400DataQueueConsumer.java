@@ -152,7 +152,7 @@ public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
             entry = queue.read(key, -1, searchType);
         }
 
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         if (entry != null) {
             exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
             if (getEndpoint().getFormat() == Jt400Configuration.Format.binary) {

@@ -102,7 +102,7 @@ class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         final DataLakeFileClientWrapper clientWrapper
                 = new DataLakeFileClientWrapper(dataLakeFileSystemClient.getFileClient(fileName));
         final DataLakeFileOperations operations = new DataLakeFileOperations(getEndpoint().getConfiguration(), clientWrapper);
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         DataLakeOperationResponse response;
 

@@ -21,6 +21,7 @@ import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.spi.Synchronization;
@@ -71,8 +72,37 @@ public class EventHubsConsumer extends DefaultConsumer {
         return (EventHubsEndpoint) super.getEndpoint();
     }
 
+    private Exchange createAzureEventHubExchange(final EventContext eventContext) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
+        // set body as byte[] and let camel typeConverters do the job to convert
+        message.setBody(eventContext.getEventData().getBody());
+        // set headers
+        message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
+        message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
+        message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
+        message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
+        message.setHeader(EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
+
+        return exchange;
+    }
+
+    private Exchange createAzureEventHubExchange(final ErrorContext errorContext) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
+        // set headers
+        message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
+
+        // set exception
+        exchange.setException(errorContext.getThrowable());
+
+        return exchange;
+    }
+
     private void onEventListener(final EventContext eventContext) {
-        final Exchange exchange = getEndpoint().createAzureEventHubExchange(eventContext);
+        final Exchange exchange = createAzureEventHubExchange(eventContext);
 
         // add exchange callback
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
@@ -93,7 +123,7 @@ public class EventHubsConsumer extends DefaultConsumer {
     }
 
     private void onErrorListener(final ErrorContext errorContext) {
-        final Exchange exchange = getEndpoint().createAzureEventHubExchange(errorContext);
+        final Exchange exchange = createAzureEventHubExchange(errorContext);
 
         // log exception if an exception occurred and was not handled
         if (exchange.getException() != null) {

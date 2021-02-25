@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
+import org.apache.camel.component.google.pubsub.GooglePubsubConsumer;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +32,12 @@ import org.slf4j.LoggerFactory;
 public class CamelMessageReceiver implements MessageReceiver {
 
     private final Logger localLog;
+    private final GooglePubsubConsumer consumer;
     private final GooglePubsubEndpoint endpoint;
     private final Processor processor;
 
-    public CamelMessageReceiver(GooglePubsubEndpoint endpoint, Processor processor) {
+    public CamelMessageReceiver(GooglePubsubConsumer consumer, GooglePubsubEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = processor;
         String loggerId = endpoint.getLoggerId();
@@ -50,7 +53,7 @@ public class CamelMessageReceiver implements MessageReceiver {
             localLog.trace("Received message ID : {}", pubsubMessage.getMessageId());
         }
 
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = consumer.createExchange(true);
         exchange.getIn().setBody(pubsubMessage.getData().toByteArray());
 
         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
@@ -67,7 +70,7 @@ public class CamelMessageReceiver implements MessageReceiver {
         try {
             processor.process(exchange);
         } catch (Exception e) {
-            exchange.setException(e);
+            consumer.getExceptionHandler().handleException(e);
         }
     }
 }

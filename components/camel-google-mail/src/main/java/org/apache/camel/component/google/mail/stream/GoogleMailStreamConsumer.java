@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
+import com.google.api.services.gmail.model.MessagePart;
+import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
@@ -83,7 +88,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         if (c.getMessages() != null) {
             for (Message message : c.getMessages()) {
                 Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
-                Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), mess);
+                Exchange exchange = createExchange(getEndpoint().getExchangePattern(), mess);
                 answer.add(exchange);
             }
         }
@@ -167,6 +172,42 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
                     .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
         } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
+        }
+    }
+
+    public Exchange createExchange(ExchangePattern pattern, com.google.api.services.gmail.model.Message mail) {
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(pattern);
+        org.apache.camel.Message message = exchange.getIn();
+        exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
+        List<MessagePart> parts = mail.getPayload().getParts();
+        if (parts != null && parts.get(0).getBody().getData() != null) {
+            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim());
+            String body = new String(bodyBytes, StandardCharsets.UTF_8);
+            message.setBody(body);
+        }
+        configureHeaders(message, mail.getPayload().getHeaders());
+        return exchange;
+    }
+
+    private void configureHeaders(org.apache.camel.Message message, List<MessagePartHeader> headers) {
+        for (MessagePartHeader header : headers) {
+            String headerName = header.getName();
+            if ("SUBJECT".equalsIgnoreCase(headerName)) {
+                message.setHeader(GoogleMailStreamConstants.MAIL_SUBJECT, header.getValue());
+            }
+            if ("TO".equalsIgnoreCase(headerName)) {
+                message.setHeader(GoogleMailStreamConstants.MAIL_TO, header.getValue());
+            }
+            if ("FROM".equalsIgnoreCase(headerName)) {
+                message.setHeader(GoogleMailStreamConstants.MAIL_FROM, header.getValue());
+            }
+            if ("CC".equalsIgnoreCase(headerName)) {
+                message.setHeader(GoogleMailStreamConstants.MAIL_CC, header.getValue());
+            }
+            if ("BCC".equalsIgnoreCase(headerName)) {
+                message.setHeader(GoogleMailStreamConstants.MAIL_BCC, header.getValue());
+            }
         }
     }
 

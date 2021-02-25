@@ -111,12 +111,13 @@ public class NsqConsumer extends DefaultConsumer {
         @Override
         public void message(NSQMessage msg) {
             LOG.debug("Received Message: {}", msg);
-            Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
-            exchange.getIn().setBody(msg.getMessage());
-            exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
-            exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
-            exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
+            Exchange exchange = createExchange(false);
             try {
+                exchange.setPattern(ExchangePattern.InOnly);
+                exchange.getIn().setBody(msg.getMessage());
+                exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
+                exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
+                exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
                 if (configuration.getAutoFinish()) {
                     msg.finished();
                 } else {
@@ -129,6 +130,8 @@ public class NsqConsumer extends DefaultConsumer {
                     msg.requeue((int) configuration.getRequeueInterval());
                 }
                 getExceptionHandler().handleException("Error during processing", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

@@ -108,7 +108,7 @@ public class JcrConsumer extends DefaultConsumer {
 
         boolean noLocal = getJcrEndpoint().isNoLocal();
 
-        eventListener = new EndpointEventListener(getJcrEndpoint(), getProcessor());
+        eventListener = new EndpointEventListener(this, getJcrEndpoint(), getProcessor());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding JCR Event Listener, {}, on {}. eventTypes={}, isDeep={}, uuid={}, nodeTypeName={}, noLocal={}",

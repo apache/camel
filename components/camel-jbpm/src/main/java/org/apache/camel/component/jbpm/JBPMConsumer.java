@@ -19,7 +19,6 @@ package org.apache.camel.component.jbpm;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jbpm.emitters.CamelEventEmitter;
 import org.apache.camel.component.jbpm.listeners.CamelCaseEventListener;
@@ -98,7 +97,7 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
     }
 
     public void sendMessage(String eventType, Object body) {
-        Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
+        Exchange exchange = createExchange(false);
         exchange.getIn().setHeader("EventType", eventType);
 
         exchange.getIn().setBody(body);
@@ -111,6 +110,7 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
                     if (exchange.getException() != null) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                     }
+                    releaseExchange(exchange, false);
                 }
             });
         } else {
@@ -124,6 +124,7 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 
@@ -131,7 +132,6 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
     public void onDeploy(DeploymentEvent event) {
         InternalRuntimeManager manager = (InternalRuntimeManager) event.getDeployedUnit().getRuntimeManager();
         configure(manager, this);
-
     }
 
     @Override
@@ -156,7 +156,6 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
         }
 
         configureConsumer(eventListenerType, manager, consumer);
-
     }
 
     protected void configureConsumer(String eventListenerType, InternalRuntimeManager manager, JBPMConsumer consumer) {

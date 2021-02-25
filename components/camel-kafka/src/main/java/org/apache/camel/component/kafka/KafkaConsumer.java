@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -239,8 +240,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
         @SuppressWarnings("unchecked")
         protected boolean doRun() {
-            // allow to re-connect thread in case we use that to retry failed
-            // messages
+            // allow to re-connect thread in case we use that to retry failed messages
             boolean reConnect = false;
             boolean unsubscribing = false;
 
@@ -320,7 +320,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                     LOG.trace("Partition = {}, offset = {}, key = {}, value = {}", record.partition(),
                                             record.offset(), record.key(), record.value());
                                 }
-                                Exchange exchange = endpoint.createKafkaExchange(record);
+                                Exchange exchange = createKafkaExchange(record);
 
                                 propagateHeaders(record, exchange, endpoint.getConfiguration());
 
@@ -355,14 +355,11 @@ public class KafkaConsumer extends DefaultConsumer {
                                     // processing failed due to an unhandled
                                     // exception, what should we do
                                     if (endpoint.getConfiguration().isBreakOnFirstError()) {
-                                        // we are failing and we should break
-                                        // out
+                                        // we are failing and we should break out
                                         LOG.warn(
                                                 "Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.",
-                                                exchange,
-                                                topicName, partitionLastOffset, exchange.getException());
-                                        // force commit so we resume on next
-                                        // poll where we failed
+                                                exchange, topicName, partitionLastOffset, exchange.getException());
+                                        // force commit so we resume on next poll where we failed
                                         commitOffset(offsetRepository, partition, partitionLastOffset, true);
                                         // continue to next partition
                                         breakOnErrorHit = true;
@@ -380,6 +377,9 @@ public class KafkaConsumer extends DefaultConsumer {
                                     // offset state upon partition revoke
                                     lastProcessedOffset.put(serializeOffsetKey(partition), partitionLastOffset);
                                 }
+
+                                // success so release the exchange
+                                releaseExchange(exchange, false);
                             }
 
                             if (!breakOnErrorHit) {
@@ -504,6 +504,24 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Exchange createKafkaExchange(ConsumerRecord record) {
+        Exchange exchange = createExchange(false);
+
+        Message message = exchange.getIn();
+        message.setHeader(KafkaConstants.PARTITION, record.partition());
+        message.setHeader(KafkaConstants.TOPIC, record.topic());
+        message.setHeader(KafkaConstants.OFFSET, record.offset());
+        message.setHeader(KafkaConstants.HEADERS, record.headers());
+        message.setHeader(KafkaConstants.TIMESTAMP, record.timestamp());
+        if (record.key() != null) {
+            message.setHeader(KafkaConstants.KEY, record.key());
+        }
+        message.setBody(record.value());
+
+        return exchange;
     }
 
     private void propagateHeaders(

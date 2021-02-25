@@ -113,7 +113,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     }
 
     private Exchange createExchange(String path, OperationResult result, WatchedEvent watchedEvent) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         ZooKeeperMessage in = new ZooKeeperMessage(getEndpoint().getCamelContext(), path, result.getStatistics(), watchedEvent);
         exchange.setIn(in);
         if (result.isOk()) {

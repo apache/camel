@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -47,7 +46,7 @@ public class IgniteEventsConsumer extends DefaultConsumer {
 
         @Override
         public boolean apply(Event event) {
-            Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+            Exchange exchange = createExchange(true);
             Message in = exchange.getIn();
             in.setBody(event);
             try {

@@ -54,10 +54,10 @@ public class MiloServerConsumer extends DefaultConsumer {
     }
 
     protected void performWrite(final DataValue value) {
-        Exchange exchange = getEndpoint().createExchange();
-        mapToMessage(value, exchange.getMessage());
+        Exchange exchange = createExchange(true);
 
         try {
+            mapToMessage(value, exchange.getMessage());
             getProcessor().process(exchange);
         } catch (Exception e) {
             getExceptionHandler().handleException("Error processing exchange", e);

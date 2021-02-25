@@ -29,6 +29,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
@@ -44,6 +45,7 @@ import org.apache.camel.component.netty.http.HttpPrincipal;
 import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.component.netty.http.NettyHttpHelper;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.spi.CamelLogger;
@@ -339,4 +341,32 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getMessage(), consumer.getConfiguration());
     }
 
+    @Override
+    protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
+        Exchange exchange = consumer.createExchange(false);
+
+        // create a new IN message as we cannot reuse with netty
+        Message in;
+        if (message instanceof FullHttpRequest) {
+            FullHttpRequest request = (FullHttpRequest) message;
+            in = consumer.getEndpoint().getNettyHttpBinding().toCamelMessage(request, exchange, consumer.getConfiguration());
+        } else {
+            InboundStreamHttpRequest request = (InboundStreamHttpRequest) message;
+            in = consumer.getEndpoint().getNettyHttpBinding().toCamelMessage(request, exchange, consumer.getConfiguration());
+        }
+        exchange.setIn(in);
+
+        // setup the common message headers
+        consumer.getEndpoint().updateMessageHeader(in, ctx);
+
+        // honor the character encoding
+        String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
+        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
+        if (charset != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
+        }
+
+        return exchange;
+    }
 }

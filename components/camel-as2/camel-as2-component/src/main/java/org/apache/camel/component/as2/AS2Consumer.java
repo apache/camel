@@ -124,17 +124,18 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                     = HttpMessageUtils.extractEdiPayload(request, as2ServerConnection.getDecryptingPrivateKey());
 
             // Set AS2 Interchange property and EDI message into body of input message.
-            Exchange exchange = getEndpoint().createExchange();
-            HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-            exchange.setProperty(AS2Constants.AS2_INTERCHANGE, coreContext);
-            exchange.getIn().setBody(ediEntity.getEdiMessage());
+            Exchange exchange = createExchange(false);
 
             try {
+                HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+                exchange.setProperty(AS2Constants.AS2_INTERCHANGE, coreContext);
+                exchange.getIn().setBody(ediEntity.getEdiMessage());
                 // send message to next processor in the route
                 getProcessor().process(exchange);
             } finally {
                 // check if an exception occurred and was not handled
                 exception = exchange.getException();
+                releaseExchange(exchange, false);
             }
         } catch (Exception e) {
             LOG.warn("Failed to process AS2 message", e);

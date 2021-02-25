@@ -28,14 +28,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The JCache consumer.
  */
 public class JCacheConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(JCacheConsumer.class);
 
     private CacheEntryListenerConfiguration<Object, Object> entryListenerConfiguration;
 
@@ -83,7 +80,7 @@ public class JCacheConsumer extends DefaultConsumer {
                             @Override
                             protected void onEvents(Iterable<CacheEntryEvent<?, ?>> events) {
                                 for (CacheEntryEvent<?, ?> event : events) {
-                                    Exchange exchange = getEndpoint().createExchange();
+                                    Exchange exchange = createExchange(true);
                                     Message message = exchange.getIn();
                                     message.setHeader(JCacheConstants.EVENT_TYPE, event.getEventType().name());
                                     message.setHeader(JCacheConstants.KEY, event.getKey());
@@ -96,7 +93,7 @@ public class JCacheConsumer extends DefaultConsumer {
                                     try {
                                         getProcessor().process(exchange);
                                     } catch (Exception e) {
-                                        LOG.error("Error processing event ", e);
+                                        getExceptionHandler().handleException(e);
                                     }
                                 }
                             }

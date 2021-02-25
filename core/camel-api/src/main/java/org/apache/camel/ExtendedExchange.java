@@ -29,6 +29,14 @@ import org.apache.camel.spi.UnitOfWork;
 public interface ExtendedExchange extends Exchange {
 
     /**
+     * If there is an existing inbound message of the given type then return it as-is, otherwise return null.
+     *
+     * @param  type the given type
+     * @return      the message if exists with the given type, otherwise null.
+     */
+    <T> T getInOrNull(Class<T> type);
+
+    /**
      * Sets the endpoint which originated this message exchange. This method should typically only be called by
      * {@link Endpoint} implementations
      */

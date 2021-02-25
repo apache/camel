@@ -92,7 +92,7 @@ public class PahoConsumer extends DefaultConsumer {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 LOG.debug("Message arrived on topic: {} -> {}", topic, message);
-                Exchange exchange = getEndpoint().createExchange(message, topic);
+                Exchange exchange = createExchange(message, topic);
 
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
@@ -134,6 +134,18 @@ public class PahoConsumer extends DefaultConsumer {
     @Override
     public PahoEndpoint getEndpoint() {
         return (PahoEndpoint) super.getEndpoint();
+    }
+
+    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        Exchange exchange = createExchange(true);
+
+        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
+        paho.setBody(mqttMessage.getPayload());
+        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+        paho.setHeader(PahoConstants.MQTT_QOS, mqttMessage.getQos());
+
+        exchange.setIn(paho);
+        return exchange;
     }
 
 }

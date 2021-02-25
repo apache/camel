@@ -57,6 +57,7 @@ public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
                     getExceptionHandler().handleException("Error processing exchange",
                             exchange, exchange.getException());
                 }
+                releaseExchange(exchange, false);
             });
         } catch (IllegalStateException ex) {
             throw new CongestionException(ex, exchange.getIn().getBody(SoroushMessage.class));

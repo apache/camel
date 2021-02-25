@@ -185,7 +185,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     }
 
     protected void sendTimerExchange(long counter) {
-        final Exchange exchange = endpoint.createExchange();
+        final Exchange exchange = createExchange(false);
 
         if (endpoint.isIncludeMetadata()) {
             exchange.setProperty(Exchange.TIMER_COUNTER, counter);
@@ -206,10 +206,15 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         if (!endpoint.isSynchronous()) {
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
-                public void done(boolean doneSync) {
+                public void done(boolean cbDoneSync) {
                     // handle any thrown exception
                     if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                        TimerConsumer.this.getExceptionHandler().handleException("Error processing exchange", exchange,
+                                exchange.getException());
+                    }
+                    // sync wil release outside this callback
+                    if (!cbDoneSync) {
+                        TimerConsumer.this.releaseExchange(exchange, false);
                     }
                 }
             });
@@ -221,8 +226,12 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             }
 
             // handle any thrown exception
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            try {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

@@ -94,9 +94,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param component   the component that created this endpoint
      */
     protected DefaultEndpoint(String endpointUri, Component component) {
-        this.camelContext = component == null ? null : component.getCamelContext();
         this.component = component;
         this.setEndpointUri(endpointUri);
+        if (component != null) {
+            this.camelContext = component.getCamelContext();
+        }
     }
 
     /**
@@ -226,12 +228,19 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public Exchange createExchange() {
-        return new DefaultExchange(this, getExchangePattern());
+        return createExchange(exchangePattern);
     }
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(this, pattern);
+        Exchange answer = new DefaultExchange(this, pattern);
+        configureExchange(answer);
+        return answer;
+    }
+
+    @Override
+    public void configureExchange(Exchange exchange) {
+        // noop
     }
 
     /**

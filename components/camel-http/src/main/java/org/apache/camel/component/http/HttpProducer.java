@@ -173,17 +173,10 @@ public class HttpProducer extends DefaultProducer {
                 Object headerValue = entry.getValue();
 
                 if (headerValue != null) {
-                    if (headerValue instanceof String) {
-                        // optimise for string values
-                        String value = (String) headerValue;
-                        if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                            httpRequest.addHeader(key, value);
-                        }
-                        continue;
-                    } else if (headerValue instanceof Long || headerValue instanceof Integer
-                            || headerValue instanceof Boolean) {
-                        // optimise for other common types
-                        String value = tc.convertTo(String.class, exchange, headerValue);
+                    if (headerValue instanceof String || headerValue instanceof Integer || headerValue instanceof Long
+                            || headerValue instanceof Boolean || headerValue instanceof Date) {
+                        // optimise for common types
+                        String value = headerValue.toString();
                         if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
                             httpRequest.addHeader(key, value);
                         }

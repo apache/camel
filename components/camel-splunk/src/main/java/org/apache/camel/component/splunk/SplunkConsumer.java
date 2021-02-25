@@ -66,28 +66,18 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
 
                     @Override
                     public void process(SplunkEvent splunkEvent) {
-                        final Exchange exchange = getEndpoint().createExchange();
+                        final Exchange exchange = createExchange(true);
                         Message message = exchange.getIn();
                         message.setBody(splunkEvent);
 
-                        try {
-                            LOG.trace("Processing exchange [{}]...", exchange);
-                            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                                @Override
-                                public void done(boolean doneSync) {
-                                    LOG.trace("Done processing exchange [{}]...", exchange);
-                                }
-                            });
-                        } catch (Exception e) {
-                            exchange.setException(e);
-                        }
-                        if (exchange.getException() != null) {
-                            getExceptionHandler().handleException("Error processing exchange", exchange,
-                                    exchange.getException());
-                        }
-
+                        LOG.trace("Processing exchange [{}]...", exchange);
+                        getAsyncProcessor().process(exchange, new AsyncCallback() {
+                            @Override
+                            public void done(boolean doneSync) {
+                                LOG.trace("Done processing exchange [{}]...", exchange);
+                            }
+                        });
                     }
-
                 });
                 // Return 0: no exchanges returned by poll, as exchanges have been returned asynchronously
                 return 0;
@@ -107,7 +97,7 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
         LOG.trace("Received {} messages in this poll", splunkEvents.size());
         Queue<Exchange> answer = new LinkedList<>();
         for (SplunkEvent splunkEvent : splunkEvents) {
-            Exchange exchange = getEndpoint().createExchange();
+            Exchange exchange = createExchange(true);
             Message message = exchange.getIn();
             message.setBody(splunkEvent);
             answer.add(exchange);

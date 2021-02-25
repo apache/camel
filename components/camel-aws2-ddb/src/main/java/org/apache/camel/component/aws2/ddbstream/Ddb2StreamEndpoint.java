@@ -20,7 +20,6 @@ import java.net.URI;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
@@ -34,7 +33,6 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.model.Record;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
@@ -67,13 +65,6 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         consumer.setSchedulerProperties(consumer.getEndpoint().getSchedulerProperties());
         configureConsumer(consumer);
         return consumer;
-    }
-
-    Exchange createExchange(Record record) {
-        Exchange ex = super.createExchange();
-        ex.getIn().setBody(record, Record.class);
-
-        return ex;
     }
 
     @Override

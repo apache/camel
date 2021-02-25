@@ -17,8 +17,6 @@
 package org.apache.camel.component.irc;
 
 import org.apache.camel.Category;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -27,16 +25,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCConstants;
-import org.schwering.irc.lib.IRCModeParser;
-import org.schwering.irc.lib.IRCUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Send and receive messages to/from and IRC chat.
  */
-@UriEndpoint(
-             firstVersion = "1.1.0",
+@UriEndpoint(firstVersion = "1.1.0",
              scheme = "irc",
              title = "IRC",
              syntax = "irc:hostname:port",
@@ -55,76 +50,6 @@ public class IrcEndpoint extends DefaultEndpoint {
         super(UnsafeUriCharactersEncoder.encode(endpointUri), component);
         this.component = component;
         this.configuration = configuration;
-    }
-
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        Exchange exchange = super.createExchange(pattern);
-        exchange.setProperty(Exchange.BINDING, getBinding());
-        return exchange;
-    }
-
-    public Exchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "PRIVMSG", target, user, msg);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnNickExchange(IRCUser user, String newNick) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "NICK", user, newNick);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnQuitExchange(IRCUser user, String msg) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "QUIT", user, msg);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnJoinExchange(String channel, IRCUser user) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "JOIN", channel, user);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "KICK", channel, user, whoWasKickedNick, msg);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "MODE", channel, user, modeParser.getLine());
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnPartExchange(String channel, IRCUser user, String msg) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "PART", channel, user, msg);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnReplyExchange(int num, String value, String msg) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "REPLY", num, value, msg);
-        exchange.setIn(im);
-        return exchange;
-    }
-
-    public Exchange createOnTopicExchange(String channel, IRCUser user, String topic) {
-        Exchange exchange = createExchange();
-        IrcMessage im = new IrcMessage(getCamelContext(), "TOPIC", channel, user, topic);
-        exchange.setIn(im);
-        return exchange;
     }
 
     @Override

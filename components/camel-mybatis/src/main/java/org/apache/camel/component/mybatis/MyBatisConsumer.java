@@ -130,9 +130,10 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
             // process the current exchange
             LOG.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
-            getProcessor().process(exchange);
-
+            Exception cause = null;
             try {
+                getProcessor().process(exchange);
+
                 if (onConsume != null) {
                     endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
                 }
@@ -142,12 +143,15 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
             if (getEndpoint().isTransacted() && exchange.isFailed()) {
                 // break out as we are transacted and should rollback
-                Exception cause = exchange.getException();
-                if (cause != null) {
-                    throw cause;
-                } else {
-                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                cause = exchange.getException();
+                if (cause == null) {
+                    cause = new RollbackExchangeException("Rollback transaction due error processing exchange", null);
                 }
+            }
+            releaseExchange(exchange, false);
+
+            if (cause != null) {
+                throw cause;
             }
         }
 
@@ -156,7 +160,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
     private Exchange createExchange(Object data) {
         final MyBatisEndpoint endpoint = getEndpoint();
-        final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+        final Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOnly);
         final String outputHeader = getEndpoint().getOutputHeader();
 
         Message msg = exchange.getIn();

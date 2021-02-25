@@ -42,6 +42,13 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     private DataType dataType;
 
     @Override
+    public void reset() {
+        body = null;
+        messageId = null;
+        dataType = null;
+    }
+
+    @Override
     public String toString() {
         // do not output information about the message as it may contain sensitive information
         if (messageId != null) {

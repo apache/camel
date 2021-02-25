@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultConsumer;
@@ -39,11 +40,6 @@ public class DataSetConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.camelContext = endpoint.getCamelContext();
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
     }
 
     @Override
@@ -86,10 +82,27 @@ public class DataSetConsumer extends DefaultConsumer {
         }
     }
 
+    /**
+     * Creates a message exchange for the given index in the {@link DataSet}
+     */
+    protected Exchange createExchange(long messageIndex) throws Exception {
+        Exchange exchange = createExchange(false);
+
+        endpoint.getDataSet().populateMessage(exchange, messageIndex);
+
+        if (!endpoint.getDataSetIndex().equals("off")) {
+            Message in = exchange.getIn();
+            in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+        }
+
+        return exchange;
+    }
+
     protected void sendMessages(long startIndex, long endIndex) {
-        try {
-            for (long i = startIndex; i < endIndex; i++) {
-                Exchange exchange = endpoint.createExchange(i);
+        for (long i = startIndex; i < endIndex; i++) {
+            Exchange exchange = null;
+            try {
+                exchange = createExchange(i);
                 getProcessor().process(exchange);
 
                 try {
@@ -104,9 +117,11 @@ public class DataSetConsumer extends DefaultConsumer {
                 if (reporter != null) {
                     reporter.process(exchange);
                 }
+            } catch (Exception e) {
+                handleException(e);
+            } finally {
+                releaseExchange(exchange, false);
             }
-        } catch (Exception e) {
-            handleException(e);
         }
     }
 

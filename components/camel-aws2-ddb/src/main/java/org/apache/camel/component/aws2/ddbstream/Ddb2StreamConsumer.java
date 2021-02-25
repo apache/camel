@@ -97,6 +97,12 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         return processedExchanges;
     }
 
+    protected Exchange createExchange(Record record) {
+        Exchange ex = createExchange(true);
+        ex.getIn().setBody(record, Record.class);
+        return ex;
+    }
+
     private DynamoDbStreamsClient getClient() {
         return getEndpoint().getClient();
     }
@@ -130,7 +136,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         for (Record record : records) {
             BigInteger recordSeqNum = new BigInteger(record.dynamodb().sequenceNumber());
             if (condition == null || condition.matches(providedSeqNum, recordSeqNum)) {
-                exchanges.add(getEndpoint().createExchange(record));
+                exchanges.add(createExchange(record));
             }
         }
         return exchanges;

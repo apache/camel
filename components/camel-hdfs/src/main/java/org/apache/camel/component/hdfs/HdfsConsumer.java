@@ -179,36 +179,40 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private void processHdfsInputStream(
             HdfsInputStream hdfsFile, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount,
             AtomicInteger totalMessageCount) {
-        Exchange exchange = this.getEndpoint().createExchange();
-        Message message = exchange.getIn();
-        String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");
-        message.setHeader(Exchange.FILE_NAME, fileName);
-        message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
-        message.setHeader("CamelFileAbsolutePath", hdfsFile.getActualPath());
-        if (key.getValue() != null) {
-            message.setHeader(HdfsHeader.KEY.name(), key.getValue());
-        }
-
-        if (hdfsFile.getNumOfReadBytes() >= 0) {
-            message.setHeader(Exchange.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
-        }
-
-        message.setBody(value.getValue());
-
-        updateNewExchange(exchange, messageCount.get(), hdfsFile);
-
-        LOG.debug("Processing file [{}]", fileName);
+        Exchange exchange = createExchange(false);
         try {
+            Message message = exchange.getIn();
+            String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");
+            message.setHeader(Exchange.FILE_NAME, fileName);
+            message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
+            message.setHeader("CamelFileAbsolutePath", hdfsFile.getActualPath());
+            if (key.getValue() != null) {
+                message.setHeader(HdfsHeader.KEY.name(), key.getValue());
+            }
+
+            if (hdfsFile.getNumOfReadBytes() >= 0) {
+                message.setHeader(Exchange.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
+            }
+
+            message.setBody(value.getValue());
+
+            updateNewExchange(exchange, messageCount.get(), hdfsFile);
+
+            LOG.debug("Processing file [{}]", fileName);
+
             processor.process(exchange);
             totalMessageCount.incrementAndGet();
+
         } catch (Exception e) {
             exchange.setException(e);
+        } finally {
+            // in case of unhandled exceptions then let the exception handler handle them
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException(exchange.getException());
+            }
+            releaseExchange(exchange, false);
         }
 
-        // in case of unhandled exceptions then let the exception handler handle them
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException(exchange.getException());
-        }
     }
 
     private boolean normalFileIsDirectoryHasSuccessFile(FileStatus fileStatus, HdfsInfo info) {

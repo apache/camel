@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -27,6 +28,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,6 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteFileIgnoreDoPollErrorTest {
+
+    private final CamelContext camelContext = new DefaultCamelContext();
+
     private final RemoteFileEndpoint<Object> remoteFileEndpoint = new RemoteFileEndpoint<Object>() {
         @Override
         protected RemoteFileConsumer<Object> buildConsumer(Processor processor) {
@@ -100,6 +105,9 @@ public class RemoteFileIgnoreDoPollErrorTest {
 
     private RemoteFileConsumer<Object> getRemoteFileConsumer(
             final String doPollResult, final boolean ignoreCannotRetrieveFile) {
+
+        remoteFileEndpoint.setCamelContext(camelContext);
+
         return new RemoteFileConsumer<Object>(remoteFileEndpoint, null, null, null) {
             @Override
             protected boolean doPollDirectory(

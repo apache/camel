@@ -71,27 +71,30 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
         }
 
         protected void onValue(Value value) {
-            final Exchange exchange = endpoint.createExchange();
-            final Message message = exchange.getIn();
-
-            message.setHeader(ConsulConstants.CONSUL_KEY, value.getKey());
-            message.setHeader(ConsulConstants.CONSUL_RESULT, true);
-            message.setHeader(ConsulConstants.CONSUL_FLAGS, value.getFlags());
-            message.setHeader(ConsulConstants.CONSUL_CREATE_INDEX, value.getCreateIndex());
-            message.setHeader(ConsulConstants.CONSUL_LOCK_INDEX, value.getLockIndex());
-            message.setHeader(ConsulConstants.CONSUL_MODIFY_INDEX, value.getModifyIndex());
-
-            if (value.getSession().isPresent()) {
-                message.setHeader(ConsulConstants.CONSUL_SESSION, value.getSession().get());
-            }
-
-            message.setBody(
-                    configuration.isValueAsString() ? value.getValueAsString().orElse(null) : value.getValue().orElse(null));
-
+            final Exchange exchange = createExchange(false);
             try {
+                final Message message = exchange.getIn();
+
+                message.setHeader(ConsulConstants.CONSUL_KEY, value.getKey());
+                message.setHeader(ConsulConstants.CONSUL_RESULT, true);
+                message.setHeader(ConsulConstants.CONSUL_FLAGS, value.getFlags());
+                message.setHeader(ConsulConstants.CONSUL_CREATE_INDEX, value.getCreateIndex());
+                message.setHeader(ConsulConstants.CONSUL_LOCK_INDEX, value.getLockIndex());
+                message.setHeader(ConsulConstants.CONSUL_MODIFY_INDEX, value.getModifyIndex());
+
+                if (value.getSession().isPresent()) {
+                    message.setHeader(ConsulConstants.CONSUL_SESSION, value.getSession().get());
+                }
+
+                message.setBody(
+                        configuration.isValueAsString()
+                                ? value.getValueAsString().orElse(null) : value.getValue().orElse(null));
+
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
 

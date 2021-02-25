@@ -50,7 +50,7 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
         if (listenerInterface != null) {
             this.eventHandler = createListenerInterfaceProxy(endpoint, processor, listenerInterface);
         } else {
-            this.eventHandler = new FilteringCamelEventHandler(endpoint, processor, eventClass);
+            this.eventHandler = new FilteringCamelEventHandler(this, endpoint, processor, eventClass);
         }
     }
 
@@ -72,7 +72,7 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
             GuavaEventBusEndpoint endpoint, Processor processor, Class<?> listenerInterface) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return Proxy.newProxyInstance(classLoader, new Class[] { listenerInterface },
-                new ListenerInterfaceHandler(endpoint, processor));
+                new ListenerInterfaceHandler(this, endpoint, processor));
     }
 
     private static final class ListenerInterfaceHandler implements InvocationHandler {
@@ -81,8 +81,8 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
 
         private final CamelEventHandler delegateHandler;
 
-        private ListenerInterfaceHandler(GuavaEventBusEndpoint endpoint, Processor processor) {
-            this.delegateHandler = new CamelEventHandler(endpoint, processor);
+        private ListenerInterfaceHandler(GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor) {
+            this.delegateHandler = new CamelEventHandler(consumer, endpoint, processor);
         }
 
         @Override

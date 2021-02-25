@@ -72,7 +72,8 @@ public class SmppConsumer extends DefaultConsumer {
                 }
             }
         };
-        this.messageReceiverListener = new MessageReceiverListenerImpl(getEndpoint(), getProcessor(), getExceptionHandler());
+        this.messageReceiverListener
+                = new MessageReceiverListenerImpl(this, getEndpoint(), getProcessor(), getExceptionHandler());
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
@@ -45,6 +46,7 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
+    private final JmsConsumer consumer;
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
     private JmsBinding binding;
@@ -55,7 +57,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     private boolean disableReplyTo;
     private boolean async;
 
-    public EndpointMessageListener(JmsEndpoint endpoint, Processor processor) {
+    public EndpointMessageListener(JmsConsumer consumer, JmsEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
@@ -146,6 +149,9 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             }
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
+
+            // the exchange is now done so release it
+            consumer.releaseExchange(exchange, false);
 
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
@@ -250,14 +256,30 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                     }
                 }
             }
+
+            // if we completed from async processing then we should release the exchange
+            // the sync processing will release the exchange outside this callback
+            if (!doneSync) {
+                consumer.releaseExchange(exchange, false);
+            }
         }
     }
 
     public Exchange createExchange(Message message, Session session, Object replyDestination) {
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = consumer.createExchange(false);
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
-        exchange.setIn(new JmsMessage(exchange, message, session, binding));
+
+        // optimize: either create a new JmsMessage or reuse existing if exists
+        JmsMessage msg = exchange.adapt(ExtendedExchange.class).getInOrNull(JmsMessage.class);
+        if (msg == null) {
+            msg = new JmsMessage(exchange, message, session, binding);
+            exchange.setIn(msg);
+        } else {
+            msg.setJmsMessage(message);
+            msg.setJmsSession(session);
+            msg.setBinding(binding);
+        }
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {

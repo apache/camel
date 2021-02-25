@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +31,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -144,24 +141,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         int max = getConfiguration().getWorkerPoolMaxSize();
         return getCamelContext().getExecutorServiceManager().newThreadPool(this,
                 "KafkaProducer[" + configuration.getTopic() + "]", core, max);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public Exchange createKafkaExchange(ConsumerRecord record) {
-        Exchange exchange = super.createExchange();
-
-        Message message = exchange.getIn();
-        message.setHeader(KafkaConstants.PARTITION, record.partition());
-        message.setHeader(KafkaConstants.TOPIC, record.topic());
-        message.setHeader(KafkaConstants.OFFSET, record.offset());
-        message.setHeader(KafkaConstants.HEADERS, record.headers());
-        message.setHeader(KafkaConstants.TIMESTAMP, record.timestamp());
-        if (record.key() != null) {
-            message.setHeader(KafkaConstants.KEY, record.key());
-        }
-        message.setBody(record.value());
-
-        return exchange;
     }
 
     protected KafkaProducer createProducer(KafkaEndpoint endpoint) {
