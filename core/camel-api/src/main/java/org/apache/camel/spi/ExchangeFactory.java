@@ -36,7 +36,7 @@ import org.apache.camel.Service;
  * The factory is pluggable which allows to use different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
  */
-public interface ExchangeFactory extends Service, CamelContextAware, NonManagedService {
+public interface ExchangeFactory extends Service, CamelContextAware, NonManagedService, RouteIdAware {
 
     /**
      * Utilization statistics of the this factory.

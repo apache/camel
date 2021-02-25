@@ -113,6 +113,7 @@ public class ManagedExchangeFactoryManager extends ManagedService implements Man
             Collection<ExchangeFactory> factories = exchangeFactoryManager.getExchangeFactories();
             for (ExchangeFactory ef : factories) {
                 CompositeType ct = CamelOpenMBeanTypes.listExchangeFactoryCompositeType();
+                String routeId = ef.getRouteId();
                 String url = ef.getConsumer().getEndpoint().getEndpointUri();
                 if (sanitize) {
                     url = URISupport.sanitizeUri(url);
@@ -132,8 +133,9 @@ public class ManagedExchangeFactoryManager extends ManagedService implements Man
                 }
 
                 CompositeData data = new CompositeDataSupport(
-                        ct, new String[] { "url", "capacity", "pooled", "created", "acquired", "released", "discarded" },
-                        new Object[] { url, capacity, size, created, acquired, released, discarded });
+                        ct,
+                        new String[] { "url", "routeId", "capacity", "pooled", "created", "acquired", "released", "discarded" },
+                        new Object[] { url, routeId, capacity, size, created, acquired, released, discarded });
                 answer.put(data);
             }
             return answer;

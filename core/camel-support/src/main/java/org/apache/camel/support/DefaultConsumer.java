@@ -185,6 +185,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     @Override
     protected void doStart() throws Exception {
         LOG.debug("Starting consumer: {}", this);
+        exchangeFactory.setRouteId(routeId);
         ServiceHelper.startService(exchangeFactory, processor);
     }
 

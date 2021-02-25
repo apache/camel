@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link ExchangeFactory} that creates a new {@link Exchange} instance.
  */
-public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFactory, CamelContextAware {
+public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExchangeFactory.class);
 
@@ -43,6 +42,7 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
     final Consumer consumer;
     CamelContext camelContext;
     ExchangeFactoryManager exchangeFactoryManager;
+    String routeId;
 
     public DefaultExchangeFactory() {
         this.consumer = null;
@@ -55,6 +55,16 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
     @Override
     protected void doBuild() throws Exception {
         this.exchangeFactoryManager = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override
@@ -166,11 +176,12 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
             long discarded = statistics.getDiscardedCounter();
             boolean shouldLog = pooled > 0 || created > 0 || acquired > 0 || released > 0 || discarded > 0;
             if (shouldLog) {
+                String id = getRouteId();
                 String uri = consumer.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
 
-                LOG.info("{} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
-                        name, uri, pooled, created, acquired, released, discarded);
+                log.info("{} {} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
+                        name, id, uri, pooled, created, acquired, released, discarded);
             }
         }
     }
