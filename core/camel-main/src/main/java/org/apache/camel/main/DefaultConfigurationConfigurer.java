@@ -31,7 +31,6 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
-import org.apache.camel.impl.engine.DefaultExchangeFactory;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -125,14 +124,6 @@ public final class DefaultConfigurationConfigurer {
 
         if ("pooled".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PooledExchangeFactory());
-        } else if ("default".equals(config.getExchangeFactory())) {
-            ecc.setExchangeFactory(new DefaultExchangeFactory());
-        } else {
-            ExchangeFactory ef
-                    = camelContext.getRegistry().lookupByNameAndType(config.getExchangeFactory(), ExchangeFactory.class);
-            if (ef != null) {
-                ecc.setExchangeFactory(ef);
-            }
         }
         ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
         ecc.getExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());
@@ -373,6 +364,10 @@ public final class DefaultConfigurationConfigurer {
         ShutdownStrategy ss = getSingleBeanOfType(registry, ShutdownStrategy.class);
         if (ss != null) {
             ecc.setShutdownStrategy(ss);
+        }
+        ExchangeFactory exf = getSingleBeanOfType(registry, ExchangeFactory.class);
+        if (exf != null) {
+            ecc.setExchangeFactory(exf);
         }
         Set<TypeConverters> tcs = registry.findByType(TypeConverters.class);
         if (!tcs.isEmpty()) {
