@@ -21,7 +21,6 @@
 ** xref:atomix-set-component.adoc[Atomix Set]
 ** xref:atomix-value-component.adoc[Atomix Value]
 ** xref:avro-component.adoc[Avro RPC]
-*** xref:aws-s3-component.adoc[AWS S3 Storage Service]
 *** xref:aws-swf-component.adoc[AWS Simple Workflow (SWF)]
 ** xref:aws2-summary.adoc[AWS 2]
 *** xref:aws2-athena-component.adoc[AWS 2 Athena]

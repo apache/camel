@@ -280,7 +280,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyBuilders,
             org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.RobotFrameworkBuilders,
             org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssBuilders,
-            org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3Builders,
             org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.STS2Builders,
             org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFBuilders,
             org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.SagaBuilders,
