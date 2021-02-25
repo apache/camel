@@ -181,7 +181,6 @@ For more details see:
 ** xref:components::mybatis-component.adoc[MyBatis]
 ** xref:components::quartz-component.adoc[Quartz]
 ** xref:components::snmp-component.adoc[SNMP]
-** xref:components::aws-s3-component.adoc[AWS-S3]
 
 [[PollingConsumer-ScheduledPollConsumerOptions]]
 === ScheduledPollConsumer Options
