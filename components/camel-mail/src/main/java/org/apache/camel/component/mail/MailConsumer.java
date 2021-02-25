@@ -385,7 +385,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
 
                 if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                    Exchange exchange = getEndpoint().createExchange(message);
+                    Exchange exchange = createExchange(message);
                     if (getEndpoint().getConfiguration().isMapMailMessage()) {
                         // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
                         LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
@@ -399,6 +399,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                                 exchange.getIn(AttachmentMessage.class).setAttachmentObjects(att);
                             }
                         } catch (MessagingException | IOException e) {
+                            // must release exchange before throwing exception
+                            releaseExchange(exchange, true);
                             throw new RuntimeCamelException("Error accessing attachments due to: " + e.getMessage(), e);
                         }
                     }
@@ -509,6 +511,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } catch (MessagingException e) {
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
         }
+    }
+
+    private Exchange createExchange(Message message) {
+        Exchange exchange = createExchange(true);
+        exchange.setProperty(Exchange.BINDING, getEndpoint().getBinding());
+        exchange.setIn(new MailMessage(exchange, message, getEndpoint().getConfiguration().isMapMailMessage()));
+        return exchange;
     }
 
     private void copyOrMoveMessageIfRequired(

@@ -21,13 +21,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
@@ -52,7 +48,6 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
-import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
@@ -343,36 +338,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         super.doStop();
     }
 
-    public Exchange createExchange(software.amazon.awssdk.services.sqs.model.Message msg) {
-        return createExchange(getExchangePattern(), msg);
-    }
-
-    private Exchange createExchange(ExchangePattern pattern, software.amazon.awssdk.services.sqs.model.Message msg) {
-        Exchange exchange = super.createExchange(pattern);
-        Message message = exchange.getIn();
-        message.setBody(msg.body());
-        message.setHeaders(new HashMap<>(msg.attributesAsStrings()));
-        message.setHeader(Sqs2Constants.MESSAGE_ID, msg.messageId());
-        message.setHeader(Sqs2Constants.MD5_OF_BODY, msg.md5OfBody());
-        message.setHeader(Sqs2Constants.RECEIPT_HANDLE, msg.receiptHandle());
-        message.setHeader(Sqs2Constants.ATTRIBUTES, msg.attributes());
-        message.setHeader(Sqs2Constants.MESSAGE_ATTRIBUTES, msg.messageAttributes());
-
-        // Need to apply the SqsHeaderFilterStrategy this time
-        HeaderFilterStrategy headerFilterStrategy = getHeaderFilterStrategy();
-        // add all sqs message attributes as camel message headers so that
-        // knowledge of
-        // the Sqs class MessageAttributeValue will not leak to the client
-        for (Entry<String, MessageAttributeValue> entry : msg.messageAttributes().entrySet()) {
-            String header = entry.getKey();
-            Object value = translateValue(entry.getValue());
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(header, value, exchange)) {
-                message.setHeader(header, value);
-            }
-        }
-        return exchange;
-    }
-
     public Sqs2Configuration getConfiguration() {
         return configuration;
     }
@@ -406,13 +371,4 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    private Object translateValue(MessageAttributeValue mav) {
-        Object result = null;
-        if (mav.stringValue() != null) {
-            result = mav.stringValue();
-        } else if (mav.binaryValue() != null) {
-            result = mav.binaryValue();
-        }
-        return result;
-    }
 }

@@ -28,8 +28,6 @@ import org.jbpm.services.api.service.ServiceRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.kie.api.KieServices;
-import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.KieContainer;
 import org.kie.internal.runtime.manager.InternalRuntimeManager;
 import org.kie.internal.runtime.manager.RuntimeEnvironment;
@@ -154,47 +152,4 @@ public class CamelKieServerExtensionTest {
         assertNull(context);
     }
 
-    @Test
-    public void testBuildDeploymentCamelContext() throws Exception {
-
-        when(runtimeManager.getIdentifier()).thenReturn(identifier);
-        when(runtimeManager.getEnvironment()).thenReturn(runtimeEnvironment);
-
-        Environment environment = KieServices.get().newEnvironment();
-        when(runtimeEnvironment.getEnvironment()).thenReturn(environment);
-
-        RuntimeManagerRegistry.get().register(runtimeManager);
-
-        CamelKieServerExtension extension = new CamelKieServerExtension();
-        CamelContext context = extension.buildDeploymentContext(identifier, this.getClass().getClassLoader());
-        assertNotNull(context);
-
-        context.stop();
-    }
-
-    @Test
-    public void testBuildDeploymentCamelContextCustomBuilder() throws Exception {
-
-        when(runtimeManager.getIdentifier()).thenReturn(identifier);
-        when(runtimeManager.getEnvironment()).thenReturn(runtimeEnvironment);
-
-        Environment environment = KieServices.get().newEnvironment();
-        environment.set(JBPMConstants.CAMEL_CONTEXT_BUILDER_KEY, new CamelContextBuilder() {
-
-            @Override
-            public CamelContext buildCamelContext() {
-                // for test purpose return simply null as camel context
-                return null;
-            }
-
-        });
-        when(runtimeEnvironment.getEnvironment()).thenReturn(environment);
-
-        RuntimeManagerRegistry.get().register(runtimeManager);
-
-        CamelKieServerExtension extension = new CamelKieServerExtension();
-        CamelContext context = extension.buildDeploymentContext(identifier, this.getClass().getClassLoader());
-        assertNull(context);
-
-    }
 }

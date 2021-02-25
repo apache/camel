@@ -62,14 +62,15 @@ public class AsteriskConsumer extends DefaultConsumer {
     private final class EventListener implements ManagerEventListener {
         @Override
         public void onManagerEvent(ManagerEvent event) {
-            Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setHeader(AsteriskConstants.EVENT_NAME, event.getClass().getSimpleName());
-            exchange.getIn().setBody(event);
-
+            Exchange exchange = createExchange(false);
             try {
+                exchange.getIn().setHeader(AsteriskConstants.EVENT_NAME, event.getClass().getSimpleName());
+                exchange.getIn().setBody(event);
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error processing exchange.", exchange, e);
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

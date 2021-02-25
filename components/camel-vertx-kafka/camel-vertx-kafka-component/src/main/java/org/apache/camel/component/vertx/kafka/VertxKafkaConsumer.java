@@ -23,6 +23,7 @@ import io.vertx.kafka.client.consumer.KafkaConsumer;
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
@@ -104,7 +105,7 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
     }
 
     private void onEventListener(final KafkaConsumerRecord<Object, Object> record) {
-        final Exchange exchange = getEndpoint().createExchange(record);
+        final Exchange exchange = createExchange(record);
         final Map<String, Buffer> propagatedHeaders
                 = new VertxKafkaHeadersPropagation(getConfiguration().getHeaderFilterStrategy())
                         .getPropagatedHeaders(record.headers(), exchange.getIn());
@@ -132,6 +133,24 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
         if (cause != null) {
             getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
         }
+    }
+
+    private Exchange createExchange(final KafkaConsumerRecord<Object, Object> record) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
+        // set body as byte[] and let camel typeConverters do the job to convert
+        message.setBody(record.record().value());
+
+        // set headers
+        message.setHeader(VertxKafkaConstants.PARTITION_ID, record.partition());
+        message.setHeader(VertxKafkaConstants.TOPIC, record.topic());
+        message.setHeader(VertxKafkaConstants.OFFSET, record.offset());
+        message.setHeader(VertxKafkaConstants.HEADERS, record.headers());
+        message.setHeader(VertxKafkaConstants.TIMESTAMP, record.timestamp());
+        message.setHeader(VertxKafkaConstants.MESSAGE_KEY, record.key());
+
+        return exchange;
     }
 
     private class ConsumerOnCompletion extends SynchronizationAdapter {

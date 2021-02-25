@@ -58,7 +58,6 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
                 String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()));
         Producer producer = endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
-        //Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
         message.setBody("Hello!");

@@ -18,17 +18,21 @@ package org.apache.camel.component.aws2.sqs;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
-import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -40,6 +44,7 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.MessageNotInflightException;
 import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
@@ -60,7 +65,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     private Collection<String> attributeNames;
     private Collection<String> messageAttributeNames;
 
-    public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
+    public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
         if (getConfiguration().getAttributeNames() != null) {
@@ -136,7 +141,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
         for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
-            Exchange exchange = getEndpoint().createExchange(message);
+            Exchange exchange = createExchange(message);
             answer.add(exchange);
         }
 
@@ -280,6 +285,47 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public Sqs2Endpoint getEndpoint() {
         return (Sqs2Endpoint) super.getEndpoint();
+    }
+
+    public Exchange createExchange(software.amazon.awssdk.services.sqs.model.Message msg) {
+        return createExchange(getEndpoint().getExchangePattern(), msg);
+    }
+
+    private Exchange createExchange(ExchangePattern pattern, software.amazon.awssdk.services.sqs.model.Message msg) {
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(pattern);
+        Message message = exchange.getIn();
+        message.setBody(msg.body());
+        message.setHeaders(new HashMap<>(msg.attributesAsStrings()));
+        message.setHeader(Sqs2Constants.MESSAGE_ID, msg.messageId());
+        message.setHeader(Sqs2Constants.MD5_OF_BODY, msg.md5OfBody());
+        message.setHeader(Sqs2Constants.RECEIPT_HANDLE, msg.receiptHandle());
+        message.setHeader(Sqs2Constants.ATTRIBUTES, msg.attributes());
+        message.setHeader(Sqs2Constants.MESSAGE_ATTRIBUTES, msg.messageAttributes());
+
+        // Need to apply the SqsHeaderFilterStrategy this time
+        HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
+        // add all sqs message attributes as camel message headers so that
+        // knowledge of
+        // the Sqs class MessageAttributeValue will not leak to the client
+        for (Map.Entry<String, MessageAttributeValue> entry : msg.messageAttributes().entrySet()) {
+            String header = entry.getKey();
+            Object value = translateValue(entry.getValue());
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(header, value, exchange)) {
+                message.setHeader(header, value);
+            }
+        }
+        return exchange;
+    }
+
+    private static Object translateValue(MessageAttributeValue mav) {
+        Object result = null;
+        if (mav.stringValue() != null) {
+            result = mav.stringValue();
+        } else if (mav.binaryValue() != null) {
+            result = mav.binaryValue();
+        }
+        return result;
     }
 
     @Override

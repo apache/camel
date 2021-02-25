@@ -139,7 +139,7 @@ public class FileWatchConsumer extends DefaultConsumer {
     }
 
     private Exchange prepareExchange(FileEvent event) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(true);
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);

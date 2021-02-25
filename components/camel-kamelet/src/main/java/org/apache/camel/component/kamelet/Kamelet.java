@@ -116,6 +116,10 @@ public final class Kamelet {
         RouteDefinition def = in.asRouteDefinition();
         def.setId(rid);
 
+        if (def.getInput() == null) {
+            throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");
+        }
+
         // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {

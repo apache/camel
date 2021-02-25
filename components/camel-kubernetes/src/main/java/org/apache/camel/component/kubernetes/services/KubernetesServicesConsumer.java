@@ -106,7 +106,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Service resource) {
                     ServiceEvent se = new ServiceEvent(action, resource);
-                    Exchange exchange = getEndpoint().createExchange();
+                    Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(se.getService());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, se.getAction());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
@@ -114,8 +114,9 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                         processor.process(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error during processing", exchange, e);
+                    } finally {
+                        releaseExchange(exchange, false);
                     }
-
                 }
 
                 @Override

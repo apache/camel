@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.storage;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -28,8 +30,11 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.CopyRequest;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -73,7 +78,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
         String fileName = getConfiguration().getObjectName();
         String bucketName = getConfiguration().getBucketName();
-        Queue<Exchange> exchanges = new LinkedList<>();
+        Queue<Exchange> exchanges;
 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
@@ -101,7 +106,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
     protected Queue<Exchange> createExchanges(Blob blob, String key) {
         Queue<Exchange> answer = new LinkedList<>();
-        Exchange exchange = getEndpoint().createExchange(blob, key);
+        Exchange exchange = createExchange(blob, key);
         answer.add(exchange);
         return answer;
     }
@@ -115,7 +120,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         try {
             for (Blob blob : blobList) {
                 if (includeObject(blob)) {
-                    Exchange exchange = getEndpoint().createExchange(blob, blob.getBlobId().getName());
+                    Exchange exchange = createExchange(blob, blob.getBlobId().getName());
                     answer.add(exchange);
                 }
             }
@@ -248,4 +253,57 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     public GoogleCloudStorageEndpoint getEndpoint() {
         return (GoogleCloudStorageEndpoint) super.getEndpoint();
     }
+
+    public Exchange createExchange(Blob blob, String key) {
+        return createExchange(getEndpoint().getExchangePattern(), blob, key);
+    }
+
+    public Exchange createExchange(ExchangePattern pattern, Blob blob, String key) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
+            LOG.trace("Got object [{}]", blob);
+        }
+
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(pattern);
+        Message message = exchange.getIn();
+
+        if (getConfiguration().isIncludeBody()) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                blob.downloadTo(baos);
+                message.setBody(baos.toByteArray());
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+        } else {
+            message.setBody(blob);
+        }
+
+        message.setHeader(GoogleCloudStorageConstants.OBJECT_NAME, key);
+        message.setHeader(GoogleCloudStorageConstants.BUCKET_NAME, getConfiguration().getBucketName());
+        //OTHER METADATA
+        message.setHeader(GoogleCloudStorageConstants.CACHE_CONTROL, blob.getCacheControl());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_COMPONENT_COUNT, blob.getComponentCount());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION, blob.getContentDisposition());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, blob.getContentEncoding());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CONTENT_LANGUAGE, blob.getContentLanguage());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_TYPE, blob.getContentType());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CUSTOM_TIME, blob.getCustomTime());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CRC32C_HEX, blob.getCrc32cToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_ETAG, blob.getEtag());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_GENERATION, blob.getGeneration());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_BLOB_ID, blob.getBlobId());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_KMS_KEY_NAME, blob.getKmsKeyName());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_MD5, blob.getMd5ToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_MEDIA_LINK, blob.getMediaLink());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_METAGENERATION, blob.getMetageneration());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, blob.getSize());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_STORAGE_CLASS, blob.getStorageClass());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CREATE_TIME, blob.getCreateTime());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_LAST_UPDATE, new Date(blob.getUpdateTime()));
+
+        return exchange;
+    }
+
 }

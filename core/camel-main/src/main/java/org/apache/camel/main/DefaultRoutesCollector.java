@@ -74,6 +74,26 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 name = name.replace('.', '/');
 
                 boolean match = !"false".equals(includePattern);
+
+                // special support for testing with @ExcludeRoutes annotation with camel-test modules
+                String exclude = camelContext.adapt(ExtendedCamelContext.class).getTestExcludeRoutes();
+                // exclude take precedence over include
+                if (match && ObjectHelper.isNotEmpty(exclude)) {
+                    // this property is a comma separated list of FQN class names, so we need to make
+                    // name as path so we can use ant patch matcher
+                    exclude = exclude.replace('.', '/');
+                    // there may be multiple separated by comma
+                    String[] parts = exclude.split(",");
+                    for (String part : parts) {
+                        // must negate when excluding, and hence !
+                        match = !matcher.match(part, name);
+                        log.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
+                        if (!match) {
+                            break;
+                        }
+                    }
+                }
+
                 // exclude take precedence over include
                 if (match && ObjectHelper.isNotEmpty(excludePattern)) {
                     // there may be multiple separated by comma

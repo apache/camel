@@ -52,7 +52,7 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
         // retrieve from last to first item LIFO
         for (int i = max; i > -1; i--) {
             Comment newComment = newComments.get(i);
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
             e.getIn().setBody(newComment);
             getProcessor().process(e);
         }

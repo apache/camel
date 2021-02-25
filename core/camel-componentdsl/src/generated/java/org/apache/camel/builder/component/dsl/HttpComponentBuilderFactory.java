@@ -130,6 +130,38 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
+         * Disables authentication scheme caching.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param authCachingDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder authCachingDisabled(
+                boolean authCachingDisabled) {
+            doSetProperty("authCachingDisabled", authCachingDisabled);
+            return this;
+        }
+        /**
+         * Disables automatic request recovery and re-execution.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param automaticRetriesDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder automaticRetriesDisabled(
+                boolean automaticRetriesDisabled) {
+            doSetProperty("automaticRetriesDisabled", automaticRetriesDisabled);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -183,6 +215,22 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
+         * Disables connection state tracking.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param connectionStateDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder connectionStateDisabled(
+                boolean connectionStateDisabled) {
+            doSetProperty("connectionStateDisabled", connectionStateDisabled);
+            return this;
+        }
+        /**
          * The time for connection to live, the time unit is millisecond, the
          * default value is always keep alive.
          * 
@@ -196,6 +244,55 @@ public interface HttpComponentBuilderFactory {
         default HttpComponentBuilder connectionTimeToLive(
                 long connectionTimeToLive) {
             doSetProperty("connectionTimeToLive", connectionTimeToLive);
+            return this;
+        }
+        /**
+         * Disables automatic content decompression.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param contentCompressionDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder contentCompressionDisabled(
+                boolean contentCompressionDisabled) {
+            doSetProperty("contentCompressionDisabled", contentCompressionDisabled);
+            return this;
+        }
+        /**
+         * Disables state (cookie) management.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param cookieManagementDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder cookieManagementDisabled(
+                boolean cookieManagementDisabled) {
+            doSetProperty("cookieManagementDisabled", cookieManagementDisabled);
+            return this;
+        }
+        /**
+         * Disables the default user agent set by this builder if none has been
+         * provided by the user.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param defaultUserAgentDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder defaultUserAgentDisabled(
+                boolean defaultUserAgentDisabled) {
+            doSetProperty("defaultUserAgentDisabled", defaultUserAgentDisabled);
             return this;
         }
         /**
@@ -279,6 +376,22 @@ public interface HttpComponentBuilderFactory {
          */
         default HttpComponentBuilder maxTotalConnections(int maxTotalConnections) {
             doSetProperty("maxTotalConnections", maxTotalConnections);
+            return this;
+        }
+        /**
+         * Disables automatic redirect handling.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param redirectHandlingDisabled the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder redirectHandlingDisabled(
+                boolean redirectHandlingDisabled) {
+            doSetProperty("redirectHandlingDisabled", redirectHandlingDisabled);
             return this;
         }
         /**
@@ -536,15 +649,22 @@ public interface HttpComponentBuilderFactory {
             case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "responsePayloadStreamingThreshold": ((HttpComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "authCachingDisabled": ((HttpComponent) component).setAuthCachingDisabled((boolean) value); return true;
+            case "automaticRetriesDisabled": ((HttpComponent) component).setAutomaticRetriesDisabled((boolean) value); return true;
             case "autowiredEnabled": ((HttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientConnectionManager": ((HttpComponent) component).setClientConnectionManager((org.apache.http.conn.HttpClientConnectionManager) value); return true;
             case "connectionsPerRoute": ((HttpComponent) component).setConnectionsPerRoute((int) value); return true;
+            case "connectionStateDisabled": ((HttpComponent) component).setConnectionStateDisabled((boolean) value); return true;
             case "connectionTimeToLive": ((HttpComponent) component).setConnectionTimeToLive((long) value); return true;
+            case "contentCompressionDisabled": ((HttpComponent) component).setContentCompressionDisabled((boolean) value); return true;
+            case "cookieManagementDisabled": ((HttpComponent) component).setCookieManagementDisabled((boolean) value); return true;
+            case "defaultUserAgentDisabled": ((HttpComponent) component).setDefaultUserAgentDisabled((boolean) value); return true;
             case "httpBinding": ((HttpComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpClientConfigurer": ((HttpComponent) component).setHttpClientConfigurer((org.apache.camel.component.http.HttpClientConfigurer) value); return true;
             case "httpConfiguration": ((HttpComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
             case "httpContext": ((HttpComponent) component).setHttpContext((org.apache.http.protocol.HttpContext) value); return true;
             case "maxTotalConnections": ((HttpComponent) component).setMaxTotalConnections((int) value); return true;
+            case "redirectHandlingDisabled": ((HttpComponent) component).setRedirectHandlingDisabled((boolean) value); return true;
             case "headerFilterStrategy": ((HttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyAuthDomain": ((HttpComponent) component).setProxyAuthDomain((java.lang.String) value); return true;
             case "proxyAuthHost": ((HttpComponent) component).setProxyAuthHost((java.lang.String) value); return true;

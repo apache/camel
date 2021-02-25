@@ -56,7 +56,7 @@ public class TagConsumer extends AbstractGitHubConsumer {
 
         while (!newTags.empty()) {
             RepositoryTag newTag = newTags.pop();
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
             e.getIn().setBody(newTag);
             getProcessor().process(e);
         }

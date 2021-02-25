@@ -18,7 +18,6 @@ package org.apache.camel.component.paho;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -30,7 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
@@ -78,18 +76,6 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     public String getTopic() {
         return topic;
-    }
-
-    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
-        Exchange exchange = createExchange();
-
-        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
-        paho.setBody(mqttMessage.getPayload());
-        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
-        paho.setHeader(PahoConstants.MQTT_QOS, mqttMessage.getQos());
-
-        exchange.setIn(paho);
-        return exchange;
     }
 
     protected static MqttConnectOptions createMqttConnectOptions(PahoConfiguration config) {

@@ -91,7 +91,7 @@ final class CamelCoapResource extends CoapResource {
                 return;
             }
 
-            camelExchange = consumer.getEndpoint().createExchange();
+            camelExchange = consumer.createExchange(false);
             consumer.createUoW(camelExchange);
 
             OptionSet options = exchange.getRequest().getOptions();
@@ -144,6 +144,7 @@ final class CamelCoapResource extends CoapResource {
             if (camelExchange != null) {
                 consumer.doneUoW(camelExchange);
             }
+            consumer.releaseExchange(camelExchange, false);
         }
     }
 }

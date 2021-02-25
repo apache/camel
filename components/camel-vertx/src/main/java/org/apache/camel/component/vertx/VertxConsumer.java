@@ -49,7 +49,8 @@ public class VertxConsumer extends DefaultConsumer {
         LOG.debug("onEvent {}", event);
 
         final boolean reply = event.replyAddress() != null;
-        final Exchange exchange = endpoint.createExchange(reply ? ExchangePattern.InOut : ExchangePattern.InOnly);
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(reply ? ExchangePattern.InOut : ExchangePattern.InOnly);
         exchange.getIn().setBody(event.body());
 
         try {
@@ -66,7 +67,7 @@ public class VertxConsumer extends DefaultConsumer {
                 }
             });
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error processing Vertx event: " + event, exchange, e);
+            getExceptionHandler().handleException("Error processing Vertx event: " + event, e);
         }
     }
 

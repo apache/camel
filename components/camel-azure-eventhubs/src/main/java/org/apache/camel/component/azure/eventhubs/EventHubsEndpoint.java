@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
-import com.azure.messaging.eventhubs.models.ErrorContext;
-import com.azure.messaging.eventhubs.models.EventContext;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
@@ -71,32 +67,4 @@ public class EventHubsEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public Exchange createAzureEventHubExchange(final EventContext eventContext) {
-        final Exchange exchange = createExchange();
-        final Message message = exchange.getIn();
-
-        // set body as byte[] and let camel typeConverters do the job to convert
-        message.setBody(eventContext.getEventData().getBody());
-        // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
-        message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
-        message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
-        message.setHeader(EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
-
-        return exchange;
-    }
-
-    public Exchange createAzureEventHubExchange(final ErrorContext errorContext) {
-        final Exchange exchange = createExchange();
-        final Message message = exchange.getIn();
-
-        // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
-
-        // set exception
-        exchange.setException(errorContext.getThrowable());
-
-        return exchange;
-    }
 }

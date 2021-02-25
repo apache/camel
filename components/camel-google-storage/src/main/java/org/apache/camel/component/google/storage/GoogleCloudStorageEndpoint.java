@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.google.storage;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Date;
-
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.Builder;
@@ -27,12 +23,8 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageClass;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -121,57 +113,6 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
     public Storage getStorageClient() {
         return storageClient;
-    }
-
-    public Exchange createExchange(Blob blob, String key) {
-        return createExchange(getExchangePattern(), blob, key);
-    }
-
-    public Exchange createExchange(ExchangePattern pattern, Blob blob, String key) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
-            LOG.trace("Got object [{}]", blob);
-        }
-
-        Exchange exchange = super.createExchange(pattern);
-        Message message = exchange.getIn();
-
-        if (configuration.isIncludeBody()) {
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                blob.downloadTo(baos);
-                message.setBody(baos.toByteArray());
-            } catch (Exception e) {
-                throw new RuntimeCamelException(e);
-            }
-        } else {
-            message.setBody(blob);
-        }
-
-        message.setHeader(GoogleCloudStorageConstants.OBJECT_NAME, key);
-        message.setHeader(GoogleCloudStorageConstants.BUCKET_NAME, getConfiguration().getBucketName());
-        //OTHER METADATA        
-        message.setHeader(GoogleCloudStorageConstants.CACHE_CONTROL, blob.getCacheControl());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_COMPONENT_COUNT, blob.getComponentCount());
-        message.setHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION, blob.getContentDisposition());
-        message.setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, blob.getContentEncoding());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_CONTENT_LANGUAGE, blob.getContentLanguage());
-        message.setHeader(GoogleCloudStorageConstants.CONTENT_TYPE, blob.getContentType());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_CUSTOM_TIME, blob.getCustomTime());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_CRC32C_HEX, blob.getCrc32cToHexString());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_ETAG, blob.getEtag());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_GENERATION, blob.getGeneration());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_BLOB_ID, blob.getBlobId());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_KMS_KEY_NAME, blob.getKmsKeyName());
-        message.setHeader(GoogleCloudStorageConstants.CONTENT_MD5, blob.getMd5ToHexString());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_MEDIA_LINK, blob.getMediaLink());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_METAGENERATION, blob.getMetageneration());
-        message.setHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, blob.getSize());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_STORAGE_CLASS, blob.getStorageClass());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_CREATE_TIME, blob.getCreateTime());
-        message.setHeader(GoogleCloudStorageConstants.METADATA_LAST_UPDATE, new Date(blob.getUpdateTime()));
-
-        return exchange;
     }
 
 }

@@ -22,11 +22,9 @@ import java.util.List;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
@@ -42,8 +40,6 @@ import org.asynchttpclient.proxy.ProxyServer;
 import org.asynchttpclient.proxy.ProxyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
  * Send and receive messages acting as a Telegram Bot <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
@@ -127,12 +123,6 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
         TelegramConsumer consumer = new TelegramConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-    }
-
-    public Exchange createExchange(Update update) {
-        Exchange exchange = super.createExchange();
-        populateExchange(exchange, update);
-        return exchange;
     }
 
     @Override

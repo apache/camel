@@ -306,132 +306,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
-     * AWS CloudWatch (camel-aws-cw)
-     * Send metrics to AWS CloudWatch.
-     * 
-     * Category: cloud,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-aws-cw
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.AwsCwComponentBuilder awsCw() {
-        return org.apache.camel.builder.component.dsl.AwsCwComponentBuilderFactory.awsCw();
-    }
-    /**
-     * AWS DynamoDB (camel-aws-ddb)
-     * Store and retrieve data from AWS DynamoDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsDdbComponentBuilderFactory.AwsDdbComponentBuilder awsDdb() {
-        return org.apache.camel.builder.component.dsl.AwsDdbComponentBuilderFactory.awsDdb();
-    }
-    /**
-     * AWS DynamoDB Streams (camel-aws-ddb)
-     * Receive messages from AWS DynamoDB Stream service.
-     * 
-     * Category: cloud,messaging,streams
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.AwsDdbstreamComponentBuilder awsDdbstream() {
-        return org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.awsDdbstream();
-    }
-    /**
-     * AWS Elastic Compute Cloud (EC2) (camel-aws-ec2)
-     * Manage AWS EC2 instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-aws-ec2
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.AwsEc2ComponentBuilder awsEc2() {
-        return org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.awsEc2();
-    }
-    /**
-     * AWS Elastic Container Service (ECS) (camel-aws-ecs)
-     * Manage AWS ECS cluster instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-ecs
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.AwsEcsComponentBuilder awsEcs() {
-        return org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.awsEcs();
-    }
-    /**
-     * AWS Elastic Kubernetes Service (EKS) (camel-aws-eks)
-     * Manage AWS EKS cluster instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-eks
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.AwsEksComponentBuilder awsEks() {
-        return org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.awsEks();
-    }
-    /**
-     * AWS Identity and Access Management (IAM) (camel-aws-iam)
-     * Manage AWS IAM instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-aws-iam
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.AwsIamComponentBuilder awsIam() {
-        return org.apache.camel.builder.component.dsl.AwsIamComponentBuilderFactory.awsIam();
-    }
-    /**
-     * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrieve objects from AWS S3 Storage Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-s3
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.AwsS3ComponentBuilder awsS3() {
-        return org.apache.camel.builder.component.dsl.AwsS3ComponentBuilderFactory.awsS3();
-    }
-    /**
-     * AWS Simple Workflow (SWF) (camel-aws-swf)
-     * Manage workflows in the AWS Simple Workflow service.
-     * 
-     * Category: cloud,workflow
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-aws-swf
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.AwsSwfComponentBuilder awsSwf() {
-        return org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.awsSwf();
-    }
-    /**
      * AWS 2 Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 
@@ -711,20 +585,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2TranslateComponentBuilderFactory.aws2Translate();
     }
     /**
-     * Azure Storage Blob Service (Deprecated) (camel-azure)
-     * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AzureBlobComponentBuilderFactory.AzureBlobComponentBuilder azureBlob() {
-        return org.apache.camel.builder.component.dsl.AzureBlobComponentBuilderFactory.azureBlob();
-    }
-    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service
@@ -739,20 +599,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.AzureEventhubsComponentBuilder azureEventhubs() {
         return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
-    }
-    /**
-     * Azure Storage Queue Service (Deprecated) (camel-azure)
-     * Store and retrieve messages from Azure Storage Queue Service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AzureQueueComponentBuilderFactory.AzureQueueComponentBuilder azureQueue() {
-        return org.apache.camel.builder.component.dsl.AzureQueueComponentBuilderFactory.azureQueue();
     }
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)

@@ -75,7 +75,7 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
                 if (!Strings.isNullOrEmpty(blobName)) {
                     InputStream body = JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName);
                     if (body != null) {
-                        Exchange exchange = endpoint.createExchange();
+                        Exchange exchange = createExchange(true);
                         CachedOutputStream cos = new CachedOutputStream(exchange);
                         IOHelper.copy(body, cos);
                         exchange.getIn().setBody(cos.newStreamCache());

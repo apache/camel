@@ -21,7 +21,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.jgroups.protocols.raft.RAFT;
 import org.jgroups.protocols.raft.Role;
 import org.slf4j.Logger;
@@ -30,13 +29,12 @@ import org.slf4j.LoggerFactory;
 public class CamelRoleChangeListener implements RAFT.RoleChange {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelRoleChangeListener.class);
 
+    private final JGroupsRaftConsumer consumer;
     private final JGroupsRaftEndpoint endpoint;
     private final AsyncProcessor processor;
 
-    public CamelRoleChangeListener(JGroupsRaftEndpoint endpoint, Processor processor) {
-        ObjectHelper.notNull(endpoint, "endpoint");
-        ObjectHelper.notNull(processor, "processor");
-
+    public CamelRoleChangeListener(JGroupsRaftConsumer consumer, JGroupsRaftEndpoint endpoint, Processor processor) {
+        this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
@@ -44,7 +42,7 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
     @Override
     public void roleChanged(Role role) {
         LOG.trace("New Role {} received.", role);
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = createExchange();
         switch (role) {
             case Leader:
                 exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.LEADER);
@@ -76,4 +74,11 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
             throw new JGroupsRaftException("Error in consumer while dispatching exchange containing role " + role, e);
         }
     }
+
+    private Exchange createExchange() {
+        Exchange exchange = consumer.createExchange(true);
+        endpoint.populateJGroupsRaftHeaders(exchange);
+        return exchange;
+    }
+
 }

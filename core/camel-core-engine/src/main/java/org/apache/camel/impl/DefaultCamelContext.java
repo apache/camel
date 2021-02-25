@@ -140,6 +140,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         return getOptions().disableJmx;
     }
 
+    @Override
+    public String getTestExcludeRoutes() {
+        return getExcludeRoutes();
+    }
+
     public static String getExcludeRoutes() {
         return getOptions().excludeRoutes;
     }

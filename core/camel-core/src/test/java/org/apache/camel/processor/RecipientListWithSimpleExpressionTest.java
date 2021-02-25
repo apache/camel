@@ -40,6 +40,7 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
             }
         });
         context.start();
+        template.start();
 
         for (int i = 0; i < 10; i++) {
             getMockEndpoint("mock:" + i).expectedMessageCount(50);
@@ -92,6 +93,7 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
             }
         });
         context.start();
+        template.start();
 
         for (int i = 0; i < 10; i++) {
             getMockEndpoint("mock:" + i).expectedMessageCount(50);

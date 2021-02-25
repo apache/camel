@@ -97,7 +97,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
                     @Override
                     public void eventReceived(Action action, String resource) {
-                        Exchange exchange = getEndpoint().createExchange();
+                        Exchange exchange = createExchange(false);
                         exchange.getIn().setBody(resource);
                         exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION, action);
                         exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_EVENT_TIMESTAMP,
@@ -106,6 +106,8 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
                             processor.process(exchange);
                         } catch (Exception e) {
                             getExceptionHandler().handleException("Error during processing", exchange, e);
+                        } finally {
+                            releaseExchange(exchange, false);
                         }
                     }
 

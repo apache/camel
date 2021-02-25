@@ -84,7 +84,7 @@ public class WebsocketConsumer extends ServletConsumer {
     }
 
     public void sendMessage(final String connectionKey, Object message) {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // set header and body
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
@@ -101,7 +101,7 @@ public class WebsocketConsumer extends ServletConsumer {
     }
 
     public void sendEventNotification(String connectionKey, int eventType) {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // set header
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY, connectionKey);
@@ -122,7 +122,7 @@ public class WebsocketConsumer extends ServletConsumer {
     }
 
     public void sendNotDeliveredMessage(List<String> failedConnectionKeys, Object message) {
-        final Exchange exchange = getEndpoint().createExchange();
+        final Exchange exchange = createExchange(true);
 
         // set header and body
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY_LIST, failedConnectionKeys);

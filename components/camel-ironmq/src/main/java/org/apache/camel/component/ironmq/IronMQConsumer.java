@@ -59,7 +59,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
         try {
-            Messages messages = null;
+            Messages messages;
             LOG.trace("Receiving messages with request [messagePerPoll {}, timeout {}]...", getMaxMessagesPerPoll(),
                     getEndpoint().getConfiguration().getTimeout());
             messages = this.ironQueue.reserve(getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout(),
@@ -84,7 +84,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
         for (Message message : messages) {
-            Exchange exchange = getEndpoint().createExchange(message);
+            Exchange exchange = createExchange(message);
             answer.add(exchange);
         }
         return answer;
@@ -170,6 +170,21 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public IronMQEndpoint getEndpoint() {
         return (IronMQEndpoint) super.getEndpoint();
+    }
+
+    private Exchange createExchange(io.iron.ironmq.Message msg) {
+        Exchange exchange = createExchange(true);
+        exchange.setPattern(getEndpoint().getExchangePattern());
+        org.apache.camel.Message message = exchange.getIn();
+        if (getEndpoint().getConfiguration().isPreserveHeaders()) {
+            GsonUtil.copyFrom(msg, message);
+        } else {
+            message.setBody(msg.getBody());
+        }
+        message.setHeader(IronMQConstants.MESSAGE_ID, msg.getId());
+        message.setHeader(IronMQConstants.MESSAGE_RESERVATION_ID, msg.getReservationId());
+        message.setHeader(IronMQConstants.MESSAGE_RESERVED_COUNT, msg.getReservedCount());
+        return exchange;
     }
 
 }

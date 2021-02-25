@@ -51,7 +51,7 @@ public class ApnsConsumer extends ScheduledPollConsumer {
         while (it.hasNext()) {
             InactiveDevice inactiveDevice = it.next();
 
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
             e.getIn().setBody(inactiveDevice);
             getProcessor().process(e);
         }

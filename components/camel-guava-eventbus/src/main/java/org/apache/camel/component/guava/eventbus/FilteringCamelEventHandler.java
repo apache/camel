@@ -27,8 +27,9 @@ public class FilteringCamelEventHandler extends CamelEventHandler {
 
     private final Class<?> eventClass;
 
-    public FilteringCamelEventHandler(GuavaEventBusEndpoint eventBusEndpoint, Processor processor, Class<?> eventClass) {
-        super(eventBusEndpoint, processor);
+    public FilteringCamelEventHandler(GuavaEventBusConsumer consumer, GuavaEventBusEndpoint endpoint, Processor processor,
+                                      Class<?> eventClass) {
+        super(consumer, endpoint, processor);
         this.eventClass = eventClass;
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +32,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 
 /**
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
@@ -40,7 +44,7 @@ import org.apache.camel.spi.Registry;
  * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans may not
  * support dependency injection and other features that the first-choice registry may offer.
  */
-public class DefaultRegistry implements Registry, CamelContextAware {
+public class DefaultRegistry extends ServiceSupport implements Registry, CamelContextAware {
 
     protected CamelContext camelContext;
     protected List<BeanRepository> repositories;
@@ -215,4 +219,12 @@ public class DefaultRegistry implements Registry, CamelContextAware {
         return answer;
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (fallbackRegistry instanceof Closeable) {
+            IOHelper.close((Closeable) fallbackRegistry);
+        }
+        ServiceHelper.stopAndShutdownService(fallbackRegistry);
+    }
 }

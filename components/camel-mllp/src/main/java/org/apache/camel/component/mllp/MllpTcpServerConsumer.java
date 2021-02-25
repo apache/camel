@@ -228,7 +228,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // Send the message on to Camel for processing and wait for the response
         log.debug("processMessage(hl7MessageBytes[{}], {}) - populating the exchange with received payload",
                 hl7MessageBytes == null ? -1 : hl7MessageBytes.length, consumerRunnable.getSocket());
-        Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOut);
+        Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
         if (getConfiguration().hasCharsetName()) {
             exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
         }
@@ -283,9 +284,8 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                     "processMessage(byte[], TcpSocketConsumerRunnable) - Unexpected exception creating Unit of Work", exchange,
                     uowEx);
         } finally {
-            if (exchange != null) {
-                doneUoW(exchange);
-            }
+            doneUoW(exchange);
+            releaseExchange(exchange, false);
         }
     }
 

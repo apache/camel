@@ -256,7 +256,8 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         }
 
         // create exchange and set data on it
-        Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
+        Exchange exchange = consumer.createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
 
         if (consumer.getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -362,6 +363,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             }
         } finally {
             consumer.doneUoW(exchange);
+            consumer.releaseExchange(exchange, false);
         }
     }
 

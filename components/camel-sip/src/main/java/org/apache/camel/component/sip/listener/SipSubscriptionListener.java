@@ -31,7 +31,6 @@ import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.sip.SipSubscriber;
@@ -48,14 +47,15 @@ public class SipSubscriptionListener implements SipListener {
         this.setSipSubscriber(sipSubscriber);
     }
 
-    private void dispatchExchange(Object response) throws CamelException {
+    private void dispatchExchange(Object response) {
         LOG.debug("Consumer Dispatching the received notification along the route");
-        Exchange exchange = sipSubscriber.getEndpoint().createExchange(ExchangePattern.InOnly);
+        Exchange exchange = sipSubscriber.createExchange(true);
+        exchange.setPattern(ExchangePattern.InOnly);
         exchange.getIn().setBody(response);
         try {
             sipSubscriber.getProcessor().process(exchange);
         } catch (Exception e) {
-            throw new CamelException("Error in consumer while dispatching exchange", e);
+            sipSubscriber.getExceptionHandler().handleException("Error in consumer while dispatching exchange", e);
         }
     }
 

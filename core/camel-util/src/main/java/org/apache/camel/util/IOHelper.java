@@ -469,6 +469,11 @@ public final class IOHelper {
         // try optimized for direct match without using splitting
         int pos = contentType.indexOf("charset=");
         if (pos != -1) {
+            // special optimization for utf-8 which is a common charset
+            if (contentType.regionMatches(true, pos + 8, "utf-8", 0, 5)) {
+                return "UTF-8";
+            }
+
             int end = contentType.indexOf(';', pos);
             String charset;
             if (end > pos) {

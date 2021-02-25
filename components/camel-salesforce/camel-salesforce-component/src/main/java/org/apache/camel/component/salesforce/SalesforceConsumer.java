@@ -142,7 +142,7 @@ public class SalesforceConsumer extends DefaultConsumer {
             LOG.debug("Received event {} on channel {}", channel.getId(), channel.getChannelId());
         }
 
-        final Exchange exchange = endpoint.createExchange();
+        final Exchange exchange = createExchange(false);
         final org.apache.camel.Message in = exchange.getIn();
 
         switch (messageKind) {
@@ -179,6 +179,7 @@ public class SalesforceConsumer extends DefaultConsumer {
                 final String msg = String.format("Unhandled exception: %s", ex.getMessage());
                 handleException(msg, new SalesforceException(msg, ex));
             }
+            releaseExchange(exchange, false);
         }
     }
 

@@ -45,24 +45,26 @@ public abstract class InfinispanConsumer<
 
     @Override
     public void processEvent(String eventType, String cacheName, Object key, Object eventData, Consumer<Exchange> consumer) {
-        Exchange exchange = getEndpoint().createExchange();
-        exchange.getMessage().setHeader(InfinispanConstants.EVENT_TYPE, eventType);
-        exchange.getMessage().setHeader(InfinispanConstants.CACHE_NAME, cacheName);
-
-        if (key != null) {
-            exchange.getMessage().setHeader(InfinispanConstants.KEY, key);
-        }
-        if (eventData != null) {
-            exchange.getMessage().setHeader(InfinispanConstants.EVENT_DATA, eventData);
-        }
-        if (consumer != null) {
-            consumer.accept(exchange);
-        }
-
+        Exchange exchange = createExchange(false);
         try {
+            exchange.getMessage().setHeader(InfinispanConstants.EVENT_TYPE, eventType);
+            exchange.getMessage().setHeader(InfinispanConstants.CACHE_NAME, cacheName);
+
+            if (key != null) {
+                exchange.getMessage().setHeader(InfinispanConstants.KEY, key);
+            }
+            if (eventData != null) {
+                exchange.getMessage().setHeader(InfinispanConstants.EVENT_DATA, eventData);
+            }
+            if (consumer != null) {
+                consumer.accept(exchange);
+            }
+
             getProcessor().process(exchange);
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
+        } finally {
+            releaseExchange(exchange, false);
         }
     }
 

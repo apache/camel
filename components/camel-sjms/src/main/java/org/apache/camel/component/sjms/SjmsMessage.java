@@ -53,6 +53,14 @@ public class SjmsMessage extends DefaultMessage {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        jmsMessage = null;
+        jmsSession = null;
+        binding = null;
+    }
+
+    @Override
     public String toString() {
         // do not print jmsMessage as there could be sensitive details
         if (jmsMessage != null) {

@@ -6,6 +6,23 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.8 to 3.9
 
+=== API changes
+
+The `Consumer` API in `camel-api` has been enhanced to help support Camel reducing the footprint during routing.
+One aspect is that we allow to recycle `Exchange` instances created by the consumers. This avoids creating new `Exchange`
+instances in the memory for each incoming message consumers process. By recycling `Exchange`s we reduce the overhead
+on the JVM garbage collector. However this requires Camel to know whether or not the `Exchange` should be recycle or not,
+and some API changes took place.
+
+The `Consumer` API has two new methods which a consumer must use to create an `Exchange` with `createExchange`.
+By default the exchange is auto released when its complete in use, but some consumers needs custom control,
+and can turn off auto release, which then requires the consumer to manually release the exchange by calling `releaseExchange`
+when the consumer is done with the exchange.
+
+The default implementations in `DefaultConsumer` has adapted this API and 3rd party components can continue as is, by using
+the older APIs. However for these 3rd party components to support recycling exchanges, then they must be updated to use this new API.
+
+
 === Modularized camel-spring
 
 The `camel-spring` component has been modularized into:
@@ -50,3 +67,16 @@ the one to use above, and then add which -starter JARs you want to use in your C
 - Camel-AWS-KMS has been removed. Please switch to Camel-AWS2-KMS.
 - Camel-AWS-Kinesis has been removed. Please switch to Camel-AWS2-Kinesis.
 - Camel-AWS-Kinesis Firehose has been removed. Please switch to Camel-AWS2-Kinesis-firehose.
+- Camel-AWS-IAM has been removed. Please switch to Camel-AWS2-IAM.
+- Camel-AWS-EKS has been removed. Please switch to Camel-AWS2-EKS.
+- Camel-AWS-ECS has been removed. Please switch to Camel-AWS2-ECS.
+- Camel-AWS-EC2 has been removed. Please switch to Camel-AWS2-EC2.
+- Camel-AWS-DDB has been removed. Please switch to Camel-AWS2-DDB.
+- Camel-AWS-DDB Streams has been removed. Please switch to Camel-AWS2-DDB Streams.
+- Camel-AWS-CW has been removed. Please switch to Camel-AWS2-CW.
+- Camel-AWS-S3 has been removed. Please switch to Camel-AWS2-S3.
+- Camel-AWS-SWF has been removed. There won't be a replacement for it.
+
+=== Camel-Azure component
+
+- Camel-Azure has been reomved. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.

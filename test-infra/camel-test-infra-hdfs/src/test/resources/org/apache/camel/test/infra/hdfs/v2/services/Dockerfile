@@ -17,7 +17,7 @@ ARG FROMIMAGE
 FROM ${FROMIMAGE_BUILDER} as builder
 ARG HADOOP_VERSION
 ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.0}
-RUN curl https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop.tar.gz
+RUN curl --retry 3 --retry-connrefused https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop.tar.gz
 RUN mkdir -p hadoop && tar --strip-components=1 -xvf hadoop.tar.gz -C /hadoop && rm -f hadoop.tar.gz
 ADD core-site.xml /hadoop/etc/hadoop/core-site.xml
 ADD hdfs-site.xml /hadoop/etc/hadoop/hdfs-site.xml

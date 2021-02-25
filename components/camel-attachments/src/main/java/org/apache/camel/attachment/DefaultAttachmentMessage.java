@@ -43,6 +43,11 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     }
 
     @Override
+    public void reset() {
+        delegate.reset();
+    }
+
+    @Override
     public String getMessageId() {
         return delegate.getMessageId();
     }

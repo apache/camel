@@ -87,13 +87,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
-    public void stop() {
-        super.stop();
-        // and remove when stopping
-        clear();
-    }
-
-    @Override
     public void pushRoute(Route route) {
         super.pushRoute(route);
         if (route != null) {
@@ -199,6 +192,12 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         } else {
             MDC.remove(MDC_TRANSACTION_KEY);
         }
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        clear();
     }
 
     @Override

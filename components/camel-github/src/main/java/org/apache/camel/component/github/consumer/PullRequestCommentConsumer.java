@@ -110,7 +110,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
 
         while (!newComments.empty()) {
             Comment newComment = newComments.pop();
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
             e.getIn().setBody(newComment);
 
             // Required by the producers.  Set it here for convenience.

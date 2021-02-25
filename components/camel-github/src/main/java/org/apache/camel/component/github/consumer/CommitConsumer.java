@@ -71,7 +71,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
 
         while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_COMMITTER, newCommit.getCommitter().getName());
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_SHA, newCommit.getSha());

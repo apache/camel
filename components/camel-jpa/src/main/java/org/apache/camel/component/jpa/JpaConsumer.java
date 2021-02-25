@@ -144,7 +144,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                                     "Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.",
                                     cause.getMessage(), cause);
                         } else {
-                            // rollback all by throwning exception
+                            // rollback all by throwing exception
                             throw cause;
                         }
                     }
@@ -200,14 +200,23 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
-                getProcessor().process(exchange);
-                if (exchange.getException() != null) {
-                    // if we failed then throw exception
-                    throw exchange.getException();
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
                 }
 
-                // Run the @Consumed callback
-                getDeleteHandler().deleteObject(entityManager, result, exchange);
+                try {
+                    if (exchange.getException() != null) {
+                        // if we failed then throw exception
+                        throw exchange.getException();
+                    } else {
+                        // Run the @Consumed callback
+                        getDeleteHandler().deleteObject(entityManager, result, exchange);
+                    }
+                } finally {
+                    releaseExchange(exchange, false);
+                }
             }
         }
 
@@ -514,7 +523,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Exchange createExchange(Object result, EntityManager entityManager) {
-        Exchange exchange = getEndpoint().createExchange();
+        Exchange exchange = createExchange(false);
         exchange.getIn().setBody(result);
         exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
         return exchange;

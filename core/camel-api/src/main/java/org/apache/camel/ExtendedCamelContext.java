@@ -36,6 +36,8 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
@@ -212,6 +214,26 @@ public interface ExtendedCamelContext extends CamelContext {
      * Returns an unmodifiable list of the services registered currently in this {@link CamelContext}.
      */
     List<Service> getServices();
+
+    /**
+     * Gets the exchange factory to use.
+     */
+    ExchangeFactory getExchangeFactory();
+
+    /**
+     * Sets a custom exchange factory to use.
+     */
+    void setExchangeFactory(ExchangeFactory exchangeFactory);
+
+    /**
+     * Gets the exchange factory manager to use.
+     */
+    ExchangeFactoryManager getExchangeFactoryManager();
+
+    /**
+     * Sets a custom exchange factory manager to use.
+     */
+    void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager);
 
     /**
      * Returns the bean post processor used to do any bean customization.
@@ -730,5 +752,10 @@ public interface ExtendedCamelContext extends CamelContext {
      * org.apache.camel.model.ModelCamelContext will return null or be a noop operation.
      */
     void disposeModel();
+
+    /**
+     * Used during unit-testing where its possible to specify a set of routes to exclude from discovery
+     */
+    String getTestExcludeRoutes();
 
 }

@@ -74,7 +74,7 @@ public class DebeziumConsumer extends DefaultConsumer {
     }
 
     private void onEventListener(final ChangeEvent<SourceRecord, SourceRecord> event) {
-        final Exchange exchange = endpoint.createDbzExchange(event.value());
+        final Exchange exchange = endpoint.createDbzExchange(this, event.value());
 
         try {
             // send message to next processor in the route
@@ -87,6 +87,7 @@ public class DebeziumConsumer extends DefaultConsumer {
                 getExceptionHandler().handleException("Error processing exchange", exchange,
                         exchange.getException());
             }
+            releaseExchange(exchange, false);
         }
     }
 }

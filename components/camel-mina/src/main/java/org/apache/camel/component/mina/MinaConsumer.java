@@ -373,6 +373,21 @@ public class MinaConsumer extends DefaultConsumer {
         this.acceptor = acceptor;
     }
 
+    private Exchange createExchange(IoSession session, Object payload) {
+        Exchange exchange;
+        if (configuration.isTransferExchange()) {
+            // do not release
+            exchange = getEndpoint().createExchange();
+        } else {
+            exchange = createExchange(false);
+        }
+        exchange.getIn().setHeader(MinaConstants.MINA_IOSESSION, session);
+        exchange.getIn().setHeader(MinaConstants.MINA_LOCAL_ADDRESS, session.getLocalAddress());
+        exchange.getIn().setHeader(MinaConstants.MINA_REMOTE_ADDRESS, session.getRemoteAddress());
+        MinaPayloadHelper.setIn(exchange, payload);
+        return exchange;
+    }
+
     /**
      * Handles consuming messages and replying if the exchange is out capable.
      */
@@ -406,7 +421,7 @@ public class MinaConsumer extends DefaultConsumer {
                 LOG.debug("Received body: {}", in);
             }
 
-            Exchange exchange = getEndpoint().createExchange(session, object);
+            Exchange exchange = createExchange(session, object);
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
                 exchange.setProperty(Exchange.CHARSET_NAME,
@@ -419,50 +434,54 @@ public class MinaConsumer extends DefaultConsumer {
                 getExceptionHandler().handleException(e);
             }
 
-            //
-            // If there's a response to send, send it.
-            //
-            boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
-            Object response = null;
-            if (exchange.hasOut()) {
-                response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
-            } else {
-                response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
-            }
-
-            boolean failed = exchange.isFailed();
-            if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
-                if (exchange.getException() != null) {
-                    response = exchange.getException();
+            try {
+                //
+                // If there's a response to send, send it.
+                //
+                boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
+                Object response;
+                if (exchange.hasOut()) {
+                    response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
                 } else {
-                    // failed and no exception, must be a fault
-                    response = exchange.getOut().getBody();
+                    response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
                 }
-            }
 
-            if (response != null) {
-                LOG.debug("Writing body: {}", response);
-                MinaHelper.writeBody(session, response, exchange, configuration.getWriteTimeout());
-            } else {
-                LOG.debug("Writing no response");
-                disconnect = Boolean.TRUE;
-            }
+                boolean failed = exchange.isFailed();
+                if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
+                    if (exchange.getException() != null) {
+                        response = exchange.getException();
+                    } else {
+                        // failed and no exception, must be a fault
+                        response = exchange.getOut().getBody();
+                    }
+                }
 
-            // should session be closed after complete?
-            Boolean close;
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-            } else {
-                close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-            }
+                if (response != null) {
+                    LOG.debug("Writing body: {}", response);
+                    MinaHelper.writeBody(session, response, exchange, configuration.getWriteTimeout());
+                } else {
+                    LOG.debug("Writing no response");
+                    disconnect = Boolean.TRUE;
+                }
 
-            // should we disconnect, the header can override the configuration
-            if (close != null) {
-                disconnect = close;
-            }
-            if (disconnect) {
-                LOG.debug("Closing session when complete at address: {}", address);
-                session.closeNow();
+                // should session be closed after complete?
+                Boolean close;
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+                } else {
+                    close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+                }
+
+                // should we disconnect, the header can override the configuration
+                if (close != null) {
+                    disconnect = close;
+                }
+                if (disconnect) {
+                    LOG.debug("Closing session when complete at address: {}", address);
+                    session.closeNow();
+                }
+            } finally {
+                releaseExchange(exchange, false);
             }
         }
     }

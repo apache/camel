@@ -76,7 +76,7 @@ public class DebeziumEndpointTest {
     void testIfCreatesExchangeFromSourceCreateRecord() {
         final SourceRecord sourceRecord = createCreateRecord();
 
-        final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
         final Message inMessage = exchange.getIn();
 
         assertNotNull(exchange);
@@ -102,7 +102,7 @@ public class DebeziumEndpointTest {
     void testIfCreatesExchangeFromSourceDeleteRecord() {
         final SourceRecord sourceRecord = createDeleteRecord();
 
-        final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
         final Message inMessage = exchange.getIn();
 
         assertNotNull(exchange);
@@ -123,7 +123,7 @@ public class DebeziumEndpointTest {
     void testIfCreatesExchangeFromSourceDeleteRecordWithNull() {
         final SourceRecord sourceRecord = createDeleteRecordWithNull();
 
-        final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
         final Message inMessage = exchange.getIn();
 
         assertNotNull(exchange);
@@ -141,7 +141,7 @@ public class DebeziumEndpointTest {
     void testIfCreatesExchangeFromSourceUpdateRecord() {
         final SourceRecord sourceRecord = createUpdateRecord();
 
-        final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
         final Message inMessage = exchange.getIn();
 
         assertNotNull(exchange);
@@ -166,7 +166,7 @@ public class DebeziumEndpointTest {
     void testIfCreatesExchangeFromSourceRecordOtherThanStruct() {
         final SourceRecord sourceRecord = createStringRecord();
 
-        final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
         final Message inMessage = exchange.getIn();
 
         assertNotNull(exchange);
@@ -184,7 +184,7 @@ public class DebeziumEndpointTest {
     void testIfHandlesUnknownSchema() {
         final SourceRecord sourceRecord = createUnknownUnnamedSchemaRecord();
 
-        final Exchange exchange = debeziumEndpoint.createDbzExchange(sourceRecord);
+        final Exchange exchange = debeziumEndpoint.createDbzExchange(null, sourceRecord);
         final Message inMessage = exchange.getIn();
 
         assertNotNull(exchange);

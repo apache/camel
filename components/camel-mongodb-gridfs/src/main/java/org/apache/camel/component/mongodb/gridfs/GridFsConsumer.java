@@ -142,7 +142,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                         forig = endpoint.getFilesCollection().findOneAndUpdate(filter, update, options);
                     }
                     if (forig != null) {
-                        Exchange exchange = endpoint.createExchange();
+                        Exchange exchange = createExchange(true);
                         GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
                         file = downloadStream.getGridFSFile();
 

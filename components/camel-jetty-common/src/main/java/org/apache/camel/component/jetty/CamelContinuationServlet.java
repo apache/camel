@@ -181,7 +181,8 @@ public class CamelContinuationServlet extends CamelServlet {
             }
 
             // a new request so create an exchange
-            final Exchange exchange = consumer.getEndpoint().createExchange(ExchangePattern.InOut);
+            final Exchange exchange = consumer.createExchange(false);
+            exchange.setPattern(ExchangePattern.InOut);
 
             if (consumer.getEndpoint().isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -268,6 +269,7 @@ public class CamelContinuationServlet extends CamelServlet {
             throw new ServletException(e);
         } finally {
             consumer.doneUoW(result);
+            consumer.releaseExchange(result, false);
         }
     }
 

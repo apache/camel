@@ -109,7 +109,7 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
                 public void eventReceived(
                         io.fabric8.kubernetes.client.Watcher.Action action, HorizontalPodAutoscaler resource) {
                     HPAEvent hpae = new HPAEvent(action, resource);
-                    Exchange exchange = getEndpoint().createExchange();
+                    Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(hpae.getHpa());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, hpae.getAction());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
@@ -117,6 +117,8 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
                         processor.process(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error during processing", exchange, e);
+                    } finally {
+                        releaseExchange(exchange, false);
                     }
                 }
 

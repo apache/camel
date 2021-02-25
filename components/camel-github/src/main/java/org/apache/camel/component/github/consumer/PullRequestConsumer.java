@@ -76,7 +76,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
 
         while (!newPullRequests.empty()) {
             PullRequest newPullRequest = newPullRequests.pop();
-            Exchange e = getEndpoint().createExchange();
+            Exchange e = createExchange(true);
 
             e.getIn().setBody(newPullRequest);
 

@@ -76,7 +76,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 
         while (queue != null && isRunAllowed()) {
-            final Exchange exchange = this.getEndpoint().createExchange();
+            final Exchange exchange = createExchange(true);
 
             TransactionContext transactionCtx = null;
             try {
@@ -100,22 +100,25 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         exchange.getIn().setBody(body);
                     }
                     try {
+                        final TransactionContext txc = transactionCtx;
                         // process using the asynchronous routing engine
                         processor.process(exchange, new AsyncCallback() {
                             public void done(boolean asyncDone) {
-                                // noop
+                                if (exchange.getException() != null) {
+                                    // Rollback
+                                    if (txc != null) {
+                                        txc.rollbackTransaction();
+                                    }
+                                    getExceptionHandler().handleException("Error processing exchange", exchange,
+                                            exchange.getException());
+                                }
+                                // It's OK, I commit
+                                if (exchange.getException() == null && txc != null) {
+                                    LOG.trace("Commit transaction: {}", txc.getTxnId());
+                                    txc.commitTransaction();
+                                }
                             }
                         });
-
-                        if (exchange.getException() != null) {
-                            // Rollback
-                            if (transactionCtx != null) {
-                                transactionCtx.rollbackTransaction();
-                            }
-                            getExceptionHandler().handleException("Error processing exchange", exchange,
-                                    exchange.getException());
-                        }
-
                     } catch (Exception e) {
                         LOG.error("Hzlq Exception caught: {}", e, e);
                         // Rollback
@@ -124,11 +127,6 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                             transactionCtx.rollbackTransaction();
                         }
                     }
-                }
-                // It's OK, I commit
-                if (exchange.getException() == null && transactionCtx != null) {
-                    LOG.trace("Commit transaction: {}", transactionCtx.getTxnId());
-                    transactionCtx.commitTransaction();
                 }
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {

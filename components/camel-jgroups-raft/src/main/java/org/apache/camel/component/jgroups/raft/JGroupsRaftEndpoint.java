@@ -82,13 +82,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    @Override
-    public Exchange createExchange() {
-        Exchange exchange = super.createExchange();
-        populateJGroupsRaftHeaders(exchange);
-        return exchange;
-    }
-
     public void populateJGroupsRaftHeaders(Exchange exchange) {
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_COMMIT_INDEX, resolvedRaftHandle.commitIndex());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, resolvedRaftHandle.currentTerm());

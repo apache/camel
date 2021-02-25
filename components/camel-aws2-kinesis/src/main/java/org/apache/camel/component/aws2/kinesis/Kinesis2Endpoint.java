@@ -20,7 +20,6 @@ import java.net.URI;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,7 +35,6 @@ import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
-import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.utils.AttributeMap;
 
@@ -100,15 +98,6 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         consumer.setSchedulerProperties(getSchedulerProperties());
         configureConsumer(consumer);
         return consumer;
-    }
-
-    public Exchange createExchange(Record record) {
-        Exchange exchange = super.createExchange();
-        exchange.getIn().setBody(record);
-        exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, record.approximateArrivalTimestamp());
-        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, record.partitionKey());
-        exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, record.sequenceNumber());
-        return exchange;
     }
 
     public KinesisClient getClient() {

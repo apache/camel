@@ -29,6 +29,12 @@ public class SpringWebserviceMessage extends DefaultMessage {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        webServiceMessage = null;
+    }
+
+    @Override
     protected Object createBody() {
         if (webServiceMessage != null) {
             return webServiceMessage.getPayloadSource();

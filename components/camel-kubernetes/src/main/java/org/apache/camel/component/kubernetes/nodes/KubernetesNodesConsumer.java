@@ -103,7 +103,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Node resource) {
                     NodeEvent ne = new NodeEvent(action, resource);
-                    Exchange exchange = getEndpoint().createExchange();
+                    Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(ne.getNode());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, ne.getAction());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
@@ -111,6 +111,8 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
                         processor.process(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error during processing", exchange, e);
+                    } finally {
+                        releaseExchange(exchange, false);
                     }
                 }
 
