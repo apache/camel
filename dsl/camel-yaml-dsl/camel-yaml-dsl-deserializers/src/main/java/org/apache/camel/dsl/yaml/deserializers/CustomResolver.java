@@ -58,9 +58,6 @@ public class CustomResolver implements YamlDeserializerResolver {
                 return new TryDefinitionDeserializer();
             case "org.apache.camel.model.ProcessorDefinition":
                 return new ProcessorDefinitionDeserializer();
-            case "to":
-            case "org.apache.camel.model.ToDefinition":
-                return new ToDefinitionDeserializer();
             default:
                 return null;
         }
