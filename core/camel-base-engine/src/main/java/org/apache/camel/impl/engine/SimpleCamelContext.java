@@ -597,4 +597,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public String getTestExcludeRoutes() {
+        throw new UnsupportedOperationException();
+    }
 }

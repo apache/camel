@@ -753,4 +753,9 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void disposeModel();
 
+    /**
+     * Used during unit-testing where its possible to specify a set of routes to exclude from discovery
+     */
+    String getTestExcludeRoutes();
+
 }

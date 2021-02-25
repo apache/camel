@@ -1904,6 +1904,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public String getTestExcludeRoutes() {
+        return null;
+    }
+
+    @Override
     public RouteController getInternalRouteController() {
         return new RouteController() {
             @Override

@@ -1597,6 +1597,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         getExtendedCamelContext().setStartupStepRecorder(startupStepRecorder);
     }
 
+    @Override
+    public String getTestExcludeRoutes() {
+        return getExtendedCamelContext().getTestExcludeRoutes();
+    }
+
     //
     // CatalogCamelContext
     //
