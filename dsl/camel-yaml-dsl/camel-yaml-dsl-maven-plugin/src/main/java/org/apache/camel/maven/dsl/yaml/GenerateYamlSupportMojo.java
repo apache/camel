@@ -133,6 +133,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     protected MavenProject project;
     @Parameter
     protected List<String> bannedDefinitions;
+    @Parameter
+    protected List<String> additionalDefinitions;
 
     @Override
     public void execute() throws MojoFailureException {
@@ -307,12 +309,18 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected Stream<ClassInfo> all() {
-        return Stream.of(XML_ROOT_ELEMENT_ANNOTATION_CLASS, XML_TYPE_CLASS)
-                .map(view::getAnnotations)
-                .flatMap(Collection::stream)
-                .map(AnnotationInstance::target)
-                .filter(at -> at.kind() == AnnotationTarget.Kind.CLASS)
-                .map(AnnotationTarget::asClass)
+        Stream<ClassInfo> discovered = Stream.of(XML_ROOT_ELEMENT_ANNOTATION_CLASS, XML_TYPE_CLASS)
+            .map(view::getAnnotations)
+            .flatMap(Collection::stream)
+            .map(AnnotationInstance::target)
+            .filter(at -> at.kind() == AnnotationTarget.Kind.CLASS)
+            .map(AnnotationTarget::asClass);
+
+        Stream<ClassInfo> additional = additionalDefinitions != null
+            ? additionalDefinitions.stream().map(DotName::createSimple).map(view::getClassByName)
+            : Stream.empty();
+
+        return Stream.concat(discovered, additional)
                 .filter(ci -> (ci.flags() & Modifier.ABSTRACT) == 0)
                 .filter(ci -> !isBanned(ci))
                 .filter(ci -> !ci.isEnum())
@@ -515,7 +523,10 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 annotationValue(fi, METADATA_ANNOTATION_CLASS, "required")
                         .map(AnnotationValue::asBoolean),
                 annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "required")
-                        .map(AnnotationValue::asBoolean)).orElse(false);
+                        .map(AnnotationValue::asBoolean),
+                annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "required")
+                    .map(AnnotationValue::asBoolean))
+            .orElse(false);
     }
 
     protected boolean extendsType(ClassInfo ci, DotName superType) {
