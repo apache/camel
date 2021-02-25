@@ -599,18 +599,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
     @SuppressWarnings("MethodLength")
     private void generateSetValue(CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
-        if(hasAnnotation(field, XML_TRANSIENT_CLASS)) {
-            ClassInfo ci = view.getClassByName(field.type().name());
-            if (ci == null) {
-                return;
-            }
-
-            switch (ci.name().toString()) {
-                case "org.apache.camel.model.OnFallbackDefinition":
-                    break;
-                default:
-                    return;
-            }
+        if(hasAnnotation(field, XML_TRANSIENT_CLASS) && !hasAnnotation(field, DSL_PROPERTY_ANNOTATION)) {
+            return;
         }
 
         //
@@ -750,7 +740,10 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.endControlFlow();
 
                             annotations.add(
-                                yamlPropertyWithSubtype(fieldName, "array", parametrizedType.name().toString(), isRequired(field))
+                                yamlPropertyWithSubtype(
+                                        StringHelper.camelCaseToDash(name).toLowerCase(Locale.US),
+                                        "array",
+                                        parametrizedType.name().toString(), isRequired(field))
                             );
                         }
                         return;
@@ -790,7 +783,10 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.endControlFlow();
 
                             annotations.add(
-                                yamlPropertyWithSubtype(fieldName, "array", parametrizedType.name().toString(), isRequired(field))
+                                yamlPropertyWithSubtype(
+                                        StringHelper.camelCaseToDash(name).toLowerCase(Locale.US),
+                                        "array",
+                                        parametrizedType.name().toString(), isRequired(field))
                             );
                         }
                         return;

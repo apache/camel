@@ -31,16 +31,12 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "atomix-set":
             case "atomix-value":
             case "avro":
-            case "aws-ddbstream":
-            case "aws-s3":
             case "aws-swf":
             case "aws2-ddbstream":
             case "aws2-kinesis":
             case "aws2-s3":
             case "aws2-sqs":
-            case "azure-blob":
             case "azure-eventhubs":
-            case "azure-queue":
             case "azure-storage-blob":
             case "azure-storage-datalake":
             case "azure-storage-queue":

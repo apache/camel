@@ -34,9 +34,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "atomix-set":
             case "atomix-value":
             case "avro":
-            case "aws-cw":
-            case "aws-ddb":
-            case "aws-s3":
             case "aws-swf":
             case "aws2-athena":
             case "aws2-cw":
@@ -58,9 +55,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "aws2-sqs":
             case "aws2-sts":
             case "aws2-translate":
-            case "azure-blob":
             case "azure-eventhubs":
-            case "azure-queue":
             case "azure-storage-blob":
             case "azure-storage-datalake":
             case "azure-storage-queue":

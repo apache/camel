@@ -1357,7 +1357,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.OtherwiseDefinition"),
-                    @YamlProperty(name = "when-clauses", type = "array:org.apache.camel.model.WhenDefinition"),
+                    @YamlProperty(name = "when", type = "array:org.apache.camel.model.WhenDefinition"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
             }
     )
@@ -3565,9 +3565,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -4794,9 +4794,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -5212,9 +5212,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -8699,9 +8699,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -9031,9 +9031,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -9361,9 +9361,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -10616,7 +10616,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security-definitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
                     @YamlProperty(name = "tag", type = "string"),
-                    @YamlProperty(name = "verbs", type = "array:org.apache.camel.model.rest.VerbDefinition")
+                    @YamlProperty(name = "verb", type = "array:org.apache.camel.model.rest.VerbDefinition")
             }
     )
     public static class RestDefinitionDeserializer extends YamlDeserializerBase<RestDefinition> {
@@ -11201,7 +11201,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.RestsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "rests",
-            properties = @YamlProperty(name = "rests", type = "array:org.apache.camel.model.rest.RestDefinition")
+            properties = @YamlProperty(name = "rest", type = "array:org.apache.camel.model.rest.RestDefinition")
     )
     public static class RestsDefinitionDeserializer extends YamlDeserializerBase<RestsDefinition> {
         public RestsDefinitionDeserializer() {
@@ -11640,7 +11640,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RouteTemplatesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "route-templates",
-            properties = @YamlProperty(name = "route-templates", type = "array:org.apache.camel.model.RouteTemplateDefinition")
+            properties = @YamlProperty(name = "route-template", type = "array:org.apache.camel.model.RouteTemplateDefinition")
     )
     public static class RouteTemplatesDefinitionDeserializer extends YamlDeserializerBase<RouteTemplatesDefinition> {
         public RouteTemplatesDefinitionDeserializer() {
@@ -11673,7 +11673,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.RoutesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "routes",
-            properties = @YamlProperty(name = "routes", type = "array:org.apache.camel.model.RouteDefinition")
+            properties = @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition")
     )
     public static class RoutesDefinitionDeserializer extends YamlDeserializerBase<RoutesDefinition> {
         public RoutesDefinitionDeserializer() {
@@ -14612,6 +14612,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "do-try",
             properties = {
+                    @YamlProperty(name = "do-catch", type = "array:org.apache.camel.model.CatchDefinition"),
+                    @YamlProperty(name = "do-finally", type = "object:org.apache.camel.model.FinallyDefinition"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
             }
@@ -14630,6 +14632,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(TryDefinition target, String propertyKey, String propertyName,
                 Node node) {
             switch(propertyKey) {
+                case "do-catch": {
+                    java.util.List<org.apache.camel.model.CatchDefinition> val = asFlatList(node, org.apache.camel.model.CatchDefinition.class);
+                    target.setCatchClauses(val);
+                    break;
+                }
+                case "do-finally": {
+                    org.apache.camel.model.FinallyDefinition val = asType(node, org.apache.camel.model.FinallyDefinition.class);
+                    target.setFinallyClause(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -14659,7 +14671,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "empty-value", type = "string"),
                     @YamlProperty(name = "header-extraction-enabled", type = "boolean"),
-                    @YamlProperty(name = "headers", type = "array:org.apache.camel.model.dataformat.UniVocityHeader"),
+                    @YamlProperty(name = "univocity-header", type = "array:org.apache.camel.model.dataformat.UniVocityHeader"),
                     @YamlProperty(name = "headers-disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-leading-whitespaces", type = "boolean"),
@@ -14801,7 +14813,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "comment", type = "string"),
                     @YamlProperty(name = "empty-value", type = "string"),
                     @YamlProperty(name = "header-extraction-enabled", type = "boolean"),
-                    @YamlProperty(name = "headers", type = "array:org.apache.camel.model.dataformat.UniVocityHeader"),
+                    @YamlProperty(name = "univocity-header", type = "array:org.apache.camel.model.dataformat.UniVocityHeader"),
                     @YamlProperty(name = "headers-disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-leading-whitespaces", type = "boolean"),
@@ -14980,7 +14992,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "empty-value", type = "string"),
                     @YamlProperty(name = "escape-char", type = "string"),
                     @YamlProperty(name = "header-extraction-enabled", type = "boolean"),
-                    @YamlProperty(name = "headers", type = "array:org.apache.camel.model.dataformat.UniVocityHeader"),
+                    @YamlProperty(name = "univocity-header", type = "array:org.apache.camel.model.dataformat.UniVocityHeader"),
                     @YamlProperty(name = "headers-disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-leading-whitespaces", type = "boolean"),
@@ -15511,9 +15523,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
-                    @YamlProperty(name = "params", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
+                    @YamlProperty(name = "param", type = "array:org.apache.camel.model.rest.RestOperationParamDefinition"),
                     @YamlProperty(name = "produces", type = "string"),
-                    @YamlProperty(name = "response-msgs", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
+                    @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
@@ -15828,7 +15840,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "copy", type = "boolean"),
                     @YamlProperty(name = "dynamic-uri", type = "boolean"),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
-                    @YamlProperty(name = "headers", type = "array:org.apache.camel.model.SetHeaderDefinition"),
+                    @YamlProperty(name = "set-header", type = "array:org.apache.camel.model.SetHeaderDefinition"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "body", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),

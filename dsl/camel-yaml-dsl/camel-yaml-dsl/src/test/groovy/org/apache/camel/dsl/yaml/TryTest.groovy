@@ -34,21 +34,17 @@ class TryTest extends YamlTestSupport {
                            - to: "log:when-a"
                            - to: "log:when-b"
                          do-catch:
-                             exception: 
+                           - exception: 
                                - "java.io.FileNotFoundException"
                                - "java.io.IOException"
                              steps:
                                - to: "log:io-error"
             '''
         then:
-            context.routeDefinitions.size() == 1
-
             with(context.routeDefinitions[0], RouteDefinition) {
                 input.endpointUri == 'direct:start'
 
                 with (outputs[0], TryDefinition) {
-                    outputs.size() == 3
-
                     catchClauses.size() == 1
                     catchClauses[0].outputs.size() == 1
                     catchClauses[0].exceptions.contains('java.io.FileNotFoundException')
@@ -70,7 +66,7 @@ class TryTest extends YamlTestSupport {
                            - to: "log:when-a"
                            - to: "log:when-b"
                          do-catch:
-                             exception: 
+                           - exception: 
                                - "java.io.FileNotFoundException"
                                - "java.io.IOException"
                              on-when:
@@ -79,14 +75,10 @@ class TryTest extends YamlTestSupport {
                                - to: "log:io-error"
             '''
         then:
-            context.routeDefinitions.size() == 1
-
             with(context.routeDefinitions[0], RouteDefinition) {
                 input.endpointUri == 'direct:start'
 
                 with (outputs[0], TryDefinition) {
-                    outputs.size() == 3
-
                     catchClauses.size() == 1
                     catchClauses[0].outputs.size() == 1
                     catchClauses[0].exceptions.contains('java.io.FileNotFoundException')
@@ -112,7 +104,7 @@ class TryTest extends YamlTestSupport {
                            - to: "log:when-a"
                            - to: "log:when-b"
                          do-catch:
-                             exception: 
+                           - exception: 
                                - "java.io.FileNotFoundException"
                                - "java.io.IOException"
                              on-when:
@@ -124,24 +116,25 @@ class TryTest extends YamlTestSupport {
                              - to: "log:finally"
             '''
         then:
-            context.routeDefinitions.size() == 1
-
             with(context.routeDefinitions[0], RouteDefinition) {
                 input.endpointUri == 'direct:start'
 
                 with (outputs[0], TryDefinition) {
-                    outputs.size() == 4
-
                     catchClauses.size() == 1
-                    catchClauses[0].outputs.size() == 1
-                    catchClauses[0].exceptions.contains('java.io.FileNotFoundException')
-                    catchClauses[0].exceptions.contains('java.io.IOException')
 
-                    with(catchClauses[0].onWhen.expression, SimpleExpression) {
-                        expression == '${body.size()} == 1'
+                    with(catchClauses[0]) {
+                        outputs.size() == 1
+                        exceptions.contains('java.io.FileNotFoundException')
+                        exceptions.contains('java.io.IOException')
+
+                        with(onWhen.expression, SimpleExpression) {
+                            expression == '${body.size()} == 1'
+                        }
                     }
 
-                    finallyClause.outputs.size() == 1
+                    with(finallyClause) {
+                        outputs.size() == 1
+                    }
                 }
             }
     }
@@ -161,14 +154,10 @@ class TryTest extends YamlTestSupport {
                              - to: "log:finally"
             '''
         then:
-            context.routeDefinitions.size() == 1
-
             with(context.routeDefinitions[0], RouteDefinition) {
                 input.endpointUri == 'direct:start'
 
                 with (outputs[0], TryDefinition) {
-                    outputs.size() == 3
-                    catchClauses.size() == 0
                     finallyClause.outputs.size() == 1
                 }
             }
