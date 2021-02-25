@@ -306,20 +306,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
-     * AWS Simple Workflow (SWF) (camel-aws-swf)
-     * Manage workflows in the AWS Simple Workflow service.
-     * 
-     * Category: cloud,workflow
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-aws-swf
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.AwsSwfComponentBuilder awsSwf() {
-        return org.apache.camel.builder.component.dsl.AwsSwfComponentBuilderFactory.awsSwf();
-    }
-    /**
      * AWS 2 Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 

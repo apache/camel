@@ -1832,53 +1832,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * AWS Simple Workflow (SWF) (camel-aws-swf)
-     * Manage workflows in the AWS Simple Workflow service.
-     * 
-     * Category: cloud,workflow
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-aws-swf
-     * 
-     * Syntax: <code>aws-swf:type</code>
-     * 
-     * Path parameter: type (required)
-     * Activity or workflow
-     * There are 2 enums and the value can be one of: activity, workflow
-     * 
-     * @param path type
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFEndpointBuilder awsSwf(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder("aws-swf", path);
-    }
-    /**
-     * AWS Simple Workflow (SWF) (camel-aws-swf)
-     * Manage workflows in the AWS Simple Workflow service.
-     * 
-     * Category: cloud,workflow
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-aws-swf
-     * 
-     * Syntax: <code>aws-swf:type</code>
-     * 
-     * Path parameter: type (required)
-     * Activity or workflow
-     * There are 2 enums and the value can be one of: activity, workflow
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path type
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFEndpointBuilder awsSwf(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service
