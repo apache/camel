@@ -53,7 +53,7 @@ public final class YamlSupport {
         ObjectHelper.notNull(properties, "properties");
 
         if (target instanceof CamelContext) {
-            throw new UnsupportedOperationException("Configuring the Camel Context si not supported");
+            throw new UnsupportedOperationException("Configuring the Camel Context is not supported");
         }
 
         PropertyConfigurer configurer = null;
