@@ -676,6 +676,12 @@ public class HttpProducer extends DefaultProducer {
                                 answer = new FileEntity(file);
                             }
                         }
+                    } else if (data instanceof byte[]) {
+                        ByteArrayEntity entity = new ByteArrayEntity((byte[]) data);
+                        if (contentType != null) {
+                            entity.setContentType(contentType.toString());
+                        }
+                        answer = entity;
                     } else if (data instanceof String) {
                         // be a bit careful with String as any type can most likely be converted to String
                         // so we only do an instanceof check and accept String if the body is really a String
@@ -690,7 +696,9 @@ public class HttpProducer extends DefaultProducer {
                             }
                         }
                         StringEntity entity = new StringEntity((String) data, charset);
-                        entity.setContentType(contentType != null ? contentType.toString() : null);
+                        if (contentType != null) {
+                            entity.setContentType(contentType.toString());
+                        }
                         answer = entity;
                     }
 
