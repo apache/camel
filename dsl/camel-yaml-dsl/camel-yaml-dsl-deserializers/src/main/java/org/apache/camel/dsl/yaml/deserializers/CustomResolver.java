@@ -59,7 +59,7 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "org.apache.camel.model.SagaActionUriDefinition":
                 return new SagaActionUriDefinitionDeserializer();
             case "org.apache.camel.model.ProcessorDefinition":
-                return new ProcessorDefinitionDefinitionDeserializer();
+                return new ProcessorDefinitionDeserializer();
             case "to":
             case "org.apache.camel.model.ToDefinition":
                 return new ToDefinitionDeserializer();
