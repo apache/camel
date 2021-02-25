@@ -74,4 +74,9 @@ the one to use above, and then add which -starter JARs you want to use in your C
 - Camel-AWS-DDB has been removed. Please switch to Camel-AWS2-DDB.
 - Camel-AWS-DDB Streams has been removed. Please switch to Camel-AWS2-DDB Streams.
 - Camel-AWS-CW has been removed. Please switch to Camel-AWS2-CW.
+- Camel-AWS-S3 has been removed. Please switch to Camel-AWS2-S3.
+- Camel-AWS-SWF has been removed. There won't be a replacement for it.
+
+=== Camel-Azure component
+
 - Camel-Azure has been reomved. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.
