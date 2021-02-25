@@ -919,6 +919,9 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
+            "properties" : {
+              "type" : "object"
+            },
             "uri" : {
               "type" : "string"
             }
@@ -934,6 +937,9 @@
           "properties" : {
             "inherit-error-handler" : {
               "type" : "boolean"
+            },
+            "properties" : {
+              "type" : "object"
             },
             "uri" : {
               "type" : "string"
@@ -2015,12 +2021,22 @@
         } ]
       },
       "org.apache.camel.model.SagaActionUriDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "uri" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "inherit-error-handler" : {
+              "type" : "boolean"
+            },
+            "properties" : {
+              "type" : "object"
+            },
+            "uri" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.SagaDefinition" : {

@@ -18,39 +18,24 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Allows to declare saga actions to complete or compensate a saga
  */
 @Metadata(label = "eip,routing")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SagaActionUriDefinition {
-
-    @XmlAttribute(required = true)
-    private String uri;
-
+public class SagaActionUriDefinition extends SendDefinition<SagaActionUriDefinition> {
     public SagaActionUriDefinition() {
     }
 
     public SagaActionUriDefinition(String uri) {
-        this.uri = ObjectHelper.notNull(uri, "uri");
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = ObjectHelper.notNull(uri, "uri");
+        super(uri);
     }
 
     @Override
-    public String toString() {
-        return uri;
+    public String getShortName() {
+        return "SagaAction";
     }
-
 }

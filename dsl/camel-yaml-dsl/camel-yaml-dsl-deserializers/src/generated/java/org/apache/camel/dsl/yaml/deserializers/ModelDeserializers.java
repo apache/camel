@@ -3,8 +3,10 @@ package org.apache.camel.dsl.yaml.deserializers;
 
 import java.lang.Override;
 import java.lang.String;
+import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.YamlSupport;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -70,6 +72,7 @@ import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.model.SagaOptionDefinition;
 import org.apache.camel.model.SamplingDefinition;
@@ -86,6 +89,7 @@ import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TransformDefinition;
@@ -5867,7 +5871,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "in-only",
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "uri", type = "string", required = true)
+                    @YamlProperty(name = "uri", type = "string", required = true),
+                    @YamlProperty(name = "properties", type = "object")
             }
     )
     public static class InOnlyDefinitionDeserializer extends YamlDeserializerBase<InOnlyDefinition> {
@@ -5899,8 +5904,25 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "properties": {
+                    if (target.getUri() == null) {
+                        throw new IllegalStateException("url must be set before setting properties");
+                    }
+                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    YamlDeserializationContext dc = getDeserializationContext(node);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    target.setUri(uri);
+                    break;
+                }
                 default: {
-                    return false;
+                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
+                    if (uri == null) {
+                        return false;
+                    }
+                    if (target.getUri() != null) {
+                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
+                    }
+                    target.setUri(uri);
                 }
             }
             return true;
@@ -5914,7 +5936,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "in-out",
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "uri", type = "string", required = true)
+                    @YamlProperty(name = "uri", type = "string", required = true),
+                    @YamlProperty(name = "properties", type = "object")
             }
     )
     public static class InOutDefinitionDeserializer extends YamlDeserializerBase<InOutDefinition> {
@@ -5946,8 +5969,25 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "properties": {
+                    if (target.getUri() == null) {
+                        throw new IllegalStateException("url must be set before setting properties");
+                    }
+                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    YamlDeserializationContext dc = getDeserializationContext(node);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    target.setUri(uri);
+                    break;
+                }
                 default: {
-                    return false;
+                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
+                    if (uri == null) {
+                        return false;
+                    }
+                    if (target.getUri() != null) {
+                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
+                    }
+                    target.setUri(uri);
                 }
             }
             return true;
@@ -11771,6 +11811,70 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
+            types = org.apache.camel.model.SagaActionUriDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "uri", type = "string", required = true),
+                    @YamlProperty(name = "properties", type = "object")
+            }
+    )
+    public static class SagaActionUriDefinitionDeserializer extends YamlDeserializerBase<SagaActionUriDefinition> {
+        public SagaActionUriDefinitionDeserializer() {
+            super(SagaActionUriDefinition.class);
+        }
+
+        @Override
+        protected SagaActionUriDefinition newInstance() {
+            return new SagaActionUriDefinition();
+        }
+
+        @Override
+        protected SagaActionUriDefinition newInstance(String value) {
+            return new SagaActionUriDefinition(value);
+        }
+
+        @Override
+        protected boolean setProperty(SagaActionUriDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "uri": {
+                    String val = asText(node);
+                    target.setUri(val);
+                    break;
+                }
+                case "properties": {
+                    if (target.getUri() == null) {
+                        throw new IllegalStateException("url must be set before setting properties");
+                    }
+                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    YamlDeserializationContext dc = getDeserializationContext(node);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    target.setUri(uri);
+                    break;
+                }
+                default: {
+                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
+                    if (uri == null) {
+                        return false;
+                    }
+                    if (target.getUri() != null) {
+                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
+                    }
+                    target.setUri(uri);
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             types = org.apache.camel.model.SagaDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "saga",
@@ -14028,6 +14132,77 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            inline = true,
+            types = org.apache.camel.model.ToDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "to",
+            properties = {
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "pattern", type = "string"),
+                    @YamlProperty(name = "uri", type = "string", required = true),
+                    @YamlProperty(name = "properties", type = "object")
+            }
+    )
+    public static class ToDefinitionDeserializer extends YamlDeserializerBase<ToDefinition> {
+        public ToDefinitionDeserializer() {
+            super(ToDefinition.class);
+        }
+
+        @Override
+        protected ToDefinition newInstance() {
+            return new ToDefinition();
+        }
+
+        @Override
+        protected ToDefinition newInstance(String value) {
+            return new ToDefinition(value);
+        }
+
+        @Override
+        protected boolean setProperty(ToDefinition target, String propertyKey, String propertyName,
+                Node node) {
+            switch(propertyKey) {
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "pattern": {
+                    String val = asText(node);
+                    target.setPattern(val);
+                    break;
+                }
+                case "uri": {
+                    String val = asText(node);
+                    target.setUri(val);
+                    break;
+                }
+                case "properties": {
+                    if (target.getUri() == null) {
+                        throw new IllegalStateException("url must be set before setting properties");
+                    }
+                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    YamlDeserializationContext dc = getDeserializationContext(node);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    target.setUri(uri);
+                    break;
+                }
+                default: {
+                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
+                    if (uri == null) {
+                        return false;
+                    }
+                    if (target.getUri() != null) {
+                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
+                    }
+                    target.setUri(uri);
                 }
             }
             return true;

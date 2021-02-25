@@ -5,6 +5,7 @@ import java.lang.Override;
 import java.lang.String;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.Node;
 
 public final class EndpointProducerDeserializersResolver implements YamlDeserializerResolver {
     @Override
@@ -12,7 +13,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
         return YamlDeserializerResolver.ORDER_LOWEST;
     }
 
-    public static ConstructNode resolveEndpointConstructor(String id) {
+    public static String resolveEndpointUri(String id, Node node) {
         switch(id) {
             case "activemq":
             case "ahc":
@@ -337,13 +338,13 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "yammer":
             case "zendesk":
             case "zookeeper":
-            return org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpointConstructor(id, org.apache.camel.model.ToDefinition::new);
+            return org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpointUri(id, node);
         }
         return null;
     }
 
     @Override
     public ConstructNode resolve(String id) {
-        return resolveEndpointConstructor(id);
+        return node -> org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpoint(id, node, org.apache.camel.model.ToDefinition::new);
     }
 }

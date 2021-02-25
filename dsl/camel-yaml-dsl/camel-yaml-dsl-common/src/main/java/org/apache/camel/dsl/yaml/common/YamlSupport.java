@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +43,11 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asScalarMap;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 public final class YamlSupport {
     private YamlSupport() {
@@ -195,7 +201,65 @@ public final class YamlSupport {
         return node;
     }
 
-    private static String creteEndpointUri(String scheme, Node node) {
+    public static String creteEndpointUri(Node node, BiFunction<String, Node, String> endpointResolver) {
+        String answer = null;
+
+        if (node.getNodeType() == NodeType.SCALAR) {
+            answer = asText(node);
+        } else if (node.getNodeType() == NodeType.MAPPING) {
+            final MappingNode mn = (MappingNode) node;
+            final YamlDeserializationContext dc = getDeserializationContext(node);
+
+            String uri = null;
+            Map<String, Object> properties = null;
+
+            for (NodeTuple tuple : mn.getValue()) {
+                final String key = asText(tuple.getKeyNode());
+                final Node val = tuple.getValueNode();
+
+                setDeserializationContext(val, dc);
+
+                switch (key) {
+                    case "uri":
+                        if (answer != null) {
+                            throw new IllegalArgumentException(
+                                    "uri and properties are not supported when using Endpoint DSL ");
+                        }
+
+                        uri = asText(val);
+                        break;
+                    case "properties":
+                        if (answer != null) {
+                            throw new IllegalArgumentException(
+                                    "uri and properties are not supported when using Endpoint DSL ");
+                        }
+
+                        properties = asScalarMap(tuple.getValueNode());
+                        break;
+                    default:
+                        String endpointUri = endpointResolver.apply(key, val);
+                        if (endpointUri != null) {
+                            if (uri != null || properties != null) {
+                                throw new IllegalArgumentException(
+                                        "uri and properties are not supported when using Endpoint DSL ");
+                            }
+                            answer = endpointUri;
+                        } else {
+                            throw new IllegalArgumentException("Unsupported field: " + key);
+                        }
+                }
+            }
+
+            if (answer == null) {
+                ObjectHelper.notNull(uri, "The uri must set");
+                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties);
+            }
+        }
+
+        return answer;
+    }
+
+    public static String creteEndpointUri(String scheme, Node node) {
         switch (node.getNodeType()) {
             case SCALAR:
                 return scheme + ':' + YamlDeserializerSupport.asText(node);

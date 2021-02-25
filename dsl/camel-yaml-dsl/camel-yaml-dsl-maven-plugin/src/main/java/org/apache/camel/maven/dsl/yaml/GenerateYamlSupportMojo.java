@@ -92,6 +92,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.model.OutputNode");
     public static final DotName PROCESSOR_DEFINITION_CLASS
             = DotName.createSimple("org.apache.camel.model.ProcessorDefinition");
+    public static final DotName SEND_DEFINITION_CLASS
+            = DotName.createSimple("org.apache.camel.model.SendDefinition");
 
     public static final DotName YAML_TYPE_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
@@ -108,6 +110,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerBase");
     public static final ClassName CN_DESERIALIZATION_CONTEXT
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializationContext");
+    public static final ClassName CN_YAML_SUPPORT
+            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlSupport");
     public static final ClassName CN_YAML_TYPE
             = ClassName.get("org.apache.camel.spi.annotations", "YamlType");
     public static final ClassName CN_YAML_PROPERTY
