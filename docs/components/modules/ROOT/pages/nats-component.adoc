@@ -172,8 +172,7 @@ camel.component.nats.servers=scott:tiger@someserver:4222,superman:123@someothers
 |=======================================================================
 
 == Request/Reply support
-The producer only supports publishing (sending) messages.
-The producer does not support request/reply where it can wait for an expected reply message.
+The producer supports request/reply where it can wait for an expected reply message.
 
 The consumer will when routing the message is complete, send back the message as reply-message if required.
 
