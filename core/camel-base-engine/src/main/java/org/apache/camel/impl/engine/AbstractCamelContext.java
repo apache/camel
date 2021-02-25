@@ -3298,9 +3298,10 @@ public abstract class AbstractCamelContext extends BaseService
         shutdownServices(executorServiceManager);
         shutdownServices(reactiveExecutor);
 
-        // shutdown type converter as late as possible
+        // shutdown type converter and registry as late as possible
         ServiceHelper.stopService(typeConverter);
         ServiceHelper.stopService(typeConverterRegistry);
+        ServiceHelper.stopService(registry);
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
@@ -3687,6 +3688,7 @@ public abstract class AbstractCamelContext extends BaseService
         asyncProcessorAwaitManager = null;
         exchangeFactory = null;
         exchangeFactoryManager = null;
+        registry = null;
     }
 
     /**
