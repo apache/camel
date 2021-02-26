@@ -45,6 +45,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "iteratorType": target.getConfiguration().setIteratorType(property(camelContext, software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "proxyhost":
@@ -75,6 +77,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -113,6 +117,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "iteratorType": return software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "proxyhost":
@@ -143,6 +149,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         default: return null;
@@ -177,6 +185,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "iteratorType": return target.getConfiguration().getIteratorType();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "proxyhost":
@@ -207,6 +217,8 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "timeUnit": return target.getTimeUnit();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;

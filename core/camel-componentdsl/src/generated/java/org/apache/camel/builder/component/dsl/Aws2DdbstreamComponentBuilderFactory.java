@@ -141,6 +141,23 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbstreamComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the DDBStreams client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -237,6 +254,22 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbstreamComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -316,12 +349,14 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             case "configuration": ((Ddb2StreamComponent) component).setConfiguration((org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration) value); return true;
             case "iteratorType": getOrCreateConfiguration((Ddb2StreamComponent) component).setIteratorType((software.amazon.awssdk.services.dynamodb.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Ddb2StreamComponent) component).setMaxResultsPerRequest((int) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Ddb2StreamComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Ddb2StreamComponent) component).setRegion((java.lang.String) value); return true;
             case "sequenceNumberProvider": getOrCreateConfiguration((Ddb2StreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2StreamComponent) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Ddb2StreamComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "autowiredEnabled": ((Ddb2StreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setSecretKey((java.lang.String) value); return true;

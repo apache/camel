@@ -68,7 +68,8 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false", description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
+    @UriParam(defaultValue = "false",
+              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
     private boolean overrideEndpoint;
     @UriParam(description = " Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
