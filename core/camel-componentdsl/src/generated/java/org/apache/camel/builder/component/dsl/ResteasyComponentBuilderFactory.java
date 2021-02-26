@@ -89,6 +89,24 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder copyHeaders(boolean copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -128,6 +146,44 @@ public interface ResteasyComponentBuilderFactory {
         default ResteasyComponentBuilder responsePayloadStreamingThreshold(
                 int responsePayloadStreamingThreshold) {
             doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder skipRequestHeaders(
+                boolean skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder skipResponseHeaders(
+                boolean skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
             return this;
         }
         /**
@@ -321,8 +377,11 @@ public interface ResteasyComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((ResteasyComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
+            case "copyHeaders": ((ResteasyComponent) component).setCopyHeaders((boolean) value); return true;
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "responsePayloadStreamingThreshold": ((ResteasyComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
+            case "skipRequestHeaders": ((ResteasyComponent) component).setSkipRequestHeaders((boolean) value); return true;
+            case "skipResponseHeaders": ((ResteasyComponent) component).setSkipResponseHeaders((boolean) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "authCachingDisabled": ((ResteasyComponent) component).setAuthCachingDisabled((boolean) value); return true;
             case "automaticRetriesDisabled": ((ResteasyComponent) component).setAutomaticRetriesDisabled((boolean) value); return true;
