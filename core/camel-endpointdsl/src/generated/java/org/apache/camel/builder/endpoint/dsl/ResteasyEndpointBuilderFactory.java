@@ -1118,7 +1118,9 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * Whether to clear expired cookies before sending the HTTP request.
          * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired.
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1136,7 +1138,9 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * Whether to clear expired cookies before sending the HTTP request.
          * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired.
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
