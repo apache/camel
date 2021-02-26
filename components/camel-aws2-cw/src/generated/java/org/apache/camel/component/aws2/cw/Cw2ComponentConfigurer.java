@@ -38,6 +38,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "name": getOrCreateConfiguration(target).setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -51,6 +53,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "unit": getOrCreateConfiguration(target).setUnit(property(camelContext, java.lang.String.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "value": getOrCreateConfiguration(target).setValue(property(camelContext, java.lang.Double.class, value)); return true;
         default: return false;
         }
@@ -74,6 +78,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "name": return java.lang.String.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -87,6 +93,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "unit": return java.lang.String.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "value": return java.lang.Double.class;
         default: return null;
         }
@@ -106,6 +114,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "name": return getOrCreateConfiguration(target).getName();
+        case "overrideendpoint":
+        case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
@@ -119,6 +129,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "unit": return getOrCreateConfiguration(target).getUnit();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "value": return getOrCreateConfiguration(target).getValue();
         default: return null;
         }

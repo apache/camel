@@ -127,12 +127,13 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Cw2Endpoint endpoint = (Cw2Endpoint) component
-                .createEndpoint("aws2-cw://camel.apache.org/test?overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                .createEndpoint(
+                        "aws2-cw://camel.apache.org/test?overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
-        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
-        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
-        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_WEST_1", endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
         assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
