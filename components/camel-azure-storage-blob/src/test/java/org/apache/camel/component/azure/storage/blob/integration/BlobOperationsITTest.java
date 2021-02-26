@@ -43,6 +43,7 @@ import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientW
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
+import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -193,6 +194,33 @@ class BlobOperationsITTest extends BaseIT {
         final BlobOperationResponse getBlobResponse2 = operations.getBlob(null);
 
         assertEquals(data, IOUtils.toString((InputStream) getBlobResponse2.getBody(), Charset.defaultCharset()));
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    void testUploadBlockBlobAsCachedStream() throws Exception {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        final File fileToUpload
+                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new FileInputStreamCache(fileToUpload));
+
+        final BlobOperationResponse response = operations.uploadBlockBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        // check for eTag and md5 to make sure is uploaded
+        assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
+        assertNotNull(response.getHeaders().get(BlobConstants.CONTENT_MD5));
+
+        // check content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+
+        assertEquals("awesome camel to upload!",
+                IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
     }
