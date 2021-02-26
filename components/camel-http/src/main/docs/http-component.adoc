@@ -126,7 +126,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (48 parameters):
+=== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -161,6 +161,7 @@ with the following path and query parameters:
 | *httpContext* (advanced) | To use a custom HttpContext instance |  | HttpContext
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
+| *skipResponseHeaders* (producer.advanced) | Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
 | *proxyAuthHost* (proxy) | Proxy authentication host |  | String
 | *proxyAuthMethod* (proxy) | Proxy authentication method to use. There are 3 enums and the value can be one of: Basic, Digest, NTLM |  | String

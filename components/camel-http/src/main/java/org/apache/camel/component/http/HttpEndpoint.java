@@ -137,6 +137,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will "
                                                 + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
+    @UriParam(label = "producer.advanced",
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
+                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector.")
+    private boolean skipResponseHeaders;
 
     public HttpEndpoint() {
     }
@@ -531,6 +535,18 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     public String getCustomHostHeader() {
         return customHostHeader;
+    }
+
+    public boolean isSkipResponseHeaders() {
+        return skipResponseHeaders;
+    }
+
+    /**
+     * Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP
+     * headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector.
+     */
+    public void setSkipResponseHeaders(boolean skipResponseHeaders) {
+        this.skipResponseHeaders = skipResponseHeaders;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")

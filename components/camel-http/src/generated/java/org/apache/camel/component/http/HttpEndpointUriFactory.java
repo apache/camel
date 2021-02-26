@@ -21,7 +21,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(49);
+        Set<String> props = new HashSet<>(50);
         props.add("clientBuilder");
         props.add("authMethodPriority");
         props.add("ignoreResponseBody");
@@ -54,6 +54,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("proxyAuthScheme");
         props.add("sslContextParameters");
         props.add("httpMethod");
+        props.add("skipResponseHeaders");
         props.add("deleteWithBody");
         props.add("httpUri");
         props.add("headerFilterStrategy");
