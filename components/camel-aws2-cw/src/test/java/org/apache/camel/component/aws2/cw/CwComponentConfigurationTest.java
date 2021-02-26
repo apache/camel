@@ -133,7 +133,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
-        assertEquals("US_WEST_1", endpoint.getConfiguration().getRegion());
+        assertEquals("us-west-1", endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
         assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
