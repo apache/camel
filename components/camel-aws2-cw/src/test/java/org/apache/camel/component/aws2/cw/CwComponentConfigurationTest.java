@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CwComponentConfigurationTest extends CamelTestSupport {
 
@@ -117,5 +118,22 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
         assertEquals(Protocol.HTTPS, endpoint.getConfiguration().getProxyProtocol());
+    }
+
+    @Test
+    public void createEndpointWithEndpointOverride() throws Exception {
+        Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
+        Cw2Endpoint endpoint = (Cw2Endpoint) component
+                .createEndpoint("aws2-cw://camel.apache.org/test?overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
 }
