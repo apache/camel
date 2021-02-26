@@ -133,7 +133,8 @@ public class HttpProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {
+        boolean cookies = !getEndpoint().getComponent().isCookieManagementDisabled();
+        if (cookies && getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {
             // create the cookies before the invocation
             getEndpoint().getCookieStore().clearExpired(new Date());
         }

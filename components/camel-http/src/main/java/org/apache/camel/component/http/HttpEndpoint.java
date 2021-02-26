@@ -116,7 +116,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private CookieStore cookieStore = new BasicCookieStore();
     @UriParam(label = "producer", defaultValue = "true",
               description = "Whether to clear expired cookies before sending the HTTP request."
-                            + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
+                            + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired."
+                            + " If the component has disabled cookie management then this option is disabled too.")
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer,security",
               description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
@@ -334,7 +335,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     /**
      * Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep
-     * growing by adding new cookies which is newer removed when they are expired.
+     * growing by adding new cookies which is newer removed when they are expired. If the component has disabled cookie
+     * management then this option is disabled too.
      */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
