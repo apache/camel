@@ -34,7 +34,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "atomix-set":
             case "atomix-value":
             case "avro":
-            case "aws-swf":
             case "aws2-athena":
             case "aws2-cw":
             case "aws2-ddb":
