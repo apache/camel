@@ -1,4 +1,4 @@
-<!-- Uncomment this section if your PR is not trivial
+<!-- Uncomment and fill this section if your PR is not trivial
 - [ ] Make sure there is a [JIRA issue](https://issues.apache.org/jira/browse/CAMEL) filed for the change (usually before you start working on it).  Trivial changes like typos do not require a JIRA issue.  Your pull request should address just this issue, without pulling in other changes.
 - [ ] Each commit in the pull request should have a meaningful subject line and body.
 - [ ] If you're unsure, you can format the pull request title like `[CAMEL-XXX] Fixes bug in camel-file component`, where you replace `CAMEL-XXX` with the appropriate JIRA issue.
