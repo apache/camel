@@ -74,7 +74,8 @@ public class DdbComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithOverrideEndpointElements() throws Exception {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
         Ddb2Endpoint endpoint = (Ddb2Endpoint) component
-                .createEndpoint("aws2-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                .createEndpoint(
+                        "aws2-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
