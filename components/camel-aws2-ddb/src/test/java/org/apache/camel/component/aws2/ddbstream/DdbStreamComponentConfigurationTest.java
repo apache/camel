@@ -22,6 +22,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
 
@@ -78,6 +79,20 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
+    }
+
+    @Test
+    public void createEndpointWithOverrideEndpoint() throws Exception {
+        Ddb2StreamComponent component = context.getComponent("aws2-ddbstream", Ddb2StreamComponent.class);
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint) component.createEndpoint("aws2-ddbstreams://myTable?overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
 
 }
