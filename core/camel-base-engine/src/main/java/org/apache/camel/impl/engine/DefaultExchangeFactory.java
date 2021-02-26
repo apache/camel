@@ -157,12 +157,16 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
 
     @Override
     protected void doStart() throws Exception {
-        exchangeFactoryManager.addExchangeFactory(this);
+        if (exchangeFactoryManager != null) {
+            exchangeFactoryManager.addExchangeFactory(this);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        exchangeFactoryManager.removeExchangeFactory(this);
+        if (exchangeFactoryManager != null) {
+            exchangeFactoryManager.removeExchangeFactory(this);
+        }
         logUsageSummary(LOG, "DefaultExchangeFactory", 0);
         statistics.reset();
     }

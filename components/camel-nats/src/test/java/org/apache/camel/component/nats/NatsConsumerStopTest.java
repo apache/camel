@@ -19,11 +19,15 @@ package org.apache.camel.component.nats;
 import org.apache.camel.Consumer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test NATS consumer stop happens cleanly. See https://issues.apache.org/jira/browse/CAMEL-15834.
  */
 public class NatsConsumerStopTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NatsConsumerStopTest.class);
 
     @Test
     public void testConsumerStop() throws Exception {
