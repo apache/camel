@@ -86,7 +86,8 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
         Ddb2StreamComponent component = context.getComponent("aws2-ddbstream", Ddb2StreamComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint) component.createEndpoint("aws2-ddbstreams://myTable?overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+        Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint) component
+                .createEndpoint("aws2-ddbstreams://myTable?overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
