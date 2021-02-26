@@ -47,10 +47,6 @@ public final class BlobStreamAndLength {
         }
 
         if (body instanceof InputStream) {
-            // Note: InputStream has to support mark/reset operations
-            if (!((InputStream) body).markSupported()) {
-                throw new IllegalArgumentException("InputStream of body exchange does not support mark/rest operations.");
-            }
             return new BlobStreamAndLength((InputStream) body, BlobUtils.getInputStreamLength((InputStream) body));
         }
         if (body instanceof File) {
