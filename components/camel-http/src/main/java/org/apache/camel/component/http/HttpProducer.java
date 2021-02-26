@@ -85,13 +85,14 @@ public class HttpProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
 
     private HttpClient httpClient;
-    private HttpContext httpContext;
-    private boolean throwException;
-    private boolean transferException;
-    private HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
+    private final HttpContext httpContext;
+    private final boolean throwException;
+    private final boolean transferException;
+    private final HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
     private int minOkRange;
     private int maxOkRange;
     private String defaultUrl;
+    private URI defaultUri;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -124,6 +125,7 @@ public class HttpProducer extends DefaultProducer {
             queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
             uri = URISupport.createURIWithQuery(uri, queryString);
         }
+        defaultUri = uri;
         defaultUrl = uri.toASCIIString();
     }
 
@@ -539,10 +541,11 @@ public class HttpProducer extends DefaultProducer {
      * @throws Exception          is thrown if error creating RequestEntity
      */
     protected HttpRequestBase createMethod(Exchange exchange) throws Exception {
-        if (defaultUrl == null) {
+        if (defaultUri == null || defaultUrl == null) {
             throw new IllegalArgumentException("Producer must be started");
         }
         String url = defaultUrl;
+        URI uri = defaultUri;
 
         // the exchange can have some headers that override the default url and forces to create
         // a new url that is dynamic based on header values
@@ -565,22 +568,22 @@ public class HttpProducer extends DefaultProducer {
         if (create) {
             // creating the url to use takes 2-steps
             url = HttpHelper.createURL(exchange, getEndpoint());
-            URI uri = HttpHelper.createURI(exchange, url, getEndpoint());
+            uri = HttpHelper.createURI(exchange, url, getEndpoint());
             // get the url from the uri
             url = uri.toASCIIString();
         }
 
         // create http holder objects for the request
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint());
-        HttpRequestBase method = methodToUse.createMethod(url);
+        HttpRequestBase method = methodToUse.createMethod(uri);
 
         // special for HTTP DELETE/GET if the message body should be included
         if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())) {
             HttpEntity requestEntity = createRequestEntity(exchange);
-            method = new HttpDeleteWithBodyMethod(url, requestEntity);
+            method = new HttpDeleteWithBodyMethod(uri, requestEntity);
         } else if (getEndpoint().isGetWithBody() && "GET".equals(method.getMethod())) {
             HttpEntity requestEntity = createRequestEntity(exchange);
-            method = new HttpGetWithBodyMethod(url, requestEntity);
+            method = new HttpGetWithBodyMethod(uri, requestEntity);
         }
 
         LOG.trace("Using URL: {} with method: {}", url, method);
