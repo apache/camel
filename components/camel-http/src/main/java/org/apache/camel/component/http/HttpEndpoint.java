@@ -138,8 +138,14 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                                                 + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
     @UriParam(label = "producer.advanced",
+              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
+                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
+                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+    private boolean skipRequestHeaders;
+    @UriParam(label = "producer.advanced",
               description = "Whether to skip mapping all the HTTP response headers to Camel headers."
-                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector.")
+                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
+                            + " with many object allocations for the JVM garbage collector.")
     private boolean skipResponseHeaders;
 
     public HttpEndpoint() {
@@ -535,6 +541,19 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     public String getCustomHostHeader() {
         return customHostHeader;
+    }
+
+    public boolean isSkipRequestHeaders() {
+        return skipRequestHeaders;
+    }
+
+    /**
+     * Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers
+     * needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for
+     * the JVM garbage collector.
+     */
+    public void setSkipRequestHeaders(boolean skipRequestHeaders) {
+        this.skipRequestHeaders = skipRequestHeaders;
     }
 
     public boolean isSkipResponseHeaders() {

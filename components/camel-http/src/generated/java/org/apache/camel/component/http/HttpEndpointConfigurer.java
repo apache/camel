@@ -106,6 +106,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.setProxyPort(property(camelContext, int.class, value)); return true;
+        case "skiprequestheaders":
+        case "skipRequestHeaders": target.setSkipRequestHeaders(property(camelContext, boolean.class, value)); return true;
         case "skipresponseheaders":
         case "skipResponseHeaders": target.setSkipResponseHeaders(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -210,6 +212,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
         case "proxyPort": return int.class;
+        case "skiprequestheaders":
+        case "skipRequestHeaders": return boolean.class;
         case "skipresponseheaders":
         case "skipResponseHeaders": return boolean.class;
         case "sslcontextparameters":
@@ -315,6 +319,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": return target.getProxyHost();
         case "proxyport":
         case "proxyPort": return target.getProxyPort();
+        case "skiprequestheaders":
+        case "skipRequestHeaders": return target.isSkipRequestHeaders();
         case "skipresponseheaders":
         case "skipResponseHeaders": return target.isSkipResponseHeaders();
         case "sslcontextparameters":

@@ -84,6 +84,8 @@ public class HttpProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
 
+    private static final Integer OK_RESPONSE_CODE = 200;
+
     private HttpClient httpClient;
     private final HttpContext httpContext;
     private final boolean throwException;
@@ -156,68 +158,67 @@ public class HttpProducer extends DefaultProducer {
             int[] version = HttpHelper.parserHttpVersion(httpProtocolVersion);
             httpRequest.setProtocolVersion(new HttpVersion(version[0], version[1]));
         }
+
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
-        if (getEndpoint().getCustomHostHeader() != null) {
-            httpRequest.setHeader(HOST, getEndpoint().getCustomHostHeader());
-        }
-
-        // propagate headers as HTTP headers
-        if (strategy != null) {
-            final TypeConverter tc = exchange.getContext().getTypeConverter();
-            for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
-                String key = entry.getKey();
-                // we should not add headers for the parameters in the uri if we bridge the endpoint
-                // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
-                if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
-                    continue;
-                }
-                Object headerValue = entry.getValue();
-
-                if (headerValue != null) {
-                    if (headerValue instanceof String || headerValue instanceof Integer || headerValue instanceof Long
-                            || headerValue instanceof Boolean || headerValue instanceof Date) {
-                        // optimise for common types
-                        String value = headerValue.toString();
-                        if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                            httpRequest.addHeader(key, value);
-                        }
+        if (!getEndpoint().isSkipRequestHeaders()) {
+            // propagate headers as HTTP headers
+            if (strategy != null) {
+                final TypeConverter tc = exchange.getContext().getTypeConverter();
+                for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
+                    String key = entry.getKey();
+                    // we should not add headers for the parameters in the uri if we bridge the endpoint
+                    // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
+                    if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
                         continue;
                     }
+                    Object headerValue = entry.getValue();
 
-                    // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
-                    final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
+                    if (headerValue != null) {
+                        if (headerValue instanceof String || headerValue instanceof Integer || headerValue instanceof Long
+                                || headerValue instanceof Boolean || headerValue instanceof Date) {
+                            // optimise for common types
+                            String value = headerValue.toString();
+                            if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                                httpRequest.addHeader(key, value);
+                            }
+                            continue;
+                        }
 
-                    // the value to add as request header
-                    List<String> multiValues = null;
-                    String prev = null;
+                        // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
+                        final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
-                    // if its a multi value then check each value if we can add it and for multi values they
-                    // should be combined into a single value
-                    while (it.hasNext()) {
-                        String value = tc.convertTo(String.class, it.next());
-                        if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                            if (prev == null) {
-                                prev = value;
-                            } else {
-                                // only create array for multi values when really needed
-                                if (multiValues == null) {
-                                    multiValues = new ArrayList<>();
-                                    multiValues.add(prev);
+                        // the value to add as request header
+                        List<String> multiValues = null;
+                        String prev = null;
+
+                        // if its a multi value then check each value if we can add it and for multi values they
+                        // should be combined into a single value
+                        while (it.hasNext()) {
+                            String value = tc.convertTo(String.class, it.next());
+                            if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                                if (prev == null) {
+                                    prev = value;
+                                } else {
+                                    // only create array for multi values when really needed
+                                    if (multiValues == null) {
+                                        multiValues = new ArrayList<>();
+                                        multiValues.add(prev);
+                                    }
+                                    multiValues.add(value);
                                 }
-                                multiValues.add(value);
                             }
                         }
-                    }
 
-                    // add the value(s) as a http request header
-                    if (multiValues != null) {
-                        // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                        // if multi valued, for a single value, then just output the value as is
-                        String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
-                        httpRequest.addHeader(key, s);
-                    } else if (prev != null) {
-                        httpRequest.addHeader(key, prev);
+                        // add the value(s) as a http request header
+                        if (multiValues != null) {
+                            // use the default toString of a ArrayList to create in the form [xxx, yyy]
+                            // if multi valued, for a single value, then just output the value as is
+                            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
+                            httpRequest.addHeader(key, s);
+                        } else if (prev != null) {
+                            httpRequest.addHeader(key, prev);
+                        }
                     }
                 }
             }
@@ -235,13 +236,16 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
+        if (getEndpoint().getCustomHostHeader() != null) {
+            httpRequest.setHeader(HOST, getEndpoint().getCustomHostHeader());
+        }
         //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
         //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
         if (getEndpoint().isPreserveHostHeader()) {
             String hostHeader = exchange.getIn().getHeader("Host", String.class);
             if (hostHeader != null) {
                 //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
-                httpRequest.setHeader("Host", hostHeader);
+                httpRequest.setHeader(HOST, hostHeader);
             }
         }
 
@@ -317,7 +321,12 @@ public class HttpProducer extends DefaultProducer {
         Object response = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
 
-        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+        // optimize for 200 response code as the boxing is outside the cached integers
+        if (responseCode == 200) {
+            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
+        } else {
+            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+        }
         if (httpResponse.getStatusLine() != null) {
             answer.setHeader(Exchange.HTTP_RESPONSE_TEXT, httpResponse.getStatusLine().getReasonPhrase());
         }
