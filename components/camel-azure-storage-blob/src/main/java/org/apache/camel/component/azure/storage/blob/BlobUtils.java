@@ -34,10 +34,6 @@ public final class BlobUtils {
     }
 
     public static Long getInputStreamLength(final InputStream inputStream) throws IOException {
-        if (!inputStream.markSupported()) {
-            throw new IllegalArgumentException(
-                    "Reset inputStream is not supported, provide an inputstream with supported mark/reset.");
-        }
         final long length = IOUtils.toByteArray(inputStream).length;
         inputStream.reset();
 
