@@ -47,6 +47,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "cookieManagementDisabled": target.setCookieManagementDisabled(property(camelContext, boolean.class, value)); return true;
         case "cookiestore":
         case "cookieStore": target.setCookieStore(property(camelContext, org.apache.http.client.CookieStore.class, value)); return true;
+        case "copyheaders":
+        case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": target.setDefaultUserAgentDisabled(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -81,6 +83,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "redirectHandlingDisabled": target.setRedirectHandlingDisabled(property(camelContext, boolean.class, value)); return true;
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": target.setResponsePayloadStreamingThreshold(property(camelContext, int.class, value)); return true;
+        case "skiprequestheaders":
+        case "skipRequestHeaders": target.setSkipRequestHeaders(property(camelContext, boolean.class, value)); return true;
+        case "skipresponseheaders":
+        case "skipResponseHeaders": target.setSkipResponseHeaders(property(camelContext, boolean.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
@@ -122,6 +128,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "cookieManagementDisabled": return boolean.class;
         case "cookiestore":
         case "cookieStore": return org.apache.http.client.CookieStore.class;
+        case "copyheaders":
+        case "copyHeaders": return boolean.class;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return boolean.class;
         case "headerfilterstrategy":
@@ -156,6 +164,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "redirectHandlingDisabled": return boolean.class;
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return int.class;
+        case "skiprequestheaders":
+        case "skipRequestHeaders": return boolean.class;
+        case "skipresponseheaders":
+        case "skipResponseHeaders": return boolean.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
         case "sslcontextparameters":
@@ -198,6 +210,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "cookieManagementDisabled": return target.isCookieManagementDisabled();
         case "cookiestore":
         case "cookieStore": return target.getCookieStore();
+        case "copyheaders":
+        case "copyHeaders": return target.isCopyHeaders();
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return target.isDefaultUserAgentDisabled();
         case "headerfilterstrategy":
@@ -232,6 +246,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "redirectHandlingDisabled": return target.isRedirectHandlingDisabled();
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return target.getResponsePayloadStreamingThreshold();
+        case "skiprequestheaders":
+        case "skipRequestHeaders": return target.isSkipRequestHeaders();
+        case "skipresponseheaders":
+        case "skipResponseHeaders": return target.isSkipResponseHeaders();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":

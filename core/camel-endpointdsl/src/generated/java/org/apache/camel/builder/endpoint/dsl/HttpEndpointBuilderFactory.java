@@ -1142,6 +1142,84 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipRequestHeaders(
+                boolean skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipRequestHeaders(
+                String skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipResponseHeaders(
+                boolean skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder skipResponseHeaders(
+                String skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
+            return this;
+        }
+        /**
          * Provide access to the http client request parameters used on new
          * RequestConfig instances used by producers or consumers of this
          * endpoint.
@@ -1437,84 +1515,6 @@ public interface HttpEndpointBuilderFactory {
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 String useSystemProperties) {
             doSetProperty("useSystemProperties", useSystemProperties);
-            return this;
-        }
-        /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer.advanced
-         * 
-         * @param skipRequestHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder skipRequestHeaders(
-                boolean skipRequestHeaders) {
-            doSetProperty("skipRequestHeaders", skipRequestHeaders);
-            return this;
-        }
-        /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer.advanced
-         * 
-         * @param skipRequestHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder skipRequestHeaders(
-                String skipRequestHeaders) {
-            doSetProperty("skipRequestHeaders", skipRequestHeaders);
-            return this;
-        }
-        /**
-         * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer.advanced
-         * 
-         * @param skipResponseHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder skipResponseHeaders(
-                boolean skipResponseHeaders) {
-            doSetProperty("skipResponseHeaders", skipResponseHeaders);
-            return this;
-        }
-        /**
-         * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer.advanced
-         * 
-         * @param skipResponseHeaders the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder skipResponseHeaders(
-                String skipResponseHeaders) {
-            doSetProperty("skipResponseHeaders", skipResponseHeaders);
             return this;
         }
     }

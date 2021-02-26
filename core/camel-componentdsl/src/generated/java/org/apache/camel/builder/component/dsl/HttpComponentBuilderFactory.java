@@ -69,6 +69,24 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder copyHeaders(boolean copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -107,6 +125,44 @@ public interface HttpComponentBuilderFactory {
         default HttpComponentBuilder responsePayloadStreamingThreshold(
                 int responsePayloadStreamingThreshold) {
             doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the Camel headers as HTTP request
+         * headers. If there are no data from Camel headers needed to be
+         * included in the HTTP request then this can avoid parsing overhead
+         * with many object allocations for the JVM garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder skipRequestHeaders(
+                boolean skipRequestHeaders) {
+            doSetProperty("skipRequestHeaders", skipRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping all the HTTP response headers to Camel
+         * headers. If there are no data needed from HTTP headers then this can
+         * avoid parsing overhead with many object allocations for the JVM
+         * garbage collector.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param skipResponseHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder skipResponseHeaders(
+                boolean skipResponseHeaders) {
+            doSetProperty("skipResponseHeaders", skipResponseHeaders);
             return this;
         }
         /**
@@ -646,8 +702,11 @@ public interface HttpComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.http.client.CookieStore) value); return true;
+            case "copyHeaders": ((HttpComponent) component).setCopyHeaders((boolean) value); return true;
             case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "responsePayloadStreamingThreshold": ((HttpComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
+            case "skipRequestHeaders": ((HttpComponent) component).setSkipRequestHeaders((boolean) value); return true;
+            case "skipResponseHeaders": ((HttpComponent) component).setSkipResponseHeaders((boolean) value); return true;
             case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "authCachingDisabled": ((HttpComponent) component).setAuthCachingDisabled((boolean) value); return true;
             case "automaticRetriesDisabled": ((HttpComponent) component).setAutomaticRetriesDisabled((boolean) value); return true;
