@@ -59,12 +59,14 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
@@ -95,6 +97,8 @@ public class HttpProducer extends DefaultProducer {
     private int maxOkRange;
     private String defaultUrl;
     private URI defaultUri;
+    private URI defaultRelativeUri;
+    private HttpHost defaultHttpHost;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
@@ -129,6 +133,7 @@ public class HttpProducer extends DefaultProducer {
         }
         defaultUri = uri;
         defaultUrl = uri.toASCIIString();
+        defaultHttpHost = URIUtils.extractHost(uri);
     }
 
     @Override
@@ -152,6 +157,8 @@ public class HttpProducer extends DefaultProducer {
         }
 
         HttpRequestBase httpRequest = createMethod(exchange);
+        HttpHost httpHost = createHost(httpRequest, exchange);
+
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
@@ -260,7 +267,7 @@ public class HttpProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
             }
-            httpResponse = executeMethod(httpRequest);
+            httpResponse = executeMethod(httpHost, httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Http responseCode: {}", responseCode);
@@ -418,11 +425,12 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Strategy when executing the method (calling the remote server).
      *
-     * @param  httpRequest the http Request to execute
+     * @param  httpHost    the http host to call
+     * @param  httpRequest the http request to execute
      * @return             the response
      * @throws IOException can be thrown
      */
-    protected HttpResponse executeMethod(HttpUriRequest httpRequest) throws IOException {
+    protected HttpResponse executeMethod(HttpHost httpHost, HttpUriRequest httpRequest) throws IOException {
         HttpContext localContext = new BasicHttpContext();
         if (getEndpoint().isAuthenticationPreemptive()) {
             BasicScheme basicAuth = new BasicScheme();
@@ -431,7 +439,7 @@ public class HttpProducer extends DefaultProducer {
         if (httpContext != null) {
             localContext = new BasicHttpContext(httpContext);
         }
-        return httpClient.execute(httpRequest, localContext);
+        return httpClient.execute(httpHost, httpRequest, localContext);
     }
 
     /**
@@ -543,6 +551,17 @@ public class HttpProducer extends DefaultProducer {
     }
 
     /**
+     * Creates the HttpHost to use to call the remote server
+     */
+    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) throws Exception {
+        if (httpRequest.getURI() == defaultUri) {
+            return defaultHttpHost;
+        } else {
+            return URIUtils.extractHost(httpRequest.getURI());
+        }
+    }
+
+    /**
      * Creates the HttpMethod to use to call the remote server, either its GET or POST.
      *
      * @param  exchange           the exchange
@@ -561,17 +580,18 @@ public class HttpProducer extends DefaultProducer {
         // a new url that is dynamic based on header values
         // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
         boolean create = false;
-        if (exchange.getIn().getHeader("CamelRestHttpUri") != null) {
+        Message in = exchange.getIn();
+        if (in.getHeader("CamelRestHttpUri") != null) {
             create = true;
-        } else if (exchange.getIn().getHeader("CamelHttpUri") != null && !getEndpoint().isBridgeEndpoint()) {
+        } else if (in.getHeader("CamelHttpUri") != null && !getEndpoint().isBridgeEndpoint()) {
             create = true;
-        } else if (exchange.getIn().getHeader("CamelHttpPath") != null) {
+        } else if (in.getHeader("CamelHttpPath") != null) {
             create = true;
-        } else if (exchange.getIn().getHeader("CamelRestHttpQuery") != null) {
+        } else if (in.getHeader("CamelRestHttpQuery") != null) {
             create = true;
-        } else if (exchange.getIn().getHeader("CamelHttpRawQuery") != null) {
+        } else if (in.getHeader("CamelHttpRawQuery") != null) {
             create = true;
-        } else if (exchange.getIn().getHeader("CamelHttpQuery") != null) {
+        } else if (in.getHeader("CamelHttpQuery") != null) {
             create = true;
         }
 
@@ -610,8 +630,7 @@ public class HttpProducer extends DefaultProducer {
         // there must be a host on the method
         if (method.getURI().getScheme() == null || method.getURI().getHost() == null) {
             throw new IllegalArgumentException(
-                    "Invalid url: " + url
-                                               + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
+                    "Invalid url: " + url + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
                                                + getEndpoint());
         }
 
