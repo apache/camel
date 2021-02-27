@@ -20,10 +20,14 @@ import org.apache.camel.component.google.functions.GoogleCloudFunctionsComponent
 import org.apache.camel.component.google.functions.GoogleCloudFunctionsEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleCloudFunctionsConfigurationTest.class);
 
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
@@ -36,6 +40,7 @@ public class GoogleCloudFunctionsConfigurationTest extends CamelTestSupport {
 
         assertEquals(endpoint.getConfiguration().getFunctionName(), functionName);
         assertEquals(endpoint.getConfiguration().getServiceAccountKey(), serviceAccountKeyFile);
+        LOGGER.info("OK");
     }
 
 }

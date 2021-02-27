@@ -21,8 +21,14 @@ public class GoogleCloudFunctionsEndpointConfigurer extends PropertyConfigurerSu
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleCloudFunctionsEndpoint target = (GoogleCloudFunctionsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "client": target.getConfiguration().setClient(property(camelContext, com.google.cloud.functions.v1.CloudFunctionsServiceClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "location": target.getConfiguration().setLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations.class, value)); return true;
+        case "pojorequest":
+        case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
+        case "project": target.getConfiguration().setProject(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.getConfiguration().setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -30,10 +36,21 @@ public class GoogleCloudFunctionsEndpointConfigurer extends PropertyConfigurerSu
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"client"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "client": return com.google.cloud.functions.v1.CloudFunctionsServiceClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "location": return java.lang.String.class;
+        case "operation": return org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "project": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         default: return null;
@@ -44,8 +61,14 @@ public class GoogleCloudFunctionsEndpointConfigurer extends PropertyConfigurerSu
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleCloudFunctionsEndpoint target = (GoogleCloudFunctionsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "client": return target.getConfiguration().getClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "location": return target.getConfiguration().getLocation();
+        case "operation": return target.getConfiguration().getOperation();
+        case "pojorequest":
+        case "pojoRequest": return target.getConfiguration().isPojoRequest();
+        case "project": return target.getConfiguration().getProject();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getConfiguration().getServiceAccountKey();
         default: return null;

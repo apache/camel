@@ -20,10 +20,15 @@ public class GoogleCloudFunctionsEndpointUriFactory extends org.apache.camel.sup
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(3);
+        Set<String> props = new HashSet<>(8);
         props.add("serviceAccountKey");
         props.add("lazyStartProducer");
         props.add("functionName");
+        props.add("project");
+        props.add("client");
+        props.add("location");
+        props.add("operation");
+        props.add("pojoRequest");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

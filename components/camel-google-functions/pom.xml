@@ -34,24 +34,24 @@
 
   <properties>
     <firstVersion>3.9.0</firstVersion>
+    <google-cloud-functions-version>1.0.8</google-cloud-functions-version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <!-- Override the android JDK 7 guava in libraries-bom -->
-    <!--  <dependency>
+      <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${google-cloud-guava-version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
-        <artifactId>libraries-bom</artifactId>
-        <version>${google-cloud-bom-version}</version>
+        <artifactId>google-cloud-functions-bom</artifactId>
+        <version>${google-cloud-functions-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      -->
     </dependencies>
   
   </dependencyManagement>
@@ -61,16 +61,28 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
     </dependency>
-    <!--
+    
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-storage</artifactId>
+      <artifactId>google-cloud-functions</artifactId>
     </dependency>
-  -->
+    <dependency>
+      <groupId>com.google.api.grpc</groupId>
+      <artifactId>grpc-google-cloud-functions-v1</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api</groupId>
+      <artifactId>gax-grpc</artifactId>
+      <classifier>testlib</classifier>
+      <version>1.62.0</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-junit5</artifactId>
