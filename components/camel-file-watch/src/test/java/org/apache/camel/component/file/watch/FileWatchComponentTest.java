@@ -73,18 +73,6 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     }
 
     @Test
-    public void testRemoveFile() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:watchDelete");
-        mock.expectedMessageCount(2);
-        mock.setResultWaitTime(1000);
-
-        Files.delete(testFiles.get(0));
-        Files.delete(testFiles.get(1));
-
-        mock.assertIsSatisfied();
-    }
-
-    @Test
     public void testAntMatcher() throws Exception {
         MockEndpoint all = getMockEndpoint("mock:watchAll");
         MockEndpoint onlyTxtAnywhere = getMockEndpoint("mock:onlyTxtAnywhere");
@@ -168,9 +156,6 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
                 from("file-watch://" + testPath() + "?events=MODIFY")
                         .to("mock:watchModify");
-
-                from("file-watch://" + testPath() + "?events=DELETE")
-                        .to("mock:watchDelete");
 
                 from("file-watch://" + testPath() + "?events=DELETE,CREATE")
                         .to("mock:watchDeleteOrCreate");
