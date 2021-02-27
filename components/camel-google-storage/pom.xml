@@ -30,11 +30,7 @@
   <artifactId>camel-google-storage</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Google Storage</name>
-  <description>Camel Component for Google Cloud Platform Storage</description>
-
-  <properties>
-    <firstVersion>3.9.0</firstVersion>
-  </properties>
+  <description>For storing and accessing data on Google Cloud Platform</description>
 
   <dependencyManagement>
     <dependencies>
