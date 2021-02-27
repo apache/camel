@@ -97,7 +97,6 @@ public class HttpProducer extends DefaultProducer {
     private int maxOkRange;
     private String defaultUrl;
     private URI defaultUri;
-    private URI defaultRelativeUri;
     private HttpHost defaultHttpHost;
 
     public HttpProducer(HttpEndpoint endpoint) {
