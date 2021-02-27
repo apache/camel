@@ -57,7 +57,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     private String id;
     private String routeId;
 
-    private final class PipelineTask implements Runnable {
+    private final class PipelineTask implements Runnable, AsyncCallback {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
@@ -67,6 +67,11 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             this.exchange = exchange;
             this.callback = callback;
             this.index = index;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            reactiveExecutor.schedule(this);
         }
 
         @Override
@@ -87,7 +92,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                 // get the next processor
                 AsyncProcessor processor = processors.get(index.getAndIncrement());
 
-                processor.process(exchange, doneSync -> reactiveExecutor.schedule(this));
+                processor.process(exchange, this);
             } else {
                 ExchangeHelper.copyResults(exchange, exchange);
 
