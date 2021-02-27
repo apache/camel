@@ -23,9 +23,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("google-functions")
 public class GoogleCloudFunctionsComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudFunctionsComponent.class);
 
     @Metadata
     private GoogleCloudFunctionsConfiguration configuration = new GoogleCloudFunctionsConfiguration();
@@ -48,6 +52,11 @@ public class GoogleCloudFunctionsComponent extends DefaultComponent {
 
         Endpoint endpoint = new GoogleCloudFunctionsEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        LOG.info("configuration={}", configuration);
         return endpoint;
+    }
+
+    public GoogleCloudFunctionsConfiguration getConfiguration() {
+        return configuration;
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.functions;
 
+import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -32,48 +33,21 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
     @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
     private String serviceAccountKey;
 
-    /*
-    @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
-    private GoogleCloudStorageOperations operation;
-    
-    @UriParam(label = "producer", description = "The Object name inside the bucket")
-    private String objectName;
-    
-    @UriParam(label = "common", defaultValue = "US-EAST1",
-              description = "The Cloud Storage location to use when creating the new buckets")
-    private String storageLocation = "US-EAST1";
-    
-    @UriParam(label = "common", defaultValue = "STANDARD",
-              description = "The Cloud Storage class to use when creating the new buckets")
-    private StorageClass storageClass = StorageClass.STANDARD;
-    
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoCreateBucket = true;
-    
-    @UriParam(label = "consumer")
-    private boolean moveAfterRead;
-    
-    @UriParam(label = "consumer")
-    private String destinationBucket;
-    
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean deleteAfterRead = true;
-    
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean includeBody = true;
-    
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean includeFolders = true;
-    
-    @UriParam
+    @UriParam(label = "producer", description = "Project")
+    private String project;
+
+    @UriParam(label = "producer", description = "location")
+    private String location;
+
+    @UriParam(label = "producer", enums = "listFunctions,getFunction,callFunction")
+    private GoogleCloudFunctionsOperations operation;
+
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
+
+    @UriParam(label = "advanced")
     @Metadata(autowired = true)
-    private Storage storageClient;
-    
-    public String getBucketName() {
-        return this.bucketName;
-    }
-    */
+    private CloudFunctionsServiceClient client;
 
     public String getFunctionName() {
         return functionName;
@@ -101,18 +75,73 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    public String getProject() {
+        return project;
+    }
+
+    /**
+     * The project to work with.
+     * 
+     * @param project
+     */
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * The target location.
+     * 
+     * @param location
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public GoogleCloudFunctionsOperations getOperation() {
+        return operation;
+    }
+
+    /**
+     * The operation to perform on the producer.
+     */
+    public void setOperation(GoogleCloudFunctionsOperations operation) {
+        this.operation = operation;
+    }
+
+    public CloudFunctionsServiceClient getClient() {
+        return client;
+    }
+
+    /**
+     * The client to use during service invocation.
+     */
+    public void setClient(CloudFunctionsServiceClient client) {
+        this.client = client;
+    }
+
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * Configure the input type. If true the message will be POJO type.
+     * 
+     * @param pojoRequest
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
+    }
+
     public GoogleCloudFunctionsConfiguration copy() {
         try {
             return (GoogleCloudFunctionsConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "GoogleCloudFunctionsConfiguration [functionName=" + functionName + ", serviceAccountKey="
-               + serviceAccountKey + "]";
     }
 
 }

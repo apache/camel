@@ -16,6 +16,14 @@
  */
 package org.apache.camel.component.google.functions;
 
+import java.io.FileInputStream;
+
+import com.google.api.client.util.Strings;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
+import com.google.cloud.functions.v1.CloudFunctionsServiceSettings;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,14 +41,17 @@ import org.slf4j.LoggerFactory;
  * behavior of Producer.
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "google-functions", title = "GoogleCloudFunctions",
-             syntax = "google-functions:name",
-             category = { Category.CLOUD }, producerOnly = true)
+             syntax = "google-functions:name", category = {
+                     Category.CLOUD },
+             producerOnly = true)
 public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudFunctionsEndpoint.class);
 
     @UriParam
     private GoogleCloudFunctionsConfiguration configuration;
+
+    private CloudFunctionsServiceClient cloudFunctionsClient;
 
     public GoogleCloudFunctionsEndpoint(String uri, GoogleCloudFunctionsComponent component,
                                         GoogleCloudFunctionsConfiguration configuration) {
@@ -54,7 +65,8 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Cannot consume from the google-functions endpoint: " + getEndpointUri());
+        throw new UnsupportedOperationException(
+                "Cannot consume from the google-functions endpoint: " + getEndpointUri());
     }
 
     public GoogleCloudFunctionsConfiguration getConfiguration() {
@@ -71,15 +83,37 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (configuration.getClient() != null) {
+            cloudFunctionsClient = configuration.getClient();
+        } else {
 
-        System.out.println("start");
+            if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
+                Credentials myCredentials = ServiceAccountCredentials
+                        .fromStream(new FileInputStream(configuration.getServiceAccountKey()));
+                CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
+                        .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
+                cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
+
+            } else {
+                // TODO remember to implement this
+                throw new RuntimeException("Not yet implmented");
+            }
+
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        if (configuration.getClient() == null) {
+            if (cloudFunctionsClient != null) {
+                cloudFunctionsClient.close();
+            }
+        }
+    }
 
-        System.out.println("stop");
+    public CloudFunctionsServiceClient getClient() {
+        return cloudFunctionsClient;
     }
 
 }

@@ -16,7 +16,18 @@
  */
 package org.apache.camel.component.google.functions;
 
+import java.util.List;
+
+import com.google.api.client.util.Lists;
+import com.google.api.gax.rpc.ApiException;
+import com.google.cloud.functions.v1.CloudFunction;
+import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
+import com.google.cloud.functions.v1.CloudFunctionsServiceClient.ListFunctionsPagedResponse;
+import com.google.cloud.functions.v1.ListFunctionsRequest;
+import com.google.cloud.functions.v1.LocationName;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GoogleCloudFunctionsProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudFunctionsProducer.class);
+
     private GoogleCloudFunctionsEndpoint endpoint;
 
     public GoogleCloudFunctionsProducer(GoogleCloudFunctionsEndpoint endpoint) {
@@ -33,8 +45,73 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());
+    @Override
+    public void process(final Exchange exchange) throws Exception {
+        switch (determineOperation(exchange)) {
+            case listFunctions:
+                listFunctions(endpoint.getClient(), exchange);
+                break;
+            case getFunction:
+                getFunction(endpoint.getClient(), exchange);
+                break;
+            case callFunction:
+                callFunction(endpoint.getClient(), exchange);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
+        }
+    }
+
+    private void listFunctions(CloudFunctionsServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListFunctionsRequest) {
+                ListFunctionsPagedResponse result;
+                try {
+                    result = client.listFunctions((ListFunctionsRequest) payload);
+                } catch (ApiException ae) {
+                    LOG.trace("listFunctions command returned the error code {}", ae.getStatusCode());
+                    throw ae;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            ListFunctionsRequest request = ListFunctionsRequest.newBuilder()
+                    .setParent(LocationName.of(getConfiguration().getProject(), getConfiguration().getLocation()).toString())
+                    .setPageSize(883849137) //TODO check it
+                    .setPageToken("pageToken873572522").build();
+            ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
+            List<CloudFunction> result = Lists.newArrayList(pagedListResponse.iterateAll());
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void getFunction(CloudFunctionsServiceClient client, Exchange exchange) {
+    }
+
+    private void callFunction(CloudFunctionsServiceClient client, Exchange exchange) {
+    }
+
+    private GoogleCloudFunctionsOperations determineOperation(Exchange exchange) {
+        GoogleCloudFunctionsOperations operation = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.OPERATION,
+                GoogleCloudFunctionsOperations.class);
+        if (operation == null) {
+            operation = getConfiguration().getOperation() == null
+                    ? GoogleCloudFunctionsOperations.callFunction
+                    : getConfiguration().getOperation();
+        }
+        return operation;
+    }
+
+    public static Message getMessageForResponse(final Exchange exchange) {
+        return exchange.getMessage();
+    }
+
+    private GoogleCloudFunctionsConfiguration getConfiguration() {
+        return this.endpoint.getConfiguration();
     }
 
 }

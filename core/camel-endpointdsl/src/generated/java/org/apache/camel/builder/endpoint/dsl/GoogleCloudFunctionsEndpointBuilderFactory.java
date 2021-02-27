@@ -37,6 +37,9 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
     public interface GoogleCloudFunctionsEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedGoogleCloudFunctionsEndpointBuilder advanced() {
+            return (AdvancedGoogleCloudFunctionsEndpointBuilder) this;
+        }
         /**
          * Service account key to authenticate an application as a service
          * account.
@@ -102,6 +105,149 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * location.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudFunctionsEndpointBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
+        }
+        /**
+         * The operation to perform on the producer.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudFunctionsEndpointBuilder operation(
+                GoogleCloudFunctionsOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform on the producer.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudFunctionsEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Configure the input type. If true the message will be POJO type.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudFunctionsEndpointBuilder pojoRequest(
+                boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * Configure the input type. If true the message will be POJO type.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudFunctionsEndpointBuilder pojoRequest(
+                String pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * Project.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param project the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudFunctionsEndpointBuilder project(String project) {
+            doSetProperty("project", project);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the GoogleCloudFunctions component.
+     */
+    public interface AdvancedGoogleCloudFunctionsEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default GoogleCloudFunctionsEndpointBuilder basic() {
+            return (GoogleCloudFunctionsEndpointBuilder) this;
+        }
+        /**
+         * The client to use during service invocation.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.google.cloud.functions.v1.CloudFunctionsServiceClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGoogleCloudFunctionsEndpointBuilder client(Object client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * The client to use during service invocation.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.google.cloud.functions.v1.CloudFunctionsServiceClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGoogleCloudFunctionsEndpointBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations</code> enum.
+     */
+    enum GoogleCloudFunctionsOperations {
+        listFunctions,
+        getFunction,
+        callFunction;
     }
 
     public interface GoogleCloudFunctionsBuilders {
@@ -153,7 +299,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
     static GoogleCloudFunctionsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GoogleCloudFunctionsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCloudFunctionsEndpointBuilder {
+        class GoogleCloudFunctionsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCloudFunctionsEndpointBuilder, AdvancedGoogleCloudFunctionsEndpointBuilder {
             public GoogleCloudFunctionsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

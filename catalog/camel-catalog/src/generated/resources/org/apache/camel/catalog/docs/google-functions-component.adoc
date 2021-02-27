@@ -109,7 +109,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (2 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -117,6 +117,11 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *location* (producer) | location |  | String
+| *operation* (producer) | The operation to perform on the producer. There are 3 enums and the value can be one of: listFunctions, getFunction, callFunction |  | GoogleCloudFunctionsOperations
+| *pojoRequest* (producer) | Configure the input type. If true the message will be POJO type. | false | boolean
+| *project* (producer) | Project |  | String
+| *client* (advanced) | *Autowired* The client to use during service invocation. |  | CloudFunctionsServiceClient
 |===
 // endpoint options: END
 
