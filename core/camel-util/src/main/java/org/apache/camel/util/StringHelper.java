@@ -46,8 +46,7 @@ public final class StringHelper {
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
      */
     public static String sanitize(String s) {
-        return s
-                .replace(':', '-')
+        return s.replace(':', '-')
                 .replace('_', '-')
                 .replace('.', '-')
                 .replace('/', '-')
@@ -469,15 +468,19 @@ public final class StringHelper {
             return text;
         }
 
-        StringBuilder sb = new StringBuilder();
-        String[] splittedString = text.split("\\-");
-        for (int i = 0; i < splittedString.length; i++) {
-            String currentToken = splittedString[i];
-            if (i == 0) {
-                sb.append(currentToken);
-            } else if (!currentToken.isEmpty()) {
-                sb.append(Character.toUpperCase(currentToken.charAt(0)));
-                sb.append(currentToken.substring(1));
+        // there is at least 1 dash so the capacity can be shorter
+        StringBuilder sb = new StringBuilder(length - 1);
+        boolean upper = false;
+        for (int i = 0; i < length; i++) {
+            char c = text.charAt(i);
+            if (c == '-') {
+                upper = true;
+            } else {
+                if (upper) {
+                    c = Character.toUpperCase(c);
+                }
+                sb.append(c);
+                upper = false;
             }
         }
         return sb.toString();

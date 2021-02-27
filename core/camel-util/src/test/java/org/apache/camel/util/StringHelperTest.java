@@ -56,45 +56,45 @@ public class StringHelperTest {
         assertEquals("available-phone-number-country", camelCaseToDash("availablePhoneNumberCountry"));
         assertEquals("available-phone-number-country", camelCaseToDash("AvailablePhoneNumberCountry"));
     }
-    
+
     @Nested
     class DashToCamelCase {
-        
+
         @Test
         void testDashToCamelCaseWithNull() throws Exception {
             assertThat(dashToCamelCase(null)).isNull();
         }
-        
+
         @Test
         void testDashToCamelCaseWithEmptyValue() throws Exception {
             assertThat(dashToCamelCase("")).isEmpty();
         }
-        
+
         @Test
         void testDashToCamelCaseWithNoDash() throws Exception {
             assertThat(dashToCamelCase("a")).isEqualTo("a");
         }
-        
+
         @Test
         void testDashToCamelCaseWithOneDash() throws Exception {
             assertThat(dashToCamelCase("a-b")).isEqualTo("aB");
         }
-        
+
         @Test
         void testDashToCamelCaseWithSeveralDashes() throws Exception {
             assertThat(dashToCamelCase("a-bb-cc-dd")).isEqualTo("aBbCcDd");
         }
-        
+
         @Test
         void testDashToCamelCaseWithEndDash() throws Exception {
             assertThat(dashToCamelCase("a-")).isEqualTo("a");
         }
-        
+
         @Test
         void testDashToCamelCaseWithEndDashes() throws Exception {
             assertThat(dashToCamelCase("a----")).isEqualTo("a");
         }
-        
+
         @Test
         void testDashToCamelCaseWithSeceralDashesGrouped() throws Exception {
             assertThat(dashToCamelCase("a--b")).isEqualTo("aB");
