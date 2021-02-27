@@ -10170,11 +10170,8 @@ producers.
   </xs:complexType>
 
   <xs:complexType name="sagaActionUriDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:sendDefinition">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
+    <xs:sequence/>
+    <xs:attribute name="uri" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="sagaDefinition">
