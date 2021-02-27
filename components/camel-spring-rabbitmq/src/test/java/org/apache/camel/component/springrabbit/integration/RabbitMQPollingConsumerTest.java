@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.springrabbit.integration;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -65,31 +63,6 @@ public class RabbitMQPollingConsumerTest extends AbstractRabbitMQIntTest {
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
         Thread.sleep(500);
-
-        template.sendBody("direct:start", "Hello");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testJmsPollingConsumerNoWait() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
-
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        final CountDownLatch latch = new CountDownLatch(1);
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBodyNoWait("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", String.class);
-            assertNull(body, "Should be null");
-
-            template.sendBody("spring-rabbitmq:foo?routingKey=mykey2", "Hello Claus");
-            latch.countDown();
-        });
-
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        latch.await(5, TimeUnit.SECONDS);
-        Thread.sleep(1000);
 
         template.sendBody("direct:start", "Hello");
 
