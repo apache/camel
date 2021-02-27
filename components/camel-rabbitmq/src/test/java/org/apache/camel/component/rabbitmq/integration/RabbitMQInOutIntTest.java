@@ -277,7 +277,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Test
-    public void messageAckOnExceptionWhereNoAutoAckTest() throws Exception {
+    // should run last
+    public void zRunLstMessageAckOnExceptionWhereNoAutoAckTest() throws Exception {
         Map<String, Object> headers = new HashMap<>();
         headers.put(RabbitMQConstants.EXCHANGE_NAME, EXCHANGE_NO_ACK);
         headers.put(RabbitMQConstants.ROUTING_KEY, ROUTING_KEY);
@@ -300,6 +301,12 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
         context.stop(); // On restarting the camel context, if the message was
                        // not acknowledged the message would be reprocessed
+
+        // registry is cleaned on stop so we need to re-register
+        Map<String, Object> args = new HashMap<>();
+        args.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, 60000);
+        context.getRegistry().bind("args", args);
+
         context.start();
 
         resultEndpoint.assertIsSatisfied();
