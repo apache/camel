@@ -342,12 +342,33 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return null;
     }
 
+    private final class SimpleDoneTask implements AsyncCallback {
+
+        private final SimpleTask task;
+
+        private SimpleDoneTask(SimpleTask task) {
+            this.task = task;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            // only continue with callback if we are done
+            if (isDone(task.exchange)) {
+                reactiveExecutor.schedule(task.callback);
+            } else {
+                // error occurred so loop back around and call ourselves
+                reactiveExecutor.schedule(task);
+            }
+        }
+    }
+
     /**
      * Simple task to perform calling the processor with no redelivery support
      */
     protected class SimpleTask implements Runnable {
         private final ExtendedExchange exchange;
         private final AsyncCallback callback;
+        private final SimpleDoneTask doneTask = new SimpleDoneTask(this);
 
         public SimpleTask(Exchange exchange, AsyncCallback callback) {
             this.exchange = (ExtendedExchange) exchange;
@@ -392,15 +413,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 reactiveExecutor.schedule(callback);
             } else {
                 // Simple delivery
-                outputAsync.process(exchange, doneSync -> {
-                    // only continue with callback if we are done
-                    if (isDone(exchange)) {
-                        reactiveExecutor.schedule(callback);
-                    } else {
-                        // error occurred so loop back around and call ourselves
-                        reactiveExecutor.schedule(this);
-                    }
-                });
+                outputAsync.process(exchange, doneTask);
             }
         }
 
