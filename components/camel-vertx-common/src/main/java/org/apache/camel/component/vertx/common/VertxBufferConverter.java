@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.vertx.http;
+package org.apache.camel.component.vertx.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,7 @@ public final class VertxBufferConverter {
 
     @Converter
     public static Buffer toBuffer(String string, Exchange exchange) {
-        String charset = VertxHttpHelper.getCharsetFromExchange(exchange);
+        String charset = getCharsetFromExchange(exchange);
         if (ObjectHelper.isNotEmpty(charset)) {
             Buffer.buffer(string, charset);
         }
@@ -69,7 +69,7 @@ public final class VertxBufferConverter {
 
     @Converter
     public static String toString(Buffer buffer, Exchange exchange) {
-        String charset = VertxHttpHelper.getCharsetFromExchange(exchange);
+        String charset = getCharsetFromExchange(exchange);
         if (ObjectHelper.isNotEmpty(charset)) {
             buffer.toString(charset);
         }
@@ -84,5 +84,23 @@ public final class VertxBufferConverter {
     @Converter
     public static InputStream toInputStream(Buffer buffer) {
         return new ByteArrayInputStream(buffer.getBytes());
+    }
+
+    /**
+     * Retrieves the charset from the exchange Content-Type header, or falls back to the CamelCharsetName exchange
+     * property when not available
+     */
+    private static String getCharsetFromExchange(Exchange exchange) {
+        String charset = null;
+        if (exchange != null) {
+            String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
+            if (contentType != null) {
+                charset = IOHelper.getCharsetNameFromContentType(contentType);
+            }
+            if (ObjectHelper.isEmpty(charset)) {
+                charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            }
+        }
+        return charset;
     }
 }

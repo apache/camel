@@ -257,7 +257,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             if (m.canHaveBody()) {
                 final Buffer body = ctx.getBody();
                 if (body != null) {
-                    result.setBody(body.getBytes());
+                    result.setBody(body);
                 } else {
                     result.setBody(null);
                 }
