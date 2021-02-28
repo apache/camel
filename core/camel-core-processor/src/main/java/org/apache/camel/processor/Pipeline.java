@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
@@ -61,12 +60,11 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
         private final Exchange exchange;
         private final AsyncCallback callback;
-        private final AtomicInteger index;
+        private int index;
 
-        PipelineTask(Exchange exchange, AsyncCallback callback, AtomicInteger index) {
+        PipelineTask(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
-            this.index = index;
         }
 
         @Override
@@ -77,7 +75,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         @Override
         public void run() {
             boolean stop = exchange.isRouteStop();
-            int num = index.get();
+            int num = index;
             boolean more = num < size;
             boolean first = num == 0;
 
@@ -90,7 +88,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                 }
 
                 // get the next processor
-                AsyncProcessor processor = processors.get(index.getAndIncrement());
+                AsyncProcessor processor = processors.get(index++);
 
                 processor.process(exchange, this);
             } else {
@@ -144,7 +142,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // create task which has state used during routing
-        PipelineTask task = new PipelineTask(exchange, callback, new AtomicInteger());
+        PipelineTask task = new PipelineTask(exchange, callback);
 
         if (exchange.isTransacted()) {
             reactiveExecutor.scheduleSync(task);
