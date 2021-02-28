@@ -52,8 +52,8 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
             executors.execute(new Runnable() {
                 public void run() {
                     for (int i = 0; i < 10; i++) {
-                        template.sendBodyAndHeader("direct:start", "Hello " + i, "queue", i);
                         try {
+                            template.sendBodyAndHeader("direct:start", "Hello " + i, "queue", i);
                             Thread.sleep(5);
                         } catch (Exception e) {
                             // ignore
@@ -105,8 +105,8 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
             executors.execute(new Runnable() {
                 public void run() {
                     for (int i = 0; i < 10; i++) {
-                        template.sendBodyAndHeader("direct:" + i, "Hello " + i, "queue", i);
                         try {
+                            template.sendBodyAndHeader("direct:" + i, "Hello " + i, "queue", i);
                             Thread.sleep(5);
                         } catch (Exception e) {
                             // ignore
