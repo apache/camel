@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "vertx-common",
+    "title": "Vertx Common",
+    "description": "Camel Vert.x Common support",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "eventbus,reactive",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-vertx-common",
+    "version": "3.9.0-SNAPSHOT"
+  }
+}
