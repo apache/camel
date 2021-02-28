@@ -212,10 +212,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         TimerConsumer.this.getExceptionHandler().handleException("Error processing exchange", exchange,
                                 exchange.getException());
                     }
-                    // sync wil release outside this callback
-                    if (!cbDoneSync) {
-                        TimerConsumer.this.releaseExchange(exchange, false);
-                    }
+                    TimerConsumer.this.releaseExchange(exchange, false);
                 }
             });
         } else {
