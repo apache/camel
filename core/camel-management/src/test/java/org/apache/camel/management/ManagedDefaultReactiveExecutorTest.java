@@ -19,7 +19,9 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.adapt(ExtendedCamelContext.class).getReactiveExecutor().setStatisticsEnabled(true);
+        return context;
+    }
 
     @Test
     public void testReactiveExecutor() throws Exception {
