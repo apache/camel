@@ -113,6 +113,17 @@ public class VertXReactiveExecutor extends ServiceSupport implements CamelContex
     }
 
     @Override
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        // not in use
+    }
+
+    @Override
+    public boolean isStatisticsEnabled() {
+        // not in use
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "camel-reactive-executor-vertx";
     }
