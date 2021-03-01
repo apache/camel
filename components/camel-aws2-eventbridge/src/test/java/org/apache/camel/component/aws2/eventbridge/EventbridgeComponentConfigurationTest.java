@@ -22,6 +22,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventbridgeComponentConfigurationTest extends CamelTestSupport {
 
@@ -67,6 +68,20 @@ public class EventbridgeComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+
+    @Test
+    public void createEndpointWithOverride() throws Exception {
+        EventbridgeComponent component = context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
+        EventbridgeEndpoint endpoint
+                = (EventbridgeEndpoint) component
+                        .createEndpoint("aws2-eventbridge://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
 
 }
