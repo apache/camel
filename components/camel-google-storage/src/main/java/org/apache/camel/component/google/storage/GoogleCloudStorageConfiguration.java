@@ -31,7 +31,9 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
     @Metadata(required = true)
     private String bucketName;
 
-    @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
+    @UriParam(label = "common",
+              description = "The Service account key that can be used as credentials for the Storage client. It can be loaded by default from "
+                            + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
 
     @UriParam(label = "producer",
