@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EC2ComponentConfigurationTest extends CamelTestSupport {
 
@@ -134,5 +135,18 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+
+    @Test
+    public void createEndpointWithUriOverride() throws Exception {
+        AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
+        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component
+                .createEndpoint("aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
 }
