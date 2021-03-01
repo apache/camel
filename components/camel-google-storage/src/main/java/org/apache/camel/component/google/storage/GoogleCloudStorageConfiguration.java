@@ -87,9 +87,8 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
     }
 
     /**
-     * The Service account key that can be used as credentials for the Storage client.
-     * 
-     * @param serviceAccountKey
+     * The Service account key that can be used as credentials for the Storage client. It can be loaded by default from classpath, but you can prefix with "classpath:",
+     * "file:", or "http:" to load the resource from different systems.
      */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
