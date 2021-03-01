@@ -20,9 +20,10 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(15);
         props.add("proxyProtocol");
         props.add("secretKey");
+        props.add("uriEndpointOverride");
         props.add("eventPatternFile");
         props.add("pojoRequest");
         props.add("proxyHost");
@@ -31,6 +32,7 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
         props.add("lazyStartProducer");
         props.add("eventbusNameOrArn");
         props.add("accessKey");
+        props.add("overrideEndpoint");
         props.add("eventbridgeClient");
         props.add("region");
         props.add("operation");

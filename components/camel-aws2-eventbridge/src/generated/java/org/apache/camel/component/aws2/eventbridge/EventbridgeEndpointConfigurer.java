@@ -30,6 +30,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -43,6 +45,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -64,6 +68,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "pojorequest":
         case "pojoRequest": return boolean.class;
         case "proxyhost":
@@ -77,6 +83,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "secretKey": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         default: return null;
         }
     }
@@ -94,6 +102,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pojorequest":
         case "pojoRequest": return target.getConfiguration().isPojoRequest();
         case "proxyhost":
@@ -107,6 +117,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         default: return null;
         }
     }
