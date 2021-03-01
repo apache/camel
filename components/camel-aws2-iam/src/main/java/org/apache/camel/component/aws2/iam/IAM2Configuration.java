@@ -194,7 +194,6 @@ public class IAM2Configuration implements Cloneable {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
-
     // *************************************************
     //
     // *************************************************
