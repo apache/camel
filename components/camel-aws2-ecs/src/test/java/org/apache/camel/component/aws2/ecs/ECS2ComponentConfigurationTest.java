@@ -73,7 +73,8 @@ public class ECS2ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithEndpointOverride() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
         ECS2Endpoint endpoint
-                = (ECS2Endpoint) component.createEndpoint("aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (ECS2Endpoint) component.createEndpoint(
+                        "aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
