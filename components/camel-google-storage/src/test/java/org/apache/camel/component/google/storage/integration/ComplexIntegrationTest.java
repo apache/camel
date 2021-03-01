@@ -64,12 +64,12 @@ public class ComplexIntegrationTest extends CamelTestSupport {
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, filename);
                             exchange.getIn().setBody(bais);
                         })
-                        .to("google-storage://" + bucket1 + "?serviceAccountKey=" + serviceAccountKeyFile)
+                        .to("google-storage://" + bucket1 + "?serviceAccountKey=file:" + serviceAccountKeyFile)
                         .log("upload file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}")
                         .to("mock:bucket1");
 
                 //poll from bucket1, moving processed into bucket_processed and deleting original
-                from("google-storage://" + bucket1 + "?serviceAccountKey=" + serviceAccountKeyFile
+                from("google-storage://" + bucket1 + "?serviceAccountKey=file:" + serviceAccountKeyFile
                      + "&moveAfterRead=true"
                      + "&destinationBucket=" + bucket3
                      + "&autoCreateBucket=true"
@@ -81,25 +81,25 @@ public class ComplexIntegrationTest extends CamelTestSupport {
 
                 //upload these files to bucket2 
                 from("direct:processed")
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=" + serviceAccountKeyFile)
+                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile)
                         .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}")
                         .process(exchange -> {
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
                         })
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=" + serviceAccountKeyFile
+                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
                             + "&operation=createDownloadLink")
                         .log("URL for ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName} =${body}")
                         .to("mock:bucket2");
 
                 //list all buckets
                 from("timer:timer1?repeatCount=1&fixedRate=true&period=10000")
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=" + serviceAccountKeyFile
+                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
                             + "&operation=listBuckets")
                         .log("list buckets:${body}");
 
                 //list all object of the bucket2 and send result to direct:moreinfo and direct:copy
                 from("timer:timer1?repeatCount=1&fixedRate=true&period=10000")
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=" + serviceAccountKeyFile
+                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
                             + "&operation=listObjects")
                         .log("list " + bucket2 + " objects body:${body}")
                         .split(bodyAs(List.class))
@@ -112,7 +112,7 @@ public class ComplexIntegrationTest extends CamelTestSupport {
                             String fileName = blob.getName();
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
                         })
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=" + serviceAccountKeyFile
+                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
                             + "&operation=getObject")
                         .log("get object bucket:${header.CamelGoogleCloudStorageBucketName} object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
 
@@ -126,7 +126,7 @@ public class ComplexIntegrationTest extends CamelTestSupport {
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, bucket4);
                             exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, copyFileName);
                         })
-                        .to("google-storage://" + bucket2 + "?serviceAccountKey=" + serviceAccountKeyFile
+                        .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile
                             + "&operation=copyObject")
                         .log("${body}");
 
