@@ -356,13 +356,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         @Override
-        public void done(boolean doneSync) {
-            reactiveExecutor.schedule(this);
+        public String toString() {
+            return "SimpleTask";
         }
 
         @Override
-        public String toString() {
-            return "SimpleTask";
+        public void done(boolean doneSync) {
+            // the run method decides what to do when we are done
+            run();
         }
 
         /**
