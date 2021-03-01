@@ -141,7 +141,8 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithUriOverride() throws Exception {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint) component
-                .createEndpoint("aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                .createEndpoint(
+                        "aws2-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
