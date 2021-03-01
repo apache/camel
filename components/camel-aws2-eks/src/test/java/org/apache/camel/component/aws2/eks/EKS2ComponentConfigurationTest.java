@@ -22,6 +22,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EKS2ComponentConfigurationTest extends CamelTestSupport {
 
@@ -75,7 +76,8 @@ public class EKS2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         EKS2Endpoint endpoint
-                = (EKS2Endpoint) component.createEndpoint("aws2-eks://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (EKS2Endpoint) component.createEndpoint(
+                        "aws2-eks://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
