@@ -33,10 +33,10 @@ public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSuppo
 
         GoogleCloudStorageComponent component = context.getComponent("google-storage", GoogleCloudStorageComponent.class);
         GoogleCloudStorageEndpoint endpoint = (GoogleCloudStorageEndpoint) component.createEndpoint(
-                String.format("google-storage://%s?serviceAccountKey=%s", bucketName, serviceAccountKeyFile));
+                String.format("google-storage://%s?serviceAccountKey=file:%s", bucketName, serviceAccountKeyFile));
 
         assertEquals(endpoint.getConfiguration().getBucketName(), bucketName);
-        assertEquals(endpoint.getConfiguration().getServiceAccountKey(), serviceAccountKeyFile);
+        assertEquals(endpoint.getConfiguration().getServiceAccountKey(), "file:" + serviceAccountKeyFile);
     }
 
     public void createEndpointForComplexConsumer() throws Exception {
@@ -52,13 +52,13 @@ public class GoogleCloudStorageComponentConfigurationTest extends CamelTestSuppo
         GoogleCloudStorageComponent component = context.getComponent("google-storage", GoogleCloudStorageComponent.class);
         GoogleCloudStorageEndpoint endpoint = (GoogleCloudStorageEndpoint) component.createEndpoint(
                 String.format(
-                        "google-storage://%s?serviceAccountKey=%s&moveAfterRead=%s&destinationBucket=%s&autoCreateBucket=%s&deleteAfterRead=%s&includeBody=%s",
+                        "google-storage://%s?serviceAccountKey=file:%s&moveAfterRead=%s&destinationBucket=%s&autoCreateBucket=%s&deleteAfterRead=%s&includeBody=%s",
                         bucketName, serviceAccountKeyFile, moveAfterRead, destinationBucket, autoCreateBucket,
                         deleteAfterRead, includeBody));
 
         GoogleCloudStorageConfiguration configuration = endpoint.getConfiguration();
         assertEquals(configuration.getBucketName(), bucketName);
-        assertEquals(configuration.getServiceAccountKey(), serviceAccountKeyFile);
+        assertEquals(configuration.getServiceAccountKey(), "file:" + serviceAccountKeyFile);
         assertEquals(configuration.isMoveAfterRead(), moveAfterRead);
         assertEquals(configuration.getDestinationBucket(), destinationBucket);
         assertEquals(configuration.isAutoCreateBucket(), autoCreateBucket);

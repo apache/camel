@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.google.storage;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import com.google.api.client.util.Strings;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 
@@ -37,7 +35,8 @@ public final class GoogleCloudStorageConnectionFactory {
 
     public static Storage create(CamelContext context, GoogleCloudStorageConfiguration configuration) throws Exception {
         if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-            InputStream resolveMandatoryResourceAsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
+            InputStream resolveMandatoryResourceAsInputStream
+                    = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
             Storage storage = StorageOptions.newBuilder()
                     .setCredentials(
                             ServiceAccountCredentials.fromStream(resolveMandatoryResourceAsInputStream))
