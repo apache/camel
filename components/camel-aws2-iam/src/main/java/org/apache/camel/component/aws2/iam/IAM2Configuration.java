@@ -52,6 +52,10 @@ public class IAM2Configuration implements Cloneable {
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
+    @UriParam(defaultValue = "false")
+    private boolean overrideEndpoint;
+    @UriParam
+    private String uriEndpointOverride;
 
     public IamClient getIamClient() {
         return iamClient;
@@ -166,6 +170,30 @@ public class IAM2Configuration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
+
+    public boolean isOverrideEndpoint() {
+        return overrideEndpoint;
+    }
+
+    /**
+     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * option
+     */
+    public void setOverrideEndpoint(boolean overrideEndpoint) {
+        this.overrideEndpoint = overrideEndpoint;
+    }
+
+    public String getUriEndpointOverride() {
+        return uriEndpointOverride;
+    }
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     */
+    public void setUriEndpointOverride(String uriEndpointOverride) {
+        this.uriEndpointOverride = uriEndpointOverride;
+    }
+
 
     // *************************************************
     //
