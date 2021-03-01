@@ -51,6 +51,10 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean trustAllCertificates;
     @UriParam
     private String eventPatternFile;
+    @UriParam(defaultValue = "false")
+    private boolean overrideEndpoint;
+    @UriParam
+    private String uriEndpointOverride;
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
@@ -183,6 +187,29 @@ public class EventbridgeConfiguration implements Cloneable {
      */
     public void setEventbusName(String eventbusName) {
         this.eventbusName = eventbusName;
+    }
+
+    public boolean isOverrideEndpoint() {
+        return overrideEndpoint;
+    }
+
+    /**
+     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride
+     * option
+     */
+    public void setOverrideEndpoint(boolean overrideEndpoint) {
+        this.overrideEndpoint = overrideEndpoint;
+    }
+
+    public String getUriEndpointOverride() {
+        return uriEndpointOverride;
+    }
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     */
+    public void setUriEndpointOverride(String uriEndpointOverride) {
+        this.uriEndpointOverride = uriEndpointOverride;
     }
     // *************************************************
     //
