@@ -342,37 +342,22 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return null;
     }
 
-    private final class SimpleDoneTask implements AsyncCallback {
+    /**
+     * Simple task to perform calling the processor with no redelivery support
+     */
+    protected class SimpleTask implements Runnable, AsyncCallback {
+        private final ExtendedExchange exchange;
+        private final AsyncCallback callback;
+        private boolean first = true;
 
-        private final SimpleTask task;
-
-        private SimpleDoneTask(SimpleTask task) {
-            this.task = task;
+        SimpleTask(Exchange exchange, AsyncCallback callback) {
+            this.exchange = (ExtendedExchange) exchange;
+            this.callback = callback;
         }
 
         @Override
         public void done(boolean doneSync) {
-            // only continue with callback if we are done
-            if (isDone(task.exchange)) {
-                reactiveExecutor.schedule(task.callback);
-            } else {
-                // error occurred so loop back around and call ourselves
-                reactiveExecutor.schedule(task);
-            }
-        }
-    }
-
-    /**
-     * Simple task to perform calling the processor with no redelivery support
-     */
-    protected class SimpleTask implements Runnable {
-        private final ExtendedExchange exchange;
-        private final AsyncCallback callback;
-        private final SimpleDoneTask doneTask = new SimpleDoneTask(this);
-
-        public SimpleTask(Exchange exchange, AsyncCallback callback) {
-            this.exchange = (ExtendedExchange) exchange;
-            this.callback = callback;
+            reactiveExecutor.schedule(this);
         }
 
         @Override
@@ -402,18 +387,39 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 callback.done(false);
                 return;
             }
+            if (exchange.isInterrupted()) {
+                // mark the exchange to stop continue routing when interrupted
+                // as we do not want to continue routing (for example a task has been cancelled)
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Is exchangeId: {} interrupted? true", exchange.getExchangeId());
+                }
+                exchange.setRouteStop(true);
+                // we should not continue routing so call callback
+                callback.done(false);
+                return;
+            }
 
-            if (exchange.getException() != null) {
+            // only new failure if the exchange has exception
+            // and it has not been handled by the failure processor before
+            // or not exhausted
+            boolean failure = exchange.getException() != null
+                    && !ExchangeHelper.isFailureHandled(exchange)
+                    && !exchange.isRedeliveryExhausted();
+
+            if (failure) {
                 // previous processing cause an exception
                 handleException();
                 onExceptionOccurred();
                 prepareExchangeAfterFailure(exchange);
-
                 // we do not support redelivery so continue callback
                 reactiveExecutor.schedule(callback);
+            } else if (first) {
+                // first time call the target processor
+                first = false;
+                outputAsync.process(exchange, this);
             } else {
-                // Simple delivery
-                outputAsync.process(exchange, doneTask);
+                // we are done so continue callback
+                reactiveExecutor.schedule(callback);
             }
         }
 
@@ -798,7 +804,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // and it has not been handled by the error processor
                 if (isDone(exchange)) {
                     reactiveExecutor.schedule(callback);
-                    return;
                 } else {
                     // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
                     reactiveExecutor.schedule(this);

@@ -17,11 +17,9 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,13 +59,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo")
                         .pollEnrich("file:target/data/pollenrich?move=done", 5000).convertBodyTo(String.class)
-                        .log("Polled filed ${file:name}").to("mock:result").process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // force stop route after use to prevent firing
-                                // timer again
-                                exchange.getContext().getRouteController().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
-                            }
-                        });
+                        .log("Polled filed ${file:name}").to("mock:result");
             }
         };
     }
