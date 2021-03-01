@@ -75,7 +75,8 @@ public class EventbridgeComponentConfigurationTest extends CamelTestSupport {
         EventbridgeComponent component = context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
         EventbridgeEndpoint endpoint
                 = (EventbridgeEndpoint) component
-                        .createEndpoint("aws2-eventbridge://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                        .createEndpoint(
+                                "aws2-eventbridge://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
