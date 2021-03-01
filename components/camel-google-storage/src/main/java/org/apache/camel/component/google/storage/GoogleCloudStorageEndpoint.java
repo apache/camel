@@ -72,7 +72,7 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
 
         this.storageClient = configuration.getStorageClient();
         if (this.storageClient == null) {
-            this.storageClient = GoogleCloudStorageConnectionFactory.create(configuration);
+            this.storageClient = GoogleCloudStorageConnectionFactory.create(this.getCamelContext(), configuration);
         }
 
         if (configuration.isAutoCreateBucket()) {
