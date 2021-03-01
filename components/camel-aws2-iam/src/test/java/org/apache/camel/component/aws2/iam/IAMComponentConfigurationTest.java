@@ -73,7 +73,8 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithOverrideEndpoint() throws Exception {
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
         IAM2Endpoint endpoint
-                = (IAM2Endpoint) component.createEndpoint("aws2-iam://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (IAM2Endpoint) component.createEndpoint(
+                        "aws2-iam://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
