@@ -121,6 +121,23 @@ public interface Aws2MskComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2MskComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * If we want to use a POJO request as body or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -215,6 +232,22 @@ public interface Aws2MskComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2MskComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -291,12 +324,14 @@ public interface Aws2MskComponentBuilderFactory {
             case "lazyStartProducer": ((MSK2Component) component).setLazyStartProducer((boolean) value); return true;
             case "mskClient": getOrCreateConfiguration((MSK2Component) component).setMskClient((software.amazon.awssdk.services.kafka.KafkaClient) value); return true;
             case "operation": getOrCreateConfiguration((MSK2Component) component).setOperation((org.apache.camel.component.aws2.msk.MSK2Operations) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((MSK2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((MSK2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((MSK2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((MSK2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((MSK2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((MSK2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((MSK2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((MSK2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "autowiredEnabled": ((MSK2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MSK2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((MSK2Component) component).setSecretKey((java.lang.String) value); return true;
