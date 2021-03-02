@@ -40,7 +40,7 @@ public final class VertxBufferConverter {
     public static Buffer toBuffer(String string, Exchange exchange) {
         String charset = VertxHttpHelper.getCharsetFromExchange(exchange);
         if (ObjectHelper.isNotEmpty(charset)) {
-            Buffer.buffer(string, charset);
+            return Buffer.buffer(string, charset);
         }
         return Buffer.buffer(string);
     }
@@ -70,7 +70,7 @@ public final class VertxBufferConverter {
     public static String toString(Buffer buffer, Exchange exchange) {
         String charset = VertxHttpHelper.getCharsetFromExchange(exchange);
         if (ObjectHelper.isNotEmpty(charset)) {
-            buffer.toString(charset);
+            return buffer.toString(charset);
         }
         return buffer.toString();
     }
