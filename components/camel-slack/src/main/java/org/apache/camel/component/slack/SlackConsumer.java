@@ -37,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
+    private static final int CONVERSATIONS_LIST_LIMIT = 200;
     private final SlackEndpoint slackEndpoint;
     private Slack slack;
     private String timestamp;
@@ -49,7 +50,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        this.slack = Slack.getInstance();
+        this.slack = Slack.getInstance(new CustomSlackHttpClient());
         this.channelId = getChannelId(slackEndpoint.getChannel(), null);
         super.doStart();
     }
@@ -136,7 +137,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             ConversationsListResponse response = slack.methods(slackEndpoint.getToken()).conversationsList(req -> req
                     .types(Collections.singletonList(slackEndpoint.getConversationType()))
                     .cursor(cursor)
-                    .limit(200));
+                    .limit(CONVERSATIONS_LIST_LIMIT));
 
             if (!response.isOk()) {
                 throw new RuntimeCamelException("API request conversations.list to Slack failed: " + response);
@@ -146,7 +147,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
                     .filter(it -> it.getName().equals(channel))
                     .map(Conversation::getId)
                     .findFirst().orElseGet(() -> {
-                        if (isNullOrEmpty(response.getResponseMetadata().getNextCursor())) {
+                        if (ObjectHelper.isNotEmpty(response.getResponseMetadata().getNextCursor())) {
                             throw new RuntimeCamelException(String.format("Channel %s not found", channel));
                         }
                         return getChannelId(channel, response.getResponseMetadata().getNextCursor());
@@ -154,10 +155,6 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         } catch (IOException | SlackApiException e) {
             throw new RuntimeCamelException("API request conversations.list to Slack failed", e);
         }
-    }
-
-    private static boolean isNullOrEmpty(String str) {
-        return str == null || str.isEmpty();
     }
 
     private Exchange createExchange(Message object) {
