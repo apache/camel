@@ -25,6 +25,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LambdaComponentConfigurationTest extends CamelTestSupport {
 
@@ -131,7 +132,8 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithOverride() throws Exception {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         Lambda2Endpoint endpoint = (Lambda2Endpoint) component
-                .createEndpoint("aws2-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                .createEndpoint(
+                        "aws2-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
