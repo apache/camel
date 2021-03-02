@@ -15,7 +15,7 @@
     "version": "3.9.0-SNAPSHOT",
     "scheme": "netty-http",
     "extendsScheme": "netty",
-    "syntax": "netty-http:protocol:host:port\/path",
+    "syntax": "netty-http:protocol:\/\/host:port\/path",
     "async": true,
     "api": false,
     "consumerOnly": false,

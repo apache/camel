@@ -197,7 +197,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 The Netty HTTP endpoint is configured using URI syntax:
 
 ----
-netty-http:protocol:host:port/path
+netty-http:protocol://host:port/path
 ----
 
 with the following path and query parameters:
