@@ -19,40 +19,22 @@ package org.apache.camel.component.netty;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.apache.camel.test.junit5.EndpointUriFactoryTestSupport;
 
-public class NettyEndpointUriFactoryTest extends CamelTestSupport {
+public class NettyEndpointUriFactoryTest extends EndpointUriFactoryTestSupport {
 
-    @Test
-    void buildUri() {
-        // let's just see if the route starts successfully
-    }
-
-    private String scheme() {
+    @Override
+    protected String scheme() {
         return "netty";
     }
 
-    private Map<String, Object> pathParameters() {
+    @Override
+    protected Map<String, Object> pathParameters() {
         Map<String, Object> params = new HashMap<>();
         params.put("protocol", "tcp");
         params.put("host", "localhost");
         params.put("port", AvailablePortFinder.getNextAvailable());
         return params;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                EndpointUriFactory factory = getContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(scheme());
-                String uri = factory.buildUri(scheme(), pathParameters(), false);
-                from(uri).to("mock:out");
-            }
-        };
     }
 }
