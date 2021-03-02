@@ -2967,7 +2967,7 @@ public class StaticEndpointBuilders {
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
      * 
-     * Syntax: <code>couchbase:protocol:hostname:port</code>
+     * Syntax: <code>couchbase:protocol://hostname:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use
@@ -2979,7 +2979,7 @@ public class StaticEndpointBuilders {
      * The port number to use
      * Default value: 8091
      * 
-     * @param path protocol:hostname:port
+     * @param path protocol://hostname:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
@@ -2995,7 +2995,7 @@ public class StaticEndpointBuilders {
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
      * 
-     * Syntax: <code>couchbase:protocol:hostname:port</code>
+     * Syntax: <code>couchbase:protocol://hostname:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use
@@ -3009,7 +3009,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path protocol:hostname:port
+     * @param path protocol://hostname:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
