@@ -19,6 +19,7 @@ package org.apache.camel.service.lra;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -27,11 +28,13 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CANCEL;
 import static org.apache.camel.service.lra.LRAConstants.COORDINATOR_PATH_CLOSE;
@@ -70,12 +73,25 @@ public class LRAClient implements Closeable {
                 .post(Entity.text(""), callbackToCompletableFuture(future));
 
         return future.thenApply(res -> {
-            URL lraURL = toURL(res.getHeaders().getFirst(Exchange.SAGA_LONG_RUNNING_ACTION));
-            if (lraURL == null) {
-                throw new IllegalStateException("Cannot obtain LRA id from LRA coordinator");
+            // See if there's a location header containing the LRA URL
+            String location = res.getHeaderString(HttpHeaders.LOCATION);
+            if (ObjectHelper.isNotEmpty(location)) {
+                return toURL(location);
             }
 
-            return lraURL;
+            // If there's no location header try the Long-Running-Action header, assuming there's only one present in the response
+            List<Object> lraHeaders = res.getHeaders().get(Exchange.SAGA_LONG_RUNNING_ACTION);
+            if (ObjectHelper.isNotEmpty(lraHeaders) && lraHeaders.size() == 1) {
+                return toURL(lraHeaders.get(0));
+            }
+
+            // Fallback to reading the URL from the response body
+            String responseBody = res.readEntity(String.class);
+            if (ObjectHelper.isNotEmpty(responseBody)) {
+                return toURL(responseBody);
+            }
+
+            throw new IllegalStateException("Cannot obtain LRA id from LRA coordinator");
         });
     }
 
