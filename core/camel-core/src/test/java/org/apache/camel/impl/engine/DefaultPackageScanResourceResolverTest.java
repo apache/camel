@@ -16,56 +16,33 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultPackageScanResourceResolverTest {
-    private static Set<String> loadRouteIDs(String path) throws Exception {
-        DefaultCamelContext ctx = new DefaultCamelContext(false);
-        for (RoutesBuilder builder : loadRouteDefinitions(ctx, path)) {
-            ctx.addRoutes(builder);
-        }
-        return ctx.getRouteDefinitions().stream().map(RouteDefinition::getId).collect(Collectors.toSet());
-    }
-
-    private static List<RoutesBuilder> loadRouteDefinitions(CamelContext context, String path) {
-        List<RoutesBuilder> answer = new ArrayList<>();
-
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        try {
-            for (Resource resource : ecc.getPackageScanResourceResolver().findResources(path)) {
-                answer.addAll(
-                        ecc.getRoutesLoader().findRoutesBuilders(resource));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return answer;
-    }
-
     @Test
     public void testFileResourcesScan() throws Exception {
+        final DefaultCamelContext ctx = new DefaultCamelContext();
+        final PackageScanResourceResolver resolver = ctx.getPackageScanResourceResolver();
 
-        assertThat(loadRouteIDs("file:src/test/resources/org/apache/camel/impl/engine/**/*.xml"))
-                .containsOnly("dummy-a", "scan-a", "dummy-b", "scan-b");
-        assertThat(loadRouteIDs("file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml"))
-                .containsOnly("dummy-a", "scan-a");
-        assertThat(loadRouteIDs("file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml"))
-                .containsOnly("dummy-b", "scan-b");
-        assertThat(loadRouteIDs("file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml"))
+        assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/**/*.xml"))
+                .hasSize(4)
+                .anyMatch(r -> r.getLocation().contains("ar/camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("ar/camel-dummy.xml"))
+                .anyMatch(r -> r.getLocation().contains("br/camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("br/camel-dummy.xml"));
+        assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml"))
+                .hasSize(2)
+                .anyMatch(r -> r.getLocation().contains("ar/camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("ar/camel-dummy.xml"));
+        assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml"))
+                .hasSize(2)
+                .anyMatch(r -> r.getLocation().contains("br/camel-scan.xml"))
+                .anyMatch(r -> r.getLocation().contains("br/camel-dummy.xml"));
+        assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml"))
                 .isEmpty();
     }
 }
