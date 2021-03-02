@@ -5316,7 +5316,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty-http
          * 
-         * Syntax: <code>netty-http:protocol:host:port/path</code>
+         * Syntax: <code>netty-http:protocol://host:port/path</code>
          * 
          * Path parameter: protocol (required)
          * The protocol to use which is either http, https or proxy - a consumer
@@ -5333,7 +5333,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Path parameter: path
          * Resource path
          * 
-         * @param path protocol:host:port/path
+         * @param path protocol://host:port/path
          * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(String path) {
@@ -5347,7 +5347,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty-http
          * 
-         * Syntax: <code>netty-http:protocol:host:port/path</code>
+         * Syntax: <code>netty-http:protocol://host:port/path</code>
          * 
          * Path parameter: protocol (required)
          * The protocol to use which is either http, https or proxy - a consumer
@@ -5366,7 +5366,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path protocol:host:port/path
+         * @param path protocol://host:port/path
          * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(

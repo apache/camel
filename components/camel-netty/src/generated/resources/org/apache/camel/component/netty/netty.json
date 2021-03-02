@@ -14,7 +14,7 @@
     "version": "3.9.0-SNAPSHOT",
     "scheme": "netty",
     "extendsScheme": "",
-    "syntax": "netty:protocol:host:port",
+    "syntax": "netty:protocol:\/\/host:port",
     "async": true,
     "api": false,
     "consumerOnly": false,
