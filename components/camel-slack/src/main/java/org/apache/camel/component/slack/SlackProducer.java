@@ -16,32 +16,26 @@
  */
 package org.apache.camel.component.slack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.slack.api.Slack;
+import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.Message;
+import com.slack.api.webhook.WebhookResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
 public class SlackProducer extends DefaultAsyncProducer {
 
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     private final SlackEndpoint slackEndpoint;
-    private CloseableHttpClient client;
+    private Slack slack;
 
     public SlackProducer(SlackEndpoint endpoint) {
         super(endpoint);
@@ -50,66 +44,100 @@ public class SlackProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        this.client = HttpClientBuilder.create().useSystemProperties().build();
+        this.slack = Slack.getInstance(new CustomSlackHttpClient());
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-
-        if (client != null) {
-            client.close();
-            client = null;
+        if (slack != null) {
+            slack.close();
         }
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (slackEndpoint.getToken() != null) {
+            return sendMessageByToken(exchange, callback);
+        } else {
+            return sendMessageByWebhookURL(exchange, callback);
+        }
+    }
 
-        // Create Post object
-        HttpPost httpPost = new HttpPost(slackEndpoint.getWebhookUrl());
+    private boolean sendMessageByToken(Exchange exchange, AsyncCallback callback) {
+        ChatPostMessageResponse response;
+        Object payload = exchange.getIn().getBody();
 
-        // Build Helper object
+        try {
+            if (payload instanceof SlackMessage) {
+                response = sendLegacySlackMessage((SlackMessage) payload);
+            } else if (payload instanceof Message) {
+                response = sendMessage((Message) payload);
+            } else {
+                SlackMessage slackMessage = new SlackMessage();
+                slackMessage.setText(exchange.getIn().getBody(String.class));
+                response = sendLegacySlackMessage(slackMessage);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+            return true;
+        } finally {
+            callback.done(true);
+        }
+
+        if (!response.isOk()) {
+            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+        }
+
+        return false;
+    }
+
+    private ChatPostMessageResponse sendLegacySlackMessage(SlackMessage slackMessage) throws IOException, SlackApiException {
+        return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req
+                .channel(slackEndpoint.getChannel())
+                .username(slackEndpoint.getUsername())
+                .iconUrl(slackEndpoint.getIconUrl())
+                .iconEmoji(slackEndpoint.getIconEmoji())
+                .text(slackMessage.getText()));
+    }
+
+    private ChatPostMessageResponse sendMessage(Message message) throws IOException, SlackApiException {
+        return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req
+                .channel(slackEndpoint.getChannel())
+                .username(slackEndpoint.getUsername())
+                .iconUrl(slackEndpoint.getIconUrl())
+                .iconEmoji(slackEndpoint.getIconEmoji())
+                .text(message.getText())
+                .blocks(message.getBlocks())
+                .attachments(message.getAttachments()));
+    }
+
+    private boolean sendMessageByWebhookURL(Exchange exchange, AsyncCallback callback) {
         String json;
         Object payload = exchange.getIn().getBody();
         if (payload instanceof SlackMessage) {
-            json = asJson(addEndPointOptions((SlackMessage) payload));
+            json = GSON.toJson(addEndPointOptions((SlackMessage) payload));
         } else if (payload instanceof Message) {
-            json = gson.toJson(addEndPointOptions((Message) payload));
+            json = GSON.toJson(addEndPointOptions((Message) payload));
         } else {
             SlackMessage slackMessage = new SlackMessage();
             slackMessage.setText(exchange.getIn().getBody(String.class));
-            json = asJson(addEndPointOptions(slackMessage));
+            json = GSON.toJson(addEndPointOptions(slackMessage));
         }
 
-        // use charset from exchange or fallback to the default charset
-        String charset = ExchangeHelper.getCharsetName(exchange, true);
-
-        // Set the post body
-        StringEntity body = new StringEntity(json, charset);
-
-        // Do the post
-        httpPost.setEntity(body);
-
+        WebhookResponse response;
         try {
-            client.execute(httpPost, response -> {
-                try {
-                    // 2xx is OK, anything else we regard as failure
-                    if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                        exchange.setException(
-                                new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
-                    }
-                    EntityUtils.consumeQuietly(response.getEntity());
-                } finally {
-                    callback.done(false);
-                }
-                return null;
-            });
-        } catch (Exception e) {
+            response = slack.send(slackEndpoint.getWebhookUrl(), json);
+        } catch (IOException e) {
             exchange.setException(e);
-            callback.done(true);
             return true;
+        } finally {
+            callback.done(true);
+        }
+
+        if (response.getCode() < 200 || response.getCode() > 299) {
+            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
         }
 
         return false;
@@ -127,68 +155,5 @@ public class SlackProducer extends DefaultAsyncProducer {
         slackMessage.setIconUrl(slackEndpoint.getIconUrl());
         slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
         return slackMessage;
-    }
-
-    /**
-     * Returns a JSON string to be posted to the Slack API
-     *
-     * @return JSON string
-     */
-    public String asJson(SlackMessage message) {
-        Map<String, Object> jsonMap = new HashMap<>();
-
-        // Put the values in a map
-        jsonMap.put(SlackConstants.SLACK_TEXT_FIELD, message.getText());
-        jsonMap.put(SlackConstants.SLACK_CHANNEL_FIELD, message.getChannel());
-        jsonMap.put(SlackConstants.SLACK_USERNAME_FIELD, message.getUsername());
-        jsonMap.put(SlackConstants.SLACK_ICON_URL_FIELD, message.getIconUrl());
-        jsonMap.put(SlackConstants.SLACK_ICON_EMOJI_FIELD, message.getIconEmoji());
-
-        List<SlackMessage.Attachment> attachments = message.getAttachments();
-        if (attachments != null && !attachments.isEmpty()) {
-            buildAttachmentJson(jsonMap, attachments);
-        }
-
-        // Return the string based on the JSON Object
-        return new JsonObject(jsonMap).toJson();
-    }
-
-    private void buildAttachmentJson(Map<String, Object> jsonMap, List<SlackMessage.Attachment> attachments) {
-        List<Map<String, Object>> attachmentsJson = new ArrayList<>(attachments.size());
-        attachments.forEach(attachment -> {
-            Map<String, Object> attachmentJson = new HashMap<>();
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_FALLBACK_FIELD, attachment.getFallback());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_COLOR_FIELD, attachment.getColor());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_PRETEXT_FIELD, attachment.getPretext());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_AUTHOR_NAME_FIELD, attachment.getAuthorName());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_AUTHOR_LINK_FIELD, attachment.getAuthorLink());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_AUTHOR_ICON_FIELD, attachment.getAuthorIcon());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_TITLE_FIELD, attachment.getTitle());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_TITLE_LINK_FIELD, attachment.getTitleLink());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_TEXT_FIELD, attachment.getText());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_IMAGE_URL_FIELD, attachment.getImageUrl());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_FOOTER_FIELD, attachment.getFooter());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_FOOTER_ICON_FIELD, attachment.getFooterIcon());
-            attachmentJson.put(SlackConstants.SLACK_ATTACHMENT_TS_FIELD, attachment.getTs());
-
-            List<SlackMessage.Attachment.Field> fields = attachment.getFields();
-            if (fields != null && !fields.isEmpty()) {
-                buildAttachmentFieldJson(attachmentJson, fields);
-            }
-            attachmentsJson.add(attachmentJson);
-        });
-        jsonMap.put(SlackConstants.SLACK_ATTACHMENTS_FIELD, attachmentsJson);
-    }
-
-    private void buildAttachmentFieldJson(Map<String, Object> attachmentJson, List<SlackMessage.Attachment.Field> fields) {
-        List<Map<String, Object>> fieldsJson = new ArrayList<>(fields.size());
-        fields.forEach(field -> {
-            Map<String, Object> fieldJson = new HashMap<>();
-            fieldJson.put("title", field.getTitle());
-            fieldJson.put("value", field.getValue());
-            fieldJson.put("short", field.isShortValue());
-            fieldsJson.add(fieldJson);
-        });
-        attachmentJson.put("fields", fieldsJson);
     }
 }

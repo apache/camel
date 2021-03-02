@@ -48,7 +48,7 @@
 
         <dependency>
             <groupId>com.slack.api</groupId>
-            <artifactId>slack-api-model</artifactId>
+            <artifactId>slack-api-client</artifactId>
             <version>${slack-api-model-version}</version>
             <exclusions>
                 <exclusion>

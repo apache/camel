@@ -29,6 +29,8 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "conversationtype":
+        case "conversationType": target.setConversationType(property(camelContext, com.slack.api.model.ConversationType.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -45,6 +47,8 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
         case "maxResults": target.setMaxResults(property(camelContext, java.lang.String.class, value)); return true;
+        case "naturalorder":
+        case "naturalOrder": target.setNaturalOrder(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
@@ -85,6 +89,8 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "conversationtype":
+        case "conversationType": return com.slack.api.model.ConversationType.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -101,6 +107,8 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "maxresults":
         case "maxResults": return java.lang.String.class;
+        case "naturalorder":
+        case "naturalOrder": return boolean.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "repeatcount":
@@ -142,6 +150,8 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "conversationtype":
+        case "conversationType": return target.getConversationType();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -158,6 +168,8 @@ public class SlackEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresults":
         case "maxResults": return target.getMaxResults();
+        case "naturalorder":
+        case "naturalOrder": return target.isNaturalOrder();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":

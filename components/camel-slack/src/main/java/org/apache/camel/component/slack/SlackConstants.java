@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.slack;
 
+@Deprecated
 public final class SlackConstants {
 
     public static final String SLACK_USERNAME_FIELD = "username";

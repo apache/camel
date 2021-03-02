@@ -77,10 +77,10 @@ public class SlackProducerTest extends CamelTestSupport {
 
                 onException(Exception.class).handled(true).to(errors);
 
-                final String slacUser = System.getProperty("SLACK_USER", "CamelTest");
+                final String slackUser = System.getProperty("SLACK_USER", "CamelTest");
                 from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook").setBody(constant("{\"ok\": true}"));
 
-                from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slacUser));
+                from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slackUser));
             }
         };
     }
