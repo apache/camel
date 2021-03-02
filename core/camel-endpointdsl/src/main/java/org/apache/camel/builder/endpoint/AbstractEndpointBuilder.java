@@ -51,6 +51,9 @@ public class AbstractEndpointBuilder {
             return resolvedEndpoint;
         }
 
+        // properties may contain property placeholder which should be resolved
+        resolvePropertyPlaceholders(context, properties);
+
         Map<String, Object> remaining = new LinkedHashMap<>();
         // we should not bind complex objects to registry as we create the endpoint via the properties as-is
         NormalizedEndpointUri uri = computeUri(remaining, context, false, true);
@@ -62,6 +65,19 @@ public class AbstractEndpointBuilder {
 
         resolvedEndpoint = endpoint;
         return endpoint;
+    }
+
+    private static void resolvePropertyPlaceholders(CamelContext context, Map<String, Object> properties) {
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                String text = (String) value;
+                String changed = context.resolvePropertyPlaceholders(text);
+                if (!changed.equals(text)) {
+                    entry.setValue(changed);
+                }
+            }
+        }
     }
 
     public <T extends Endpoint> T resolve(CamelContext context, Class<T> endpointType) throws NoSuchEndpointException {
@@ -122,11 +138,7 @@ public class AbstractEndpointBuilder {
             String key = entry.getKey();
             Object val = entry.getValue();
             if (val instanceof String) {
-                String text = val.toString();
-                if (camelContext != null) {
-                    text = camelContext.resolvePropertyPlaceholders(text);
-                }
-                params.put(key, text);
+                params.put(key, val);
             } else if (val instanceof Number || val instanceof Boolean || val instanceof Enum<?>) {
                 params.put(key, val.toString());
             } else if (camelContext != null && bindToRegistry) {
