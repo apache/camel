@@ -16,13 +16,13 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.util.Properties;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.junit.jupiter.api.Test;
-
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,7 +48,7 @@ public class HttpsBasicAuthTest extends ContextTestSupport {
             public void configure() throws Exception {
                 HttpEndpointBuilderFactory.HttpEndpointBuilder builder
                         = https("inline").authenticationPreemptive(true).authMethod("Basic")
-                        .authUsername("{{prop.username}}").authPassword("{{prop.password}}");
+                                .authUsername("{{prop.username}}").authPassword("{{prop.password}}");
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
