@@ -19,6 +19,7 @@ package org.apache.camel.component.microprofile.metrics.event.notifier.exchange;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.util.URISupport;
 import org.eclipse.microprofile.metrics.Tag;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
@@ -36,7 +37,7 @@ public interface MicroProfileMetricsExchangeEventNotifierNamingStrategy {
     default Tag[] getTags(ExchangeEvent event, Endpoint endpoint) {
         return new Tag[] {
                 new Tag(CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName()),
-                new Tag(ENDPOINT_NAME, endpoint.getEndpointUri()),
+                new Tag(ENDPOINT_NAME, URISupport.sanitizeUri(endpoint.getEndpointUri())),
                 new Tag(EVENT_TYPE_TAG, event.getClass().getSimpleName())
         };
     }
