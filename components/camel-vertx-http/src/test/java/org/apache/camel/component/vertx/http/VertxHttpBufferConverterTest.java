@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.http;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import io.netty.buffer.Unpooled;
 import io.vertx.core.buffer.Buffer;
@@ -38,11 +39,11 @@ public class VertxHttpBufferConverterTest extends CamelTestSupport {
 
     @Test
     public void testStringToBufferWithEncoding() {
+        String encodedString = "Ťava dvojhrbá";
         Exchange exchange = ExchangeBuilder.anExchange(context)
-                .withHeader(Exchange.CONTENT_TYPE, "text/html; charset=iso-8859-4").build();
-        context.getTypeConverter().convertTo(Buffer.class, exchange, BODY);
-        Buffer buffer = context.getTypeConverter().convertTo(Buffer.class, BODY);
-        Assertions.assertEquals(BODY, buffer.toString());
+                .withHeader(Exchange.CONTENT_TYPE, "text/html; charset=iso-8859-2").build();
+        Buffer buffer = context.getTypeConverter().convertTo(Buffer.class, exchange, encodedString);
+        Assertions.assertArrayEquals(encodedString.getBytes(Charset.forName("iso-8859-2")), buffer.getBytes());
     }
 
     @Test
@@ -72,10 +73,12 @@ public class VertxHttpBufferConverterTest extends CamelTestSupport {
 
     @Test
     public void testBufferToStringWithEncoding() {
+        String encodedString = "Ťava dvojhrbá";
         Exchange exchange = ExchangeBuilder.anExchange(context)
-                .withHeader(Exchange.CONTENT_TYPE, "text/html; charset=iso-8859-4").build();
-        String result = context.getTypeConverter().convertTo(String.class, exchange, Buffer.buffer(BODY));
-        Assertions.assertEquals(BODY, result);
+                .withHeader(Exchange.CONTENT_TYPE, "text/plain; charset=iso-8859-2").build();
+        String result = context.getTypeConverter()
+                .convertTo(String.class, exchange, Buffer.buffer(encodedString, "iso-8859-2"));
+        Assertions.assertEquals(encodedString, result);
     }
 
     @Test
