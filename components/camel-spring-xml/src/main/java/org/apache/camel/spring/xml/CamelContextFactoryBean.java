@@ -409,7 +409,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
-
         // when the routes are setup we need to start the Camel context
         context.start();
     }
@@ -458,6 +457,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         // being started/refreshed, there could be a race condition with
         // other ApplicationListeners that react to
         // ContextRefreshedEvent but this is the best that we can do
+        if (event.getSource() instanceof ApplicationContext) {
+            ApplicationContext appCtx = (ApplicationContext) event.getSource();
+            if (appCtx.getId().equals("application:management")) {
+                //don't start camel context if
+                //event is from the self management ApplicationContext
+                return;
+            }
+        }
         start();
     }
 
