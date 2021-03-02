@@ -31,7 +31,7 @@
     <artifactId>camel-xml-jaxb-dsl</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: XML DSL with camel-xml-jaxb</name>
-    <description>Camel XML DSL with acmel-xml-jaxb</description>
+    <description>Camel XML DSL with camel-xml-jaxb</description>
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
