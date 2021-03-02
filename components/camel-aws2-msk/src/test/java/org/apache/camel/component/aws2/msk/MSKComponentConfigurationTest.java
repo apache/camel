@@ -76,7 +76,8 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         MSK2Endpoint endpoint
-                = (MSK2Endpoint) component.createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (MSK2Endpoint) component.createEndpoint(
+                        "aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
