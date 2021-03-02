@@ -181,8 +181,14 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         loadCookies(exchange, client, cookieHandler);
 
         // invoke the client
-        client.async().method(httpMethod, entity,
-                new CxfInvocationCallback(client, exchange, cxfRsEndpoint, responseClass, callback, genericType));
+        if (responseClass == null || Response.class.equals(responseClass)) {
+            client.async().method(httpMethod, entity,
+                    new CxfInvocationCallback(client, exchange, cxfRsEndpoint, null, callback, null));
+        } else {
+            client.async().method(httpMethod, entity,
+                    new CxfInvocationCallback(client, exchange, cxfRsEndpoint, responseClass, callback, genericType));
+        }
+
     }
 
     protected void invokeAsyncProxyClient(Exchange exchange, final AsyncCallback callback) throws Exception {
