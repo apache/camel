@@ -22,6 +22,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MSKComponentConfigurationTest extends CamelTestSupport {
 
@@ -66,5 +67,21 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+
+    @Test
+    public void createEndpointWithOverride() throws Exception {
+        MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
+        MSK2Endpoint endpoint
+                = (MSK2Endpoint) component.createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
     }
 }
