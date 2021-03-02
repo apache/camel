@@ -22,6 +22,8 @@ import org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.junit.jupiter.api.Test;
 
+import java.util.Properties;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -34,6 +36,11 @@ public class HttpsBasicAuthTest extends ContextTestSupport {
 
     @Test
     public void testHttps() throws Exception {
+        Properties props = new Properties();
+        props.put("prop.username", "scott");
+        props.put("prop.password", "tiger");
+        context.getPropertiesComponent().setInitialProperties(props);
+
         context.start();
 
         context.addRoutes(new EndpointRouteBuilder() {
@@ -41,13 +48,13 @@ public class HttpsBasicAuthTest extends ContextTestSupport {
             public void configure() throws Exception {
                 HttpEndpointBuilderFactory.HttpEndpointBuilder builder
                         = https("inline").authenticationPreemptive(true).authMethod("Basic")
-                        .authUsername("prop.username").authPassword("prop.password");
+                        .authUsername("{{prop.username}}").authPassword("{{prop.password}}");
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 HttpEndpoint he = assertIsInstanceOf(HttpEndpoint.class, endpoint);
-                assertEquals("prop.username", he.getAuthUsername());
-                assertEquals("prop.password", he.getAuthPassword());
+                assertEquals("scott", he.getAuthUsername());
+                assertEquals("tiger", he.getAuthPassword());
             }
         });
 
