@@ -126,4 +126,18 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
+
+    @Test
+    public void createEndpointWithOverride() throws Exception {
+        Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
+        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
+                .createEndpoint("aws2-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("myFunction", endpoint.getFunction());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
+    }
 }
