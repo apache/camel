@@ -32,11 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link ExchangeFactory} that creates a new {@link Exchange} instance.
+ * {@link ExchangeFactory} that creates a new {@link Exchange} instance.
  */
-public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFactory {
+public class PrototypeExchangeFactory extends ServiceSupport implements ExchangeFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultExchangeFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PrototypeExchangeFactory.class);
 
     final UtilizationStatistics statistics = new UtilizationStatistics();
     final Consumer consumer;
@@ -44,11 +44,11 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
     ExchangeFactoryManager exchangeFactoryManager;
     String routeId;
 
-    public DefaultExchangeFactory() {
+    public PrototypeExchangeFactory() {
         this.consumer = null;
     }
 
-    public DefaultExchangeFactory(Consumer consumer) {
+    public PrototypeExchangeFactory(Consumer consumer) {
         this.consumer = consumer;
     }
 
@@ -84,7 +84,7 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
 
     @Override
     public ExchangeFactory newExchangeFactory(Consumer consumer) {
-        DefaultExchangeFactory answer = new DefaultExchangeFactory(consumer);
+        PrototypeExchangeFactory answer = new PrototypeExchangeFactory(consumer);
         answer.setStatisticsEnabled(statistics.isStatisticsEnabled());
         answer.setCapacity(getCapacity());
         answer.setCamelContext(camelContext);
@@ -167,7 +167,7 @@ public class DefaultExchangeFactory extends ServiceSupport implements ExchangeFa
         if (exchangeFactoryManager != null) {
             exchangeFactoryManager.removeExchangeFactory(this);
         }
-        logUsageSummary(LOG, "DefaultExchangeFactory", 0);
+        logUsageSummary(LOG, "PrototypeExchangeFactory", 0);
         statistics.reset();
     }
 

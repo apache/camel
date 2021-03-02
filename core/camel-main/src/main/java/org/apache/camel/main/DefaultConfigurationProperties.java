@@ -87,7 +87,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesIncludePattern = "classpath:camel/*.xml,classpath:camel-template/*.xml,classpath:camel-rest/*.xml";
     private String routesExcludePattern;
     private boolean lightweight;
-    @Metadata(defaultValue = "default", enums = "default,pooled")
+    @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
@@ -932,8 +932,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Controls whether to pool (reuse) exchanges or create new fresh exchanges (default). Using pooled will reduce JVM
-     * garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives.
+     * Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM
+     * garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The
+     * default is prototype mode.
      */
     public void setExchangeFactory(String exchangeFactory) {
         this.exchangeFactory = exchangeFactory;

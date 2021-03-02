@@ -32,6 +32,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -124,6 +125,8 @@ public final class DefaultConfigurationConfigurer {
 
         if ("pooled".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PooledExchangeFactory());
+        } else if ("prototype".equals(config.getExchangeFactory())) {
+            ecc.setExchangeFactory(new PrototypeExchangeFactory());
         }
         ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
         ecc.getExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());

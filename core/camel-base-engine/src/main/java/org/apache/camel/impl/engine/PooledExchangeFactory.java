@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Pooled {@link ExchangeFactory} that reuses {@link Exchange} instance from a pool.
  */
-public final class PooledExchangeFactory extends DefaultExchangeFactory {
+public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PooledExchangeFactory.class);
 
