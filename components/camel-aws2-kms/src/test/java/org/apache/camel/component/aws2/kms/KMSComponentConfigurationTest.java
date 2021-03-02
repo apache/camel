@@ -73,7 +73,8 @@ public class KMSComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithOverride() throws Exception {
         KMS2Component component = context.getComponent("aws2-kms", KMS2Component.class);
         KMS2Endpoint endpoint
-                = (KMS2Endpoint) component.createEndpoint("aws2-kms://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (KMS2Endpoint) component.createEndpoint(
+                        "aws2-kms://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
