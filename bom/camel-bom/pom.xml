@@ -948,10 +948,10 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-java-joor-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-java-joor-dsl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jaxb</artifactId>

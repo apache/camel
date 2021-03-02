@@ -76,7 +76,8 @@ public class MQComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         MQ2Endpoint endpoint
-                = (MQ2Endpoint) component.createEndpoint("aws2-mq://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (MQ2Endpoint) component.createEndpoint(
+                        "aws2-mq://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
