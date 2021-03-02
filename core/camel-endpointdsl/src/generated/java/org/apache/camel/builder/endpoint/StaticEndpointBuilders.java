@@ -10564,7 +10564,7 @@ public class StaticEndpointBuilders {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
      * 
-     * Syntax: <code>netty:protocol:host:port</code>
+     * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
@@ -10577,7 +10577,7 @@ public class StaticEndpointBuilders {
      * Path parameter: port (required)
      * The host port number
      * 
-     * @param path protocol:host:port
+     * @param path protocol://host:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
@@ -10592,7 +10592,7 @@ public class StaticEndpointBuilders {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
      * 
-     * Syntax: <code>netty:protocol:host:port</code>
+     * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
@@ -10607,7 +10607,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path protocol:host:port
+     * @param path protocol://host:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(

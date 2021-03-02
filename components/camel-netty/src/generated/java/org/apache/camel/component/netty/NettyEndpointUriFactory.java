@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class NettyEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":protocol:host:port";
+    private static final String BASE = ":protocol://host:port";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
