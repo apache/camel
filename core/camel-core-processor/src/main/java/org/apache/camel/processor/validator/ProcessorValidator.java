@@ -102,6 +102,16 @@ public class ProcessorValidator extends Validator {
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(processor, "processor", this);
         ServiceHelper.startService(this.processor);

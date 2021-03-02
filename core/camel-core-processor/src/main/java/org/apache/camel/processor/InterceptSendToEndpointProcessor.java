@@ -139,14 +139,24 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     }
 
     @Override
-    public void start() {
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(producer);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(producer);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(endpoint.getBefore(), endpoint.getAfter());
         // here we also need to start the producer
         ServiceHelper.startService(producer);
     }
 
     @Override
-    public void stop() {
+    public void doStop() {
         // do not stop before/after as it should only be stopped when the interceptor stops
         // we should stop the producer here
         ServiceHelper.stopService(producer);

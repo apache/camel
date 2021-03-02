@@ -229,6 +229,23 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        // lets add ourselves as a consumer
+        consumer = createConsumer();
+        // do not call build if its our-self
+        if (consumer != this) {
+            ServiceHelper.buildService(consumer);
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(consumer);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         // lets add ourselves as a consumer
         consumer = createConsumer();

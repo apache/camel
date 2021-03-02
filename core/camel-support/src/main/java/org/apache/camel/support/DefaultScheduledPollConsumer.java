@@ -92,8 +92,20 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doBuild() throws Exception {
+        super.doBuild();
         pollingConsumer = getEndpoint().createPollingConsumer();
+        ServiceHelper.buildService(pollingConsumer);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(pollingConsumer);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(pollingConsumer);
         super.doStart();
     }

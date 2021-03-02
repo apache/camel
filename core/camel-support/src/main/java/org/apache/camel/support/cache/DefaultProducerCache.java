@@ -360,7 +360,11 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             callback.done(true);
             return true;
         }
+    }
 
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(producers);
     }
 
     @Override

@@ -607,6 +607,11 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(sources);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(sources);
     }

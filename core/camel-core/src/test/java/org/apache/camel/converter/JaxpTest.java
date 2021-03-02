@@ -45,7 +45,6 @@ public class JaxpTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-
         ServiceHelper.startService(converter);
     }
 

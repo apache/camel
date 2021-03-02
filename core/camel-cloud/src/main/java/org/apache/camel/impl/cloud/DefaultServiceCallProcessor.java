@@ -31,6 +31,7 @@ import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -51,6 +52,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     private final CamelContext camelContext;
     private final ServiceLoadBalancer loadBalancer;
     private final Expression expression;
+    private ProcessorFactory processorFactory;
     private AsyncProcessor processor;
 
     private Expression serviceNameExp;
@@ -127,13 +129,18 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     // *************************************
 
     @Override
+    protected void doBuild() throws Exception {
+        ObjectHelper.notNull(camelContext, "camel context");
+        processorFactory = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory();
+    }
+
+    @Override
     protected void doInit() throws Exception {
         StringHelper.notEmpty(name, "name", "service name");
-        ObjectHelper.notNull(camelContext, "camel context");
         ObjectHelper.notNull(expression, "expression");
         ObjectHelper.notNull(loadBalancer, "load balancer");
 
-        Processor send = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(camelContext,
+        Processor send = processorFactory.createProcessor(camelContext,
                 "SendDynamicProcessor", new Object[] { uri, expression, exchangePattern });
         processor = AsyncProcessorConverterHelper.convert(send);
 
@@ -148,15 +155,13 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     @Override
     protected void doStart() throws Exception {
         // Start services if needed
-        ServiceHelper.startService(processor);
-        ServiceHelper.startService(loadBalancer);
+        ServiceHelper.startService(processor, loadBalancer);
     }
 
     @Override
     protected void doStop() throws Exception {
         // Stop services if needed
-        ServiceHelper.stopService(loadBalancer);
-        ServiceHelper.stopService(processor);
+        ServiceHelper.stopService(loadBalancer, processor);
     }
 
     // *************************************

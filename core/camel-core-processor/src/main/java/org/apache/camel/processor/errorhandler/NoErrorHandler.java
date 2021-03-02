@@ -85,6 +85,11 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(output);
+    }
+
+    @Override
     protected void doInit() throws Exception {
         ServiceHelper.initService(output);
     }

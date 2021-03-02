@@ -39,7 +39,6 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
     private final Iterator<?> iter;
     private boolean ignoreInvalidEndpoints;
-    private ProducerCache producerCache;
+    private final ProducerCache producerCache;
     private int cacheSize;
 
     /**
@@ -331,9 +330,20 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        ServiceHelper.buildService(producerCache);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(producerCache);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ObjectHelper.notNull(producerCache, "producerCache", this);
         ServiceHelper.startService(producerCache);
     }
 

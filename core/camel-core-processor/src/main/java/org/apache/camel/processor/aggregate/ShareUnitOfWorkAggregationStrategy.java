@@ -136,6 +136,16 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(strategy);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(strategy);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(strategy);
     }

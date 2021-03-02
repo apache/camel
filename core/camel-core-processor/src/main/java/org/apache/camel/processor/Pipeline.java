@@ -153,6 +153,16 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processors);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processors);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processors);
     }

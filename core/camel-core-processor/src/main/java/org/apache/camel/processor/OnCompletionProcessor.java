@@ -82,6 +82,16 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }
