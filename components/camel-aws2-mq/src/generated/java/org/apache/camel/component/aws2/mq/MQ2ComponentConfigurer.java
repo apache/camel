@@ -38,6 +38,8 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.mq.MQ2Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -51,6 +53,8 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -73,6 +77,8 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.mq.MQ2Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "pojorequest":
         case "pojoRequest": return boolean.class;
         case "proxyhost":
@@ -86,6 +92,8 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "secretKey": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         default: return null;
         }
     }
@@ -104,6 +112,8 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "overrideendpoint":
+        case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "pojorequest":
         case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "proxyhost":
@@ -117,6 +127,8 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         default: return null;
         }
     }
