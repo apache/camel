@@ -170,8 +170,7 @@ A CamelContext with Blueprint could be as:
 
 == Producer
 
-*Since Camel 3.9.0* +
- You can now use a token to send a message instead of WebhookUrl
+You can now use a token to send a message instead of WebhookUrl
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------
@@ -179,7 +178,7 @@ from("direct:test")
     .to("slack:#random?token=RAW(<YOUR_TOKEN>)");
 ---------------------------------------------------------------------------------------------------------------------------
 
- You can now use the Slack API model to create blocks. You can read more about it here https://api.slack.com/block-kit
+You can now use the Slack API model to create blocks. You can read more about it here https://api.slack.com/block-kit
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------
@@ -217,8 +216,7 @@ IMPORTANT: Add the corresponding history (`channels:history` or `groups:history`
 read (`channels:read` or `groups:read` or `mpim:read` or `im:read`) user token scope to your app to grant it permission to
 view messages in the corresponding channel. You will need to use the conversationType option to set it up too (`PUBLIC_CHANNEL`, `PRIVATE_CHANNEL`, `MPIM`, `IM`)
 
-*Since Camel 3.9.0* +
- The naturalOrder option allows consuming messages from the oldest to the newest.
+The naturalOrder option allows consuming messages from the oldest to the newest.
 Originally you would get the newest first and consume backward (message 3 => message 2 => message 1)
 
 IMPORTANT: You can use the conversationType option to read history and messages from a channel that is not only public
