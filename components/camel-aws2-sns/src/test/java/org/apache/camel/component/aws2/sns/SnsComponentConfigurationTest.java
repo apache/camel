@@ -23,6 +23,7 @@ import software.amazon.awssdk.regions.Region;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -250,10 +251,11 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertFalse(endpoint.getConfiguration().isFifoTopic());
     }
 
-        @Test
+    @Test
     public void createEndpointWithOverride() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint(
+                "aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
