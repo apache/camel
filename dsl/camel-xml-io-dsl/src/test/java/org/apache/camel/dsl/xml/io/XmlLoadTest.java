@@ -20,7 +20,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.LoadRouteFromXmlTest;
 import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +53,8 @@ public class XmlLoadTest {
             // START SNIPPET: e1
             // load route from XML and add them to the existing camel context
             ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-            Resource resource = Resource.fromClasspath(LoadRouteFromXmlTest.class, "barRoute.xml");
+            Resource resource = ecc.getResourceLoader().resolveResource(
+                    "/org/apache/camel/dsl/xml/io/barRoute.xml");
 
             ecc.getRoutesLoader().loadRoutes(resource);
 

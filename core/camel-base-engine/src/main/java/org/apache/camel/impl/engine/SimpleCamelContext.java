@@ -63,6 +63,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
@@ -451,6 +452,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 RoutesLoader.class);
 
         return result.orElseGet(DefaultRoutesLoader::new);
+    }
+
+    @Override
+    protected ResourceLoader createResourceLoader() {
+        Optional<ResourceLoader> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                ResourceLoader.FACTORY,
+                ResourceLoader.class);
+
+        return result.orElseGet(DefaultResourceLoader::new);
     }
 
     @Override

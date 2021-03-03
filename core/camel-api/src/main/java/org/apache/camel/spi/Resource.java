@@ -16,10 +16,11 @@
  */
 package org.apache.camel.spi;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * Describe a resource, such as a file or class path resource.
@@ -31,61 +32,33 @@ public interface Resource {
     String getLocation();
 
     /**
+     * Whether this resource exists..
+     */
+    boolean exists();
+
+    /**
+     * The {@link URI} of the resource.
+     * </p>
+     * The default implementation creates a {@code URI} object from resource location.
+     */
+    default URI getURI() {
+        return URI.create(getLocation());
+    }
+
+    /**
+     * The {@link URL} for the resource or <code>null</code> if the URL can not be computed.
+     * </p>
+     * The default implementation creates a {@code URI} object from resource location.
+     */
+    default URL getURL() throws MalformedURLException {
+        URI uri = getURI();
+        return uri != null ? uri.toURL() : null;
+    }
+
+    /**
      * Returns an input stream that reads from the underlying resource.
      * </p>
      * Each invocation must return a new {@link InputStream} instance.
      */
     InputStream getInputStream() throws IOException;
-
-    /**
-     * Finds a resource with a given name.
-     *
-     * @see Class#getResourceAsStream(String)
-     */
-    static Resource fromClasspath(String location) {
-        return fromClasspath(Resource.class, location);
-    }
-
-    /**
-     * Finds a resource with a given name.
-     *
-     * @see Class#getResourceAsStream(String)
-     */
-    static Resource fromClasspath(Class<?> type, String location) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return type.getResourceAsStream(location);
-            }
-        };
-    }
-
-    /**
-     * Create a resource from bytes.
-     */
-    static Resource fromBytes(String location, byte[] content) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return new ByteArrayInputStream(content);
-            }
-        };
-    }
-
-    /**
-     * Create a resource from a string.
-     */
-    static Resource fromString(String location, String content) {
-        return fromBytes(location, content.getBytes(StandardCharsets.UTF_8));
-    }
 }
