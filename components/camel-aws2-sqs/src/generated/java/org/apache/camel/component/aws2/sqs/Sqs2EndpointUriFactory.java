@@ -20,7 +20,7 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(60);
+        Set<String> props = new HashSet<>(62);
         props.add("queueUrl");
         props.add("initialDelay");
         props.add("proxyPort");
@@ -73,11 +73,13 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("queueNameOrArn");
+        props.add("uriEndpointOverride");
         props.add("exchangePattern");
         props.add("useDefaultCredentialsProvider");
         props.add("defaultVisibilityTimeout");
         props.add("messageGroupIdStrategy");
         props.add("pollStrategy");
+        props.add("overrideEndpoint");
         props.add("amazonSQSClient");
         props.add("deleteAfterRead");
         props.add("operation");

@@ -76,6 +76,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageretentionperiod":
         case "messageRetentionPeriod": getOrCreateConfiguration(target).setMessageRetentionPeriod(property(camelContext, java.lang.Integer.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "protocol": getOrCreateConfiguration(target).setProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -99,6 +101,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
@@ -165,6 +169,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageretentionperiod":
         case "messageRetentionPeriod": return java.lang.Integer.class;
         case "operation": return org.apache.camel.component.aws2.sqs.Sqs2Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "policy": return java.lang.String.class;
         case "protocol": return java.lang.String.class;
         case "proxyhost":
@@ -188,6 +194,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
         case "visibilitytimeout":
@@ -250,6 +258,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageretentionperiod":
         case "messageRetentionPeriod": return getOrCreateConfiguration(target).getMessageRetentionPeriod();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "overrideendpoint":
+        case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "policy": return getOrCreateConfiguration(target).getPolicy();
         case "protocol": return getOrCreateConfiguration(target).getProtocol();
         case "proxyhost":
@@ -273,6 +283,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "visibilitytimeout":

@@ -43,7 +43,7 @@ The queue will be created if they don't already exists. +
 
 
 // component options: START
-The AWS 2 Simple Queue Service (SQS) component supports 41 options, which are listed below.
+The AWS 2 Simple Queue Service (SQS) component supports 43 options, which are listed below.
 
 
 
@@ -54,11 +54,13 @@ The AWS 2 Simple Queue Service (SQS) component supports 41 options, which are li
 | *amazonSQSClient* (common) | *Autowired* To use the AmazonSQS as client |  | SqsClient
 | *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
 | *configuration* (common) | The AWS SQS default configuration |  | Sqs2Configuration
+| *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *region* (common) | The region in which SQS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *useDefaultCredentialsProvider* (common) | Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -120,7 +122,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (59 parameters):
+=== Query Parameters (61 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -130,11 +132,13 @@ with the following path and query parameters:
 | *amazonSQSClient* (common) | *Autowired* To use the AmazonSQS as client |  | SqsClient
 | *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *region* (common) | The region in which SQS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *useDefaultCredentialsProvider* (common) | Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean

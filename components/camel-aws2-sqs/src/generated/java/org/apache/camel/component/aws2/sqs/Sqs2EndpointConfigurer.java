@@ -84,6 +84,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageretentionperiod":
         case "messageRetentionPeriod": target.getConfiguration().setMessageRetentionPeriod(property(camelContext, java.lang.Integer.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
@@ -124,6 +126,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
@@ -207,6 +211,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageretentionperiod":
         case "messageRetentionPeriod": return java.lang.Integer.class;
         case "operation": return org.apache.camel.component.aws2.sqs.Sqs2Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "policy": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
@@ -247,6 +253,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
@@ -326,6 +334,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageretentionperiod":
         case "messageRetentionPeriod": return target.getConfiguration().getMessageRetentionPeriod();
         case "operation": return target.getConfiguration().getOperation();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "policy": return target.getConfiguration().getPolicy();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
@@ -366,6 +376,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return target.getTimeUnit();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
