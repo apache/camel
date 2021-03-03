@@ -227,20 +227,20 @@ public class CamelCatalogTest {
         map.put("disconnect", "true");
 
         String uri = catalog.asEndpointUri("netty-http", map, true);
-        assertEquals("netty-http:http:localhost:8080/foo/bar?disconnect=true", uri);
+        assertEquals("netty-http:http://localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets switch protocol
         map.put("protocol", "https");
 
         uri = catalog.asEndpointUri("netty-http", map, true);
-        assertEquals("netty-http:https:localhost:8080/foo/bar?disconnect=true", uri);
+        assertEquals("netty-http:https://localhost:8080/foo/bar?disconnect=true", uri);
 
         // lets set a query parameter in the path
         map.put("path", "foo/bar?verbose=true");
         map.put("disconnect", "true");
 
         uri = catalog.asEndpointUri("netty-http", map, true);
-        assertEquals("netty-http:https:localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
+        assertEquals("netty-http:https://localhost:8080/foo/bar?verbose=true&disconnect=true", uri);
     }
 
     @Test
@@ -326,7 +326,7 @@ public class CamelCatalogTest {
         map.put("port", "8080");
         map.put("path", "anything");
         String uri = catalog.asEndpointUri("netty-http", map, false);
-        assertEquals("netty-http:http:a-b-c.hostname.tld:8080/anything", uri);
+        assertEquals("netty-http:http://a-b-c.hostname.tld:8080/anything", uri);
 
         map = new LinkedHashMap<>();
         map.put("protocol", "http");
@@ -334,7 +334,7 @@ public class CamelCatalogTest {
         map.put("port", "8888");
         map.put("path", "service/v3");
         uri = catalog.asEndpointUri("netty-http", map, true);
-        assertEquals("netty-http:http:a-b-c.server.net:8888/service/v3", uri);
+        assertEquals("netty-http:http://a-b-c.server.net:8888/service/v3", uri);
     }
 
     @Test
@@ -350,7 +350,7 @@ public class CamelCatalogTest {
         params.remove("path");
 
         String resolved = catalog.asEndpointUri("netty-http", params, false);
-        assertEquals("netty-http:http:a-b-c.hostname.tld:8080", resolved);
+        assertEquals("netty-http:http://a-b-c.hostname.tld:8080", resolved);
     }
 
     @Test
@@ -407,7 +407,7 @@ public class CamelCatalogTest {
     @Test
     public void testEndpointPropertiesNettyHttp() throws Exception {
         Map<String, String> map
-                = catalog.endpointProperties("netty-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+                = catalog.endpointProperties("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -436,7 +436,7 @@ public class CamelCatalogTest {
     @Test
     public void testEndpointPropertiesNettyHttpPlaceholder() throws Exception {
         Map<String, String> map
-                = catalog.endpointProperties("netty-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
+                = catalog.endpointProperties("netty-http:http://{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -1307,13 +1307,13 @@ public class CamelCatalogTest {
         params.remove("throwExceptionOnFailure");
 
         String resolved = catalog.asEndpointUri("netty-http", params, false);
-        assertEquals("netty-http:http:10.192.1.10:8080", resolved);
+        assertEquals("netty-http:http://10.192.1.10:8080", resolved);
 
         // another example with dash in hostname
         uri = "netty-http:http://a-b-c.hostname.tld:8080/anything";
         params = catalog.endpointProperties(uri);
         resolved = catalog.asEndpointUri("netty-http", params, false);
-        assertEquals("netty-http:http:a-b-c.hostname.tld:8080/anything", resolved);
+        assertEquals("netty-http:http://a-b-c.hostname.tld:8080/anything", resolved);
     }
 
     @Test
