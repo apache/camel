@@ -249,4 +249,20 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPolicy());
         assertFalse(endpoint.getConfiguration().isFifoTopic());
     }
+
+        @Test
+    public void createEndpointWithOverride() throws Exception {
+        Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
+        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNull(endpoint.getConfiguration().getAmazonSNSClient());
+        assertNull(endpoint.getConfiguration().getTopicArn());
+        assertNull(endpoint.getConfiguration().getSubject());
+        assertNull(endpoint.getConfiguration().getPolicy());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
+    }
 }
