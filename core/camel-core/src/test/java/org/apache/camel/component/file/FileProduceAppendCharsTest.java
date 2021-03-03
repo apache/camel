@@ -31,9 +31,10 @@ public class FileProduceAppendCharsTest extends ContextTestSupport {
     @Test
     public void testAppendChars() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(3);
         mock.expectedFileExists("target/data/test-file-append/hello.txt", "Hello\nWorld\nHow are you?\n");
 
+        template.sendBody("direct:start", "Hello");
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "How are you?");
 
@@ -45,7 +46,6 @@ public class FileProduceAppendCharsTest extends ContextTestSupport {
     public void setUp() throws Exception {
         deleteDirectory("target/data/test-file-append");
         super.setUp();
-        template.sendBodyAndHeader("file://target/data/test-file-append", "Hello\n", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Override
