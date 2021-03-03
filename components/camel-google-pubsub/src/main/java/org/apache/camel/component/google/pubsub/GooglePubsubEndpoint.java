@@ -54,6 +54,11 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String destinationName;
 
+    @UriParam(label = "common",
+              description = "The Service account key that can be used as credentials for the Storage client. It can be loaded by default from "
+                            + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
+    private String serviceAccountKey;
+
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
     private String loggerId;
 
@@ -158,6 +163,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void setLoggerId(String loggerId) {
         this.loggerId = loggerId;
+    }
+
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
+    }
+
+    public void setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
     }
 
     public String getDestinationName() {

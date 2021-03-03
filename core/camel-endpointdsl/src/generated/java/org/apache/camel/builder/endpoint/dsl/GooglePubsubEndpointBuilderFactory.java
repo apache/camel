@@ -158,6 +158,24 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Service account key that can be used as credentials for the
+         * Storage client. It can be loaded by default from classpath, but you
+         * can prefix with classpath:, file:, or http: to load the resource from
+         * different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
+            return this;
+        }
+        /**
          * Synchronously pull batches of messages.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -441,6 +459,24 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The Service account key that can be used as credentials for the
+         * Storage client. It can be loaded by default from classpath, but you
+         * can prefix with classpath:, file:, or http: to load the resource from
+         * different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointProducerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -746,6 +782,24 @@ public interface GooglePubsubEndpointBuilderFactory {
         default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The Service account key that can be used as credentials for the
+         * Storage client. It can be loaded by default from classpath, but you
+         * can prefix with classpath:, file:, or http: to load the resource from
+         * different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
