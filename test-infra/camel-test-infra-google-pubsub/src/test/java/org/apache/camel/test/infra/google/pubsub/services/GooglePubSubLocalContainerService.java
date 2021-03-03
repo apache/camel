@@ -20,21 +20,20 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.google.pubsub.common.GooglePubSubProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.containers.PubSubEmulatorContainer;
+import org.testcontainers.utility.DockerImageName;
 
-public class GooglePubSubLocalContainerService implements GooglePubSubService, ContainerService<GenericContainer> {
+public class GooglePubSubLocalContainerService implements GooglePubSubService, ContainerService<PubSubEmulatorContainer> {
     public static final String PROJECT_ID;
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubSubLocalContainerService.class);
-    private static final String CONTAINER_NAME = "google/cloud-sdk:latest";
+    private static final String CONTAINER_NAME = "gcr.io/google.com/cloudsdktool/cloud-sdk:emulators";
     private static final String DEFAULT_PROJECT_ID = "test-project";
-    private static final int DEFAULT_PORT = 8383;
 
     static {
         PROJECT_ID = System.getProperty(GooglePubSubProperties.PROJECT_ID, DEFAULT_PROJECT_ID);
     }
 
-    private GenericContainer container;
+    private PubSubEmulatorContainer container;
 
     public GooglePubSubLocalContainerService() {
         String containerName = System.getProperty(GooglePubSubProperties.CONTAINER_NAME, CONTAINER_NAME);
@@ -46,13 +45,7 @@ public class GooglePubSubLocalContainerService implements GooglePubSubService, C
     }
 
     protected void initContainer(String containerName) {
-        String command = String.format("gcloud beta emulators pubsub start --project %s --host-port=0.0.0.0:%d",
-                PROJECT_ID, DEFAULT_PORT);
-
-        container = new GenericContainer<>(containerName)
-                .withExposedPorts(DEFAULT_PORT)
-                .withCommand("/bin/sh", "-c", command)
-                .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*started.*$"));
+        container = new PubSubEmulatorContainer(DockerImageName.parse(containerName));
     }
 
     @Override
@@ -77,7 +70,7 @@ public class GooglePubSubLocalContainerService implements GooglePubSubService, C
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public PubSubEmulatorContainer getContainer() {
         return container;
     }
 
