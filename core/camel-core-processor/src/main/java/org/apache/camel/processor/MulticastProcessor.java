@@ -586,6 +586,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 return false;
             }
 
+            // accept the exchange as a result
+            completion.submit(exchangeResult -> exchangeResult.accept(exchange));
+
             // aggregate exchanges if any
             aggregate();
 
