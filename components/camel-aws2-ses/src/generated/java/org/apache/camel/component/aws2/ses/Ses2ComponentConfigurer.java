@@ -37,6 +37,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -54,6 +56,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "to": getOrCreateConfiguration(target).setTo(property(camelContext, java.util.List.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -75,6 +79,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": return org.apache.camel.component.aws2.ses.Ses2Configuration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -92,6 +98,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "to": return java.util.List.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         default: return null;
         }
     }
@@ -109,6 +117,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "overrideendpoint":
+        case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
@@ -126,6 +136,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "to": return getOrCreateConfiguration(target).getTo();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         default: return null;
         }
     }

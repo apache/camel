@@ -20,16 +20,18 @@ public class Ses2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(16);
         props.add("proxyProtocol");
         props.add("returnPath");
         props.add("secretKey");
         props.add("subject");
+        props.add("uriEndpointOverride");
         props.add("proxyHost");
         props.add("trustAllCertificates");
         props.add("proxyPort");
         props.add("lazyStartProducer");
         props.add("accessKey");
+        props.add("overrideEndpoint");
         props.add("from");
         props.add("to");
         props.add("region");

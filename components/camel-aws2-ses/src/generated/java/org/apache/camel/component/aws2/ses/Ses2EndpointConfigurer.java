@@ -27,6 +27,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSESClient": target.getConfiguration().setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -44,6 +46,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "to": target.getConfiguration().setTo(property(camelContext, java.util.List.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -62,6 +66,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSESClient": return software.amazon.awssdk.services.ses.SesClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -79,6 +85,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "to": return java.util.List.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         default: return null;
         }
     }
@@ -93,6 +101,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSESClient": return target.getConfiguration().getAmazonSESClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -110,6 +120,8 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "to": return target.getConfiguration().getTo();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         default: return null;
         }
     }
