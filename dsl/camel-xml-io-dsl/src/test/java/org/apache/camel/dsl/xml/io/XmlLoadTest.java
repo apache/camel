@@ -35,8 +35,8 @@ public class XmlLoadTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:foo")
-                        .routeId("foo")
-                        .to("mock:foo");
+                            .routeId("foo")
+                            .to("mock:foo");
                 }
             });
 
@@ -63,7 +63,7 @@ public class XmlLoadTest {
             assertEquals(2, context.getRoutes().size());
 
             // test that loaded route works
-            MockEndpoint bar =  context.getEndpoint("mock:bar", MockEndpoint.class);
+            MockEndpoint bar = context.getEndpoint("mock:bar", MockEndpoint.class);
             bar.expectedBodiesReceived("Bye World");
             context.createProducerTemplate().sendBody("direct:bar", "Bye World");
             bar.assertIsSatisfied();
