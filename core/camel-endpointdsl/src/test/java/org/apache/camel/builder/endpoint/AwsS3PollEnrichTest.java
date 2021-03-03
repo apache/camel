@@ -16,33 +16,29 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class SedaPollEnrichSimpleExpressionTest extends CamelTestSupport {
+public class AwsS3PollEnrichTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new EndpointRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from(direct("start"))
-                        .pollEnrich(seda("${exchangeProperty.whereFrom}").concurrentConsumers(1), 1000)
-                        .to("mock:result");
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     @Test
     public void test() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedBodiesReceived("Hello World");
+        context.addRoutes(new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .pollEnrich(aws2S3("test-bucket").fileName("${body}"))
+                        .to("mock:result");
 
-        template.sendBody("seda:cheese", "Hello World");
-        template.sendBodyAndProperty("direct:start", "Empty", "whereFrom", "cheese");
+            }
+        });
+        context.start();
 
-        assertMockEndpointsSatisfied();
+        context.stop();
     }
 }
