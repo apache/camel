@@ -47,6 +47,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageGroupIdStrategy": getOrCreateConfiguration(target).setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "messagestructure":
         case "messageStructure": getOrCreateConfiguration(target).setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
@@ -66,6 +68,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subscribeSNStoSQS": getOrCreateConfiguration(target).setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -99,6 +103,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageGroupIdStrategy": return java.lang.String.class;
         case "messagestructure":
         case "messageStructure": return java.lang.String.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "policy": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
@@ -118,6 +124,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subscribeSNStoSQS": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
@@ -147,6 +155,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageGroupIdStrategy": return getOrCreateConfiguration(target).getMessageGroupIdStrategy();
         case "messagestructure":
         case "messageStructure": return getOrCreateConfiguration(target).getMessageStructure();
+        case "overrideendpoint":
+        case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "policy": return getOrCreateConfiguration(target).getPolicy();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
@@ -166,6 +176,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subscribeSNStoSQS": return getOrCreateConfiguration(target).isSubscribeSNStoSQS();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         default: return null;

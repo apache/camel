@@ -39,6 +39,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageGroupIdStrategy": target.getConfiguration().setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "messagestructure":
         case "messageStructure": target.getConfiguration().setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
@@ -58,6 +60,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subscribeSNStoSQS": target.getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -90,6 +94,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageGroupIdStrategy": return java.lang.String.class;
         case "messagestructure":
         case "messageStructure": return java.lang.String.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "policy": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
@@ -109,6 +115,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subscribeSNStoSQS": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
@@ -137,6 +145,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageGroupIdStrategy": return target.getConfiguration().getMessageGroupIdStrategy();
         case "messagestructure":
         case "messageStructure": return target.getConfiguration().getMessageStructure();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "policy": return target.getConfiguration().getPolicy();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
@@ -156,6 +166,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "subscribeSNStoSQS": return target.getConfiguration().isSubscribeSNStoSQS();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         default: return null;

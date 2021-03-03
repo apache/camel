@@ -20,7 +20,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(24);
         props.add("serverSideEncryptionEnabled");
         props.add("autoCreateTopic");
         props.add("proxyProtocol");
@@ -28,6 +28,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("subject");
         props.add("messageDeduplicationIdStrategy");
         props.add("subscribeSNStoSQS");
+        props.add("uriEndpointOverride");
         props.add("queueUrl");
         props.add("messageStructure");
         props.add("useDefaultCredentialsProvider");
@@ -39,6 +40,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("headerFilterStrategy");
         props.add("accessKey");
         props.add("topicNameOrArn");
+        props.add("overrideEndpoint");
         props.add("kmsMasterKeyId");
         props.add("region");
         props.add("amazonSNSClient");
