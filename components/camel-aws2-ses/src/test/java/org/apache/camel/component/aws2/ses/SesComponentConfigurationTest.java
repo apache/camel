@@ -213,7 +213,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithOverride() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         Ses2Endpoint endpoint
-                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (Ses2Endpoint) component.createEndpoint(
+                        "aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
