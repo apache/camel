@@ -185,7 +185,7 @@ It is up for the route to convert/unmarshall the contents.
 
 == Authentication Configuration
 
-The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+The location of the default credentials file is configurable via the serviceAccountKey parameter.
 
 == Rollback and Redelivery
 
