@@ -127,8 +127,11 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
             }
             DotName sfaName = sfa.target().asClass().name();
             for (AnnotationInstance annotation : index.getAnnotations(sfaName)) {
-                if (annotation.target().kind() != Kind.CLASS
-                        || annotation.target().asClass().nestingType() != NestingType.TOP_LEVEL) {
+                if (annotation.target().kind() != Kind.CLASS) {
+                    continue;
+                }
+                if (annotation.target().asClass().nestingType() != NestingType.TOP_LEVEL
+                        && annotation.target().asClass().nestingType() != NestingType.INNER) {
                     continue;
                 }
                 String className = annotation.target().asClass().name().toString();

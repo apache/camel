@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.xml.io;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.LoadRouteFromXmlTest;
 import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +57,10 @@ public class XmlLoadRestTest {
             foo.assertIsSatisfied();
 
             // load rest from XML and add them to the existing camel context
-            Resource resource = Resource.fromClasspath(LoadRouteFromXmlTest.class, "barRest.xml");
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            Resource resource = ecc.getResourceLoader().resolveResource(
+                    "/org/apache/camel/dsl/xml/io/barRest.xml");
+
             context.getRoutesLoader().loadRoutes(resource);
 
             assertEquals(2, context.getRoutes().size());

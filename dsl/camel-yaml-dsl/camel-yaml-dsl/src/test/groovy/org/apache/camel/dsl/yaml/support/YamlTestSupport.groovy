@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.spi.HasCamelContext
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.ResourceHelper
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
@@ -62,7 +63,7 @@ class YamlTestSupport extends Specification implements HasCamelContext {
 
         loadRoutes(
             resources.collect {
-                it -> Resource.fromString("route-${index++}.yaml", it.stripIndent())
+                it -> ResourceHelper.fromString("route-${index++}.yaml", it.stripIndent())
             }
         )
     }
@@ -89,7 +90,7 @@ class YamlTestSupport extends Specification implements HasCamelContext {
     }
 
     static Resource asResource(String location, String content) {
-        return Resource.fromString(
+        return ResourceHelper.fromString(
                 location.endsWith('.yaml') ? location : location + '.yaml',
                 content.stripIndent()
         )

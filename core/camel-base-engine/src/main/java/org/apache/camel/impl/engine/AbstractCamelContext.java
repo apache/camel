@@ -133,6 +133,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReifierStrategy;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -290,6 +291,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
     private volatile RoutesLoader routesLoader;
+    private volatile ResourceLoader resourceLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
     private volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     private volatile RuntimeCamelCatalog runtimeCamelCatalog;
@@ -3653,6 +3655,7 @@ public abstract class AbstractCamelContext extends BaseService
         getUnitOfWorkFactory();
         getRouteController();
         getRoutesLoader();
+        getResourceLoader();
 
         try {
             getRestRegistryFactory();
@@ -4601,6 +4604,23 @@ public abstract class AbstractCamelContext extends BaseService
         this.routesLoader = doAddService(routesLoader);
     }
 
+    @Override
+    public ResourceLoader getResourceLoader() {
+        if (resourceLoader == null) {
+            synchronized (lock) {
+                if (resourceLoader == null) {
+                    setResourceLoader(createResourceLoader());
+                }
+            }
+        }
+        return resourceLoader;
+    }
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = doAddService(resourceLoader);
+    }
+
     public ModelToXMLDumper getModelToXMLDumper() {
         if (modelToXMLDumper == null) {
             synchronized (lock) {
@@ -4859,6 +4879,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
     protected abstract RoutesLoader createRoutesLoader();
+
+    protected abstract ResourceLoader createResourceLoader();
 
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 

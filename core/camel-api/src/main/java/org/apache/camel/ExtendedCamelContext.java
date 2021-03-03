@@ -57,6 +57,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
@@ -647,6 +648,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets a custom {@link RoutesLoader} to be used.
      */
     void setRoutesLoader(RoutesLoader routesLoader);
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    ResourceLoader getResourceLoader();
+
+    /**
+     * Sets a custom {@link ResourceLoader} to be used.
+     */
+    void setResourceLoader(ResourceLoader resourceLoader);
 
     /**
      * Gets the {@link ModelToXMLDumper} to be used.

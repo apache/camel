@@ -118,6 +118,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -1500,6 +1501,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public RoutesLoader getRoutesLoader() {
         return getExtendedCamelContext().getRoutesLoader();
+    }
+
+    @Override
+    public ResourceLoader getResourceLoader() {
+        return getExtendedCamelContext().getResourceLoader();
+    }
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        getExtendedCamelContext().setResourceLoader(resourceLoader);
     }
 
     @Override

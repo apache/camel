@@ -19,6 +19,7 @@ package org.apache.camel.dsl.xml.jaxb;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,7 +39,7 @@ public class JaxbXmlRoutesBuilderLoaderTest {
                          + "   </route>"
                          + "</routes>";
 
-        Resource resource = Resource.fromString("in-memory.xml", content);
+        Resource resource = ResourceHelper.fromString("in-memory.xml", content);
 
         JaxbXmlRoutesBuilderLoader loader = new JaxbXmlRoutesBuilderLoader();
         loader.setCamelContext(new DefaultCamelContext());
@@ -61,7 +62,7 @@ public class JaxbXmlRoutesBuilderLoaderTest {
                          + "  </rest>"
                          + "</rests>";
 
-        Resource resource = Resource.fromString("in-memory.xml", content);
+        Resource resource = ResourceHelper.fromString("in-memory.xml", content);
 
         JaxbXmlRoutesBuilderLoader loader = new JaxbXmlRoutesBuilderLoader();
         loader.setCamelContext(new DefaultCamelContext());
@@ -87,7 +88,7 @@ public class JaxbXmlRoutesBuilderLoaderTest {
                          + "  </routeTemplate>"
                          + "</routeTemplates>";
 
-        Resource resource = Resource.fromString("in-memory.xml", content);
+        Resource resource = ResourceHelper.fromString("in-memory.xml", content);
 
         JaxbXmlRoutesBuilderLoader loader = new JaxbXmlRoutesBuilderLoader();
         loader.setCamelContext(new DefaultCamelContext());
