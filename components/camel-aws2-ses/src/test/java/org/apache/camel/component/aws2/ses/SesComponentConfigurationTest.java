@@ -208,4 +208,22 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         component.createEndpoint("aws2-ses://from@example.com?amazonSESClient=#amazonSESClient");
     }
+
+    @Test
+    public void createEndpointWithOverride() throws Exception {
+        Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNull(endpoint.getConfiguration().getAmazonSESClient());
+        assertNull(endpoint.getConfiguration().getTo());
+        assertNull(endpoint.getConfiguration().getSubject());
+        assertNull(endpoint.getConfiguration().getReturnPath());
+        assertNull(endpoint.getConfiguration().getReplyToAddresses());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
+    }
 }
