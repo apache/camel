@@ -91,6 +91,8 @@ public class Main extends MainCommandLineSupport {
         Main main = new Main();
         instance = main;
         main.run(args);
+
+        System.exit(main.getExitCode());
     }
 
     /**
