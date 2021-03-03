@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SqsComponentConfigurationTest extends CamelTestSupport {
 
@@ -327,5 +328,21 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
+    }
+
+    @Test
+    public void createEndpointWithOverride() throws Exception {
+        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
+        Sqs2Endpoint endpoint
+                = (Sqs2Endpoint) component.createEndpoint(
+                        "aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&region=US_WEST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+
+        assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_WEST_1", endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
+        assertEquals("http://localhost:9090", endpoint.getConfiguration().getUriEndpointOverride());
+
     }
 }
