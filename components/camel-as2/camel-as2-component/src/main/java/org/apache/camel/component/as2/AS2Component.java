@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ApiName;
+import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -64,4 +65,11 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+
+        // stop all server connectors as they would no longer be in use
+        AS2ConnectionHelper.closeAllServerConnections();
+    }
 }
