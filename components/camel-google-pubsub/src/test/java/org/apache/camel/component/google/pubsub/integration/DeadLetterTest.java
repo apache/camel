@@ -110,7 +110,7 @@ public class DeadLetterTest extends PubsubTestSupport {
                 .setName(projectInputSubscriptionName.toString())
                 .setTopic(inputTopic.getName())
                 .setDeadLetterPolicy(DeadLetterPolicy.newBuilder()
-                        .setDeadLetterTopic(deadLetterTopic.toString())
+                        .setDeadLetterTopic(deadLetterTopic.getName())
                         .setMaxDeliveryAttempts(5).build())
                 .build();
         Subscription deadLetterSubscription = Subscription.newBuilder()
