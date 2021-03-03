@@ -231,12 +231,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-        // lets add ourselves as a consumer
+        // lets add ourselves as a consumer (only create do not build)
         consumer = createConsumer();
-        // do not call build if its our-self
-        if (consumer != this) {
-            ServiceHelper.buildService(consumer);
-        }
     }
 
     @Override
@@ -247,9 +243,6 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     @Override
     protected void doStart() throws Exception {
-        // lets add ourselves as a consumer
-        consumer = createConsumer();
-
         // if the consumer has a polling strategy then invoke that
         if (consumer instanceof PollingConsumerPollingStrategy) {
             PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
