@@ -172,8 +172,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     @Override
     protected void doBuild() throws Exception {
-        super.doBuild();
-        exchangeFactory.build();
+        LOG.debug("Build consumer: {}", this);
+        ServiceHelper.buildService(exchangeFactory, processor);
     }
 
     @Override

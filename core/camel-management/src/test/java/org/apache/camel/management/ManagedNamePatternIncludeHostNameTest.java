@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,7 +31,7 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getManagementStrategy().init();
+        ServiceHelper.initService(context.getManagementStrategy());
         DefaultManagementObjectNameStrategy naming
                 = (DefaultManagementObjectNameStrategy) context.getManagementStrategy().getManagementObjectNameStrategy();
         naming.setHostName("localhost");

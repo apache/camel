@@ -668,7 +668,7 @@ public abstract class AbstractCamelContext extends BaseService
 
                 if (component != null) {
                     component.setCamelContext(getCamelContextReference());
-                    component.build();
+                    ServiceHelper.buildService(component);
                     postInitComponent(name, component);
                 }
             } catch (Exception e) {
@@ -1737,7 +1737,7 @@ public abstract class AbstractCamelContext extends BaseService
                             Service service = (Service) language;
                             // init service first
                             CamelContextAware.trySetCamelContext(service, camelContext);
-                            service.init();
+                            ServiceHelper.initService(service);
                             startService(service);
                         } catch (Exception e) {
                             throw RuntimeCamelException.wrapRuntimeCamelException(e);

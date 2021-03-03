@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * To process the delegated producer in synchronous mode.
@@ -29,7 +30,7 @@ import org.apache.camel.support.service.ServiceHelper;
  * This delegate allows the component developers easily to support their existing asynchronous producer to behave
  * synchronously by wrapping their producer in this synchronous delegate.
  */
-public class SynchronousDelegateProducer implements Producer {
+public class SynchronousDelegateProducer extends ServiceSupport implements Producer {
 
     private final Producer producer;
 
@@ -48,18 +49,38 @@ public class SynchronousDelegateProducer implements Producer {
     }
 
     @Override
-    public void init() {
-        producer.init();
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(producer);
     }
 
     @Override
-    public void start() {
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(producer);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(producer);
     }
 
     @Override
-    public void stop() {
+    protected void doStop() throws Exception {
         ServiceHelper.stopService(producer);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        ServiceHelper.suspendService(producer);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        ServiceHelper.resumeService(producer);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(producer);
     }
 
     @Override
