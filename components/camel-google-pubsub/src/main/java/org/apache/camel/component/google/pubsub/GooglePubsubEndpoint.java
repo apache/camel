@@ -50,7 +50,8 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String projectId;
 
-    @UriPath(label = "common", description = "The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name.")
+    @UriPath(label = "common",
+             description = "The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name.")
     @Metadata(required = true)
     private String destinationName;
 

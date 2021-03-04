@@ -78,8 +78,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *projectId* | *Required* Project Id |  | String
-| *destinationName* | *Required* Destination Name |  | String
+| *projectId* | *Required* The Google Cloud PubSub Project Id |  | String
+| *destinationName* | *Required* The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name. |  | String
 |===
 
 

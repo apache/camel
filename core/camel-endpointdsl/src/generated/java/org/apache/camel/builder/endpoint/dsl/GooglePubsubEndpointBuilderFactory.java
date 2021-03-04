@@ -874,10 +874,11 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Syntax: <code>google-pubsub:projectId:destinationName</code>
          * 
          * Path parameter: projectId (required)
-         * Project Id
+         * The Google Cloud PubSub Project Id
          * 
          * Path parameter: destinationName (required)
-         * Destination Name
+         * The Destination Name. For the consumer this will be the subscription
+         * name, while for the producer this will be the topic name.
          * 
          * @param path projectId:destinationName
          * @return the dsl builder
@@ -897,10 +898,11 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Syntax: <code>google-pubsub:projectId:destinationName</code>
          * 
          * Path parameter: projectId (required)
-         * Project Id
+         * The Google Cloud PubSub Project Id
          * 
          * Path parameter: destinationName (required)
-         * Destination Name
+         * The Destination Name. For the consumer this will be the subscription
+         * name, while for the producer this will be the topic name.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
