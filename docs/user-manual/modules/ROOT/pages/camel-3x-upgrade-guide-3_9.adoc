@@ -22,6 +22,15 @@ when the consumer is done with the exchange.
 The default implementations in `DefaultConsumer` has adapted this API and 3rd party components can continue as is, by using
 the older APIs. However for these 3rd party components to support recycling exchanges, then they must be updated to use this new API.
 
+A new `org.apache.camel.spi.ResourceLoader` has been introduced as part of https://issues.apache.org/jira/browse/CAMEL-16285[CAMEL-16285] which provide a way to support additional schemas to resolve resources. As a conseguence:
+
+- `org.apache.camel.support.ResourceHelper` has been updated to use such mechanism instead fo the old one.
+- it is not more possible to provide support for additional schemas using the URL protocol handler mechanism but instead, custom schemas can be added by implementing `org.apache.camel.spi.ResourceResolver` and either bind an instance to the Camel Registry (using `resource-loader-` as a prefix) or using the Service Factory mechanism (under the path `META-INF/services/org/apache/camel/resource-resolver/`)
++
+As example, assuming you want to provide a support for the schema `foo`, then you either have to binbd your instance to the Camel Registry with `resource-loader-foo` as a key, or create a factory finder file with path `META-INF/services/org/apache/camel/resource-resolver/foo`
+- the method for retrieving a resource URL provided by the `org.apache.camel.support.ResourceHelper` class, i.e. `resolveMandatoryResourceAsUrl` ad ` resolveResourceAsUr` have been amended to accept a `CamelContext` instance instead of a `ClassResolver`.
+
+resource-loader-
 
 === Modularized camel-spring
 
