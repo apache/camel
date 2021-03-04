@@ -155,8 +155,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
     @UriParam(label = "consumer,advanced",
-              description = "Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput."
-                            + " This param override the value from the component.")
+              description = "Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput.")
     private Integer prefetchCount;
 
     public SpringRabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {

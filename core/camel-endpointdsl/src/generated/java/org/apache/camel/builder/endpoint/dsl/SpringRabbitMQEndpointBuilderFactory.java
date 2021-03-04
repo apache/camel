@@ -639,8 +639,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         }
         /**
          * Tell the broker how many messages to send in a single request. Often
-         * this can be set quite high to improve throughput. This param override
-         * the value from the component.
+         * this can be set quite high to improve throughput.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -656,8 +655,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         }
         /**
          * Tell the broker how many messages to send in a single request. Often
-         * this can be set quite high to improve throughput. This param override
-         * the value from the component.
+         * this can be set quite high to improve throughput.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
