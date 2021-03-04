@@ -165,6 +165,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param serviceAccountKey the value to set
@@ -469,6 +470,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param serviceAccountKey the value to set
@@ -792,6 +794,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param serviceAccountKey the value to set

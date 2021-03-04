@@ -57,6 +57,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(label = "common",
               description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
+    @Metadata(required = true)
     private String serviceAccountKey;
 
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
