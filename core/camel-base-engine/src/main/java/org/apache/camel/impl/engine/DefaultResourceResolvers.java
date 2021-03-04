@@ -44,7 +44,7 @@ public final class DefaultResourceResolvers {
     }
 
     @ResourceResolver(FileResolver.SCHEME)
-    public static final class FileResolver extends ResourceResolverSupport {
+    public static class FileResolver extends ResourceResolverSupport {
         public static final String SCHEME = "file";
         private static final Logger LOGGER = LoggerFactory.getLogger(FileResolver.class);
 
@@ -98,7 +98,7 @@ public final class DefaultResourceResolvers {
     }
 
     @ResourceResolver(HttpResolver.SCHEME)
-    public static final class HttpResolver extends ResourceResolverSupport {
+    public static class HttpResolver extends ResourceResolverSupport {
         public static final String SCHEME = "http";
         private static final Logger LOGGER = LoggerFactory.getLogger(HttpResolver.class);
 
@@ -167,7 +167,7 @@ public final class DefaultResourceResolvers {
     }
 
     @ResourceResolver(ClasspathResolver.SCHEME)
-    public static final class ClasspathResolver extends ResourceResolverSupport {
+    public static class ClasspathResolver extends ResourceResolverSupport {
         public static final String SCHEME = "classpath";
         private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathResolver.class);
 
@@ -234,7 +234,7 @@ public final class DefaultResourceResolvers {
     }
 
     @ResourceResolver(RefResolver.SCHEME)
-    public static final class RefResolver extends ResourceResolverSupport {
+    public static class RefResolver extends ResourceResolverSupport {
         public static final String SCHEME = "ref";
         private static final Logger LOGGER = LoggerFactory.getLogger(RefResolver.class);
 

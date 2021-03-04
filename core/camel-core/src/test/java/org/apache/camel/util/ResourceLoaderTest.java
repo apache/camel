@@ -24,7 +24,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultResourceLoader;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ResourceResolverSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.FileUtil.copyFile;
@@ -82,15 +85,54 @@ public class ResourceLoaderTest extends TestSupport {
 
     @Test
     public void testLoadClasspathDefault() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("log4j2.properties");
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Resource resource = context.getResourceLoader().resolveResource("log4j2.properties");
 
-        try (InputStream is = resource.getInputStream()) {
-            assertNotNull(is);
+            // need to be started as it triggers the fallback
+            // resolver
+            context.start();
 
-            String text = context.getTypeConverter().convertTo(String.class, is);
-            assertNotNull(text);
-            assertTrue(text.contains("rootLogger"));
+            try (InputStream is = resource.getInputStream()) {
+                assertNotNull(is);
+
+                String text = context.getTypeConverter().convertTo(String.class, is);
+                assertNotNull(text);
+                assertTrue(text.contains("rootLogger"));
+            }
+        }
+    }
+
+    @Test
+    public void testLoadFallback() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            DefaultResourceLoader loader = new DefaultResourceLoader();
+            loader.setFallbackResolver(new ResourceResolverSupport("custom") {
+                @Override
+                public Resource resolve(String location) {
+                    return ResourceHelper.fromString("custom", "fallback");
+                }
+
+                @Override
+                protected Resource createResource(String location) {
+                    throw new UnsupportedOperationException();
+                }
+            });
+
+            context.setResourceLoader(loader);
+
+            Resource resource = context.getResourceLoader().resolveResource("log4j2.properties");
+
+            // need to be started as it triggers the fallback
+            // resolver
+            context.start();
+
+            try (InputStream is = resource.getInputStream()) {
+                assertNotNull(is);
+
+                String text = context.getTypeConverter().convertTo(String.class, is);
+                assertNotNull(text);
+                assertTrue(text.equals("fallback"));
+            }
         }
     }
 
