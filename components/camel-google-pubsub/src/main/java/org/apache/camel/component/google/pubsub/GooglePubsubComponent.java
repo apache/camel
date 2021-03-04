@@ -63,8 +63,8 @@ public class GooglePubsubComponent extends DefaultComponent {
 
     @Metadata(label = "common",
               description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
-                  + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.",
-                  required = true)
+                            + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.",
+              required = true)
     private String serviceAccountKey;
 
     @Metadata(

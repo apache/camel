@@ -65,6 +65,24 @@ public interface GooglePubsubComponentBuilderFactory {
             return this;
         }
         /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubComponentBuilder serviceAccountKey(
+                java.lang.String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -195,6 +213,7 @@ public interface GooglePubsubComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "endpoint": ((GooglePubsubComponent) component).setEndpoint((java.lang.String) value); return true;
+            case "serviceAccountKey": ((GooglePubsubComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "publisherCacheSize": ((GooglePubsubComponent) component).setPublisherCacheSize((int) value); return true;

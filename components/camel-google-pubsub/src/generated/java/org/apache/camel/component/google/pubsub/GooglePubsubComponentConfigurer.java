@@ -34,6 +34,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherCacheTimeout": target.setPublisherCacheTimeout(property(camelContext, int.class, value)); return true;
         case "publisherterminationtimeout":
         case "publisherTerminationTimeout": target.setPublisherTerminationTimeout(property(camelContext, int.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -54,6 +56,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherCacheTimeout": return int.class;
         case "publisherterminationtimeout":
         case "publisherTerminationTimeout": return int.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         default: return null;
         }
     }
@@ -75,6 +79,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherCacheTimeout": return target.getPublisherCacheTimeout();
         case "publisherterminationtimeout":
         case "publisherTerminationTimeout": return target.getPublisherTerminationTimeout();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return target.getServiceAccountKey();
         default: return null;
         }
     }
