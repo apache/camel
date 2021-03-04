@@ -53,6 +53,10 @@ public class STS2Configuration implements Cloneable {
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
+    @UriParam(defaultValue = "false")
+    private boolean overrideEndpoint;
+    @UriParam
+    private String uriEndpointOverride;
 
     public StsClient getStsClient() {
         return stsClient;
