@@ -7,6 +7,8 @@
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-mysql.adoc[opts=optional]
+//Manually maintained attributes
+:group: Debezium
 
 *Since Camel {since}*
 
