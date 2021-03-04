@@ -61,6 +61,12 @@ public class GooglePubsubComponent extends DefaultComponent {
               description = "Endpoint to use with local Pub/Sub emulator.")
     private String endpoint;
 
+    @Metadata(label = "common",
+              description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
+                  + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.",
+                  required = true)
+    private String serviceAccountKey;
+
     @Metadata(
               label = "producer",
               description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
@@ -111,6 +117,7 @@ public class GooglePubsubComponent extends DefaultComponent {
         GooglePubsubEndpoint pubsubEndpoint = new GooglePubsubEndpoint(uri, this, remaining);
         pubsubEndpoint.setProjectId(parts[0]);
         pubsubEndpoint.setDestinationName(parts[1]);
+        pubsubEndpoint.setServiceAccountKey(serviceAccountKey);
 
         setProperties(pubsubEndpoint, parameters);
 
@@ -233,5 +240,13 @@ public class GooglePubsubComponent extends DefaultComponent {
 
     public void setPublisherTerminationTimeout(int publisherTerminationTimeout) {
         this.publisherTerminationTimeout = publisherTerminationTimeout;
+    }
+
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
+    }
+
+    public void setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
     }
 }
