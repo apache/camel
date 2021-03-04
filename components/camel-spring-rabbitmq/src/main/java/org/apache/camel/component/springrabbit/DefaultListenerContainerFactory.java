@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.Optional;
+
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
@@ -47,7 +49,9 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         if (endpoint.getComponent().getErrorHandler() != null) {
             listener.setErrorHandler(endpoint.getComponent().getErrorHandler());
         }
-        listener.setPrefetchCount(endpoint.getComponent().getPrefetchCount());
+
+        listener.setPrefetchCount(
+                Optional.ofNullable(endpoint.getPrefetchCount()).orElse(endpoint.getComponent().getPrefetchCount()));
         listener.setShutdownTimeout(endpoint.getComponent().getShutdownTimeout());
         listener.setConsumerArguments(endpoint.getConsumerArgs());
         return listener;

@@ -59,6 +59,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
         case "nolocal":
         case "noLocal": target.setNoLocal(property(camelContext, boolean.class, value)); return true;
+        case "prefetchcount":
+        case "prefetchCount": target.setPrefetchCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "queues": target.setQueues(property(camelContext, java.lang.String.class, value)); return true;
         case "replytimeout":
         case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
@@ -114,6 +116,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
         case "nolocal":
         case "noLocal": return boolean.class;
+        case "prefetchcount":
+        case "prefetchCount": return java.lang.Integer.class;
         case "queues": return java.lang.String.class;
         case "replytimeout":
         case "replyTimeout": return long.class;
@@ -170,6 +174,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
         case "nolocal":
         case "noLocal": return target.isNoLocal();
+        case "prefetchcount":
+        case "prefetchCount": return target.getPrefetchCount();
         case "queues": return target.getQueues();
         case "replytimeout":
         case "replyTimeout": return target.getReplyTimeout();
