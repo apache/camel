@@ -23,7 +23,6 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -179,7 +178,6 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
                     configuration.getPort());
 
             TSSLTransportFactory.TSSLTransportParameters sslParams;
-            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
 
             sslParams = new TSSLTransportFactory.TSSLTransportParameters(
                     sslParameters.getSecureSocketProtocol(),
@@ -190,7 +188,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             if (ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getProvider())
                     && ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getKeyStore().getType())) {
                 sslParams.setTrustStore(
-                        ResourceHelper.resolveResourceAsInputStream(classResolver,
+                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                 sslParameters.getTrustManagers().getKeyStore().getResource()),
                         sslParameters.getTrustManagers().getKeyStore().getPassword(),
                         sslParameters.getTrustManagers().getProvider(),

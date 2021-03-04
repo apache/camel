@@ -246,7 +246,7 @@ public class JaxbDataFormat extends ServiceSupport
                     // if a schema is set then an MarshallException is thrown when the XML is not valid
                     // and the method must throw this exception as it would when the object in the body is a root element
                     // or a partial class (the other alternatives above)
-                    // 
+                    //
                     // it would be best to completely remove the exception handler here but it's left for backwards compatibility reasons.
                     if (MarshalException.class.isAssignableFrom(e.getClass()) && schema != null) {
                         throw e;
@@ -614,7 +614,7 @@ public class JaxbDataFormat extends ServiceSupport
         String[] schemas = schema.split(",");
         Source[] sources = new Source[schemas.length];
         for (int i = 0; i < schemas.length; i++) {
-            URL schemaUrl = ResourceHelper.resolveMandatoryResourceAsUrl(camelContext.getClassResolver(), schemas[i]);
+            URL schemaUrl = ResourceHelper.resolveMandatoryResourceAsUrl(camelContext, schemas[i]);
             sources[i] = new StreamSource(schemaUrl.toExternalForm());
         }
         return sources;

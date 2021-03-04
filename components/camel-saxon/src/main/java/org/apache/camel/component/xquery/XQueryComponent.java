@@ -58,7 +58,7 @@ public class XQueryComponent extends DefaultComponent {
     }
 
     public URL resolveModuleResource(String uri) throws Exception {
-        return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), uri);
+        return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(), uri);
     }
 
     public ModuleURIResolver getModuleURIResolver() {

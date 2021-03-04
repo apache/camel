@@ -90,7 +90,7 @@ public class FreemarkerComponent extends DefaultComponent {
                 @Override
                 protected URL getURL(String name) {
                     try {
-                        return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), name);
+                        return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(), name);
                     } catch (Exception e) {
                         // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback without locale
                         // so we should return null to signal the resource could not be found

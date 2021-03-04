@@ -100,10 +100,10 @@ public class GrpcProducer extends DefaultAsyncProducer {
 
             if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE) {
                 ObjectHelper.notNull(configuration.getKeyCertChainResource(), "serviceAccountResource");
-                ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
 
                 Credentials creds = GoogleCredentials.fromStream(
-                        ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getServiceAccountResource()));
+                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                configuration.getServiceAccountResource()));
                 callCreds = MoreCallCredentials.from(creds);
             } else if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
                 ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
@@ -170,13 +170,16 @@ public class GrpcProducer extends DefaultAsyncProducer {
             SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient()
                     .sslProvider(SslProvider.OPENSSL)
                     .keyManager(
-                            ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyCertChainResource()),
-                            ResourceHelper.resolveResourceAsInputStream(classResolver, configuration.getKeyResource()),
+                            ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                    configuration.getKeyCertChainResource()),
+                            ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                    configuration.getKeyResource()),
                             configuration.getKeyPassword());
 
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(classResolver,
-                        configuration.getTrustCertCollectionResource()));
+                sslContextBuilder
+                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                configuration.getTrustCertCollectionResource()));
             }
 
             channelBuilder = channelBuilder.sslContext(sslContextBuilder.build());
