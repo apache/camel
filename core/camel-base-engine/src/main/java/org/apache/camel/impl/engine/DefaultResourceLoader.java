@@ -59,13 +59,13 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
                 return super.resolve(DefaultResourceResolvers.ClasspathResolver.SCHEME + ":" + location);
             }
         };
+
+        this.fallbackResolver.setCamelContext(camelContext);
     }
 
     @Override
     public void doStart() throws Exception {
         super.doStart();
-
-        CamelContextAware.trySetCamelContext(this.fallbackResolver, getCamelContext());
         ServiceHelper.startService(this.fallbackResolver);
     }
 
@@ -94,6 +94,7 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.fallbackResolver.setCamelContext(this.camelContext);
     }
 
     @Override
