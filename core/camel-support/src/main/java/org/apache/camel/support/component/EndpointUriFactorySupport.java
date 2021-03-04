@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -55,9 +56,15 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         }
         if (ObjectHelper.isNotEmpty(obj)) {
             String str = camelContext.getTypeConverter().convertTo(String.class, obj);
-            uri = uri.replace(name, str);
+            int occurence = StringHelper.countOccurence(uri, name);
+            if (occurence > 1) {
+                uri = StringHelper.replaceFromSecondOccurence(uri, name, str);
+            } else {
+                uri = uri.replace(name, str);
+            }
         } else {
-            // the option is optional and we have no default or value for it, so we need to remove it from the syntax
+            // the option is optional and we have no default or value for it, so we need to
+            // remove it from the syntax
             int pos = uri.indexOf(name);
             if (pos != -1) {
                 // remove from syntax
@@ -91,7 +98,8 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         String query = URISupport.createQueryString(map, encode);
         if (ObjectHelper.isNotEmpty(query)) {
             // there may be a ? sign in the context path then use & instead
-            // (this is not correct but lets deal with this as the camel-catalog handled this)
+            // (this is not correct but lets deal with this as the camel-catalog handled
+            // this)
             boolean questionMark = uri.indexOf('?') != -1;
             if (questionMark) {
                 uri = uri + "&" + query;
@@ -100,5 +108,39 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
             }
         }
         return uri;
+    }
+
+    private int countOccurence(String str, String findStr) {
+        int lastIndex = 0;
+        int count = 0;
+
+        while (lastIndex != -1) {
+
+            lastIndex = str.indexOf(findStr, lastIndex);
+
+            if (lastIndex != -1) {
+                count++;
+                lastIndex += findStr.length();
+            }
+        }
+        return count;
+    }
+
+    private String replaceFromSecondOccurence(String str, String name, String repl) {
+        int index = str.indexOf(name);
+        boolean replace = false;
+
+        while (index != -1) {
+            String tempString = str.substring(index);
+            if (replace) {
+                tempString = tempString.replaceFirst(name, repl);
+                str = str.substring(0, index) + tempString;
+                replace = false;
+            } else {
+                replace = true;
+            }
+            index = str.indexOf(name, index + 1);
+        }
+        return str;
     }
 }

@@ -1009,4 +1009,49 @@ public final class StringHelper {
         return Pattern.compile(regex).splitAsStream(text);
     }
 
+    /**
+     * Returns the occurence of a search string in to a string
+     *
+     * @param  text   the text
+     * @param  search the string to search
+     * @return        an integer reporting the number of occurence of the searched string in to the text
+     */
+    public static int countOccurence(String text, String search) {
+        int lastIndex = 0;
+        int count = 0;
+        while (lastIndex != -1) {
+            lastIndex = text.indexOf(search, lastIndex);
+            if (lastIndex != -1) {
+                count++;
+                lastIndex += search.length();
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Replaces a string in to a text starting from his second occurence
+     *
+     * @param  text   the text
+     * @param  search the string to search
+     * @param  repl   the replacement for the string
+     * @return        the string with the replacement
+     */
+    public static String replaceFromSecondOccurence(String text, String search, String repl) {
+        int index = text.indexOf(search);
+        boolean replace = false;
+
+        while (index != -1) {
+            String tempString = text.substring(index);
+            if (replace) {
+                tempString = tempString.replaceFirst(search, repl);
+                text = text.substring(0, index) + tempString;
+                replace = false;
+            } else {
+                replace = true;
+            }
+            index = text.indexOf(search, index + 1);
+        }
+        return text;
+    }
 }
