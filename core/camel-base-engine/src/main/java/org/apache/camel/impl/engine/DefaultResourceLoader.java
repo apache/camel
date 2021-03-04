@@ -44,6 +44,7 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
 
     private final Map<String, ResourceResolver> resolvers;
     private CamelContext camelContext;
+    private ResourceResolver fallbackResolver;
 
     public DefaultResourceLoader() {
         this(null);
@@ -52,6 +53,20 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
     public DefaultResourceLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
         this.resolvers = new ConcurrentHashMap<>();
+        this.fallbackResolver = new DefaultResourceResolvers.ClasspathResolver() {
+            @Override
+            public Resource resolve(String location) {
+                return super.resolve(DefaultResourceResolvers.ClasspathResolver.SCHEME + ":" + location);
+            }
+        };
+    }
+
+    @Override
+    public void doStart() throws Exception {
+        super.doStart();
+
+        CamelContextAware.trySetCamelContext(this.fallbackResolver, getCamelContext());
+        ServiceHelper.startService(this.fallbackResolver);
     }
 
     @Override
@@ -61,6 +76,14 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
         ServiceHelper.stopService(resolvers.values());
 
         resolvers.clear();
+    }
+
+    public ResourceResolver getFallbackResolver() {
+        return fallbackResolver;
+    }
+
+    public void setFallbackResolver(ResourceResolver fallbackResolver) {
+        this.fallbackResolver = fallbackResolver;
     }
 
     @Override
@@ -77,11 +100,14 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
     public Resource resolveResource(final String uri) {
         ObjectHelper.notNull(uri, "Resource uri must not be null");
 
-        String location = uri;
-        String scheme = StringHelper.before(location, ":");
+        //
+        // If the scheme is not set, use a fallback resolver which by default uses the classpath
+        // resolver but a custom implementation can be provided. This is useful when as example
+        // resources need to be discovered on a set of location through a dedicated resolver.
+        //
+        String scheme = StringHelper.before(uri, ":");
         if (scheme == null) {
-            scheme = DefaultResourceResolvers.ClasspathResolver.SCHEME;
-            location = DefaultResourceResolvers.ClasspathResolver.SCHEME + ":" + location;
+            return this.fallbackResolver.resolve(uri);
         }
 
         ResourceResolver rr = getResourceResolver(scheme);
@@ -90,7 +116,7 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
                     "Cannot find a ResourceResolver in classpath supporting the scheme: " + scheme);
         }
 
-        return rr.resolve(location);
+        return rr.resolve(uri);
     }
 
     /**
