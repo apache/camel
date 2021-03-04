@@ -69,7 +69,6 @@ public class STS2ComponentConfigurationTest extends CamelTestSupport {
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
 
-
     @Test
     public void createEndpointWithOverride() throws Exception {
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
@@ -77,7 +76,8 @@ public class STS2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         STS2Endpoint endpoint
-                = (STS2Endpoint) component.createEndpoint("aws2-sts://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
+                = (STS2Endpoint) component.createEndpoint(
+                        "aws2-sts://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
