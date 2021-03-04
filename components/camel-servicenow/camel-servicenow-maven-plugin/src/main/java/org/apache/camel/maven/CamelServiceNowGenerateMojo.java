@@ -180,7 +180,9 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
         try {
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(toCamelCase(name, false))
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    .addAnnotation(Generated.class)
+                    .addAnnotation(AnnotationSpec.builder(Generated.class)
+                            .addMember("value", "$S", CamelServiceNowGenerateMojo.class.getName())
+                            .build())
                     .addAnnotation(AnnotationSpec.builder(ServiceNowSysParm.class)
                             .addMember("name", "$S", "sysparm_exclude_reference_link")
                             .addMember("value", "$S", "true")
