@@ -20,7 +20,9 @@ import java.util.List;
 
 import com.google.api.client.util.Lists;
 import com.google.api.gax.rpc.ApiException;
+import com.google.cloud.functions.v1.CallFunctionResponse;
 import com.google.cloud.functions.v1.CloudFunction;
+import com.google.cloud.functions.v1.CloudFunctionName;
 import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
 import com.google.cloud.functions.v1.CloudFunctionsServiceClient.ListFunctionsPagedResponse;
 import com.google.cloud.functions.v1.ListFunctionsRequest;
@@ -89,10 +91,51 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         }
     }
 
-    private void getFunction(CloudFunctionsServiceClient client, Exchange exchange) {
+    private void getFunction(CloudFunctionsServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CloudFunctionName) {
+                CloudFunction result;
+                try {
+                    result = client.getFunction((CloudFunctionName) payload);
+                } catch (ApiException ae) {
+                    LOG.trace("getFunction command returned the error code {}", ae.getStatusCode());
+                    throw ae;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(), getConfiguration().getLocation(),
+                    getConfiguration().getFunctionName());
+            CloudFunction result = client.getFunction(cfName);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
     }
 
-    private void callFunction(CloudFunctionsServiceClient client, Exchange exchange) {
+    private void callFunction(CloudFunctionsServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        String data = exchange.getIn().getBody(String.class);
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CloudFunctionName) {
+                CallFunctionResponse result;
+                try {
+                    result = client.callFunction((CloudFunctionName) payload, data);
+                } catch (ApiException ae) {
+                    LOG.trace("callFunction command returned the error code {}", ae.getStatusCode());
+                    throw ae;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(), getConfiguration().getLocation(),
+                    getConfiguration().getFunctionName());
+            CallFunctionResponse result = client.callFunction(cfName, data);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
     }
 
     private GoogleCloudFunctionsOperations determineOperation(Exchange exchange) {
