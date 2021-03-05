@@ -16,7 +16,7 @@ In Java:
 
 [source,java]
 ----
-javaEndpoint endpoint = context.getEndpoint("activemq:my.queue");
+Endpoint endpoint = context.getEndpoint("activemq:my.queue");
 PollingConsumer consumer = endpoint.createPollingConsumer(); Exchange
 exchange = consumer.receive();
 ----
