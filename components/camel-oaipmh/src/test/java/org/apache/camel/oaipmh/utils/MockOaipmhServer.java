@@ -103,7 +103,10 @@ public final class MockOaipmhServer {
     }
 
     public void stop() {
-        server.stop();
+        if (server != null) {
+            server.stop();
+            server = null;
+        }
     }
 
     public int getHttpPort() {
