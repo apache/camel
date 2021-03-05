@@ -17,8 +17,8 @@ In Java:
 [source,java]
 ----
 Endpoint endpoint = context.getEndpoint("activemq:my.queue");
-PollingConsumer consumer = endpoint.createPollingConsumer(); Exchange
-exchange = consumer.receive();
+PollingConsumer consumer = endpoint.createPollingConsumer();
+Exchange exchange = consumer.receive();
 ----
 
 The *`ConsumerTemplate`* (discussed below) is also available.
