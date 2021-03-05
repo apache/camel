@@ -20,8 +20,10 @@ import java.nio.file.Files;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Fails on CI server")
 public class FileWatchComponentDeleteTest extends FileWatchComponentTestBase {
 
     @Test
