@@ -28,6 +28,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -47,6 +49,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "translateClient": target.getConfiguration().setTranslateClient(property(camelContext, software.amazon.awssdk.services.translate.TranslateClient.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -66,6 +70,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.translate.Translate2Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "pojorequest":
         case "pojoRequest": return boolean.class;
         case "proxyhost":
@@ -85,6 +91,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "translateClient": return software.amazon.awssdk.services.translate.TranslateClient.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         default: return null;
         }
     }
@@ -100,6 +108,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pojorequest":
         case "pojoRequest": return target.getConfiguration().isPojoRequest();
         case "proxyhost":
@@ -119,6 +129,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "translateClient": return target.getConfiguration().getTranslateClient();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         default: return null;
         }
     }
