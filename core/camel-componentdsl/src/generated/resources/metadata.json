@@ -2588,7 +2588,7 @@
     "version": "3.9.0-SNAPSHOT",
     "scheme": "google-bigquery-sql",
     "extendsScheme": "",
-    "syntax": "google-bigquery-sql:projectId:query",
+    "syntax": "google-bigquery-sql:projectId:queryString",
     "async": false,
     "api": false,
     "consumerOnly": false,

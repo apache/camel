@@ -130,15 +130,15 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-bigquery
          * 
-         * Syntax: <code>google-bigquery-sql:projectId:query</code>
-         * 
-         * Path parameter: query (required)
-         * BigQuery standard SQL query
+         * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
          * 
          * Path parameter: projectId (required)
          * Google Cloud Project Id
          * 
-         * @param path projectId:query
+         * Path parameter: queryString (required)
+         * BigQuery standard SQL query
+         * 
+         * @param path projectId:queryString
          * @return the dsl builder
          */
         default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
@@ -152,17 +152,17 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-bigquery
          * 
-         * Syntax: <code>google-bigquery-sql:projectId:query</code>
-         * 
-         * Path parameter: query (required)
-         * BigQuery standard SQL query
+         * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
          * 
          * Path parameter: projectId (required)
          * Google Cloud Project Id
          * 
+         * Path parameter: queryString (required)
+         * BigQuery standard SQL query
+         * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path projectId:query
+         * @param path projectId:queryString
          * @return the dsl builder
          */
         default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(

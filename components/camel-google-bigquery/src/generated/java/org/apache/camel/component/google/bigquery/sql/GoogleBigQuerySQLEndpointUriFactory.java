@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":projectId:query";
+    private static final String BASE = ":projectId:queryString";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
@@ -23,7 +23,7 @@ public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.suppor
         Set<String> props = new HashSet<>(4);
         props.add("lazyStartProducer");
         props.add("connectionFactory");
-        props.add("query");
+        props.add("queryString");
         props.add("projectId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
@@ -41,8 +41,8 @@ public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.suppor
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "query", null, true, copy);
         uri = buildPathParameter(syntax, uri, "projectId", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "queryString", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
