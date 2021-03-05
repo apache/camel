@@ -309,8 +309,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     @Override
-    public Message toCamelMessage(FullHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration)
-            throws Exception {
+    public Message toCamelMessage(FullHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) {
         LOG.trace("toCamelMessage: {}", response);
 
         NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, response);
@@ -336,8 +335,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     @Override
-    public Message toCamelMessage(InboundStreamHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration)
-            throws Exception {
+    public Message toCamelMessage(InboundStreamHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) {
         LOG.trace("toCamelMessage: {}", response);
 
         NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, null);
@@ -352,8 +350,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
     @Override
     public void populateCamelHeaders(
-            HttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration)
-            throws Exception {
+            HttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) {
         LOG.trace("populateCamelHeaders: {}", response);
 
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.status().code());
@@ -445,7 +442,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         HttpResponse response = null;
 
-        if (response == null && body instanceof InputStream && configuration.isDisableStreamCache()) {
+        if (body instanceof InputStream && configuration.isDisableStreamCache()) {
             response = new OutboundStreamHttpResponse(
                     (InputStream) body, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code)));
             response.headers().set(TRANSFER_ENCODING, CHUNKED);

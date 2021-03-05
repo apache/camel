@@ -21,7 +21,6 @@ import java.net.SocketAddress;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.netty.NettyConstants;
@@ -82,9 +81,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Object in = msg;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", ctx.channel(), in);
+            LOG.debug("Channel: {} received body: {}", ctx.channel(), msg);
         }
 
         // create Exchange and let the consumer process it
@@ -147,20 +145,17 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void processAsynchronously(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
-        consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                // send back response if the communication is synchronous
-                try {
-                    if (consumer.getConfiguration().isSync()) {
-                        sendResponse(message, ctx, exchange);
-                    }
-                } catch (Throwable e) {
-                    consumer.getExceptionHandler().handleException(e);
-                } finally {
-                    consumer.doneUoW(exchange);
-                    consumer.releaseExchange(exchange, false);
+        consumer.getAsyncProcessor().process(exchange, doneSync -> {
+            // send back response if the communication is synchronous
+            try {
+                if (consumer.getConfiguration().isSync()) {
+                    sendResponse(message, ctx, exchange);
                 }
+            } catch (Throwable e) {
+                consumer.getExceptionHandler().handleException(e);
+            } finally {
+                consumer.doneUoW(exchange);
+                consumer.releaseExchange(exchange, false);
             }
         });
     }
