@@ -40,7 +40,7 @@ public class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport {
 
     protected GoogleBigQuerySQLProducer createAndStartProducer() throws Exception {
         configuration.setProjectId(projectId);
-        configuration.setQuery(sql);
+        configuration.setQueryString(sql);
 
         GoogleBigQuerySQLProducer sqlProducer = new GoogleBigQuerySQLProducer(bigquery, endpoint, configuration);
         sqlProducer.start();

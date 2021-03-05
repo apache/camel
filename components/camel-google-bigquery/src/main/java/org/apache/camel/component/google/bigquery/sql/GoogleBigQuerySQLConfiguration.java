@@ -33,7 +33,7 @@ public class GoogleBigQuerySQLConfiguration {
     private String projectId;
     @UriPath(label = "common", description = "BigQuery standard SQL query")
     @Metadata(required = true)
-    private String query;
+    private String queryString;
 
     public void parseRemaining(String remaining) {
         int indexOfColon = remaining.indexOf(':');
@@ -43,7 +43,7 @@ public class GoogleBigQuerySQLConfiguration {
         }
 
         projectId = remaining.substring(0, indexOfColon);
-        query = remaining.substring(indexOfColon + 1);
+        queryString = remaining.substring(indexOfColon + 1);
     }
 
     /**
@@ -57,12 +57,12 @@ public class GoogleBigQuerySQLConfiguration {
         this.connectionFactory = connectionFactory;
     }
 
-    public String getQuery() {
-        return query;
+    public String getQueryString() {
+        return queryString;
     }
 
-    public GoogleBigQuerySQLConfiguration setQuery(String query) {
-        this.query = query;
+    public GoogleBigQuerySQLConfiguration setQueryString(String queryString) {
+        this.queryString = queryString;
         return this;
     }
 

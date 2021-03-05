@@ -166,7 +166,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         String placeholder = ":#";
-        query = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), configuration.getQuery(), placeholder);
+        query = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), configuration.getQueryString(), placeholder);
         queryParameterNames = SqlHelper.extractParameterNames(query);
     }
 }

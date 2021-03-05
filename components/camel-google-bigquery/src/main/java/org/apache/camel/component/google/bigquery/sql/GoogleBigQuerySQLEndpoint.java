@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * handled by Camel.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-bigquery-sql", title = "Google BigQuery Standard SQL",
-             syntax = "google-bigquery-sql:projectId:query", label = "cloud,messaging", producerOnly = true)
+             syntax = "google-bigquery-sql:projectId:queryString", label = "cloud,messaging", producerOnly = true)
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     @UriParam
