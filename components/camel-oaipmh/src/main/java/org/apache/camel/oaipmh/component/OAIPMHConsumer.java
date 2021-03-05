@@ -19,12 +19,12 @@ package org.apache.camel.oaipmh.component;
 import org.apache.camel.Processor;
 import org.apache.camel.oaipmh.handler.ConsumerResponseHandler;
 import org.apache.camel.oaipmh.handler.Harvester;
-import org.apache.camel.support.DefaultScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * The OAIPMH consumer.
  */
-public class OAIPMHConsumer extends DefaultScheduledPollConsumer {
+public class OAIPMHConsumer extends ScheduledPollConsumer {
 
     private Harvester harvester;
 
@@ -38,8 +38,7 @@ public class OAIPMHConsumer extends DefaultScheduledPollConsumer {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
         this.harvester = new Harvester(
                 new ConsumerResponseHandler(this),
                 getEndpoint().getUrl(),
@@ -52,6 +51,7 @@ public class OAIPMHConsumer extends DefaultScheduledPollConsumer {
         if (getEndpoint().isIgnoreSSLWarnings()) {
             this.harvester.getHttpClient().setIgnoreSSLWarnings(true);
         }
+        super.doStart();
     }
 
     @Override

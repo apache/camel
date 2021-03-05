@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultPollingEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.URISupport;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -37,7 +37,7 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
              category = { Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH })
-public class OAIPMHEndpoint extends DefaultPollingEndpoint {
+public class OAIPMHEndpoint extends ScheduledPollEndpoint {
 
     private transient URI url;
 
