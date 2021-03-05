@@ -17,24 +17,20 @@
 package org.apache.camel.component.springrabbit;
 
 import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 
-public class DefaultMessageListenerContainer extends DirectMessageListenerContainer {
+public class CamelSimpleMessageListenerContainer extends SimpleMessageListenerContainer implements MessageListenerContainer {
 
-    private AmqpAdmin amqpAdmin;
-
-    public DefaultMessageListenerContainer(ConnectionFactory connectionFactory) {
-        super(connectionFactory);
+    public CamelSimpleMessageListenerContainer(SpringRabbitMQEndpoint endpoint) {
+        super(endpoint.getConnectionFactory());
+        this.setConcurrentConsumers(endpoint.getConcurrentConsumers());
+        if (endpoint.getMaxConcurrentConsumers() != null) {
+            this.setMaxConcurrentConsumers(endpoint.getMaxConcurrentConsumers());
+        }
     }
 
     @Override
-    public void setAmqpAdmin(AmqpAdmin amqpAdmin) {
-        super.setAmqpAdmin(amqpAdmin);
-        this.amqpAdmin = amqpAdmin;
-    }
-
     public AmqpAdmin getAmqpAdmin() {
-        return amqpAdmin;
+        return super.getAmqpAdmin();
     }
 }
