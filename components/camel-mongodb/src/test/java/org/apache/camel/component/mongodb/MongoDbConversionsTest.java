@@ -18,15 +18,19 @@ package org.apache.camel.component.mongodb;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.converters.MongoDbBasicConverters;
 import org.apache.camel.converter.IOConverter;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -133,6 +137,26 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         // CHECKSTYLE:OFF
         public String _id = "testInsertPojo";
         // CHECKSTYLE:ON
+    }
+
+    @Test
+    public void shouldConvertJsonStringListToBSONList() throws InterruptedException {
+        String jsonListArray = "[{\"key\":\"value1\"}, {\"key\":\"value2\"}]";
+        List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonListArray);
+        assertNotNull(bsonList);
+        assertEquals(2, bsonList.size());
+
+        String jsonEmptyArray = "[]";
+        bsonList = MongoDbBasicConverters.fromStringToList(jsonEmptyArray);
+        assertNotNull(bsonList);
+        assertEquals(0, bsonList.size());
+    }
+
+    @Test
+    public void shouldNotConvertJsonStringListToBSONList() throws InterruptedException {
+        String jsonSingleValue = "{\"key\":\"value1\"}";
+        List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonSingleValue);
+        assertNull(bsonList);
     }
 
 }
