@@ -119,6 +119,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setDeadLetterQueue(deadLetterQueue);
         endpoint.setDeadLetterRoutingKey(deadLetterRoutingKey);
         endpoint.setReplyTimeout(replyTimeout);
+        endpoint.setPrefetchCount(prefetchCount);
 
         endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
         setProperties(endpoint, parameters);

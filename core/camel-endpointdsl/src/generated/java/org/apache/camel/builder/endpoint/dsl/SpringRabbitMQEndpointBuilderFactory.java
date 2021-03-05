@@ -638,6 +638,38 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Tell the broker how many messages to send in a single request. Often
+         * this can be set quite high to improve throughput.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
+                int prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * Tell the broker how many messages to send in a single request. Often
+         * this can be set quite high to improve throughput.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
+                String prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
