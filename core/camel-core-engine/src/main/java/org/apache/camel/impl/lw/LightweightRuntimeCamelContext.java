@@ -914,9 +914,14 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
+        return resolvePropertyPlaceholders(text, false);
+    }
+
+    @Override
+    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
-            return getPropertiesComponent().parseUri(text);
+            return getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
         }
         // is the value a known field (currently we only support
         // constants from Exchange.class)

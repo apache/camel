@@ -64,15 +64,16 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
             List<String> typeFilterDefinitions = new ArrayList<>(definition.getTypeFilters().size());
             for (YAMLTypeFilterDefinition definition : definition.getTypeFilters()) {
                 String value = parseString(definition.getValue());
-                if (!value.startsWith("type") && !value.startsWith("regexp")) {
+                if (value != null && !value.startsWith("type") && !value.startsWith("regexp")) {
                     YAMLTypeFilterType type = parse(YAMLTypeFilterType.class, definition.getType());
                     if (type == null) {
                         type = YAMLTypeFilterType.type;
                     }
-
                     value = type.name() + ":" + value;
                 }
-                typeFilterDefinitions.add(value);
+                if (value != null) {
+                    typeFilterDefinitions.add(value);
+                }
             }
             return typeFilterDefinitions;
         } else {

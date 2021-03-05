@@ -41,6 +41,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.TypedProcessorFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
@@ -126,7 +127,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
         endpointScheme = ThrowingHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders,
                 () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
-        endpointUri = ThrowingHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+        endpointUri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, endpointUri);
         ExchangePattern pattern = CamelContextHelper.parse(camelContext, ExchangePattern.class, definition.getPattern());
 
         Expression expression = retrieveExpression(camelContext, endpointScheme);

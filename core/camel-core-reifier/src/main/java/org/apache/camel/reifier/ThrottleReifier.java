@@ -38,7 +38,7 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
 
         // should be default 1000 millis
-        long period = definition.getTimePeriodMillis() != null ? parseDuration(definition.getTimePeriodMillis()) : 1000L;
+        long period = parseDuration(definition.getTimePeriodMillis(), 1000L);
 
         // max requests per period is mandatory
         Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();

@@ -18,8 +18,10 @@ package org.apache.camel.builder.endpoint;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +32,8 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.util.URISupport;
 
@@ -68,14 +72,23 @@ public class AbstractEndpointBuilder {
     }
 
     private static void resolvePropertyPlaceholders(CamelContext context, Map<String, Object> properties) {
+        Set<String> toRemove = new HashSet<>();
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String) {
                 String text = (String) value;
-                String changed = context.resolvePropertyPlaceholders(text);
-                if (!changed.equals(text)) {
+                String changed = context.adapt(ExtendedCamelContext.class).resolvePropertyPlaceholders(text, true);
+                if (changed.startsWith(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
+                    // unresolved then remove it
+                    toRemove.add(entry.getKey());
+                } else if (!changed.equals(text)) {
                     entry.setValue(changed);
                 }
+            }
+        }
+        if (!toRemove.isEmpty()) {
+            for (String key : toRemove) {
+                properties.remove(key);
             }
         }
     }
@@ -109,7 +122,7 @@ public class AbstractEndpointBuilder {
         String targetPath = path;
         if (camelContext != null) {
             targetScheme = camelContext.resolvePropertyPlaceholders(targetScheme);
-            targetPath = camelContext.resolvePropertyPlaceholders(targetPath);
+            targetPath = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, targetPath);
         }
 
         if (params.isEmpty()) {

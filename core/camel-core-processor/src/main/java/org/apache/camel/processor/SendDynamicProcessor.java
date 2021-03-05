@@ -233,7 +233,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
 
         // in case path has property placeholders then try to let property component resolve those
         try {
-            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(exchange.getContext(), uri);
         } catch (Exception e) {
             throw new ResolveEndpointFailedException(uri, e);
         }
@@ -310,7 +310,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
 
         if ((isAllowOptimisedComponents() || isAutoStartupComponents()) && uri != null) {
             // in case path has property placeholders then try to let property component resolve those
-            String u = camelContext.resolvePropertyPlaceholders(uri);
+            String u = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
             // find out which component it is
             scheme = ExchangeHelper.resolveScheme(u);
         }

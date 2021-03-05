@@ -134,6 +134,20 @@ public final class URISupport {
     }
 
     /**
+     * Strips the query parameters from the uri
+     *
+     * @param  uri the uri
+     * @return     the uri without the query parameter
+     */
+    public static String stripQuery(String uri) {
+        int idx = uri.indexOf('?');
+        if (idx > -1) {
+            uri = uri.substring(0, idx);
+        }
+        return uri;
+    }
+
+    /**
      * Parses the query part of the uri (eg the parameters).
      * <p/>
      * The URI parameters will by default be URI encoded. However you can define a parameter values with the syntax:

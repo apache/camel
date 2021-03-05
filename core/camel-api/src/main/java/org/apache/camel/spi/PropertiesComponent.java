@@ -46,6 +46,16 @@ public interface PropertiesComponent extends StaticService {
     String SUFFIX_TOKEN = "}}";
 
     /**
+     * The token for marking a placeholder as optional
+     */
+    String OPTIONAL_TOKEN = "?";
+
+    /**
+     * The prefix and optional tokens
+     */
+    String PREFIX_OPTIONAL_TOKEN = PREFIX_TOKEN + OPTIONAL_TOKEN;
+
+    /**
      * Parses the input text and resolve all property placeholders from within the text.
      *
      * @param  uri                      input text
@@ -53,6 +63,16 @@ public interface PropertiesComponent extends StaticService {
      * @throws IllegalArgumentException is thrown if error during parsing
      */
     String parseUri(String uri);
+
+    /**
+     * Parses the input text and resolve all property placeholders from within the text.
+     *
+     * @param  uri                      input text
+     * @param  keepUnresolvedOptional   whether to keep placeholders that are optional and was unresolved
+     * @return                          text with resolved property placeholders
+     * @throws IllegalArgumentException is thrown if error during parsing
+     */
+    String parseUri(String uri, boolean keepUnresolvedOptional);
 
     /**
      * Looks up the property with the given key

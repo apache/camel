@@ -44,8 +44,9 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         final Processor before = this.createChildProcessor(true);
         // create the after
         Processor afterProcessor = null;
-        if (definition.getAfterUri() != null) {
-            ToDefinition to = new ToDefinition(parseString(definition.getAfterUri()));
+        String afterUri = parseString(definition.getAfterUri());
+        if (afterUri != null) {
+            ToDefinition to = new ToDefinition(afterUri);
             // at first use custom factory
             afterProcessor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, to);
             // fallback to default implementation if factory did not create the processor

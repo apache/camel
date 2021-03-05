@@ -818,7 +818,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public NormalizedEndpointUri normalizeUri(String uri) {
         try {
-            uri = resolvePropertyPlaceholders(uri);
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
             uri = URISupport.normalizeUri(uri);
             return new NormalizedUri(uri);
         } catch (Exception e) {
@@ -874,14 +874,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
 
-        // in case path has property placeholders then try to let property
-        // component resolve those
+        // in case path has property placeholders then try to let property component resolve those
         if (!normalized) {
-            try {
-                uri = resolvePropertyPlaceholders(uri);
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
         }
 
         final String rawUri = uri;
@@ -1767,9 +1762,14 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
+        return resolvePropertyPlaceholders(text, false);
+    }
+
+    @Override
+    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
-            String answer = getPropertiesComponent().parseUri(text);
+            String answer = getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
             LOG.debug("Resolved text: {} -> {}", text, answer);
             return answer;
         }

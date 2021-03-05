@@ -32,11 +32,12 @@ public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        if (definition.getMessageFrequency() != null) {
-            return new SamplingThrottler(parseLong(definition.getMessageFrequency()));
+        Long freq = parseLong(definition.getMessageFrequency());
+        if (freq != null) {
+            return new SamplingThrottler(freq);
         } else {
             // should default be 1 sample period
-            long time = definition.getSamplePeriod() != null ? parseDuration(definition.getSamplePeriod()) : 1L;
+            long time = parseDuration(definition.getSamplePeriod(), 1);
             // should default be in seconds
             TimeUnit tu = definition.getUnits() != null ? parse(TimeUnit.class, definition.getUnits()) : TimeUnit.SECONDS;
             return new SamplingThrottler(time, tu);

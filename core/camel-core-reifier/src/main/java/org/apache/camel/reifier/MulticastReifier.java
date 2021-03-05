@@ -65,7 +65,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Multicast", definition, isParallelProcessing);
 
-        long timeout = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : 0;
+        long timeout = parseDuration(definition.getTimeout(), 0);
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
@@ -82,8 +82,9 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getStrategyRef()), Object.class);
+        String ref = parseString(definition.getStrategyRef());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {

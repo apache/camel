@@ -362,12 +362,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
 
         // prefer to use explicit configured executor on the definition
+        String ref = parseString(definition.getExecutorServiceRef());
         if (definition.getExecutorService() != null) {
             return definition.getExecutorService();
-        } else if (definition.getExecutorServiceRef() != null) {
+        } else if (ref != null) {
             // lookup in registry first and use existing thread pool if exists
-            ExecutorService answer
-                    = lookupExecutorServiceRef(name, definition, parseString(definition.getExecutorServiceRef()));
+            ExecutorService answer = lookupExecutorServiceRef(name, definition, ref);
             if (answer == null) {
                 throw new IllegalArgumentException(
                         "ExecutorServiceRef " + definition.getExecutorServiceRef()

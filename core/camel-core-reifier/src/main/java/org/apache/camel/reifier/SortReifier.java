@@ -38,8 +38,9 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
     @SuppressWarnings("unchecked")
     public Processor createProcessor() throws Exception {
         // lookup in registry
-        if (isNotEmpty(definition.getComparatorRef())) {
-            definition.setComparator(lookup(parseString(definition.getComparatorRef()), Comparator.class));
+        String ref = parseString(definition.getComparatorRef());
+        if (isNotEmpty(ref)) {
+            definition.setComparator(lookup(ref, Comparator.class));
         }
 
         // if no comparator then default on to string representation

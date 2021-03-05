@@ -725,6 +725,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Parses the given text and resolve any property placeholders - using {{key}}.
+     * <p/>
+     * <b>Important:</b> If resolving placeholders on an endpoint uri, then you SHOULD use
+     * EndpointHelper#resolveEndpointUriPropertyPlaceholders instead.
      *
      * @param  text                     the text such as an endpoint uri or the likes
      * @return                          the text with resolved property placeholders

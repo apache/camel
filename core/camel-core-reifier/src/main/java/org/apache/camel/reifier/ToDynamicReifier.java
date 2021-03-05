@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
@@ -47,8 +48,9 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
         processor.setCamelContext(camelContext);
         processor.setPattern(parse(ExchangePattern.class, definition.getPattern()));
-        if (definition.getCacheSize() != null) {
-            processor.setCacheSize(parseInt(definition.getCacheSize()));
+        Integer num = parseInt(definition.getCacheSize());
+        if (num != null) {
+            processor.setCacheSize(num);
         }
         if (definition.getIgnoreInvalidEndpoint() != null) {
             processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
@@ -64,7 +66,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
 
     protected Expression createExpression(String uri) {
         // make sure to parse property placeholders
-        uri = camelContext.resolvePropertyPlaceholders(uri);
+        uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
 
         // we use simple language by default but you can configure a different language
         String language = "simple";

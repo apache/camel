@@ -769,4 +769,18 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     String getTestExcludeRoutes();
 
+    /**
+     * Parses the given text and resolve any property placeholders - using {{key}}.
+     * <p/>
+     * <b>Important:</b> If resolving placeholders on an endpoint uri, then you SHOULD use
+     * EndpointHelper#resolveEndpointUriPropertyPlaceholders instead.
+     *
+     * @param  text                     the text such as an endpoint uri or the likes
+     * @param  keepUnresolvedOptional   whether to keep placeholders that are optional and was unresolved
+     * @return                          the text with resolved property placeholders
+     * @throws IllegalArgumentException is thrown if property placeholders was used and there was an error resolving
+     *                                  them
+     */
+    String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional);
+
 }

@@ -640,6 +640,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
+        return getExtendedCamelContext().resolvePropertyPlaceholders(text, keepUnresolvedOptional);
+    }
+
+    @Override
     public PropertiesComponent getPropertiesComponent() {
         return delegate.getPropertiesComponent();
     }
