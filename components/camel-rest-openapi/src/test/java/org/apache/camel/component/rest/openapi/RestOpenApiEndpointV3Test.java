@@ -367,16 +367,6 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldLoadOpenApiSpecifications() throws IOException {
-        final CamelContext camelContext = mock(CamelContext.class);
-        when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
-
-        assertThat(
-                RestOpenApiEndpoint.loadSpecificationFrom(camelContext, RestOpenApiComponent.DEFAULT_SPECIFICATION_URI))
-                        .isNotNull();
-    }
-
-    @Test
     public void shouldPickBestScheme() {
         assertThat(RestOpenApiEndpoint.pickBestScheme("http", Arrays.asList("http", "https")))
                 .isEqualTo("https");
