@@ -58,8 +58,11 @@ public final class UnitOfWorkHelper {
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        if (synchronizations != null && !synchronizations.isEmpty()) {
-            // TODO: only copy/sort if there is > 1 (if 1 then use directly (no for loop)
+        if (synchronizations == null || synchronizations.isEmpty()) {
+            return;
+        }
+
+        if (synchronizations.size() > 1) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
             List<Synchronization> copy = new ArrayList<>(synchronizations);
 
@@ -72,19 +75,26 @@ public final class UnitOfWorkHelper {
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {
-                try {
-                    if (failed) {
-                        log.trace("Invoking synchronization.onFailure: {} with {}", synchronization, exchange);
-                        synchronization.onFailure(exchange);
-                    } else {
-                        log.trace("Invoking synchronization.onComplete: {} with {}", synchronization, exchange);
-                        synchronization.onComplete(exchange);
-                    }
-                } catch (Throwable e) {
-                    // must catch exceptions to ensure all synchronizations have a chance to run
-                    log.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
-                }
+                doneSynchronization(synchronization, exchange, failed);
             }
+        } else {
+            // there are only 1 synchronization to done
+            doneSynchronization(synchronizations.get(0), exchange, exchange.isFailed());
+        }
+    }
+
+    private static void doneSynchronization(Synchronization synchronization, Exchange exchange, boolean failed) {
+        try {
+            if (failed) {
+                LOG.trace("Invoking synchronization.onFailure: {} with {}", synchronization, exchange);
+                synchronization.onFailure(exchange);
+            } else {
+                LOG.trace("Invoking synchronization.onComplete: {} with {}", synchronization, exchange);
+                synchronization.onComplete(exchange);
+            }
+        } catch (Throwable e) {
+            // must catch exceptions to ensure all synchronizations have a chance to run
+            LOG.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
         }
     }
 
