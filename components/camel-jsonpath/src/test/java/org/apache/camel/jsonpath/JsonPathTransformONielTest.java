@@ -17,12 +17,15 @@
 package org.apache.camel.jsonpath;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class JsonPathHeaderNameTest extends CamelTestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class JsonPathTransformONielTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -30,21 +33,22 @@ public class JsonPathHeaderNameTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .setHeader("number").jsonpath("$..store.book.length()", false, int.class, "myHeader")
-                        .to("mock:result");
+                        .transform().jsonpath("$.store.book[?(@.author == \"John O'Niel\")].title")
+                        .to("mock:authors");
             }
         };
     }
 
     @Test
     public void testAuthors() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedHeaderReceived("number", "3");
+        getMockEndpoint("mock:authors").expectedMessageCount(1);
 
-        Object file = new File("src/test/resources/books.json");
-        template.sendBodyAndHeader("direct:start", "Hello World", "myHeader", file);
+        template.sendBody("direct:start", new File("src/test/resources/books.json"));
 
         assertMockEndpointsSatisfied();
+
+        List<?> titles = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals("Camel in Space", titles.get(0));
     }
 
 }

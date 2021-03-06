@@ -13,6 +13,13 @@
                 "title": "Sword of Honour",
                 "price": 12.99,
                 "isbn": "0-553-21311-3"
+            },
+            {
+                "category": "fiction",
+                "author": "John O'Niel",
+                "title": "Camel in Space",
+                "price": 9.99,
+                "isbn": "0-555-12345-6"
             }
         ],
         "bicycle": {
