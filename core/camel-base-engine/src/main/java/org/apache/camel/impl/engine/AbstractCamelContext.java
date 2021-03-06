@@ -2963,7 +2963,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                lines.add(String.format("  %s %s (%s)", status, id, uri));
             }
             for (Route route : routes) {
                 if (!route.isAutoStartup()) {
@@ -2977,7 +2977,7 @@ public abstract class AbstractCamelContext extends BaseService
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                    lines.add(String.format("  %s %s (%s)", status, id, uri));
                 }
             }
             if (disabled > 0) {
@@ -3367,7 +3367,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                lines.add(String.format("  %s %s (%s)", status, id, uri));
             }
             if (forced > 0) {
                 LOG.info("Routes shutdown summary (total:{} stopped:{} forced:{})", total, stopped, forced);
@@ -3542,30 +3542,33 @@ public abstract class AbstractCamelContext extends BaseService
     protected void logRouteState(Route route, String state) {
         if (LOG.isInfoEnabled()) {
             if (route.getConsumer() != null) {
-                // use basic endpoint uri to not log verbose details or potential sensitive data
+                String id = route.getId();
                 String uri = route.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                LOG.info("Route: {} is {}, was consuming from: {}", route.getId(), state, uri);
+                String line = String.format("%s %s (%s)", state, id, uri);
+                LOG.info(line);
             } else {
-                LOG.info("Route: {} is {}.", route.getId(), state);
+                String id = route.getId();
+                String line = String.format("%s %s", state, id);
+                LOG.info(line);
             }
         }
     }
 
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
-        logRouteState(routeService.getRoute(), "stopped");
+        logRouteState(routeService.getRoute(), "Stopped");
     }
 
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         routeService.shutdown();
-        logRouteState(routeService.getRoute(), "shutdown and removed");
+        logRouteState(routeService.getRoute(), "Shutdown");
     }
 
     protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
         routeService.setRemovingRoutes(false);
         routeService.suspend();
-        logRouteState(routeService.getRoute(), "suspended");
+        logRouteState(routeService.getRoute(), "Suspended");
     }
 
     /**
