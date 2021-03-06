@@ -1240,7 +1240,7 @@ public class RestOpenApiReader {
                 array = false;
             } else if ("string".equalsIgnoreCase(typeName) || "java.lang.String".equals(typeName)) {
                 prop.format = "string";
-                prop.type = "sting";
+                prop.type = "string";
             } else if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
                 prop.format = "integer";
                 prop.type = "number";
