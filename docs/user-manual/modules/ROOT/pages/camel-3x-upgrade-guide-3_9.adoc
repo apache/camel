@@ -88,4 +88,10 @@ the one to use above, and then add which -starter JARs you want to use in your C
 
 === Camel-Azure component
 
-- Camel-Azure has been reomved. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.
+- Camel-Azure has been removed. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.
+
+=== camel-freemarker component
+
+The freemarker component now has turned off localized lookup for templates.
+This can be turned back on by setting `localizedLookup=true` on the component.
+
