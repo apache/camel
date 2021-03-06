@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.rabbitmq.integration;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,8 +50,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;
-    private static final String EXCHANGE = "ex5";
-    private static final String EXCHANGE_NO_ACK = "ex5.noAutoAck";
+    static final String EXCHANGE = "ex5";
+    static final String EXCHANGE_NO_ACK = "ex5.noAutoAck";
 
     @Produce("direct:start")
     protected ProducerTemplate template;
@@ -195,54 +190,6 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
         String reply = template.requestBodyAndHeaders("direct:rabbitMQ", "header", headers, String.class);
         assertEquals("header response", reply);
-    }
-
-    @Test
-    public void serializeTest() throws InterruptedException, IOException {
-        TestSerializableObject foo = new TestSerializableObject();
-        foo.setName("foobar");
-
-        TestSerializableObject reply
-                = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME,
-                        EXCHANGE, TestSerializableObject.class);
-        assertEquals("foobar", reply.getName());
-        assertEquals("foobar", reply.getDescription());
-    }
-
-    @Test
-    public void partiallySerializeTest() throws InterruptedException, IOException {
-        TestPartiallySerializableObject foo = new TestPartiallySerializableObject();
-        foo.setName("foobar");
-
-        try {
-            template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
-                    TestPartiallySerializableObject.class);
-        } catch (CamelExecutionException e) {
-            // expected
-        }
-        // Make sure we didn't crash the one Consumer thread
-        String reply2 = template.requestBodyAndHeader("direct:rabbitMQ", "partiallySerializeTest1",
-                RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
-        assertEquals("partiallySerializeTest1 response", reply2);
-    }
-
-    @Test
-    public void testSerializableObject() throws IOException {
-        TestSerializableObject foo = new TestSerializableObject();
-        foo.setName("foobar");
-
-        byte[] body = null;
-        try (ByteArrayOutputStream b = new ByteArrayOutputStream(); ObjectOutputStream o = new ObjectOutputStream(b);) {
-            o.writeObject(foo);
-            body = b.toByteArray();
-        }
-
-        TestSerializableObject newFoo = null;
-        try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b);) {
-            newFoo = (TestSerializableObject) o.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-        }
-        assertEquals(foo.getName(), newFoo.getName());
     }
 
     @Test
