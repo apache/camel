@@ -91,11 +91,11 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
      */
     protected final class UtilizationStatistics implements Statistics {
 
-        boolean statisticsEnabled;
         public final LongAdder created = new LongAdder();
         public final LongAdder acquired = new LongAdder();
         public final LongAdder released = new LongAdder();
         public final LongAdder discarded = new LongAdder();
+        private boolean statisticsEnabled;
 
         @Override
         public void reset() {

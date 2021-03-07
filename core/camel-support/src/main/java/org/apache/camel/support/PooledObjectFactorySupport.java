@@ -104,11 +104,11 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
      */
     protected final class UtilizationStatistics implements PooledObjectFactory.Statistics {
 
-        boolean statisticsEnabled;
         public final LongAdder created = new LongAdder();
         public final LongAdder acquired = new LongAdder();
         public final LongAdder released = new LongAdder();
         public final LongAdder discarded = new LongAdder();
+        private boolean statisticsEnabled;
 
         @Override
         public void reset() {
