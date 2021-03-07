@@ -168,6 +168,11 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     }
 
     @Override
+    public boolean isPooled() {
+        return true;
+    }
+
+    @Override
     protected void doStop() throws Exception {
         exchangeFactoryManager.removeExchangeFactory(this);
         logUsageSummary(LOG, "PooledExchangeFactory", pool.size());
