@@ -2963,7 +2963,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("  %s %s (%s)", status, id, uri));
+                lines.add(String.format("    %s %s (%s)", status, id, uri));
             }
             for (Route route : routes) {
                 if (!route.isAutoStartup()) {
@@ -2977,7 +2977,7 @@ public abstract class AbstractCamelContext extends BaseService
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    lines.add(String.format("  %s %s (%s)", status, id, uri));
+                    lines.add(String.format("    %s %s (%s)", status, id, uri));
                 }
             }
             if (disabled > 0) {
@@ -3367,7 +3367,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("  %s %s (%s)", status, id, uri));
+                lines.add(String.format("    %s %s (%s)", status, id, uri));
             }
             if (forced > 0) {
                 LOG.info("Routes shutdown summary (total:{} stopped:{} forced:{})", total, stopped, forced);
