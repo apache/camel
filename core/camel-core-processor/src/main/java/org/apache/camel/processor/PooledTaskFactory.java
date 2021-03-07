@@ -46,15 +46,23 @@ public abstract class PooledTaskFactory extends PooledObjectFactorySupport<Poole
 
     @Override
     public boolean release(PooledExchangeTask task) {
-        boolean inserted = pool.offer(task);
-        if (statistics.isStatisticsEnabled()) {
-            if (inserted) {
-                statistics.released.increment();
-            } else {
+        try {
+            task.reset();
+            boolean inserted = pool.offer(task);
+            if (statistics.isStatisticsEnabled()) {
+                if (inserted) {
+                    statistics.released.increment();
+                } else {
+                    statistics.discarded.increment();
+                }
+            }
+            return inserted;
+        } catch (Throwable e) {
+            if (statistics.isStatisticsEnabled()) {
                 statistics.discarded.increment();
             }
+            return false;
         }
-        return inserted;
     }
 
     @Override

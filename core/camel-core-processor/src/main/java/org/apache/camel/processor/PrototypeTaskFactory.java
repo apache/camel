@@ -36,8 +36,8 @@ public abstract class PrototypeTaskFactory extends PrototypeObjectFactorySupport
     }
 
     @Override
-    public boolean release(PooledExchangeTask pooledTask) {
-        // not pooled
+    public boolean release(PooledExchangeTask task) {
+        // not pooled so no need to reset task
         return true;
     }
 
