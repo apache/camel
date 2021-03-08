@@ -150,9 +150,6 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
 
-            // the exchange is now done so release it
-            consumer.releaseExchange(exchange, false);
-
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
@@ -256,17 +253,12 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                     }
                 }
             }
-
-            // if we completed from async processing then we should release the exchange
-            // the sync processing will release the exchange outside this callback
-            if (!doneSync) {
-                consumer.releaseExchange(exchange, false);
-            }
         }
     }
 
     public Exchange createExchange(Message message, Session session, Object replyDestination) {
-        Exchange exchange = consumer.createExchange(false);
+        // must be prototype scoped (not pooled) so we create the exchange via endpoint
+        Exchange exchange = endpoint.createExchange();
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
 
