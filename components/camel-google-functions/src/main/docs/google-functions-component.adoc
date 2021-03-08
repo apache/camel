@@ -14,8 +14,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-fun
 
 *{component-header}*
 
-The Google Storage component provides access to https://cloud.google.com/storage/[Google Cloud Storage] via
-the https://github.com/googleapis/java-storage[google java storage library].
+The Google Storage component provides access to https://cloud.google.com/functions/[Google Cloud Functions] via
+the https://github.com/googleapis/java-functions[google java functions library].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -35,14 +35,14 @@ for this component:
 
 == Authentication Configuration
 
-Google Storage component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication[Google Storage Auth Guide].
+Google Functions component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://github.com/googleapis/google-cloud-java#authentication[Google Cloud Authentication].
 
 When you have the **service account key** you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 [source,text]
 --------------------------------------------------------
-String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
+String endpoint = "google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json";
 --------------------------------------------------------
 
 Or by providing the path to the GCP credentials file location:
@@ -59,18 +59,17 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 
 [source,text]
 --------------------------------------------------------
-google-storage://bucketNameOrArn?[options]
+google-functions://functionName?[options]
 --------------------------------------------------------
 
-By default the bucket will be created if it don't already exists. +
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-For example in order to read file `hello.txt` from bucket `myCamelBucket`, use the following snippet:
+For example in order to call the function `myCamelFunction` from the project `myProject` and location `us-central1`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
-from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&objectName=hello.txt")
+from("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=callFunction")
   .to("file:/var/downloaded");
 --------------------------------------------------------------------------------
 
@@ -217,7 +216,7 @@ If you need to have more control over the `storageClient` instance configuration
 
 [source,java]
 --------------------------------------------------------------------------------
-from("google-storage://myCamelBucket?storageClient=#client")
+from("google-functions://myCamelFunction?storageClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -235,7 +234,7 @@ from("direct:start")
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
     exchange.getIn().setBody(bais);    
 })
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json")
 .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
 --------------------------------------------------------------------------------
 
@@ -251,7 +250,7 @@ This operation will upload the file camel.txt with the content "Camel rocks!" in
     exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, "myCamelBucket_dest");
     exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, "camel_copy.txt");
   })
-  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -265,7 +264,7 @@ This operation will copy the object with the name expressed in the header DESTIN
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteObject);
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
   })
-  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -276,7 +275,7 @@ This operation will delete the object from the bucket myCamelBucket.
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -287,7 +286,7 @@ This operation will list the buckets for this account.
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -298,7 +297,7 @@ This operation will delete the bucket myCamelBucket.
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -312,7 +311,7 @@ from("direct:start")
 .process( exchange -> {
   exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
 })
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -327,7 +326,7 @@ from("direct:start")
   exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
   exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
 })
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -345,7 +344,7 @@ This will require specifying the destinationBucket option. As example:
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json"
+  from("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json"
     + "&autoCreateBucket=true"
     + "&destinationBucket=myCamelProcessedBucket"
     + "&moveAfterRead=true"
