@@ -141,12 +141,12 @@ requests using TCP on port `8888`:
 
 [source,xml]
 ----
-<endpoint id="hl7NettyListener" uri="netty:tcp://localhost:8888?sync=true&amp;encoder=#hl7encoder&amp;decoder=#hl7decoder"/>
+<endpoint id="hl7NettyListener" uri="netty:tcp://localhost:8888?sync=true&amp;encoders=#hl7encoder&amp;decoders=#hl7decoder"/>
 ----
 
 *sync=true* indicates that this listener is synchronous and therefore
 will return a HL7 response to the caller. The HL7 codec is setup with
-*encoder=#hl7encoder*and*decoder=#hl7decoder*. Note that `hl7encoder`
+*encoders=#hl7encoder*and*decoders=#hl7decoder*. Note that `hl7encoder`
 and `hl7decoder` are just bean IDs, so they could be named differently.
 The beans can be set in the Spring XML file:
 
