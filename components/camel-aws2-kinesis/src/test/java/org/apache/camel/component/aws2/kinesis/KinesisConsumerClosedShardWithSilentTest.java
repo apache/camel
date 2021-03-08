@@ -67,7 +67,7 @@ public class KinesisConsumerClosedShardWithSilentTest {
         configuration.setIteratorType(ShardIteratorType.LATEST);
         configuration.setShardClosed(Kinesis2ShardClosedStrategyEnum.silent);
         configuration.setStreamName("streamName");
-        Kinesis2Endpoint endpoint = new Kinesis2Endpoint(null, configuration, component);
+        Kinesis2Endpoint endpoint = new Kinesis2Endpoint("aws2-kinesis:foo", configuration, component);
         endpoint.start();
         undertest = new Kinesis2Consumer(endpoint, processor);
 
@@ -84,6 +84,9 @@ public class KinesisConsumerClosedShardWithSilentTest {
                         .streamDescription(StreamDescription.builder().shards(shardList).build()).build());
         when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
                 .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
+
+        context.start();
+        undertest.start();
     }
 
     @Test
