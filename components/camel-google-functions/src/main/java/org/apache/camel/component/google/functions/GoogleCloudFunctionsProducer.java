@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.api.client.util.Lists;
 import com.google.api.gax.rpc.ApiException;
+import com.google.cloud.functions.v1.CallFunctionRequest;
 import com.google.cloud.functions.v1.CallFunctionResponse;
 import com.google.cloud.functions.v1.CloudFunction;
 import com.google.cloud.functions.v1.CloudFunctionName;
@@ -50,18 +51,18 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-            case listFunctions:
-                listFunctions(endpoint.getClient(), exchange);
-                break;
-            case getFunction:
-                getFunction(endpoint.getClient(), exchange);
-                break;
-            case callFunction:
-                callFunction(endpoint.getClient(), exchange);
-                break;
+        case listFunctions:
+            listFunctions(endpoint.getClient(), exchange);
+            break;
+        case getFunction:
+            getFunction(endpoint.getClient(), exchange);
+            break;
+        case callFunction:
+            callFunction(endpoint.getClient(), exchange);
+            break;
 
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -69,20 +70,22 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListFunctionsRequest) {
-                ListFunctionsPagedResponse result;
+                ListFunctionsPagedResponse pagedListResponse;
                 try {
-                    result = client.listFunctions((ListFunctionsRequest) payload);
+                    pagedListResponse = client.listFunctions((ListFunctionsRequest) payload);
+                    List<CloudFunction> result = Lists.newArrayList(pagedListResponse.iterateAll());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
                 } catch (ApiException ae) {
                     LOG.trace("listFunctions command returned the error code {}", ae.getStatusCode());
                     throw ae;
                 }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
             }
         } else {
             ListFunctionsRequest request = ListFunctionsRequest.newBuilder()
-                    .setParent(LocationName.of(getConfiguration().getProject(), getConfiguration().getLocation()).toString())
-                    .setPageSize(883849137) //TODO check it
+                    .setParent(LocationName.of(getConfiguration().getProject(), getConfiguration().getLocation())
+                            .toString())
+                    .setPageSize(883849137) // TODO check it
                     .setPageToken("pageToken873572522").build();
             ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
             List<CloudFunction> result = Lists.newArrayList(pagedListResponse.iterateAll());
@@ -106,8 +109,8 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(), getConfiguration().getLocation(),
-                    getConfiguration().getFunctionName());
+            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
+                    getConfiguration().getLocation(), getConfiguration().getFunctionName());
             CloudFunction result = client.getFunction(cfName);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
@@ -115,24 +118,27 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
     }
 
     private void callFunction(CloudFunctionsServiceClient client, Exchange exchange) throws InvalidPayloadException {
-        String data = exchange.getIn().getBody(String.class);
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CloudFunctionName) {
+            if (payload instanceof CallFunctionRequest) {
                 CallFunctionResponse result;
                 try {
-                    result = client.callFunction((CloudFunctionName) payload, data);
+                    result = client.callFunction( (CallFunctionRequest) payload );
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
                 } catch (ApiException ae) {
                     LOG.trace("callFunction command returned the error code {}", ae.getStatusCode());
                     throw ae;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
+                }                
             }
         } else {
-            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(), getConfiguration().getLocation(),
-                    getConfiguration().getFunctionName());
-            CallFunctionResponse result = client.callFunction(cfName, data);
+            String data = exchange.getIn().getBody(String.class);
+            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(), getConfiguration().getLocation(), getConfiguration().getFunctionName());
+            CallFunctionRequest request = CallFunctionRequest.newBuilder()
+                .setName(cfName.toString())
+                .setData(data)
+                .build();
+            CallFunctionResponse result = client.callFunction(request);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -142,8 +148,7 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         GoogleCloudFunctionsOperations operation = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.OPERATION,
                 GoogleCloudFunctionsOperations.class);
         if (operation == null) {
-            operation = getConfiguration().getOperation() == null
-                    ? GoogleCloudFunctionsOperations.callFunction
+            operation = getConfiguration().getOperation() == null ? GoogleCloudFunctionsOperations.callFunction
                     : getConfiguration().getOperation();
         }
         return operation;
