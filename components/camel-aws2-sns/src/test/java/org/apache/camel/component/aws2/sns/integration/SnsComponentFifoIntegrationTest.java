@@ -60,7 +60,7 @@ public class SnsComponentFifoIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("aws2-sns://Order.fifo?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&subject=The+subject+message&messageGroupIdStrategy=useExchangeId");
+                        .to("aws2-sns://Order.fifo?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&subject=The+subject+message&messageGroupIdStrategy=useExchangeId&autoCreateTopic=true");
             }
         };
     }

@@ -63,7 +63,7 @@ public class SnsTopicProducerCustomConfigLocalstackTest extends Aws2SNSBaseTest 
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .toF("aws2-sns://%s?subject=The+subject+message&configuration=#class:%s",
+                        .toF("aws2-sns://%s?subject=The+subject+message&configuration=#class:%s&autoCreateTopic=true",
                                 sharedNameGenerator.getName(), TestSnsConfiguration.class.getName());
             }
         };
