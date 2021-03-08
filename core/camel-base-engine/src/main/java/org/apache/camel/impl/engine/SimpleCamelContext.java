@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -81,9 +84,6 @@ import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Represents the context used to configure routes and the policies to use.
