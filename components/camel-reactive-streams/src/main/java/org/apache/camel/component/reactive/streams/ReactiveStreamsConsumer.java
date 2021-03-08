@@ -75,7 +75,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
     public void onComplete() {
         if (endpoint.isForwardOnComplete()) {
-            Exchange exchange = createExchange(true);
+            Exchange exchange = endpoint.createExchange();
             exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
 
             doSend(exchange, done -> {
@@ -85,7 +85,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
     public void onError(Throwable error) {
         if (endpoint.isForwardOnError()) {
-            Exchange exchange = createExchange(true);
+            Exchange exchange = endpoint.createExchange();
             exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onError");
             exchange.getIn().setBody(error);
 

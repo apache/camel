@@ -174,10 +174,14 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
     @Override
     protected void doStop() throws Exception {
-        exchangeFactoryManager.removeExchangeFactory(this);
-        logUsageSummary(LOG, "PooledExchangeFactory", pool.size());
-        statistics.reset();
-        pool.clear();
+        if (exchangeFactoryManager != null) {
+            exchangeFactoryManager.removeExchangeFactory(this);
+        }
+        if (pool != null) {
+            logUsageSummary(LOG, "PooledExchangeFactory", pool.size());
+            statistics.reset();
+            pool.clear();
+        }
 
         // do not call super
     }
