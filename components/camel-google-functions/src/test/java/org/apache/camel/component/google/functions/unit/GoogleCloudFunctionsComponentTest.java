@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.functions.unit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +32,13 @@ import com.google.cloud.functions.v1.CloudFunction;
 import com.google.cloud.functions.v1.CloudFunctionName;
 import com.google.cloud.functions.v1.CloudFunctionStatus;
 import com.google.cloud.functions.v1.GetFunctionRequest;
+import com.google.cloud.functions.v1.ListFunctionsRequest;
 import com.google.cloud.functions.v1.ListFunctionsResponse;
+import com.google.cloud.functions.v1.LocationName;
 import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Timestamp;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -40,10 +47,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseTest {
 
@@ -60,26 +63,26 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:listFunctions")
-                        // .to("google-functions://myCamelFunction?client=#client&operation=listFunctions")
-                        .to("google-functions://" + functionName + "?project=" + project + "&location=" + location
-                            + "&operation=listFunctions")
-                        .to("mock:result");
-                from("direct:getFunction")
-                        .to("google-functions://" + functionName + "?project=" + project + "&location=" + location
-                            + "&operation=getFunction")
-                        .to("mock:result");
-                from("direct:callFunction")
-                        .to("google-functions://" + functionName + "?project=" + project + "&location=" + location
-                            + "&operation=callFunction")
-                        .to("mock:result");
+                //simple routes
+                from("direct:listFunctions").to("google-functions://" + functionName + "?project=" + project
+                        + "&location=" + location + "&operation=listFunctions").to("mock:result");
+                from("direct:getFunction").to("google-functions://" + functionName + "?project=" + project
+                        + "&location=" + location + "&operation=getFunction").to("mock:result");
+                from("direct:callFunction").to("google-functions://" + functionName + "?project=" + project
+                        + "&location=" + location + "&operation=callFunction").to("mock:result");
+                //pojo routes
+                from("direct:listFunctionsPojo").to("google-functions://" + functionName + "?project=" + project
+                        + "&location=" + location + "&operation=listFunctions&pojoRequest=true").to("mock:result");
+                from("direct:getFunctionPojo").to("google-functions://" + functionName + "?project=" + project
+                        + "&location=" + location + "&operation=getFunction&pojoRequest=true").to("mock:result");
+                from("direct:callFunctionPojo").to("google-functions://" + functionName + "?project=" + project
+                        + "&location=" + location + "&operation=callFunction&pojoRequest=true").to("mock:result");
             }
         };
     }
 
     @Test
     public void listFunctionsTest() throws Exception {
-        log.info("list function");
         CloudFunction cf1 = CloudFunction.newBuilder().build();
         CloudFunction cf2 = CloudFunction.newBuilder().build();
         List<CloudFunction> cfList = Arrays.asList(cf1, cf2);
@@ -88,6 +91,32 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         Exchange exchange = template.send("direct:listFunctions", ExchangePattern.InOut, exc -> {
+        });
+        List<CloudFunction> result = exchange.getMessage().getBody(List.class);
+        assertNotNull(result);
+        assertEquals(cfList.size(), result.size());
+
+        for (int i = 0; i < result.size(); i++) {
+            assertEquals(expectedResponse.getFunctionsList().get(i), result.get(i));
+        }
+
+    }
+
+    @Test
+    public void listFunctionsPojoTest() throws Exception {
+        CloudFunction cf1 = CloudFunction.newBuilder().build();
+        CloudFunction cf2 = CloudFunction.newBuilder().build();
+        List<CloudFunction> cfList = Arrays.asList(cf1, cf2);
+        ListFunctionsResponse expectedResponse = ListFunctionsResponse.newBuilder().setNextPageToken("")
+                .addAllFunctions(cfList).build();
+        mockCloudFunctionsService.addResponse(expectedResponse);
+
+        ListFunctionsRequest pojoRequest = ListFunctionsRequest.newBuilder()
+                .setParent(LocationName.of(project, location).toString()).setPageSize(883849137)
+                .setPageToken("pageToken873572522").build();
+
+        Exchange exchange = template.send("direct:listFunctionsPojo", ExchangePattern.InOut, exc -> {
+            exc.getIn().setBody(pojoRequest);
         });
         List<CloudFunction> result = exchange.getMessage().getBody(List.class);
         assertNotNull(result);
@@ -129,11 +158,39 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
+    public void getFunctionPojoTest() throws Exception {
+        CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
+        CloudFunction expectedResponse = CloudFunction.newBuilder()
+                .setName( cfName.toString())
+                .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
+                .setEntryPoint("entryPoint-1979329474").setRuntime("runtime1550962648")
+                .setTimeout(Duration.newBuilder().build()).setAvailableMemoryMb(1964533661)
+                .setServiceAccountEmail("serviceAccountEmail1825953988").setUpdateTime(Timestamp.newBuilder().build())
+                .setVersionId(-670497310).putAllLabels(new HashMap<String, String>())
+                .putAllEnvironmentVariables(new HashMap<String, String>()).setNetwork("network1843485230")
+                .setMaxInstances(-330682013).setVpcConnector("vpcConnector2101559652").setBuildId("buildId230943785")
+                .build();
+        mockCloudFunctionsService.addResponse(expectedResponse);
+        
+        Exchange exchange = template.send("direct:getFunctionPojo", ExchangePattern.InOut, exc -> {
+            exc.getIn().setBody(cfName);
+        });
+        CloudFunction actualResponse = exchange.getMessage().getBody(CloudFunction.class);
+        assertEquals(expectedResponse, actualResponse);
+
+        List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
+        assertEquals(1, actualRequests.size());
+        GetFunctionRequest actualRequest = ((GetFunctionRequest) actualRequests.get(0));
+
+        assertEquals(cfName.toString(), actualRequest.getName());
+        assertTrue(channelProvider.isHeaderSent(ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+                GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+    }
+
+    @Test
     public void callFunctionTest() throws Exception {
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
-                .setExecutionId("executionId-454906285")
-                .setResult("result-934426595")
-                .setError("error96784904")
+                .setExecutionId("executionId-454906285").setResult("result-934426595").setError("error96784904")
                 .build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
@@ -152,10 +209,35 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         assertEquals(name.toString(), actualRequest.getName());
         assertEquals(data, actualRequest.getData());
-        assertTrue(
-                channelProvider.isHeaderSent(
-                        ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
-                        GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+        assertTrue(channelProvider.isHeaderSent(ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+                GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+    }
+
+    @Test
+    public void callFunctionPojoTest() throws Exception {
+        CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
+                .setExecutionId("executionId-454906285").setResult("result-934426595").setError("error96784904")
+                .build();
+        mockCloudFunctionsService.addResponse(expectedResponse);
+
+        CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
+        String data = "data3076010";
+        CallFunctionRequest request = CallFunctionRequest.newBuilder().setName(cfName.toString()).setData(data).build();
+
+        Exchange exchange = template.send("direct:callFunctionPojo", ExchangePattern.InOut, exc -> {
+            exc.getIn().setBody(request);
+        });
+        CallFunctionResponse actualResponse = exchange.getMessage().getBody(CallFunctionResponse.class);
+        assertEquals(expectedResponse, actualResponse);
+
+        List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
+        assertEquals(1, actualRequests.size());
+        CallFunctionRequest actualRequest = ((CallFunctionRequest) actualRequests.get(0));
+
+        assertEquals(cfName.toString(), actualRequest.getName());
+        assertEquals(data, actualRequest.getData());
+        assertTrue(channelProvider.isHeaderSent(ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+                GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
     }
 
 }
