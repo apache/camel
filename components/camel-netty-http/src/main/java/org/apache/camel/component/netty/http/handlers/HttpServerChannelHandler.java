@@ -343,7 +343,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
-        Exchange exchange = consumer.createExchange(false);
+        // must be prototype scoped (not pooled) so we create the exchange via endpoint
+        Exchange exchange = consumer.getEndpoint().createExchange();
 
         // create a new IN message as we cannot reuse with netty
         Message in;

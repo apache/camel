@@ -113,7 +113,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
-        Exchange exchange = consumer.createExchange(false);
+        // must be prototype scoped (not pooled) so we create the exchange via endpoint
+        Exchange exchange = consumer.getEndpoint().createExchange();
         consumer.getEndpoint().updateMessageHeader(exchange.getIn(), ctx);
         NettyPayloadHelper.setIn(exchange, message);
         return exchange;
@@ -140,7 +141,6 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             consumer.getExceptionHandler().handleException(e);
         } finally {
             consumer.doneUoW(exchange);
-            consumer.releaseExchange(exchange, false);
         }
     }
 
@@ -155,7 +155,6 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
                 consumer.getExceptionHandler().handleException(e);
             } finally {
                 consumer.doneUoW(exchange);
-                consumer.releaseExchange(exchange, false);
             }
         });
     }
