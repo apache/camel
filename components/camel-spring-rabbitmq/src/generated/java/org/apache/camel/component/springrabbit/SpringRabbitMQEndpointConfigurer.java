@@ -33,7 +33,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
-        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, org.springframework.amqp.rabbit.connection.ConnectionFactory.class, value)); return true;
         case "deadletterexchange":
@@ -96,7 +96,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
-        case "concurrentConsumers": return int.class;
+        case "concurrentConsumers": return java.lang.Integer.class;
         case "connectionfactory":
         case "connectionFactory": return org.springframework.amqp.rabbit.connection.ConnectionFactory.class;
         case "deadletterexchange":

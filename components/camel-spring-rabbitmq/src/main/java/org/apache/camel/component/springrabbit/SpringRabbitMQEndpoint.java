@@ -162,8 +162,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @UriParam(label = "consumer,advanced", defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER, enums = "DMLC,SMLC",
               description = "The type of the MessageListenerContainer")
     private String messageListenerContainerType = DIRECT_MESSAGE_LISTENER_CONTAINER;
-    @UriParam(label = "consumer,advanced", defaultValue = "1", description = "The number of consumers")
-    private int concurrentConsumers = 1;
+    @UriParam(label = "consumer,advanced", description = "The number of consumers")
+    private Integer concurrentConsumers;
     @UriParam(label = "consumer,advanced", description = "The maximum number of consumers (available only with SMLC)")
     private Integer maxConcurrentConsumers;
 
@@ -373,11 +373,11 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         this.messageListenerContainerType = messageListenerContainerType;
     }
 
-    public int getConcurrentConsumers() {
+    public Integer getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
-    public void setConcurrentConsumers(int concurrentConsumers) {
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 

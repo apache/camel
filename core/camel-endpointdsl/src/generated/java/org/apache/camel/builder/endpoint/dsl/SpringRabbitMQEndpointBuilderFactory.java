@@ -572,7 +572,6 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 1
          * Group: consumer (advanced)
          * 
          * @param concurrentConsumers the value to set
@@ -588,7 +587,6 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 1
          * Group: consumer (advanced)
          * 
          * @param concurrentConsumers the value to set
