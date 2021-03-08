@@ -686,13 +686,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             try {
                 doRun();
             } catch (Throwable e) {
-                e.printStackTrace();
-
-                // unexpected exception during running so break out
+                // unexpected exception during running so set exception and trigger callback
+                // (do not do taskFactory.release as that happens later)
                 exchange.setException(e);
-                AsyncCallback cb = callback;
-                taskFactory.release(this);
-                cb.done(false);
+                callback.done(false);
             }
         }
 
