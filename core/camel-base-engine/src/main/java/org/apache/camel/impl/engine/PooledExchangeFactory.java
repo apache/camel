@@ -164,7 +164,9 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
     @Override
     public void purge() {
-        pool.clear();
+        if (pool != null) {
+            pool.clear();
+        }
     }
 
     @Override
