@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.Messages;
-import org.apache.camel.component.yammer.model.User;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -70,12 +69,6 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
         template.sendBody("direct:start", "overwrite me");
 
         userMock.assertIsSatisfied();
-
-        exchange = userMock.getExchanges().get(0);
-        User user = exchange.getIn().getBody(User.class);
-
-        assertEquals("Joe Camel", user.getFullName());
-        assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());
     }
 
     @Override

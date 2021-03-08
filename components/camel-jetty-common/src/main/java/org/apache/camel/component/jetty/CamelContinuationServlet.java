@@ -181,7 +181,8 @@ public class CamelContinuationServlet extends CamelServlet {
             }
 
             // a new request so create an exchange
-            final Exchange exchange = consumer.createExchange(false);
+            // must be prototype scoped (not pooled) so we create the exchange via endpoint
+            final Exchange exchange = endpoint.createExchange();
             exchange.setPattern(ExchangePattern.InOut);
 
             if (consumer.getEndpoint().isBridgeEndpoint()) {
@@ -269,7 +270,6 @@ public class CamelContinuationServlet extends CamelServlet {
             throw new ServletException(e);
         } finally {
             consumer.doneUoW(result);
-            consumer.releaseExchange(result, false);
         }
     }
 

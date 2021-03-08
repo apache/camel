@@ -2882,6 +2882,9 @@ public abstract class AbstractCamelContext extends BaseService
         }
         bootstraps.clear();
 
+        if (adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled()) {
+            LOG.info("Pooled mode enabled. Camel pools and reuses objects to reduce JVM object allocations.");
+        }
         if (isLightweight()) {
             LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
             ReifierStrategy.clearReifiers();

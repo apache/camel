@@ -271,6 +271,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         // create internal callback which will execute the advices in reverse order when done
+        // TODO: pool this task, and the states array
         AsyncCallback callback = new AsyncAfterTask(states, exchange, originalCallback);
 
         if (exchange.isTransacted()) {
