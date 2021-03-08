@@ -47,8 +47,8 @@ public class Sqs2Configuration implements Cloneable {
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
-    @UriParam(defaultValue = "true")
-    private boolean autoCreateQueue = true;
+    @UriParam(defaultValue = "false")
+    private boolean autoCreateQueue;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
