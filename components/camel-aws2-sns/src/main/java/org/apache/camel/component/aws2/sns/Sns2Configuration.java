@@ -52,8 +52,8 @@ public class Sns2Configuration implements Cloneable {
     private String kmsMasterKeyId;
     @UriParam
     private boolean serverSideEncryptionEnabled;
-    @UriParam(defaultValue = "true")
-    private boolean autoCreateTopic = true;
+    @UriParam(defaultValue = "false")
+    private boolean autoCreateTopic;
     @UriParam(defaultValue = "false")
     private boolean overrideEndpoint;
     @UriParam
