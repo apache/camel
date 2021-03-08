@@ -79,7 +79,7 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
         final String sqsEndpointUri = String.format(
                 "aws2-sqs://%s.fifo?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&messageGroupIdStrategy=useExchangeId"
                                                     + "&messageDeduplicationIdStrategy=useContentBasedDeduplication"
-                                                    + "&configuration=%s",
+                                                    + "&configuration=%s&autoCreateQueue=true",
                 sharedNameGenerator.getName(),
                 credentials.accessKeyId(),
                 credentials.secretAccessKey(),
@@ -91,7 +91,7 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .to(sqsEndpointUri);
 
-                fromF("aws2-sqs://%s.fifo?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=false&configuration=%s",
+                fromF("aws2-sqs://%s.fifo?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=false&configuration=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         credentials.accessKeyId(),
                         credentials.secretAccessKey(),

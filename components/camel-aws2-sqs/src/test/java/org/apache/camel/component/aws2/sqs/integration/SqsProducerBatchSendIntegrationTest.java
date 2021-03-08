@@ -77,7 +77,7 @@ public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
         AwsCredentials credentials = credentialsProvider.resolveCredentials();
 
         final String sqsEndpointUri
-                = String.format("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&configuration=%s",
+                = String.format("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&configuration=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         credentials.accessKeyId(),
                         credentials.secretAccessKey(),
@@ -89,7 +89,7 @@ public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .to(sqsEndpointUri);
 
-                fromF("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=true&configuration=%s",
+                fromF("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=true&configuration=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         credentials.accessKeyId(),
                         credentials.secretAccessKey(),

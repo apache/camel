@@ -60,10 +60,11 @@ public class SqsConsumerMessageLocalstackTest extends Aws2SQSBaseTest {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
-                fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1)
-                        .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
-                        .to("mock:result");
+                fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true",
+                        sharedNameGenerator.getName())
+                                .startupOrder(1)
+                                .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                                .to("mock:result");
             }
         };
     }
