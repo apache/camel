@@ -167,6 +167,7 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-format-plugin</artifactId>
+                <version>${project.version}</version>
             </plugin>
         </plugins>
     </build>

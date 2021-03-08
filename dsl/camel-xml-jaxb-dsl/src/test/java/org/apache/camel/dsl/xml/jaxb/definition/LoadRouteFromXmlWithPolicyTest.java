@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.dsl.xml.jaxb.definition;
 
 import java.io.InputStream;
 
@@ -24,6 +24,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.dsl.xml.jaxb.definition;
 
 import java.io.InputStream;
 
@@ -22,30 +22,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.apache.camel.component.rest.DummyRestProcessorFactory;
-import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.model.RoutesDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LoadRestFromXmlTest extends ContextTestSupport {
-
-    @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
-        return jndi;
-    }
+public class LoadRouteFromXmlTest extends ContextTestSupport {
 
     @Test
-    public void testLoadRestsDefinitionFromXml() throws Exception {
+    public void testLoadRoutesDefinitionFromXml() throws Exception {
         assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
-
-        assertEquals(2, context.getRoutes().size());
+        assertEquals(1, context.getRoutes().size());
 
         // test that existing route works
         MockEndpoint foo = getMockEndpoint("mock:foo");
@@ -53,19 +41,21 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         template.sendBody("direct:foo", "Hello World");
         foo.assertIsSatisfied();
 
-        // load rest from XML and add them to the existing camel context
-        InputStream is = getClass().getResourceAsStream("barRest.xml");
+        // START SNIPPET: e1
+        // load route from XML and add them to the existing camel context
+        InputStream is = getClass().getResourceAsStream("barRoute.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
-        context.addRestDefinitions(rests.getRests(), true);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
+        context.addRouteDefinitions(routes.getRoutes());
+        // END SNIPPET: e1
 
-        assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
-        assertEquals(3, context.getRoutes().size());
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
+        assertEquals(2, context.getRoutes().size());
 
         // test that loaded route works
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedBodiesReceived("Bye World");
-        template.sendBody("seda:get-say-hello-bar", "Bye World");
+        template.sendBody("direct:bar", "Bye World");
         bar.assertIsSatisfied();
     }
 
@@ -74,8 +64,6 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().host("localhost").component("dummy-rest").apiContextPath("/api-docs");
-
                 from("direct:foo").routeId("foo").to("mock:foo");
             }
         };
