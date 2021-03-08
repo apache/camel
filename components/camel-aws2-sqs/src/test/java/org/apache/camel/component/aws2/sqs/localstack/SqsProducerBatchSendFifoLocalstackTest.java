@@ -56,7 +56,7 @@ public class SqsProducerBatchSendFifoLocalstackTest extends Aws2SQSBaseTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         final String sqsEndpointUri = String.format(
                 "aws2-sqs://%s.fifo?messageGroupIdStrategy=useExchangeId"
-                                                    + "&messageDeduplicationIdStrategy=useContentBasedDeduplication",
+                                                    + "&messageDeduplicationIdStrategy=useContentBasedDeduplication&autoCreateQueue=true",
                 sharedNameGenerator.getName());
 
         return new RouteBuilder() {
@@ -65,7 +65,7 @@ public class SqsProducerBatchSendFifoLocalstackTest extends Aws2SQSBaseTest {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .to(sqsEndpointUri);
 
-                fromF("aws2-sqs://%s.fifo?deleteAfterRead=false", sharedNameGenerator.getName())
+                fromF("aws2-sqs://%s.fifo?deleteAfterRead=false&autoCreateQueue=true", sharedNameGenerator.getName())
                         .startupOrder(1).log("${body}").to("mock:result");
             }
         };

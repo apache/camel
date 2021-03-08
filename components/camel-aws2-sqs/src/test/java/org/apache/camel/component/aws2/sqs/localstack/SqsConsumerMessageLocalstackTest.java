@@ -58,9 +58,9 @@ public class SqsConsumerMessageLocalstackTest extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").startupOrder(2).toF("aws2-sqs://%s", sharedNameGenerator.getName());
+                from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
-                fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true", sharedNameGenerator.getName())
+                fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true", sharedNameGenerator.getName())
                         .startupOrder(1)
                         .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
                         .to("mock:result");

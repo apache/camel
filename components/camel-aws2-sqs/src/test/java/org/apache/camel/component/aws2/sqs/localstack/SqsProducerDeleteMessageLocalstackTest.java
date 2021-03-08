@@ -52,9 +52,9 @@ public class SqsProducerDeleteMessageLocalstackTest extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").startupOrder(2).toF("aws2-sqs://%s", sharedNameGenerator.getName());
+                from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
-                fromF("aws2-sqs://%s?deleteAfterRead=false", sharedNameGenerator.getName())
+                fromF("aws2-sqs://%s?deleteAfterRead=false&autoCreateQueue=true", sharedNameGenerator.getName())
                         .startupOrder(1).log("${body}")
                         .toF("aws2-sqs://%s?operation=deleteMessage", sharedNameGenerator.getName())
                         .log("${body}")

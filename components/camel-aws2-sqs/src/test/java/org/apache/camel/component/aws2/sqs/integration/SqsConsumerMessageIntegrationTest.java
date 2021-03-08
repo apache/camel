@@ -73,7 +73,8 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
         AwsCredentials credentials = credentialsProvider.resolveCredentials();
 
         final String sqsEndpointUri
-                = String.format("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&configuration=%s",
+                = String.format(
+                        "aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&configuration=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         credentials.accessKeyId(),
                         credentials.secretAccessKey(),
@@ -84,7 +85,7 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                fromF("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=false&deleteIfFiltered=true&configuration=%s",
+                fromF("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=false&deleteIfFiltered=true&configuration=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         credentials.accessKeyId(),
                         credentials.secretAccessKey(),

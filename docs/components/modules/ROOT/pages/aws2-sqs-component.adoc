@@ -54,7 +54,7 @@ The AWS 2 Simple Queue Service (SQS) component supports 43 options, which are li
 | Name | Description | Default | Type
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | *Autowired* To use the AmazonSQS as client |  | SqsClient
-| *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
+| *autoCreateQueue* (common) | Setting the autocreation of the queue | false | boolean
 | *configuration* (common) | The AWS SQS default configuration |  | Sqs2Configuration
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
@@ -132,7 +132,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
 | *amazonSQSClient* (common) | *Autowired* To use the AmazonSQS as client |  | SqsClient
-| *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
+| *autoCreateQueue* (common) | Setting the autocreation of the queue | false | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String

@@ -88,7 +88,7 @@ public class SqsComponentLocalstackTest extends Aws2SQSBaseTest {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final String sqsEndpointUri = String
-                .format("aws2-sqs://%s?messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s",
+                .format("aws2-sqs://%s?messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         "1209600", "65536", "60",
                         "file:src/test/resources/org/apache/camel/component/aws2/sqs/policy.txt");

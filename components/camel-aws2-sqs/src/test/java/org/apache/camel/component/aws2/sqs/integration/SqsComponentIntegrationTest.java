@@ -106,7 +106,7 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
         AwsCredentials credentials = credentialsProvider.resolveCredentials();
 
         final String sqsEndpointUri = String
-                .format("aws2-sqs://%s?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&configuration=%s",
+                .format("aws2-sqs://%s?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&configuration=%s&autoCreateQueue=true",
                         sharedNameGenerator.getName(),
                         credentials.accessKeyId(),
                         credentials.secretAccessKey(),
