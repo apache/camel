@@ -112,9 +112,12 @@ public class SplunkConnectionFactory {
         if (owner != null) {
             args.setOwner(owner);
         }
-
-        args.setUsername(username);
-        args.setPassword(password);
+        if (username != null) {
+            args.setUsername(username);
+        }
+        if (password != null) {
+            args.setPassword(password);
+        }
         // useful in cases where you want to bypass app. servers https handling
         // (wls i'm looking at you)
         if (isUseSunHttpsHandler()) {
