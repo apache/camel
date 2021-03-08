@@ -84,8 +84,8 @@ public class AWS2S3Configuration implements Cloneable {
     private AWS2S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoCreateBucket = true;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean autoCreateBucket;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
