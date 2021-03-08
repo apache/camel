@@ -247,7 +247,12 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
     enum GoogleCloudFunctionsOperations {
         listFunctions,
         getFunction,
-        callFunction;
+        callFunction,
+        generateDownloadUrl,
+        generateUploadUrl,
+        createFunction,
+        updateFunction,
+        deleteFunction;
     }
 
     public interface GoogleCloudFunctionsBuilders {

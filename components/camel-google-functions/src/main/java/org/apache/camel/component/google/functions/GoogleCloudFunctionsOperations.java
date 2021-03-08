@@ -20,25 +20,10 @@ public enum GoogleCloudFunctionsOperations {
 
     listFunctions,
     getFunction,
-    callFunction;
-
-    //TODO Clean up
-    // listFunctions,
-    // getFunction,
-    // createAlias,
-    // deleteAlias,
-    // getAlias,
-    // listAliases,
-    // createFunction,
-    // deleteFunction,
-    // invokeFunction,
-    // updateFunction,
-    // createEventSourceMapping,
-    // deleteEventSourceMapping,
-    // listEventSourceMapping,
-    // listTags,
-    // tagResource,
-    // untagResource,
-    // publishVersion,
-    // listVersions
+    callFunction,
+    generateDownloadUrl,
+    generateUploadUrl,
+    createFunction,
+    updateFunction,
+    deleteFunction;
 }
