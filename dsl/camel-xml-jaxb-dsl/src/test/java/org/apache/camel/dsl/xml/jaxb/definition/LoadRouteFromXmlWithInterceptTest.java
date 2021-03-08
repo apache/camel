@@ -14,57 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.dsl.xml.jaxb.definition;
 
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.RoutesDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LoadRouteFromXmlTest extends ContextTestSupport {
+public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Test
-    public void testLoadRoutesDefinitionFromXml() throws Exception {
-        assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
-        assertEquals(1, context.getRoutes().size());
-
-        // test that existing route works
-        MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedBodiesReceived("Hello World");
-        template.sendBody("direct:foo", "Hello World");
-        foo.assertIsSatisfied();
-
-        // START SNIPPET: e1
-        // load route from XML and add them to the existing camel context
-        InputStream is = getClass().getResourceAsStream("barRoute.xml");
+    public void testLoadRouteFromXmlWithIntercept() throws Exception {
+        InputStream is = getClass().getResourceAsStream("barInterceptorRoute.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
-        // END SNIPPET: e1
+        context.start();
 
         assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
-        assertEquals(2, context.getRoutes().size());
+        assertEquals(1, context.getRoutes().size());
 
         // test that loaded route works
-        MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedBodiesReceived("Bye World");
-        template.sendBody("direct:bar", "Bye World");
-        bar.assertIsSatisfied();
-    }
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:intercept").expectedBodiesReceived("Bye World");
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:foo").routeId("foo").to("mock:foo");
-            }
-        };
+        template.sendBody("direct:bar", "Bye World");
+
+        assertMockEndpointsSatisfied();
     }
 }

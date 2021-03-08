@@ -14,41 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.dsl.xml.jaxb.definition;
 
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.RoutesDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
     @Test
-    public void testLoadRouteFromXmlWithIntercept() throws Exception {
-        InputStream is = getClass().getResourceAsStream("barInterceptorRoute.xml");
+    public void testLoadRouteWithNamespaceFromXml() throws Exception {
+        InputStream is = getClass().getResourceAsStream("routeWithNamespace.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
-        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
-        assertEquals(1, context.getRoutes().size());
+        Route routeWithNamespace = context.getRoute("routeWithNamespace");
+        assertNotNull(routeWithNamespace, "Expected to find route with id: routeWithNamespace");
 
-        // test that loaded route works
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:intercept").expectedBodiesReceived("Bye World");
+        MockEndpoint bar = context.getEndpoint("mock:bar", MockEndpoint.class);
+        bar.expectedBodiesReceived("Hello from foo");
 
-        template.sendBody("direct:bar", "Bye World");
+        // Make sure loaded route can process a XML payload with namespaces
+        // attached
+        context.createProducerTemplate().sendBody("direct:foo",
+                "<?xml version='1.0'?><foo xmlns='http://foo'><bar>cheese</bar></foo>");
 
-        assertMockEndpointsSatisfied();
+        bar.assertIsSatisfied();
     }
 }

@@ -14,43 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.xml.in;
+package org.apache.camel.dsl.xml.jaxb;
 
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.xml.jaxb.JaxbHelper;
 
 /**
- * {@link XMLRoutesDefinitionLoader} that uses {@link ModelParser} to load and parse the routes from XML which is fast
- * and light-weight compared to the default that uses JAXB.
+ * JAXB based {@link XMLRoutesDefinitionLoader}. This is the default loader used historically by Camel. The camel-xml-io
+ * parser is a light-weight alternative.
  */
 @JdkService(XMLRoutesDefinitionLoader.FACTORY)
-public class ModelParserXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
-
-    public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
+public class JaxbXmlRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
 
     @Override
     public Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
-        ModelParser parser = new ModelParser(inputStream, NAMESPACE);
-        return parser.parseRoutesDefinition();
+        return JaxbHelper.loadRoutesDefinition(context, inputStream);
     }
 
     @Override
     public Object loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream) throws Exception {
-        ModelParser parser = new ModelParser(inputStream, NAMESPACE);
-        return parser.parseRouteTemplatesDefinition();
+        return JaxbHelper.loadRouteTemplatesDefinition(context, inputStream);
     }
 
     @Override
     public Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
-        ModelParser parser = new ModelParser(inputStream, NAMESPACE);
-        return parser.parseRestsDefinition();
+        return JaxbHelper.loadRestsDefinition(context, inputStream);
     }
 
     @Override
     public String toString() {
-        return "camel-xml-io";
+        return "camel-xml-jaxb";
     }
+
 }
