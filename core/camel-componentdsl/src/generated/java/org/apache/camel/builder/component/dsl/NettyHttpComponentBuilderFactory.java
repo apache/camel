@@ -84,6 +84,22 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1391,6 +1407,7 @@ public interface NettyHttpComponentBuilderFactory {
             switch (name) {
             case "configuration": ((NettyHttpComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
             case "disconnect": getOrCreateConfiguration((NettyHttpComponent) component).setDisconnect((boolean) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((NettyHttpComponent) component).setHostnameVerification((boolean) value); return true;
             case "keepAlive": getOrCreateConfiguration((NettyHttpComponent) component).setKeepAlive((boolean) value); return true;
             case "reuseAddress": getOrCreateConfiguration((NettyHttpComponent) component).setReuseAddress((boolean) value); return true;
             case "reuseChannel": getOrCreateConfiguration((NettyHttpComponent) component).setReuseChannel((boolean) value); return true;
