@@ -97,7 +97,7 @@ related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 75 options, which are listed below.
+The Netty HTTP component supports 76 options, which are listed below.
 
 
 
@@ -106,6 +106,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyConfiguration
 | *disconnect* (common) | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | boolean
+| *hostnameVerification* (common) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *keepAlive* (common) | Setting to ensure socket is not closed due to inactivity | true | boolean
 | *reuseAddress* (common) | Setting to facilitate socket multiplexing | true | boolean
 | *reuseChannel* (common) | This option allows producers and consumers (in client mode) to reuse the same Netty Channel for the lifecycle of processing the Exchange. This is useful if you need to call a server multiple times in a Camel route and want to use the same network connection. When using this, the channel is not returned to the connection pool until the Exchange is done; or disconnected if the disconnect option is set to true. The reused Channel is stored on the Exchange as an exchange property with the key NettyConstants#NETTY_CHANNEL which allows you to obtain the channel during routing and use it as well. | false | boolean
@@ -213,7 +214,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (79 parameters):
+=== Query Parameters (80 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -221,6 +222,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *bridgeEndpoint* (common) | If the option is true, the producer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange). | false | boolean
 | *disconnect* (common) | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | boolean
+| *hostnameVerification* (common) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *keepAlive* (common) | Setting to ensure socket is not closed due to inactivity | true | boolean
 | *reuseAddress* (common) | Setting to facilitate socket multiplexing | true | boolean
 | *reuseChannel* (common) | This option allows producers and consumers (in client mode) to reuse the same Netty Channel for the lifecycle of processing the Exchange. This is useful if you need to call a server multiple times in a Camel route and want to use the same network connection. When using this, the channel is not returned to the connection pool until the Exchange is done; or disconnected if the disconnect option is set to true. The reused Channel is stored on the Exchange as an exchange property with the key NettyConstants#NETTY_CHANNEL which allows you to obtain the channel during routing and use it as well. | false | boolean
