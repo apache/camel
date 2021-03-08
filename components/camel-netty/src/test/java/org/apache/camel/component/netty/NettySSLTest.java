@@ -58,7 +58,7 @@ public class NettySSLTest extends BaseNettyTest {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate
                 // details
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
+                from("netty:tcp://127.0.0.1:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 SSLSession session
