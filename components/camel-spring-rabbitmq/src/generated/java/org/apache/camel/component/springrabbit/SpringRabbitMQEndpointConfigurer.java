@@ -32,6 +32,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, org.springframework.amqp.rabbit.connection.ConnectionFactory.class, value)); return true;
         case "deadletterexchange":
@@ -53,8 +55,12 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "exclusive": target.setExclusive(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": target.setMaxConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
         case "messageconverter":
         case "messageConverter": target.setMessageConverter(property(camelContext, org.springframework.amqp.support.converter.MessageConverter.class, value)); return true;
+        case "messagelistenercontainertype":
+        case "messageListenerContainerType": target.setMessageListenerContainerType(property(camelContext, java.lang.String.class, value)); return true;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
         case "nolocal":
@@ -89,6 +95,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "autoStartup": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return java.lang.Integer.class;
         case "connectionfactory":
         case "connectionFactory": return org.springframework.amqp.rabbit.connection.ConnectionFactory.class;
         case "deadletterexchange":
@@ -110,8 +118,12 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "exclusive": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": return java.lang.Integer.class;
         case "messageconverter":
         case "messageConverter": return org.springframework.amqp.support.converter.MessageConverter.class;
+        case "messagelistenercontainertype":
+        case "messageListenerContainerType": return java.lang.String.class;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
         case "nolocal":
@@ -147,6 +159,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "autoStartup": return target.isAutoStartup();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "concurrentconsumers":
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
         case "deadletterexchange":
@@ -168,8 +182,12 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "exclusive": return target.isExclusive();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": return target.getMaxConcurrentConsumers();
         case "messageconverter":
         case "messageConverter": return target.getMessageConverter();
+        case "messagelistenercontainertype":
+        case "messageListenerContainerType": return target.getMessageListenerContainerType();
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
         case "nolocal":
