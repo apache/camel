@@ -242,8 +242,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param  uri uri of the endpoint
      * @return     the interceptor builder to configure
      */
-    public InterceptFromDefinition interceptFrom(@AsEndpointUri
-    final String uri) {
+    public InterceptFromDefinition interceptFrom(@AsEndpointUri final String uri) {
         InterceptFromDefinition answer = new InterceptFromDefinition(uri);
         getInterceptFroms().add(answer);
         return answer;
@@ -255,8 +254,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param  uri uri of the endpoint
      * @return     the builder
      */
-    public InterceptSendToEndpointDefinition interceptSendToEndpoint(@AsEndpointUri
-    final String uri) {
+    public InterceptSendToEndpointDefinition interceptSendToEndpoint(@AsEndpointUri final String uri) {
         InterceptSendToEndpointDefinition answer = new InterceptSendToEndpointDefinition(uri);
         getInterceptSendTos().add(answer);
         return answer;
