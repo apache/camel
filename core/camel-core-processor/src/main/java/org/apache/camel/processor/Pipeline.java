@@ -53,18 +53,32 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     private final ReactiveExecutor reactiveExecutor;
     private final List<AsyncProcessor> processors;
     private final int size;
+    private PooledExchangeTaskFactory taskFactory;
+
     private String id;
     private String routeId;
 
-    private final class PipelineTask implements Runnable, AsyncCallback {
+    private final class PipelineTask implements PooledExchangeTask, AsyncCallback {
 
-        private final Exchange exchange;
-        private final AsyncCallback callback;
+        private Exchange exchange;
+        private AsyncCallback callback;
         private int index;
 
-        PipelineTask(Exchange exchange, AsyncCallback callback) {
+        PipelineTask() {
+        }
+
+        @Override
+        public void prepare(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
+            this.index = 0;
+        }
+
+        @Override
+        public void reset() {
+            this.exchange = null;
+            this.callback = null;
+            this.index = 0;
         }
 
         @Override
@@ -101,7 +115,9 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                     LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
 
-                reactiveExecutor.schedule(callback);
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                reactiveExecutor.schedule(cb);
             }
         }
     }
@@ -142,7 +158,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // create task which has state used during routing
-        PipelineTask task = new PipelineTask(exchange, callback);
+        PooledExchangeTask task = taskFactory.acquire(exchange, callback);
 
         if (exchange.isTransacted()) {
             reactiveExecutor.scheduleSync(task);
@@ -154,22 +170,47 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     protected void doBuild() throws Exception {
-        ServiceHelper.buildService(processors);
+        boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
+        if (pooled) {
+            taskFactory = new PooledTaskFactory() {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new PipelineTask();
+                }
+            };
+            int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
+            taskFactory.setCapacity(capacity);
+        } else {
+            taskFactory = new PrototypeTaskFactory() {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new PipelineTask();
+                }
+            };
+        }
+        LOG.trace("Using TaskFactory: {}", taskFactory);
+
+        ServiceHelper.buildService(taskFactory, processors);
     }
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(processors);
+        ServiceHelper.initService(taskFactory, processors);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(processors);
+        ServiceHelper.startService(taskFactory, processors);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors);
+        ServiceHelper.stopService(taskFactory, processors);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(taskFactory, processors);
     }
 
     @Override
