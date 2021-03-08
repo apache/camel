@@ -79,39 +79,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointConsumerBuilder hostnameVerification(
-                boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointConsumerBuilder hostnameVerification(
-                String hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -456,6 +423,39 @@ public interface NettyEndpointBuilderFactory {
         default NettyEndpointConsumerBuilder reconnectInterval(
                 String reconnectInterval) {
             doSetProperty("reconnectInterval", reconnectInterval);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointConsumerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointConsumerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
@@ -1979,39 +1979,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointProducerBuilder hostnameVerification(
-                boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointProducerBuilder hostnameVerification(
-                String hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2297,6 +2264,39 @@ public interface NettyEndpointBuilderFactory {
         default NettyEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointProducerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointProducerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
@@ -3734,39 +3734,6 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointBuilder hostnameVerification(
-                boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointBuilder hostnameVerification(
-                String hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -3935,6 +3902,39 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**

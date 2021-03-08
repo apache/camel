@@ -68,7 +68,6 @@ The Netty component supports 73 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyConfiguration
 | *disconnect* (common) | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | boolean
-| *hostnameVerification* (common) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *keepAlive* (common) | Setting to ensure socket is not closed due to inactivity | true | boolean
 | *reuseAddress* (common) | Setting to facilitate socket multiplexing | true | boolean
 | *reuseChannel* (common) | This option allows producers and consumers (in client mode) to reuse the same Netty Channel for the lifecycle of processing the Exchange. This is useful if you need to call a server multiple times in a Camel route and want to use the same network connection. When using this, the channel is not returned to the connection pool until the Exchange is done; or disconnected if the disconnect option is set to true. The reused Channel is stored on the Exchange as an exchange property with the key NettyConstants#NETTY_CHANNEL which allows you to obtain the channel during routing and use it as well. | false | boolean
@@ -105,6 +104,7 @@ The Netty component supports 73 options, which are listed below.
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
+| *hostnameVerification* ( security) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
@@ -171,7 +171,6 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *disconnect* (common) | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | boolean
-| *hostnameVerification* (common) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *keepAlive* (common) | Setting to ensure socket is not closed due to inactivity | true | boolean
 | *reuseAddress* (common) | Setting to facilitate socket multiplexing | true | boolean
 | *reuseChannel* (common) | This option allows producers and consumers (in client mode) to reuse the same Netty Channel for the lifecycle of processing the Exchange. This is useful if you need to call a server multiple times in a Camel route and want to use the same network connection. When using this, the channel is not returned to the connection pool until the Exchange is done; or disconnected if the disconnect option is set to true. The reused Channel is stored on the Exchange as an exchange property with the key NettyConstants#NETTY_CHANNEL which allows you to obtain the channel during routing and use it as well. | false | boolean
@@ -208,6 +207,7 @@ with the following path and query parameters:
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
+| *hostnameVerification* ( security) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: \http://netty.io/wiki/native-transports.html | false | boolean
