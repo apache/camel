@@ -25,7 +25,7 @@ public final class MongoDbBasicConvertersLoader implements TypeConverterLoader {
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.util.List.class, java.lang.String.class, false,
+        addTypeConverter(registry, java.util.List.class, java.lang.String.class, true,
             (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToList((java.lang.String) value));
         addTypeConverter(registry, java.util.Map.class, org.bson.Document.class, false,
             (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromDocumentToMap((org.bson.Document) value));
