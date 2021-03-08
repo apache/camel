@@ -95,3 +95,8 @@ the one to use above, and then add which -starter JARs you want to use in your C
 The freemarker component now has turned off localized lookup for templates.
 This can be turned back on by setting `localizedLookup=true` on the component.
 
+=== Camel-AWS2 components
+
+- Camel-AWS2-sqs has now the autoCreateQueue option set to false as default, so you'll need to create entities before or set the option explicitly to true
+
+
