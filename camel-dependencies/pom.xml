@@ -201,6 +201,7 @@
     <flatpack-version>4.0.4</flatpack-version>
     <flink-version>1.12.2</flink-version>
     <fop-version>2.6</fop-version>
+    <formatter-maven-plugin-version>2.14.0</formatter-maven-plugin-version>
     <freemarker-version>2.3.31</freemarker-version>
     <ftpserver-version>1.1.1</ftpserver-version>
     <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
@@ -272,7 +273,7 @@
     <ical4j-version>1.0.7</ical4j-version>
     <icu4j-version>68.2</icu4j-version>
     <ignite-version>2.9.1</ignite-version>
-    <impsort-maven-plugin-version>1.5.0</impsort-maven-plugin-version>
+    <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
     <infinispan-version>12.0.1.Final</infinispan-version>
     <influx-guava-version>20.0</influx-guava-version>
     <influx-java-driver-version>2.21</influx-java-driver-version>

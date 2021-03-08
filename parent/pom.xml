@@ -185,6 +185,7 @@
         <flatpack-version>4.0.4</flatpack-version>
         <flink-version>1.12.2</flink-version>
         <fop-version>2.6</fop-version>
+        <formatter-maven-plugin-version>2.14.0</formatter-maven-plugin-version>
         <ftpserver-version>1.1.1</ftpserver-version>
         <freemarker-version>2.3.31</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
@@ -252,7 +253,7 @@
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>68.2</icu4j-version>
         <ignite-version>2.9.1</ignite-version>
-        <impsort-maven-plugin-version>1.5.0</impsort-maven-plugin-version>
+        <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
         <infinispan-version>12.0.1.Final</infinispan-version>
         <influx-java-driver-version>2.21</influx-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
@@ -4081,9 +4082,9 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-format-plugin</artifactId>
-                    <version>${project.version}</version>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${formatter-maven-plugin-version}</version>
                     <configuration>
                         <configFile>camel-eclipse-formatter-config.xml</configFile>
                         <skip>${format.skip}</skip>
@@ -4093,6 +4094,7 @@
                         <cachedir>${basedir}/target</cachedir>
                         <excludes>${sourcecheckExcludes}</excludes>
                         <lineEnding>KEEP</lineEnding>
+                        <javaExclusionPattern>\b((from|fromF)\([^;]*\.end[^;]*?\)|rest\([^;]*?\));</javaExclusionPattern>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -4537,8 +4539,8 @@
                         <artifactId>maven-checkstyle-plugin</artifactId>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-format-plugin</artifactId>
+                        <groupId>net.revelc.code.formatter</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>format</id>
