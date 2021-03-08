@@ -686,6 +686,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             try {
                 doRun();
             } catch (Throwable e) {
+                e.printStackTrace();
+
                 // unexpected exception during running so break out
                 exchange.setException(e);
                 AsyncCallback cb = callback;
@@ -1091,6 +1093,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // because you can continue and still let the failure processor do some routing
             // before continue in the main route.
             boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+            final boolean fHandled = handled;
 
             if (allowFailureProcessor && processor != null) {
 
@@ -1155,9 +1158,24 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         }
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
-                        AsyncCallback cb = callback;
+                        reactiveExecutor.schedule(callback);
+
+                        // create log message
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
+                        if (processor != null) {
+                            if (isDeadLetterChannel && deadLetterUri != null) {
+                                msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                            } else {
+                                msg = msg + ". Processed by failure processor: " + processor;
+                            }
+                        }
+
+                        // log that we failed delivery as we are exhausted
+                        logFailedDelivery(false, false, fHandled, false, isDeadLetterChannel, exchange, msg, null);
+
+                        // we are done so we can release the task
                         taskFactory.release(this);
-                        reactiveExecutor.schedule(cb);
                     }
                 });
             } else {
@@ -1176,25 +1194,26 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
                 } finally {
                     // callback we are done
-                    AsyncCallback cb = callback;
+                    reactiveExecutor.schedule(callback);
+
+                    // create log message
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
+                    if (processor != null) {
+                        if (isDeadLetterChannel && deadLetterUri != null) {
+                            msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                        } else {
+                            msg = msg + ". Processed by failure processor: " + processor;
+                        }
+                    }
+
+                    // log that we failed delivery as we are exhausted
+                    logFailedDelivery(false, false, fHandled, false, isDeadLetterChannel, exchange, msg, null);
+
+                    // we are done so we can release the task
                     taskFactory.release(this);
-                    reactiveExecutor.schedule(cb);
                 }
             }
-
-            // create log message
-            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
-            msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
-            if (processor != null) {
-                if (isDeadLetterChannel && deadLetterUri != null) {
-                    msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
-                } else {
-                    msg = msg + ". Processed by failure processor: " + processor;
-                }
-            }
-
-            // log that we failed delivery as we are exhausted
-            logFailedDelivery(false, false, handled, false, isDeadLetterChannel, exchange, msg, null);
         }
 
         protected void prepareExchangeAfterFailure(

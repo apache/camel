@@ -564,7 +564,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ExchangeFactory.FACTORY,
                 ExchangeFactory.class);
 
-        return result.orElseGet(PrototypeExchangeFactory::new);
+        return result.orElseGet(PooledExchangeFactory::new);
+        //        return result.orElseGet(PrototypeExchangeFactory::new);
     }
 
     @Override
