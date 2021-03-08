@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -175,6 +176,11 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(consumer.getConfiguration().isClientMode());
             engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            if (consumer.getConfiguration().isHostnameVerification()) {
+                SSLParameters sslParams = engine.getSSLParameters();
+                sslParams.setEndpointIdentificationAlgorithm("HTTPS");
+                engine.setSSLParameters(sslParams);
+            }
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));

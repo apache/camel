@@ -67,6 +67,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private List<ChannelHandler> encoders = new ArrayList<>();
     @UriParam(label = "codec")
     private List<ChannelHandler> decoders = new ArrayList<>();
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean hostnameVerification = true;
     @UriParam
     private boolean disconnect;
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -720,6 +722,17 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public void setCorrelationManager(NettyCamelStateCorrelationManager correlationManager) {
         this.correlationManager = correlationManager;
     }
+
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * To enable/disable hostname verification on SSLEngine
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
+    }    
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
         if (handlers != null) {
