@@ -98,5 +98,5 @@ This can be turned back on by setting `localizedLookup=true` on the component.
 === Camel-AWS2 components
 
 - Camel-AWS2-sqs has now the autoCreateQueue option set to false as default, so you'll need to create entities before or set the option explicitly to true
-
+- Camel-AWS2-sns has now the autoCreateTopic option set to false as default, so you'll need to create entities before or set the option explicitly to true
 
