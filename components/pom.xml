@@ -107,26 +107,6 @@
         <module>camel-atomix</module>
         <module>camel-avro</module>
         <module>camel-avro-rpc</module>
-        <module>camel-aws2-athena</module>
-        <module>camel-aws2-cw</module>
-        <module>camel-aws2-ddb</module>
-        <module>camel-aws2-ec2</module>
-        <module>camel-aws2-ecs</module>
-        <module>camel-aws2-eks</module>
-        <module>camel-aws2-eventbridge</module>
-        <module>camel-aws2-iam</module>
-        <module>camel-aws2-kinesis</module>
-        <module>camel-aws2-kms</module>
-        <module>camel-aws2-lambda</module>
-        <module>camel-aws2-msk</module>
-        <module>camel-aws2-mq</module>
-        <module>camel-aws2-s3</module>
-        <module>camel-aws2-ses</module>
-        <module>camel-aws2-sns</module>
-        <module>camel-aws2-sqs</module>
-        <module>camel-aws2-sts</module>
-        <module>camel-aws2-translate</module>
-        <module>camel-aws-xray</module>
         <module>camel-azure-storage-blob</module>
         <module>camel-azure-storage-datalake</module>
         <module>camel-azure-storage-queue</module>
