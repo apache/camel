@@ -32,15 +32,6 @@
     <name>Camel :: Azure Event Hubs</name>
     <description>Camel Azure Event Hubs Component</description>
 
-    <properties>
-      <camel.osgi.import.pkg>
-        !org.apache.camel.component.azure.eventhubs*,
-        reactor*;version="[3,4)",
-        ${camel.osgi.import.defaults},
-        *
-      </camel.osgi.import.pkg>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -120,6 +111,47 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+          <id>uber</id>
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.1</version>
+                <executions>
+                  <execution>
+                    <id>bundle</id>
+                    <goals>
+                      <goal>bundle</goal>
+                    </goals>
+                    <configuration>
+                        <classifier>uber</classifier>
+                        <instructions>
+                            <Export-Package>
+                                org.apache.camel.component.azure.eventhubs
+                            </Export-Package>
+                            <Import-Package>
+                                kotlin*;resolution:=optional,
+                                *,
+                            </Import-Package>
+                            <Private-Package>
+                                com.azure.core*,
+                                com.azure.messaging.eventhubs*,
+                                com.azure.storage*,
+                                com.microsoft.azure*,
+                                io.netty*,
+                                org.apache.qpid*,
+                                reactor.core*
+                            </Private-Package>
+                        </instructions>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build> 
         </profile>
     </profiles>
 </project>
