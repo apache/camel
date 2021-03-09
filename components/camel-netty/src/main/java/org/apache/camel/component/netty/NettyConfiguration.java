@@ -65,8 +65,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private List<ChannelHandler> encoders = new ArrayList<>();
     @UriParam(label = "codec")
     private List<ChannelHandler> decoders = new ArrayList<>();
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean hostnameVerification = true;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean hostnameVerification;
     @UriParam
     private boolean disconnect;
     @UriParam(label = "producer,advanced", defaultValue = "true")
