@@ -5596,12 +5596,12 @@ public class StaticEndpointBuilders {
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-functions
      * 
-     * Syntax: <code>google-functions:name</code>
+     * Syntax: <code>google-functions:functionName</code>
      * 
      * Path parameter: functionName (required)
      * Function name
      * 
-     * @param path name
+     * @param path functionName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(
@@ -5617,14 +5617,14 @@ public class StaticEndpointBuilders {
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-functions
      * 
-     * Syntax: <code>google-functions:name</code>
+     * Syntax: <code>google-functions:functionName</code>
      * 
      * Path parameter: functionName (required)
      * Function name
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path name
+     * @param path functionName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(
