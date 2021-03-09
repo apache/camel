@@ -48,10 +48,22 @@ import org.apache.velocity.VelocityContext;
       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
+    protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
+
     /** The Constant CACHE_PROPERTIES_FILENAME. */
     private static final String CACHE_PROPERTIES_FILENAME = "camel-api-component-maven-plugin-cache.properties";
 
-    protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
+    /**
+     * List of API names, proxies and code generation settings.
+     */
+    @Parameter(required = true)
+    protected ApiProxy[] apis;
+
+    /**
+     * Common Javasource code generation settings.
+     */
+    @Parameter
+    protected FromJavasource fromJavasource = new FromJavasource();
 
     /**
      * Projects cache directory.
@@ -69,18 +81,6 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}")
     private File cachedir;
-
-    /**
-     * List of API names, proxies and code generation settings.
-     */
-    @Parameter(required = true)
-    protected ApiProxy[] apis;
-
-    /**
-     * Common Javasource code generation settings.
-     */
-    @Parameter
-    protected FromJavasource fromJavasource = new FromJavasource();
 
     /**
      * Names of options that can be set to null value if not specified.
