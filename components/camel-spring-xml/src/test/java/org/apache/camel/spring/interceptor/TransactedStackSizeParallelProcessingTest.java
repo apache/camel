@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 
@@ -24,6 +27,14 @@ public class TransactedStackSizeParallelProcessingTest extends TransactionClient
 
     private static final boolean PRINT_STACK_TRACE = false;
     private int total = 100;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // must use prototype scoped exchange factory
+        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
+        return context;
+    }
 
     // to test for flaky when using parallel processing then set this to 100
     @RepeatedTest(value = 1)
