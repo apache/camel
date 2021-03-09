@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.kafka.configuration;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.vertx.kafka.VertxKafkaHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -25,6 +26,8 @@ public abstract class BaseVertxKafkaConfiguration implements HeaderFilterStrateg
 
     @UriParam(label = "common")
     private HeaderFilterStrategy headerFilterStrategy = new VertxKafkaHeaderFilterStrategy();
+    @UriParam(label = "consumer")
+    private boolean allowManualCommit;
 
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
@@ -37,4 +40,23 @@ public abstract class BaseVertxKafkaConfiguration implements HeaderFilterStrateg
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    /**
+     * Whether to allow doing manual commits via
+     * {@link org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit}.
+     * <p/>
+     * If this option is enabled then an instance of
+     * {@link org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit} is stored on the {@link Exchange}
+     * message header, which allows end users to access this API and perform manual offset commits via the Kafka
+     * consumer.
+     *
+     * Note: To take full control of the offset committing, you may need to disable the Kafka Consumer default auto
+     * commit behavior by setting 'enableAutoCommit' to 'false'.
+     */
+    public boolean isAllowManualCommit() {
+        return allowManualCommit;
+    }
+
+    public void setAllowManualCommit(boolean allowManualCommit) {
+        this.allowManualCommit = allowManualCommit;
+    }
 }

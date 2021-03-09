@@ -482,6 +482,30 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow doing manual commits via
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit.
+         * If this option is enabled then an instance of
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * is stored on the Exchange message header, which allows end users to
+         * access this API and perform manual offset commits via the Kafka
+         * consumer. Note: To take full control of the offset commiting, you may
+         * need to disable the Kafka Consumer default auto commit behavior by
+         * setting 'enableAutoCommit' to 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder allowManualCommit(
+                boolean allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
+            return this;
+        }
+        /**
          * The frequency in milliseconds that the consumer offsets are
          * auto-committed to Kafka if enable.auto.commit is set to true.
          * 
@@ -2123,6 +2147,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "socketConnectionSetupTimeoutMaxMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSocketConnectionSetupTimeoutMaxMs((long) value); return true;
             case "socketConnectionSetupTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSocketConnectionSetupTimeoutMs((long) value); return true;
             case "allowAutoCreateTopics": getOrCreateConfiguration((VertxKafkaComponent) component).setAllowAutoCreateTopics((boolean) value); return true;
+            case "allowManualCommit": getOrCreateConfiguration((VertxKafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((VertxKafkaComponent) component).setAutoCommitIntervalMs((int) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((VertxKafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((VertxKafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;

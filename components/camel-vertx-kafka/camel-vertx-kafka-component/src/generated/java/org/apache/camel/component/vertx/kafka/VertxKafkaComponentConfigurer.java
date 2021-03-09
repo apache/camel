@@ -33,6 +33,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": getOrCreateConfiguration(target).setAllowAutoCreateTopics(property(camelContext, boolean.class, value)); return true;
+        case "allowmanualcommit":
+        case "allowManualCommit": getOrCreateConfiguration(target).setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": getOrCreateConfiguration(target).setAutoCommitIntervalMs(property(camelContext, int.class, value)); return true;
         case "autooffsetreset":
@@ -249,6 +251,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "additionalProperties": return java.util.Map.class;
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": return boolean.class;
+        case "allowmanualcommit":
+        case "allowManualCommit": return boolean.class;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return int.class;
         case "autooffsetreset":
@@ -461,6 +465,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": return getOrCreateConfiguration(target).isAllowAutoCreateTopics();
+        case "allowmanualcommit":
+        case "allowManualCommit": return getOrCreateConfiguration(target).isAllowManualCommit();
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return getOrCreateConfiguration(target).getAutoCommitIntervalMs();
         case "autooffsetreset":

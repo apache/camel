@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (101 parameters):
+=== Query Parameters (102 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,6 +102,7 @@ with the following path and query parameters:
 | *socketConnectionSetupTimeout{zwsp}MaxMs* (common) | The maximum amount of time the client will wait for the socket connection to be established. The connection setup timeout will increase exponentially for each consecutive connection failure up to this maximum. To avoid connection storms, a randomization factor of 0.2 will be applied to the timeout resulting in a random range between 20% below and 20% above the computed value. | 2m7s | long
 | *socketConnectionSetupTimeoutMs* (common) | The amount of time the client will wait for the socket connection to be established. If the connection is not built before the timeout elapses, clients will close the socket channel. | 10s | long
 | *allowAutoCreateTopics* (consumer) | Allow automatic topic creation on the broker when subscribing to or assigning a topic. A topic being subscribed to will be automatically created only if the broker allows for it using auto.create.topics.enable broker configuration. This configuration must be set to false when using brokers older than 0.11.0 | true | boolean
+| *allowManualCommit* (consumer) | Whether to allow doing manual commits via org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit. If this option is enabled then an instance of org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. Note: To take full control of the offset commiting, you may need to disable the Kafka Consumer default auto commit behavior by setting 'enableAutoCommit' to 'false'. | false | boolean
 | *autoCommitIntervalMs* (consumer) | The frequency in milliseconds that the consumer offsets are auto-committed to Kafka if enable.auto.commit is set to true. | 5s | int
 | *autoOffsetReset* (consumer) | What to do when there is no initial offset in Kafka or if the current offset does not exist any more on the server (e.g. because that data has been deleted): earliest: automatically reset the offset to the earliest offsetlatest: automatically reset the offset to the latest offsetnone: throw exception to the consumer if no previous offset is found for the consumer's groupanything else: throw exception to the consumer. There are 3 enums and the value can be one of: latest, earliest, none | latest | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -186,7 +187,7 @@ with the following path and query parameters:
 
 == Component Options
 // component options: START
-The Vert.x Kafka component supports 104 options, which are listed below.
+The Vert.x Kafka component supports 105 options, which are listed below.
 
 
 
@@ -216,6 +217,7 @@ The Vert.x Kafka component supports 104 options, which are listed below.
 | *socketConnectionSetupTimeout{zwsp}MaxMs* (common) | The maximum amount of time the client will wait for the socket connection to be established. The connection setup timeout will increase exponentially for each consecutive connection failure up to this maximum. To avoid connection storms, a randomization factor of 0.2 will be applied to the timeout resulting in a random range between 20% below and 20% above the computed value. | 2m7s | long
 | *socketConnectionSetupTimeoutMs* (common) | The amount of time the client will wait for the socket connection to be established. If the connection is not built before the timeout elapses, clients will close the socket channel. | 10s | long
 | *allowAutoCreateTopics* (consumer) | Allow automatic topic creation on the broker when subscribing to or assigning a topic. A topic being subscribed to will be automatically created only if the broker allows for it using auto.create.topics.enable broker configuration. This configuration must be set to false when using brokers older than 0.11.0 | true | boolean
+| *allowManualCommit* (consumer) | Whether to allow doing manual commits via org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit. If this option is enabled then an instance of org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. Note: To take full control of the offset commiting, you may need to disable the Kafka Consumer default auto commit behavior by setting 'enableAutoCommit' to 'false'. | false | boolean
 | *autoCommitIntervalMs* (consumer) | The frequency in milliseconds that the consumer offsets are auto-committed to Kafka if enable.auto.commit is set to true. | 5s | int
 | *autoOffsetReset* (consumer) | What to do when there is no initial offset in Kafka or if the current offset does not exist any more on the server (e.g. because that data has been deleted): earliest: automatically reset the offset to the earliest offsetlatest: automatically reset the offset to the latest offsetnone: throw exception to the consumer if no previous offset is found for the consumer's groupanything else: throw exception to the consumer. There are 3 enums and the value can be one of: latest, earliest, none | latest | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
