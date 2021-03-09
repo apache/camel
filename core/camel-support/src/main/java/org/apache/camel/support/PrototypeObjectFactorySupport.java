@@ -27,8 +27,8 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport implements PooledObjectFactory<T> {
 
+    protected CamelContext camelContext;
     protected final UtilizationStatistics statistics = new UtilizationStatistics();
-    private CamelContext camelContext;
     protected boolean statisticsEnabled;
 
     @Override
