@@ -542,7 +542,7 @@
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
-        <velocity-tools-version>2.0</velocity-tools-version>
+        <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.1</velocity-version>
         <vertx-version>3.9.5</vertx-version>
         <vysper-version>0.7</vysper-version>
