@@ -177,14 +177,29 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
                     return new PipelineTask();
                 }
+
+                @Override
+                public String toString() {
+                    return "PooledTaskFactory[capacity: " + getCapacity() + "]";
+                }
             };
             int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
         } else {
             taskFactory = new PrototypeTaskFactory() {
                 @Override
+                public boolean isPooled() {
+                    return false;
+                }
+
+                @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
                     return new PipelineTask();
+                }
+
+                @Override
+                public String toString() {
+                    return "PrototypeTaskFactory";
                 }
             };
         }

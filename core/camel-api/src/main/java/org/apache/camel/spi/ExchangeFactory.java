@@ -79,9 +79,4 @@ public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManag
         return true;
     }
 
-    /**
-     * Whether the factory is pooled.
-     */
-    boolean isPooled();
-
 }

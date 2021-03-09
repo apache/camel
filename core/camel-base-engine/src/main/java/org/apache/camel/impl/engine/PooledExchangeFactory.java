@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -36,8 +33,6 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PooledExchangeFactory.class);
 
     private final ReleaseOnDoneTask onDone = new ReleaseOnDoneTask();
-    private BlockingQueue<Exchange> pool;
-    private int capacity = 100;
 
     public PooledExchangeFactory() {
     }
@@ -47,35 +42,12 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        this.pool = new ArrayBlockingQueue<>(capacity);
-    }
-
-    @Override
     public ExchangeFactory newExchangeFactory(Consumer consumer) {
         PooledExchangeFactory answer = new PooledExchangeFactory(consumer);
         answer.setCamelContext(camelContext);
         answer.setCapacity(capacity);
         answer.setStatisticsEnabled(isStatisticsEnabled());
         return answer;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
-    public int getSize() {
-        if (pool != null) {
-            return pool.size();
-        } else {
-            return 0;
-        }
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     @Override
@@ -160,13 +132,6 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             answer.onDone(onDone);
         }
         return answer;
-    }
-
-    @Override
-    public void purge() {
-        if (pool != null) {
-            pool.clear();
-        }
     }
 
     @Override

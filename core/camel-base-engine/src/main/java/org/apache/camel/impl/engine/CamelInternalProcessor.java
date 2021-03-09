@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -45,6 +46,7 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.PooledObjectFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -61,6 +63,7 @@ import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +106,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
+    private PooledObjectFactory<CamelInternalTask> taskFactory;
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -115,6 +119,27 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
+
+        // only create pooled task factory
+        if (pooled) {
+            taskFactory = new CamelInternalPooledTaskFactory();
+            int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
+            taskFactory.setCapacity(capacity);
+            LOG.trace("Using TaskFactory: {}", taskFactory);
+        }
+
+        ServiceHelper.buildService(taskFactory, processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        ServiceHelper.stopAndShutdownServices(taskFactory, processor);
     }
 
     @Override
@@ -174,16 +199,32 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Callback task to process the advices after processing.
      */
-    private final class AsyncAfterTask implements AsyncCallback {
+    private final class AsyncAfterTask implements CamelInternalTask {
 
         private final Object[] states;
-        private final Exchange exchange;
-        private final AsyncCallback originalCallback;
+        private Exchange exchange;
+        private AsyncCallback originalCallback;
 
-        private AsyncAfterTask(Object[] states, Exchange exchange, AsyncCallback originalCallback) {
+        private AsyncAfterTask(Object[] states) {
             this.states = states;
+        }
+
+        @Override
+        public void prepare(Exchange exchange, AsyncCallback originalCallback) {
             this.exchange = exchange;
             this.originalCallback = originalCallback;
+        }
+
+        @Override
+        public Object[] getStates() {
+            return states;
+        }
+
+        @Override
+        public void reset() {
+            Arrays.fill(states, null);
+            this.exchange = null;
+            this.originalCallback = null;
         }
 
         @Override
@@ -213,6 +254,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------
+
+                // task is done so reset
+                if (taskFactory != null) {
+                    taskFactory.release(this);
+                }
             }
         }
     }
@@ -253,8 +299,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             return true;
         }
 
+        Object[] states;
+
+        // create internal callback which will execute the advices in reverse order when done
+        CamelInternalTask afterTask = taskFactory != null ? taskFactory.acquire() : null;
+        if (afterTask == null) {
+            states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
+            afterTask = new AsyncAfterTask(states);
+        } else {
+            states = afterTask.getStates();
+        }
+        afterTask.prepare(exchange, originalCallback);
+
         // optimise to use object array for states, and only for the number of advices that keep state
-        final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0, j = 0; i < advices.size(); i++) {
             CamelInternalProcessorAdvice<?> task = advices.get(i);
@@ -269,10 +326,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 return true;
             }
         }
-
-        // create internal callback which will execute the advices in reverse order when done
-        // TODO: pool this task, and the states array
-        AsyncCallback callback = new AsyncAfterTask(states, exchange, originalCallback);
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
@@ -291,14 +344,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
-            callback.done(true);
+            if (taskFactory != null) {
+                taskFactory.release(afterTask);
+            }
             return true;
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
             // do uow before processing and if a value is returned the the uow wants to be processed after
             // was well in the same thread
-            AsyncCallback async = callback;
+            AsyncCallback async = afterTask;
             boolean beforeAndAfter = uow != null && uow.isBeforeAfterProcess();
             if (beforeAndAfter) {
                 async = uow.beforeProcess(processor, exchange, async);
@@ -318,7 +373,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
                 // execute any after processor work (in current thread, not in the callback)
-                uow.afterProcess(processor, exchange, callback, false);
+                uow.afterProcess(processor, exchange, afterTask, false);
             }
 
             if (LOG.isTraceEnabled()) {

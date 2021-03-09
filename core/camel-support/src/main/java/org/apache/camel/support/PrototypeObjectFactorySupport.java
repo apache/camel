@@ -81,6 +81,11 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
     }
 
     @Override
+    public boolean isPooled() {
+        return false;
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
         statistics.reset();

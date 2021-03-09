@@ -108,6 +108,11 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
     Statistics getStatistics();
 
     /**
+     * Whether the factory is pooled.
+     */
+    boolean isPooled();
+
+    /**
      * Acquires an object from the pool (if any)
      *
      * @return the object or <tt>null</tt> if the pool is empty

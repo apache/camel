@@ -35,7 +35,9 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-        this.pool = new ArrayBlockingQueue<>(capacity);
+        if (isPooled()) {
+            this.pool = new ArrayBlockingQueue<>(capacity);
+        }
     }
 
     @Override
@@ -83,8 +85,15 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
     }
 
     @Override
+    public boolean isPooled() {
+        return true;
+    }
+
+    @Override
     public void purge() {
-        pool.clear();
+        if (pool != null) {
+            pool.clear();
+        }
     }
 
     @Override
@@ -96,7 +105,9 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
     protected void doShutdown() throws Exception {
         super.doShutdown();
         statistics.reset();
-        pool.clear();
+        if (pool != null) {
+            pool.clear();
+        }
     }
 
     /**

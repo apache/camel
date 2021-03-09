@@ -128,8 +128,8 @@ public final class DefaultConfigurationConfigurer {
         } else if ("prototype".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PrototypeExchangeFactory());
         }
-        ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
         ecc.getExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());
+        ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
