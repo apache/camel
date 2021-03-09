@@ -2700,7 +2700,7 @@
     "version": "3.9.0-SNAPSHOT",
     "scheme": "google-functions",
     "extendsScheme": "",
-    "syntax": "google-functions:name",
+    "syntax": "google-functions:functionName",
     "async": false,
     "api": false,
     "consumerOnly": false,

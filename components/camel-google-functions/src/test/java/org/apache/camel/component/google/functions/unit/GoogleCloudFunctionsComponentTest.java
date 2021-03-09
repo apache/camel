@@ -222,7 +222,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        GetFunctionRequest actualRequest = ((GetFunctionRequest) actualRequests.get(0));
+        GetFunctionRequest actualRequest = (GetFunctionRequest) actualRequests.get(0);
 
         assertEquals(cfName.toString(), actualRequest.getName());
         assertTrue(channelProvider.isHeaderSent(ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -252,7 +252,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        GetFunctionRequest actualRequest = ((GetFunctionRequest) actualRequests.get(0));
+        GetFunctionRequest actualRequest = (GetFunctionRequest) actualRequests.get(0);
 
         assertEquals(cfName.toString(), actualRequest.getName());
         assertTrue(channelProvider.isHeaderSent(ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -277,7 +277,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        CallFunctionRequest actualRequest = ((CallFunctionRequest) actualRequests.get(0));
+        CallFunctionRequest actualRequest = (CallFunctionRequest) actualRequests.get(0);
 
         assertEquals(name.toString(), actualRequest.getName());
         assertEquals(data, actualRequest.getData());
@@ -305,7 +305,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        CallFunctionRequest actualRequest = ((CallFunctionRequest) actualRequests.get(0));
+        CallFunctionRequest actualRequest = (CallFunctionRequest) actualRequests.get(0);
 
         assertEquals(cfName.toString(), actualRequest.getName());
         assertEquals(data, actualRequest.getData());
@@ -329,7 +329,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        GenerateDownloadUrlRequest actualRequest = ((GenerateDownloadUrlRequest) actualRequests.get(0));
+        GenerateDownloadUrlRequest actualRequest = (GenerateDownloadUrlRequest) actualRequests.get(0);
         assertEquals(cfName.toString(), actualRequest.getName());
 
     }
@@ -354,7 +354,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        GenerateDownloadUrlRequest actualRequest = ((GenerateDownloadUrlRequest) actualRequests.get(0));
+        GenerateDownloadUrlRequest actualRequest = (GenerateDownloadUrlRequest) actualRequests.get(0);
         assertEquals(cfName.toString(), actualRequest.getName());
     }
 
@@ -373,7 +373,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        GenerateUploadUrlRequest actualRequest = ((GenerateUploadUrlRequest) actualRequests.get(0));
+        GenerateUploadUrlRequest actualRequest = (GenerateUploadUrlRequest) actualRequests.get(0);
         assertEquals(locationName.toString(), actualRequest.getParent());
     }
 
@@ -395,7 +395,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        GenerateUploadUrlRequest actualRequest = ((GenerateUploadUrlRequest) actualRequests.get(0));
+        GenerateUploadUrlRequest actualRequest = (GenerateUploadUrlRequest) actualRequests.get(0);
         assertEquals(locationName.toString(), actualRequest.getParent());
     }
 
@@ -525,7 +525,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         assertNotNull(actualResponse);
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        DeleteFunctionRequest actualRequest = ((DeleteFunctionRequest) actualRequests.get(0));
+        DeleteFunctionRequest actualRequest = (DeleteFunctionRequest) actualRequests.get(0);
         assertEquals(cfName.toString(), actualRequest.getName());
     }
 
@@ -544,7 +544,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         assertNotNull(actualResponse);
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
         assertEquals(1, actualRequests.size());
-        DeleteFunctionRequest actualRequest = ((DeleteFunctionRequest) actualRequests.get(0));
+        DeleteFunctionRequest actualRequest = (DeleteFunctionRequest) actualRequests.get(0);
         assertEquals(cfName.toString(), actualRequest.getName());
     }
 }

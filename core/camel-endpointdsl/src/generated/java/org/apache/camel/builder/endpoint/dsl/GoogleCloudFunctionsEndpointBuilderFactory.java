@@ -106,7 +106,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             return this;
         }
         /**
-         * location.
+         * The Google Cloud Location (Region) where the Function is located.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -151,7 +151,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configure the input type. If true the message will be POJO type.
+         * Specifies if the request is a pojo request.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -167,7 +167,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configure the input type. If true the message will be POJO type.
+         * Specifies if the request is a pojo request.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -184,7 +184,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Project.
+         * The Google Cloud Project name where the Function is located.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -268,7 +268,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * Syntax: <code>google-functions:functionName</code>
          * 
          * Path parameter: functionName (required)
-         * Function name
+         * The user-defined name of the function
          * 
          * @param path functionName
          * @return the dsl builder
@@ -288,7 +288,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * Syntax: <code>google-functions:functionName</code>
          * 
          * Path parameter: functionName (required)
-         * Function name
+         * The user-defined name of the function
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

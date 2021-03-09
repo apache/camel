@@ -14,8 +14,8 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-fun
 
 *{component-header}*
 
-The Google Storage component provides access to https://cloud.google.com/storage/[Google Cloud Storage] via
-the https://github.com/googleapis/java-storage[google java storage library].
+The Google Functions component provides access to https://cloud.google.com/functions/[Google Cloud Functions] via
+the https://github.com/googleapis/java-functions[Google Cloud Functions Client for Java].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -35,19 +35,17 @@ for this component:
 
 == Authentication Configuration
 
-Google Storage component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication[Google Storage Auth Guide].
+Google Functions component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://github.com/googleapis/google-cloud-java#authentication[Google Cloud Authentication].
 
 When you have the **service account key** you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 [source,text]
 --------------------------------------------------------
-String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
+String endpoint = "google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json";
 --------------------------------------------------------
 
-Or by providing the path to the GCP credentials file location:
-
-Provide authentication credentials to your application code by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
+Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
 [source,text]
 --------------------------------------------------------
@@ -59,19 +57,18 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 
 [source,text]
 --------------------------------------------------------
-google-storage://bucketNameOrArn?[options]
+google-functions://functionName?[options]
 --------------------------------------------------------
 
-By default the bucket will be created if it don't already exists. +
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-For example in order to read file `hello.txt` from bucket `myCamelBucket`, use the following snippet:
+For example in order to call the function `myCamelFunction` from the project `myProject` and location `us-central1`, use the following snippet:
 
 [source,java]
 --------------------------------------------------------------------------------
-from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&objectName=hello.txt")
-  .to("file:/var/downloaded");
+from("google-functions://myCamelFunction?project=myProject&location=us-central1&operation=callFunction&serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("direct:test");
 --------------------------------------------------------------------------------
 
 
@@ -94,7 +91,7 @@ The GoogleCloudFunctions component supports 2 options, which are listed below.
 The GoogleCloudFunctions endpoint is configured using URI syntax:
 
 ----
-google-functions:name
+google-functions:functionName
 ----
 
 with the following path and query parameters:
@@ -105,7 +102,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *functionName* | *Required* Function name |  | String
+| *functionName* | *Required* The user-defined name of the function |  | String
 |===
 
 
@@ -117,10 +114,10 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *location* (producer) | location |  | String
-| *operation* (producer) | The operation to perform on the producer. There are 3 enums and the value can be one of: listFunctions, getFunction, callFunction |  | GoogleCloudFunctionsOperations
-| *pojoRequest* (producer) | Configure the input type. If true the message will be POJO type. | false | boolean
-| *project* (producer) | Project |  | String
+| *location* (producer) | The Google Cloud Location (Region) where the Function is located |  | String
+| *operation* (producer) | The operation to perform on the producer. There are 8 enums and the value can be one of: listFunctions, getFunction, callFunction, generateDownloadUrl, generateUploadUrl, createFunction, updateFunction, deleteFunction |  | GoogleCloudFunctionsOperations
+| *pojoRequest* (producer) | Specifies if the request is a pojo request | false | boolean
+| *project* (producer) | The Google Cloud Project name where the Function is located |  | String
 | *client* (advanced) | *Autowired* The client to use during service invocation. |  | CloudFunctionsServiceClient
 |===
 // endpoint options: END
@@ -128,7 +125,7 @@ with the following path and query parameters:
 
 == Usage
 
-=== Message headers evaluated by the Google Storage Producer
+=== Message headers evaluated by the Google Functions Producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -159,7 +156,7 @@ with the following path and query parameters:
 
 |=======================================================================
 
-=== Message headers set by the Google Storage Producer
+=== Message headers set by the Google Functions Producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -192,14 +189,14 @@ with the following path and query parameters:
 | `CamelGoogleCloudStorageMediaLink` |`String` | The media link
 | `CamelGoogleCloudStorageMetageneration` | `String` | The metageneration of the object
 | `CamelGoogleCloudStorageContentLength` |`Long` |The content length of this object.
-| `CamelGoogleCloudStorageStorageClass` | `String` | The storage class of the object
+| `CamelGoogleCloudStorageStorageClass` | `String` | The functions class of the object
 | `CamelGoogleCloudStorageCreateTime` |`String` | The creation time of the object
 | `CamelGoogleCloudStorageLastUpdate` |`String` | The last update of the object
 |=======================================================================
 
-=== Google Storage Producer operations
+=== Google Functions Producer operations
 
-Google Storage component provides the following operation on the producer side:
+Google Functions component provides the following operation on the producer side:
 
 - copyObject
 - listObjects
@@ -213,17 +210,17 @@ If you don't specify an operation explicitly the producer will a file upload.
 
 === Advanced component configuration
 
-If you need to have more control over the `storageClient` instance configuration, you can create your own instance and refer to it in your Camel google-storage component configuration:
+If you need to have more control over the `functionsClient` instance configuration, you can create your own instance and refer to it in your Camel google-functions component configuration:
 
 [source,java]
 --------------------------------------------------------------------------------
-from("google-storage://myCamelBucket?storageClient=#client")
+from("google-functions://myCamelFunction?functionsClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-=== Google Storage Producer Operation examples
+=== Google Functions Producer Operation examples
 
-- File Upload: This operation will upload a file to the Google Storage based on the body content
+- File Upload: This operation will upload a file to the Google Functions based on the body content
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -235,7 +232,7 @@ from("direct:start")
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
     exchange.getIn().setBody(bais);    
 })
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json")
 .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
 --------------------------------------------------------------------------------
 
@@ -251,7 +248,7 @@ This operation will upload the file camel.txt with the content "Camel rocks!" in
     exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, "myCamelBucket_dest");
     exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, "camel_copy.txt");
   })
-  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -265,7 +262,7 @@ This operation will copy the object with the name expressed in the header DESTIN
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteObject);
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
   })
-  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -276,7 +273,7 @@ This operation will delete the object from the bucket myCamelBucket.
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -287,7 +284,7 @@ This operation will list the buckets for this account.
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -298,7 +295,7 @@ This operation will delete the bucket myCamelBucket.
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -312,7 +309,7 @@ from("direct:start")
 .process( exchange -> {
   exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
 })
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -327,7 +324,7 @@ from("direct:start")
   exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
   exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
 })
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
+.to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -345,7 +342,7 @@ This will require specifying the destinationBucket option. As example:
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json"
+  from("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json"
     + "&autoCreateBucket=true"
     + "&destinationBucket=myCamelProcessedBucket"
     + "&moveAfterRead=true"

@@ -5599,7 +5599,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-functions:functionName</code>
      * 
      * Path parameter: functionName (required)
-     * Function name
+     * The user-defined name of the function
      * 
      * @param path functionName
      * @return the dsl builder
@@ -5620,7 +5620,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-functions:functionName</code>
      * 
      * Path parameter: functionName (required)
-     * Function name
+     * The user-defined name of the function
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

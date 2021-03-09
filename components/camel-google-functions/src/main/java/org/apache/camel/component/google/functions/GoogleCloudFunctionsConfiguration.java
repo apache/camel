@@ -26,23 +26,24 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleCloudFunctionsConfiguration implements Cloneable {
 
-    @UriPath(label = "common", description = "Function name")
+    @UriPath(label = "common", description = "The user-defined name of the function")
     @Metadata(required = true)
     private String functionName;
 
     @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer", description = "Project")
+    @UriParam(label = "producer", description = "The Google Cloud Project name where the Function is located")
     private String project;
 
-    @UriParam(label = "producer", description = "location")
+    @UriParam(label = "producer", description = "The Google Cloud Location (Region) where the Function is located")
     private String location;
 
-    @UriParam(label = "producer", enums = "listFunctions,getFunction,callFunction")
+    @UriParam(label = "producer",
+              enums = "listFunctions,getFunction,callFunction,generateDownloadUrl,generateUploadUrl,createFunction,updateFunction,deleteFunction")
     private GoogleCloudFunctionsOperations operation;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false", description = "Specifies if the request is a pojo request")
     private boolean pojoRequest;
 
     @UriParam(label = "advanced")
