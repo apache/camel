@@ -14,37 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.dsl.xml.jaxb.spring;
 
 import java.io.InputStream;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spring.SpringCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
-
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
-    }
+public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
 
     @Test
     public void testLoadRoutes() throws Exception {
+        AbstractXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
         SpringCamelContext camel = applicationContext.getBean(SpringCamelContext.class);
         assertEquals(0, camel.getRoutes().size());
         assertTrue(camel.getStatus().isStarted());
 
         // load routes from xml file
-        InputStream is = this.getClass().getResourceAsStream("myRoutes.xml");
+        InputStream is = new ClassPathResource("org/apache/camel/spring/myRoutes.xml").getInputStream();
         ExtendedCamelContext ecc = camel.adapt(ExtendedCamelContext.class);
         RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         camel.addRouteDefinitions(routes.getRoutes());
@@ -82,7 +82,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         //camel.getRouteController().removeRoute("bar");
 
         // load updated xml
-        is = this.getClass().getResourceAsStream("myUpdatedRoutes.xml");
+        is = new ClassPathResource("org/apache/camel/spring/myUpdatedRoutes.xml").getInputStream();
         routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         camel.addRouteDefinitions(routes.getRoutes());
 
