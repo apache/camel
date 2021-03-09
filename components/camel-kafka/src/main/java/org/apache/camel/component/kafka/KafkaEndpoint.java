@@ -51,6 +51,8 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
 
+    private static final String CALLBACK_HANDLER_CLASS_CONFIG = "sasl.login.callback.handler.class";
+
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
 
@@ -128,9 +130,8 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
                 replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
 
-                // as long as the property is not available in Kafka client, use a static string
-                final String CH_PROPERTY = "sasl.login.callback.handler.class";
-                replaceWithClass(props, CH_PROPERTY, resolver, AuthenticateCallbackHandler.class);
+                // because he property is not available in Kafka client, use a static string
+                replaceWithClass(props, CALLBACK_HANDLER_CLASS_CONFIG, resolver, AuthenticateCallbackHandler.class);
             }
         } catch (Throwable t) {
             // can ignore and Kafka itself might be able to handle it, if not,
