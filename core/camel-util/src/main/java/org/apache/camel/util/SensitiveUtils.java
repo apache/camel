@@ -67,7 +67,6 @@ public final class SensitiveUtils {
                     "proxypassword",
                     "proxyuser",
                     "publickeyid",
-                    "queueownerawsaccountid",
                     "refreshtoken",
                     "sasljaasconfig",
                     "secretkey",

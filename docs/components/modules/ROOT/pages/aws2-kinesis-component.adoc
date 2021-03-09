@@ -1,7 +1,7 @@
 [[aws2-kinesis-component]]
 = AWS 2 Kinesis Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
+:page-source: components/camel-aws/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
 :docTitle: AWS 2 Kinesis
 :artifactId: camel-aws2-kinesis
 :description: Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.

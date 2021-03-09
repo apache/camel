@@ -1,7 +1,7 @@
 [[aws2-kinesis-firehose-component]]
 = AWS 2 Kinesis Firehose Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-firehose-component.adoc
+:page-source: components/camel-aws/camel-aws2-kinesis/src/main/docs/aws2-kinesis-firehose-component.adoc
 :docTitle: AWS 2 Kinesis Firehose
 :artifactId: camel-aws2-kinesis
 :description: Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
