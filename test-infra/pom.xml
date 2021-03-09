@@ -37,7 +37,6 @@
         <module>camel-test-infra-kafka</module>
         <module>camel-test-infra-parent</module>
         <module>camel-test-infra-aws-common</module>
-        <module>camel-test-infra-aws-v1</module>
         <module>camel-test-infra-aws-v2</module>
         <module>camel-test-infra-cassandra</module>
         <module>camel-test-infra-elasticsearch</module>
