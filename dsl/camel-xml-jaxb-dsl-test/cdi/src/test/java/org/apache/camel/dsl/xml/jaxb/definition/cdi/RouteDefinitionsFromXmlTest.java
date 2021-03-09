@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.test;
+package org.apache.camel.dsl.xml.jaxb.definition.cdi;
 
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
@@ -75,6 +75,6 @@ public class RouteDefinitionsFromXmlTest {
 
         inbound.sendBody("test");
 
-        assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
+        MockEndpoint.assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
     }
 }

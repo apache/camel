@@ -24,14 +24,14 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>dsl</artifactId>
+        <artifactId>camel-xml-jaxb-dsl-test</artifactId>
         <version>3.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-xml-jaxb-dsl</artifactId>
+    <artifactId>camel-xml-jaxb-dsl-test-managemenr</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: XML DSL with camel-xml-jaxb</name>
-    <description>Camel XML DSL with camel-xml-jaxb</description>
+    <name>Camel :: XML DSL Jaxb :: Test :: Management</name>
+    <description>Camel XML DSL Tests with Jaxb and Management</description>
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
@@ -40,15 +40,15 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb-dsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxb</artifactId>
         </dependency>
 
         <dependency>
@@ -60,6 +60,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -135,24 +140,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-spi</id>
-                        <goals>
-                            <goal>generate-spi</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <!-- skip testing on java 8 -->
     <profiles>
