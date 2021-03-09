@@ -75,19 +75,6 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default NettyComponentBuilder hostnameVerification(
-                boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
          * The option is a: <code>boolean</code> type.
@@ -922,6 +909,19 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyComponentBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Client side certificate keystore to be used for encryption.
          * 
          * The option is a: <code>java.io.File</code> type.
@@ -1115,7 +1115,6 @@ public interface NettyComponentBuilderFactory {
             switch (name) {
             case "configuration": ((NettyComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
             case "disconnect": getOrCreateConfiguration((NettyComponent) component).setDisconnect((boolean) value); return true;
-            case "hostnameVerification": getOrCreateConfiguration((NettyComponent) component).setHostnameVerification((boolean) value); return true;
             case "keepAlive": getOrCreateConfiguration((NettyComponent) component).setKeepAlive((boolean) value); return true;
             case "reuseAddress": getOrCreateConfiguration((NettyComponent) component).setReuseAddress((boolean) value); return true;
             case "reuseChannel": getOrCreateConfiguration((NettyComponent) component).setReuseChannel((boolean) value); return true;
@@ -1173,6 +1172,7 @@ public interface NettyComponentBuilderFactory {
             case "encoding": getOrCreateConfiguration((NettyComponent) component).setEncoding((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((NettyComponent) component).setTextline((boolean) value); return true;
             case "enabledProtocols": getOrCreateConfiguration((NettyComponent) component).setEnabledProtocols((java.lang.String) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((NettyComponent) component).setHostnameVerification((boolean) value); return true;
             case "keyStoreFile": getOrCreateConfiguration((NettyComponent) component).setKeyStoreFile((java.io.File) value); return true;
             case "keyStoreFormat": getOrCreateConfiguration((NettyComponent) component).setKeyStoreFormat((java.lang.String) value); return true;
             case "keyStoreResource": getOrCreateConfiguration((NettyComponent) component).setKeyStoreResource((java.lang.String) value); return true;
