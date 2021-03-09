@@ -251,7 +251,7 @@ camel.component.sql.dataSource = #myDS
 ----
 
 To refer to a custom bean you may want to favour using `#bean:` style, as this states the intention more clearly that its referring to a bean,
-and not just a text value that happens to start with a `#` sign:
+and not just a text value that happens to start with a `+#+` sign:
 
 [source,properties]
 ----
