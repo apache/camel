@@ -37,6 +37,7 @@
         <module>definition</module>
         <module>management</module>
         <module>cdi</module>
+        <module>jbpm</module>
         <module>spring</module>
     </modules>
 </project>
