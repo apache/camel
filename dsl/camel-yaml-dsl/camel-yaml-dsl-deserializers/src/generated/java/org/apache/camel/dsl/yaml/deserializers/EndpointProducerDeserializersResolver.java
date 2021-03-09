@@ -34,6 +34,26 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "atomix-set":
             case "atomix-value":
             case "avro":
+            case "aws2-athena":
+            case "aws2-cw":
+            case "aws2-ddb":
+            case "aws2-ec2":
+            case "aws2-ecs":
+            case "aws2-eks":
+            case "aws2-eventbridge":
+            case "aws2-iam":
+            case "aws2-kinesis":
+            case "aws2-kinesis-firehose":
+            case "aws2-kms":
+            case "aws2-lambda":
+            case "aws2-mq":
+            case "aws2-msk":
+            case "aws2-s3":
+            case "aws2-ses":
+            case "aws2-sns":
+            case "aws2-sqs":
+            case "aws2-sts":
+            case "aws2-translate":
             case "azure-eventhubs":
             case "azure-storage-blob":
             case "azure-storage-datalake":
