@@ -228,6 +228,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             try {
                 for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
@@ -333,19 +334,21 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(),
                         exchange);
             }
-            // ----------------------------------------------------------
-            // CAMEL END USER - DEBUG ME HERE +++ START +++
-            // ----------------------------------------------------------
             try {
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ START +++
+                // ----------------------------------------------------------
                 processor.process(exchange);
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ END +++
+                // ----------------------------------------------------------
             } catch (Throwable e) {
                 exchange.setException(e);
-            }
-            // ----------------------------------------------------------
-            // CAMEL END USER - DEBUG ME HERE +++ END +++
-            // ----------------------------------------------------------
-            if (taskFactory != null) {
-                taskFactory.release(afterTask);
+            } finally {
+                afterTask.done(true);
+                if (taskFactory != null) {
+                    taskFactory.release(afterTask);
+                }
             }
             return true;
         } else {
