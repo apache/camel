@@ -98,7 +98,7 @@ related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 75 options, which are listed below.
+The Netty HTTP component supports 76 options, which are listed below.
 
 
 
@@ -166,6 +166,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed to be serialized by default. | false | boolean
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
+| *hostnameVerification* (security) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *keyStoreFile* (security) | Client side certificate keystore to be used for encryption |  | File
 | *keyStoreFormat* (security) | Keystore format to be used for payload encryption. Defaults to JKS if not set |  | String
 | *keyStoreResource* (security) | Client side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
@@ -214,7 +215,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (80 parameters):
+=== Query Parameters (81 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -286,6 +287,7 @@ with the following path and query parameters:
 | *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
+| *hostnameVerification* (security) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *keyStoreFile* (security) | Client side certificate keystore to be used for encryption |  | File
 | *keyStoreFormat* (security) | Keystore format to be used for payload encryption. Defaults to JKS if not set |  | String
 | *keyStoreResource* (security) | Client side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String

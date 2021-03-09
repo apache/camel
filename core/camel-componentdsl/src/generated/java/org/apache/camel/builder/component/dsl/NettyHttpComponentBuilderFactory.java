@@ -945,6 +945,19 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpComponentBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Client side certificate keystore to be used for encryption.
          * 
          * The option is a: <code>java.io.File</code> type.
@@ -1213,6 +1226,7 @@ public interface NettyHttpComponentBuilderFactory {
             case "encoding": getOrCreateConfiguration((NettyHttpComponent) component).setEncoding((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((NettyHttpComponent) component).setTextline((boolean) value); return true;
             case "enabledProtocols": getOrCreateConfiguration((NettyHttpComponent) component).setEnabledProtocols((java.lang.String) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((NettyHttpComponent) component).setHostnameVerification((boolean) value); return true;
             case "keyStoreFile": getOrCreateConfiguration((NettyHttpComponent) component).setKeyStoreFile((java.io.File) value); return true;
             case "keyStoreFormat": getOrCreateConfiguration((NettyHttpComponent) component).setKeyStoreFormat((java.lang.String) value); return true;
             case "keyStoreResource": getOrCreateConfiguration((NettyHttpComponent) component).setKeyStoreResource((java.lang.String) value); return true;

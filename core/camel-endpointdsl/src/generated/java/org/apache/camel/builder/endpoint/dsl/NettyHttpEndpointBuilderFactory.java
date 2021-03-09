@@ -452,6 +452,32 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpEndpointConsumerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpEndpointConsumerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Client side certificate keystore to be used for encryption.
          * 
          * The option is a: <code>java.io.File</code> type.
@@ -2375,6 +2401,32 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpEndpointProducerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpEndpointProducerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Client side certificate keystore to be used for encryption.
          * 
          * The option is a: <code>java.io.File</code> type.
@@ -3693,6 +3745,32 @@ public interface NettyHttpEndpointBuilderFactory {
         default NettyHttpEndpointBuilder enabledProtocols(
                 String enabledProtocols) {
             doSetProperty("enabledProtocols", enabledProtocols);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpEndpointBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpEndpointBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
