@@ -1165,11 +1165,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
             case "camel-aws":
-                return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"), dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"), 
-                dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"), dir.resolve("camel-aws2-eventbridge"), dir.resolve("camel-aws2-iam"), 
-                dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"), dir.resolve("camel-aws2-mq"),
-                dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"), dir.resolve("camel-aws2-sns"),
-                dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-sts"), dir.resolve("camel-aws2-translate"), dir.resolve("camel-aws-xray"));
+                return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
+                        dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
+                        dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"), dir.resolve("camel-aws2-eventbridge"),
+                        dir.resolve("camel-aws2-iam"),
+                        dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
+                        dir.resolve("camel-aws2-mq"),
+                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
+                        dir.resolve("camel-aws2-sns"),
+                        dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-sts"), dir.resolve("camel-aws2-translate"),
+                        dir.resolve("camel-aws-xray"));
             default:
                 return Collections.singletonList(dir);
         }
