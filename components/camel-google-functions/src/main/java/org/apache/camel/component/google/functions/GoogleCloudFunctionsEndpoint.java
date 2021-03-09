@@ -31,8 +31,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Store and retrieve objects from Google Cloud Functions Service using the google-cloud-storage library.
@@ -41,12 +39,10 @@ import org.slf4j.LoggerFactory;
  * behavior of Producer.
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "google-functions", title = "GoogleCloudFunctions",
-             syntax = "google-functions:name", category = {
+             syntax = "google-functions:functionName", category = {
                      Category.CLOUD },
              producerOnly = true)
 public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudFunctionsEndpoint.class);
 
     @UriParam
     private GoogleCloudFunctionsConfiguration configuration;
@@ -57,7 +53,6 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
                                         GoogleCloudFunctionsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        LOG.info("uris={}, configuration={}", uri, configuration);
     }
 
     public Producer createProducer() throws Exception {
@@ -86,19 +81,18 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
         if (configuration.getClient() != null) {
             cloudFunctionsClient = configuration.getClient();
         } else {
-
             if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
                 Credentials myCredentials = ServiceAccountCredentials
                         .fromStream(new FileInputStream(configuration.getServiceAccountKey()));
                 CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
                         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
                 cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
-
             } else {
-                // TODO remember to implement this
-                throw new RuntimeException("Not yet implmented");
+                //it needs to define the  environment variable GOOGLE_APPLICATION_CREDENTIALS with the service account file
+                //more info at https://cloud.google.com/docs/authentication/production
+                CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder().build();
+                cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
             }
-
         }
     }
 

@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class GoogleCloudFunctionsEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":name";
+    private static final String BASE = ":functionName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;

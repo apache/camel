@@ -233,13 +233,7 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                 }
             }
         } else {
-            LocationName locationName = LocationName.of(getConfiguration().getProject(),
-                    getConfiguration().getLocation());
-            CreateFunctionRequest request = CreateFunctionRequest.newBuilder().setLocation(locationName.toString())
-                    .setFunction(CloudFunction.newBuilder().build()).build(); // TODO check if add function name
-            CloudFunction result = client.createFunctionAsync(request).get();
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            throw new IllegalArgumentException("createFunction is supported only in pojo mode");
         }
     }
 
@@ -258,7 +252,7 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                 }
             }
         } else {
-            throw new IllegalArgumentException("updateFunction supported only in pojo mode");   // TODO check
+            throw new IllegalArgumentException("updateFunction is supported only in pojo mode");
         }
     }
 
