@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.swagger;
+package org.apache.camel.dsl.xml.jaxb.swagger;
 
 import java.util.List;
 import java.util.Properties;
@@ -29,13 +29,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.swagger.producer.DummyRestProducerFactory;
+import org.apache.camel.swagger.RestSwaggerReader;
+import org.apache.camel.swagger.RestSwaggerSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
 

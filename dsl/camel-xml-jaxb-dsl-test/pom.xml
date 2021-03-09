@@ -39,5 +39,6 @@
         <module>cdi</module>
         <module>jbpm</module>
         <module>spring</module>
+        <module>swagger</module>
     </modules>
 </project>
