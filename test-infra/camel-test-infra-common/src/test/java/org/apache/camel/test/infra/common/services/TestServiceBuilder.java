@@ -15,14 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.elasticsearch.common;
+package org.apache.camel.test.infra.common.services;
 
-public final class ElasticSearchProperties {
-    public static final String ELASTIC_SEARCH_HOST = "elasticsearch.host";
-    public static final String ELASTIC_SEARCH_PORT = "elasticsearch.port";
-    public static final String ELASTIC_SEARCH_CONTAINER = "elasticsearch.container";
+public interface TestServiceBuilder<T extends TestService> {
 
-    private ElasticSearchProperties() {
-
-    }
+    T build();
 }

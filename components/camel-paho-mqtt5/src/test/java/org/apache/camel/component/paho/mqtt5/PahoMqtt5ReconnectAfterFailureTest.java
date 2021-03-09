@@ -29,6 +29,8 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerService;
+import org.apache.camel.test.infra.mosquitto.services.MosquittoRemoteService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -42,10 +44,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PahoMqtt5ReconnectAfterFailureTest extends CamelTestSupport {
 
     public static final String TESTING_ROUTE_ID = "testingRoute";
+    private static int mqttPort = AvailablePortFinder.getNextAvailable();
 
     MosquittoService service;
-
-    int mqttPort = AvailablePortFinder.getNextAvailable();
     CountDownLatch routeStartedLatch = new CountDownLatch(1);
 
     @EndpointInject("mock:test")
@@ -56,12 +57,25 @@ public class PahoMqtt5ReconnectAfterFailureTest extends CamelTestSupport {
         return false;
     }
 
+    private static MosquittoService createLocalService() {
+        return new MosquittoLocalContainerService(mqttPort);
+    }
+
+    private static MosquittoService createRemoteService() {
+        return new MosquittoRemoteService(mqttPort);
+    }
+
     @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
-        service = MosquittoServiceFactory.createService(mqttPort);
+
         // Broker will be started later, after camel context is started,
         // to ensure first consumer connection fails
+        service = MosquittoServiceFactory
+                .builder()
+                .addLocalMapping(PahoMqtt5ReconnectAfterFailureTest::createLocalService)
+                .addRemoteMapping(PahoMqtt5ReconnectAfterFailureTest::createRemoteService)
+                .build();
     }
 
     @Override

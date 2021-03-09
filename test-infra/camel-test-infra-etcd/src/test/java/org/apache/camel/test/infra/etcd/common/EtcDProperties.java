@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.etcd.common;
 
 public final class EtcDProperties {
     public static final String SERVICE_ADDRESS = "etcd.service.address";
+    public static final String ETCD_CONTAINER = "etcd.container";
 
     private EtcDProperties() {
 

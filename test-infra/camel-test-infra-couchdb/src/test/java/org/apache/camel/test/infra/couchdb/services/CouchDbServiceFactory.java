@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.couchdb.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class CouchDbServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CouchDbServiceFactory.class);
-
     private CouchDbServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<CouchDbService> builder() {
+        return new SimpleTestServiceBuilder<>("consul");
+    }
+
     public static CouchDbService createService() {
-        String instanceType = System.getProperty("couchdb.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-couchdb-container")) {
-            return new CouchDbLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new CouchDbRemoteService();
-        }
-
-        LOG.error("CouchDb instance must be one of 'local-couchdb-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid CouchDb instance type");
+        return builder()
+                .addLocalMapping(CouchDbLocalContainerService::new)
+                .addRemoteMapping(CouchDbRemoteService::new)
+                .build();
     }
 }

@@ -30,21 +30,23 @@ public class CouchDbLocalContainerService implements CouchDbService, ContainerSe
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchDbLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public CouchDbLocalContainerService() {
-        String containerName = System.getProperty("couchdb.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(System.getProperty(CouchDbProperties.COUCHDB_CONTAINER, CONTAINER_IMAGE));
     }
 
     public CouchDbLocalContainerService(String imageName) {
-        initContainer(imageName);
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String imageName) {
-        container = new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(CONTAINER_NAME)
+    public CouchDbLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer<>(DockerImageName.parse(imageName))
+                .withNetworkAliases(containerName)
                 .withExposedPorts(CouchDbProperties.DEFAULT_PORT)
                 .waitingFor(Wait.forListeningPort());
     }

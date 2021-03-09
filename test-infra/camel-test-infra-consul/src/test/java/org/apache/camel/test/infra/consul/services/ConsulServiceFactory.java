@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.consul.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class ConsulServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(ConsulServiceFactory.class);
-
     private ConsulServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<ConsulService> builder() {
+        return new SimpleTestServiceBuilder<>("consul");
+    }
+
     public static ConsulService createService() {
-        String instanceType = System.getProperty("consul.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-consul-container")) {
-            return new ConsulLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new ConsulRemoteService();
-        }
-
-        LOG.error("Consul instance must be one of 'local-consul-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Consul instance type");
+        return builder()
+                .addLocalMapping(ConsulLocalContainerService::new)
+                .addRemoteMapping(ConsulRemoteService::new)
+                .build();
     }
 }

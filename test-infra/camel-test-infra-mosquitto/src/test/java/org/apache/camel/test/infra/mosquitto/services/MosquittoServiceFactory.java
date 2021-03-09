@@ -16,40 +16,21 @@
  */
 package org.apache.camel.test.infra.mosquitto.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class MosquittoServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(MosquittoServiceFactory.class);
-
     private MosquittoServiceFactory() {
 
     }
 
-    public static MosquittoService createService() {
-        return createService(null);
+    public static SimpleTestServiceBuilder<MosquittoService> builder() {
+        return new SimpleTestServiceBuilder<>("mosquitto");
     }
 
-    public static MosquittoService createService(Integer port) {
-        String instanceType = System.getProperty("mosquitto.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-mosquitto-container")) {
-            if (port == null) {
-                return new MosquittoLocalContainerService();
-            } else {
-                return new MosquittoLocalContainerService(port);
-            }
-        }
-
-        if (instanceType.equals("remote")) {
-            if (port == null) {
-                return new MosquittoRemoteService();
-            } else {
-                return new MosquittoRemoteService(port);
-            }
-        }
-
-        LOG.error("Mosquitto instance must be one of 'local-mosquitto-container' or 'remote'");
-        throw new UnsupportedOperationException("Invalid Mosquitto instance type");
+    public static MosquittoService createService() {
+        return builder()
+                .addLocalMapping(MosquittoLocalContainerService::new)
+                .addRemoteMapping(MosquittoRemoteService::new)
+                .build();
     }
 }

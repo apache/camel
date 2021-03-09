@@ -51,7 +51,7 @@ public class BaseIT extends CamelTestSupport {
 
     static {
         initCredentials();
-        service = AzureStorageDataLakeServiceFactory.createAzureService();
+        service = AzureStorageDataLakeServiceFactory.createService();
     }
 
     @Override
