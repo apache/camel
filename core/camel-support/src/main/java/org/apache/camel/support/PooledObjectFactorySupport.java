@@ -31,6 +31,7 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
     protected CamelContext camelContext;
     protected BlockingQueue<T> pool;
     protected int capacity = 100;
+    protected boolean statisticsEnabled;
 
     @Override
     protected void doBuild() throws Exception {
@@ -52,12 +53,12 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
 
     @Override
     public boolean isStatisticsEnabled() {
-        return statistics.isStatisticsEnabled();
+        return statisticsEnabled;
     }
 
     @Override
     public void setStatisticsEnabled(boolean statisticsEnabled) {
-        statistics.setStatisticsEnabled(statisticsEnabled);
+        this.statisticsEnabled = statisticsEnabled;
     }
 
     @Override
@@ -119,7 +120,6 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
         public final LongAdder acquired = new LongAdder();
         public final LongAdder released = new LongAdder();
         public final LongAdder discarded = new LongAdder();
-        private boolean statisticsEnabled;
 
         @Override
         public void reset() {
@@ -149,15 +149,6 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
             return discarded.longValue();
         }
 
-        @Override
-        public boolean isStatisticsEnabled() {
-            return statisticsEnabled;
-        }
-
-        @Override
-        public void setStatisticsEnabled(boolean statisticsEnabled) {
-            this.statisticsEnabled = statisticsEnabled;
-        }
     }
 
 }

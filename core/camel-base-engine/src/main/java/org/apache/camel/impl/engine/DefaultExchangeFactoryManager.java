@@ -163,15 +163,6 @@ public class DefaultExchangeFactoryManager extends ServiceSupport implements Exc
             return answer;
         }
 
-        @Override
-        public boolean isStatisticsEnabled() {
-            return statisticsEnabled;
-        }
-
-        @Override
-        public void setStatisticsEnabled(boolean statisticsEnabled) {
-            throw new UnsupportedOperationException();
-        }
     }
 
     @Override

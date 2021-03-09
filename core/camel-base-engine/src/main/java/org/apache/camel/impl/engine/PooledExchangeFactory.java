@@ -46,7 +46,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         PooledExchangeFactory answer = new PooledExchangeFactory(consumer);
         answer.setCamelContext(camelContext);
         answer.setCapacity(capacity);
-        answer.setStatisticsEnabled(isStatisticsEnabled());
+        answer.setStatisticsEnabled(statisticsEnabled);
         return answer;
     }
 
@@ -56,11 +56,11 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         if (exchange == null) {
             // create a new exchange as there was no free from the pool
             exchange = createPooledExchange(null, autoRelease);
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.created.increment();
             }
         } else {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
             // reset exchange for reuse
@@ -76,11 +76,11 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         if (exchange == null) {
             // create a new exchange as there was no free from the pool
             exchange = new DefaultPooledExchange(fromEndpoint);
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.created.increment();
             }
         } else {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
             // reset exchange for reuse
@@ -102,7 +102,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             // only release back in pool if reset was success
             boolean inserted = pool.offer(exchange);
 
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 if (inserted) {
                     statistics.released.increment();
                 } else {
@@ -111,7 +111,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             }
             return inserted;
         } catch (Exception e) {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.discarded.increment();
             }
             LOG.debug("Error resetting exchange: {}. This exchange is discarded.", exchange);

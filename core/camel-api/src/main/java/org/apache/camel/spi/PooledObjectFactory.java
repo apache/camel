@@ -54,17 +54,6 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
          */
         void reset();
 
-        /**
-         * Whether statistics is enabled.
-         */
-        boolean isStatisticsEnabled();
-
-        /**
-         * Sets whether statistics is enabled.
-         *
-         * @param statisticsEnabled <tt>true</tt> to enable
-         */
-        void setStatisticsEnabled(boolean statisticsEnabled);
     }
 
     /**

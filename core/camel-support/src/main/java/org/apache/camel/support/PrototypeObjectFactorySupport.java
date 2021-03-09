@@ -29,6 +29,7 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
 
     protected final UtilizationStatistics statistics = new UtilizationStatistics();
     private CamelContext camelContext;
+    protected boolean statisticsEnabled;
 
     @Override
     public CamelContext getCamelContext() {
@@ -38,16 +39,6 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    @Override
-    public boolean isStatisticsEnabled() {
-        return statistics.isStatisticsEnabled();
-    }
-
-    @Override
-    public void setStatisticsEnabled(boolean statisticsEnabled) {
-        statistics.setStatisticsEnabled(statisticsEnabled);
     }
 
     @Override
@@ -63,6 +54,16 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
     @Override
     public void setCapacity(int capacity) {
         // not in use
+    }
+
+    @Override
+    public boolean isStatisticsEnabled() {
+        return statisticsEnabled;
+    }
+
+    @Override
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        this.statisticsEnabled = statisticsEnabled;
     }
 
     @Override
@@ -100,7 +101,6 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
         public final LongAdder acquired = new LongAdder();
         public final LongAdder released = new LongAdder();
         public final LongAdder discarded = new LongAdder();
-        private boolean statisticsEnabled;
 
         @Override
         public void reset() {
@@ -130,15 +130,6 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
             return discarded.longValue();
         }
 
-        @Override
-        public boolean isStatisticsEnabled() {
-            return statisticsEnabled;
-        }
-
-        @Override
-        public void setStatisticsEnabled(boolean statisticsEnabled) {
-            this.statisticsEnabled = statisticsEnabled;
-        }
     }
 
 }

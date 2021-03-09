@@ -71,8 +71,8 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
     @Override
     public ExchangeFactory newExchangeFactory(Consumer consumer) {
         PrototypeExchangeFactory answer = new PrototypeExchangeFactory(consumer);
-        answer.setStatisticsEnabled(statistics.isStatisticsEnabled());
-        answer.setCapacity(getCapacity());
+        answer.setStatisticsEnabled(statisticsEnabled);
+        answer.setCapacity(capacity);
         answer.setCamelContext(camelContext);
         return answer;
     }
@@ -84,7 +84,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
 
     @Override
     public Exchange create(boolean autoRelease) {
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             statistics.created.increment();
         }
         return new DefaultExchange(camelContext);
@@ -92,7 +92,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
 
     @Override
     public Exchange create(Endpoint fromEndpoint, boolean autoRelease) {
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             statistics.created.increment();
         }
         return new DefaultExchange(fromEndpoint);
@@ -100,7 +100,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
 
     @Override
     public boolean release(Exchange exchange) {
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             statistics.released.increment();
         }
         return true;
@@ -135,7 +135,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
     }
 
     void logUsageSummary(Logger log, String name, int pooled) {
-        if (statistics.isStatisticsEnabled() && consumer != null) {
+        if (statisticsEnabled && consumer != null) {
             // only log if there is any usage
             long created = statistics.getCreatedCounter();
             long acquired = statistics.getAcquiredCounter();
@@ -147,8 +147,17 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
                 String uri = consumer.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
 
-                log.info("{} {} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
-                        name, id, uri, pooled, created, acquired, released, discarded);
+                // are there any leaks?
+                boolean leak = created + acquired > released + discarded;
+                if (leak) {
+                    long leaks = (created + acquired) - (released + discarded);
+                    log.info(
+                            "{} {} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
+                            name, id, uri, leaks, pooled, created, acquired, released, discarded);
+                } else {
+                    log.info("{} {} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
+                            name, id, uri, pooled, created, acquired, released, discarded);
+                }
             }
         }
     }

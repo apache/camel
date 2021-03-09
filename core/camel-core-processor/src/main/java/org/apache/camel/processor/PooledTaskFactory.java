@@ -31,12 +31,12 @@ public abstract class PooledTaskFactory extends PooledObjectFactorySupport<Poole
     public PooledExchangeTask acquire(Exchange exchange, AsyncCallback callback) {
         PooledExchangeTask task = acquire();
         if (task == null) {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.created.increment();
             }
             task = create(exchange, callback);
         } else {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
         }
@@ -49,7 +49,7 @@ public abstract class PooledTaskFactory extends PooledObjectFactorySupport<Poole
         try {
             task.reset();
             boolean inserted = pool.offer(task);
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 if (inserted) {
                     statistics.released.increment();
                 } else {
@@ -58,7 +58,7 @@ public abstract class PooledTaskFactory extends PooledObjectFactorySupport<Poole
             }
             return inserted;
         } catch (Throwable e) {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.discarded.increment();
             }
             return false;
