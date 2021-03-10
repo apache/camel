@@ -2347,7 +2347,8 @@ public abstract class AbstractCamelContext extends BaseService
         // try to load from maven properties first
         try {
             Properties p = new Properties();
-            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base/pom.properties");
+            is = AbstractCamelContext.class
+                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties");
             if (is != null) {
                 p.load(is);
                 version = p.getProperty("version", "");
