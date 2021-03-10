@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test the number of refill requests that are sent to a published from a Camel consumer.
  */
-public class RequestRefillTest extends CamelTestSupport {
+public class RequestRefillTest extends BaseReactiveTest {
 
     @Test
     public void testUnboundedRequests() throws Exception {

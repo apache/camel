@@ -27,14 +27,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BasicPublisherTest extends CamelTestSupport {
+public class BasicPublisherTest extends BaseReactiveTest {
 
     @Test
     public void testWorking() throws Exception {

@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.reactive.streams.support;
+package org.apache.camel.component.reactive.streams;
 
-import org.apache.camel.component.reactive.streams.BaseReactiveTest;
-import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
-public class ReactiveStreamsTestSupport extends BaseReactiveTest {
-
-    protected CamelReactiveStreamsService camel;
-
-    @BeforeEach
-    public void initReactiveStreamService() {
-        this.camel = CamelReactiveStreams.get(context);
-    }
+public abstract class BaseReactiveTest extends CamelTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // must run in prototype scope
+        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
+        return context;
     }
 
 }
