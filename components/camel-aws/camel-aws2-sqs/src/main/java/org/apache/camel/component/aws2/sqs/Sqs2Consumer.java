@@ -27,6 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedExchange;
@@ -214,8 +215,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
 
         return total;

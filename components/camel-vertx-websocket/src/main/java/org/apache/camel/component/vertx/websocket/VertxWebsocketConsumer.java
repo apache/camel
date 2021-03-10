@@ -63,13 +63,9 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         exchange.getMessage().setHeader(VertxWebsocketContants.CONNECTION_KEY, connectionKey);
         exchange.getMessage().setBody(message);
 
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     public void onException(String connectionKey, Throwable cause) {

@@ -28,6 +28,7 @@ import com.slack.api.methods.response.conversations.ConversationsHistoryResponse
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.Conversation;
 import com.slack.api.model.Message;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -122,9 +123,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, doneSync -> {
-                // noop
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
 
         return total;

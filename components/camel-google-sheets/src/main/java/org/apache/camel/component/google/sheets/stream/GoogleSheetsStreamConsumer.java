@@ -28,6 +28,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.BatchGetValuesResponse;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -145,7 +146,9 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange done"));
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
 
         return total;

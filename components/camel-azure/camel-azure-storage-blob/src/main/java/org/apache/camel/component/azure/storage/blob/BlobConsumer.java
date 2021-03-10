@@ -24,6 +24,7 @@ import java.util.Queue;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobStorageException;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
@@ -149,8 +150,9 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
         return total;
     }

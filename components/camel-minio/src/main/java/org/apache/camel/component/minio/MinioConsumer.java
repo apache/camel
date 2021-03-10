@@ -42,6 +42,7 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
@@ -288,8 +289,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange ...");
-            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange done."));
+            getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
 
         return total;

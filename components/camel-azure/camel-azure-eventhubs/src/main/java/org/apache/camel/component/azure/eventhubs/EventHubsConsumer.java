@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.eventhubs;
 import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
@@ -118,8 +119,9 @@ public class EventHubsConsumer extends DefaultConsumer {
                 processRollback(exchange);
             }
         });
-        // send message to next processor in the route
-        getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     private void onErrorListener(final ErrorContext errorContext) {

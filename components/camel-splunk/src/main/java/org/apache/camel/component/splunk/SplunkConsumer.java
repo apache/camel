@@ -70,13 +70,9 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
                         Message message = exchange.getIn();
                         message.setBody(splunkEvent);
 
-                        LOG.trace("Processing exchange [{}]...", exchange);
-                        getAsyncProcessor().process(exchange, new AsyncCallback() {
-                            @Override
-                            public void done(boolean doneSync) {
-                                LOG.trace("Done processing exchange [{}]...", exchange);
-                            }
-                        });
+                        // use default consumer callback
+                        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                        getAsyncProcessor().process(exchange, cb);
                     }
                 });
                 // Return 0: no exchanges returned by poll, as exchanges have been returned asynchronously

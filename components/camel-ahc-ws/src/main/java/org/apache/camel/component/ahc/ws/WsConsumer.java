@@ -79,14 +79,9 @@ public class WsConsumer extends DefaultConsumer {
             exchange.getIn().setBody(message);
         }
 
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
 }

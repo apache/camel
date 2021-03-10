@@ -30,6 +30,7 @@ import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfigurat
 import org.apache.camel.component.vertx.kafka.operations.VertxKafkaConsumerOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +117,7 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
         // add exchange callback
         exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
         // send message to next processor in the route
-        getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
+        getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
     private void onErrorListener(final Throwable error) {

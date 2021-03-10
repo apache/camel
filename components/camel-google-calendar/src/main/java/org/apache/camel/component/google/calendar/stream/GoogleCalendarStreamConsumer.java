@@ -30,6 +30,7 @@ import com.google.api.services.calendar.model.Events;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -152,7 +153,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
     private DateTime retrieveLastUpdateDate(List<Date> dateList) {
         Date finalLastUpdate;
         if (!dateList.isEmpty()) {
-            dateList.sort((o1, o2) -> o1.compareTo(o2));
+            dateList.sort(Date::compareTo);
             Date lastUpdateDate = dateList.get(dateList.size() - 1);
             java.util.Calendar calendar = java.util.Calendar.getInstance();
             calendar.setTime(lastUpdateDate);
@@ -179,9 +180,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, doneSync -> {
-                // noop
-            });
+            getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
         return total;
     }

@@ -85,13 +85,9 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         while (!exchanges.isEmpty()) {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
-            LOG.trace("Processing exchange [{}] started.", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange [{}] done.", exchange);
-                }
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
             processedExchanges++;
         }
         return processedExchanges;

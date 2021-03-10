@@ -283,13 +283,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange [{}] done.", exchange);
-                }
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
 
         return total;

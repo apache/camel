@@ -289,15 +289,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         }
         exchange.getIn().setBody(message);
 
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange,
-                            exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     /**
@@ -322,14 +316,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (transportExchange != null) {
             in.setHeader(UndertowConstants.EXCHANGE, transportExchange);
         }
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
