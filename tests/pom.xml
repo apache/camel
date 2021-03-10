@@ -78,7 +78,6 @@
             <id>release</id>
             <modules>
                 <module>camel-itest-performance</module>
-                <module>camel-performance</module>
             </modules>
         </profile>
 
@@ -87,7 +86,6 @@
             <id>performance.test</id>
             <modules>
                 <module>camel-itest-performance</module>
-                <module>camel-performance</module>
             </modules>
         </profile>
     </profiles>
