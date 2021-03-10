@@ -40,10 +40,6 @@ public class SlackHelperTest {
     public void testCreateSlackConfigForServerUrl() {
         String serverUrl = "http://foo.bar.com";
         SlackConfig slackConfig = SlackHelper.createSlackConfig(serverUrl);
-        assertEquals(serverUrl, slackConfig.getAuditEndpointUrlPrefix());
-        assertEquals(serverUrl, slackConfig.getLegacyStatusEndpointUrlPrefix());
         assertEquals(serverUrl, slackConfig.getMethodsEndpointUrlPrefix());
-        assertEquals(serverUrl, slackConfig.getScimEndpointUrlPrefix());
-        assertEquals(serverUrl, slackConfig.getStatusEndpointUrlPrefix());
     }
 }

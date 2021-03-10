@@ -39,11 +39,7 @@ public final class SlackHelper {
         SlackConfig config;
         if (ObjectHelper.isNotEmpty(serverUrl)) {
             config = new SlackConfig();
-            config.setAuditEndpointUrlPrefix(serverUrl);
-            config.setLegacyStatusEndpointUrlPrefix(serverUrl);
             config.setMethodsEndpointUrlPrefix(serverUrl);
-            config.setScimEndpointUrlPrefix(serverUrl);
-            config.setStatusEndpointUrlPrefix(serverUrl);
         } else {
             config = SlackConfig.DEFAULT;
         }
