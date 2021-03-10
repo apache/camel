@@ -46,8 +46,8 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     private long maxResults = 10L;
     @UriParam
     private String labels;
-    @UriParam
-    private boolean markAsRead;
+    @UriParam(defaultValue = "true")
+    private boolean markAsRead = true;
 
     public String getClientId() {
         return clientId;
