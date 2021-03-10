@@ -43,7 +43,6 @@
         <module>camel-itest</module>
         <module>camel-itest-cdi</module>
         <module>camel-itest-jms2</module>
-        <module>camel-jmh</module>
         <module>camel-partial-classpath-test</module>
         <module>camel-typeconverterscan-test</module>
     </modules>
