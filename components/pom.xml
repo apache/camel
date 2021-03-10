@@ -108,10 +108,7 @@
         <module>camel-avro</module>
         <module>camel-avro-rpc</module>
         <module>camel-aws</module>
-        <module>camel-azure-storage-blob</module>
-        <module>camel-azure-storage-datalake</module>
-        <module>camel-azure-storage-queue</module>
-        <module>camel-azure-eventhubs</module>
+        <module>camel-azure</module>
         <module>camel-barcode</module>
         <module>camel-base64</module>
         <module>camel-bean-validator</module>
