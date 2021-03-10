@@ -1,7 +1,7 @@
 [[azure-eventhubs-component]]
 = Azure Event Hubs Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-azure-eventhubs/src/main/docs/azure-eventhubs-component.adoc
+:page-source: components/camel-azure/camel-azure-eventhubs/src/main/docs/azure-eventhubs-component.adoc
 :docTitle: Azure Event Hubs
 :artifactId: camel-azure-eventhubs
 :description: The azure-eventhubs component that integrates Azure Event Hubs using AMQP protocol. Azure EventHubs is a highly scalable publish-subscribe service that can ingest millions of events per second and stream them to multiple consumers.

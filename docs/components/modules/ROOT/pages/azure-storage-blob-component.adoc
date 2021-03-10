@@ -1,7 +1,7 @@
 [[azure-storage-blob-component]]
 = Azure Storage Blob Service Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-azure-storage-blob/src/main/docs/azure-storage-blob-component.adoc
+:page-source: components/camel-azure/camel-azure-storage-blob/src/main/docs/azure-storage-blob-component.adoc
 :docTitle: Azure Storage Blob Service
 :artifactId: camel-azure-storage-blob
 :description: Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
