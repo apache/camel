@@ -355,10 +355,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             } finally {
                 // processing is done
                 afterTask.done(true);
-                // task is done so reset
-                if (taskFactory != null) {
-                    taskFactory.release(afterTask);
-                }
             }
             // we are done synchronously - must return true
             return true;
