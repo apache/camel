@@ -139,7 +139,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param markAsRead the value to set
@@ -155,7 +155,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param markAsRead the value to set
