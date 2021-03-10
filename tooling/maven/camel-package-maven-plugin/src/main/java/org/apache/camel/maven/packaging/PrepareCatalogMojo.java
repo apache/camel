@@ -589,6 +589,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-vertx-common":
                 case "camel-vertx-kafka":
                 case "camel-infinispan":
+                case "camel-azure":
                 case "camel-aws":
                     return false;
                 default:
@@ -1165,6 +1166,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 return Collections.singletonList(dir.resolve("camel-vertx-kafka-component"));
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
+            case "camel-azure":
+                return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"), dir.resolve("camel-azure-storage-datalake"),
+                dir.resolve("camel-azure-storage-queue"));
             case "camel-aws":
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
                         dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
