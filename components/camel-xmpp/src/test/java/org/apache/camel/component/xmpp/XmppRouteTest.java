@@ -89,7 +89,7 @@ public class XmppRouteTest extends XmppBaseTest {
                 from(uri1).to(uri2);
                 from(uri3).process(e -> {
                     LOG.info("Received exchange: " + e);
-                    receivedExchange = e;
+                    receivedExchange = e.copy();
                     latch.countDown();
                 });
             }
