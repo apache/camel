@@ -322,8 +322,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     states[j++] = state;
                 }
             } catch (Throwable e) {
+                // error in before so break out
                 exchange.setException(e);
-                originalCallback.done(true);
+                try {
+                    originalCallback.done(true);
+                } finally {
+                    // task is done so reset
+                    if (taskFactory != null) {
+                        taskFactory.release(afterTask);
+                    }
+                }
                 return true;
             }
         }
@@ -345,11 +353,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             } catch (Throwable e) {
                 exchange.setException(e);
             } finally {
+                // processing is done
                 afterTask.done(true);
+                // task is done so reset
                 if (taskFactory != null) {
                     taskFactory.release(afterTask);
                 }
             }
+            // we are done synchronously - must return true
             return true;
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
@@ -383,7 +394,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
                         exchange.getExchangeId(), exchange);
             }
-            // must return false
+            // we are done asynchronously - must return false
             return false;
         }
     }
