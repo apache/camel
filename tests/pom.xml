@@ -71,22 +71,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <!-- includes these modules when doing the release -->
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>camel-itest-performance</module>
-            </modules>
-        </profile>
-
-        <!-- performance tests -->
-        <profile>
-            <id>performance.test</id>
-            <modules>
-                <module>camel-itest-performance</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
