@@ -1,0 +1,139 @@
+[[google-mail-stream-component]]
+= Google Mail Stream Component
+:docTitle: Google Mail Stream
+:artifactId: camel-google-mail
+:description: Poll for incoming messages in Google Mail.
+:since: 2.22
+:supportLevel: Stable
+:component-header: Only consumer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-mail-stream.adoc[opts=optional]
+//Manually maintained attributes
+:group: Google
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Mail component provides access
+to http://gmail.com/[Gmail] via
+the https://developers.google.com/gmail/api/v1/reference/[Google Mail
+Web APIs]. This component provides the streaming feature for Messages.
+
+Google Mail uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need
+to https://developers.google.com/gmail/api/auth/web-server[create an
+account and generate OAuth credentials]. Credentials comprise of a
+clientId, clientSecret, and a refreshToken. A handy resource for
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-mail</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+== URI Format
+
+The GoogleMail Component uses the following URI format:
+
+----
+google-mail-stream://index?[options]
+----
+
+== Component options
+
+
+// component options: START
+The Google Mail Stream component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *applicationName* (consumer) | Google mail application name. Example would be camel-google-mail/1.0 |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientId* (consumer) | Client ID of the mail application |  | String
+| *labels* (consumer) | Comma separated list of labels to take into account |  | String
+| *markAsRead* (consumer) | Mark the message as read once it has been consumed | false | boolean
+| *maxResults* (consumer) | Max results to be returned | 10 | long
+| *query* (consumer) | The query to execute on gmail box | is:unread | String
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *clientFactory* (advanced) | The client Factory |  | GoogleMailClientFactory
+| *configuration* (advanced) | The configuration |  | GoogleMailStreamConfiguration
+| *accessToken* (security) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *clientSecret* (security) | Client secret of the mail application |  | String
+| *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Google Mail Stream endpoint is configured using URI syntax:
+
+----
+google-mail-stream:index
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *index* | *Required* Currently not in use |  | String
+|===
+
+
+=== Query Parameters (29 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *applicationName* (consumer) | Google mail application name. Example would be camel-google-mail/1.0 |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientId* (consumer) | Client ID of the mail application |  | String
+| *labels* (consumer) | Comma separated list of labels to take into account |  | String
+| *markAsRead* (consumer) | Mark the message as read once it has been consumed | false | boolean
+| *maxResults* (consumer) | Max results to be returned | 10 | long
+| *query* (consumer) | The query to execute on gmail box | is:unread | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *accessToken* (security) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *clientSecret* (security) | Client secret of the mail application |  | String
+| *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+|===
+
+include::camel-spring-boot::page$google-mail-starter.adoc[]
