@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx.kafka;
 import java.util.Map;
 
 import io.vertx.core.buffer.Buffer;
+import io.vertx.kafka.client.common.TopicPartition;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord;
 import org.apache.camel.Exchange;
@@ -27,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
+import org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit;
 import org.apache.camel.component.vertx.kafka.operations.VertxKafkaConsumerOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
@@ -150,7 +152,19 @@ public class VertxKafkaConsumer extends DefaultConsumer implements Suspendable {
         message.setHeader(VertxKafkaConstants.TIMESTAMP, record.timestamp());
         message.setHeader(VertxKafkaConstants.MESSAGE_KEY, record.key());
 
+        // set headers for the manual offsets commit
+        if (getConfiguration().isAllowManualCommit()) {
+            message.setHeader(VertxKafkaConstants.MANUAL_COMMIT, createKafkaManualCommit(kafkaConsumer, record.topic(),
+                    new TopicPartition(record.topic(), record.partition()), record.offset()));
+        }
+
         return exchange;
+    }
+
+    private VertxKafkaManualCommit createKafkaManualCommit(
+            final KafkaConsumer<Object, Object> consumer, final String topicName,
+            final TopicPartition partition, final long offset) {
+        return getEndpoint().getComponent().getKafkaManualCommitFactory().create(consumer, topicName, partition, offset);
     }
 
     private class ConsumerOnCompletion extends SynchronizationAdapter {

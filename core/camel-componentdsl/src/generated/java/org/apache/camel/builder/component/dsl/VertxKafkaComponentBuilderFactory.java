@@ -488,9 +488,9 @@ public interface VertxKafkaComponentBuilderFactory {
          * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
          * is stored on the Exchange message header, which allows end users to
          * access this API and perform manual offset commits via the Kafka
-         * consumer. Note: To take full control of the offset commiting, you may
-         * need to disable the Kafka Consumer default auto commit behavior by
-         * setting 'enableAutoCommit' to 'false'.
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -982,6 +982,28 @@ public interface VertxKafkaComponentBuilderFactory {
         default VertxKafkaComponentBuilder valueDeserializer(
                 java.lang.String valueDeserializer) {
             doSetProperty("valueDeserializer", valueDeserializer);
+            return this;
+        }
+        /**
+         * Factory to use for creating
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * instances. This allows to plugin a custom factory to create custom
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaComponentBuilder kafkaManualCommitFactory(
+                org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
         }
         /**
@@ -2172,6 +2194,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "seekToPosition": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekToPosition((java.lang.String) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSessionTimeoutMs((int) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
+            case "kafkaManualCommitFactory": ((VertxKafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory) value); return true;
             case "acks": getOrCreateConfiguration((VertxKafkaComponent) component).setAcks((java.lang.String) value); return true;
             case "batchSize": getOrCreateConfiguration((VertxKafkaComponent) component).setBatchSize((int) value); return true;
             case "bufferMemory": getOrCreateConfiguration((VertxKafkaComponent) component).setBufferMemory((long) value); return true;

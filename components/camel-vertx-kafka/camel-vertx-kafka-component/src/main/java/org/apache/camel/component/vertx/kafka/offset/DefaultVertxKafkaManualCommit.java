@@ -48,7 +48,7 @@ public class DefaultVertxKafkaManualCommit implements VertxKafkaManualCommit {
 
     private void commitOffset(final TopicPartition partition, final long recordOffset) {
         if (recordOffset != -1) {
-            LOG.debug("Commit offsets from topic {} with offset: {}", topicName, recordOffset);
+            LOG.info("Commit offsets from topic {} with offset: {}", topicName, recordOffset);
             kafkaConsumer.commit(Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1, "")));
         }
     }

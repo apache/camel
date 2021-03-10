@@ -772,9 +772,9 @@ public interface VertxKafkaEndpointBuilderFactory {
          * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
          * is stored on the Exchange message header, which allows end users to
          * access this API and perform manual offset commits via the Kafka
-         * consumer. Note: To take full control of the offset commiting, you may
-         * need to disable the Kafka Consumer default auto commit behavior by
-         * setting 'enableAutoCommit' to 'false'.
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -796,9 +796,9 @@ public interface VertxKafkaEndpointBuilderFactory {
          * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
          * is stored on the Exchange message header, which allows end users to
          * access this API and perform manual offset commits via the Kafka
-         * consumer. Note: To take full control of the offset commiting, you may
-         * need to disable the Kafka Consumer default auto commit behavior by
-         * setting 'enableAutoCommit' to 'false'.
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

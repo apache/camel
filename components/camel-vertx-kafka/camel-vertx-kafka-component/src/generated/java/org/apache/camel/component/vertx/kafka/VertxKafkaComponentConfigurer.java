@@ -90,6 +90,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "interceptorClasses": getOrCreateConfiguration(target).setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "isolationlevel":
         case "isolationLevel": getOrCreateConfiguration(target).setIsolationLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory.class, value)); return true;
         case "keydeserializer":
         case "keyDeserializer": getOrCreateConfiguration(target).setKeyDeserializer(property(camelContext, java.lang.String.class, value)); return true;
         case "keyserializer":
@@ -240,7 +242,7 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"vertx","vertxKafkaClientFactory"};
+        return new String[]{"kafkaManualCommitFactory","vertx","vertxKafkaClientFactory"};
     }
 
     @Override
@@ -308,6 +310,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "interceptorClasses": return java.lang.String.class;
         case "isolationlevel":
         case "isolationLevel": return java.lang.String.class;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": return org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory.class;
         case "keydeserializer":
         case "keyDeserializer": return java.lang.String.class;
         case "keyserializer":
@@ -522,6 +526,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "interceptorClasses": return getOrCreateConfiguration(target).getInterceptorClasses();
         case "isolationlevel":
         case "isolationLevel": return getOrCreateConfiguration(target).getIsolationLevel();
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "keydeserializer":
         case "keyDeserializer": return getOrCreateConfiguration(target).getKeyDeserializer();
         case "keyserializer":
