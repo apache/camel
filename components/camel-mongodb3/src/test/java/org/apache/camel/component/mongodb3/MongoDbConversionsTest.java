@@ -18,11 +18,14 @@ package org.apache.camel.component.mongodb3;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb3.converters.MongoDbBasicConverters;
 import org.apache.camel.converter.IOConverter;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.junit.Test;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -117,4 +120,23 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         // CHECKSTYLE:ON
     }
 
+    @Test
+    public void shouldConvertJsonStringListToBSONList() {
+        String jsonListArray = "[{\"key\":\"value1\"}, {\"key\":\"value2\"}]";
+        List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonListArray);
+        assertNotNull(bsonList);
+        assertEquals(2, bsonList.size());
+
+        String jsonEmptyArray = "[]";
+        bsonList = MongoDbBasicConverters.fromStringToList(jsonEmptyArray);
+        assertNotNull(bsonList);
+        assertEquals(0, bsonList.size());
+    }
+
+    @Test
+    public void shouldNotConvertJsonStringListToBSONList() {
+        String jsonSingleValue = "{\"key\":\"value1\"}";
+        List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonSingleValue);
+        assertNull(bsonList);
+    }
 }
