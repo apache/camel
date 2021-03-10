@@ -28,6 +28,7 @@ public final class VertxKafkaConstants {
     public static final String OFFSET = HEADER_PREFIX + "Offset";
     public static final String HEADERS = HEADER_PREFIX + "Headers";
     public static final String TIMESTAMP = HEADER_PREFIX + "Timestamp";
+    public static final String MANUAL_COMMIT = HEADER_PREFIX + "ManualCommit";
     // headers evaluated by the producer only
     public static final String OVERRIDE_TOPIC = HEADER_PREFIX + "OverrideTopic";
 

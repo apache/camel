@@ -23,6 +23,8 @@ import io.vertx.core.VertxOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
+import org.apache.camel.component.vertx.kafka.offset.DefaultVertxKafkaManualCommitFactory;
+import org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommitFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -42,6 +44,8 @@ public class VertxKafkaComponent extends DefaultComponent {
     private VertxOptions vertxOptions;
     @Metadata(label = "advanced", autowired = true)
     private VertxKafkaClientFactory vertxKafkaClientFactory = new DefaultVertxKafkaClientFactory();
+    @Metadata(label = "consumer,advanced", autowired = true)
+    private VertxKafkaManualCommitFactory kafkaManualCommitFactory = new DefaultVertxKafkaManualCommitFactory();
 
     public VertxKafkaComponent() {
     }
@@ -146,4 +150,17 @@ public class VertxKafkaComponent extends DefaultComponent {
         this.vertxKafkaClientFactory = vertxKafkaClientFactory;
     }
 
+    /**
+     * Factory to use for creating {@link org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit}
+     * instances. This allows to plugin a custom factory to create custom
+     * {@link org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit} instances in case special logic is
+     * needed when doing manual commits that deviates from the default implementation that comes out of the box.
+     */
+    public VertxKafkaManualCommitFactory getKafkaManualCommitFactory() {
+        return kafkaManualCommitFactory;
+    }
+
+    public void setKafkaManualCommitFactory(VertxKafkaManualCommitFactory kafkaManualCommitFactory) {
+        this.kafkaManualCommitFactory = kafkaManualCommitFactory;
+    }
 }
