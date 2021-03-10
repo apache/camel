@@ -67,7 +67,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     private static final String[] EXCLUDE_DOC_FILES
             = {
                     "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
-                    "camel-debezium-common", "camel-infinispan-common" };
+                    "camel-debezium-common", "camel-infinispan-common", "camel-vertx-common" };
 
     private static final int UNUSED_LABELS_WARN = 15;
 
@@ -586,6 +586,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-salesforce":
                 case "camel-fhir":
                 case "camel-debezium-common":
+                case "camel-vertx-common":
                 case "camel-vertx-kafka":
                 case "camel-infinispan":
                 case "camel-aws":
