@@ -22,7 +22,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Utility methods for Slack
  */
-public class SlackHelper {
+public final class SlackHelper {
 
     private SlackHelper() {
         // Utility class
