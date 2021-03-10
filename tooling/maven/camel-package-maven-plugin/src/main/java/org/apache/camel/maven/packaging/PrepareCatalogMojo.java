@@ -1173,8 +1173,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dir.resolve("camel-azure-storage-queue"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
-                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"), dir.resolve("camel-google-sheets"), 
-                         dir.resolve("camel-google-storage"));
+                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
+                        dir.resolve("camel-google-sheets"),
+                        dir.resolve("camel-google-storage"));
             case "camel-aws":
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
                         dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),

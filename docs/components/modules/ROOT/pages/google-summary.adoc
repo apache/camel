@@ -1,6 +1,6 @@
 = Google Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-bigquery/src/main/docs/google-summary.adoc
+:page-source: components/camel-google/camel-google-bigquery/src/main/docs/google-summary.adoc
 //attributes written by hand, not generated
 :docTitle: Google
 

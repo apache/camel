@@ -1,7 +1,7 @@
 [[google-drive-component]]
 = Google Drive Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-drive/src/main/docs/google-drive-component.adoc
+:page-source: components/camel-google/camel-google-drive/src/main/docs/google-drive-component.adoc
 :docTitle: Google Drive
 :artifactId: camel-google-drive
 :description: Manage files in Google Drive.

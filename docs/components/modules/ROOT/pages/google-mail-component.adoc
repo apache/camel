@@ -1,7 +1,7 @@
 [[google-mail-component]]
 = Google Mail Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-mail/src/main/docs/google-mail-component.adoc
+:page-source: components/camel-google/camel-google-mail/src/main/docs/google-mail-component.adoc
 :docTitle: Google Mail
 :artifactId: camel-google-mail
 :description: Manage messages in Google Mail.

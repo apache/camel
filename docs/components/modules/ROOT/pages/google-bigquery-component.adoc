@@ -1,7 +1,7 @@
 [[google-bigquery-component]]
 = Google BigQuery Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-component.adoc
+:page-source: components/camel-google/camel-google-bigquery/src/main/docs/google-bigquery-component.adoc
 :docTitle: Google BigQuery
 :artifactId: camel-google-bigquery
 :description: Google BigQuery data warehouse for analytics.

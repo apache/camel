@@ -1,7 +1,7 @@
 [[google-calendar-component]]
 = Google Calendar Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-calendar/src/main/docs/google-calendar-component.adoc
+:page-source: components/camel-google/camel-google-calendar/src/main/docs/google-calendar-component.adoc
 :docTitle: Google Calendar
 :artifactId: camel-google-calendar
 :description: Perform various operations on a Google Calendar.

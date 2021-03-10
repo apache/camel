@@ -1,7 +1,7 @@
 [[google-sheets-stream-component]]
 = Google Sheets Stream Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc
+:page-source: components/camel-google/camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc
 :docTitle: Google Sheets Stream
 :artifactId: camel-google-sheets
 :description: Poll for changes in Google Sheets.
