@@ -74,12 +74,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient4-version}</version>
-        </dependency>
-
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
