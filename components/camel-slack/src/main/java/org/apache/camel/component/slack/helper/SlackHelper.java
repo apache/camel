@@ -39,7 +39,7 @@ public final class SlackHelper {
         SlackConfig config;
         if (ObjectHelper.isNotEmpty(serverUrl)) {
             config = new SlackConfig();
-            config.setMethodsEndpointUrlPrefix(serverUrl);
+            config.setMethodsEndpointUrlPrefix(serverUrl + "/api/");
         } else {
             config = SlackConfig.DEFAULT;
         }
