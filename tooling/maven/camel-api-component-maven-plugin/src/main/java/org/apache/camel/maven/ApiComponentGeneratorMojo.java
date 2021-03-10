@@ -363,11 +363,13 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
      * Store file hash cache.
      */
     private void writeCacheFile(List<String> cache) {
-        File cacheFile = new File(this.cachedir, CACHE_PROPERTIES_FILENAME);
-        try (OutputStream out = new FileOutputStream(cacheFile)) {
-            Files.write(cacheFile.toPath(), cache);
-        } catch (IOException e) {
-            getLog().warn("Cannot store file hash cache properties file", e);
+        if (this.cachedir != null) {
+            File cacheFile = new File(this.cachedir, CACHE_PROPERTIES_FILENAME);
+            try (OutputStream out = new FileOutputStream(cacheFile)) {
+                Files.write(cacheFile.toPath(), cache);
+            } catch (IOException e) {
+                getLog().warn("Cannot store file hash cache properties file", e);
+            }
         }
     }
 
@@ -376,6 +378,9 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
      */
     private List<String> readCacheFile() {
         Log log = getLog();
+        if (this.cachedir == null) {
+            return Collections.emptyList();
+        }
         if (!this.cachedir.exists()) {
             if (!this.cachedir.mkdirs()) {
                 log.warn("Unable to create cache directory '" + this.cachedir + "'.");
