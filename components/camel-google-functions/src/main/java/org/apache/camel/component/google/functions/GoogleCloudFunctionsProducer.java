@@ -33,6 +33,7 @@ import com.google.cloud.functions.v1.GenerateDownloadUrlRequest;
 import com.google.cloud.functions.v1.GenerateDownloadUrlResponse;
 import com.google.cloud.functions.v1.GenerateUploadUrlRequest;
 import com.google.cloud.functions.v1.GenerateUploadUrlResponse;
+import com.google.cloud.functions.v1.HttpsTrigger;
 import com.google.cloud.functions.v1.ListFunctionsRequest;
 import com.google.cloud.functions.v1.LocationName;
 import com.google.cloud.functions.v1.UpdateFunctionRequest;
@@ -97,9 +98,9 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                 ListFunctionsPagedResponse pagedListResponse;
                 try {
                     pagedListResponse = client.listFunctions((ListFunctionsRequest) payload);
-                    List<CloudFunction> result = Lists.newArrayList(pagedListResponse.iterateAll());
+                    List<CloudFunction> response = Lists.newArrayList(pagedListResponse.iterateAll());
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setBody(response);
                 } catch (ApiException ae) {
                     LOG.trace("listFunctions command returned the error code {}", ae.getStatusCode());
                     throw ae;
@@ -112,9 +113,9 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                     .setPageSize(883849137) // TODO check it
                     .setPageToken("pageToken873572522").build();
             ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
-            List<CloudFunction> result = Lists.newArrayList(pagedListResponse.iterateAll());
+            List<CloudFunction> response = Lists.newArrayList(pagedListResponse.iterateAll());
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setBody(response);
         }
     }
 
@@ -122,22 +123,22 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CloudFunctionName) {
-                CloudFunction result;
+                CloudFunction response;
                 try {
-                    result = client.getFunction((CloudFunctionName) payload);
+                    response = client.getFunction((CloudFunctionName) payload);
                 } catch (ApiException ae) {
                     LOG.trace("getFunction command returned the error code {}", ae.getStatusCode());
                     throw ae;
                 }
                 Message message = getMessageForResponse(exchange);
-                message.setBody(result);
+                message.setBody(response);
             }
         } else {
             CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
                     getConfiguration().getLocation(), getConfiguration().getFunctionName());
-            CloudFunction result = client.getFunction(cfName);
+            CloudFunction response = client.getFunction(cfName);
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setBody(response);
         }
     }
 
@@ -145,11 +146,12 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CallFunctionRequest) {
-                CallFunctionResponse result;
+                CallFunctionResponse response;
                 try {
-                    result = client.callFunction((CallFunctionRequest) payload);
+                    response = client.callFunction((CallFunctionRequest) payload);
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+                    message.setBody(response.getResult());
                 } catch (ApiException ae) {
                     LOG.trace("callFunction command returned the error code {}", ae.getStatusCode());
                     throw ae;
@@ -161,9 +163,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                     getConfiguration().getLocation(), getConfiguration().getFunctionName());
             CallFunctionRequest request = CallFunctionRequest.newBuilder().setName(cfName.toString()).setData(data)
                     .build();
-            CallFunctionResponse result = client.callFunction(request);
+            CallFunctionResponse response = client.callFunction(request);
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+            message.setBody(response.getResult());
         }
     }
 
@@ -173,10 +176,11 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GenerateDownloadUrlRequest) {
                 try {
-                    GenerateDownloadUrlResponse result = client
+                    GenerateDownloadUrlResponse response = client
                             .generateDownloadUrl((GenerateDownloadUrlRequest) payload);
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+                    message.setBody(response.getDownloadUrl());
                 } catch (ApiException ae) {
                     LOG.trace("generateDownloadUrl command returned the error code {}", ae.getStatusCode());
                     throw ae;
@@ -187,9 +191,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                     getConfiguration().getLocation(), getConfiguration().getFunctionName());
             GenerateDownloadUrlRequest request = GenerateDownloadUrlRequest.newBuilder().setName(cfName.toString())
                     .build();
-            GenerateDownloadUrlResponse result = client.generateDownloadUrl(request);
+            GenerateDownloadUrlResponse response = client.generateDownloadUrl(request);
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+            message.setBody(response.getDownloadUrl());
         }
     }
 
@@ -199,9 +204,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GenerateUploadUrlRequest) {
                 try {
-                    GenerateUploadUrlResponse result = client.generateUploadUrl((GenerateUploadUrlRequest) payload);
+                    GenerateUploadUrlResponse response = client.generateUploadUrl((GenerateUploadUrlRequest) payload);
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+                    message.setBody(response.getUploadUrl());
                 } catch (ApiException ae) {
                     LOG.trace("generateUploadUrl command returned the error code {}", ae.getStatusCode());
                     throw ae;
@@ -212,9 +218,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
                     getConfiguration().getLocation());
             GenerateUploadUrlRequest request = GenerateUploadUrlRequest.newBuilder().setParent(locationName.toString())
                     .build();
-            GenerateUploadUrlResponse result = client.generateUploadUrl(request);
+            GenerateUploadUrlResponse response = client.generateUploadUrl(request);
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, response);
+            message.setBody(response.getUploadUrl());
         }
     }
 
@@ -224,16 +231,37 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CreateFunctionRequest) {
                 try {
-                    CloudFunction result = client.createFunctionAsync((CreateFunctionRequest) payload).get();
+                    CloudFunction response = client.createFunctionAsync((CreateFunctionRequest) payload).get();
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setBody(response);
                 } catch (ApiException ae) {
                     LOG.trace("createFunction command returned the error code {}", ae.getStatusCode());
                     throw ae;
                 }
             }
         } else {
-            throw new IllegalArgumentException("createFunction is supported only in pojo mode");
+            final String project = getConfiguration().getProject();
+            final String location = getConfiguration().getLocation();
+            final String functionName = getConfiguration().getFunctionName();
+            final String entryPoint = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, String.class);
+            final String runtime = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.RUNTIME, String.class);
+            final String sourceArchiveUrl
+                    = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, String.class);
+
+            CloudFunction function = CloudFunction.newBuilder()
+                    .setName(CloudFunctionName.of(project, location, functionName).toString())
+                    .setEntryPoint(entryPoint)
+                    .setRuntime(runtime)
+                    .setHttpsTrigger(HttpsTrigger.getDefaultInstance())
+                    .setSourceArchiveUrl(sourceArchiveUrl)
+                    .build();
+            CreateFunctionRequest request = CreateFunctionRequest.newBuilder()
+                    .setLocation(LocationName.of(project, location).toString())
+                    .setFunction(function).build();
+
+            CloudFunction response = client.createFunctionAsync(request).get();
+            Message message = getMessageForResponse(exchange);
+            message.setBody(response);
         }
     }
 
@@ -243,9 +271,9 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof UpdateFunctionRequest) {
                 try {
-                    CloudFunction result = client.updateFunctionAsync((UpdateFunctionRequest) payload).get();
+                    CloudFunction response = client.updateFunctionAsync((UpdateFunctionRequest) payload).get();
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setBody(response);
                 } catch (ApiException ae) {
                     LOG.trace("updateFunction command returned the error code {}", ae.getStatusCode());
                     throw ae;
@@ -262,9 +290,9 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteFunctionRequest) {
                 try {
-                    Empty result = client.deleteFunctionAsync((DeleteFunctionRequest) payload).get();
+                    Empty response = client.deleteFunctionAsync((DeleteFunctionRequest) payload).get();
                     Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+                    message.setBody(response);
                 } catch (ApiException ae) {
                     LOG.trace("deleteFunction command returned the error code {}", ae.getStatusCode());
                     throw ae;
@@ -274,9 +302,9 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
                     getConfiguration().getLocation(), getConfiguration().getFunctionName());
             DeleteFunctionRequest request = DeleteFunctionRequest.newBuilder().setName(cfName.toString()).build();
-            Empty result = client.deleteFunctionAsync(request).get();
+            Empty response = client.deleteFunctionAsync(request).get();
             Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            message.setBody(response);
         }
     }
 

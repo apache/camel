@@ -17,37 +17,9 @@
 package org.apache.camel.component.google.functions;
 
 public interface GoogleCloudFunctionsConstants {
-
     String OPERATION = "GoogleCloudFunctionsOperation";
-
-    // String S3_BUCKET = "CamelAwsLambdaS3Bucket";
-    // String S3_KEY = "CamelAwsLambdaS3Key";
-    // String S3_OBJECT_VERSION = "CamelAwsLambdaS3ObjectVersion";
-    // String ZIP_FILE = "CamelAwsLambdaZipFile";
-    // String DESCRIPTION = "CamelAwsLambdaDescription";
-    // String ROLE = "CamelAwsLambdaRole";
-    // String RUNTIME = "CamelAwsLambdaRuntime";
-    // String HANDLER = "CamelAwsLambdaHandler";
-    // String TARGET_ARN = "CamelAwsLambdaTargetArn";
-    // String MEMORY_SIZE = "CamelAwsLambdaMemorySize";
-    // String KMS_KEY_ARN = "CamelAwsLambdaKMSKeyArn";
-    // String ENVIRONMENT_VARIABLES = "CamelAwsLambdaEnvironmentVariables";
-    // String PUBLISH = "CamelAwsLambdaPublish";
-    // String TIMEOUT = "CamelAwsLambdaTimeout";
-    // String TAGS = "CamelAwsLambdaTags";
-    // String TRACING_CONFIG = "CamelAwsLambdaTracingConfig";
-    // String SECURITY_GROUP_IDS = "CamelAwsLambdaSecurityGroupIds";
-    // String SUBNET_IDS = "CamelAwsLambdaSubnetIds";
-    // String EVENT_SOURCE_ARN = "CamelAwsLambdaEventSourceArn";
-    // String EVENT_SOURCE_BATCH_SIZE = "CamelAwsLambdaEventSourceBatchSize";
-    // String EVENT_SOURCE_UUID = "CamelAwsLambdaEventSourceUuid";
-    // String RESOURCE_ARN = "CamelAwsLambdaResourceArn";
-    // String RESOURCE_TAGS = "CamelAwsLambdaResourceTags";
-    // String RESOURCE_TAG_KEYS = "CamelAwsLambdaResourceTagKeys";
-    // String VERSION_DESCRIPTION = "CamelAwsLambdaVersionDescription";
-    // String VERSION_REVISION_ID = "CamelAwsLambdaVersionRevisionId";
-    // String FUNCTION_VERSION = "CamelAwsLambdaFunctionVersion";
-    // String FUNCTION_ALIAS_NAME = "CamelAwsLambdaAliasFunctionName";
-    // String FUNCTION_ALIAS_DESCRIPTION = "CamelAwsLambdaAliasFunctionDescription";
-
+    String ENTRY_POINT = "GoogleCloudFunctionsEntryPoint";
+    String RUNTIME = "GoogleCloudFunctionsRuntime";
+    String SOURCE_ARCHIVE_URL = "GoogleCloudFunctionsSourceArchiveUrl";
+    String RESPONSE_OBJECT = "GoogleCloudFunctionsResponseObject";
 }
