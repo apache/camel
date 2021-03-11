@@ -114,7 +114,7 @@ The HTTP component supports 37 options, which are listed below.
 The HTTP endpoint is configured using URI syntax:
 
 ----
-http:httpUri
+http://httpUri
 ----
 
 with the following path and query parameters:

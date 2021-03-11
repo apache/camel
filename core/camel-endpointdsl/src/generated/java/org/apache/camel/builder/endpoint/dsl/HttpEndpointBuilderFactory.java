@@ -1547,12 +1547,12 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
-         * Syntax: <code>http:httpUri</code>
+         * Syntax: <code>http://httpUri</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path httpUri
+         * @param path //httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String path) {
@@ -1566,14 +1566,14 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
-         * Syntax: <code>http:httpUri</code>
+         * Syntax: <code>http://httpUri</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path httpUri
+         * @param path //httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder http(String componentName, String path) {
@@ -1587,12 +1587,12 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
-         * Syntax: <code>https:httpUri</code>
+         * Syntax: <code>https://httpUri</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path httpUri
+         * @param path //httpUri
          * @return the dsl builder
          */
         default HttpEndpointBuilder https(String path) {

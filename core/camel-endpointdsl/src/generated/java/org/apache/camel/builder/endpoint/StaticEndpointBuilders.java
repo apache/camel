@@ -6658,12 +6658,12 @@ public class StaticEndpointBuilders {
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      * 
-     * Syntax: <code>http:httpUri</code>
+     * Syntax: <code>http://httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
-     * @param path httpUri
+     * @param path //httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
@@ -6678,14 +6678,14 @@ public class StaticEndpointBuilders {
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      * 
-     * Syntax: <code>http:httpUri</code>
+     * Syntax: <code>http://httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path httpUri
+     * @param path //httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(

@@ -15,7 +15,7 @@
     "scheme": "http",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",
-    "syntax": "http:httpUri",
+    "syntax": "http:\/\/httpUri",
     "async": false,
     "api": false,
     "consumerOnly": false,

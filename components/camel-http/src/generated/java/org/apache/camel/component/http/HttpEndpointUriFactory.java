@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class HttpEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":httpUri";
+    private static final String BASE = "://httpUri";
     private static final String[] SCHEMES = new String[]{"http", "https"};
 
     private static final Set<String> PROPERTY_NAMES;
