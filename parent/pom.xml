@@ -1206,6 +1206,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-debezium-common-parent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-debezium-parent</artifactId>
 				<version>${project.version}</version>
 			</dependency>
