@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Send requests to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri",
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http://httpUri",
              producerOnly = true, category = { Category.HTTP }, lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
