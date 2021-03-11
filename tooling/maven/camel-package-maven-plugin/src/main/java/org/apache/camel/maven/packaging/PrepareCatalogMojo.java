@@ -591,6 +591,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-infinispan":
                 case "camel-azure":
                 case "camel-google":
+                case "camel-debezium": 
                 case "camel-aws":
                     return false;
                 default:
@@ -1176,6 +1177,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
                         dir.resolve("camel-google-sheets"),
                         dir.resolve("camel-google-storage"));
+            case "camel-debezium":
+                return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
+                         dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"));
             case "camel-aws":
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
                         dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
