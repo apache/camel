@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.minio.common;
 
 public final class MinioProperties {
+    public static final String MINIO_CONTAINER = "minio.container";
     public static final String ACCESS_KEY = "minio.access.key";
     public static final String SECRET_KEY = "minio.secret.key";
     public static final String USERNAME = "minio.access.username";

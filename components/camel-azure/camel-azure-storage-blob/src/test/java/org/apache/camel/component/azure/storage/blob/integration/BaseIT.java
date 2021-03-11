@@ -43,7 +43,7 @@ public class BaseIT extends CamelTestSupport {
     static {
         initCredentials();
 
-        service = AzureStorageBlobServiceFactory.createAzureService();
+        service = AzureStorageBlobServiceFactory.createService();
     }
 
     /*

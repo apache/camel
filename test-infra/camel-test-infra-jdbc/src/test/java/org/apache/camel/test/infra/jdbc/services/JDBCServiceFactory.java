@@ -15,14 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.elasticsearch.common;
+package org.apache.camel.test.infra.jdbc.services;
 
-public final class ElasticSearchProperties {
-    public static final String ELASTIC_SEARCH_HOST = "elasticsearch.host";
-    public static final String ELASTIC_SEARCH_PORT = "elasticsearch.port";
-    public static final String ELASTIC_SEARCH_CONTAINER = "elasticsearch.container";
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
-    private ElasticSearchProperties() {
+public final class JDBCServiceFactory {
 
+    private JDBCServiceFactory() {
+
+    }
+
+    public static SimpleTestServiceBuilder<JDBCService> builder() {
+        return new SimpleTestServiceBuilder<>("jdbc");
+    }
+
+    public static JDBCService createService() {
+        return builder()
+                .addRemoteMapping(JDBCRemoteService::new)
+                .build();
     }
 }

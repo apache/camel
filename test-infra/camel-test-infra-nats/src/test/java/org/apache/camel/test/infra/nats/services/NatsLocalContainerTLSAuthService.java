@@ -17,15 +17,16 @@
 package org.apache.camel.test.infra.nats.services;
 
 import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NatsLocalContainerTLSAuthService extends NatsLocalContainerService {
     /*Certificates used for tests with TLS authentication come from:
      *https://github.com/nats-io/jnats/tree/master/src/test/resources */
-    protected void initContainer(String imageName) {
-        super.initContainer(imageName);
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        GenericContainer container = super.initContainer(imageName, containerName);
 
-        getContainer()
+        container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
                 .withClasspathResourceMapping("org/apache/camel/test/infra/nats/services", "/nats", BindMode.READ_ONLY)
                 .withCommand("--tls",
@@ -33,5 +34,7 @@ public class NatsLocalContainerTLSAuthService extends NatsLocalContainerService 
                         "--tlskey=/nats/key.pem",
                         "--tlsverify",
                         "--tlscacert=/nats/ca.pem");
+
+        return container;
     }
 }

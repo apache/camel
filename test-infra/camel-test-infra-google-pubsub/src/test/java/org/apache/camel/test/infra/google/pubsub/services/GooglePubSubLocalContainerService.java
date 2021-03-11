@@ -24,28 +24,32 @@ import org.testcontainers.containers.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class GooglePubSubLocalContainerService implements GooglePubSubService, ContainerService<PubSubEmulatorContainer> {
+    public static final String IMAGE_NAME = "gcr.io/google.com/cloudsdktool/cloud-sdk:emulators";
+
     public static final String PROJECT_ID;
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubSubLocalContainerService.class);
-    private static final String CONTAINER_NAME = "gcr.io/google.com/cloudsdktool/cloud-sdk:emulators";
     private static final String DEFAULT_PROJECT_ID = "test-project";
 
     static {
         PROJECT_ID = System.getProperty(GooglePubSubProperties.PROJECT_ID, DEFAULT_PROJECT_ID);
     }
 
-    private PubSubEmulatorContainer container;
+    private final PubSubEmulatorContainer container;
 
     public GooglePubSubLocalContainerService() {
-        String containerName = System.getProperty(GooglePubSubProperties.CONTAINER_NAME, CONTAINER_NAME);
-        initContainer(containerName);
+        this(System.getProperty(GooglePubSubProperties.PUBSUB_CONTAINER, IMAGE_NAME));
     }
 
-    public GooglePubSubLocalContainerService(String containerName) {
-        initContainer(containerName);
+    public GooglePubSubLocalContainerService(String imageName) {
+        container = initContainer(imageName);
     }
 
-    protected void initContainer(String containerName) {
-        container = new PubSubEmulatorContainer(DockerImageName.parse(containerName));
+    public GooglePubSubLocalContainerService(PubSubEmulatorContainer container) {
+        this.container = container;
+    }
+
+    protected PubSubEmulatorContainer initContainer(String imageName) {
+        return new PubSubEmulatorContainer(DockerImageName.parse(imageName));
     }
 
     @Override

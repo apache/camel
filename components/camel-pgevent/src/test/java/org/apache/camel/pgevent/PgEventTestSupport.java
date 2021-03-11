@@ -16,8 +16,9 @@
  */
 package org.apache.camel.pgevent;
 
+import org.apache.camel.test.infra.jdbc.services.JDBCLocalContainerService;
 import org.apache.camel.test.infra.jdbc.services.JDBCService;
-import org.apache.camel.test.infra.jdbc.services.JDBCServiceBuilder;
+import org.apache.camel.test.infra.jdbc.services.JDBCServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -27,7 +28,10 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 public class PgEventTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static JDBCService service;
+    public static JDBCService service = JDBCServiceFactory
+            .builder()
+            .addLocalMapping(PgEventTestSupport::createLocalService)
+            .build();
 
     protected static final String TEST_MESSAGE_BODY = "Test Camel PGEvent";
     protected static final String POSTGRES_USER = "postgres";
@@ -38,7 +42,7 @@ public class PgEventTestSupport extends CamelTestSupport {
 
     private static PostgreSQLContainer container;
 
-    static {
+    private static JDBCService createLocalService() {
         final String postgresImage = "postgres:13.0";
 
         container = new PostgreSQLContainer(postgresImage);
@@ -48,10 +52,7 @@ public class PgEventTestSupport extends CamelTestSupport {
                 .withDatabaseName(POSTGRES_DB)
                 .withLogConsumer(new Slf4jLogConsumer(LOG));
 
-        // Let the JDBC Service handle container lifecycle
-        service = JDBCServiceBuilder.newBuilder()
-                .withContainer(container)
-                .build();
+        return new JDBCLocalContainerService<>(container);
     }
 
     public Integer getMappedPort() {

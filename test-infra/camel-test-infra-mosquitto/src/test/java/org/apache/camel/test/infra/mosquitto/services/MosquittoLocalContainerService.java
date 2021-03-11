@@ -32,37 +32,44 @@ public class MosquittoLocalContainerService implements MosquittoService, Contain
 
     private static final Logger LOG = LoggerFactory.getLogger(MosquittoLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public MosquittoLocalContainerService() {
-        String containerName = System.getProperty("mosquitto.container", CONTAINER_IMAGE);
-
-        initContainer(containerName, null);
+        this(CONTAINER_IMAGE);
     }
 
     public MosquittoLocalContainerService(int port) {
-        String containerName = System.getProperty("mosquitto.container", CONTAINER_IMAGE);
+        String imageName = System.getProperty(MosquittoProperties.MOSQUITTO_CONTAINER, CONTAINER_IMAGE);
 
-        initContainer(containerName, port);
+        container = initContainer(imageName, port);
     }
 
-    public MosquittoLocalContainerService(String containerName) {
-        initContainer(containerName, null);
+    public MosquittoLocalContainerService(String imageName) {
+        container = initContainer(imageName, null);
     }
 
-    protected void initContainer(String containerName, Integer port) {
+    public MosquittoLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, Integer port) {
+        GenericContainer ret;
+
         if (port == null) {
-            container = new GenericContainer(containerName)
+            ret = new GenericContainer(imageName)
                     .withExposedPorts(CONTAINER_PORT);
         } else {
             @SuppressWarnings("deprecation")
-            GenericContainer fixedPortContainer = new FixedHostPortGenericContainer(containerName)
+            GenericContainer fixedPortContainer = new FixedHostPortGenericContainer(imageName)
                     .withFixedExposedPort(port, CONTAINER_PORT);
-            container = fixedPortContainer;
+            ret = fixedPortContainer;
         }
-        container.withNetworkAliases(CONTAINER_NAME)
+
+        ret.withNetworkAliases(CONTAINER_NAME)
                 .waitingFor(Wait.forLogMessage(".* mosquitto version .* running", 1))
                 .waitingFor(Wait.forListeningPort());
+
+        return ret;
     }
 
     @Override

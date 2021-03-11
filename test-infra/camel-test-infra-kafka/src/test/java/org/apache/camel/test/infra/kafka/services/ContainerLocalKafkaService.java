@@ -25,7 +25,19 @@ import org.testcontainers.containers.KafkaContainer;
 
 public class ContainerLocalKafkaService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
-    private KafkaContainer kafka = new KafkaContainer().withEmbeddedZookeeper();
+    private final KafkaContainer kafka;
+
+    public ContainerLocalKafkaService() {
+        kafka = initContainer();
+    }
+
+    public ContainerLocalKafkaService(KafkaContainer kafka) {
+        this.kafka = kafka;
+    }
+
+    protected KafkaContainer initContainer() {
+        return new KafkaContainer().withEmbeddedZookeeper();
+    }
 
     public String getBootstrapServers() {
         return kafka.getBootstrapServers();

@@ -29,21 +29,19 @@ public class NatsLocalContainerService implements NatsService, ContainerService<
     private static final int PORT = 4222;
 
     private static final Logger LOG = LoggerFactory.getLogger(NatsLocalContainerService.class);
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public NatsLocalContainerService() {
-        String imageName = System.getProperty("nats.container", CONTAINER_IMAGE);
-
-        initContainer(imageName);
+        this(System.getProperty(NatsProperties.NATS_CONTAINER, CONTAINER_IMAGE));
     }
 
     public NatsLocalContainerService(String imageName) {
-        initContainer(imageName);
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String imageName) {
-        container = new GenericContainer(imageName)
-                .withNetworkAliases(CONTAINER_NAME)
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer(imageName)
+                .withNetworkAliases(containerName)
                 .withExposedPorts(PORT)
                 .waitingFor(Wait.forLogMessage(".*Listening.*for.*route.*connections.*", 1));
     }

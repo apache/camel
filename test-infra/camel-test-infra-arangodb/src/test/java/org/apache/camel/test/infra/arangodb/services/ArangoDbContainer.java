@@ -24,11 +24,10 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ArangoDbContainer extends GenericContainer {
     public static final Integer PORT_DEFAULT = 8529;
+    public static final String ARANGO_IMAGE = "arangodb:latest";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDbContainer.class);
-
     private static final String CONTAINER_NAME = "arango";
-    private static final String ARANGO_IMAGE = "arangodb:latest";
     private static final String ARANGO_NO_AUTH = "ARANGO_NO_AUTH";
 
     public ArangoDbContainer() {
@@ -37,6 +36,7 @@ public class ArangoDbContainer extends GenericContainer {
 
     public ArangoDbContainer(String containerName) {
         super(containerName);
+
         setWaitStrategy(Wait.forListeningPort());
         addFixedExposedPort(PORT_DEFAULT, PORT_DEFAULT);
         withNetworkAliases(CONTAINER_NAME);

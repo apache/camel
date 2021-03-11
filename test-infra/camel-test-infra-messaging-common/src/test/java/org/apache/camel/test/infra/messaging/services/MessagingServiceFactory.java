@@ -15,14 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.elasticsearch.common;
+package org.apache.camel.test.infra.messaging.services;
 
-public final class ElasticSearchProperties {
-    public static final String ELASTIC_SEARCH_HOST = "elasticsearch.host";
-    public static final String ELASTIC_SEARCH_PORT = "elasticsearch.port";
-    public static final String ELASTIC_SEARCH_CONTAINER = "elasticsearch.container";
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
-    private ElasticSearchProperties() {
+public final class MessagingServiceFactory {
 
+    private MessagingServiceFactory() {
+
+    }
+
+    public static SimpleTestServiceBuilder<MessagingService> builder() {
+        return new SimpleTestServiceBuilder<>("messaging");
+    }
+
+    public static MessagingService createService() {
+        return builder()
+                .addRemoteMapping(MessagingRemoteService::new)
+                .build();
     }
 }

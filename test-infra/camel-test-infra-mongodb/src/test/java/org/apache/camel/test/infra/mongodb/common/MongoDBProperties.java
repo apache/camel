@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.mongodb.common;
 public final class MongoDBProperties {
     public static final String MONGODB_URL = "mongodb.url";
     public static final String MONGODB_CONNECTION_ADDRESS = "mongodb.connection.address";
+    public static final String MONGODB_CONTAINER = "mongodb.container";
 
     private MongoDBProperties() {
 

@@ -39,21 +39,23 @@ public class MinioLocalContainerService implements MinioService, ContainerServic
         SECRET_KEY = System.getProperty(MinioProperties.SECRET_KEY, "testSecretKey");
     }
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public MinioLocalContainerService() {
-        String containerName = System.getProperty("minio.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(System.getProperty(MinioProperties.MINIO_CONTAINER, CONTAINER_IMAGE));
     }
 
     public MinioLocalContainerService(String containerName) {
-        initContainer(containerName);
+        container = initContainer(containerName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String containerName) {
-        container = new GenericContainer(containerName)
-                .withNetworkAliases(CONTAINER_NAME)
+    public MinioLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer(imageName)
+                .withNetworkAliases(containerName)
                 .withEnv("MINIO_ACCESS_KEY", accessKey())
                 .withEnv("MINIO_SECRET_KEY", secretKey())
                 .withCommand("server /data")

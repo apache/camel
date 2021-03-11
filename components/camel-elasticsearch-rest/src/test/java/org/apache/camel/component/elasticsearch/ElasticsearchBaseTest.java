@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerService;
+import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchService;
+import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -37,12 +39,14 @@ import org.testcontainers.utility.Base58;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ElasticsearchBaseTest extends CamelTestSupport {
 
-    public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.8.0";
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
 
     @RegisterExtension
-    public static ElasticSearchLocalContainerService service;
+    public static ElasticSearchService service = ElasticSearchServiceFactory
+            .builder()
+            .addLocalMapping(ElasticsearchBaseTest::createElasticSearchService)
+            .build();
 
     protected static String clusterName = "docker-cluster";
     protected static RestClient restClient;
@@ -50,10 +54,10 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBaseTest.class);
 
-    static {
-        service = new ElasticSearchLocalContainerService();
+    private static ElasticSearchLocalContainerService createElasticSearchService() {
+        ElasticSearchLocalContainerService ret = new ElasticSearchLocalContainerService();
 
-        service.getContainer()
+        ret.getContainer()
                 .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
                 .withEnv("discovery.type", "single-node")
                 .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
@@ -62,6 +66,8 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
                         .forStatusCodeMatching(response -> response == HttpURLConnection.HTTP_OK
                                 || response == HttpURLConnection.HTTP_UNAUTHORIZED)
                         .withStartupTimeout(Duration.ofMinutes(2)));
+
+        return ret;
     }
 
     @Override

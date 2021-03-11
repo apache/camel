@@ -20,84 +20,70 @@ package org.apache.camel.test.infra.aws2.services;
 import java.util.function.Supplier;
 
 import org.apache.camel.test.infra.aws.common.services.AWSService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AWSServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(AWSServiceFactory.class);
-
     private AWSServiceFactory() {
 
     }
 
-    private static String getInstanceTypeName(String awsInstanceType) {
-        return awsInstanceType == null ? "default" : awsInstanceType;
+    public static <T extends AWSService> SimpleTestServiceBuilder<T> builder() {
+        return new SimpleTestServiceBuilder<>("aws");
     }
 
-    private static <
-            T extends AWSLocalContainerService> AWSService createService(String property, String name, Supplier<T> supplier) {
-        String awsInstanceType = System.getProperty(property);
-        LOG.info("Creating a {} {} instance", name, getInstanceTypeName(awsInstanceType));
-
-        if (awsInstanceType == null || awsInstanceType.equals("local-aws-container")) {
-            return supplier.get();
-        }
-
-        if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService();
-        }
-
-        LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
-                awsInstanceType);
-        throw new UnsupportedOperationException("Invalid AWS instance type");
-    }
-
-    private static <T extends AWSLocalContainerService> AWSService createService(String name, Supplier<T> supplier) {
-        return createService("aws-service.instance.type", name, supplier);
+    private static AWSService createService(Supplier<AWSService> supplier) {
+        return builder()
+                .addRemoteMapping(AWSRemoteService::new)
+                .addLocalMapping(supplier)
+                .withPropertyNameFormat("%s-service.instance.type")
+                .build();
     }
 
     public static AWSService createKinesisService() {
-        return createService("aws-service.kinesis.instance.type", "AWS Kinesis",
-                AWSKinesisLocalContainerService::new);
+        return builder()
+                .addRemoteMapping(AWSRemoteService::new)
+                .addLocalMapping(AWSKinesisLocalContainerService::new)
+                .withPropertyNameFormat("%s-service.kinesis.instance.type")
+                .build();
     }
 
     public static AWSService createSQSService() {
-        return createService("AWS SQS", AWSSQSLocalContainerService::new);
+        return createService(AWSSQSLocalContainerService::new);
     }
 
     public static AWSService createS3Service() {
-        return createService("AWS S3", AWSS3LocalContainerService::new);
+        return createService(AWSS3LocalContainerService::new);
     }
 
     public static AWSService createSNSService() {
-        return createService("AWS SNS", AWSSNSLocalContainerService::new);
+        return createService(AWSSNSLocalContainerService::new);
     }
 
     public static AWSService createCloudWatchService() {
-        return createService("AWS Cloud Watch", AWSCloudWatchLocalContainerService::new);
+        return createService(AWSCloudWatchLocalContainerService::new);
     }
 
     public static AWSService createEC2Service() {
-        return createService("AWS EC2", AWSEC2LocalContainerService::new);
+        return createService(AWSEC2LocalContainerService::new);
     }
 
     public static AWSService createEventBridgeService() {
-        return createService("AWS EventBridge", AWSEventBridgeLocalContainerService::new);
+        return createService(AWSEventBridgeLocalContainerService::new);
     }
 
     public static AWSService createIAMService() {
-        return createService("AWS IAM", AWSIAMLocalContainerService::new);
+        return createService(AWSIAMLocalContainerService::new);
     }
 
     public static AWSService createKMSService() {
-        return createService("AWS KMS", AWSKMSLocalContainerService::new);
+        return createService(AWSKMSLocalContainerService::new);
     }
 
     public static AWSService createLambdaService() {
-        return createService("AWS Lambda", AWSLambdaLocalContainerService::new);
+        return createService(AWSLambdaLocalContainerService::new);
     }
 
     public static AWSService createSTSService() {
-        return createService("AWS STS", AWSSTSLocalContainerService::new);
+        return createService(AWSSTSLocalContainerService::new);
     }
 }
