@@ -54,7 +54,7 @@ public class GooglePubSubLocalContainerService implements GooglePubSubService, C
 
     @Override
     public void registerProperties() {
-
+        System.setProperty(GooglePubSubProperties.SERVICE_ADDRESS, getServiceAddress());
     }
 
     @Override
