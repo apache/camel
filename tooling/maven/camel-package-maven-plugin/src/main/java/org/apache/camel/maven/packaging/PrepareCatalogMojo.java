@@ -1182,8 +1182,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
                         dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"));
             case "camel-microprofile":
-                        return Arrays.asList(dir.resolve("camel-microprofile-config"), dir.resolve("camel-microprofile-fault-tolerance"),
-                                dir.resolve("camel-microprofile-health"), dir.resolve("camel-microprofile-metrics"));
+                return Arrays.asList(dir.resolve("camel-microprofile-config"),
+                        dir.resolve("camel-microprofile-fault-tolerance"),
+                        dir.resolve("camel-microprofile-health"), dir.resolve("camel-microprofile-metrics"));
             case "camel-aws":
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
                         dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),

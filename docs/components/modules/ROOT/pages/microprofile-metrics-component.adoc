@@ -1,7 +1,7 @@
 [[microprofile-metrics-component]]
 = MicroProfile Metrics Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc
+:page-source: components/camel-microprofile/camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc
 :docTitle: MicroProfile Metrics
 :artifactId: camel-microprofile-metrics
 :description: Expose metrics from Camel routes.

@@ -1,7 +1,7 @@
 [[microprofile-config-other]]
 = Microprofile Config Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-microprofile-config/src/main/docs/microprofile-config.adoc
+:page-source: components/camel-microprofile/camel-microprofile-config/src/main/docs/microprofile-config.adoc
 :docTitle: Microprofile Config
 :artifactId: camel-microprofile-config
 :description: Bridging Eclipse MicroProfile Config with Camel properties
