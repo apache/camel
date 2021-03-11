@@ -23,14 +23,14 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
+        <artifactId>camel-debezium-parent</artifactId>
         <version>3.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-debezium-parent</artifactId>
+    <artifactId>camel-debezium-common-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Debezium :: Parent</name>
-    <description>Camel Debezium parent</description>
+    <name>Camel :: Debezium Common :: Parent</name>
+    <description>Camel Debezium Common parent</description>
 
     <modules>
         <module>camel-debezium-common-component</module>
