@@ -49,6 +49,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.functions.GoogleCloudFunctionsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -261,8 +262,9 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     public void callFunctionTest() throws Exception {
+        final String result = "result-934426595";
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
-                .setExecutionId("executionId-454906285").setResult("result-934426595")
+                .setExecutionId("executionId-454906285").setResult(result)
                 .setError("error96784904").build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
@@ -272,7 +274,9 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         Exchange exchange = template.send("direct:callFunction", ExchangePattern.InOut, exc -> {
             exc.getIn().setBody(data);
         });
-        CallFunctionResponse actualResponse = exchange.getMessage().getBody(CallFunctionResponse.class);
+        assertEquals(result, exchange.getMessage().getBody(String.class));
+        CallFunctionResponse actualResponse
+                = exchange.getMessage().getHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, CallFunctionResponse.class);
         assertEquals(expectedResponse, actualResponse);
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
@@ -287,8 +291,9 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     public void callFunctionPojoTest() throws Exception {
+        final String result = "result-934426595";
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
-                .setExecutionId("executionId-454906285").setResult("result-934426595")
+                .setExecutionId("executionId-454906285").setResult(result)
                 .setError("error96784904").build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
@@ -300,7 +305,9 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         Exchange exchange = template.send("direct:callFunctionPojo", ExchangePattern.InOut, exc -> {
             exc.getIn().setBody(request);
         });
-        CallFunctionResponse actualResponse = exchange.getMessage().getBody(CallFunctionResponse.class);
+        assertEquals(result, exchange.getMessage().getBody(String.class));
+        CallFunctionResponse actualResponse
+                = exchange.getMessage().getHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, CallFunctionResponse.class);
         assertEquals(expectedResponse, actualResponse);
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
@@ -315,16 +322,18 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     public void generateDownloadUrlTest() throws Exception {
+        String downloadUrl = "downloadUrl-1211148345";
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
 
         GenerateDownloadUrlResponse expectedResponse = GenerateDownloadUrlResponse.newBuilder()
-                .setDownloadUrl("downloadUrl-1211148345").build();
+                .setDownloadUrl(downloadUrl).build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         Exchange exchange = template.send("direct:generateDownloadUrl", ExchangePattern.InOut, exc -> {
         });
+        assertEquals(downloadUrl, exchange.getMessage().getBody(String.class));
         GenerateDownloadUrlResponse actualResponse = exchange.getMessage()
-                .getBody(GenerateDownloadUrlResponse.class);
+                .getHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, GenerateDownloadUrlResponse.class);
         assertEquals(expectedResponse, actualResponse);
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
@@ -336,10 +345,11 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     public void generateDownloadUrlPojoTest() throws Exception {
+        String downloadUrl = "downloadUrl-1211148345";
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
 
         GenerateDownloadUrlResponse expectedResponse = GenerateDownloadUrlResponse.newBuilder()
-                .setDownloadUrl("downloadUrl-1211148345").build();
+                .setDownloadUrl(downloadUrl).build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         GenerateDownloadUrlRequest request = GenerateDownloadUrlRequest.newBuilder().setName(cfName.toString())
@@ -348,8 +358,10 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         Exchange exchange = template.send("direct:generateDownloadUrlPojo", ExchangePattern.InOut, exc -> {
             exc.getIn().setBody(request);
         });
+
+        assertEquals(downloadUrl, exchange.getMessage().getBody(String.class));
         GenerateDownloadUrlResponse actualResponse = exchange.getMessage()
-                .getBody(GenerateDownloadUrlResponse.class);
+                .getHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, GenerateDownloadUrlResponse.class);
         assertEquals(expectedResponse, actualResponse);
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
@@ -360,15 +372,17 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     public void generateUploadUrlTest() throws Exception {
+        final String updloadUrl = "uploadUrl1239085998";
         LocationName locationName = LocationName.of(project, location);
         GenerateUploadUrlResponse expectedResponse = GenerateUploadUrlResponse.newBuilder()
-                .setUploadUrl("uploadUrl1239085998").build();
+                .setUploadUrl(updloadUrl).build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         Exchange exchange = template.send("direct:generateUploadUrl", ExchangePattern.InOut, exc -> {
         });
+        assertEquals(updloadUrl, exchange.getMessage().getBody(String.class));
         GenerateUploadUrlResponse actualResponse = exchange.getMessage()
-                .getBody(GenerateUploadUrlResponse.class);
+                .getHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, GenerateUploadUrlResponse.class);
         assertEquals(expectedResponse, actualResponse);
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
@@ -379,9 +393,10 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     public void generateUploadUrlTestPojo() throws Exception {
+        final String updloadUrl = "uploadUrl1239085998";
         LocationName locationName = LocationName.of(project, location);
         GenerateUploadUrlResponse expectedResponse = GenerateUploadUrlResponse.newBuilder()
-                .setUploadUrl("uploadUrl1239085998").build();
+                .setUploadUrl(updloadUrl).build();
         mockCloudFunctionsService.addResponse(expectedResponse);
 
         GenerateUploadUrlRequest request = GenerateUploadUrlRequest.newBuilder()
@@ -389,8 +404,9 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         Exchange exchange = template.send("direct:generateUploadUrlPojo", ExchangePattern.InOut, exc -> {
             exc.getIn().setBody(request);
         });
+        assertEquals(updloadUrl, exchange.getMessage().getBody(String.class));
         GenerateUploadUrlResponse actualResponse = exchange.getMessage()
-                .getBody(GenerateUploadUrlResponse.class);
+                .getHeader(GoogleCloudFunctionsConstants.RESPONSE_OBJECT, GenerateUploadUrlResponse.class);
         assertEquals(expectedResponse, actualResponse);
 
         List<AbstractMessage> actualRequests = mockCloudFunctionsService.getRequests();
@@ -399,7 +415,6 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
         assertEquals(locationName.toString(), actualRequest.getParent());
     }
 
-    @Disabled
     @Test
     public void createFunctionTest() throws Exception {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
@@ -417,6 +432,9 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
                 .setResponse(Any.pack(expectedResponse)).build();
         mockCloudFunctionsService.addResponse(resultOperation);
         Exchange exchange = template.send("direct:createFunction", ExchangePattern.InOut, exc -> {
+            exc.getIn().setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, "com.example.Test");
+            exc.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
+            exc.getIn().setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, "gs://somebucket/file.zip");
         });
         CloudFunction actualResponse = exchange.getMessage().getBody(CloudFunction.class);
         assertEquals(expectedResponse, actualResponse);
