@@ -152,7 +152,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
                     .filter(it -> it.getName().equals(channel))
                     .map(Conversation::getId)
                     .findFirst().orElseGet(() -> {
-                        if (ObjectHelper.isNotEmpty(response.getResponseMetadata().getNextCursor())) {
+                        if (ObjectHelper.isEmpty(response.getResponseMetadata().getNextCursor())) {
                             throw new RuntimeCamelException(String.format("Channel %s not found", channel));
                         }
                         return getChannelId(channel, response.getResponseMetadata().getNextCursor());
