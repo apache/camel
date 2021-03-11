@@ -68,7 +68,7 @@ public class SlackConsumerTest extends CamelTestSupport {
 
     private void sendMessage(String message) throws IOException {
         RequestBody requestBody
-                = RequestBody.create(String.format("{ 'text': '%s'}", message), MediaType.parse("application/json"));
+                = RequestBody.create(MediaType.parse("application/json"), String.format("{ 'text': '%s'}", message));
 
         Request request = new Request.Builder()
                 .url(hook)
