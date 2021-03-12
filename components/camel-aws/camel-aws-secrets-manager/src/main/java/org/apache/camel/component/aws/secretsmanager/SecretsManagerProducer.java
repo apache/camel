@@ -39,7 +39,7 @@ public class SecretsManagerProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecretsManagerProducer.class);
 
-    private transient String ecsProducerToString;
+    private transient String secretsManagerProducerToString;
 
     public SecretsManagerProducer(Endpoint endpoint) {
         super(endpoint);
@@ -71,10 +71,10 @@ public class SecretsManagerProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (ecsProducerToString == null) {
-            ecsProducerToString = "SecretsManagerProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (secretsManagerProducerToString == null) {
+            secretsManagerProducerToString = "SecretsManagerProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
-        return ecsProducerToString;
+        return secretsManagerProducerToString;
     }
 
     @Override

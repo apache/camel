@@ -106,7 +106,7 @@ public class SecretsManagerConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the ECS client
+     * To define a proxy protocol when instantiating the Secrets Manager client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
@@ -117,7 +117,7 @@ public class SecretsManagerConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the ECS client
+     * To define a proxy host when instantiating the Secrets Manager client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -128,7 +128,7 @@ public class SecretsManagerConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the ECS client
+     * To define a proxy port when instantiating the Secrets Manager client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -139,7 +139,7 @@ public class SecretsManagerConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which ECS client needs to work. When using this parameter, the configuration will expect the
+     * The region in which Secrets Manager client needs to work. When using this parameter, the configuration will expect the
      * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
