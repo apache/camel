@@ -143,12 +143,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-aws-xray</artifactId>
+        <artifactId>camel-aws-secrets-manager</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-aws-secrets-manager</artifactId>
+        <artifactId>camel-aws-xray</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

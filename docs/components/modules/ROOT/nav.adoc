@@ -43,6 +43,7 @@
 *** xref:aws2-sns-component.adoc[AWS 2 Simple Notification System (SNS)]
 *** xref:aws2-sqs-component.adoc[AWS 2 Simple Queue Service (SQS)]
 *** xref:aws2-translate-component.adoc[AWS 2 Translate]
+*** xref:aws-secrets-manager-component.adoc[AWS Secrets Manager]
 ** xref:azure-summary.adoc[Azure]
 *** xref:azure-eventhubs-component.adoc[Azure Event Hubs]
 *** xref:azure-storage-blob-component.adoc[Azure Storage Blob Service]

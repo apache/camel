@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
 
 /**
  * A Producer which sends messages to the Amazon Secrets Manager Service SDK v2
- * <a href="http://aws.amazon.com/secrets-manager/">AWS ECS</a>
+ * <a href="http://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a>
  */
 public class SecretsManagerProducer extends DefaultProducer {
 
