@@ -474,7 +474,10 @@ public class KafkaConsumer extends DefaultConsumer {
                 }
                 LOG.debug("Saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey, offset);
                 try {
-                    commitOffset(offsetRepository, partition, offset, true);
+                    // only commit offsets if the component has control
+                    if (endpoint.getConfiguration().getAutoCommitEnable()) {
+                        commitOffset(offsetRepository, partition, offset, true);
+                    }
                 } catch (java.lang.Exception e) {
                     LOG.error("Error saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey,
                             offset);
