@@ -28,15 +28,15 @@ public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/target/filename-consumer?password=admin&recursive=true&sortBy=file:name";
+               + "/out/filename-consumer?password=admin&recursive=true&sortBy=file:name";
     }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        sendFile(getFtpUrl(), "Hello World", "target/filename-consumer-hello.txt");
-        sendFile(getFtpUrl(), "Bye World", "target/filename-consumer-bye.txt");
+        sendFile(getFtpUrl(), "Hello World", "out/filename-consumer-hello.txt");
+        sendFile(getFtpUrl(), "Bye World", "out/filename-consumer-bye.txt");
     }
 
     @Override
@@ -62,9 +62,9 @@ public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
         Thread.sleep(2000);
 
         // and expect name to contain target/filename-consumer-XXX.txt
-        assertDirectoryEquals("target/filename-consumer-bye.txt",
+        assertDirectoryEquals("out/filename-consumer-bye.txt",
                 mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
-        assertDirectoryEquals("target/filename-consumer-hello.txt",
+        assertDirectoryEquals("out/filename-consumer-hello.txt",
                 mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 

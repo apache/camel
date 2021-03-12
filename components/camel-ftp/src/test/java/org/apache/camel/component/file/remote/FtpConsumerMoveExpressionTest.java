@@ -16,18 +16,15 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -39,13 +36,6 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/filelanguage?password=admin&delay=5000";
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        deleteDirectory("target/filelanguage");
     }
 
     @Test
@@ -61,8 +51,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        File file = new File(service.getFtpRootDir() + "/filelanguage/backup/" + now + "/123-report2.bak");
-        assertTrue(file.exists(), "File should have been renamed");
+        assertFileExists(ftpFile("filelanguage/backup/" + now + "/123-report2.bak"));
     }
 
     @Override

@@ -31,11 +31,11 @@ public class SftpChmodTest extends SftpServerTestSupport {
     @Test
     public void testSftpChmod() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&password=admin&chmod=777",
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&chmod=777",
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = new File(service.getFtpRootDir() + "/hello.txt");
+        File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

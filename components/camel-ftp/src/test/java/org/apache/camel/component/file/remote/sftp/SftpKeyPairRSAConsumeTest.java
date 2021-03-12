@@ -82,8 +82,8 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
-                     + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10000&strictHostKeyChecking=yes&disconnect=true")
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
+                     + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
                              .routeId("foo").noAutoStartup()
                              .to("mock:result");
             }

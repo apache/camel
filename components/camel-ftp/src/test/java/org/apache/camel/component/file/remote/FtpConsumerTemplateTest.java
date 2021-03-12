@@ -65,7 +65,7 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
 
         // file should still exists
         Thread.sleep(500);
-        File file = new File(service.getFtpRootDir() + "/template/hello.txt");
+        File file = ftpFile("template/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 
@@ -96,7 +96,7 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
 
         // file should still exists
         Thread.sleep(500);
-        File file = new File(service.getFtpRootDir() + "/template/hello.txt");
+        File file = ftpFile("template/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 
@@ -111,7 +111,7 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(service.getFtpRootDir() + "/template/hello.txt");
+        File file = ftpFile("template/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 

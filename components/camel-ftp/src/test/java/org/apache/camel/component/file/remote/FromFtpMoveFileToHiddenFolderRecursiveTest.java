@@ -43,9 +43,9 @@ public class FromFtpMoveFileToHiddenFolderRecursiveTest extends FtpServerTestSup
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
-        mock.expectedFileExists(service.getFtpRootDir() + "/.done/hello.txt");
-        mock.expectedFileExists(service.getFtpRootDir() + "/bye/.done/bye.txt");
-        mock.expectedFileExists(service.getFtpRootDir() + "/goodday/.done/goodday.txt");
+        mock.expectedFileExists(ftpFile(".done/hello.txt"));
+        mock.expectedFileExists(ftpFile("bye/.done/bye.txt"));
+        mock.expectedFileExists(ftpFile("goodday/.done/goodday.txt"));
 
         mock.assertIsSatisfied();
     }

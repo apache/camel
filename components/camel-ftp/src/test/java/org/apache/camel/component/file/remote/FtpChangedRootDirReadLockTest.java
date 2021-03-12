@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -44,17 +45,16 @@ public class FtpChangedRootDirReadLockTest extends FtpServerTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/out/slowfile.dat");
+        mock.expectedFileExists(testFile("slowfile.dat"));
 
         writeSlowFile();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/out/slowfile.dat"));
-        String[] lines = content.split(LS);
-        assertEquals(20, lines.length, "There should be 20 lines in the file");
+        List<String> lines = Files.readAllLines(testFile("slowfile.dat"));
+        assertEquals(20, lines.size(), "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
-            assertEquals("Line " + i, lines[i]);
+            assertEquals("Line " + i, lines.get(i));
         }
     }
 
@@ -62,7 +62,7 @@ public class FtpChangedRootDirReadLockTest extends FtpServerTestSupport {
         LOG.debug("Writing slow file...");
 
         createDirectory(service.getFtpRootDir() + "/");
-        FileOutputStream fos = new FileOutputStream(service.getFtpRootDir() + "/slowfile.dat", true);
+        FileOutputStream fos = new FileOutputStream(ftpFile("slowfile.dat").toFile(), true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
@@ -79,7 +79,7 @@ public class FtpChangedRootDirReadLockTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl()).to("file:target/out", "mock:result");
+                from(getFtpUrl()).to(fileUri(), "mock:result");
             }
         };
     }

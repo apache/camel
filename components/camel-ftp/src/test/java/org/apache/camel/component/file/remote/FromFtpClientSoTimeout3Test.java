@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPFile;
 import org.junit.jupiter.api.Test;
@@ -33,12 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
 
-    private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/timeout/?soTimeout=5000";
-    }
+    int port = AvailablePortFinder.getNextAvailable();
 
-    private String getPort() {
-        return "21";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + port + "/timeout/?soTimeout=5000";
     }
 
     @Test

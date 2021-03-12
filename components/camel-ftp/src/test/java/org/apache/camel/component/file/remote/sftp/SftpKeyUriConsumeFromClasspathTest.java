@@ -47,7 +47,7 @@ public class SftpKeyUriConsumeFromClasspathTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&knownHostsUri=known_hosts&privateKeyUri=id_rsa&privateKeyPassphrase=secret&delay=10000&disconnect=true")
                              .routeId("foo").noAutoStartup()
                              .to("mock:result");

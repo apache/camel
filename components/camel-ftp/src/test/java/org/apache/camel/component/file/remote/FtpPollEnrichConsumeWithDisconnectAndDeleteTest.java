@@ -37,7 +37,7 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/poll", expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://{{ftp.root.dir}}/poll", expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -60,7 +60,7 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
                                                                                 // to
                                                                                 // be
                                                                                 // deleted
-            File file = new File(service.getFtpRootDir() + "/poll/hello.txt");
+            File file = ftpFile("poll/hello.txt").toFile();
             fileExists = file.exists();
 
             if (fileExists) {

@@ -16,51 +16,40 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory=" + testDirectory("lwd")
+               + "&resumeDownload=true&binary=true";
     }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/lwd");
-        deleteDirectory("target/out");
-
         super.setUp();
 
         // create file on FTP server to download
-        createDirectory(service.getFtpRootDir() + "/myserver");
-        File temp = new File(service.getFtpRootDir() + "/myserver", "hello.txt");
-        temp.createNewFile();
-        FileOutputStream fos = new FileOutputStream(temp);
-        fos.write("Hello\nWorld\nI was here".getBytes());
-        fos.close();
+        Path myserver = ftpFile("myserver");
+        createDirectory(myserver);
+        Files.write(myserver.resolve("hello.txt"), "Hello\nWorld\nI was here".getBytes());
 
         // create in-progress file with partial download
-        createDirectory("target/lwd");
-        temp = new File("target/lwd/hello.txt.inprogress");
-        temp.createNewFile();
-        fos = new FileOutputStream(temp);
-        fos.write("Hello\n".getBytes());
-        fos.close();
+        Path lwd = testDirectory("lwd", true);
+        Files.write(lwd.resolve("hello.txt.inprogress"), "Hello\n".getBytes());
     }
 
     @Test
@@ -77,24 +66,20 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
         assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
-        File out = new File("target/out/hello.txt");
-        assertTrue(out.exists(), "file should exists");
-        assertEquals("Hello\nWorld\nI was here", IOConverter.toString(out, null));
+        assertFileExists(testFile("out/hello.txt"), "Hello\nWorld\nI was here");
 
         // now the lwd file should be deleted
-        File local = new File("target/lwd/hello.txt");
-        assertFalse(local.exists(), "Local work file should have been deleted");
+        assertFileNotExists(testFile("lwd/hello.txt"));
 
         // and so the in progress
-        File temp = new File("target/lwd/hello.txt.inprogress");
-        assertFalse(temp.exists(), "Local work file should have been deleted");
+        assertFileNotExists(testFile("lwd/hello.txt.inprogress"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", "file://target/out");
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", fileUri("out"));
             }
         };
     }

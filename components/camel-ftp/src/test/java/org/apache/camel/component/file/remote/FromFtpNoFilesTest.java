@@ -35,7 +35,7 @@ public class FromFtpNoFilesTest extends FtpServerTestSupport {
     @Test
     public void testPoolIn3SecondsButNoFiles() throws Exception {
         deleteDirectory(service.getFtpRootDir());
-        createDirectory(service.getFtpRootDir() + "slowfile");
+        createDirectory(service.getFtpRootDir().resolve("slowfile"));
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 

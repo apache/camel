@@ -34,11 +34,11 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
     public void testFileToFtp() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        template.sendBodyAndHeader("file:target/in", "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUri("in"), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
 
         assertTrue(notify.matchesWaitTime());
 
-        File file = new File(service.getFtpRootDir() + "/out/sub/hello.txt");
+        File file = ftpFile("out/sub/hello.txt").toFile();
         assertTrue(file.exists(), "File should exists " + file);
     }
 
@@ -47,7 +47,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/in?recursive=true")
+                from(fileUri("in?recursive=true"))
                         .to("ftp://admin:admin@localhost:{{ftp.server.port}}"
                             + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
             }

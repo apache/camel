@@ -43,9 +43,9 @@ public class FromFtpMoveFileAbsoluteFolderRecursiveTest extends FtpServerTestSup
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
-        mock.expectedFileExists(service.getFtpRootDir() + "/.done/hello.txt.old");
-        mock.expectedFileExists(service.getFtpRootDir() + "/.done/bye/bye.txt.old");
-        mock.expectedFileExists(service.getFtpRootDir() + "/.done/goodday/goodday.txt.old");
+        mock.expectedFileExists(ftpFile(".done/hello.txt.old"));
+        mock.expectedFileExists(ftpFile(".done/bye/bye.txt.old"));
+        mock.expectedFileExists(ftpFile(".done/goodday/goodday.txt.old"));
 
         mock.assertIsSatisfied();
     }

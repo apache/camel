@@ -66,7 +66,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
 
         prepareFtpServer();
         // Check that the payload exists in upload and is in iso charset.ß
-        File file = new File(service.getFtpRootDir() + "/upload/iso.txt");
+        File file = ftpFile("upload/iso.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
 
         // Lets also test byte wise

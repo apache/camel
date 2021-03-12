@@ -31,12 +31,12 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpTempFile() throws Exception {
-        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                    + "?username=admin&password=admin&tempFileName=temp-${file:name}",
                 "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(service.getFtpRootDir() + "/hello.txt");
+        File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

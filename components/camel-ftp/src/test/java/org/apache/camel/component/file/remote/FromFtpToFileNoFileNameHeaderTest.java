@@ -46,7 +46,7 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello World from FTPServer");
-        mock.expectedFileExists("target/ftptest/hello.txt", "Hello World from FTPServer");
+        mock.expectedFileExists(testFile("hello.txt"), "Hello World from FTPServer");
 
         mock.assertIsSatisfied();
     }
@@ -69,7 +69,7 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
+                String fileUrl = fileUri("?fileExist=Override&noop=true");
                 // we do not set any filename in the header property so the
                 // filename should be the one
                 // from the FTP server we downloaded

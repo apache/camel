@@ -25,7 +25,7 @@ public class SftpSimpleConsumeRecursiveNotStepwiseTest extends SftpSimpleConsume
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true&stepwise=false")
                              .routeId("foo")
                              .noAutoStartup().to("log:result", "mock:result");

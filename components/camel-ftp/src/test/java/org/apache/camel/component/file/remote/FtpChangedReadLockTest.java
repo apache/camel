@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -44,13 +43,13 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/slowfile.dat");
+        mock.expectedFileExists(testFile("out/slowfile.dat"));
 
         writeSlowFile();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/changed/out/slowfile.dat"));
+        String content = context.getTypeConverter().convertTo(String.class, testFile("out/slowfile.dat").toFile());
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -61,8 +60,8 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        createDirectory(service.getFtpRootDir() + "/changed");
-        FileOutputStream fos = new FileOutputStream(service.getFtpRootDir() + "/changed/slowfile.dat", true);
+        createDirectory(ftpFile("changed"));
+        FileOutputStream fos = new FileOutputStream(ftpFile("changed/slowfile.dat").toFile(), true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
@@ -79,7 +78,7 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl()).to("file:target/changed/out", "mock:result");
+                from(getFtpUrl()).to(fileUri("out"), "mock:result");
             }
         };
     }

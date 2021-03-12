@@ -16,17 +16,14 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -38,7 +35,7 @@ public class SftpKeyConsumeTest extends SftpServerTestSupport {
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir().toString(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -51,11 +48,7 @@ public class SftpKeyConsumeTest extends SftpServerTestSupport {
     }
 
     private byte[] getBytesFromFile(String filename) throws IOException {
-        InputStream input;
-        input = new FileInputStream(new File(filename));
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        IOHelper.copyAndCloseInput(input, output);
-        return output.toByteArray();
+        return Files.readAllBytes(Paths.get(filename));
     }
 
     @BindToRegistry("privateKey")
@@ -67,7 +60,7 @@ public class SftpKeyConsumeTest extends SftpServerTestSupport {
     @BindToRegistry("knownHosts")
     public byte[] addKnownHosts() throws Exception {
 
-        return getBytesFromFile("./src/test/resources/id_rsa");
+        return getBytesFromFile("./src/test/resources/known_hosts");
     }
 
     @Override
@@ -75,8 +68,8 @@ public class SftpKeyConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
-                     + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&delay=10000&strictHostKeyChecking=yes&disconnect=true")
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
+                     + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
                              .routeId("foo").noAutoStartup().to("mock:result");
             }
         };

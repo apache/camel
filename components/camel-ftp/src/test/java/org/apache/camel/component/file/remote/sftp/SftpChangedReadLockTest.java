@@ -16,19 +16,16 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
-import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
@@ -37,22 +34,15 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SftpChangedReadLockTest.class);
 
     protected String getFtpUrl() {
-        return "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
-               + "/changed?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/changed");
-        super.setUp();
+        return "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/changed" +
+               "?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
     @Test
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/slowfile.dat");
+        mock.expectedFileExists(testFile("out/slowfile.dat"));
 
         context.getRouteController().startRoute("foo");
 
@@ -60,7 +50,7 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/changed/out/slowfile.dat"));
+        String content = context.getTypeConverter().convertTo(String.class, testFile("out/slowfile.dat").toFile());
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -71,14 +61,13 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        createDirectory(service.getFtpRootDir() + "/changed");
-        FileOutputStream fos = new FileOutputStream(service.getFtpRootDir() + "/changed/slowfile.dat", true);
+        createDirectory(ftpFile("changed"));
+        FileOutputStream fos = new FileOutputStream(ftpFile("changed/slowfile.dat").toFile(), true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
             Thread.sleep(200);
         }
-
         fos.flush();
         fos.close();
         LOG.debug("Writing slow file DONE...");
@@ -89,7 +78,7 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to("file:target/changed/out", "mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to(fileUri("out"), "mock:result");
             }
         };
     }

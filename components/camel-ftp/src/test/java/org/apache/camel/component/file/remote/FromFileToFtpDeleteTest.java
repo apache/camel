@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
@@ -40,25 +39,23 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/delete", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("delete"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesWaitTime());
 
         // file should be deleted
-        File file = new File("target/delete/hello.txt");
-        assertFalse(file.exists(), "File should be deleted");
+        assertFileNotExists(testFile("delete/hello.txt"));
 
         // file should exists on ftp server
-        file = new File(service.getFtpRootDir() + "/hello.txt");
-        assertTrue(file.exists(), "File should exist on ftp server");
+        assertFileExists(ftpFile("hello.txt"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:target/delete?delete=true").to(getFtpUrl()).to("mock:result");
+                from(fileUri("delete?delete=true")).to(getFtpUrl()).to("mock:result");
             }
         };
     }

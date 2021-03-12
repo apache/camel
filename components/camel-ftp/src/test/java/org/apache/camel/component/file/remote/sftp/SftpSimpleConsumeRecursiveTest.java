@@ -29,9 +29,9 @@ public class SftpSimpleConsumeRecursiveTest extends SftpServerTestSupport {
     public void testSftpSimpleConsumeRecursive() throws Exception {
         // create files using regular file
         template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "A", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/foo", "B", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/bar", "C", Exchange.FILE_NAME, "c.txt");
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/bar/cake", "D", Exchange.FILE_NAME, "d.txt");
+        template.sendBodyAndHeader("file://{{ftp.root.dir}}/foo", "B", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file://{{ftp.root.dir}}/bar", "C", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader("file://{{ftp.root.dir}}/bar/cake", "D", Exchange.FILE_NAME, "d.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(4);
@@ -46,7 +46,7 @@ public class SftpSimpleConsumeRecursiveTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true").routeId("foo")
                              .noAutoStartup().to("log:result", "mock:result");
             }

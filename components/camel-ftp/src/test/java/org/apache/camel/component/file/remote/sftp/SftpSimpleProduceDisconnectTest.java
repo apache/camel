@@ -31,10 +31,10 @@ public class SftpSimpleProduceDisconnectTest extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleProduce() throws Exception {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&password=admin",
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin",
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(service.getFtpRootDir() + "/hello.txt");
+        File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
@@ -43,10 +43,10 @@ public class SftpSimpleProduceDisconnectTest extends SftpServerTestSupport {
         service.setUpServer();
 
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&password=admin",
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin",
                 "Hello World", Exchange.FILE_NAME, "hello1.txt");
 
-        file = new File(service.getFtpRootDir() + "/hello1.txt");
+        file = ftpFile("hello1.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

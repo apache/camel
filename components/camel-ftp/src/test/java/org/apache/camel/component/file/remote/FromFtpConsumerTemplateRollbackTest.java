@@ -74,7 +74,7 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
+        File file = ftpFile("deletefile/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 

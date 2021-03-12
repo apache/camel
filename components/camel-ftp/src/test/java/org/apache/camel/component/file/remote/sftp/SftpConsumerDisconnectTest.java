@@ -63,7 +63,7 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
     @Test
     public void testConsumeMove() throws Exception {
         // moved file after its processed
-        String movedFile = service.getFtpRootDir() + "/.camel/" + SAMPLE_FILE_NAME_2;
+        String movedFile = ftpFile(".camel/") + SAMPLE_FILE_NAME_2;
 
         // prepare sample file to be consumed by SFTP consumer
         createSampleFile(SAMPLE_FILE_NAME_2);
@@ -86,7 +86,7 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delete=true")
                              .routeId("foo").noAutoStartup().process(new Processor() {
                                  @Override
@@ -95,7 +95,7 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
                                      // the SFTP server
                                  }
                              }).to("mock:result");
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
                              .process(new Processor() {
                                  @Override

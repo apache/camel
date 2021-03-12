@@ -34,7 +34,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
     private MyStrategy myStrategy = new MyStrategy();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+        return "ftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                + "?password=admin&processStrategy=#myStrategy";
     }
 

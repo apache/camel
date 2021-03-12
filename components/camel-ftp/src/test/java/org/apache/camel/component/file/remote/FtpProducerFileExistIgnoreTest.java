@@ -22,8 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
 public class FtpProducerFileExistIgnoreTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
@@ -34,7 +32,6 @@ public class FtpProducerFileExistIgnoreTest extends FtpServerTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/exist");
 
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
@@ -43,7 +40,7 @@ public class FtpProducerFileExistIgnoreTest extends FtpServerTestSupport {
     public void testIgnore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(service.getFtpRootDir() + "/exist/hello.txt", "Hello World");
+        mock.expectedFileExists(ftpFile("exist/hello.txt"), "Hello World");
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 

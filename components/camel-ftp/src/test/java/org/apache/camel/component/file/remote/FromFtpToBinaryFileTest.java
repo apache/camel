@@ -57,7 +57,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         assertTrue(bytes.length > 10000, "Logo size wrong");
 
         // assert the file
-        File file = new File("target/ftptest/deleteme.jpg");
+        File file = testFile("deleteme.jpg").toFile();
         assertTrue(file.exists(), "The binary file should exists");
         assertTrue(file.length() > 10000, "Logo size wrong");
     }
@@ -80,7 +80,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?noop=true&fileExist=Override";
+                String fileUrl = fileUri("?noop=true&fileExist=Override");
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg")).to(fileUrl, "mock:result");
             }
         };

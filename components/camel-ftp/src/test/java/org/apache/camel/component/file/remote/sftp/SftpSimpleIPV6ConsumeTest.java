@@ -49,7 +49,7 @@ public class SftpSimpleIPV6ConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://[::1]:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://[::1]:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true").routeId("foo").noAutoStartup()
                              .to("mock:result");
             }
