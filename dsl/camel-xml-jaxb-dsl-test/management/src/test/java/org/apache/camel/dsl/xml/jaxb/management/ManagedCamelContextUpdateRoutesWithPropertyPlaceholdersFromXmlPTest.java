@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest extends ManagementTestSupport {
@@ -46,11 +47,6 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
 
     @Test
     public void testUpdate() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "Hello World");
@@ -59,8 +55,8 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         MBeanServer mbeanServer = getMBeanServer();
 
         // there should be 1 routes to start with
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
+        Set<ObjectName> set = mbeanServer.queryNames(getCamelObjectName(TYPE_ROUTE, "*"), null);
+        assertEquals(1, set.size(), set.toString());
 
         // update existing route, and add a 2nd
         String xml = "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
@@ -75,12 +71,12 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
                      + "</route>"
                      + "</routes>";
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
         // there should be 2 routes now
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(2, set.size());
+        set = mbeanServer.queryNames(getCamelObjectName(TYPE_ROUTE, "*"), null);
+        assertEquals(2, set.size(), set.toString());
 
         // test updated route
         getMockEndpoint("mock:changed").expectedMessageCount(1);
@@ -95,11 +91,6 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
 
     @Test
     public void testUpdateEscaped() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "Hello World");
@@ -108,8 +99,8 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         MBeanServer mbeanServer = getMBeanServer();
 
         // there should be 1 routes to start with
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
+        Set<ObjectName> set = mbeanServer.queryNames(getCamelObjectName(TYPE_ROUTE, "*"), null);
+        assertEquals(1, set.size(), set.toString());
 
         // update existing route, and add a 2nd
         String xml = "<routes id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
@@ -124,13 +115,13 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
                      + "</route>"
                      + "</routes>";
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[] { xml, true },
                 new String[] { "java.lang.String", "boolean" });
 
         // there should be 2 routes now
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(2, set.size());
+        set = mbeanServer.queryNames(getCamelObjectName(TYPE_ROUTE, "*"), null);
+        assertEquals(2, set.size(), set.toString());
 
         // test updated route
         getMockEndpoint("mock:changed").expectedMessageCount(1);

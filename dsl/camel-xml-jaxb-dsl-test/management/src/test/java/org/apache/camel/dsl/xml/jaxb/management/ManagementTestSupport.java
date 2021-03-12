@@ -22,10 +22,23 @@ import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.apache.camel.ContextTestSupport;
+
+import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_NAME;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_TYPE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 
 /**
  * Base class for JMX tests.
@@ -52,5 +65,32 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
             MBeanServerConnection server, ObjectName name, String operationName, Object[] params, String[] signature)
             throws InstanceNotFoundException, MBeanException, ReflectionException, IOException {
         return (T) server.invoke(name, operationName, params, signature);
+    }
+
+    public ObjectName getContextObjectName() throws MalformedObjectNameException {
+        return getCamelObjectName(TYPE_CONTEXT, context.getName());
+    }
+
+    public ObjectName getCamelObjectName(String type, String name) throws MalformedObjectNameException {
+        String quote;
+        switch (type) {
+            case TYPE_CONTEXT:
+            case TYPE_COMPONENT:
+            case TYPE_ENDPOINT:
+            case TYPE_PROCESSOR:
+            case TYPE_ROUTE:
+            case TYPE_THREAD_POOL:
+            case TYPE_STEP:
+                quote = "\"";
+                break;
+            default:
+                quote = "";
+                break;
+        }
+        String on = DEFAULT_DOMAIN + ":"
+                    + KEY_CONTEXT + "=" + context.getManagementName() + ","
+                    + KEY_TYPE + "=" + type + ","
+                    + KEY_NAME + "=" + quote + name + quote;
+        return ObjectName.getInstance(on);
     }
 }

@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -32,11 +33,6 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
     @Test
     public void testUpdateRouteFromXml() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -59,7 +55,7 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
         mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
-        assertEquals(1, context.getRoutes().size());
+        assertEquals(1, context.getRoutes().size(), context.getRoutes().toString());
 
         getMockEndpoint("mock:changed").expectedMessageCount(1);
 
@@ -70,11 +66,6 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
     @Test
     public void testUpdateRouteFromXmlWithoutRouteId() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -97,7 +88,7 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
         mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
 
-        assertEquals(1, context.getRoutes().size());
+        assertEquals(1, context.getRoutes().size(), context.getRoutes().toString());
 
         getMockEndpoint("mock:changed").expectedMessageCount(1);
 
@@ -108,11 +99,6 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
     @Test
     public void testUpdateRouteFromXmlMismatchRouteId() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -143,9 +129,9 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         }
     }
 
-    static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
+    ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
+        Set<ObjectName> set = mbeanServer.queryNames(getCamelObjectName(TYPE_ROUTE, "*"), null);
+        assertEquals(1, set.size(), set.toString());
 
         return set.iterator().next();
     }

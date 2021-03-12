@@ -28,13 +28,14 @@
         <version>3.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-xml-jaxb-dsl-test-managemenr</artifactId>
+    <artifactId>camel-xml-jaxb-dsl-test-management</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: XML DSL Jaxb :: Test :: Management</name>
     <description>Camel XML DSL Tests with Jaxb and Management</description>
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 
     <dependencies>
