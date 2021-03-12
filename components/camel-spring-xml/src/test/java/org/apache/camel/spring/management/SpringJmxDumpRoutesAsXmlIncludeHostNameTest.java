@@ -48,7 +48,9 @@ public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSuppo
     public void testJmxDumpRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName
+                .getInstance("org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\""
+                             + context.getName() + "\"");
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         assertNotNull(xml);
         log.info(xml);

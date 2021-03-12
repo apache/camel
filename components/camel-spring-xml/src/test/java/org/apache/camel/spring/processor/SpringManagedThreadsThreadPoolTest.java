@@ -39,7 +39,8 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"myPool\"");
+        ObjectName on = ObjectName
+                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=threadpools,name=\"myPool\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(2, corePoolSize.intValue());

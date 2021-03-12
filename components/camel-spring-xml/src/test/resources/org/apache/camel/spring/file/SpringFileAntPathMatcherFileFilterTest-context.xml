@@ -29,7 +29,7 @@
         <template id="camelTemplate"/>
 
         <!-- use myFilter as filter to allow setting ANT paths for which files to scan for -->
-        <endpoint id="myFileEndpoint" uri="file://target/antpathmatcher?initialDelay=0&amp;delay=10&amp;recursive=true&amp;filter=#myAntFilter"/>
+        <endpoint id="myFileEndpoint" uri="file://target/data/SpringFileAntPathMatcherFileFilterTest?initialDelay=0&amp;delay=10&amp;recursive=true&amp;filter=#myAntFilter"/>
 
         <route>
             <from uri="ref:myFileEndpoint"/>

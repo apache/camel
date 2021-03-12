@@ -16,9 +16,12 @@
  */
 package org.apache.camel.spring;
 
+import java.nio.file.Path;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.TestSupport;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.support.EventNotifierSupport;
@@ -50,14 +53,15 @@ public class StartAndStopEventNotifier extends EventNotifierSupport implements C
         // Note: there is also a CamelContextStartingEvent which is send first
         // and then Camel is starting. And when all that is done this event
         // (CamelContextStartedEvent) is send
+        Path directory = TestSupport.testDirectory(SendMessageOnRouteStartAndStopTest.class, false);
         if (event.getType() == Type.CamelContextStarted) {
             LOG.info("Sending a message on startup...");
-            template.sendBody("file:target/startandstop/start.txt", "Starting");
+            template.sendBody("file:" + directory + "?fileName=start.txt", "Starting");
         } else if (event.getType() == Type.CamelContextStopping) {
             // Note: there is also a CamelContextStoppedEvent which is send
             // afterwards, when Camel has been fully stopped.
             LOG.info("Sending a message on stopping...");
-            template.sendBody("file:target/startandstop/stop.txt", "Stopping");
+            template.sendBody("file:" + directory + "?fileName=stop.txt", "Stopping");
         }
     }
 

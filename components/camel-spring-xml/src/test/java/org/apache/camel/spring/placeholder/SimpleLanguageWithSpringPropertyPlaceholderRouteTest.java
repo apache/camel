@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -37,19 +36,12 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
     @Produce("direct:startSimple")
     protected ProducerTemplate template;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/outBox");
-        deleteDirectory("target/outBoxSimple");
-    }
-
     @Test
     @DirtiesContext
     public void replaceSimpleExpression() throws Exception {
         template.sendBody("Test");
 
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertDirectoryExists("target/outBoxSimple/"));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertDirectoryExists(testDirectory("outBoxSimple")));
     }
 
     @Disabled(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
@@ -58,7 +50,8 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
     public void replaceExpression() throws Exception {
         template.sendBody("direct:start", "Test");
 
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertFileExists("target/outBox/" + getTestFileName()));
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFileExists(testDirectory("outBox").resolve(getTestFileName())));
     }
 
     private String getTestFileName() {

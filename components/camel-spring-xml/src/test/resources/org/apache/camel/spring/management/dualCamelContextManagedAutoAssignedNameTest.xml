@@ -26,7 +26,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         
-        <endpoint id="fromFile" uri="file://target/route1?initialDelay=0&amp;delay=10"/>
+        <endpoint id="fromFile" uri="file://target/data/DualCamelContextManagedAutoAssignedNameTest/route1?initialDelay=0&amp;delay=10"/>
         <endpoint id="mock1" uri="mock:mock1"/>
 
         <route id="route1">
@@ -38,7 +38,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         
-        <endpoint id="fromFile2" uri="file://target/route2?initialDelay=0&amp;delay=10"/>
+        <endpoint id="fromFile2" uri="file://target/data/DualCamelContextManagedAutoAssignedNameTest/route2?initialDelay=0&amp;delay=10"/>
         <endpoint id="mock2" uri="mock:mock2"/>
 
         <route id="route2">

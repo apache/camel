@@ -35,7 +35,7 @@
 
         <route>
             <from uri="direct:first"/>
-            <to uri="file://target/foo"/>
+            <to uri="file://target/data/SpringInterceptSendToEndpointSkipTest"/>
             <to uri="mock:result"/>
         </route>
 

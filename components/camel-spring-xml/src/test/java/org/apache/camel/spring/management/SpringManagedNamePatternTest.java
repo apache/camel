@@ -24,11 +24,6 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringManagedNamePatternTest extends ManagedNamePatternTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedNamePatternTest.xml");
     }

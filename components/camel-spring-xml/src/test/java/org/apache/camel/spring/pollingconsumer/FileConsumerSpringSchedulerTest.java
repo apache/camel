@@ -18,7 +18,6 @@ package org.apache.camel.spring.pollingconsumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,18 +30,11 @@ public class FileConsumerSpringSchedulerTest extends SpringTestSupport {
                 "org/apache/camel/spring/pollingconsumer/FileConsumerSpringSchedulerTest.xml");
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/file/spring");
-        super.setUp();
-    }
-
     @Test
     public void testSpringScheduler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/file/spring", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         context.getRouteController().startRoute("foo");
 

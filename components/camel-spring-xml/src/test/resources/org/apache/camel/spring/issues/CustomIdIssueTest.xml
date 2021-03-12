@@ -36,11 +36,11 @@
         <when customId="true" id="UK">
           <xpath>/person/city = 'London'</xpath>
           <log message="UK message" customId="true" id="ukLog"/>
-          <to uri="file:target/messages/uk" customId="true" id="ukOutput"/>
+          <to uri="file:target/data/CustomIdIssueTest/uk" customId="true" id="ukOutput"/>
         </when>
         <otherwise>
           <log message="Other message"/>
-          <to uri="file:target/messages/others"/>
+          <to uri="file:target/data/CustomIdIssueTest/others"/>
         </otherwise>
       </choice>
     </route>

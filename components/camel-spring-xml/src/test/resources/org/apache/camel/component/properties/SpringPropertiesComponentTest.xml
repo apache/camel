@@ -31,7 +31,7 @@
             classpath:org/apache/camel/component/properties/cheese.properties"/>
     </bean>
 
-    <camelContext autoStartup="{{autoStartup}}" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext autoStartup="{{autoStartup}}" xmlns="http://camel.apache.org/schema/spring" id="myCamelContext">
 
         <route>
             <from uri="direct:start"/>

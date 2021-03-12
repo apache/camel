@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ShutdownCompleteAllTasksTest;
 
@@ -25,6 +28,9 @@ public class SpringShutdownCompleteAllTasksTest extends ShutdownCompleteAllTasks
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/ShutdownCompleteAllTasksTest.xml");
+        Map<String, Object> beans = new HashMap<>();
+        beans.put("myProcessor", new ShutdownCompleteAllTasksTest.MyProcessor());
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/ShutdownCompleteAllTasksTest.xml", beans);
     }
 }

@@ -28,7 +28,7 @@
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="foo" autoStartup="false">
-      <from uri="file:target/file/spring?scheduler=spring&amp;scheduler.cron=0/2+*+*+*+*+?"/>
+      <from uri="file:target/data/FileConsumerSpringSchedulerTest?scheduler=spring&amp;scheduler.cron=0/2+*+*+*+*+?"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>

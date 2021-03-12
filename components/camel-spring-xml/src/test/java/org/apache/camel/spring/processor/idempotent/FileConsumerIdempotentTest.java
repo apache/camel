@@ -43,8 +43,6 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/fileidempotent");
-
         super.setUp();
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
@@ -52,7 +50,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     @Test
     public void testIdempotent() throws Exception {
         // send a file
-        template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
 
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -67,14 +65,14 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         mock.setResultMinimumWaitTime(50);
 
         // move file back
-        File file = new File("target/fileidempotent/done/report.txt");
-        File renamed = new File("target/fileidempotent/report.txt");
+        File file = testFile("done/report.txt").toFile();
+        File renamed = testFile("report.txt").toFile();
         file.renameTo(renamed);
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         assertMockEndpointsSatisfied();
 
-        String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
+        String name = FileUtil.normalizePath(testFile("report.txt").toAbsolutePath().toString());
         assertTrue(repo.contains(name), "Should contain file: " + name);
     }
 

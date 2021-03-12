@@ -28,4 +28,8 @@ public class SpringFileConsumerPreMoveIssueTest extends FileConsumerPreMoveIssue
         return createSpringCamelContext(this, "org/apache/camel/spring/file/SpringFileConsumerPreMoveIssueTest.xml");
     }
 
+    static class MyPreMoveCheckerProcessor extends FileConsumerPreMoveIssueTest.MyPreMoveCheckerProcessor {
+
+    }
+
 }

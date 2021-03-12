@@ -18,7 +18,6 @@ package org.apache.camel.spring.file;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,20 +29,13 @@ public class SpringFileLanguageCBRTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/file/SpringFileLanguageCBRTest.xml");
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/cbr");
-        super.setUp();
-    }
-
     @Test
     public void testTxt() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(1);
         getMockEndpoint("mock:dat").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file://target/cbr", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -54,7 +46,7 @@ public class SpringFileLanguageCBRTest extends SpringTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file://target/cbr", "Bye World", Exchange.FILE_NAME, "bye.dat");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.dat");
 
         assertMockEndpointsSatisfied();
     }
@@ -65,7 +57,7 @@ public class SpringFileLanguageCBRTest extends SpringTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/cbr", "Hi World", Exchange.FILE_NAME, "hi.foo");
+        template.sendBodyAndHeader(fileUri(), "Hi World", Exchange.FILE_NAME, "hi.foo");
 
         assertMockEndpointsSatisfied();
     }

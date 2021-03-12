@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.file;
 
-import java.io.File;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,7 +23,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,7 +43,7 @@ public class SpringFileRouteTest extends SpringRunWithTestSupport {
     public void testMocksAreValid() throws Exception {
         // lets check that our injected endpoint is valid
         FileEndpoint fileEndpoint = assertIsInstanceOf(FileEndpoint.class, inputFile);
-        assertEquals(new File("target/test-default-inbox"), fileEndpoint.getFile(), "File");
+        assertEquals(testDirectory().toFile(), fileEndpoint.getFile(), "File");
 
         result.expectedBodiesReceived(expectedBody);
         result.setResultWaitTime(5000);
@@ -56,10 +53,4 @@ public class SpringFileRouteTest extends SpringRunWithTestSupport {
         result.assertIsSatisfied();
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/test-default-inbox");
-        super.setUp();
-    }
 }
