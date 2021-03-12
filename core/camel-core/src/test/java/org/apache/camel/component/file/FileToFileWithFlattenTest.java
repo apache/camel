@@ -58,19 +58,13 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
 
         // flatten files
         mock.expectedFileExists(testFile("flatten-out/bye.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-out/hello.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-out/goodday.txt"));
-        ;
 
         // default move files
         mock.expectedFileExists(testFile("flatten-in/.camel/bye.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-in/sub/.camel/hello.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-in/sub/sub2/.camel/goodday.txt"));
-        ;
 
         assertMockEndpointsSatisfied();
     }
@@ -91,19 +85,13 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
 
         // flatten files
         mock.expectedFileExists(testFile("flatten-out/bye.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-out/hello.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-out/goodday.txt"));
-        ;
 
         // default move files
         mock.expectedFileExists(testFile("flatten-in/.camel/bye.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-in/sub/.camel/hello.txt"));
-        ;
         mock.expectedFileExists(testFile("flatten-in/sub/sub2/.camel/goodday.txt"));
-        ;
 
         assertMockEndpointsSatisfied();
     }

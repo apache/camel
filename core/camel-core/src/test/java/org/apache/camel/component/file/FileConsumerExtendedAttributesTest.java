@@ -36,31 +36,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
     private static final String FILE = "attributes.txt";
-    private final String ROOT = testDirectory().toString();
+    private final String root = testDirectory().toString();
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        Files.createFile(Paths.get(ROOT, "basic", FILE));
-        Files.createFile(Paths.get(ROOT, "basic-as-default", FILE));
-        Files.createFile(Paths.get(ROOT, "basic-as-default-with-filter", FILE));
-        Files.createFile(Paths.get(ROOT, "posix", FILE));
+        Files.createFile(Paths.get(root, "basic", FILE));
+        Files.createFile(Paths.get(root, "basic-as-default", FILE));
+        Files.createFile(Paths.get(root, "basic-as-default-with-filter", FILE));
+        Files.createFile(Paths.get(root, "posix", FILE));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                fromF("file://%s/basic?initialDelay=0&delay=10&extendedAttributes=basic:*", ROOT).convertBodyTo(String.class)
+                fromF("file://%s/basic?initialDelay=0&delay=10&extendedAttributes=basic:*", root).convertBodyTo(String.class)
                         .to("mock:basic");
-                fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", ROOT)
+                fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", root)
                         .convertBodyTo(String.class).to("mock:basic-as-default");
                 fromF("file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime",
-                        ROOT).convertBodyTo(String.class)
+                        root).convertBodyTo(String.class)
                                 .to("mock:basic-as-default-with-filter");
-                fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", ROOT).convertBodyTo(String.class)
+                fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", root).convertBodyTo(String.class)
                         .to("mock:posix");
             }
         };

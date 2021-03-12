@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
     // use utf-8 as original payload with 00e6 which is a danish ae letter
-    private byte[] utf = ("ABC\u00e6D\uD867\uDE3DE\uD83C\uDFF3").getBytes(StandardCharsets.UTF_8);
+    private byte[] utf = "ABC\u00e6D\uD867\uDE3DE\uD83C\uDFF3".getBytes(StandardCharsets.UTF_8);
 
     @Test
     public void testFileProducerCharsetUTFOptimized() throws Exception {
