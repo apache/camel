@@ -17,10 +17,7 @@
 package org.apache.camel.component.paho;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -33,14 +30,6 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
     BrokerService broker;
 
     int mqttPort = AvailablePortFinder.getNextAvailable();
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        // this test must use prototype scope as we use pooling consumer
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
-        return context;
-    }
 
     @Override
     protected boolean useJmx() {

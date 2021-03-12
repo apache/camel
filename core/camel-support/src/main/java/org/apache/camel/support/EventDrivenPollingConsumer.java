@@ -30,6 +30,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumerPollingStrategy;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
@@ -174,7 +175,11 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (isCopy()) {
+        // we must make a copy as the exchange put on queue is consumed by another part
+        // and it would not reset and return the pooled exchange to the pool
+        boolean pooled = exchange instanceof PooledExchange;
+
+        if (isCopy() || pooled) {
             // if we copy then we handover completion
             exchange = prepareCopy(exchange, true);
         }

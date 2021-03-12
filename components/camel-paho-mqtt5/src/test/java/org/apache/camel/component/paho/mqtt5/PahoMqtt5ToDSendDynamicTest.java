@@ -16,23 +16,12 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PahoMqtt5ToDSendDynamicTest extends PahoMqtt5TestSupport {
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        // this test must use prototype scope as we use pooling consumer
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
-        return context;
-    }
 
     @Test
     public void testToD() throws Exception {
