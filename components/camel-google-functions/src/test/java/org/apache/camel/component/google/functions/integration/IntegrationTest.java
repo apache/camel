@@ -92,8 +92,7 @@ public class IntegrationTest extends CamelTestSupport {
                             functionCreationSourceCode);
                 }).to("google-functions://" + randomFunctionName + "?serviceAccountKey=" + serviceAccountKeyFile
                       + "&project=" + project + "&location=" + location + "&operation=createFunction")
-                        .process(exchange -> {
-                        }).log("body:${body}").to("mock:createFunction");
+                        .log("body:${body}").to("mock:createFunction");
 
                 // delete function
                 from("timer:timer1?repeatCount=1")
