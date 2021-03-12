@@ -185,7 +185,7 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the ECS client.
+         * To define a proxy host when instantiating the Secrets Manager client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -199,7 +199,7 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the ECS client.
+         * To define a proxy port when instantiating the Secrets Manager client.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -213,7 +213,7 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the ECS client.
+         * To define a proxy port when instantiating the Secrets Manager client.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -228,7 +228,8 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the ECS client.
+         * To define a proxy protocol when instantiating the Secrets Manager
+         * client.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
@@ -245,7 +246,8 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the ECS client.
+         * To define a proxy protocol when instantiating the Secrets Manager
+         * client.
          * 
          * The option will be converted to a
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
@@ -261,9 +263,9 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The region in which ECS client needs to work. When using this
-         * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1) You'll need to use the name
+         * The region in which Secrets Manager client needs to work. When using
+         * this parameter, the configuration will expect the lowercase name of
+         * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
