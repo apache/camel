@@ -1,7 +1,7 @@
 [[test-junit5-other]]
 = Test JUnit5 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-test-junit5/src/main/docs/test-junit5.adoc
+:page-source: components/camel-test/camel-test-junit5/src/main/docs/test-junit5.adoc
 :docTitle: Test JUnit5
 :artifactId: camel-test-junit5
 :description: Camel unit testing with JUnit 5

@@ -338,7 +338,7 @@ instead.
 [source,java]
 .*`isMockEndpoints` using camel-test kit*
 ----
-include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
 ----
 
 
@@ -401,7 +401,7 @@ The same example using the Test Kit
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
 ----
-include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
 ----
 
 == Limiting the number of messages to keep

@@ -1,7 +1,7 @@
 [[testcontainers-other]]
 = Testcontainers Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-testcontainers/src/main/docs/testcontainers.adoc
+:page-source: components/camel-test/camel-testcontainers/src/main/docs/testcontainers.adoc
 :docTitle: Testcontainers
 :artifactId: camel-testcontainers
 :description: Camel support for testcontainers
