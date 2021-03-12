@@ -306,6 +306,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
+     * AWS Secrets Manager (camel-aws-secrets-manager)
+     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsSecretsManagerComponentBuilderFactory.AwsSecretsManagerComponentBuilder awsSecretsManager() {
+        return org.apache.camel.builder.component.dsl.AwsSecretsManagerComponentBuilderFactory.awsSecretsManager();
+    }
+    /**
      * AWS 2 Athena (camel-aws2-athena)
      * Access AWS Athena service using AWS SDK version 2.x.
      * 

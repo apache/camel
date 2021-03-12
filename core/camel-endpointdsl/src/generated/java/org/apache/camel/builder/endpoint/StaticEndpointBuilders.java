@@ -1832,6 +1832,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Secrets Manager (camel-aws-secrets-manager)
+     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
+     * 
+     * Syntax: <code>aws-secrets-manager://label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path //label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.endpointBuilder("aws-secrets-manager", path);
+    }
+    /**
+     * AWS Secrets Manager (camel-aws-secrets-manager)
+     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
+     * 
+     * Syntax: <code>aws-secrets-manager://label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path //label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service

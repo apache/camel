@@ -906,6 +906,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "AwsSecretsManagerComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws-secrets-manager",
+    "title": "AWS Secrets Manager",
+    "description": "Manage AWS Secrets Manager services using AWS SDK version 2.x.",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "cloud,management",
+    "javaType": "org.apache.camel.component.aws.secretsmanager.SecretsManagerComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws-secrets-manager",
+    "version": "3.9.0-SNAPSHOT",
+    "scheme": "aws-secrets-manager",
+    "extendsScheme": "",
+    "syntax": "aws-secrets-manager:\/\/label",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "AzureEventhubsComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-eventhubs",
