@@ -438,7 +438,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doBuild() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
@@ -447,6 +447,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 

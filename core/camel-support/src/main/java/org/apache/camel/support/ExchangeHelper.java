@@ -308,12 +308,9 @@ public final class ExchangeHelper {
         // do not share the unit of work
         ExtendedExchange ce = (ExtendedExchange) copy;
         ce.setUnitOfWork(null);
-
-        // do not reuse the message id
-        // hand over on completion to the copy if we got any
-        UnitOfWork uow = exchange.getUnitOfWork();
-        if (handover && uow != null) {
-            uow.handoverSynchronization(copy, filter);
+        if (handover) {
+            // Need to hand over the completion for async invocation
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(ce);
         }
         // set a correlation id so we can track back the original exchange
         copy.setProperty(ExchangePropertyKey.CORRELATION_ID, id);

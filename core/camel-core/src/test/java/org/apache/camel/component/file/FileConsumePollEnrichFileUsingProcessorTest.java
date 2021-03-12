@@ -86,6 +86,9 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                             // otherwise do a rollback
                             throw new CamelExchangeException("Cannot find the data file " + name, exchange);
                         }
+
+                        // and remember to done the UoW
+                        data.getUnitOfWork().done(data);
                     }
                 }).to("mock:start");
 
