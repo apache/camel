@@ -253,11 +253,17 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     private static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         while (true) {
-            int readCount = in.read(buffer);
-            if (readCount < 0) {
+            try {
+                int readCount = in.read(buffer);
+                if (readCount < 0) {
+                    break;
+                }
+                out.write(buffer, 0, readCount);
+            } catch (IllegalStateException e) {
+                //There is a change in TarArchiveInputStreamClass (since 1.20). It is possible to receive
+                //IllegalStateException("No current tar entry") instead of result -1
                 break;
             }
-            out.write(buffer, 0, readCount);
         }
     }
 

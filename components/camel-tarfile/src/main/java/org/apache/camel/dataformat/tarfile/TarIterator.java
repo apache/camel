@@ -77,7 +77,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
             if (tarInputStream == null) {
                 return false;
             }
-            boolean availableDataInCurrentEntry = tarInputStream.available() > 0;
+            boolean availableDataInCurrentEntry = tarInputStream.getCurrentEntry() != null && tarInputStream.available() > 0;
             if (!availableDataInCurrentEntry) {
                 // advance to the next entry.
                 parent = getNextElement();
