@@ -21,7 +21,9 @@ import java.net.ConnectException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -30,7 +32,13 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
 
@@ -221,6 +229,42 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
+    }
+
+    @Test
+    public void testRemoveInternalProperties() throws Exception {
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
+
+        assertEquals("iso-8859-1", exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertEquals("iso-8859-1", exchange.getProperty(Exchange.CHARSET_NAME));
+
+        exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
+        assertNull(exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertNull(exchange.getProperty(Exchange.CHARSET_NAME));
+
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
+        exchange.setProperty(ExchangePropertyKey.AGGREGATED_SIZE, "1");
+        exchange.setProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, "2");
+
+        exchange.removeProperties("CamelAggregated*");
+        assertEquals("iso-8859-1", exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+        assertNull(exchange.getProperty(ExchangePropertyKey.AGGREGATED_SIZE));
+        assertNull(exchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT));
+
+        exchange.removeProperties("*");
+        assertNull(exchange.getProperty(ExchangePropertyKey.CHARSET_NAME));
+    }
+
+    @Test
+    public void testAllProperties() throws Exception {
+        exchange.removeProperties("*");
+        exchange.setProperty("foo", 123);
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, "seda:bar");
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
+
+        assertEquals(1, exchange.getProperties().size());
+        assertEquals(2, exchange.adapt(ExtendedExchange.class).getInternalProperties().size());
+        assertEquals(3, exchange.getAllProperties().size());
     }
 
     @Test

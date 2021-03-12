@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 
 /**
@@ -60,7 +61,8 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         // propagate exception from old exchange if there isn't already an exception
         if (newExchange.getException() == null) {
             newExchange.setException(oldExchange.getException());
-            newExchange.setProperty(Exchange.FAILURE_ENDPOINT, oldExchange.getProperty(Exchange.FAILURE_ENDPOINT));
+            newExchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                    oldExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT));
         }
     }
 

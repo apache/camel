@@ -139,7 +139,7 @@ public class ErrorHandlingTest extends CamelAwsXRayTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            Exception ex = (Exception) exchange.getProperties().get(Exchange.EXCEPTION_CAUGHT);
+            Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             LOG.debug("Processing caught exception {}", ex.getLocalizedMessage());
             exchange.getIn().getHeaders().put("HandledError", ex.getLocalizedMessage());
         }
@@ -155,7 +155,7 @@ public class ErrorHandlingTest extends CamelAwsXRayTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            Exception ex = (Exception) exchange.getProperties().get(Exchange.EXCEPTION_CAUGHT);
+            Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             LOG.debug(">> Attempting redelivery of handled exception {} with message: {}",
                     ex.getClass().getSimpleName(), ex.getLocalizedMessage());
         }

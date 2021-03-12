@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -121,7 +122,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 // but evaluation result is a textual representation of a numeric value.
                 String text = expression.evaluate(exchange, String.class);
                 count = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
-                exchange.setProperty(Exchange.LOOP_SIZE, count);
+                exchange.setProperty(ExchangePropertyKey.LOOP_SIZE, count);
             }
         }
 
@@ -141,7 +142,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
                     // set current index as property
                     LOG.debug("LoopProcessor: iteration #{}", index);
-                    current.setProperty(Exchange.LOOP_INDEX, index);
+                    current.setProperty(ExchangePropertyKey.LOOP_INDEX, index);
 
                     processor.process(current, doneSync -> {
                         // increment counter after done

@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -300,7 +301,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             exchange.setPattern(pattern);
         }
         // set property which endpoint we send to
-        exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
         return exchange;
     }
 

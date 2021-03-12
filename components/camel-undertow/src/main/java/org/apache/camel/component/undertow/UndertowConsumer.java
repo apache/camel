@@ -43,6 +43,7 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -351,7 +352,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             getEndpoint().getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
         }
 
-        exchange.setProperty(Exchange.CHARSET_NAME, httpExchange.getRequestCharset());
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, httpExchange.getRequestCharset());
         in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, httpExchange.getRequestCharset());
 
         exchange.setIn(in);

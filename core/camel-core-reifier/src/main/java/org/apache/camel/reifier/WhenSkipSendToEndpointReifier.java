@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
@@ -44,7 +45,7 @@ public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSen
             @Override
             public boolean matches(Exchange exchange) {
                 boolean matches = delegate.matches(exchange);
-                exchange.setProperty(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED, matches);
+                exchange.setProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED, matches);
                 return matches;
             }
 

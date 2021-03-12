@@ -17,7 +17,6 @@
 package org.apache.camel.model.errorhandler;
 
 // TODO: Maybe not needed
-// TODO: Maybe not needed
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlTransient

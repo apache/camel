@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,6 +25,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
@@ -106,6 +106,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
+    private Object[] EMPTY_STATEFUL_STATES;
     private PooledObjectFactory<CamelInternalTask> taskFactory;
 
     public CamelInternalProcessor(CamelContext camelContext) {
@@ -131,6 +132,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
             LOG.trace("Using TaskFactory: {}", taskFactory);
+
+            // create empty array we can use for reset
+            EMPTY_STATEFUL_STATES = new Object[statefulAdvices];
         }
 
         ServiceHelper.buildService(taskFactory, processor);
@@ -222,7 +226,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public void reset() {
-            Arrays.fill(states, null);
+            // reset array by copying over from empty which is a very fast JVM optimized operation
+            System.arraycopy(EMPTY_STATEFUL_STATES, 0, states, 0, statefulAdvices);
             this.exchange = null;
             this.originalCallback = null;
         }
@@ -818,11 +823,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
             MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);
             if (history != null) {
-                List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+                List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
                 if (list == null) {
                     // use thread-safe list as message history may be accessed concurrently
                     list = new CopyOnWriteArrayList<>();
-                    exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
+                    exchange.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, list);
                 }
                 list.add(history);
             }
@@ -896,7 +901,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
             // cache the body and if we could do that replace it as the new body
             boolean failed = exchange.getException(StreamCacheException.class) != null
-                    || exchange.getProperty(Exchange.EXCEPTION_CAUGHT, StreamCacheException.class) != null;
+                    || exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, StreamCacheException.class) != null;
             if (!failed) {
                 try {
                     StreamCache sc = strategy.cache(exchange);

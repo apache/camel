@@ -25,6 +25,7 @@ import io.netty.buffer.ByteBuf;
 import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -98,7 +99,7 @@ public final class VertxBufferConverter {
                 charset = IOHelper.getCharsetNameFromContentType(contentType);
             }
             if (ObjectHelper.isEmpty(charset)) {
-                charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             }
         }
         return charset;

@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -80,7 +81,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
     @Override
     public void onCompletion(Exchange exchange) {
         if (exchange != null) {
-            StringBuffer stringBuffer = (StringBuffer) exchange.removeProperty(Exchange.GROUPED_EXCHANGE);
+            StringBuffer stringBuffer = (StringBuffer) exchange.removeProperty(ExchangePropertyKey.GROUPED_EXCHANGE);
             if (stringBuffer != null) {
                 exchange.getIn().setBody(stringBuffer.toString());
             }
@@ -88,10 +89,10 @@ public class StringAggregationStrategy implements AggregationStrategy {
     }
 
     private static StringBuffer getStringBuffer(Exchange exchange) {
-        StringBuffer stringBuffer = exchange.getProperty(Exchange.GROUPED_EXCHANGE, StringBuffer.class);
+        StringBuffer stringBuffer = exchange.getProperty(ExchangePropertyKey.GROUPED_EXCHANGE, StringBuffer.class);
         if (stringBuffer == null) {
             stringBuffer = new StringBuffer();
-            exchange.setProperty(Exchange.GROUPED_EXCHANGE, stringBuffer);
+            exchange.setProperty(ExchangePropertyKey.GROUPED_EXCHANGE, stringBuffer);
         }
         return stringBuffer;
     }

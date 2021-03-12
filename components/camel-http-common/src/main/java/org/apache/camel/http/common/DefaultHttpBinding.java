@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -176,7 +177,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         if (request.getCharacterEncoding() != null) {
             headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
-            message.getExchange().setProperty(Exchange.CHARSET_NAME, request.getCharacterEncoding());
+            message.getExchange().setProperty(ExchangePropertyKey.CHARSET_NAME, request.getCharacterEncoding());
         }
 
         try {

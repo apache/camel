@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
@@ -181,7 +182,7 @@ public final class CSimpleHelper {
     public static Exception exception(Exchange exchange) {
         Exception exception = exchange.getException();
         if (exception == null) {
-            exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+            exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
         }
         return exception;
     }
@@ -189,7 +190,7 @@ public final class CSimpleHelper {
     public static <T> T exceptionAs(Exchange exchange, Class<T> type) {
         Exception exception = exchange.getException();
         if (exception == null) {
-            exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+            exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
         }
         if (exception != null) {
             return type.cast(exception);
@@ -233,7 +234,7 @@ public final class CSimpleHelper {
     }
 
     public static String stepId(Exchange exchange) {
-        return exchange.getProperty(Exchange.STEP_ID, String.class);
+        return exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
     }
 
     public static String fileName(Message message) {

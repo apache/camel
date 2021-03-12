@@ -37,6 +37,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
@@ -356,7 +357,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
             // if batch consumer is enabled then we need to adjust the batch size
             // with the size from the batch consumer
             if (isBatchConsumer()) {
-                int size = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
+                int size = exchange.getProperty(ExchangePropertyKey.BATCH_SIZE, Integer.class);
                 if (batchSize != size) {
                     batchSize = size;
                     LOG.trace("Using batch consumer completion, so setting batch size to: {}", batchSize);

@@ -23,6 +23,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
@@ -92,7 +93,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         // set the exchange charset property for converting
         if (consumer.getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME,
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
                     IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
         }
         if (consumer.getConfiguration().isReuseChannel()) {

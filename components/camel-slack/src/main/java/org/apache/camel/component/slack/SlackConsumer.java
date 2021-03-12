@@ -31,6 +31,7 @@ import com.slack.api.model.Conversation;
 import com.slack.api.model.Message;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.slack.helper.SlackHelper;
@@ -120,9 +121,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;

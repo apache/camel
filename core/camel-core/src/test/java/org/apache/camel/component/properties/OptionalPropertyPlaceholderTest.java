@@ -27,9 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
 
-    // TODO: eip test
-    // TODO: reuse code in AbstractCamelContext and endpoint-dsl
-
     @Override
     public boolean isUseRouteBuilder() {
         return false;

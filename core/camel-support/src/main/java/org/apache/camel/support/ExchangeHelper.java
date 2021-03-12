@@ -36,6 +36,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -315,7 +316,7 @@ public final class ExchangeHelper {
             uow.handoverSynchronization(copy, filter);
         }
         // set a correlation id so we can track back the original exchange
-        copy.setProperty(Exchange.CORRELATION_ID, id);
+        copy.setProperty(ExchangePropertyKey.CORRELATION_ID, id);
         return copy;
     }
 
@@ -405,6 +406,7 @@ public final class ExchangeHelper {
         if (source.hasProperties()) {
             result.getProperties().putAll(source.getProperties());
         }
+        source.adapt(ExtendedExchange.class).copyInternalProperties(result);
 
         // copy over state
         result.setRouteStop(source.isRouteStop());
@@ -624,7 +626,7 @@ public final class ExchangeHelper {
      * @return          <tt>true</tt> if failure handled, <tt>false</tt> otherwise
      */
     public static boolean isFailureHandled(Exchange exchange) {
-        return exchange.getProperty(Exchange.FAILURE_HANDLED, false, Boolean.class);
+        return exchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED, false, Boolean.class);
     }
 
     /**
@@ -634,7 +636,7 @@ public final class ExchangeHelper {
      * @return          <tt>true</tt> if exhausted, <tt>false</tt> otherwise
      */
     public static boolean isUnitOfWorkExhausted(Exchange exchange) {
-        return exchange.getProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, false, Boolean.class);
+        return exchange.getProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED, false, Boolean.class);
     }
 
     /**
@@ -643,7 +645,7 @@ public final class ExchangeHelper {
      * @param exchange the exchange
      */
     public static void setFailureHandled(Exchange exchange) {
-        exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
+        exchange.setProperty(ExchangePropertyKey.FAILURE_HANDLED, Boolean.TRUE);
         // clear exception since its failure handled
         exchange.setException(null);
     }
@@ -848,6 +850,15 @@ public final class ExchangeHelper {
         if (exchange.hasProperties()) {
             answer.setProperties(safeCopyProperties(exchange.getProperties()));
         }
+        exchange.adapt(ExtendedExchange.class).copyInternalProperties(answer);
+        // safe copy message history using a defensive copy
+        List<MessageHistory> history
+                = (List<MessageHistory>) exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY);
+        if (history != null) {
+            // use thread-safe list as message history may be accessed concurrently
+            answer.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
+        }
+
         if (handover) {
             // Need to hand over the completion for async invocation
             exchange.adapt(ExtendedExchange.class).handoverCompletions(answer);
@@ -894,7 +905,7 @@ public final class ExchangeHelper {
         Message answer = null;
 
         // try parent first
-        UnitOfWork uow = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        UnitOfWork uow = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (uow != null) {
             answer = uow.getOriginalInMessage();
         }
@@ -923,17 +934,7 @@ public final class ExchangeHelper {
         if (properties == null) {
             return null;
         }
-
-        Map<String, Object> answer = new ConcurrentHashMap<>(properties);
-
-        // safe copy message history using a defensive copy
-        List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
-        if (history != null) {
-            // use thread-safe list as message history may be accessed concurrently
-            answer.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
-        }
-
-        return answer;
+        return new ConcurrentHashMap<>(properties);
     }
 
     /**
@@ -956,7 +957,7 @@ public final class ExchangeHelper {
             // header takes precedence
             String charsetName = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
             if (charsetName == null) {
-                charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                charsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             }
             if (charsetName != null) {
                 return IOHelper.normalizeCharset(charsetName);
@@ -1000,7 +1001,7 @@ public final class ExchangeHelper {
         } else if (value instanceof String) {
             scanner = new Scanner((String) value, delimiter);
         } else {
-            String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            String charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             if (value instanceof File) {
                 try {
                     scanner = new Scanner((File) value, charset, delimiter);

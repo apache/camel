@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
@@ -233,7 +234,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @SuppressWarnings("unchecked")
         public long getElapsed() {
             // this can only be calculate if message history is enabled
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
             if (list == null || list.isEmpty()) {
                 return 0;
             }

@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -42,15 +43,15 @@ public class CassandraCamelCodec {
         // add the aggregated size and timeout property as the only properties
         // we want to retain
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_SIZE,
-                exchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class));
+                exchange.getProperty(ExchangePropertyKey.AGGREGATED_SIZE, Integer.class));
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_TIMEOUT,
-                exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, Long.class));
+                exchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, Long.class));
         // add the aggregated completed by property to retain
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_COMPLETED_BY,
-                exchange.getProperty(Exchange.AGGREGATED_COMPLETED_BY, String.class));
+                exchange.getProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, String.class));
         // add the aggregated correlation key property to retain
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_CORRELATION_KEY,
-                exchange.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class));
+                exchange.getProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, String.class));
         // and a guard property if using the flexible toolbox aggregator
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_COLLECTION_GUARD,
                 exchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, String.class));

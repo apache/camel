@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 
 /**
  * Aggregate all exchanges into a {@link List} of values defined by the {@link #getValue(Exchange)} call. The combined
@@ -60,7 +61,7 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
     @SuppressWarnings("unchecked")
     public void onCompletion(Exchange exchange) {
         if (exchange != null && isStoreAsBodyOnCompletion()) {
-            List<V> list = (List<V>) exchange.removeProperty(Exchange.GROUPED_EXCHANGE);
+            List<V> list = (List<V>) exchange.removeProperty(ExchangePropertyKey.GROUPED_EXCHANGE);
             if (list != null) {
                 exchange.getIn().setBody(list);
             }
@@ -96,10 +97,10 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
 
     @SuppressWarnings("unchecked")
     private List<V> getList(Exchange exchange) {
-        List<V> list = exchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+        List<V> list = exchange.getProperty(ExchangePropertyKey.GROUPED_EXCHANGE, List.class);
         if (list == null) {
             list = new GroupedExchangeList<>();
-            exchange.setProperty(Exchange.GROUPED_EXCHANGE, list);
+            exchange.setProperty(ExchangePropertyKey.GROUPED_EXCHANGE, list);
         }
         return list;
     }

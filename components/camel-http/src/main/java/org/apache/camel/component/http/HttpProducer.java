@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -359,7 +360,7 @@ public class HttpProducer extends DefaultProducer {
                 }
                 if (!found && name.equalsIgnoreCase("content-type")) {
                     name = Exchange.CONTENT_TYPE;
-                    exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
                     found = true;
                 }
                 // use http helper to extract parameter value as it may contain multiple values

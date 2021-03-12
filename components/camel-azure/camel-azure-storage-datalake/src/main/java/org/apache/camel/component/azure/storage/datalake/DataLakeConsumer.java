@@ -27,6 +27,7 @@ import com.azure.storage.file.datalake.models.PathItem;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileClientWrapper;
@@ -131,9 +132,9 @@ class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         for (int i = 0; i < total && isBatchAllowed(); i++) {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
-            exchange.setProperty(Exchange.BATCH_INDEX, i);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, i == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, i);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, i == total - 1);
 
             pendingExchanges = total - i - 1;
 

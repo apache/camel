@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.util.IOHelper;
@@ -81,7 +82,7 @@ public final class AhcHelper {
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         if (contentType != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(contentType));
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(contentType));
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfMessageHelper;
@@ -88,7 +89,7 @@ class CamelOutputStream extends CachedOutputStream {
         LOG.debug("send the message to endpoint {}", this.targetCamelEndpointUri);
         final org.apache.camel.Exchange exchange = this.producer.getEndpoint().createExchange(pattern);
 
-        exchange.setProperty(Exchange.TO_ENDPOINT, this.targetCamelEndpointUri);
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, this.targetCamelEndpointUri);
         CachedOutputStream outputStream = (CachedOutputStream) outMessage.getContent(OutputStream.class);
         // Send out the request message here, copy the protocolHeader back
         CxfHeaderHelper.propagateCxfToCamel(this.headerFilterStrategy, outMessage, exchange.getIn(), exchange);

@@ -29,6 +29,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.LoggingLevel;
@@ -449,7 +450,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             Exception e = exchange.getException();
             // e is never null
 
-            Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+            Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
             if (previous != null && previous != e) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
@@ -467,7 +468,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // store the original caused exception in a property, so we can restore it later
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
         }
 
         /**
@@ -507,9 +508,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 LOG.trace("This exchange has already been marked for handling: {}", handled);
                 if (!handled) {
                     // exception not handled, put exception back in the exchange
-                    exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+                    exchange.setException(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class));
                     // and put failure endpoint back as well
-                    exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+                    exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                            exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
                 }
                 return;
             }
@@ -524,13 +526,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             LOG.trace("This exchange is not handled or continued so its marked as failed: {}", ee);
             // exception not handled, put exception back in the exchange
             ee.setErrorHandlerHandled(false);
-            ee.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+            ee.setException(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class));
             // and put failure endpoint back as well
-            ee.setProperty(Exchange.FAILURE_ENDPOINT, ee.getProperty(Exchange.TO_ENDPOINT));
+            ee.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, ee.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
             Route rc = ExchangeHelper.getRoute(ee);
             if (rc != null) {
-                ee.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
+                ee.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
             }
 
             // create log message
@@ -547,13 +549,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             if (e == null) {
-                e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             }
 
             if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                 String msg = "Rollback " + ExchangeHelper.logIds(exchange);
                 Throwable cause = exchange.getException() != null
-                        ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                        ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
                     msg = msg + " due: " + cause.getMessage();
                 }
@@ -874,7 +876,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
-            exchange.removeProperty(Exchange.FAILURE_HANDLED);
+            exchange.removeProperty(ExchangePropertyKey.FAILURE_HANDLED);
             // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
 
             // create log message
@@ -931,7 +933,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             Exception e = exchange.getException();
             // e is never null
 
-            Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+            Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
             if (previous != null && previous != e) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
@@ -949,7 +951,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // store the original caused exception in a property, so we can restore it later
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
 
             // find the error handler to use (if any)
             ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
@@ -1076,7 +1078,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
                 // and remove traces of rollback only and uow exhausted markers
                 exchange.setRollbackOnly(false);
-                exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
+                exchange.removeProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED);
 
                 handled = true;
             } else {
@@ -1127,11 +1129,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 LOG.trace("Failure processor {} is processing Exchange: {}", processor, exchange);
 
                 // store the last to endpoint as the failure endpoint
-                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
                 // and store the route id so we know in which route we failed
                 Route rc = ExchangeHelper.getRoute(exchange);
                 if (rc != null) {
-                    exchange.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
+                    exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
                 }
 
                 // fire event as we had a failure processor to handle it, which there is a event for
@@ -1230,9 +1233,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 LOG.trace("This exchange has already been marked for handling: {}", handled);
                 if (!handled) {
                     // exception not handled, put exception back in the exchange
-                    exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+                    exchange.setException(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class));
                     // and put failure endpoint back as well
-                    exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+                    exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                            exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
                 }
                 return;
             }
@@ -1287,13 +1291,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             LOG.trace("This exchange is not handled or continued so its marked as failed: {}", ee);
             // exception not handled, put exception back in the exchange
             ee.setErrorHandlerHandled(false);
-            ee.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+            ee.setException(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class));
             // and put failure endpoint back as well
-            ee.setProperty(Exchange.FAILURE_ENDPOINT, ee.getProperty(Exchange.TO_ENDPOINT));
+            ee.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, ee.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
             String routeId = ExchangeHelper.getAtRouteId(ee);
             if (routeId != null) {
-                ee.setProperty(Exchange.FAILURE_ROUTE_ID, routeId);
+                ee.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, routeId);
             }
         }
 
@@ -1359,7 +1363,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 logStackTrace = currentRedeliveryPolicy.isLogStackTrace();
             }
             if (e == null) {
-                e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
             }
 
             if (newException) {
@@ -1385,7 +1389,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                 String msg = "Rollback " + ExchangeHelper.logIds(exchange);
                 Throwable cause = exchange.getException() != null
-                        ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                        ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
                     msg = msg + " due: " + cause.getMessage();
                 }

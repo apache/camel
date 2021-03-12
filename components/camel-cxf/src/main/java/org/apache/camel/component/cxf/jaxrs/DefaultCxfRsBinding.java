@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Variant;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -184,7 +185,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
             String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
             if (normalizedEncoding != null) {
-                camelExchange.setProperty(Exchange.CHARSET_NAME, normalizedEncoding);
+                camelExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedEncoding);
             }
         }
     }

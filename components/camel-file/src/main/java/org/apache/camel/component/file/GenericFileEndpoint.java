@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LoggingLevel;
@@ -1544,7 +1545,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public void configureExchange(Exchange exchange) {
         // Now we just set the charset property here
         if (getCharset() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, getCharset());
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getCharset());
         }
     }
 

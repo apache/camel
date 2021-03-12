@@ -37,6 +37,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -353,7 +354,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // run this as if we run inside try .. catch so there is no regular
         // Camel error handler
-        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
+        exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
         Callable<Exchange> task;
 
@@ -481,12 +482,13 @@ public class ResilienceProcessor extends AsyncProcessorSupport
             exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
 
             // store the last to endpoint as the failure endpoint
-            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             }
             // give the rest of the pipeline another chance
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exchange.getException());
             exchange.setRouteStop(false);
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..

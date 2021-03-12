@@ -25,6 +25,7 @@ import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.InsertAllRequest;
 import com.google.cloud.bigquery.InsertAllResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -53,11 +54,11 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     private static List<Exchange> prepareExchangeList(Exchange exchange) {
         List<Exchange> entryList;
 
-        if (null == exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
+        if (null == exchange.getProperty(ExchangePropertyKey.GROUPED_EXCHANGE)) {
             entryList = new ArrayList<>();
             entryList.add(exchange);
         } else {
-            entryList = (List<Exchange>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            entryList = (List<Exchange>) exchange.getProperty(ExchangePropertyKey.GROUPED_EXCHANGE);
         }
 
         return entryList;

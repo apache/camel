@@ -181,7 +181,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
         if (!getEventNotifiers().isEmpty()) {
-            // TODO: only for exchange event notifiers
             getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
         }
         for (EventNotifier notifier : eventNotifiers) {

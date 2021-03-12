@@ -43,6 +43,7 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
@@ -239,7 +240,7 @@ public class FallbackTypeConverter {
             if (prettyPrint) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
-            String charset = exchange != null ? exchange.getProperty(Exchange.CHARSET_NAME, String.class) : null;
+            String charset = exchange != null ? exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class) : null;
             if (charset != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
             }

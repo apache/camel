@@ -30,6 +30,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
@@ -229,8 +230,8 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                         // closed by the unit of work of the child route, but by the unit of
                         // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
                         // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
-                        if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                            newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
+                        if (newExchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                            newExchange.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
                         }
                         // if we share unit of work, we need to prepare the child exchange
                         if (isShareUnitOfWork()) {
@@ -286,23 +287,23 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         // do not share unit of work
         exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
 
-        exchange.setProperty(Exchange.SPLIT_INDEX, index);
+        exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
             // non streaming mode, so we know the total size already
-            exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>) allPairs).size());
+            exchange.setProperty(ExchangePropertyKey.SPLIT_SIZE, ((Collection<?>) allPairs).size());
         }
         if (hasNext) {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.TRUE);
             // streaming mode, so set total size when we are complete based on the index
-            exchange.setProperty(Exchange.SPLIT_SIZE, index + 1);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_SIZE, index + 1);
         }
     }
 
     @Override
     protected Integer getExchangeIndex(Exchange exchange) {
-        return exchange.getProperty(Exchange.SPLIT_INDEX, Integer.class);
+        return exchange.getProperty(ExchangePropertyKey.SPLIT_INDEX, Integer.class);
     }
 
     public Expression getExpression() {
@@ -313,7 +314,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
         if (exchange.getContext().isMessageHistory()) {
             // we do not want to copy the message history for splitted sub-messages
-            answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
+            answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);
         }
         return answer;
     }

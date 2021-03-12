@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
@@ -134,7 +135,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 target.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
             }
             // set property which endpoint we send to
-            target.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
             final boolean sending = camelContext.isEventNotificationApplicable()
                     && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
@@ -179,7 +180,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 exchange.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
             }
             // set property which endpoint we send to
-            exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
             LOG.debug(">>>> {} {}", destination, exchange);
 

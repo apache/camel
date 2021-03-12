@@ -22,6 +22,7 @@ import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.splunk.event.SplunkEvent;
@@ -107,9 +108,9 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
             try {
                 LOG.trace("Processing exchange [{}]...", exchange);
                 getProcessor().process(exchange);

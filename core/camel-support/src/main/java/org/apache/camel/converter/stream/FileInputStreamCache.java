@@ -34,6 +34,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
@@ -227,7 +228,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                         return "OnCompletion[CachedOutputStream]";
                     }
                 };
-                UnitOfWork streamCacheUnitOfWork = exchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
+                UnitOfWork streamCacheUnitOfWork
+                        = exchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
                 if (streamCacheUnitOfWork != null && streamCacheUnitOfWork.getRoute() != null) {
                     // The stream cache must sometimes not be closed when the exchange is deleted. This is for example the
                     // case in the splitter and multi-cast case with AggregationStrategy where the result of the sub-routes

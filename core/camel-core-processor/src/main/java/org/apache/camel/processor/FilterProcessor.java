@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -79,7 +80,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
 
         // set property whether the filter matches or not
-        exchange.setProperty(Exchange.FILTER_MATCHED, matches);
+        exchange.setProperty(ExchangePropertyKey.FILTER_MATCHED, matches);
 
         if (matches) {
             filtered++;

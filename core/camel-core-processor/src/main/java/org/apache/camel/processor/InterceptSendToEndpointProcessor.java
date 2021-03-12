@@ -23,6 +23,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -92,7 +93,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         boolean shouldSkip = skip;
 
         // if then interceptor had a when predicate, then we should only skip if it matched
-        Boolean whenMatches = (Boolean) exchange.removeProperty(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        Boolean whenMatches = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         if (whenMatches != null) {
             shouldSkip = skip && whenMatches;
         }

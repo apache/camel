@@ -106,6 +106,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
                 processor.process(exchange, this);
             } else {
+                // copyResults is needed in case MEP is OUT and the message is not an OUT message
                 ExchangeHelper.copyResults(exchange, exchange);
 
                 // logging nextExchange as it contains the exchange that might have altered the payload and since

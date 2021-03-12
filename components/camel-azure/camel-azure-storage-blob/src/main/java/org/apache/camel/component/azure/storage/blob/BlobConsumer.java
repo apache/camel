@@ -26,6 +26,7 @@ import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobStorageException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
@@ -130,9 +131,9 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;

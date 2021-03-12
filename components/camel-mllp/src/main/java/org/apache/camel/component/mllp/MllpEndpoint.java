@@ -26,6 +26,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -111,7 +112,7 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     void setExchangeProperties(Exchange mllpExchange) {
         if (configuration.hasCharsetName()) {
-            mllpExchange.setProperty(Exchange.CHARSET_NAME, configuration.getCharsetName());
+            mllpExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, configuration.getCharsetName());
         }
     }
 

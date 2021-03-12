@@ -23,6 +23,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
@@ -185,7 +186,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         }
 
         Expression exp = expression;
-        Object slip = exchange.removeProperty(Exchange.EVALUATE_EXPRESSION_RESULT);
+        Object slip = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
         if (slip != null) {
             if (slip instanceof Expression) {
                 exp = (Expression) slip;
@@ -238,9 +239,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         }
 
         // ensure the slip is empty when we start
-        if (current.hasProperties()) {
-            current.setProperty(Exchange.SLIP_ENDPOINT, null);
-        }
+        current.removeProperty(ExchangePropertyKey.SLIP_ENDPOINT);
 
         while (iter.hasNext(current)) {
 
@@ -394,7 +393,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
         AsyncProcessor answer = processor;
 
-        boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
+        boolean tryBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
         if (!tryBlock && route != null && errorHandler != null) {
@@ -433,14 +432,14 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             AsyncProcessor target = createErrorHandler(route, ex, p, endpoint);
 
             // set property which endpoint we send to and the producer that can do it
-            ex.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
-            ex.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
-            ex.setProperty(Exchange.SLIP_PRODUCER, p);
+            ex.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
+            ex.setProperty(ExchangePropertyKey.SLIP_ENDPOINT, endpoint.getEndpointUri());
+            ex.setProperty(ExchangePropertyKey.SLIP_PRODUCER, p);
 
             return target.process(ex, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // cleanup producer after usage
-                    ex.removeProperty(Exchange.SLIP_PRODUCER);
+                    ex.removeProperty(ExchangePropertyKey.SLIP_PRODUCER);
 
                     // we only have to handle async completion of the routing slip
                     if (doneSync) {
@@ -592,7 +591,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
-            AsyncProcessor producer = exchange.getProperty(Exchange.SLIP_PRODUCER, AsyncProcessor.class);
+            AsyncProcessor producer = exchange.getProperty(ExchangePropertyKey.SLIP_PRODUCER, AsyncProcessor.class);
             return producer.process(exchange, callback);
         }
 

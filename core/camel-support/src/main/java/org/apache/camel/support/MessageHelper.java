@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -547,7 +548,7 @@ public final class MessageHelper {
     @SuppressWarnings("unchecked")
     private static String doDumpMessageHistoryStacktrace(
             Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
-        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         boolean enabled = list != null;
 
         StringBuilder sb = new StringBuilder();

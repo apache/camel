@@ -25,6 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
@@ -168,7 +169,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
         boolean stop = ee.isRouteStop();
         ee.setRouteStop(false);
-        Object failureHandled = ee.removeProperty(Exchange.FAILURE_HANDLED);
+        Object failureHandled = ee.removeProperty(ExchangePropertyKey.FAILURE_HANDLED);
         Boolean errorhandlerHandled = ee.getErrorHandlerHandled();
         ee.setErrorHandlerHandled(null);
         boolean rollbackOnly = ee.isRollbackOnly();
@@ -192,7 +193,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             // restore the options
             ee.setRouteStop(stop);
             if (failureHandled != null) {
-                ee.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
+                ee.setProperty(ExchangePropertyKey.FAILURE_HANDLED, failureHandled);
             }
             if (errorhandlerHandled != null) {
                 ee.setErrorHandlerHandled(errorhandlerHandled);
@@ -240,7 +241,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         }
 
         // add a header flag to indicate its a on completion exchange
-        answer.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
+        answer.setProperty(ExchangePropertyKey.ON_COMPLETION, Boolean.TRUE);
 
         return answer;
     }
@@ -266,10 +267,10 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         public void onAfterRoute(Route route, Exchange exchange) {
             // route scope = remember we have been at this route
             if (routeScoped && route.getRouteId().equals(routeId)) {
-                List<String> routeIds = exchange.getProperty(Exchange.ON_COMPLETION_ROUTE_IDS, List.class);
+                List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
                 if (routeIds == null) {
                     routeIds = new ArrayList<>();
-                    exchange.setProperty(Exchange.ON_COMPLETION_ROUTE_IDS, routeIds);
+                    exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, routeIds);
                 }
                 routeIds.add(route.getRouteId());
             }
@@ -285,7 +286,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
             if (routeScoped) {
                 // check if we visited the route
-                List<String> routeIds = exchange.getProperty(Exchange.ON_COMPLETION_ROUTE_IDS, List.class);
+                List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
                 if (routeIds == null || !routeIds.contains(routeId)) {
                     return;
                 }

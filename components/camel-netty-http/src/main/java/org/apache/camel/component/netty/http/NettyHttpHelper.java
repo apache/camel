@@ -28,6 +28,7 @@ import java.util.Map;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.IOHelper;
@@ -47,7 +48,7 @@ public final class NettyHttpHelper {
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = getCharsetFromContentType(contentType);
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.normalizeCharset(charset));
         }
     }
 

@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -114,7 +115,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         public void begin() {
             // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
-            exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
             // if the MEP on the endpoint is different then
