@@ -131,10 +131,13 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
 
         // Temporarily disable CamelContext start while the contexts are instantiated.
         SpringCamelContext.setNoStart(true);
-        context.refresh();
-        context.registerShutdownHook();
-        // Turn CamelContext startup back on since the context's have now been instantiated.
-        SpringCamelContext.setNoStart(false);
+        try {
+            context.refresh();
+            context.registerShutdownHook();
+        } finally {
+            // Turn CamelContext startup back on since the context's have now been instantiated.
+            SpringCamelContext.setNoStart(false);
+        }
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
         CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> getTestMethod().getName());

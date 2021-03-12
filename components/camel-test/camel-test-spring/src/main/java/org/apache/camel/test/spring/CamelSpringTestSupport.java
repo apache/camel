@@ -59,16 +59,19 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             // after we are finished setting up the unit test
             synchronized (lock) {
                 SpringCamelContext.setNoStart(true);
-                if (isCreateCamelContextPerClass()) {
-                    applicationContext = threadAppContext.get();
-                    if (applicationContext == null) {
+                try {
+                    if (isCreateCamelContextPerClass()) {
+                        applicationContext = threadAppContext.get();
+                        if (applicationContext == null) {
+                            applicationContext = doCreateApplicationContext();
+                            threadAppContext.set(applicationContext);
+                        }
+                    } else {
                         applicationContext = doCreateApplicationContext();
-                        threadAppContext.set(applicationContext);
                     }
-                } else {
-                    applicationContext = doCreateApplicationContext();
+                } finally {
+                    SpringCamelContext.setNoStart(false);
                 }
-                SpringCamelContext.setNoStart(false);
             }
         } else {
             log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");

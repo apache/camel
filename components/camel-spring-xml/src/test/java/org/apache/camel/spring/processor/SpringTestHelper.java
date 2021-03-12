@@ -41,8 +41,13 @@ public final class SpringTestHelper {
         test.setUseRouteBuilder(false);
 
         boolean isNoStart = DefaultCamelContext.isNoStart();
-        DefaultCamelContext.setNoStart(true);
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(classpathUri);
+        final AbstractXmlApplicationContext applicationContext;
+        try {
+            DefaultCamelContext.setNoStart(true);
+            applicationContext = new ClassPathXmlApplicationContext(classpathUri);
+        } finally {
+            DefaultCamelContext.setNoStart(isNoStart);
+        }
         test.setCamelContextService(new Service() {
             public void start() {
                 applicationContext.start();
@@ -57,7 +62,6 @@ public final class SpringTestHelper {
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
             context.getRegistry().bind(entry.getKey(), entry.getValue());
         }
-        DefaultCamelContext.setNoStart(isNoStart);
         if (!isNoStart) {
             context.start();
         }

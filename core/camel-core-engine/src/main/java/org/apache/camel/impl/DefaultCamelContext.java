@@ -165,7 +165,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     public void start() {
         // for example from unit testing we want to start Camel later (manually)
         if (isNoStart()) {
-            LOG.trace("Ignoring start() as NO_START is false");
+            LOG.trace("Ignoring start() as NO_START is true");
             return;
         }
 
