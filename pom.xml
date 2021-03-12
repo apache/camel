@@ -412,6 +412,8 @@
                                 <goal>flatten</goal>
                             </goals>
                             <configuration>
+                                <outputDirectory>${project.build.directory}</outputDirectory>
+                                <flattenedPomFilename>${project.artifactId}-${project.version}.pom</flattenedPomFilename>
                                 <updatePomFile>true</updatePomFile>
                                 <pomElements>
                                     <build>keep</build>
