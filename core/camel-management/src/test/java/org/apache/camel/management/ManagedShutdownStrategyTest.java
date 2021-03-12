@@ -31,17 +31,12 @@ public class ManagedShutdownStrategyTest extends ManagementTestSupport {
 
     @Test
     public void testManagedShutdownStrategy() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // set timeout to 300
         context.getShutdownStrategy().setTimeout(300);
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         Long timeout = (Long) mbeanServer.getAttribute(on, "Timeout");
         assertEquals(300, timeout.longValue());

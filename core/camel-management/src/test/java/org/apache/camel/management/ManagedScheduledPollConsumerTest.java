@@ -34,11 +34,6 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
     @Test
     public void testScheduledPollConsumer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
@@ -48,7 +43,8 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-        assertEquals("file://target/data/foo?backoffErrorThreshold=3&backoffIdleThreshold=2&backoffMultiplier=4&delay=4000",
+        assertEquals(
+                "file://" + testDirectory() + "?backoffErrorThreshold=3&backoffIdleThreshold=2&backoffMultiplier=4&delay=4000",
                 uri);
 
         Long delay = (Long) mbeanServer.getAttribute(on, "Delay");
@@ -118,7 +114,7 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/foo?delay=4000&backoffMultiplier=4&backoffIdleThreshold=2&backoffErrorThreshold=3")
+                from(fileUri("?delay=4000&backoffMultiplier=4&backoffIdleThreshold=2&backoffErrorThreshold=3"))
                         .to("mock:result");
             }
         };

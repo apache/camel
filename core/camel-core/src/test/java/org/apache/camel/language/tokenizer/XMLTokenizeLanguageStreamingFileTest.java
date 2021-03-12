@@ -20,17 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.builder.Namespaces;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/xmltokenize");
-        super.setUp();
-    }
 
     @Test
     public void testFromFile() throws Exception {
@@ -46,8 +38,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
                   + "<c:child some_attr='b' anotherAttr='b'></c:child>" + "<c:child some_attr='c' anotherAttr='c'></c:child>"
                   + "<c:child some_attr='d' anotherAttr='d'></c:child>" + "</c:parent>";
 
-        deleteDirectory("target/data/xmltokenize");
-        template.sendBodyAndHeader("file:target/data/xmltokenize", body, Exchange.FILE_NAME, "myxml.xml");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "myxml.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +49,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
 
             public void configure() {
-                from("file:target/data/xmltokenize?initialDelay=0&delay=10").split().xtokenize("//C:child", ns).streaming()
+                from(fileUri("?initialDelay=0&delay=10")).split().xtokenize("//C:child", ns).streaming()
                         .to("mock:result").end();
             }
         };

@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +34,11 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockMinAgeTest.class);
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/");
-        createDirectory("target/data/changed/in");
-        super.setUp();
-    }
-
     @Test
     public void testChangedReadLockMinAge() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/slowfile.dat");
+        mock.expectedFileExists(testFile("out/slowfile.dat"));
         mock.expectedMessagesMatches(
                 exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isGreaterThan(new Date().getTime() + 500));
 
@@ -55,7 +46,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/data/changed/out/slowfile.dat"));
+        String content = new String(Files.readAllBytes(testFile("out/slowfile.dat")));
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -66,15 +57,14 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        FileOutputStream fos = new FileOutputStream("target/data/changed/in/slowfile.dat");
-        for (int i = 0; i < 20; i++) {
-            fos.write(("Line " + i + LS).getBytes());
-            LOG.debug("Writing line " + i);
-            Thread.sleep(50);
+        try (OutputStream fos = Files.newOutputStream(testFile("in/slowfile.dat"))) {
+            for (int i = 0; i < 20; i++) {
+                fos.write(("Line " + i + LS).getBytes());
+                LOG.debug("Writing line " + i);
+                Thread.sleep(50);
+            }
+            fos.flush();
         }
-
-        fos.flush();
-        fos.close();
         LOG.debug("Writing slow file DONE...");
     }
 
@@ -83,8 +73,9 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinAge=1000&readLockTimeout=1500")
-                        .to("file:target/data/changed/out", "mock:result");
+                from(fileUri(
+                        "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinAge=1000&readLockTimeout=1500"))
+                                .to(fileUri("out"), "mock:result");
             }
         };
     }

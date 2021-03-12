@@ -16,29 +16,20 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.FileOutputStream;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/");
-        createDirectory("target/data/changed/in");
-        super.setUp();
-    }
 
     @Test
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/zerofile.dat");
+        mock.expectedFileExists(testFile("out/zerofile.dat"));
 
         writeZeroLengthFile();
 
@@ -46,9 +37,7 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
     }
 
     private void writeZeroLengthFile() throws Exception {
-        FileOutputStream fos = new FileOutputStream("target/data/changed/in/zerofile.dat");
-        fos.flush();
-        fos.close();
+        Files.write(testFile("in/zerofile.dat"), new byte[0]);
     }
 
     @Override
@@ -56,8 +45,8 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0")
-                        .to("file:target/data/changed/out",
+                from(fileUri("in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0"))
+                        .to(fileUri("out"),
                                 "mock:result");
             }
         };

@@ -23,7 +23,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,23 +30,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ContextTestSupport {
+public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ManagementTestSupport {
 
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServer server;
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
     @Test
     public void testCustomId() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         Set<ObjectName> s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals(6, s.size(), "Could not find 2 endpoints: " + s);
 

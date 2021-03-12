@@ -33,12 +33,12 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda://foo");
 
-        template.sendBodyAndHeader("file://target/intercept", "Hello World", Exchange.FILE_NAME, "input.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "input.txt");
 
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(exchange.getFromEndpoint().getEndpointUri().startsWith("file://target/intercept"));
+        assertTrue(exchange.getFromEndpoint().getEndpointUri().startsWith(fileUri()));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:foo").to("mock:foo");
 
-                from("file://target/intercept?initialDelay=0&delay=10").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                from(fileUri("?initialDelay=0&delay=10")).setHeader(Exchange.FILE_NAME, constant("hello.txt"))
                         .to("seda:foo");
             }
         };

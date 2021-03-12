@@ -26,9 +26,12 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
+import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -37,6 +40,7 @@ import static org.mockito.Mockito.when;
  * Tests proper behavior of DefaultManagementAgent when {@link MBeanServer#registerMBean(Object, ObjectName)} returns an
  * {@link ObjectInstance} with a different ObjectName
  */
+@ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
 public class DefaultManagementAgentMockTest {
 
     @Test
@@ -75,23 +79,31 @@ public class DefaultManagementAgentMockTest {
     @Test
     public void testShouldUseHostIPAddressWhenFlagisTrue() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "true");
-        CamelContext ctx = new DefaultCamelContext();
+        try {
+            CamelContext ctx = new DefaultCamelContext();
 
-        ManagementAgent agent = new DefaultManagementAgent(ctx);
-        agent.start();
+            ManagementAgent agent = new DefaultManagementAgent(ctx);
+            agent.start();
 
-        assertTrue(agent.getUseHostIPAddress());
+            assertTrue(agent.getUseHostIPAddress());
+        } finally {
+            System.clearProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
+        }
     }
 
     @Test
     public void shouldUseHostNameWhenFlagisFalse() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "false");
-        CamelContext ctx = new DefaultCamelContext();
+        try {
+            CamelContext ctx = new DefaultCamelContext();
 
-        ManagementAgent agent = new DefaultManagementAgent(ctx);
-        agent.start();
+            ManagementAgent agent = new DefaultManagementAgent(ctx);
+            agent.start();
 
-        assertFalse(agent.getUseHostIPAddress());
+            assertFalse(agent.getUseHostIPAddress());
+        } finally {
+            System.clearProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
+        }
     }
 
 }

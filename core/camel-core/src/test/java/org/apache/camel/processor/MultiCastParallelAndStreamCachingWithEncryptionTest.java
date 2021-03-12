@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Collections;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -40,7 +41,7 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
             public void configure() throws Exception {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
+                context.getStreamCachingStrategy().setSpoolDirectory(fileUri());
                 context.getStreamCachingStrategy().setSpoolThreshold(5000L);
                 context.getStreamCachingStrategy().setSpoolCipher("AES/CTR/NoPadding");
 
@@ -92,9 +93,9 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
         byte[] resultBytes = baos.toByteArray();
 
         MockEndpoint mock = getMockEndpoint("mock:resulta");
-        mock.expectedBodiesReceived(resultBytes);
+        mock.expectedBodiesReceived(Collections.singletonList(resultBytes));
         mock = getMockEndpoint("mock:resultb");
-        mock.expectedBodiesReceived(resultBytes);
+        mock.expectedBodiesReceived(Collections.singletonList(resultBytes));
 
         InputStream in = getPayload();
         try {

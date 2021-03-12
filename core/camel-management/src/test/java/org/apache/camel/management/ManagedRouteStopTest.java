@@ -33,11 +33,6 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
 
     @Test
     public void testStopRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

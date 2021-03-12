@@ -35,11 +35,6 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
     @Test
     public void testService() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBody("direct:start", "Hello World");
 
         // must enable always as CamelContext has been started
@@ -59,11 +54,6 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
     @Test
     public void testNonManagedService() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // must enable always as CamelContext has been started
         // and we add the service manually below
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);

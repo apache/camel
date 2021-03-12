@@ -16,38 +16,30 @@
  */
 package org.apache.camel.component.file;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConvertBodyToUTF8Test extends ContextTestSupport {
 
-    private byte[] body;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/utf8");
-        super.setUp();
-
-        // include a UTF-8 char in the text \u0E08 is a Thai elephant
-        body = "Hello Thai Elephant \u0E08".getBytes("UTF-8");
-
-        template.sendBodyAndHeader("file://target/data/utf8", body, Exchange.FILE_NAME, "utf8.txt");
-    }
-
     @Test
     public void testFileUTF8() throws Exception {
+        // include a UTF-8 char in the text \u0E08 is a Thai elephant
+        byte[] body = "Hello Thai Elephant \u0E08".getBytes(StandardCharsets.UTF_8);
+
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "utf8.txt");
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/utf8?initialDelay=0&delay=10").convertBodyTo(String.class, "UTF-8").to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(String.class, "UTF-8").to("mock:result");
             }
         });
 

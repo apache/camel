@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,24 +27,12 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
 
-    private String fileUrl
-            = "file://target/data/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filefilter");
-        deleteDirectory("target/data/filefilter/foo");
-        deleteDirectory("target/data/filefilter/barbar");
-        super.setUp();
-    }
-
     @Test
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri("foo"), "This is a file to be filtered", Exchange.FILE_NAME,
                 "skipme.txt");
 
         mock.setResultWaitTime(100);
@@ -58,10 +45,10 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri("foo"), "This is a file to be filtered", Exchange.FILE_NAME,
                 "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/data/filefilter/barbar", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("barbar"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }
@@ -70,7 +57,9 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri(
+                        "?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4"))
+                                .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

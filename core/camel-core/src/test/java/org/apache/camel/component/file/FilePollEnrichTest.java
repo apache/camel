@@ -16,40 +16,31 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FilePollEnrichTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/pollenrich");
-        super.setUp();
-    }
-
     @Test
     public void testFilePollEnrich() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/data/pollenrich/done/hello.txt");
+        mock.expectedFileExists(testFile("done/hello.txt"));
 
-        template.sendBodyAndHeader("file:target/data/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:" + testDirectory(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // file should be moved
-        File file = new File("target/data/pollenrich/hello.txt");
-        assertFalse(file.exists(), "File should have been moved");
+        assertFalse(Files.exists(testFile("hello.txt")), "File should have been moved");
     }
 
     @Override
@@ -58,7 +49,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo")
-                        .pollEnrich("file:target/data/pollenrich?move=done", 5000).convertBodyTo(String.class)
+                        .pollEnrich(fileUri("?move=done"), 5000).convertBodyTo(String.class)
                         .log("Polled filed ${file:name}").to("mock:result");
             }
         };

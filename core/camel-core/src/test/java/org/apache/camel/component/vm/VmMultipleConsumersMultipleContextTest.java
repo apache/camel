@@ -17,14 +17,13 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
+public class VmMultipleConsumersMultipleContextTest extends AbstractVmTestSupport {
 
     @Test
     public void testMultipleVMConsumersSameContext() throws Exception {

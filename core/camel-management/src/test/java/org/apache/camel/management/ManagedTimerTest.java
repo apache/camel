@@ -26,28 +26,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedTimerTest extends ManagementTestSupport {
 
     @Test
     public void testTimer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName
-                .getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"timer://foo\\?delay=5000&period=8000\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "timer://foo\\?delay=5000&period=8000");
         assertEquals(true, mbeanServer.isRegistered(name), "Should be registered");
 
         Long period = (Long) mbeanServer.getAttribute(name, "Period");
         assertEquals(8000, period.longValue());
 
         String camelId = (String) mbeanServer.getAttribute(name, "CamelId");
-        assertEquals("camel-1", camelId);
+        assertEquals(context.getManagementName(), camelId);
 
         // change period and delay
         mbeanServer.setAttribute(name, new Attribute("Period", 500));

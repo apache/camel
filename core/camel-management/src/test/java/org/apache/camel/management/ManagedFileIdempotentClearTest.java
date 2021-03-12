@@ -37,17 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
-    protected Endpoint startEndpoint;
-    protected MockEndpoint resultEndpoint;
-    private File store = new File("target/data/idempotentfilestore.dat");
+
+    private File store = testFile("idempotentfilestore.dat").toFile();
     private IdempotentRepository repo;
 
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        Endpoint startEndpoint = resolveMandatoryEndpoint("direct:start");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -63,7 +60,7 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String path = (String) mbeanServer.getAttribute(on, "FilePath");
-        assertEquals(FileUtil.normalizePath("target/data/idempotentfilestore.dat"), FileUtil.normalizePath(path));
+        assertEquals(FileUtil.normalizePath(testFile("idempotentfilestore.dat").toString()), FileUtil.normalizePath(path));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());
@@ -75,9 +72,9 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
 
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
 
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("3", "three");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "2", "two");
+        sendMessage(startEndpoint, "3", "three");
 
         resultEndpoint.assertIsSatisfied();
 
@@ -102,7 +99,7 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
         assertFalse(repo.contains("4"));
     }
 
-    protected void sendMessage(final Object messageId, final Object body) {
+    protected void sendMessage(final Endpoint startEndpoint, final Object messageId, final Object body) {
         template.send(startEndpoint, exchange -> {
             // now lets fire in a message
             Message in = exchange.getIn();
@@ -114,25 +111,17 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        // delete file store before testing
-        if (store.exists()) {
-            store.delete();
-        }
-
-        repo = FileIdempotentRepository.fileIdempotentRepository(store);
-
-        // let's add 4 to start with
-        repo.add("4");
-
         super.setUp();
-        startEndpoint = resolveMandatoryEndpoint("direct:start");
-        resultEndpoint = getMockEndpoint("mock:result");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                repo = FileIdempotentRepository.fileIdempotentRepository(store);
+                // let's add 4 to start with
+                repo.add("4");
+
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), repo)
                         .to("mock:result");

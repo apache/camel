@@ -23,6 +23,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -32,11 +33,6 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
 
     @Test
     public void testRedeliver() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -46,7 +42,7 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "route1");
 
         Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, num.longValue());

@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,8 +61,7 @@ public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
                                 // check mbeans
                                 MBeanServer mbeanServer = getMBeanServer();
 
-                                ObjectName on = ObjectName.getInstance(
-                                        "org.apache.camel:context=camel-1,type=services,name=DefaultReactiveExecutor");
+                                ObjectName on = getCamelObjectName(TYPE_SERVICE, "DefaultReactiveExecutor");
                                 assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
                                 // should be 1 running

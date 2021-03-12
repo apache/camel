@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -41,11 +42,6 @@ public class TwoManagedCamelContextTest extends TestSupport {
 
     @Test
     public void testTwoManagedCamelContext() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         camel1 = createCamelContext("foo");
         camel2 = createCamelContext("bar");
 
@@ -54,10 +50,10 @@ public class TwoManagedCamelContextTest extends TestSupport {
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=foo,type=context,name=\"foo\"");
+        ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=bar,type=context,name=\"bar\"");
+        ObjectName on2 = getContextObjectName(camel2);
         assertTrue(mbeanServer.isRegistered(on2), "Should be registered");
 
         camel1.stop();
@@ -65,6 +61,12 @@ public class TwoManagedCamelContextTest extends TestSupport {
 
         assertFalse(mbeanServer.isRegistered(on), "Should be unregistered");
         assertFalse(mbeanServer.isRegistered(on2), "Should be unregistered");
+    }
+
+    private static ObjectName getContextObjectName(CamelContext context) throws MalformedObjectNameException {
+        return ObjectName
+                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\""
+                             + context.getName() + "\"");
     }
 
     @Override

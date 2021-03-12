@@ -22,6 +22,8 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -32,35 +34,30 @@ public class ManagedCBRTest extends ManagementTestSupport {
     // CAMEL-4044: mbeans not registered for children of choice
     @Test
     public void testManagedCBR() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "route");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-a\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "task-a");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"choice\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "choice");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-b\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "task-b");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-c\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "task-c");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-d\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "task-d");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-e\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "task-e");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"task-done\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "task-done");
         assertTrue(mbeanServer.isRegistered(on), "MBean '" + on + "' not registered");
     }
 

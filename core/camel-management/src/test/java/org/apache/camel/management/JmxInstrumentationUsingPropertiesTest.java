@@ -21,18 +21,17 @@ import javax.management.ObjectName;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
+import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 
 /**
  * This module contains test cases that verifies jmx system property uses.
  */
+@ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
 public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     @Override
     @BeforeEach
@@ -40,17 +39,11 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
         domainName = "org.apache.camel-properties";
         System.setProperty(JmxSystemPropertyKeys.DOMAIN, domainName);
         System.setProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, domainName);
-
         super.setUp();
     }
 
     @Test
     public void testMBeanServerType() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // default is platform mbs
         assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));
     }

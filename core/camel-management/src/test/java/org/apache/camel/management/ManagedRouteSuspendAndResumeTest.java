@@ -27,7 +27,6 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedSuspendableRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,27 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/managed");
-        super.setUp();
-    }
-
     @Test
     public void testSuspendAndResume() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/data/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -74,7 +61,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         // wait a little bit while route is stopped to verify that file was not consumed
         mock.setResultWaitTime(250);
 
-        template.sendBodyAndHeader("file://target/data/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // route is stopped so we do not get the file
         mock.assertIsNotSatisfied();
@@ -111,7 +98,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/managed?initialDelay=0&delay=10").routeId("foo").to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").to("mock:result");
             }
         };
     }

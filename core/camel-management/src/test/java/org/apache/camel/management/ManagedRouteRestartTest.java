@@ -37,11 +37,6 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
 
     @Test
     public void testRestartRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertEquals(1, myRoutePolicy.getStart());
         assertEquals(0, myRoutePolicy.getStop());
 

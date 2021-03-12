@@ -24,6 +24,7 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -31,13 +32,8 @@ public class ManagedInlinedProcessorTest extends ManagementTestSupport {
 
     @Test
     public void testManageInlinedProcessor() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"custom\"");
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "custom");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

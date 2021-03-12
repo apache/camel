@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,14 +33,6 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
 
     private ScheduledExecutorService pool;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/a");
-        deleteDirectory("target/data/b");
-        super.setUp();
-    }
-
     @Test
     public void testSharedThreadPool() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -49,8 +40,8 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
         // thread thread name should be the same
         mock.message(0).header("threadName").isEqualTo(mock.message(1).header("threadName"));
 
-        template.sendBodyAndHeader("file:target/data/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/data/b", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri("a"), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("b"), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -64,10 +55,10 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
                 pool = new ThreadPoolBuilder(context).poolSize(1).buildScheduled(this, "MySharedPool");
                 context.getRegistry().bind("myPool", pool);
 
-                from("file:target/data/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a")
+                from(fileUri("a?initialDelay=0&delay=10&scheduledExecutorService=#myPool")).routeId("a")
                         .to("direct:shared");
 
-                from("file:target/data/b?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("b")
+                from(fileUri("b?initialDelay=0&delay=10&scheduledExecutorService=#myPool")).routeId("b")
                         .to("direct:shared");
 
                 from("direct:shared").routeId("shared").convertBodyTo(String.class).log("Get ${file:name} using ${threadName}")

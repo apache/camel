@@ -23,6 +23,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -42,13 +43,8 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
 
     @Test
     public void testRouteAddSecondRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
+        ObjectName route1 = getCamelObjectName(TYPE_ROUTE, "foo");
 
         // should be started
         String state = (String) mbeanServer.getAttribute(route1, "State");
@@ -65,7 +61,7 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route DONE <<<<<<<<<<<<<<");
 
         // find the 2nd route
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
+        ObjectName route2 = getCamelObjectName(TYPE_ROUTE, "bar");
 
         // should be started
         state = (String) mbeanServer.getAttribute(route2, "State");

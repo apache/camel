@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test that FileProducer can use message id as the filename.
@@ -34,7 +34,7 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
     @Test
     public void testGeneratedFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:a");
-        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file://target", FileEndpoint.class);
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint(fileUri(), FileEndpoint.class);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
@@ -42,15 +42,14 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
         String id = fileEndpoint.getGeneratedFileName(exchange.getIn());
         template.send(endpoint, exchange);
 
-        File file = new File("target/" + id);
-        assertEquals(true, file.exists(), "The generated file should exists: " + file);
+        assertTrue(Files.exists(testFile(id)), "The generated file should exists: " + id);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("file://target");
+                from("direct:a").to(fileUri());
             }
         };
     }

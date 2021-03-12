@@ -49,11 +49,6 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
     @Override
     @Test
     public void testMBeansRegistered() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertDefaultDomain();
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
@@ -74,11 +69,6 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
     @Override
     @Test
     public void testCounters() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>", "<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");

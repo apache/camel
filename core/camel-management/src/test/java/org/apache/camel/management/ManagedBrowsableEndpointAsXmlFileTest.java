@@ -21,34 +21,21 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
-        super.setUp();
-    }
-
     @Test
     public void testBrowseableEndpointAsXmlAllIncludeBody() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBodyAndHeader("direct:start", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name
-                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/data/files\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "file://" + testDirectory());
 
         String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[] { true },
                 new String[] { "java.lang.Boolean" });
@@ -65,7 +52,7 @@ public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
 
-                from("direct:start").to("file:target/data/files");
+                from("direct:start").to(fileUri());
             }
         };
     }

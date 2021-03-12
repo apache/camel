@@ -27,6 +27,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 @Disabled("Manual test")
 public class FileAsyncStressTest extends ContextTestSupport {
 
@@ -36,23 +38,17 @@ public class FileAsyncStressTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+        assumeFalse(isPlatform("windows"));
         super.setUp();
-        deleteDirectory("target/data/filestress");
         for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file:target/data/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
+            template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, i + ".txt");
         }
     }
 
     @Test
     public void testAsyncStress() throws Exception {
         // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         // start route when all the files have been written
         context.getRouteController().startRoute("foo");
@@ -73,7 +69,7 @@ public class FileAsyncStressTest extends ContextTestSupport {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from("file:target/data/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup().threads(10)
+                from(fileUri("?maxMessagesPerPoll=50")).routeId("foo").noAutoStartup().threads(10)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate some work with random time to complete

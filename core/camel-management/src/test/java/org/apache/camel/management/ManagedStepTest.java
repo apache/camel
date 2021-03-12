@@ -26,6 +26,7 @@ import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,11 +35,6 @@ public class ManagedStepTest extends ManagementTestSupport {
 
     @Test
     public void testManageStep() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -50,7 +46,7 @@ public class ManagedStepTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=steps,name=\"foo\"");
+        ObjectName on = getCamelObjectName(TYPE_STEP, "foo");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
@@ -61,7 +57,7 @@ public class ManagedStepTest extends ManagementTestSupport {
         assertEquals("foo", stepId);
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", camelId);
+        assertEquals(context.getManagementName(), camelId);
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);

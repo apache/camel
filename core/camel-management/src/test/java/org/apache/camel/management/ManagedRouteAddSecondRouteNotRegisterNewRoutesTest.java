@@ -23,6 +23,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -47,13 +48,8 @@ public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends Manageme
 
     @Test
     public void testRouteAddSecondRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
+        ObjectName route1 = getCamelObjectName(TYPE_ROUTE, "foo");
 
         // should be started
         String state = (String) mbeanServer.getAttribute(route1, "State");
@@ -70,7 +66,7 @@ public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends Manageme
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route DONE <<<<<<<<<<<<<<");
 
         // find the 2nd route
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
+        ObjectName route2 = getCamelObjectName(TYPE_ROUTE, "bar");
 
         // should not be registered
         assertFalse(mbeanServer.isRegistered(route2), "2nd route should not be registered");

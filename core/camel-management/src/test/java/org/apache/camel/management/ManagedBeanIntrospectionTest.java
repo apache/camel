@@ -38,11 +38,6 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
 
     @Test
     public void testManageBeanIntrospection() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");

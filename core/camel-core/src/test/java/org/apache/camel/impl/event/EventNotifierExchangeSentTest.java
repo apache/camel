@@ -35,13 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
-    protected static List<CamelEvent> events = new ArrayList<>();
+    protected List<CamelEvent> events = new ArrayList<>();
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void clearEvents() throws Exception {
         events.clear();
-        super.setUp();
     }
 
     @Override

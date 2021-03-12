@@ -24,20 +24,17 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
 
     @Test
     public void testManagedThreadPool() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads1(threads)\"");
+        ObjectName on = getCamelObjectName(TYPE_THREAD_POOL, "mythreads(threads)");
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
         assertEquals(false, shutdown.booleanValue());
@@ -62,13 +59,13 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         String id = (String) mbeanServer.getAttribute(on, "Id");
-        assertEquals("threads1", id);
+        assertEquals("mythreads", id);
 
         String source = (String) mbeanServer.getAttribute(on, "SourceId");
         assertEquals("threads", source);
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals("route1", routeId);
+        assertTrue(routeId.matches("route[0-9]+"));
 
         String profileId = (String) mbeanServer.getAttribute(on, "ThreadPoolProfileId");
         assertEquals("custom", profileId);
@@ -90,7 +87,7 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
 
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").threads().executorServiceRef("custom").to("mock:result");
+                from("direct:start").threads().id("mythreads").executorServiceRef("custom").to("mock:result");
             }
         };
     }

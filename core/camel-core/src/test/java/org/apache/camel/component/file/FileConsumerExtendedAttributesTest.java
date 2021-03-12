@@ -27,20 +27,20 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for consuming a batch of files (multiple files in one consume)
  */
 public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
-    private static final String ROOT = "target/data/extended-attributes";
     private static final String FILE = "attributes.txt";
+    private final String ROOT = testDirectory().toString();
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory(ROOT);
-
         super.setUp();
 
         Files.createFile(Paths.get(ROOT, "basic", FILE));

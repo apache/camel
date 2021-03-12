@@ -16,33 +16,20 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for file producer option tempPrefix
  */
 public class FileProduceTempFileNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
-    private String parentFileUrl = "file://target/data/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
-    private String childFileUrl = "file://target/data/tempandrename/?tempFileName=work/${file:name.noext}.tmp";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/tempandrename");
-        deleteDirectory("target/data/work");
-        super.setUp();
-    }
+    private String fileUrl = fileUri("tempandrename?tempFileName=inprogress-${file:name.noext}.tmp");
+    private String parentFileUrl = fileUri("tempandrename?tempFileName=../work/${file:name.noext}.tmp");
+    private String childFileUrl = fileUri("tempandrename?tempFileName=work/${file:name.noext}.tmp");
 
     @Test
     public void testCreateTempFileName() throws Exception {
@@ -51,8 +38,8 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "target/data/tempandrename/claus.txt");
-        assertDirectoryEquals("target/data/tempandrename/inprogress-claus.tmp", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, testFile("claus.txt").toString());
+        assertDirectoryEquals(testFile("inprogress-claus.tmp").toString(), tempFileName);
     }
 
     @Test
@@ -70,24 +57,21 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
     public void testTempFileName() throws Exception {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/data/tempandrename/hello.txt");
-        assertEquals(true, file.exists(), "The generated file should exist: " + file);
+        assertFileExists(testFile("tempandrename/hello.txt"));
     }
 
     @Test
     public void testParentTempFileName() throws Exception {
         template.sendBodyAndHeader("direct:b", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/data/work");
-        assertEquals(true, file.exists(), "The generated temp directory should exist: " + file);
+        assertDirectoryExists(testDirectory("work"));
     }
 
     @Test
     public void testChildTempFileName() throws Exception {
         template.sendBodyAndHeader("direct:c", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/data/tempandrename/work");
-        assertEquals(true, file.exists(), "The generated temp directory should exist: " + file);
+        assertDirectoryExists(testDirectory("tempandrename/work"));
     }
 
     @Test
@@ -97,8 +81,8 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "target/data/tempandrename/claus.txt");
-        assertDirectoryEquals("target/data/work/claus.tmp", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, testFile("tempandrename/claus.txt").toString());
+        assertDirectoryEquals(testDirectory("work/claus.tmp").toString(), tempFileName);
     }
 
     @Override

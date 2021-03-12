@@ -42,11 +42,6 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
     @Test
     public void testProducer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("foo").expectedMessageCount(1);

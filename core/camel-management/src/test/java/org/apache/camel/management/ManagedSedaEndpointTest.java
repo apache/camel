@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,11 +32,6 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
     @Test
     public void testSedaEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("seda:start", "Hello World");
@@ -45,7 +41,7 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://start\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "seda://start");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("seda://start", uri);
 

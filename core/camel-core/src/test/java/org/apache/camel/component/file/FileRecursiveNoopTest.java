@@ -20,28 +20,20 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileRecursiveNoopTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/noop");
-        super.setUp();
-    }
 
     @Test
     public void testRecursiveNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
-        template.sendBodyAndHeader("file:target/data/noop", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/data/noop", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/data/noop/foo", "a2", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/data/noop/bar", "c", Exchange.FILE_NAME, "c.txt");
-        template.sendBodyAndHeader("file:target/data/noop/bar", "b2", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(fileUri(), "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri(), "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(fileUri("foo"), "a2", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri("bar"), "c", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader(fileUri("bar"), "b2", Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -49,7 +41,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         mock.reset();
         mock.expectedBodiesReceived("c2");
 
-        template.sendBodyAndHeader("file:target/data/noop", "c2", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader(fileUri(), "c2", Exchange.FILE_NAME, "c.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +51,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/noop?initialDelay=0&delay=10&recursive=true&noop=true").convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&recursive=true&noop=true")).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

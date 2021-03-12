@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.io.File;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -28,29 +27,18 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/suspended");
-        super.setUp();
-    }
-
     @Test
     public void testConsumeSuspendAndResumeFile() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
@@ -59,28 +47,28 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals(true, registered, "Should be registered");
+        assertTrue(registered, "Should be registered");
         Boolean ss = (Boolean) mbeanServer.getAttribute(on, "SupportSuspension");
-        assertEquals(true, ss.booleanValue());
+        assertTrue(ss);
         Boolean suspended = (Boolean) mbeanServer.getAttribute(on, "Suspended");
-        assertEquals(false, suspended.booleanValue());
+        assertFalse(suspended);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/data/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader("file://target/data/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             // now its suspended by the policy
             Boolean bool = (Boolean) mbeanServer.getAttribute(on, "Suspended");
-            assertEquals(true, bool.booleanValue());
+            assertTrue(bool);
         });
 
         // the route is suspended by the policy so we should only receive one
-        String[] files = new File("target/data/suspended/").list();
+        String[] files = testDirectory().toFile().list();
         assertNotNull(files);
         assertEquals(1, files.length, "The file should exists");
 
@@ -94,11 +82,11 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         suspended = (Boolean) mbeanServer.getAttribute(on, "Suspended");
-        assertEquals(false, suspended.booleanValue());
+        assertFalse(suspended);
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             // and the file is now deleted
-            String[] names = new File("target/data/suspended/").list();
+            String[] names = testDirectory().toFile().list();
             assertNotNull(names);
             assertEquals(0, names.length, "The file should exists");
         });
@@ -111,7 +99,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
 
-                from("file://target/data/suspended?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true")
+                from(fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true"))
                         .routePolicy(myPolicy).id("myRoute")
                         .to("mock:result");
             }

@@ -39,14 +39,9 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
 
     @Test
     public void testFromRestModel() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", null, null);
         assertNotNull(xml);

@@ -20,22 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for intercepting sending to endpoint with dynamic endpoints and uri matching
  */
 public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/foo");
-        deleteDirectory("target/data/bar");
-        deleteDirectory("target/data/cheese");
-        super.setUp();
-    }
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -95,11 +85,10 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // intercept sending to to either target/data/foo or
-                // target/data/bar directory
-                interceptSendToEndpoint("file://target/data/(foo|bar)").skipSendToOriginalEndpoint().to("mock:detour");
+                // intercept sending to to either ./foo or ./bar directory
+                interceptSendToEndpoint(fileUri("(foo|bar)")).skipSendToOriginalEndpoint().to("mock:detour");
 
-                from("direct:first").to("file://target/data/foo").to("file://target/data/bar").to("file://target/data/cheese")
+                from("direct:first").to(fileUri("foo")).to(fileUri("bar")).to(fileUri("cheese"))
                         .to("mock:result");
                 // END SNIPPET: e1
             }
@@ -108,7 +97,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 
         getMockEndpoint("mock:detour").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedFileExists("target/data/cheese/cheese.txt");
+        getMockEndpoint("mock:result").expectedFileExists(testFile("cheese/cheese.txt"));
 
         template.sendBodyAndHeader("direct:first", "Hello World", Exchange.FILE_NAME, "cheese.txt");
 
@@ -128,7 +117,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
                         // know beforehand
                         // but it should still be intercepted as we intercept
                         // all file endpoints
-                        template.sendBodyAndHeader("file://target/data/foo", "Hello Foo", Exchange.FILE_NAME, "foo.txt");
+                        template.sendBodyAndHeader(fileUri("foo"), "Hello Foo", Exchange.FILE_NAME, "foo.txt");
                     }
                 }).to("mock:result");
             }
@@ -137,7 +126,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 
         getMockEndpoint("mock:detour").expectedBodiesReceived("Hello Foo");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedFileExists("target/data/foo/foo.txt");
+        getMockEndpoint("mock:result").expectedFileExists(testFile("foo/foo.txt"));
 
         template.sendBody("direct:first", "Hello World");
 

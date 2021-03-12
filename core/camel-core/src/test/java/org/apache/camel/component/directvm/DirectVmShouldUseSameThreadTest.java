@@ -22,12 +22,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
+@ResourceLock("DirectVmComponent")
 public class DirectVmShouldUseSameThreadTest extends ContextTestSupport {
 
     private static long id;

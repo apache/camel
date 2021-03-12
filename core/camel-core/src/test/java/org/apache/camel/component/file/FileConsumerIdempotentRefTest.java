@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,18 +44,10 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/idempotent");
-        super.setUp();
-        template.sendBodyAndHeader("file://target/data/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10")
+                from(fileUri("?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }
@@ -65,6 +56,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
     @Test
     public void testIdempotentRef() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -79,9 +72,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         // move file back
-        File file = new File("target/data/idempotent/done/report.txt");
-        File renamed = new File("target/data/idempotent/report.txt");
-        file.renameTo(renamed);
+        Files.move(testFile("done/report.txt"), testFile("report.txt"));
 
         // should NOT consume the file again, let a bit time go
         Thread.sleep(100);
@@ -97,7 +88,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
             // will return true 1st time, and false 2nd time
             boolean result = invoked;
             invoked = true;
-            assertEquals("report.txt", messageId);
+            assertEquals(testFile("report.txt").toAbsolutePath().toString(), messageId);
             return !result;
         }
 

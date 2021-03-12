@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.file.stress;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,36 +33,22 @@ import org.junit.jupiter.api.Test;
 @Disabled("Manual test")
 public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
 
-    private boolean enabled;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        if (!enabled) {
-            return;
-        }
-
-        deleteDirectory("target/data/big");
-        createDirectory("target/data/big");
+        super.setUp();
 
         // create a big file
-        File file = new File("target/data/big/data.txt");
-        FileOutputStream fos = new FileOutputStream(file);
-        for (int i = 0; i < 100000; i++) {
-            String s = "Hello World this is a long line with number " + i + LS;
-            fos.write(s.getBytes());
+        try (OutputStream fos = new BufferedOutputStream(Files.newOutputStream(testFile("big/data.txt")))) {
+            for (int i = 0; i < 100000; i++) {
+                String s = "Hello World this is a long line with number " + i + LS;
+                fos.write(s.getBytes());
+            }
         }
-        fos.close();
-
-        super.setUp();
     }
 
     @Test
     public void testBigFile() throws Exception {
-        if (!enabled) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:done");
         mock.expectedMessageCount(1);
         mock.setResultWaitTime(2 * 60000);
@@ -74,8 +61,8 @@ public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/big").split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000")
-                        .to("file:target/data/out/also-big.txt?fileExist=Append")
+                from(fileUri("big")).split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000")
+                        .to(fileUri("out/also-big.txt?fileExist=Append"))
                         .end().to("mock:done");
             }
         };

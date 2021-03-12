@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -35,11 +36,6 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXmlIncludeBody() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(7);
 
         template.sendBody("direct:start", "<foo>Camel &gt; Donkey</foo>");
@@ -60,7 +56,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[] { 0, true },
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
@@ -129,11 +125,6 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXml() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
@@ -145,7 +136,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[] { 0, false },
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
@@ -167,11 +158,6 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXmlAllIncludeBody() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello World");
@@ -183,7 +169,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[] { true },
                 new String[] { "java.lang.Boolean" });
@@ -200,11 +186,6 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXmlAll() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
@@ -216,7 +197,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint("mock:result").getReceivedExchanges();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[] { false },
                 new String[] { "java.lang.Boolean" });
@@ -233,11 +214,6 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXmlRangeIncludeBody() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(3);
 
         template.sendBody("direct:start", "Hello World");
@@ -250,7 +226,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[] { 0, 1, true },
                 new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
@@ -267,11 +243,6 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXmlRange() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(3);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
@@ -284,7 +255,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[] { 0, 1, false },
                 new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
@@ -301,14 +272,9 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointAsXmlRangeInvalidIndex() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         try {
             mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[] { 3, 1, false },

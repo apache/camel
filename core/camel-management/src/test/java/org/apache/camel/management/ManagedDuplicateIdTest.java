@@ -26,11 +26,6 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
 
     @Test
     public void testDuplicateId() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

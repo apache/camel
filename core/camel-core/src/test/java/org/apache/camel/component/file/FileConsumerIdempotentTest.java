@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,27 +33,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class FileConsumerIdempotentTest extends ContextTestSupport {
 
-    private String uri = "file://target/data/idempotent/?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/idempotent");
-        super.setUp();
-        template.sendBodyAndHeader("file://target/data/idempotent", "Hello World", Exchange.FILE_NAME, "report.txt");
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
 
     @Test
     public void testIdempotent() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -68,16 +60,14 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         // move file back
-        File file = new File("target/data/idempotent/done/report.txt");
-        File renamed = new File("target/data/idempotent/report.txt");
-        file.renameTo(renamed);
+        Files.move(testFile("done/report.txt"), testFile("report.txt"));
 
         // should NOT consume the file again, let a bit time pass to let the
         // consumer try to consume it but it should not
         Thread.sleep(100);
         assertMockEndpointsSatisfied();
 
-        FileEndpoint fe = context.getEndpoint(uri, FileEndpoint.class);
+        FileEndpoint fe = context.getEndpoint(fileUri(), FileEndpoint.class);
         assertNotNull(fe);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) fe.getInProgressRepository();

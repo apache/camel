@@ -16,33 +16,21 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for writing done files
  */
 public class FilerConsumerDoneFileNameSuffixTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        super.setUp();
-    }
-
     @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // wait a bit and it should not pickup the written file as there are no
         // done file
@@ -55,14 +43,13 @@ public class FilerConsumerDoneFileNameSuffixTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "hello.txt.ready");
+        template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "hello.txt.ready");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
-        File file = new File("target/data/done/hello.txt.ready");
-        assertFalse(file.exists(), "Done file should be deleted: " + file);
+        assertFileNotExists(testFile("hello.txt.ready"));
     }
 
     @Override
@@ -70,7 +57,7 @@ public class FilerConsumerDoneFileNameSuffixTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=10").to("mock:result");
+                from(fileUri("?doneFileName=${file:name}.ready&initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

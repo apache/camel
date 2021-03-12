@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,14 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
 
     MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/");
-        createDirectory("target/data/changed/in");
-        super.setUp();
-    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -63,8 +54,8 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
         mock.message(0).arrives().between(0, 1400).millis();
         mock.message(1).arrives().between(0, 1400).millis();
 
-        template.sendBodyAndHeader("file:target/data/changed/in", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/data/changed/in", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -81,15 +72,16 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&readLockIdempotentReleaseAsync=true&idempotentRepository=#myRepo")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                // we are in progress
-                                int size = myRepo.getCacheSize();
-                                assertTrue(size == 1 || size == 2);
-                            }
-                        }).to("mock:result");
+                from(fileUri(
+                        "?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&readLockIdempotentReleaseAsync=true&idempotentRepository=#myRepo"))
+                                .process(new Processor() {
+                                    @Override
+                                    public void process(Exchange exchange) throws Exception {
+                                        // we are in progress
+                                        int size = myRepo.getCacheSize();
+                                        assertTrue(size == 1 || size == 2);
+                                    }
+                                }).to("mock:result");
             }
         };
     }

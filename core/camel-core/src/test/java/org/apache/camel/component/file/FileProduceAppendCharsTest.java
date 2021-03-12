@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,7 +31,7 @@ public class FileProduceAppendCharsTest extends ContextTestSupport {
     public void testAppendChars() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        mock.expectedFileExists("target/data/test-file-append/hello.txt", "Hello\nWorld\nHow are you?\n");
+        mock.expectedFileExists(testFile("hello.txt"), "Hello\nWorld\nHow are you?\n");
 
         template.sendBody("direct:start", "Hello");
         template.sendBody("direct:start", "World");
@@ -42,18 +41,11 @@ public class FileProduceAppendCharsTest extends ContextTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/test-file-append");
-        super.setUp();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                        .to("file://target/data/test-file-append?fileExist=Append&appendChars=\\n", "mock:result");
+                        .to(fileUri("?fileExist=Append&appendChars=\\n"), "mock:result");
             }
         };
     }

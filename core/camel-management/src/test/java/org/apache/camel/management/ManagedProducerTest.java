@@ -32,11 +32,6 @@ public class ManagedProducerTest extends ManagementTestSupport {
 
     @Test
     public void testProducer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -49,7 +44,7 @@ public class ManagedProducerTest extends ManagementTestSupport {
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals(true, registered, "Should be registered");
+            assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
             assertTrue(uri.equals("log://foo") || uri.equals("mock://result"), uri);

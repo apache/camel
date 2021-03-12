@@ -76,6 +76,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
@@ -3945,7 +3946,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public boolean isJMXDisabled() {
-        String override = System.getProperty("org.apache.camel.jmx.disabled");
+        String override = System.getProperty(JmxSystemPropertyKeys.DISABLED);
         if (override != null) {
             return "true".equals(override);
         } else {

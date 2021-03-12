@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -32,11 +33,6 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
 
     @Test
     public void testManageStatistics() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -78,11 +74,11 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         assertNull(lastFail);
 
         // should be 5 on the processors
-        ObjectName foo = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"foo\"");
+        ObjectName foo = getCamelObjectName(TYPE_PROCESSOR, "foo");
         completed = (Long) mbeanServer.getAttribute(foo, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
 
-        ObjectName mock = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mock\"");
+        ObjectName mock = getCamelObjectName(TYPE_PROCESSOR, "mock");
         completed = (Long) mbeanServer.getAttribute(mock, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
     }

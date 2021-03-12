@@ -17,6 +17,9 @@
 package org.apache.camel.test.junit5;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -310,6 +313,14 @@ public final class TestSupport {
     }
 
     /**
+     * To be used to check is a directory is found in the file system
+     */
+    public static void assertDirectoryExists(Path file) {
+        assertTrue(Files.exists(file), "Directory " + file + " should exist");
+        assertTrue(Files.isDirectory(file), "Directory " + file + " should be a directory");
+    }
+
+    /**
      * Asserts that a given directory is found in the file system.
      */
     public static void assertDirectoryExists(String filename) {
@@ -319,12 +330,36 @@ public final class TestSupport {
     }
 
     /**
+     * To be used to check is a file is found in the file system
+     */
+    public static void assertFileExists(Path file) {
+        assertTrue(Files.exists(file), "File " + file + " should exist");
+        assertTrue(Files.exists(file), "File " + file + " should be a file");
+    }
+
+    /**
+     * To be used to check is a file is found in the file system
+     */
+    public static void assertFileExists(Path file, String content) throws IOException {
+        assertTrue(Files.exists(file), "File " + file + " should exist");
+        assertTrue(Files.isRegularFile(file), "File " + file + " should be a file");
+        assertEquals(content, new String(Files.readAllBytes(file)), "File " + file + " has unexpected content");
+    }
+
+    /**
      * Asserts that a given file is found in the file system.
      */
     public static void assertFileExists(String filename) {
         File file = new File(filename);
         assertTrue(file.exists(), "File " + filename + " should exist");
         assertTrue(file.isFile(), "File " + filename + " should be a file");
+    }
+
+    /**
+     * To be used to check is a file is <b>not</b> found in the file system
+     */
+    public static void assertFileNotExists(Path file) {
+        assertFalse(Files.exists(file), "File " + file + " should not exist");
     }
 
     /**
@@ -391,6 +426,17 @@ public final class TestSupport {
      * @param  file the directory to be deleted
      * @return      <tt>false</tt> when an error occur while deleting directory
      */
+    public static boolean deleteDirectory(Path file) {
+        return deleteDirectory(file.toFile());
+    }
+
+    /**
+     * Recursively delete a directory, useful to zapping test data. Deletion will be attempted up to five time before
+     * giving up.
+     *
+     * @param  file the directory to be deleted
+     * @return      <tt>false</tt> when an error occur while deleting directory
+     */
     public static boolean deleteDirectory(String file) {
         return deleteDirectory(new File(file));
     }
@@ -441,6 +487,25 @@ public final class TestSupport {
         if (!success) {
             LOG.warn("Deletion of file: {} failed", file.getAbsolutePath());
         }
+    }
+
+    /**
+     * Creates a given directory.
+     *
+     * @param file the directory to be created
+     */
+    public static void createCleanDirectory(Path file) {
+        deleteDirectory(file);
+        createDirectory(file);
+    }
+
+    /**
+     * Creates a given directory.
+     *
+     * @param file the directory to be created
+     */
+    public static void createDirectory(Path file) {
+        file.toFile().mkdirs();
     }
 
     /**

@@ -22,9 +22,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ResourceLock("DirectVmComponent")
 public class DirectVmNoConsumerTest extends ContextTestSupport {
 
     @Override

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -35,19 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FileNoOpLockFileTest extends ContextTestSupport {
 
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        deleteDirectory("target/data/reports");
-        super.tearDown();
-    }
-
     @Test
     public void testLocked() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Locked");
 
-        template.sendBodyAndHeader("file:target/data/reports/locked", "Hello Locked", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri("locked"), "Hello Locked", Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
 
@@ -63,7 +55,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Not Locked");
 
-        template.sendBodyAndHeader("file:target/data/reports/notlocked", "Hello Not Locked", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri("notlocked"), "Hello Not Locked", Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
 
@@ -74,23 +66,14 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         checkLockFile(false);
     }
 
-    private static boolean existsLockFile(boolean expected) {
-        String filename = "target/data/reports/";
-        filename += expected ? "locked/" : "notlocked/";
-        filename += "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-
-        File file = new File(filename);
-        return expected == file.exists();
+    private boolean existsLockFile(boolean expected) {
+        String filename = (expected ? "locked/" : "notlocked/") + "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        return expected == Files.exists(testFile(filename));
     }
 
-    private static void checkLockFile(boolean expected) {
-        String filename = "target/data/reports/";
-        filename += expected ? "locked/" : "notlocked/";
-        filename += "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-
-        File file = new File(filename);
-        String s = "Lock file should " + (expected ? "exists" : "not exists");
-        assertEquals(expected, file.exists(), s);
+    private void checkLockFile(boolean expected) {
+        String filename = (expected ? "locked/" : "notlocked/") + "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        assertEquals(expected, Files.exists(testFile(filename)), "Lock file should " + (expected ? "exists" : "not exists"));
     }
 
     @Override
@@ -98,17 +81,17 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/data/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile")
+                from(fileUri("locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile"))
                         .process(new MyNoopProcessor()).to("mock:report");
 
                 // for no locks
-                from("file://target/data/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none")
+                from(fileUri("notlocked/?initialDelay=0&delay=10&noop=true&readLock=none"))
                         .process(new MyNoopProcessor()).to("mock:report");
             }
         };
     }
 
-    private static class MyNoopProcessor implements Processor {
+    private class MyNoopProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);

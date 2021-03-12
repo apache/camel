@@ -17,6 +17,7 @@
 package org.apache.camel.component.mock;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -931,8 +932,29 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      *
      * @param name name of file, will cater for / and \ on different OS platforms
      */
+    public void expectedFileExists(final Path name) {
+        expectedFileExists(name.toString(), null);
+    }
+
+    /**
+     * Adds an expectation that a file exists with the given name
+     *
+     * @param name name of file, will cater for / and \ on different OS platforms
+     */
     public void expectedFileExists(final String name) {
         expectedFileExists(name, null);
+    }
+
+    /**
+     * Adds an expectation that a file exists with the given name
+     * <p/>
+     * Will wait at most 5 seconds while checking for the existence of the file.
+     *
+     * @param name    name of file, will cater for / and \ on different OS platforms
+     * @param content content of file to compare, can be <tt>null</tt> to not compare content
+     */
+    public void expectedFileExists(final Path name, final String content) {
+        expectedFileExists(name.toString(), content);
     }
 
     /**

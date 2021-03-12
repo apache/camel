@@ -40,11 +40,6 @@ public class ManagedStatisticsLevelRoutesOnlyTest extends ManagementTestSupport 
 
     @Test
     public void testManageStatisticsRoutesOnly() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 

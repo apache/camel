@@ -22,17 +22,14 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedInterceptTest extends ManagementTestSupport {
 
     @Test
     public void testIntercept() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:intercept").expectedBodiesReceived("Hello World", "Hello World");
 
@@ -42,15 +39,15 @@ public class ManagedInterceptTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
         Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://intercept\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "mock://intercept");
         queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(2, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"log-foo\"");
+        name = getCamelObjectName(TYPE_PROCESSOR, "log-foo");
         mbeanServer.isRegistered(name);
 
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");

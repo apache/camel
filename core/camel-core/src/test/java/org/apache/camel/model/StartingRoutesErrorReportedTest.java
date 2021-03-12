@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -60,6 +61,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
     }
 
     @Test
+    @ResourceLock("VmComponent")
     public void testMaskPassword() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

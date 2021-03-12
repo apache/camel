@@ -34,7 +34,7 @@ public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
         assertEquals(10249, data.length);
 
         // store the logo
-        template.sendBodyAndHeader("file:target/data", data, Exchange.FILE_NAME, "savedlogo.jpeg");
+        template.sendBodyAndHeader(fileUri(), data, Exchange.FILE_NAME, "savedlogo.jpeg");
     }
 
     @Override

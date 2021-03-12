@@ -17,20 +17,23 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileConfigureTest extends ContextTestSupport {
+
     private static final String EXPECT_PATH
-            = "target" + File.separator + "data" + File.separator + "foo" + File.separator + "bar";
+            = "target" + File.separator + "data" + File.separator + "FileConfigureTest" + File.separator + "bar";
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
 
     private static final Processor DUMMY_PROCESSOR = new Processor() {
@@ -41,28 +44,29 @@ public class FileConfigureTest extends ContextTestSupport {
 
     @Test
     public void testUriConfigurations() throws Exception {
-        assertFileEndpoint("file://target/data/foo/bar", EXPECT_PATH, false);
-        assertFileEndpoint("file://target/data/foo/bar?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/data/foo/bar?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/data/foo/bar", EXPECT_PATH, false);
-        assertFileEndpoint("file://target/data/foo/bar/", EXPECT_PATH, false);
-        assertFileEndpoint("file://target/data/foo/bar/?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/data/foo/bar/?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/data/foo/bar/", EXPECT_PATH, false);
-        assertFileEndpoint("file:/target/data/foo/bar/", File.separator + EXPECT_PATH + File.separator + EXPECT_FILE, true);
+        assertFileEndpoint("file://target/data/FileConfigureTest/bar", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/data/FileConfigureTest/bar?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/FileConfigureTest/bar?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/FileConfigureTest/bar", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/data/FileConfigureTest/bar/", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/data/FileConfigureTest/bar/?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/FileConfigureTest/bar/?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/FileConfigureTest/bar/", EXPECT_PATH, false);
+        assertFileEndpoint("file:/target/data/FileConfigureTest/bar/",
+                File.separator + EXPECT_PATH + File.separator + EXPECT_FILE, true);
         assertFileEndpoint("file:/", File.separator, true);
         assertFileEndpoint("file:///", File.separator, true);
     }
 
     @Test
-    public void testUriWithParameters() throws Exception {
+    public void testUriWithParameters() {
         FileEndpoint endpoint
                 = resolveMandatoryEndpoint(
                         "file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&bridgeErrorHandler=true"
                                            + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed",
                         FileEndpoint.class);
         assertNotNull(endpoint, "Could not find file endpoint");
-        assertEquals(true, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
+        assertTrue(endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
 
         endpoint = resolveMandatoryEndpoint(
                 "file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&startingDirectoryMustExist=true"
@@ -70,7 +74,7 @@ public class FileConfigureTest extends ContextTestSupport {
                 FileEndpoint.class);
 
         assertNotNull(endpoint, "Could not find file endpoint");
-        assertEquals(true, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
+        assertTrue(endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
 
         endpoint = resolveMandatoryEndpoint(
                 "file:///C:/camel/temp?delay=10&startingDirectoryMustExist=true&useFixedDelay=true&initialDelay=10"
@@ -78,23 +82,24 @@ public class FileConfigureTest extends ContextTestSupport {
                 FileEndpoint.class);
 
         assertNotNull(endpoint, "Could not find file endpoint");
-        assertEquals(true, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
+        assertTrue(endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
 
         endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10",
                 FileEndpoint.class);
 
         assertNotNull(endpoint, "Could not find file endpoint");
-        assertEquals(false, endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
+        assertFalse(endpoint.isStartingDirectoryMustExist(), "Get a wrong option of StartingDirectoryMustExist");
     }
 
     @Test
-    public void testUriWithCharset() throws Exception {
-        FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/data/foo/bar?charset=UTF-8", FileEndpoint.class);
-        assertNotNull(endpoint, "Could not find endpoint: file://target/data/foo/bar?charset=UTF-8");
+    public void testUriWithCharset() {
+        FileEndpoint endpoint
+                = resolveMandatoryEndpoint("file://target/data/FileConfigureTest/bar?charset=UTF-8", FileEndpoint.class);
+        assertNotNull(endpoint, "Could not find endpoint: file://target/data/FileConfigureTest/bar?charset=UTF-8");
         assertEquals("UTF-8", endpoint.getCharset(), "Get a wrong charset");
 
         try {
-            resolveMandatoryEndpoint("file://target/data/foo/bar?charset=ASSI", FileEndpoint.class);
+            resolveMandatoryEndpoint("file://target/data/FileConfigureTest/bar?charset=ASSI", FileEndpoint.class);
             // The charset is wrong
             fail("Expect a configure exception here");
         } catch (Exception ex) {
@@ -105,10 +110,10 @@ public class FileConfigureTest extends ContextTestSupport {
 
     @Test
     public void testConsumerConfigurations() throws Exception {
-        FileConsumer consumer = createFileConsumer("file://target/data/foo/bar?recursive=true");
+        FileConsumer consumer = createFileConsumer("file://target/data/FileConfigureTest/bar?recursive=true");
         assertNotNull(consumer);
         try {
-            createFileConsumer("file://target/data/foo/bar?recursiv=true");
+            createFileConsumer("file://target/data/FileConfigureTest/bar?recursiv=true");
             fail("Expect a configure exception here");
         } catch (Exception ex) {
             boolean b = ex instanceof ResolveEndpointFailedException;
@@ -116,21 +121,12 @@ public class FileConfigureTest extends ContextTestSupport {
         }
     }
 
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        // one of the above tests created a /target folder in the root we want
-        // to get rid of when testing
-        deleteDirectory("/target");
-    }
-
     private FileConsumer createFileConsumer(String endpointUri) throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         return endpoint.createConsumer(DUMMY_PROCESSOR);
     }
 
-    private void assertFileEndpoint(String endpointUri, String expectedPath, boolean absolute) throws IOException {
+    private void assertFileEndpoint(String endpointUri, String expectedPath, boolean absolute) {
         FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         assertNotNull(endpoint, "Could not find endpoint: " + endpointUri);
 

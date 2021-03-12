@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,14 +29,13 @@ import org.junit.jupiter.api.Test;
  * will work on windows system.
  */
 public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
+
     private String path;
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        File dir = new File("target/data/reports/dosnovol");
-        deleteDirectory(dir);
-        path = dir.getAbsolutePath();
+        path = testDirectory("dosnovol").toAbsolutePath().toString();
         if (FileUtil.isWindows()) {
             int dp = path.indexOf(":\\");
             if (dp > 0) {

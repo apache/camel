@@ -20,25 +20,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/exclusiveread?readLock=fileLock&initialDelay=0&delay=10";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/exclusiveread");
-        super.setUp();
-    }
+    private String fileUrl = fileUri("?readLock=fileLock&initialDelay=0&delay=10");
 
     @Test
     public void testCopy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/exclusiveread/out/hello.txt", "Hello World");
+        mock.expectedFileExists(testFile("out/hello.txt"), "Hello World");
 
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -49,7 +41,7 @@ public class FileExclusiveReadLockCopyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to("file://target/data/exclusiveread/out").to("mock:result");
+                from(fileUrl).to(fileUri("out")).to("mock:result");
             }
         };
     }

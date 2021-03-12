@@ -16,7 +16,11 @@
  */
 package org.apache.camel.test.junit5;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -55,6 +59,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
@@ -67,6 +72,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -76,6 +82,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -84,7 +91,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * testing.
  */
 public abstract class CamelTestSupport
-        implements BeforeEachCallback, AfterAllCallback, BeforeAllCallback, BeforeTestExecutionCallback,
+        implements BeforeEachCallback, AfterEachCallback, AfterAllCallback, BeforeAllCallback, BeforeTestExecutionCallback,
         AfterTestExecutionCallback {
 
     /**
@@ -116,6 +123,8 @@ public abstract class CamelTestSupport
     private String currentTestName;
     private boolean isCreateCamelContextPerClass = false;
     private CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
+    private ExtensionContext.Store globalStore;
+    private boolean testDirectoryCleaned;
     // CHECKSTYLE:ON
 
     @Override
@@ -135,6 +144,12 @@ public abstract class CamelTestSupport
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         currentTestName = context.getDisplayName();
+        globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+    }
+
+    @Override
+    public void afterEach(ExtensionContext context) throws Exception {
+        DefaultCamelContext.clearOptions();
     }
 
     @Override
@@ -463,6 +478,17 @@ public abstract class CamelTestSupport
         if (extra != null && !extra.isEmpty()) {
             pc.setOverrideProperties(extra);
         }
+        pc.addPropertiesSource(new PropertiesSource() {
+            @Override
+            public String getName() {
+                return "junit-store";
+            }
+
+            @Override
+            public String getProperty(String name) {
+                return globalStore.get(name, String.class);
+            }
+        });
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
             pc.setIgnoreMissingLocation(ignore);
@@ -552,6 +578,7 @@ public abstract class CamelTestSupport
             doPostTearDown();
             cleanupResources();
         }
+        testDirectoryCleaned = false;
     }
 
     void tearDownCreateCamelContextPerClass() throws Exception {
@@ -574,7 +601,7 @@ public abstract class CamelTestSupport
      * Strategy to perform resources setup, before {@link CamelContext} is created
      */
     protected void setupResources() throws Exception {
-        // noop
+        deleteTestDirectory();
     }
 
     /**
@@ -1022,6 +1049,62 @@ public abstract class CamelTestSupport
         public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
             CamelTestSupport.this.debugAfter(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
                     definition.getLabel(), timeTaken);
+        }
+    }
+
+    protected Path testDirectory() {
+        return testDirectory(false);
+    }
+
+    protected Path testDirectory(boolean create) {
+        Class<?> testClass = getClass();
+        return testDirectory(testClass, create);
+    }
+
+    public static Path testDirectory(Class<?> testClass, boolean create) {
+        Path dir = Paths.get("target", "data", testClass.getSimpleName());
+        if (create) {
+            try {
+                Files.createDirectories(dir);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+            }
+        }
+        return dir;
+    }
+
+    protected Path testFile(String dir) {
+        return testDirectory().resolve(dir);
+    }
+
+    protected Path testDirectory(String dir) {
+        return testDirectory(dir, false);
+    }
+
+    protected Path testDirectory(String dir, boolean create) {
+        Path f = testDirectory().resolve(dir);
+        if (create) {
+            try {
+                Files.createDirectories(f);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+            }
+        }
+        return f;
+    }
+
+    protected String fileUri() {
+        return "file:" + testDirectory();
+    }
+
+    protected String fileUri(String query) {
+        return "file:" + testDirectory() + (query.startsWith("?") ? "" : "/") + query;
+    }
+
+    public void deleteTestDirectory() {
+        if (!testDirectoryCleaned) {
+            deleteDirectory(testDirectory());
+            testDirectoryCleaned = true;
         }
     }
 

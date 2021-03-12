@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
-public class VmMultipleConsumersIssueTest extends ContextTestSupport {
+public class VmMultipleConsumersIssueTest extends AbstractVmTestSupport {
 
     @Test
     public void testVmMultipleConsumersIssue() throws Exception {

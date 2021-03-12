@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -27,10 +28,11 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
@@ -71,20 +73,12 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/mail/backup");
-        super.setUp();
-    }
-
     @Test
     public void testOk() throws Exception {
         template.sendBodyAndHeader("direct:confirm", "bumper", "to", "someone@somewhere.org");
 
-        File file = new File("target/data/mail/backup/");
-        String[] files = file.list();
-        assertEquals(1, files.length, "There should be one file");
+        long files = Files.list(testDirectory()).count();
+        assertEquals(1, files, "There should be one file");
     }
 
     @Test
@@ -103,9 +97,8 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
         // deleted
         assertTrue(LATCH.await(5, TimeUnit.SECONDS), "Should countdown the latch");
 
-        File file = new File("target/data/mail/backup/");
-        String[] files = file.list();
-        assertEquals(0, files.length, "There should be no files");
+        long files = Files.list(testDirectory()).count();
+        assertEquals(0, files, "There should be no files");
     }
 
     @Override
@@ -123,7 +116,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
                         .end()
                         // here starts the regular route
                         .bean(OrderService.class, "createMail").log("Saving mail backup file")
-                        .to("file:target/data/mail/backup").log("Trying to send mail to ${header.to}")
+                        .to(fileUri()).log("Trying to send mail to ${header.to}")
                         .bean(OrderService.class, "sendMail").log("Mail send to ${header.to}");
             }
         };

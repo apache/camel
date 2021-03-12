@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,14 +36,9 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
     @Test
     public void testPerformanceCounterStats() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
 
         Long delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         assertEquals(0, delta.intValue());

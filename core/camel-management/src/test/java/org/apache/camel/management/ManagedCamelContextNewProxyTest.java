@@ -29,14 +29,9 @@ public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {
 
     @Test
     public void testNewProxy() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         ManagedCamelContextMBean proxy = JMX.newMBeanProxy(mbeanServer, on, ManagedCamelContextMBean.class);
         assertNotNull(proxy);

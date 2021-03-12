@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,20 +30,15 @@ public class ManagedRouteAutoStartupTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContext() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
-        ObjectName onFoo = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
-        ObjectName onBar = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
+        ObjectName on = getContextObjectName();
+        ObjectName onFoo = getCamelObjectName(TYPE_ROUTE, "foo");
+        ObjectName onBar = getCamelObjectName(TYPE_ROUTE, "bar");
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        assertEquals(context.getManagementName(), name);
 
         String state = (String) mbeanServer.getAttribute(onFoo, "State");
         assertEquals("Stopped", state);

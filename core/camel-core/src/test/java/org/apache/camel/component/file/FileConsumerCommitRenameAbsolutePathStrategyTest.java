@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -30,25 +27,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTestSupport {
 
-    private String base;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        deleteDirectory("target/data/reports");
-        // use current dir as base as aboslute path
-        base = new File("").getAbsolutePath() + "/target/data";
-        super.setUp();
-    }
-
     @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("target/data/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists(testFile("done/paris.txt"), "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -57,8 +42,9 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?move=" + base + "/done/${file:name}&initialDelay=0&delay=10")
-                        .convertBodyTo(String.class).to("mock:report");
+                from(fileUri(
+                        "reports?move=" + testDirectory("done").toAbsolutePath() + "/${file:name}&initialDelay=0&delay=10"))
+                                .convertBodyTo(String.class).to("mock:report");
             }
         };
     }

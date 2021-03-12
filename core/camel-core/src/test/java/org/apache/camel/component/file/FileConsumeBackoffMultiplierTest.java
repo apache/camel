@@ -31,9 +31,8 @@ public class FileConsumeBackoffMultiplierTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
         super.setUp();
-        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
     }
 
     @Test
@@ -50,7 +49,7 @@ public class FileConsumeBackoffMultiplierTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/files/?initialDelay=0&delay=10&delete=true&backoffMultiplier=4&backoffIdleThreshold=3")
+                from(fileUri() + "?initialDelay=0&delay=10&delete=true&backoffMultiplier=4&backoffIdleThreshold=3")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

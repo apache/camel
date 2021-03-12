@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,11 +31,6 @@ public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello World");
@@ -44,7 +40,7 @@ public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 

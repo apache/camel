@@ -16,29 +16,19 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class FileSplitXPathCharsetTest extends ContextTestSupport {
 
-    private static final String TEST_DIR = "target/data/file-split-xpath-charset";
-
-    private static Path inputCsv = Paths.get(TEST_DIR, "input.csv");
-    private static Path inputXml = Paths.get(TEST_DIR, "input.xml");
-
-    @BeforeAll
-    public static void clearInputFiles() throws IOException {
-        deleteDirectory(TEST_DIR);
-    }
+    private final Path inputCsv = testFile("input.csv");
+    private final Path inputXml = testFile("input.xml");
 
     @Test
     public void testCsv() throws Exception {
@@ -68,10 +58,10 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // input: *.csv
-                fromF("file:%s?charset=ISO-8859-1&include=.*\\.csv", TEST_DIR).split().tokenize(",").to("mock:result");
+                from(fileUri("?charset=ISO-8859-1&include=.*\\.csv")).split().tokenize(",").to("mock:result");
 
                 // input: *.xml
-                fromF("file:%s?charset=ISO-8859-1&include=.*\\.xml", TEST_DIR).split().xpath("/foo/bar/text()")
+                fromF(fileUri("?charset=ISO-8859-1&include=.*\\.xml")).split().xpath("/foo/bar/text()")
                         .to("mock:result");
             }
         };

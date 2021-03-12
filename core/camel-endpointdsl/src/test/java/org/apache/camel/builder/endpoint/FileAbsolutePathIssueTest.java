@@ -16,33 +16,16 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileAbsolutePathIssueTest extends ContextTestSupport {
 
-    private String uri;
-    private String start;
-    private String done;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/issue");
-        deleteDirectory("target/data/done");
-
-        start = new File("target/data/issue").getAbsolutePath();
-        done = new File("target/data/done").getAbsolutePath();
-        uri = "file:" + start + "?initialDelay=0&delay=10&move=" + done + "/${file:name}";
-
-        super.setUp();
-    }
+    private String start = testDirectory("issue").toAbsolutePath().toString();
+    private String done = testDirectory("done").toAbsolutePath().toString();
 
     @Test
     public void testMoveAbsolute() throws Exception {

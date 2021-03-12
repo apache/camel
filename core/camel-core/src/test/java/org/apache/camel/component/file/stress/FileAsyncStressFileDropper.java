@@ -21,6 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @Disabled("Manual test")
 public class FileAsyncStressFileDropper extends ContextTestSupport {
@@ -31,22 +34,10 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
         return "" + counter++ + ".txt";
     }
 
-    @Override
-    public void setUp() throws Exception {
-        // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
-        super.setUp();
-        deleteDirectory("target/data/filestress");
-    }
-
+    @Test
     public void testDropInNewFiles() throws Exception {
         // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(250);
@@ -63,7 +54,7 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
                 from("timer:foo?period=50")
                         .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename"))
                         .setBody(constant("Hello World"))
-                        .to("file:target/data/filestress").to("mock:result");
+                        .to(fileUri()).to("mock:result");
             }
         };
     }

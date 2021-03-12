@@ -23,6 +23,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,25 +31,20 @@ public class ManagedStickyLoadBalancerTest extends ManagementTestSupport {
 
     @Test
     public void testManageStickyLoadBalancer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBodyAndHeader("direct:start", "Hello World", "num", "123");
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mysend\"");
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "mysend");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", camelId);
+        assertEquals(context.getManagementName(), camelId);
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);

@@ -24,15 +24,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @Disabled("Manual test")
 public class FileAsyncStressManually extends ContextTestSupport {
 
+    @Test
     public void testAsyncStress() throws Exception {
         // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         // test by starting the unit test FileAsyncStressFileDropper in another
         // JVM
@@ -48,7 +50,7 @@ public class FileAsyncStressManually extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup").threads(10)
+                from(fileUri("?readLock=markerFile&maxMessagesPerPoll=25&move=backup")).threads(10)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate some work with random time to complete

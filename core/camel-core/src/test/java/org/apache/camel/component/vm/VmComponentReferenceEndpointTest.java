@@ -18,7 +18,6 @@ package org.apache.camel.component.vm;
 
 import java.util.Iterator;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.QueueReference;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  *
  */
-public class VmComponentReferenceEndpointTest extends ContextTestSupport {
+public class VmComponentReferenceEndpointTest extends AbstractVmTestSupport {
 
     @Test
     public void testVmComponentReference() throws Exception {

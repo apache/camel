@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.properties;
 
-import java.io.FileOutputStream;
+import java.io.Writer;
+import java.nio.file.Files;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,40 +28,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends ContextTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/space");
-        createDirectory("target/data/space");
-        super.setUp();
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
         // create space.properties file
-        FileOutputStream fos = new FileOutputStream("target/data/space/space.properties");
-        String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS
-                      + "cool.both= Both leading and trailing space ";
-        fos.write(cool.getBytes());
-        fos.write(LS.getBytes());
+        testDirectory(true);
+        try (Writer w = Files.newBufferedWriter(testFile("space.properties"))) {
+            String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS
+                          + "cool.both= Both leading and trailing space " + LS;
+            w.write(cool);
 
-        String space = "space.leading=   \\r\\n" + LS + "space.trailing=\\t   " + LS + "space.both=  \\r   \\t  \\n   ";
-        fos.write(space.getBytes());
-        fos.write(LS.getBytes());
+            String space
+                    = "space.leading=   \\r\\n" + LS + "space.trailing=\\t   " + LS + "space.both=  \\r   \\t  \\n   " + LS;
+            w.write(space);
 
-        String mixed = "mixed.leading=   Leading space\\r\\n" + LS + "mixed.trailing=Trailing space\\t   " + LS
-                       + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   ";
-        fos.write(mixed.getBytes());
-        fos.write(LS.getBytes());
+            String mixed = "mixed.leading=   Leading space\\r\\n" + LS + "mixed.trailing=Trailing space\\t   " + LS
+                           + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   " + LS;
+            w.write(mixed);
 
-        String empty = "empty.line=                               ";
-        fos.write(empty.getBytes());
+            String empty = "empty.line=                               ";
+            w.write(empty);
+        }
 
-        fos.close();
-
-        context.getPropertiesComponent().setLocation("file:target/data/space/space.properties");
-
+        context.getPropertiesComponent().setLocation(fileUri("space.properties"));
         return context;
     }
 

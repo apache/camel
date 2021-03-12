@@ -41,11 +41,6 @@ public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
 
     @Test
     public void testManageStatisticsLevelDisabled() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 

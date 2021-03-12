@@ -32,19 +32,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
     @Test
     public void testManageThrottler() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(10);
 
         // Send in a first batch of 10 messages and check that the endpoint
@@ -63,10 +61,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the object name for the delayer
         ObjectName throttlerName
-                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler\"");
+                = getCamelObjectName(TYPE_PROCESSOR, "mythrottler");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route1");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -111,9 +109,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     @Test
     public void testThrottleVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
         if (isPlatform("windows")) {
             // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
             return;
@@ -123,7 +119,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route2");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -146,9 +142,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     @Test
     public void testThrottleAsyncVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
         if (isPlatform("windows")) {
             // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
             return;
@@ -158,7 +152,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route3\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route3");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -183,9 +177,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     @Test
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
         if (isPlatform("windows")) {
             // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
             return;
@@ -195,7 +187,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route4\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route4");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -225,16 +217,11 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         //. which would through a RejectedExecutionException.. we need to make
         // sure that the delayedCount/throttledCount doesn't leak
 
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route2");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -259,16 +246,11 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         //. which would through a RejectedExecutionException.. we need to make
         // sure that the delayedCount/throttledCount doesn't leak
 
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route2");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -299,26 +281,26 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").id("route1")
                         .to("log:foo")
                         .throttle(10).timePeriodMillis(250).id("mythrottler")
                         .to("mock:result");
 
-                from("seda:throttleCount")
+                from("seda:throttleCount").id("route2")
                         .throttle(1).timePeriodMillis(250).id("mythrottler2")
                         .to("mock:end");
 
-                from("seda:throttleCountAsync")
+                from("seda:throttleCountAsync").id("route3")
                         .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler3")
                         .to("mock:endAsync");
 
-                from("seda:throttleCountAsyncException")
+                from("seda:throttleCountAsyncException").id("route4")
                         .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler4")
                         .to("mock:endAsyncException")
                         .process(exchange -> {
                             throw new RuntimeException("Fail me");
                         });
-                from("seda:throttleCountRejectExecutionCallerRuns")
+                from("seda:throttleCountRejectExecutionCallerRuns").id("route5")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
                         .throttle(1)
                         .timePeriodMillis(250)
@@ -328,7 +310,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
                         .id("mythrottler5")
                         .to("mock:endAsyncRejectCallerRuns");
 
-                from("seda:throttleCountRejectExecution")
+                from("seda:throttleCountRejectExecution").id("route6")
                         .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
                         .throttle(1)
                         .timePeriodMillis(250)

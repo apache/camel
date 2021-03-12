@@ -39,11 +39,6 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
 
     @Test
     public void testRoutes() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the Camel route
@@ -67,7 +62,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         assertTrue(policy.startsWith("ThrottlingExceptionRoutePolicy"));
 
         // get the RoutePolicy
-        String mbeanName = String.format("org.apache.camel:context=camel-1,name=%s,type=services", policy);
+        String mbeanName
+                = String.format("org.apache.camel:context=" + context.getManagementName() + ",name=%s,type=services", policy);
         set = mbeanServer.queryNames(new ObjectName(mbeanName), null);
         assertEquals(1, set.size());
         on = set.iterator().next();

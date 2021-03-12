@@ -31,18 +31,13 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
 
     @Test
     public void testManagedCamelContext() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        assertEquals(context.getManagementName(), name);
 
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);

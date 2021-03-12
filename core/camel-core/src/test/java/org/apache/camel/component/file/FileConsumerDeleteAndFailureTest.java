@@ -21,27 +21,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/failed");
-        super.setUp();
-    }
 
     @Test
     public void testMoveFailed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World IS processed!");
 
-        mock.expectedFileExists("target/data/failed/error/bye.txt");
+        mock.expectedFileExists(testFile("error/bye.txt"));
 
-        template.sendBodyAndHeader("file://target/data/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,8 +44,8 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).useOriginalMessage()
-                        .to("file://target/data/failed/error");
-                from("file://target/data/failed?delete=true&initialDelay=0&delay=10").setBody(simple("${body} IS processed!"))
+                        .to(fileUri("error"));
+                from(fileUri("?delete=true&initialDelay=0&delay=10")).setBody(simple("${body} IS processed!"))
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);

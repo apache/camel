@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -30,24 +27,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerAbsolutePathWithAbsoluteMoveTest extends ContextTestSupport {
 
-    private String base;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/reports");
-        // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/data/reports";
-        super.setUp();
-    }
-
     @Test
     public void testConsumeFromAbsolutePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists(base + "/done/paris.txt");
+        mock.expectedFileExists(testFile("done/paris.txt"));
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -56,7 +42,7 @@ public class FileConsumerAbsolutePathWithAbsoluteMoveTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + base + "?initialDelay=0&delay=10&move=" + base + "/done/${file:onlyname}")
+                from(fileUri("?initialDelay=0&delay=10&move=" + testDirectory() + "/done/${file:onlyname}"))
                         .convertBodyTo(String.class).to("mock:report");
             }
         };

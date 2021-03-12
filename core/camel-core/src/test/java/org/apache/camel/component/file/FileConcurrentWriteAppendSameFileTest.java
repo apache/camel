@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -25,7 +25,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,13 +34,6 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
 
     private final int size = 100;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/concurrent");
-        super.setUp();
-    }
-
     @Test
     public void testConcurrentAppend() throws Exception {
         // create file with many lines
@@ -50,7 +42,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
             sb.append("Line " + i + LS);
         }
 
-        template.sendBodyAndHeader("file:target/data/concurrent", sb.toString(), Exchange.FILE_NAME, "input.txt");
+        template.sendBodyAndHeader(fileUri(), sb.toString(), Exchange.FILE_NAME, "input.txt");
 
         // start route
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -66,7 +58,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // check the file has correct number of lines
-        String txt = context.getTypeConverter().convertTo(String.class, new File("target/data/concurrent/outbox/result.txt"));
+        String txt = new String(Files.readAllBytes(testFile("outbox/result.txt")));
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
@@ -84,10 +76,10 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
                         .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))
-                        .to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt").to("mock:result").end();
+                        .to(fileUri("outbox?fileExist=Append&fileName=result.txt")).to("mock:result").end();
             }
         };
     }

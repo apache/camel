@@ -22,17 +22,9 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileProducerToDMoveExistingTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/out");
-        super.setUp();
-    }
 
     @Test
     public void testMoveExisting() throws Exception {
@@ -46,8 +38,8 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists("target/out/old-hello.txt");
-        assertFileExists("target/out/hello.txt");
+        assertFileExists(testFile("out/old-hello.txt"));
+        assertFileExists(testFile("out/hello.txt"));
     }
 
     @Override
@@ -56,7 +48,8 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .toD("file:target/${header.myDir}?fileExist=Move&moveExisting=target/out/old-${file:onlyname}")
+                        .toD(fileUri("${header.myDir}?fileExist=Move&moveExisting=" + testDirectory("out").toString()
+                                     + "/old-${file:onlyname}"))
                         .to("mock:result");
             }
         };
