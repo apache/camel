@@ -47,6 +47,7 @@
         <module>camel-aws2-msk</module>
         <module>camel-aws2-mq</module>
         <module>camel-aws2-s3</module>
+        <module>camel-aws-secrets-manager</module>
         <module>camel-aws2-ses</module>
         <module>camel-aws2-sns</module>
         <module>camel-aws2-sqs</module>
