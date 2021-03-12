@@ -201,6 +201,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": target.setUseDataType(property(camelContext, boolean.class, value)); return true;
         case "usemdclogging":
         case "UseMdcLogging": target.setUseMdcLogging(property(camelContext, boolean.class, value)); return true;
+        case "uuidgenerator":
+        case "UuidGenerator": target.setUuidGenerator(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -388,6 +390,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": return boolean.class;
         case "usemdclogging":
         case "UseMdcLogging": return boolean.class;
+        case "uuidgenerator":
+        case "UuidGenerator": return java.lang.String.class;
         default: return null;
         }
     }
@@ -576,6 +580,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "UseDataType": return target.isUseDataType();
         case "usemdclogging":
         case "UseMdcLogging": return target.isUseMdcLogging();
+        case "uuidgenerator":
+        case "UuidGenerator": return target.getUuidGenerator();
         default: return null;
         }
     }

@@ -22,14 +22,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.spi.UuidGenerator;
 
 /**
- * Default {@link UuidGenerator} (32 chars) optimized for Camel usage.
+ * {@link UuidGenerator} that is 50% the size of the default (16 chars) optimized for Camel usage.
  */
-public class DefaultUuidGenerator implements UuidGenerator {
+public class ShortUuidGenerator implements UuidGenerator {
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private final char[] seed
-            = (longToHex(new char[0], ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray();
+            = (seedToHex(ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray();
     private final AtomicLong index = new AtomicLong();
 
     @Override
@@ -39,10 +39,19 @@ public class DefaultUuidGenerator implements UuidGenerator {
 
     private static String longToHex(char[] seed, long v) {
         int l = seed.length;
-        char[] hexChars = new char[16 + seed.length];
+        char[] hexChars = new char[16];
         System.arraycopy(seed, 0, hexChars, 0, l);
-        for (int j = 15; j >= 0; j--) {
+        for (int j = 9; j >= 0; j--) {
             hexChars[l + j] = HEX_ARRAY[(int) (v & 0x0F)];
+            v >>= 4;
+        }
+        return new String(hexChars);
+    }
+
+    private static String seedToHex(long v) {
+        char[] hexChars = new char[6];
+        for (int j = 5; j >= 0; j--) {
+            hexChars[j] = HEX_ARRAY[(int) (v & 0x0F)];
             v >>= 4;
         }
         return new String(hexChars);

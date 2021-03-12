@@ -69,6 +69,10 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.ClassicUuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.ShortUuidGenerator;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
@@ -185,6 +189,16 @@ public final class DefaultConfigurationConfigurer {
         if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
             camelContext.getStreamCachingStrategy()
                     .setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
+        }
+
+        if ("default".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new DefaultUuidGenerator());
+        } else if ("short".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new ShortUuidGenerator());
+        } else if ("classic".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new ClassicUuidGenerator());
+        } else if ("simple".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new SimpleUuidGenerator());
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());
