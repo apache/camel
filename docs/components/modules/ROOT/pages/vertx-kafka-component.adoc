@@ -22,7 +22,7 @@ This allows the component to work in a *full asynchronous* manner that results o
 [NOTE]
 ====
 This component works very similar to xref:components::kafka-component.adoc[Kafka Component]. However there are some features that this component
-does not _yet_  support like manual offsets commits which allows for *at least once* semantics, storing offsets in idempotent repository and topics patterns.
+does not _yet_  support like storing offsets in idempotent repository and topics patterns.
 However, these features may be added later as improvements to this component.
 ====
 
