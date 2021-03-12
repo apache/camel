@@ -30,7 +30,11 @@
     </bean>
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+        <property name="brokerURL">
+            <bean class="org.apache.camel.component.jms.CamelJmsTestHelper" factory-method="createBrokerUrl">
+                <constructor-arg name="options" value="broker.useJmx=true"/>
+            </bean>
+        </property>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">

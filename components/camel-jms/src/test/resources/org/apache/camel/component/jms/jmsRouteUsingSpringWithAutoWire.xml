@@ -30,7 +30,9 @@
   </camelContext>
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    <property name="brokerURL">
+      <bean class="org.apache.camel.component.jms.CamelJmsTestHelper" factory-method="createBrokerUrl"/>
+    </property>
   </bean>
   <!-- END SNIPPET: example -->
 
