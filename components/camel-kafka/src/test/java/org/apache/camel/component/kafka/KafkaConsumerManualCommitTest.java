@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
-import java.util.stream.StreamSupport;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -28,19 +26,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled
 public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
-    public static final String TOPIC = "test";
+    public static final String TOPIC = "testManualCommitTest";
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
+                    + "&allowManualCommit=true&autoOffsetReset=earliest")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -79,7 +75,7 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    public void kafkaManualCommit() throws InterruptedException, IOException {
+    public void kafkaManualCommit() throws Exception {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         // The LAST_RECORD_BEFORE_COMMIT header should include a value as we use
@@ -94,8 +90,34 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        to.reset();
+
+        // Second step: We shut down our route, we expect nothing will be recovered by our route
+        context.getRouteController().stopRoute("foo");
+        to.expectedMessageCount(0);
+
+        // Third step: While our route is stopped, we send 3 records more to Kafka test topic
+        for (int k = 5; k < 8; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        // Fourth step: We start again our route, since we have been committing the offsets from the first step,
+        // we will expect to consume from the latest committed offset e.g from offset 5
+        context.getRouteController().startRoute("foo");
+        to.expectedMessageCount(3);
+
+        // give some time for the route to start again
+        synchronized (this) {
+            Thread.sleep(1000);
+        }
+
+        to.assertIsSatisfied(3000);
     }
 
 }
