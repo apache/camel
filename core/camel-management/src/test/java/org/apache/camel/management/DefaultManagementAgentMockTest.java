@@ -27,11 +27,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
-import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.when;
  * Tests proper behavior of DefaultManagementAgent when {@link MBeanServer#registerMBean(Object, ObjectName)} returns an
  * {@link ObjectInstance} with a different ObjectName
  */
-@ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class DefaultManagementAgentMockTest {
 
     @Test

@@ -22,15 +22,14 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
-import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 
 /**
  * This module contains test cases that verifies jmx system property uses.
  */
-@ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
 
     @Override

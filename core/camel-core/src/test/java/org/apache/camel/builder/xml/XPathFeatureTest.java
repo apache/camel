@@ -28,10 +28,13 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.apache.camel.language.xpath.XPathBuilder.xpath;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;
 

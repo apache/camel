@@ -31,19 +31,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
-import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 
 /**
  * This test verifies JMX is enabled by default and it uses local mbean server to conduct the test as connector server
  * is not enabled by default.
  */
-@ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class JmxInstrumentationUsingDefaultsTest extends ManagementTestSupport {
 
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;

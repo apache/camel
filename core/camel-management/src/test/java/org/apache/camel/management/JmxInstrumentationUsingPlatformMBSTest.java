@@ -29,15 +29,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
-import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
  */
-@ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override

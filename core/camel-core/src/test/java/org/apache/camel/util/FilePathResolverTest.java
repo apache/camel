@@ -17,12 +17,15 @@
 package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilePathResolverTest {
 
     @Test
+    @ResourceLock(Resources.SYSTEM_PROPERTIES)
     public void testFilePathResolver() throws Exception {
         assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
 
