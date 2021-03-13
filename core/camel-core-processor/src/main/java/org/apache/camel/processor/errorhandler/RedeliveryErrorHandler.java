@@ -387,8 +387,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         public void run() {
             // can we still run
             boolean run = true;
-            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
-            if (forceShutdown) {
+            if (shutdownStrategy.isForceShutdown()) {
                 run = false;
             }
             if (run && isStoppingOrStopped()) {
@@ -792,8 +791,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         protected boolean isRunAllowed() {
             // if camel context is forcing a shutdown then do not allow running
-            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
-            if (forceShutdown) {
+            if (shutdownStrategy.isForceShutdown()) {
                 return false;
             }
 

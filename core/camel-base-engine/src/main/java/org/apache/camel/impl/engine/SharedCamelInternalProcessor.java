@@ -28,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -304,18 +303,14 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             return false;
         }
 
-        // determine if we can still run, or the camel context is forcing a shutdown
-        if (processor instanceof Service) {
-            boolean forceShutdown = shutdownStrategy.forceShutdown((Service) processor);
-            if (forceShutdown) {
-                String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
-                             + exchange;
-                LOG.debug(msg);
-                if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException(msg));
-                }
-                return false;
+        if (shutdownStrategy.isForceShutdown()) {
+            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
+                         + exchange;
+            LOG.debug(msg);
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException(msg));
             }
+            return false;
         }
 
         // yes we can continue

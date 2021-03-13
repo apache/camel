@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 
 /**
@@ -224,19 +223,9 @@ public interface ShutdownStrategy extends StaticService {
     boolean isLogInflightExchangesOnTimeout();
 
     /**
-     * Whether a service is forced to shutdown.
-     * <p/>
-     * Can be used to signal to services that they are no longer allowed to run, such as if a forced shutdown is
-     * currently in progress.
-     * <p/>
-     * For example the Camel {@link org.apache.camel.processor.RedeliveryErrorHandler} uses this information to know if
-     * a forced shutdown is in progress, and then break out of redelivery attempts.
-     * 
-     * @param  service the service
-     * @return         <tt>true</tt> indicates the service is to be forced to shutdown, <tt>false</tt> the service can
-     *                 keep running.
+     * Whether the shutdown strategy is forcing to shutdown
      */
-    boolean forceShutdown(Service service);
+    boolean isForceShutdown();
 
     /**
      * Whether a timeout has occurred during a shutdown.

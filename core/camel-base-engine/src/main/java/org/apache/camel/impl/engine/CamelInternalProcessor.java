@@ -292,8 +292,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             return true;
         }
 
-        boolean forceShutdown = shutdownStrategy.forceShutdown(this);
-        if (forceShutdown) {
+        if (shutdownStrategy.isForceShutdown()) {
             String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: "
                          + exchange;
             LOG.debug(msg);

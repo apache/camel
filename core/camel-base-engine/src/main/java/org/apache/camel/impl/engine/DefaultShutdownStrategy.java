@@ -127,7 +127,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private boolean suppressLoggingOnTimeout;
     private boolean logInflightExchangesOnTimeout = true;
 
-    private volatile boolean forceShutdown;
+    private boolean forceShutdown;
     private final AtomicBoolean timeoutOccurred = new AtomicBoolean();
     private volatile Future<?> currentShutdownTaskFuture;
 
@@ -280,7 +280,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     @Override
-    public boolean forceShutdown(Service service) {
+    public boolean isForceShutdown() {
         return forceShutdown;
     }
 
@@ -714,7 +714,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 Consumer consumer = deferred.getConsumer();
                 if (consumer instanceof ShutdownAware) {
                     LOG.trace("Route: {} preparing to shutdown.", deferred.getRoute().getId());
-                    boolean forced = context.getShutdownStrategy().forceShutdown(consumer);
+                    boolean forced = context.getShutdownStrategy().isForceShutdown();
                     boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
                     prepareShutdown(consumer, suspendOnly, forced, false, suppress);
                     LOG.debug("Route: {} preparing to shutdown complete.", deferred.getRoute().getId());
@@ -748,7 +748,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // now the route consumers has been shutdown, then prepare route services for shutdown
             for (RouteStartupOrder order : routes) {
                 for (Service service : order.getServices()) {
-                    boolean forced = context.getShutdownStrategy().forceShutdown(service);
+                    boolean forced = context.getShutdownStrategy().isForceShutdown();
                     boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
                     prepareShutdown(service, suspendOnly, forced, true, suppress);
                 }
