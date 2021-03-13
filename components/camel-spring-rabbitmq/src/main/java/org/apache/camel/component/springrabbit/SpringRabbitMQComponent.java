@@ -29,6 +29,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.util.ErrorHandler;
 
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
 import static org.apache.camel.component.springrabbit.SpringRabbitMQEndpoint.ARG_PREFIX;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
@@ -89,6 +90,13 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     private ListenerContainerFactory listenerContainerFactory = new DefaultListenerContainerFactory();
     @Metadata(label = "advanced", description = "Switch on ignore exceptions such as mismatched properties when declaring")
     private boolean ignoreDeclarationExceptions;
+    @Metadata(label = "consumer,advanced", defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER, enums = "DMLC,SMLC",
+              description = "The type of the MessageListenerContainer")
+    private String messageListenerContainerType = DIRECT_MESSAGE_LISTENER_CONTAINER;
+    @Metadata(label = "consumer,advanced", defaultValue = "1", description = "The number of consumers")
+    private int concurrentConsumers = 1;
+    @Metadata(label = "consumer,advanced", description = "The maximum number of consumers (available only with SMLC)")
+    private Integer maxConcurrentConsumers;
 
     @Override
     protected void doInit() throws Exception {
@@ -119,6 +127,10 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setDeadLetterQueue(deadLetterQueue);
         endpoint.setDeadLetterRoutingKey(deadLetterRoutingKey);
         endpoint.setReplyTimeout(replyTimeout);
+        endpoint.setPrefetchCount(prefetchCount);
+        endpoint.setMessageListenerContainerType(messageListenerContainerType);
+        endpoint.setConcurrentConsumers(concurrentConsumers);
+        endpoint.setMaxConcurrentConsumers(maxConcurrentConsumers);
 
         endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
         setProperties(endpoint, parameters);
@@ -260,5 +272,29 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setIgnoreDeclarationExceptions(boolean ignoreDeclarationExceptions) {
         this.ignoreDeclarationExceptions = ignoreDeclarationExceptions;
+    }
+
+    public String getMessageListenerContainerType() {
+        return messageListenerContainerType;
+    }
+
+    public void setMessageListenerContainerType(String messageListenerContainerType) {
+        this.messageListenerContainerType = messageListenerContainerType;
+    }
+
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public Integer getMaxConcurrentConsumers() {
+        return maxConcurrentConsumers;
+    }
+
+    public void setMaxConcurrentConsumers(Integer maxConcurrentConsumers) {
+        this.maxConcurrentConsumers = maxConcurrentConsumers;
     }
 }

@@ -16,27 +16,26 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
 
-    private File browseDir;
+    private Path browseDir;
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/browse?password=admin";
@@ -44,13 +43,9 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
 
     @BeforeEach
     public void createDir() {
-        browseDir = new File(service.getFtpRootDir(), "browse");
-        createDirectory(service.getFtpRootDir() + File.pathSeparator + "browse");
-    }
-
-    @AfterEach
-    public void cleanupDir() {
-        FileUtil.removeDir(new File(service.getFtpRootDir(), "browse"));
+        browseDir = service.getFtpRootDir().resolve("browse");
+        deleteDirectory(browseDir);
+        createDirectory(browseDir);
     }
 
     @Test
@@ -83,8 +78,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         assertEquals(0, repo.getCacheSize());
 
         // and the file is still there
-        File file = new File(browseDir, "a.txt");
-        assertTrue(file.exists(), "File should exist " + file);
+        assertFileExists(browseDir.resolve("a.txt"));
     }
 
     @Test
@@ -109,10 +103,8 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         assertEquals(0, repo.getCacheSize());
 
         // and the files is still there
-        File fileA = new File(browseDir, "a.txt");
-        assertTrue(fileA.exists(), "File should exist " + fileA);
-        File fileB = new File(browseDir, "/b.txt");
-        assertTrue(fileB.exists(), "File should exist " + fileB);
+        assertFileExists(browseDir.resolve("a.txt"));
+        assertFileExists(browseDir.resolve("b.txt"));
     }
 
     @Test
@@ -139,11 +131,8 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         assertEquals(0, repo.getCacheSize());
 
         // and the files is still there
-        File fileA = new File(browseDir, "/a.txt");
-        assertTrue(fileA.exists(), "File should exist " + fileA);
-        File fileB = new File(browseDir, "/foo/b.txt");
-        assertTrue(fileB.exists(), "File should exist " + fileB);
-        File fileC = new File(browseDir, "/bar/c.txt");
-        assertTrue(fileC.exists(), "File should exist " + fileC);
+        assertFileExists(browseDir.resolve("a.txt"));
+        assertFileExists(browseDir.resolve("foo/b.txt"));
+        assertFileExists(browseDir.resolve("bar/c.txt"));
     }
 }

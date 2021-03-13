@@ -16,37 +16,32 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerTemplateTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/consumer");
-        super.setUp();
-    }
+    final String filename = "hello.txt";
 
     @Test
     public void testFileConsumerTemplate() throws Exception {
-        template.sendBodyAndHeader("file:target/data/consumer", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, filename);
+
         // file should exist
-        File file = new File("target/data/consumer/hello.txt");
+        assertTrue(Files.exists(testFile(filename)), "File should exist " + filename);
 
-        assertTrue(file.exists(), "File should exist " + file);
-
-        String body = consumer.receiveBody("file:target/data/consumer?delete=true", 5000, String.class);
+        String body = consumer.receiveBody(fileUri("?delete=true"), 5000, String.class);
         assertEquals("Hello World", body);
 
         // file should be deleted
-        assertFalse(file.exists(), "File should be deleted " + file);
+        assertFalse(Files.exists(testFile(filename)), "File should be deleted " + filename);
     }
 
 }

@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,17 +28,10 @@ import org.junit.jupiter.api.Test;
 public class FileConsumerBatchTest extends ContextTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file-batch");
-        super.setUp();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/file-batch?initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10")).noAutoStartup().convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -50,8 +42,8 @@ public class FileConsumerBatchTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader("file://target/data/file-batch/", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file-batch/", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // test header keys
         mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);

@@ -23,6 +23,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -46,6 +47,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final Endpoint delegate;
     private final AsyncProducer producer;
     private final boolean skip;
+    private AsyncProcessor pipeline;
 
     public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
                                             boolean skip) {
@@ -71,24 +73,9 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         // add header with the real endpoint uri
         exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
-        if (endpoint.getBefore() != null || endpoint.getAfter() != null) {
-            // detour the exchange using synchronous processing
-            AsyncProcessor before = null;
-            if (endpoint.getBefore() != null) {
-                before = AsyncProcessorConverterHelper.convert(endpoint.getBefore());
-            }
-            AsyncProcessor ascb = new AsyncProcessorSupport() {
-                @Override
-                public boolean process(Exchange exchange, AsyncCallback callback) {
-                    return callback(exchange, callback, true);
-                }
-            };
-            AsyncProcessor after = null;
-            if (endpoint.getAfter() != null) {
-                after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
-            }
-
-            return new Pipeline(exchange.getContext(), Arrays.asList(before, ascb, after)).process(exchange, callback);
+        if (pipeline != null) {
+            // detour the exchange with the pipeline that has before and after included
+            return pipeline.process(exchange, callback);
         }
 
         return callback(exchange, callback, true);
@@ -106,7 +93,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         boolean shouldSkip = skip;
 
         // if then interceptor had a when predicate, then we should only skip if it matched
-        Boolean whenMatches = (Boolean) exchange.removeProperty(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        Boolean whenMatches = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         if (whenMatches != null) {
             shouldSkip = skip && whenMatches;
         }
@@ -139,17 +126,50 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     }
 
     @Override
-    public void start() {
-        ServiceHelper.startService(endpoint.getBefore(), endpoint.getAfter());
-        // here we also need to start the producer
-        ServiceHelper.startService(producer);
+    protected void doBuild() throws Exception {
+        // build pipeline with befofe/after processors
+        if (endpoint.getBefore() != null || endpoint.getAfter() != null) {
+            // detour the exchange using synchronous processing
+            AsyncProcessor before = null;
+            if (endpoint.getBefore() != null) {
+                before = AsyncProcessorConverterHelper.convert(endpoint.getBefore());
+            }
+            AsyncProcessor ascb = new AsyncProcessorSupport() {
+                @Override
+                public boolean process(Exchange exchange, AsyncCallback callback) {
+                    return callback(exchange, callback, true);
+                }
+            };
+            AsyncProcessor after = null;
+            if (endpoint.getAfter() != null) {
+                after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
+            }
+
+            pipeline = new Pipeline(getEndpoint().getCamelContext(), Arrays.asList(before, ascb, after));
+        }
+
+        ServiceHelper.buildService(producer, pipeline);
     }
 
     @Override
-    public void stop() {
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(producer, pipeline);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(producer, pipeline);
+    }
+
+    @Override
+    public void doStop() {
         // do not stop before/after as it should only be stopped when the interceptor stops
         // we should stop the producer here
         ServiceHelper.stopService(producer);
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(producer, pipeline);
+    }
 }

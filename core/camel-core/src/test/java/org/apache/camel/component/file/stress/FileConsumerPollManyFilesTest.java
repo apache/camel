@@ -24,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 @Disabled("Manual test")
 public class FileConsumerPollManyFilesTest extends ContextTestSupport {
 
@@ -33,16 +35,13 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
-        deleteDirectory("target/data/manyfiles");
         super.setUp();
 
         // create files
         for (int i = 0; i < FILES; i++) {
-            template.sendBodyAndHeader("file:target/data/manyfiles", "Message " + i, Exchange.FILE_NAME, "file-" + i + ".txt");
+            template.sendBodyAndHeader(fileUri(), "Message " + i, Exchange.FILE_NAME, "file-" + i + ".txt");
         }
     }
 
@@ -54,14 +53,12 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
     @Test
     public void testPollManyFiles() throws Exception {
         // do not test on windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/manyfiles?delete=true").convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?delete=true")).convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();

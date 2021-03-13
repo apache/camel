@@ -65,7 +65,7 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
                                                                                 // to
                                                                                 // be
                                                                                 // deleted
-            File file = new File(service.getFtpRootDir() + "/hello.txt");
+            File file = ftpFile("hello.txt").toFile();
             fileExists = file.exists();
 
             if (fileExists) {
@@ -83,7 +83,7 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
             @Override
             public void configure() throws Exception {
                 from("vm:trigger")
-                        .pollEnrich("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                        .pollEnrich("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                     + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
                         .routeId("foo").to("mock:result");
             }

@@ -36,6 +36,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExtendedCamelContext;
@@ -303,7 +304,7 @@ public class MethodInfo {
                     // use a expression which invokes the method to be used by dynamic router
                     Expression expression = new DynamicRouterExpression(pojo);
                     expression.init(camelContext);
-                    exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, expression);
+                    exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, expression);
                     return dynamicRouter.process(exchange, callback);
                 }
 
@@ -331,14 +332,14 @@ public class MethodInfo {
                     if (!ServiceHelper.isStarted(recipientList)) {
                         ServiceHelper.startService(recipientList);
                     }
-                    exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, result);
+                    exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
                     return recipientList.process(exchange, callback);
                 }
                 if (routingSlip != null) {
                     if (!ServiceHelper.isStarted(routingSlip)) {
                         ServiceHelper.startService(routingSlip);
                     }
-                    exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, result);
+                    exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
                     return routingSlip.process(exchange, callback);
                 }
 

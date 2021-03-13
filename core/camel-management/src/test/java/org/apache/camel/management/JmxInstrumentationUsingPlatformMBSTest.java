@@ -25,20 +25,19 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
  */
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     @Override
     @BeforeEach
@@ -48,13 +47,15 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
     }
 
     @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
+    }
+
+    @Override
     @Test
     public void testMBeanServerType() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         try {
             mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
             fail(); // should not get here

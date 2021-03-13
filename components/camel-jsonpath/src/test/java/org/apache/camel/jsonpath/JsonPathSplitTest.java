@@ -57,7 +57,7 @@ public class JsonPathSplitTest extends CamelTestSupport {
 
     @Test
     public void testSplit() throws Exception {
-        getMockEndpoint("mock:authors").expectedMessageCount(2);
+        getMockEndpoint("mock:authors").expectedMessageCount(3);
 
         String out = template.requestBody("direct:start", new File("src/test/resources/books.json"), String.class);
         assertNotNull(out);

@@ -19,10 +19,7 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class FtpProducerFileExistAppendNoFileBeforeTest extends FtpServerTestSupport {
 
@@ -30,18 +27,11 @@ public class FtpProducerFileExistAppendNoFileBeforeTest extends FtpServerTestSup
         return "ftp://admin@localhost:{{ftp.server.port}}/exist?password=admin&delay=2000&noop=true&fileExist=Append";
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        deleteDirectory("target/exist");
-    }
-
     @Test
     public void testAppend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists(service.getFtpRootDir() + "/exist/hello.txt", "Bye World");
+        mock.expectedFileExists(ftpFile("exist/hello.txt"), "Bye World");
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 

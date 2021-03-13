@@ -32,6 +32,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -68,6 +69,10 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.ClassicUuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.ShortUuidGenerator;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
@@ -124,9 +129,11 @@ public final class DefaultConfigurationConfigurer {
 
         if ("pooled".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PooledExchangeFactory());
+        } else if ("prototype".equals(config.getExchangeFactory())) {
+            ecc.setExchangeFactory(new PrototypeExchangeFactory());
         }
-        ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
         ecc.getExchangeFactory().setCapacity(config.getExchangeFactoryCapacity());
+        ecc.getExchangeFactory().setStatisticsEnabled(config.isExchangeFactoryStatisticsEnabled());
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
@@ -182,6 +189,16 @@ public final class DefaultConfigurationConfigurer {
         if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
             camelContext.getStreamCachingStrategy()
                     .setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
+        }
+
+        if ("default".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new DefaultUuidGenerator());
+        } else if ("short".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new ShortUuidGenerator());
+        } else if ("classic".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new ClassicUuidGenerator());
+        } else if ("simple".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new SimpleUuidGenerator());
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());

@@ -39,7 +39,7 @@ public class JsonPathHeaderNameTest extends CamelTestSupport {
     @Test
     public void testAuthors() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedHeaderReceived("number", "2");
+        getMockEndpoint("mock:result").expectedHeaderReceived("number", "3");
 
         Object file = new File("src/test/resources/books.json");
         template.sendBodyAndHeader("direct:start", "Hello World", "myHeader", file);

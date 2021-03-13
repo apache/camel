@@ -31,11 +31,9 @@ public class SpringPropertyPlaceholderFileEndpointIssueTest extends SpringTestSu
 
     @Test
     public void testSpring() throws Exception {
-        deleteDirectory("target/issue");
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/issue/foo.txt");
+        mock.expectedFileExists(testFile("foo.txt"));
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "foo.txt");
 

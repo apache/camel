@@ -34,11 +34,6 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
     @Test
     public void testShutdownRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -59,11 +54,6 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
     @Test
     public void testStopAndRemoveRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -88,11 +78,6 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
     @Test
     public void testStopRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);

@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -35,18 +34,11 @@ public class NewFileConsumerTest extends ContextTestSupport {
 
     private MyFileEndpoint myFile;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/myfile");
-        super.setUp();
-    }
-
     @Test
     public void testNewFileConsumer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/myfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
@@ -61,7 +53,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 myFile = new MyFileEndpoint();
                 myFile.setCamelContext(context);
-                myFile.setFile(new File("target/data/myfile"));
+                myFile.setFile(testDirectory().toFile());
                 myFile.setDelay(10);
                 myFile.setInitialDelay(0);
 

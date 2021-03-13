@@ -1,7 +1,7 @@
 [[azure-storage-datalake-component]]
 = Azure storage datalake service Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-azure-storage-datalake/src/main/docs/azure-storage-datalake-component.adoc
+:page-source: components/camel-azure/camel-azure-storage-datalake/src/main/docs/azure-storage-datalake-component.adoc
 :docTitle: Azure storage datalake service
 :artifactId: camel-azure-storage-datalake
 :description: Camel Azure Datalake Gen2 Component

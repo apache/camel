@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
@@ -47,12 +48,12 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         if (exception != null) {
             // store the caught exception as a property
             exchange.setException(null);
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
         }
 
         // store the last to endpoint as the failure endpoint
-        if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+        if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
         }
 
         // continue processing
@@ -105,11 +106,11 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         public void done(boolean doneSync) {
             try {
                 if (exception == null) {
-                    exchange.removeProperty(Exchange.FAILURE_ENDPOINT);
+                    exchange.removeProperty(ExchangePropertyKey.FAILURE_ENDPOINT);
                 } else {
                     // set exception back on exchange
                     exchange.setException(exception);
-                    exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+                    exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
                 }
 
                 if (!doneSync) {

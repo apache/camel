@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.URISupport;
@@ -146,7 +147,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public void postWriteCheck(Exchange exchange) {
         try {
-            boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+            boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
             if (isLast && getEndpoint().isDisconnectOnBatchComplete()) {
                 LOG.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
                 disconnect();

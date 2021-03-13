@@ -9,19 +9,41 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === API changes
 
 The `Consumer` API in `camel-api` has been enhanced to help support Camel reducing the footprint during routing.
-One aspect is that we allow to recycle `Exchange` instances created by the consumers. This avoids creating new `Exchange`
+One aspect is that we allow recycling `Exchange` instances created by the consumers. This avoids creating new `Exchange`
 instances in the memory for each incoming message consumers process. By recycling `Exchange`s we reduce the overhead
-on the JVM garbage collector. However this requires Camel to know whether or not the `Exchange` should be recycle or not,
+on the JVM garbage collector. This requires Camel to know if the `Exchange` should be recycled or not,
 and some API changes took place.
 
 The `Consumer` API has two new methods which a consumer must use to create an `Exchange` with `createExchange`.
-By default the exchange is auto released when its complete in use, but some consumers needs custom control,
+Default the exchange is auto released when its complete in use, but some consumers needs custom control,
 and can turn off auto release, which then requires the consumer to manually release the exchange by calling `releaseExchange`
 when the consumer is done with the exchange.
 
 The default implementations in `DefaultConsumer` has adapted this API and 3rd party components can continue as is, by using
-the older APIs. However for these 3rd party components to support recycling exchanges, then they must be updated to use this new API.
+the older APIs. For these 3rd party components to support recycling exchanges, then they must be updated to use this new API.
 
+A new `org.apache.camel.spi.ResourceLoader` has been introduced as part of https://issues.apache.org/jira/browse/CAMEL-16285[CAMEL-16285] which provide a way to support additional schemas to resolve resources. As a consequece:
+
+- `org.apache.camel.support.ResourceHelper` has been updated to use such mechanism instead fo the old one.
+- it is not more possible to provide support for additional schemas using the URL protocol handler mechanism but instead, custom schemas can be added by implementing `org.apache.camel.spi.ResourceResolver` and either bind an instance to the Camel Registry (using `resource-loader-` as a prefix) or using the Service Factory mechanism (under the path `META-INF/services/org/apache/camel/resource-resolver/`)
+
+As example, assuming you want to provide a support for the schema `foo`, then you either have to binbd your instance to the Camel Registry with `resource-loader-foo` as a key, or create a factory finder file with path `META-INF/services/org/apache/camel/resource-resolver/foo`
+The method for retrieving a resource URL provided by the `org.apache.camel.support.ResourceHelper` class, i.e. `resolveMandatoryResourceAsUrl` ad ` resolveResourceAsUr` have been amended to accept a `CamelContext` instance instead of a `ClassResolver`.
+
+=== Exchange properties
+
+The properties on `Exchange` have been optimized to separate into two: internal state vs user properties.
+
+The method `getProperties()` now only returns user properties. To include internal properties as well,
+then use `getAllProperties()`.
+
+The other APIs such as `getProperty(String)` works the same way as before, being able to lookup a property
+regardless if its internal or custom.
+
+The internal properties is a fixed set of known keys defined in the `ExchangePropertyKey` enum class.
+These keys are used in camel-core such as the routing engine, EIPs and others that needs to store internal
+state on the `Exchange` which is done as exchange properties. Because Camel end users can also store
+exchange properties then before they would get mixed together. What we have done now is to separate them.
 
 === Modularized camel-spring
 
@@ -30,7 +52,7 @@ The `camel-spring` component has been modularized into:
 - `camel-spring` - Core module for Camel Spring support
 - `camel-spring-xml` - XML DSL when using Spring XML (eg `<beans>`)
 
-And also for Camel on Spring Boot:
+Also for Camel on Spring Boot:
 
 - `camel-spring-boot-starter` - Camel with Spring Boot
 - `camel-spring-boot-xml-starter` - XML DSL when using Spring XML (eg `<beans>`) with Spring Boot
@@ -79,4 +101,23 @@ the one to use above, and then add which -starter JARs you want to use in your C
 
 === Camel-Azure component
 
-- Camel-Azure has been reomved. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.
+- Camel-Azure has been removed. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.
+
+=== camel-freemarker component
+
+The freemarker component now has turned off localized lookup for templates.
+This can be turned back on by setting `localizedLookup=true` on the component.
+
+=== Camel-AWS2 components
+
+- Camel-AWS2-sqs has now the autoCreateQueue option set to false as default, so you'll need to create entities before or set the option explicitly to true
+- Camel-AWS2-sns has now the autoCreateTopic option set to false as default, so you'll need to create entities before or set the option explicitly to true
+- Camel-AWS2-s3 has now the autoCreateBucket option set to false as default, so you'll need to create entities before or set the option explicitly to true
+
+=== Camel-jmh, camel-performance and camel-itest-performance
+
+Camel-jmh, camel-performance and camel-itest-performance have been moved to a new repository https://github.com/apache/camel-performance-tests
+
+=== Camel-Debezium
+
+The camel-debezium-parent module has been renamed to camel-debezium-common-parent, while the old the name is now used as parent name for the middle folder. This is an internal change that shouldn't affect end users, added here for tracking purpose anyway.

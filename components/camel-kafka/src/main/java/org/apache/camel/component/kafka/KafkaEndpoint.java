@@ -33,6 +33,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.security.auth.AuthenticateCallbackHandler;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
@@ -46,6 +47,8 @@ import org.slf4j.LoggerFactory;
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
+
+    private static final String CALLBACK_HANDLER_CLASS_CONFIG = "sasl.login.callback.handler.class";
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
@@ -123,6 +126,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
                 replaceWithClass(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, resolver, Partitioner.class);
                 replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
+
+                // because he property is not available in Kafka client, use a static string
+                replaceWithClass(props, CALLBACK_HANDLER_CLASS_CONFIG, resolver, AuthenticateCallbackHandler.class);
             }
         } catch (Exception t) {
             // can ignore and Kafka itself might be able to handle it, if not,

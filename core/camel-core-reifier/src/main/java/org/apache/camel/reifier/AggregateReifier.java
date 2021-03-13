@@ -207,17 +207,20 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
     public OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(OptimisticLockRetryPolicyDefinition definition) {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
-        if (definition.getMaximumRetries() != null) {
-            policy.setMaximumRetries(parseInt(definition.getMaximumRetries()));
+        Integer num = parseInt(definition.getMaximumRetries());
+        if (num != null) {
+            policy.setMaximumRetries(num);
         }
-        if (definition.getRetryDelay() != null) {
-            policy.setRetryDelay(parseDuration(definition.getRetryDelay()));
+        Long dur = parseDuration(definition.getRetryDelay());
+        if (dur != null) {
+            policy.setRetryDelay(dur);
         }
-        if (definition.getMaximumRetryDelay() != null) {
-            policy.setMaximumRetryDelay(parseDuration(definition.getMaximumRetryDelay()));
+        dur = parseDuration(definition.getMaximumRetryDelay());
+        if (dur != null) {
+            policy.setMaximumRetryDelay(dur);
         }
         if (definition.getExponentialBackOff() != null) {
-            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), false));
+            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), true));
         }
         if (definition.getRandomBackOff() != null) {
             policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff(), false));

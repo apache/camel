@@ -26,12 +26,12 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="file://target/data/premove?initialDelay=0&amp;delay=10&amp;preMove=work/work-${file:name}"/>
+            <from uri="file://target/data/SpringFileConsumerPreMoveTest?initialDelay=0&amp;delay=10&amp;preMove=work/work-${file:name}"/>
             <process ref="checker"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
 
-    <bean id="checker" class="org.apache.camel.component.file.FileConsumerPreMoveTest$MyPreMoveCheckerProcessor"/>
+    <bean id="checker" class="org.apache.camel.spring.file.SpringFileConsumerPreMoveTest$MyPreMoveCheckerProcessor"/>
 
 </beans>

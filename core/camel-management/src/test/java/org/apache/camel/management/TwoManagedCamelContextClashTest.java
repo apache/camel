@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -44,11 +45,6 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
 
     @Test
     public void testTwoManagedCamelContextNoClashDefault() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         camel1 = createCamelContext("foo", null);
         camel2 = createCamelContext("foo", null);
 
@@ -56,14 +52,12 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         // the default name pattern will ensure the JMX names is unique
         camel2.start();
-        ObjectName on2 = ObjectName
-                .getInstance("org.apache.camel:context=" + camel2.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on2 = getContextObjectName(camel2);
         assertTrue(mbeanServer.isRegistered(on2), "Should be registered");
 
         assertTrue(mbeanServer.isRegistered(on), "Should still be registered after name clash");
@@ -79,14 +73,12 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         // the pattern has a counter so no clash
         camel2.start();
-        ObjectName on2 = ObjectName
-                .getInstance("org.apache.camel:context=" + camel2.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on2 = getContextObjectName(camel2);
         assertTrue(mbeanServer.isRegistered(on2), "Should be registered");
 
         assertTrue(mbeanServer.isRegistered(on), "Should still be registered after name clash");
@@ -95,11 +87,6 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
 
     @Test
     public void testTwoManagedCamelContextClash() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         camel1 = createCamelContext("foo", "myFoo");
         camel2 = createCamelContext("foo", "myFoo");
 
@@ -107,8 +94,7 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         // we use fixed names, so we will get a clash
@@ -118,6 +104,12 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         } catch (Exception e) {
             assertTrue(e.getCause().getMessage().contains("is already registered"));
         }
+    }
+
+    private static ObjectName getContextObjectName(CamelContext context) throws MalformedObjectNameException {
+        return ObjectName
+                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\""
+                             + context.getName() + "\"");
     }
 
     @Override

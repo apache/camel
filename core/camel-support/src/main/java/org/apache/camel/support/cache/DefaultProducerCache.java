@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
@@ -173,7 +174,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             LOG.debug(">>>> {} {}", endpoint, exchange);
 
             // set property which endpoint we send to
-            exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
 
             // send the exchange using the processor
             StopWatch watch = null;
@@ -345,7 +346,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         LOG.debug(">>>> {} {}", endpoint, exchange);
 
         // set property which endpoint we send to
-        exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
 
         // send the exchange using the processor
         try {
@@ -360,7 +361,11 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             callback.done(true);
             return true;
         }
+    }
 
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(producers);
     }
 
     @Override

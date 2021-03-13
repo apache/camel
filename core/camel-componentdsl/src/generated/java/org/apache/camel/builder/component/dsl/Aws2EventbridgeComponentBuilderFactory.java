@@ -139,6 +139,23 @@ public interface Aws2EventbridgeComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2EventbridgeComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * If we want to use a POJO request as body or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -235,6 +252,22 @@ public interface Aws2EventbridgeComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2EventbridgeComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -314,12 +347,14 @@ public interface Aws2EventbridgeComponentBuilderFactory {
             case "eventPatternFile": getOrCreateConfiguration((EventbridgeComponent) component).setEventPatternFile((java.lang.String) value); return true;
             case "lazyStartProducer": ((EventbridgeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((EventbridgeComponent) component).setOperation((org.apache.camel.component.aws2.eventbridge.EventbridgeOperations) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((EventbridgeComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((EventbridgeComponent) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((EventbridgeComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((EventbridgeComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((EventbridgeComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((EventbridgeComponent) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((EventbridgeComponent) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((EventbridgeComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "autowiredEnabled": ((EventbridgeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((EventbridgeComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((EventbridgeComponent) component).setSecretKey((java.lang.String) value); return true;

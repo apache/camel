@@ -123,7 +123,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -142,7 +142,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -1644,7 +1644,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -1663,7 +1663,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -2394,7 +2394,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set
@@ -2412,7 +2412,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateBucket the value to set

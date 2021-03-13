@@ -1832,6 +1832,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Secrets Manager (camel-aws-secrets-manager)
+     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
+     * 
+     * Syntax: <code>aws-secrets-manager://label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path //label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.endpointBuilder("aws-secrets-manager", path);
+    }
+    /**
+     * AWS Secrets Manager (camel-aws-secrets-manager)
+     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.9
+     * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
+     * 
+     * Syntax: <code>aws-secrets-manager://label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path //label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service
@@ -2967,7 +3010,7 @@ public class StaticEndpointBuilders {
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
      * 
-     * Syntax: <code>couchbase:protocol:hostname:port</code>
+     * Syntax: <code>couchbase:protocol://hostname:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use
@@ -2979,7 +3022,7 @@ public class StaticEndpointBuilders {
      * The port number to use
      * Default value: 8091
      * 
-     * @param path protocol:hostname:port
+     * @param path protocol://hostname:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
@@ -2995,7 +3038,7 @@ public class StaticEndpointBuilders {
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
      * 
-     * Syntax: <code>couchbase:protocol:hostname:port</code>
+     * Syntax: <code>couchbase:protocol://hostname:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use
@@ -3009,7 +3052,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path protocol:hostname:port
+     * @param path protocol://hostname:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
@@ -5338,15 +5381,15 @@ public class StaticEndpointBuilders {
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      * 
-     * Syntax: <code>google-bigquery-sql:projectId:query</code>
-     * 
-     * Path parameter: query (required)
-     * BigQuery standard SQL query
+     * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
      * 
      * Path parameter: projectId (required)
      * Google Cloud Project Id
      * 
-     * @param path projectId:query
+     * Path parameter: queryString (required)
+     * BigQuery standard SQL query
+     * 
+     * @param path projectId:queryString
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
@@ -5361,17 +5404,17 @@ public class StaticEndpointBuilders {
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      * 
-     * Syntax: <code>google-bigquery-sql:projectId:query</code>
-     * 
-     * Path parameter: query (required)
-     * BigQuery standard SQL query
+     * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
      * 
      * Path parameter: projectId (required)
      * Google Cloud Project Id
      * 
+     * Path parameter: queryString (required)
+     * BigQuery standard SQL query
+     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path projectId:query
+     * @param path projectId:queryString
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
@@ -5702,10 +5745,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-pubsub:projectId:destinationName</code>
      * 
      * Path parameter: projectId (required)
-     * Project Id
+     * The Google Cloud PubSub Project Id
      * 
      * Path parameter: destinationName (required)
-     * Destination Name
+     * The Destination Name. For the consumer this will be the subscription
+     * name, while for the producer this will be the topic name.
      * 
      * @param path projectId:destinationName
      * @return the dsl builder
@@ -5725,10 +5769,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-pubsub:projectId:destinationName</code>
      * 
      * Path parameter: projectId (required)
-     * Project Id
+     * The Google Cloud PubSub Project Id
      * 
      * Path parameter: destinationName (required)
-     * Destination Name
+     * The Destination Name. For the consumer this will be the subscription
+     * name, while for the producer this will be the topic name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6701,12 +6746,12 @@ public class StaticEndpointBuilders {
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      * 
-     * Syntax: <code>http:httpUri</code>
+     * Syntax: <code>http://httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
-     * @param path httpUri
+     * @param path //httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
@@ -6721,14 +6766,14 @@ public class StaticEndpointBuilders {
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      * 
-     * Syntax: <code>http:httpUri</code>
+     * Syntax: <code>http://httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path httpUri
+     * @param path //httpUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
@@ -10609,7 +10654,7 @@ public class StaticEndpointBuilders {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
      * 
-     * Syntax: <code>netty:protocol:host:port</code>
+     * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
@@ -10622,7 +10667,7 @@ public class StaticEndpointBuilders {
      * Path parameter: port (required)
      * The host port number
      * 
-     * @param path protocol:host:port
+     * @param path protocol://host:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
@@ -10637,7 +10682,7 @@ public class StaticEndpointBuilders {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
      * 
-     * Syntax: <code>netty:protocol:host:port</code>
+     * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
@@ -10652,7 +10697,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path protocol:host:port
+     * @param path protocol://host:port
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
@@ -10668,7 +10713,7 @@ public class StaticEndpointBuilders {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
      * 
-     * Syntax: <code>netty-http:protocol:host:port/path</code>
+     * Syntax: <code>netty-http:protocol://host:port/path</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
@@ -10685,7 +10730,7 @@ public class StaticEndpointBuilders {
      * Path parameter: path
      * Resource path
      * 
-     * @param path protocol:host:port/path
+     * @param path protocol://host:port/path
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
@@ -10700,7 +10745,7 @@ public class StaticEndpointBuilders {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
      * 
-     * Syntax: <code>netty-http:protocol:host:port/path</code>
+     * Syntax: <code>netty-http:protocol://host:port/path</code>
      * 
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
@@ -10719,7 +10764,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path protocol:host:port/path
+     * @param path protocol://host:port/path
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(

@@ -16,30 +16,20 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import static org.apache.camel.test.junit5.TestSupport.assertDirectoryExists;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
-    private static final String TEST_DIR = "target/res/home/foo/bar/baz/xxx";
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}///foo/bar/baz/xxx?password=admin";
-    }
-
-    @AfterEach
-    public void cleanupDir() {
-        FileUtil.removeDir(new File(TEST_DIR));
     }
 
     @Test
@@ -47,10 +37,10 @@ public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
         FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
-        assertTrue(new File(TEST_DIR).exists());
+        assertDirectoryExists(ftpFile("foo/bar/baz/xxx"));
         // producer should create necessary subdirs
         sendFile(getFtpUrl(), "Hello World", "sub1/sub2/hello.txt");
-        assertTrue(new File(TEST_DIR, "sub1/sub2").exists());
+        assertDirectoryExists(ftpFile("foo/bar/baz/xxx/sub1/sub2"));
 
         // to see if another connect causes problems with autoCreate=true
         endpoint.stop();

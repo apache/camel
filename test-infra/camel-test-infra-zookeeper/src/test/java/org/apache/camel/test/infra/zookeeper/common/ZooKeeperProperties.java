@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.zookeeper.common;
 
 public final class ZooKeeperProperties {
     public static final String CONNECTION_STRING = "zookeeper.connection.string";
+    public static final String ZOOKEEPER_CONTAINER = "zookeeper.container";
 
     private ZooKeeperProperties() {
 

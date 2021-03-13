@@ -31,6 +31,7 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.http.base.HttpHelper;
@@ -181,7 +182,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                 if (!found && name.equalsIgnoreCase("content-type")) {
                     found = true;
                     name = Exchange.CONTENT_TYPE;
-                    exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
                 }
                 Object extracted = HttpHelper.extractHttpParameterValue(value);
                 if (strategy != null && !strategy.applyFilterToExternalHeaders(name, extracted, exchange)) {

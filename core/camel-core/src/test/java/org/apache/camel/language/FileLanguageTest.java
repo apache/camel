@@ -31,7 +31,9 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for File Language.
@@ -183,10 +185,10 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testFileNameDoubleExtension() throws Exception {
-        file = new File("target/data/filelanguage/test/bigfile.tar.gz");
+        file = testFile("test/bigfile.tar.gz").toFile();
 
-        String uri = "file://target/data/filelanguage?fileExist=Override";
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/data/filelanguage", file, null, false);
+        String uri = fileUri("?fileExist=Override");
+        GenericFile<File> gf = FileConsumer.asGenericFile(testDirectory().toString(), file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 
@@ -201,12 +203,12 @@ public class FileLanguageTest extends LanguageTestSupport {
     @Override
     public Exchange createExchange() {
         // create the file
-        String uri = "file://target/data/filelanguage?fileExist=Override";
+        String uri = "file://" + testDirectory().toString() + "?fileExist=Override";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "test/hello.txt");
 
         // get the file handle
-        file = new File("target/data/filelanguage/test/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/data/filelanguage", file, null, false);
+        file = testDirectory().resolve("test/hello.txt").toFile();
+        GenericFile<File> gf = FileConsumer.asGenericFile(testDirectory().toString(), file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

@@ -109,6 +109,23 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * If we want to use a POJO request as body or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -155,6 +172,22 @@ public interface Aws2LambdaComponentBuilderFactory {
         default Aws2LambdaComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -294,9 +327,11 @@ public interface Aws2LambdaComponentBuilderFactory {
             case "configuration": ((Lambda2Component) component).setConfiguration((org.apache.camel.component.aws2.lambda.Lambda2Configuration) value); return true;
             case "lazyStartProducer": ((Lambda2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Lambda2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Lambda2Component) component).setPojoRequest((boolean) value); return true;
             case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Lambda2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Lambda2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "autowiredEnabled": ((Lambda2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "proxyHost": getOrCreateConfiguration((Lambda2Component) component).setProxyHost((java.lang.String) value); return true;

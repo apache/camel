@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,34 +36,49 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
  behave as in runtime.
  */
 public class AWSContainer extends GenericContainer<AWSContainer> {
-    private static final String LOCALSTACK_CONTAINER = "localstack/localstack:0.12.6";
+    public static final String LOCALSTACK_CONTAINER = "localstack/localstack:0.12.7";
 
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private static final int SERVICE_PORT = 4566;
 
-    public AWSContainer(Service... services) {
-        this(LOCALSTACK_CONTAINER, services);
+    public AWSContainer() {
+        this(System.getProperty(AWSProperties.AWS_CONTAINER, LOCALSTACK_CONTAINER));
     }
 
-    public AWSContainer(String container, Service... services) {
-        super(container);
+    public AWSContainer(String imageName) {
+        super(imageName);
+    }
 
+    public AWSContainer(String imageName, Service... services) {
+        super(imageName);
+
+        setupServices(services);
+        setupContainer();
+    }
+
+    @Deprecated
+    protected AWSContainer(String imageName, String serviceList) {
+        super(imageName);
+
+        setupServices(serviceList);
+        setupContainer();
+    }
+
+    public void setupServices(Service... services) {
         String serviceList = Arrays.stream(services)
                 .map(Service::serviceName)
                 .collect(Collectors.joining(","));
 
-        setupContainer(serviceList);
+        setupServices(serviceList);
+
     }
 
-    protected AWSContainer(String container, String serviceList) {
-        super(container);
-
-        setupContainer(serviceList);
-    }
-
-    protected void setupContainer(String serviceList) {
+    public void setupServices(String serviceList) {
         LOG.debug("Creating services {}", serviceList);
         withEnv("SERVICE", serviceList);
+    }
+
+    protected void setupContainer() {
         withExposedPorts(SERVICE_PORT);
         waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
     }

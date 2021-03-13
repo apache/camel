@@ -19,22 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class RouteFormattedUriTest extends ContextTestSupport {
 
-    private String path = "target/data/toformat";
+    private String path = testDirectory().toString();
     private String name = "hello.txt";
     private String pattern = ".*txt$";
     private String result = "result";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/toformat");
-        super.setUp();
-    }
 
     @Test
     public void testFormattedUri() throws Exception {

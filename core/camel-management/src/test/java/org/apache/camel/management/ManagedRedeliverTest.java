@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -32,11 +34,6 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
 
     @Test
     public void testRedeliver() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         MockEndpoint mock = getMockEndpoint("mock:foo");
@@ -47,7 +44,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "route1");
 
         Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, num.longValue());
@@ -58,7 +55,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
         num = (Long) mbeanServer.getAttribute(on, "FailuresHandled");
         assertEquals(1, num.longValue());
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myprocessor\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "myprocessor");
 
         num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, num.longValue());

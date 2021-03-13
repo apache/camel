@@ -32,7 +32,7 @@ public class SftpConsumeTemplateTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         String out = consumer.receiveBody(
-                "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&password=admin", 5000,
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin", 5000,
                 String.class);
         assertNotNull(out);
         // Apache SSHD appends \u0000 at last byte in retrieved file

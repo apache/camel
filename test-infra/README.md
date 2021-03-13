@@ -62,7 +62,8 @@ parameters and/or other test scenarios constraints. When a service allows differ
 selected, this should be done via command line properties (`-D<property.name>=<value>`). For example, when allowing a
 service to choose between running as a local container or as remote instance, a property in the format
 `<name>.instance.type` should be handled. Additional runtime parameters used in different scenarios, should be handled
-as `<name>.<parameter>`. More complex services may use the builder pattern to compose the service accordingly.
+as `<name>.<parameter>`. More complex services may use the builder available through the factory classes to compose 
+the service accordingly.
 
 
 ### Registering Properties
@@ -142,6 +143,18 @@ in order to let JUnit 5 manage its lifecycle.
 ```
 @RegisterExtension
 static MyService service = MyServiceServiceFactory.createService();
+```
+
+More complex test services can be created using something similar to: 
+
+```
+@RegisterExtension
+static MyService service = MyServiceServiceFactory
+    .builder()
+        .addRemoveMapping(MyTestClass::myCustomRemoteService) // this is rarely needed
+        .addLocalMapping(MyTestClass::staticMethodReturningAService) // sets the handler for -Dmy-service.instance.type=local-myservice-local-container
+        .addMapping("local-alternative-service", MyTestClass::anotherMethodReturningAService) // sets the handler for -Dmy-service.instance.type=local-alternative-service
+    .createService();
 ```
 
 You can use the methods as well as the registered properties to access the test infrastructure services available. 

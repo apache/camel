@@ -24,18 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/enrich");
-        deleteDirectory("target/data/enrichdata");
-        super.setUp();
-    }
 
     @Test
     public void testPollEnrich() throws Exception {
@@ -44,13 +35,16 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
 
-        mock.expectedFileExists("target/data/enrich/.done/AAA.fin");
-        mock.expectedFileExists("target/data/enrichdata/.done/AAA.dat");
-        mock.expectedFileExists("target/data/enrichdata/BBB.dat");
+        mock.expectedFileExists(testFile("enrich/.done/AAA.fin"));
+        mock.expectedFileExists(testFile("enrichdata/.done/AAA.dat"));
+        mock.expectedFileExists(testFile("enrichdata/BBB.dat"));
 
-        template.sendBodyAndHeader("file://target/data/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
-        template.sendBodyAndHeader("file://target/data/enrichdata", "Other Big file", Exchange.FILE_NAME, "BBB.dat");
-        template.sendBodyAndHeader("file://target/data/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
+                Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader(fileUri("enrichdata"),
+                "Other Big file", Exchange.FILE_NAME, "BBB.dat");
+        template.sendBodyAndHeader(fileUri("enrich"), "Start",
+                Exchange.FILE_NAME, "AAA.fin");
 
         assertMockEndpointsSatisfied();
     }
@@ -60,34 +54,40 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
-                        name = FileUtil.stripExt(name) + ".dat";
+                from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                                name = FileUtil.stripExt(name) + ".dat";
 
-                        // use a consumer template to get the data file
-                        Exchange data = null;
-                        ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
-                        try {
-                            // try to get the data file
-                            data = con.receive(
-                                    "file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
-                        } finally {
-                            // stop the consumer as it does not need to poll for
-                            // files anymore
-                            con.stop();
-                        }
+                                // use a consumer template to get the data file
+                                Exchange data = null;
+                                ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
+                                try {
+                                    // try to get the data file
+                                    data = con.receive(
+                                            fileUri("enrichdata?initialDelay=0&delay=10&move=.done&fileName="
+                                                    + name),
+                                            5000);
+                                } finally {
+                                    // stop the consumer as it does not need to poll for
+                                    // files anymore
+                                    con.stop();
+                                }
 
-                        // if we found the data file then process it by sending
-                        // it to the direct:data endpoint
-                        if (data != null) {
-                            template.send("direct:data", data);
-                        } else {
-                            // otherwise do a rollback
-                            throw new CamelExchangeException("Cannot find the data file " + name, exchange);
-                        }
-                    }
-                }).to("mock:start");
+                                // if we found the data file then process it by sending
+                                // it to the direct:data endpoint
+                                if (data != null) {
+                                    template.send("direct:data", data);
+                                } else {
+                                    // otherwise do a rollback
+                                    throw new CamelExchangeException("Cannot find the data file " + name, exchange);
+                                }
+
+                                // and remember to done the UoW
+                                data.getUnitOfWork().done(data);
+                            }
+                        }).to("mock:start");
 
                 from("direct:data").to("mock:result");
             }

@@ -32,14 +32,9 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
 
     @Test
     public void testDumpAsXml() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         assertNotNull(xml);
@@ -57,14 +52,9 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
 
     @Test
     public void testDumpAsXmlResolvePlaceholder() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
@@ -82,14 +72,9 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
 
     @Test
     public void testDumpAsXmlResolvePlaceholderDelegateEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[] { true, true },
                 new String[] { "boolean", "boolean" });

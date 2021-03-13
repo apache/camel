@@ -17,30 +17,22 @@
 
 package org.apache.camel.test.infra.hdfs.v2.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class HDFSServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(HDFSServiceFactory.class);
 
     private HDFSServiceFactory() {
 
     }
 
     public static HDFSService createService() {
-        String instanceType = System.getProperty("hdfs.instance.type");
+        return builder()
+                .addLocalMapping(ContainerLocalHDFSService::new)
+                .addRemoteMapping(RemoteHDFSService::new)
+                .build();
+    }
 
-        if (instanceType == null || instanceType.equals("local-hdfs-container")) {
-            return new ContainerLocalHDFSService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new RemoteHDFSService();
-        }
-
-        LOG.error("Invalid HDFS instance type: {}. Must be either 'remote' or 'local-hdfs-container",
-                instanceType);
-        throw new UnsupportedOperationException(String.format("Invalid HDFS instance type: %s", instanceType));
-
+    public static SimpleTestServiceBuilder<HDFSService> builder() {
+        return new SimpleTestServiceBuilder<>("hdfs");
     }
 }

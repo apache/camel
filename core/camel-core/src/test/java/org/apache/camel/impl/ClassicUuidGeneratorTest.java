@@ -36,6 +36,7 @@ public class ClassicUuidGeneratorTest {
 
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
+        System.out.println(firstUUID);
 
         assertNotSame(firstUUID, secondUUID);
     }

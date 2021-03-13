@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -165,7 +166,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             boolean caught = false;
             if ((showAll || showCaughtException) && exception == null) {
                 // fallback to caught exception
-                exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 caught = true;
             }
 

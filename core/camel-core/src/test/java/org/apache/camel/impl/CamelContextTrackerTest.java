@@ -22,9 +22,11 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextTracker;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
 public class CamelContextTrackerTest {
 
     private final class MyContextTracker extends CamelContextTracker {

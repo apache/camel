@@ -1,7 +1,7 @@
 [[google-bigquery-sql-component]]
 = Google BigQuery Standard SQL Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
+:page-source: components/camel-google/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
 :docTitle: Google BigQuery Standard SQL
 :artifactId: camel-google-bigquery
 :description: Access Google Cloud BigQuery service using SQL queries.
@@ -98,7 +98,7 @@ The Google BigQuery Standard SQL component supports 4 options, which are listed 
 The Google BigQuery Standard SQL endpoint is configured using URI syntax:
 
 ----
-google-bigquery-sql:projectId:query
+google-bigquery-sql:projectId:queryString
 ----
 
 with the following path and query parameters:
@@ -109,8 +109,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *query* | *Required* BigQuery standard SQL query |  | String
 | *projectId* | *Required* Google Cloud Project Id |  | String
+| *queryString* | *Required* BigQuery standard SQL query |  | String
 |===
 
 

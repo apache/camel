@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,36 +24,26 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileConsumerSuspendTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/suspended");
-        super.setUp();
-    }
 
     @Test
     public void testConsumeSuspendFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/data/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader("file://target/data/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // the route is suspended by the policy so we should only receive one
-        String[] files = new File("target/data/suspended/").list();
-        assertNotNull(files);
-        assertEquals(1, files.length, "The file should exists");
+        long files = Files.list(testDirectory()).count();
+        assertEquals(1, files, "The file should exists");
     }
 
     @Override
@@ -62,7 +52,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
-                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
+                from(fileUri("?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10"))
                         .routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
                         .to("mock:result");
             }

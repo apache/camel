@@ -22,10 +22,8 @@ import java.io.InputStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpStreamingMoveTest extends FtpServerTestSupport {
@@ -33,13 +31,6 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/mymove?password=admin&delay=1000&streamDownload=true&move=done&stepwise=false";
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        deleteDirectory("target/mymove");
     }
 
     @Test
@@ -59,7 +50,7 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
         // give time for consumer to rename file
         Thread.sleep(1000);
 
-        File file = new File(service.getFtpRootDir() + "/mymove/done/hello.txt");
+        File file = ftpFile("mymove/done/hello.txt").toFile();
         assertTrue(file.exists(), "File should have been renamed");
     }
 

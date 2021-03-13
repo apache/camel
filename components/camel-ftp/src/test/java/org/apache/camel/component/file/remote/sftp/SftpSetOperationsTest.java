@@ -32,12 +32,12 @@ public class SftpSetOperationsTest extends SftpServerTestSupport {
     @Test
     public void testSftpSetOperations() throws Exception {
         String preferredAuthentications = "password,publickey";
-        String uri = "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+        String uri = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&ciphers=blowfish-cbc" + "&preferredAuthentications=password,publickey";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload
-        File file = new File(service.getFtpRootDir() + "/hello.txt");
+        File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 

@@ -45,6 +45,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
@@ -176,7 +177,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
 
         // propagate body
-        String encoding = (String) camelExchange.getProperty(Exchange.CHARSET_NAME);
+        String encoding = (String) camelExchange.getProperty(ExchangePropertyKey.CHARSET_NAME);
         camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding));
 
@@ -303,7 +304,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         setCharsetWithContentType(camelExchange);
 
         // set body
-        String encoding = (String) camelExchange.getProperty(Exchange.CHARSET_NAME);
+        String encoding = (String) camelExchange.getProperty(ExchangePropertyKey.CHARSET_NAME);
         Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage,
                 camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class), encoding);
         if (body != null) {
@@ -496,7 +497,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
             String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
             if (normalizedEncoding != null) {
-                camelExchange.setProperty(Exchange.CHARSET_NAME, normalizedEncoding);
+                camelExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedEncoding);
             }
         }
     }

@@ -1,7 +1,7 @@
 [[microprofile-health-other]]
 = Microprofile Health Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-microprofile-health/src/main/docs/microprofile-health.adoc
+:page-source: components/camel-microprofile/camel-microprofile-health/src/main/docs/microprofile-health.adoc
 :docTitle: Microprofile Health
 :artifactId: camel-microprofile-health
 :description: Bridging Eclipse MicroProfile Health with Camel health checks

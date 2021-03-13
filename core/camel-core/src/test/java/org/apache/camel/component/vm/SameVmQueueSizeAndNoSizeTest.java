@@ -22,6 +22,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaConstants;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  *
  */
+@ResourceLock("VmComponent")
 public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
 
     @Test

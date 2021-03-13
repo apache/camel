@@ -41,11 +41,6 @@ public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
 
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // services
@@ -98,11 +93,6 @@ public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
 
     @Test
     public void testDuplicateMessagesCountAreCorrectlyCounted() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // processors

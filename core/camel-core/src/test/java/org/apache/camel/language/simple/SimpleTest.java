@@ -43,6 +43,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -262,6 +264,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    @ResourceLock(Resources.SYSTEM_PROPERTIES)
     public void testSimpleSystemPropertyExpressions() throws Exception {
         System.setProperty("who", "I was here");
         assertExpression("${sys.who}", "I was here");

@@ -20,20 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
 
-    private String uri = "file://target/data/inbox?idempotent=false&move=../done&moveFailed=../error"
-                         + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=none&initialDelay=0&delay=10";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        super.setUp();
-    }
+    private String uri = fileUri("?idempotent=false&move=../done&moveFailed=../error"
+                                 + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=none&initialDelay=0&delay=10");
 
     @Test
     public void testConsumeSameFileAgain() throws Exception {
@@ -41,15 +33,15 @@ public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
         // some file systems may read files in different order
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Foo");
 
-        template.sendBodyAndHeader("file://target/data/inbox", "Hello World", Exchange.FILE_NAME, "foo.txt");
-        template.sendBodyAndHeader("file://target/data/inbox", "Foo", Exchange.FILE_NAME, "bar.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "foo.txt");
+        template.sendBodyAndHeader(fileUri(), "Foo", Exchange.FILE_NAME, "bar.txt");
 
         assertMockEndpointsSatisfied();
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("file://target/data/inbox", "Bye World", Exchange.FILE_NAME, "foo.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "foo.txt");
 
         assertMockEndpointsSatisfied();
     }

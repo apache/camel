@@ -24,10 +24,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 /**
  *
  */
+@ResourceLock("DirectVmComponent")
 public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
     private CamelContext context2;

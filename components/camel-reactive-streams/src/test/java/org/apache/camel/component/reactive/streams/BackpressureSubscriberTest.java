@@ -23,7 +23,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test backpressure from the consumer side.
  */
 @SuppressWarnings("unused")
-public class BackpressureSubscriberTest extends CamelTestSupport {
+public class BackpressureSubscriberTest extends BaseReactiveTest {
 
     @Test
     public void testBackpressure() throws Exception {

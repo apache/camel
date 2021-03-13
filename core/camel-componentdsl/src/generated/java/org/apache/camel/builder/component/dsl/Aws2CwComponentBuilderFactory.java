@@ -119,6 +119,22 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2CwComponentBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the CW client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -226,6 +242,22 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2CwComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * The metric value.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -315,6 +347,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "configuration": ((Cw2Component) component).setConfiguration((org.apache.camel.component.aws2.cw.Cw2Configuration) value); return true;
             case "lazyStartProducer": ((Cw2Component) component).setLazyStartProducer((boolean) value); return true;
             case "name": getOrCreateConfiguration((Cw2Component) component).setName((java.lang.String) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Cw2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Cw2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Cw2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Cw2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -322,6 +355,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "timestamp": getOrCreateConfiguration((Cw2Component) component).setTimestamp((java.time.Instant) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Cw2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "unit": getOrCreateConfiguration((Cw2Component) component).setUnit((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Cw2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "value": getOrCreateConfiguration((Cw2Component) component).setValue((java.lang.Double) value); return true;
             case "autowiredEnabled": ((Cw2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Cw2Component) component).setAccessKey((java.lang.String) value); return true;

@@ -95,12 +95,13 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
         }
 
+        // attachment is optional
         AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
 
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            if (am.getAttachment(name) != null) {
+            if (am != null && am.getAttachment(name) != null) {
                 DataHandler dh = am.getAttachment(name);
                 Object value = dh;
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {

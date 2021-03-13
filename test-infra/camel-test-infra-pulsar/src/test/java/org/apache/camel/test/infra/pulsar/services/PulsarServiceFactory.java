@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.pulsar.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class PulsarServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(PulsarServiceFactory.class);
-
     private PulsarServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<PulsarService> builder() {
+        return new SimpleTestServiceBuilder<>("pulsar");
+    }
+
     public static PulsarService createService() {
-        String instanceType = System.getProperty("pulsar.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-pulsar-container")) {
-            return new PulsarLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new PulsarRemoteService();
-        }
-
-        LOG.error("Pulsar instance must be one of 'local-pulsar-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Pulsar instance type");
+        return builder()
+                .addLocalMapping(PulsarLocalContainerService::new)
+                .addRemoteMapping(PulsarRemoteService::new)
+                .build();
     }
 }

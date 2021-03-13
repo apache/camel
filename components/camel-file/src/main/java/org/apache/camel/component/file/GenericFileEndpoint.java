@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LoggingLevel;
@@ -157,7 +158,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                        + "files to directories outside the starting directory, such as parent or root folders.")
     protected boolean jailStartingDirectory = true;
     @UriParam(label = "producer", description = "Used to append characters (text) after writing files. This can for "
-                                                + "example be used to add new lines or other separators when writing and appending to existing files. <p/> "
+                                                + "example be used to add new lines or other separators when writing and appending new files or existing files. <p/> "
                                                 + "To specify new-line (slash-n or slash-r) or tab (slash-t) characters then escape with an extra slash, "
                                                 + "eg slash-slash-n.")
     protected String appendChars;
@@ -1454,7 +1455,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Used to append characters (text) after writing files. This can for example be used to add new lines or other
-     * separators when writing and appending to existing files.
+     * separators when writing and appending to new files or existing files.
      * <p/>
      * To specify new-line (slash-n or slash-r) or tab (slash-t) characters then escape with an extra slash, eg
      * slash-slash-n
@@ -1544,7 +1545,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public void configureExchange(Exchange exchange) {
         // Now we just set the charset property here
         if (getCharset() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, getCharset());
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getCharset());
         }
     }
 

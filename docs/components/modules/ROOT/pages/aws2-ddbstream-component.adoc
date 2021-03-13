@@ -1,7 +1,7 @@
 [[aws2-ddbstream-component]]
 = AWS 2 DynamoDB Streams Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-ddb/src/main/docs/aws2-ddbstream-component.adoc
+:page-source: components/camel-aws/camel-aws2-ddb/src/main/docs/aws2-ddbstream-component.adoc
 :docTitle: AWS 2 DynamoDB Streams
 :artifactId: camel-aws2-ddb
 :description: Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
@@ -45,7 +45,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 DynamoDB Streams component supports 14 options, which are listed below.
+The AWS 2 DynamoDB Streams component supports 16 options, which are listed below.
 
 
 
@@ -57,12 +57,14 @@ The AWS 2 DynamoDB Streams component supports 14 options, which are listed below
 | *configuration* (consumer) | The component configuration |  | Ddb2StreamConfiguration
 | *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. There are 5 enums and the value can be one of: TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, null | LATEST | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll |  | int
+| *overrideEndpoint* (consumer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *proxyHost* (consumer) | To define a proxy host when instantiating the DDBStreams client |  | String
 | *proxyPort* (consumer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
 | *proxyProtocol* (consumer) | To define a proxy protocol when instantiating the DDBStreams client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (consumer) | The region in which DDBStreams client needs to work |  | String
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (consumer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -93,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,6 +105,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. There are 5 enums and the value can be one of: TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, null | LATEST | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll |  | int
+| *overrideEndpoint* (consumer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *proxyHost* (consumer) | To define a proxy host when instantiating the DDBStreams client |  | String
 | *proxyPort* (consumer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
 | *proxyProtocol* (consumer) | To define a proxy protocol when instantiating the DDBStreams client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
@@ -110,6 +113,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (consumer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy

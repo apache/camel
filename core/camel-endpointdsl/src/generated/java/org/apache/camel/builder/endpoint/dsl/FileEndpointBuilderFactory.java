@@ -2934,9 +2934,9 @@ public interface FileEndpointBuilderFactory {
         /**
          * Used to append characters (text) after writing files. This can for
          * example be used to add new lines or other separators when writing and
-         * appending to existing files. To specify new-line (slash-n or slash-r)
-         * or tab (slash-t) characters then escape with an extra slash, eg
-         * slash-slash-n.
+         * appending new files or existing files. To specify new-line (slash-n
+         * or slash-r) or tab (slash-t) characters then escape with an extra
+         * slash, eg slash-slash-n.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

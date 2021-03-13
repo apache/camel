@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProcessorDefinitionHelperTest extends ContextTestSupport {
@@ -34,7 +35,7 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
                 = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
         assertNotNull(it);
 
-        assertEquals("choice1", it.next().getId());
+        assertThat(it.next().getId()).matches("choice[0-9]+");
         assertEquals("whenfoo", it.next().getId());
         assertEquals("foo", it.next().getId());
         assertEquals("whenbar", it.next().getId());

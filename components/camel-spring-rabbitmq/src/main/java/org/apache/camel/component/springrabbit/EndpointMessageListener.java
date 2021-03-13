@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.springrabbit;
 
-import java.util.Map;
-
 import com.rabbitmq.client.Channel;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -141,9 +139,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
 
-            // the exchange is now done so release it
-            consumer.releaseExchange(exchange, false);
-
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
@@ -160,18 +155,7 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
     }
 
     protected Exchange createExchange(Message message, Channel channel, Object replyDestination) {
-        Exchange exchange = consumer.createExchange(false);
-
-        Object body = messageConverter.fromMessage(message);
-        exchange.getMessage().setBody(body);
-
-        // TODO: optimize to use existing headers map
-        Map<String, Object> headers
-                = messagePropertiesConverter.fromMessageProperties(message.getMessageProperties(), exchange);
-        if (!headers.isEmpty()) {
-            exchange.getMessage().setHeaders(headers);
-        }
-
+        Exchange exchange = endpoint.createExchange(message);
         exchange.setProperty(SpringRabbitMQConstants.CHANNEL, channel);
 
         // lets set to an InOut if we have some kind of reply-to destination
@@ -260,12 +244,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                         endpoint.getExceptionHandler().handleException(rce);
                     }
                 }
-            }
-
-            // if we completed from async processing then we should release the exchange
-            // the sync processing will release the exchange outside this callback
-            if (!doneSync) {
-                consumer.releaseExchange(exchange, false);
             }
         }
 

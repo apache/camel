@@ -28,4 +28,32 @@ public class SpringSamplingThrottlerTest extends SamplingThrottlerTest {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/samplingThrottler.xml");
     }
 
+    @Override
+    public void testSamplingFromExchangeStream() throws Exception {
+        try {
+            super.testSamplingFromExchangeStream();
+        } catch (Exception e) {
+            throw new Exception("Error", e);
+        }
+    }
+
+    @Override
+    public void testBurstySampling() throws Exception {
+        super.testBurstySampling();
+    }
+
+    @Override
+    public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
+        super.testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough();
+    }
+
+    @Override
+    public void testSamplingUsingMessageFrequency() throws Exception {
+        super.testSamplingUsingMessageFrequency();
+    }
+
+    @Override
+    public void testSamplingUsingMessageFrequencyViaDSL() throws Exception {
+        super.testSamplingUsingMessageFrequencyViaDSL();
+    }
 }

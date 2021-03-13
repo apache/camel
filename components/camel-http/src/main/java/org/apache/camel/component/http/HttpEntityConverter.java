@@ -61,7 +61,7 @@ public final class HttpEntityConverter {
 
     private static HttpEntity asHttpEntity(InputStream in, Exchange exchange) throws IOException {
         InputStreamEntity entity;
-        if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
             InputStream stream = GZIPHelper.compressGzip(contentEncoding, in);
             entity = new InputStreamEntity(
@@ -72,30 +72,48 @@ public final class HttpEntityConverter {
         }
         if (exchange != null) {
             String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
+            if (contentEncoding != null) {
+                entity.setContentEncoding(contentEncoding);
+            }
             String contentType = ExchangeHelper.getContentType(exchange);
-            entity.setContentEncoding(contentEncoding);
-            entity.setContentType(contentType);
+            if (contentType != null) {
+                entity.setContentType(contentType);
+            }
         }
         return entity;
     }
 
     private static HttpEntity asHttpEntity(byte[] data, Exchange exchange) throws Exception {
         AbstractHttpEntity entity;
+
+        String contentEncoding = null;
+        if (exchange != null) {
+            contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
+        }
+
         if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
-            String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
-            InputStream stream = GZIPHelper.compressGzip(contentEncoding, data);
-            entity = new InputStreamEntity(
-                    stream, stream instanceof ByteArrayInputStream
-                            ? stream.available() != 0 ? stream.available() : -1 : -1);
+            boolean gzip = GZIPHelper.isGzip(contentEncoding);
+            if (gzip) {
+                InputStream stream = GZIPHelper.compressGzip(contentEncoding, data);
+                entity = new InputStreamEntity(
+                        stream, stream instanceof ByteArrayInputStream
+                                ? stream.available() != 0 ? stream.available() : -1 : -1);
+            } else {
+                // use a byte array entity as-is
+                entity = new ByteArrayEntity(data);
+            }
         } else {
             // create the Repeatable HttpEntity
             entity = new ByteArrayEntity(data);
         }
         if (exchange != null) {
-            String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
+            if (contentEncoding != null) {
+                entity.setContentEncoding(contentEncoding);
+            }
             String contentType = ExchangeHelper.getContentType(exchange);
-            entity.setContentEncoding(contentEncoding);
-            entity.setContentType(contentType);
+            if (contentType != null) {
+                entity.setContentType(contentType);
+            }
         }
         return entity;
     }

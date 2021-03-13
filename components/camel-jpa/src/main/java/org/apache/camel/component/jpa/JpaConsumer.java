@@ -34,6 +34,7 @@ import javax.persistence.PessimisticLockException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -188,9 +189,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             Object result = holder.result;
 
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;

@@ -45,6 +45,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -227,7 +228,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // set the exchange encoding property
         if (getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+                    IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
         if (LOG.isTraceEnabled()) {

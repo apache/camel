@@ -29,16 +29,11 @@ public class ManagedRegisterCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testRegisterCamelContext() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        assertEquals(context.getName(), name);
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);

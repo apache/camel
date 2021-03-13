@@ -32,6 +32,12 @@
     <name>Camel :: Management</name>
     <description>Camel Management</description>
 
+    <properties>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -337,7 +343,6 @@
                                 <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
                                 <exclude>${platform.skip.tests}</exclude>
                             </excludes>
-                            <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
                             <!-- needed for testing the properties component -->
                             <environmentVariables>
                                 <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>

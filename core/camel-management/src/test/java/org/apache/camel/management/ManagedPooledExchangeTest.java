@@ -32,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -76,7 +77,7 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
 
         // get the object name for the delayer
         ObjectName on
-                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultExchangeFactoryManager");
+                = getCamelObjectName(TYPE_SERVICE, "DefaultExchangeFactoryManager");
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);

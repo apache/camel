@@ -49,7 +49,9 @@
   </bean>
 
   <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="broker">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    <property name="brokerURL">
+      <bean class="org.apache.camel.component.jms.CamelJmsTestHelper" factory-method="createBrokerUrl"/>
+    </property>
   </bean>
 
   <bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">

@@ -38,8 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
-    private static final AtomicInteger ORDER = new AtomicInteger();
-
     @Test
     public void testRequestAsync() throws Exception {
         Exchange exchange = new DefaultExchange(context);
@@ -263,7 +261,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
     @Test
     public void testAsyncCallbackExchangeInOnly() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -276,22 +274,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("Hello World", exchange.getIn().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackExchangeInOut() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -303,21 +301,21 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("HelloHello", exchange.getMessage().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackExchangeInOnlyGetResult() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -328,22 +326,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("Hello World", exchange.getIn().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         Exchange reply = future.get(10, TimeUnit.SECONDS);
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
         assertNotNull(reply);
     }
 
     @Test
     public void testAsyncCallbackExchangeInOutGetResult() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         Exchange exchange = context.getEndpoint("direct:start").createExchange();
         exchange.getIn().setBody("Hello");
@@ -353,22 +351,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("HelloHello", exchange.getMessage().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         Exchange reply = future.get(10, TimeUnit.SECONDS);
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
         assertNotNull(reply);
         assertEquals("HelloHello", reply.getMessage().getBody());
     }
 
     @Test
     public void testAsyncCallbackBodyInOnly() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -378,22 +376,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("Hello World", exchange.getIn().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackBodyInOut() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -401,21 +399,21 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("HelloHello", exchange.getMessage().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackBodyInOnlyGetResult() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -423,43 +421,43 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("Hello World", exchange.getIn().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         Object reply = future.get(10, TimeUnit.SECONDS);
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
         // no reply when in only
         assertEquals(null, reply);
     }
 
     @Test
     public void testAsyncCallbackBodyInOutGetResult() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         Future<Object> future = template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("HelloHello", exchange.getMessage().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         Object reply = future.get(10, TimeUnit.SECONDS);
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
         assertEquals("HelloHello", reply);
     }
 
     @Test
     public void testAsyncCallbackInOnlyProcessor() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -473,22 +471,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("Hello World", exchange.getIn().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackInOutProcessor() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -501,21 +499,21 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("HelloHello", exchange.getMessage().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackThreadsInOutProcessor() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -528,21 +526,21 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 assertEquals("ByeBye", exchange.getMessage().getBody());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackExchangeInOnlyWithFailure() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -553,21 +551,21 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onFailure(Exchange exchange) {
                 assertEquals("Damn forced by unit test", exchange.getException().getMessage());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Test
     public void testAsyncCallbackExchangeInOutWithFailure() throws Exception {
-        ORDER.set(0);
+        final AtomicInteger order = new AtomicInteger();
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -579,16 +577,16 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void onFailure(Exchange exchange) {
                 assertEquals("Damn forced by unit test", exchange.getException().getMessage());
-                ORDER.addAndGet(2);
+                order.addAndGet(2);
                 latch.countDown();
             }
         });
 
-        ORDER.addAndGet(1);
+        order.addAndGet(1);
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-        ORDER.addAndGet(4);
+        order.addAndGet(4);
 
-        assertEquals(7, ORDER.get());
+        assertEquals(7, order.get());
     }
 
     @Override

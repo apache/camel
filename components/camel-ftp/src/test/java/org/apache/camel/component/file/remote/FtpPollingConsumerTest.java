@@ -56,7 +56,7 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
         // file
         Thread.sleep(1000);
 
-        File file = new File(service.getFtpRootDir() + "/polling/bye.txt");
+        File file = ftpFile("polling/bye.txt").toFile();
         assertTrue(file.exists(), "File should exist " + file);
 
         consumer.stop();

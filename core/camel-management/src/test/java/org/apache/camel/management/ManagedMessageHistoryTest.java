@@ -26,6 +26,7 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,14 +59,14 @@ public class ManagedMessageHistoryTest extends ManagementTestSupport {
         // check mbeans
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        assertEquals(context.getName(), name);
         Boolean mh = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
         assertEquals(Boolean.TRUE, mh);
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultMessageHistoryFactory");
+        on = getCamelObjectName(TYPE_SERVICE, "DefaultMessageHistoryFactory");
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         Boolean en = (Boolean) mbeanServer.getAttribute(on, "Enabled");

@@ -67,7 +67,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     private static final String[] EXCLUDE_DOC_FILES
             = {
                     "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
-                    "camel-debezium-common", "camel-infinispan-common" };
+                    "camel-debezium-common", "camel-infinispan-common", "camel-vertx-common" };
 
     private static final int UNUSED_LABELS_WARN = 15;
 
@@ -586,8 +586,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-salesforce":
                 case "camel-fhir":
                 case "camel-debezium-common":
+                case "camel-vertx-common":
                 case "camel-vertx-kafka":
                 case "camel-infinispan":
+                case "camel-azure":
+                case "camel-google":
+                case "camel-microprofile":
+                case "camel-debezium": 
+                case "camel-test": 
+                case "camel-aws":
                     return false;
                 default:
                     return true;
@@ -1163,6 +1170,40 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 return Collections.singletonList(dir.resolve("camel-vertx-kafka-component"));
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
+            case "camel-azure":
+                return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"),
+                        dir.resolve("camel-azure-storage-datalake"),
+                        dir.resolve("camel-azure-storage-queue"));
+            case "camel-google":
+                return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
+                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
+                        dir.resolve("camel-google-sheets"),
+                        dir.resolve("camel-google-storage"));
+            case "camel-debezium":
+                return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
+                        dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"));
+            case "camel-microprofile":
+                return Arrays.asList(dir.resolve("camel-microprofile-config"),
+                        dir.resolve("camel-microprofile-fault-tolerance"),
+                        dir.resolve("camel-microprofile-health"), dir.resolve("camel-microprofile-metrics"));
+            case "camel-test":
+                return Arrays.asList(dir.resolve("camel-test"),
+                        dir.resolve("camel-test-cdi"),
+                        dir.resolve("camel-testcontainers"), dir.resolve("camel-testcontainers-junit5"),
+                        dir.resolve("camel-testcontainers-spring"), dir.resolve("camel-testcontainers-spring-junit5"),
+                        dir.resolve("camel-test-junit5"), dir.resolve("camel-test-spring"),
+                        dir.resolve("camel-test-spring-junit5"));
+            case "camel-aws":
+                return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
+                        dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
+                        dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"), dir.resolve("camel-aws2-eventbridge"),
+                        dir.resolve("camel-aws2-iam"),
+                        dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
+                        dir.resolve("camel-aws2-mq"),
+                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
+                        dir.resolve("camel-aws2-sns"),
+                        dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-sts"), dir.resolve("camel-aws2-translate"),
+                        dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"));
             default:
                 return Collections.singletonList(dir);
         }

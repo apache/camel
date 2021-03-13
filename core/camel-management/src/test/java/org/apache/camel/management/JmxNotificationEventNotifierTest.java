@@ -22,22 +22,17 @@ import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_EVENT_NOTIFIER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JmxNotificationEventNotifierTest extends ContextTestSupport {
+public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
 
     private JmxNotificationEventNotifier notifier;
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -60,7 +55,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
     public void testExchangeDone() throws Exception {
         // START SNIPPET: e2
         // register the NotificationListener
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
+        ObjectName on = getCamelObjectName(TYPE_EVENT_NOTIFIER, "JmxEventNotifier");
         MyNotificationListener listener = new MyNotificationListener();
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
                 listener,
@@ -86,7 +81,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
 
     @Test
     public void testExchangeFailed() throws Exception {
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
+        ObjectName on = getCamelObjectName(TYPE_EVENT_NOTIFIER, "JmxEventNotifier");
 
         MyNotificationListener listener = new MyNotificationListener();
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,

@@ -46,7 +46,7 @@ To send a direct message to a slackuser.
 
 [source,java]
 -------------------------
-slack:@username[?options]
+slack:@userID[?options]
 -------------------------
 
 == Options
@@ -54,7 +54,7 @@ slack:@username[?options]
 
 
 // component options: START
-The Slack component supports 4 options, which are listed below.
+The Slack component supports 5 options, which are listed below.
 
 
 
@@ -64,6 +64,7 @@ The Slack component supports 4 options, which are listed below.
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *token* (token) | The token to use |  | String
 | *webhookUrl* (webhook) | The incoming webhook URL |  | String
 |===
 // component options: END
@@ -90,17 +91,19 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *token* (common) | The token to use |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *conversationType* (consumer) | Type of conversation. There are 4 enums and the value can be one of: PUBLIC_CHANNEL, PRIVATE_CHANNEL, MPIM, IM | PUBLIC_CHANNEL | ConversationType
 | *maxResults* (consumer) | The Max Result for the poll | 10 | String
+| *naturalOrder* (consumer) | Create exchanges in natural order (oldest to newest) or not | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *serverUrl* (consumer) | The Server URL of the Slack instance | https://slack.com | String
-| *token* (consumer) | The token to use |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
@@ -131,13 +134,14 @@ with the following path and query parameters:
 == SlackComponent
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
-bean that contains the incoming webhook url for the integration as a
+bean that contains the incoming webhook url or the app token for the integration as a
 parameter.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------------------------
 <bean id="slack" class="org.apache.camel.component.slack.SlackComponent">
     <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
+    <property name="token" value="xoxb-12345678901-1234567890123-xxxxxxxxxxxxxxxxxxxxxxxx"/>
 </bean>
 -----------------------------------------------------------------------------------------------------------------------
 
@@ -166,6 +170,34 @@ A CamelContext with Blueprint could be as:
 </blueprint>
 ---------------------------------------------------------------------------------------------------------------------------
 
+== Producer
+
+You can now use a token to send a message instead of WebhookUrl
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------
+from("direct:test")
+    .to("slack:#random?token=RAW(<YOUR_TOKEN>)");
+---------------------------------------------------------------------------------------------------------------------------
+
+You can now use the Slack API model to create blocks. You can read more about it here https://api.slack.com/block-kit
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------
+    public void testSlackAPIModelMessage() {
+        Message message = new Message();
+        message.setBlocks(Collections.singletonList(SectionBlock
+                .builder()
+                .text(MarkdownTextObject
+                        .builder()
+                        .text("*Hello from Camel!*")
+                        .build())
+                .build()));
+
+        template.sendBody(test, message);
+    }
+---------------------------------------------------------------------------------------------------------------------------
+
 == Consumer
 
 You can use also a consumer for messages in channel
@@ -182,6 +214,14 @@ You'll need to create a Slack app and use it on your workspace.
 
 Use the 'Bot User OAuth Access Token' as token for the consumer endpoint.
 
-IMPORTANT: Add the `channels:history` and `channels:read` user token scope to your app to grant it permission to view messages in the user's public channels.
+IMPORTANT: Add the corresponding history (`channels:history` or `groups:history` or `mpim:history` or `im:history`) and
+read (`channels:read` or `groups:read` or `mpim:read` or `im:read`) user token scope to your app to grant it permission to
+view messages in the corresponding channel. You will need to use the conversationType option to set it up too (`PUBLIC_CHANNEL`, `PRIVATE_CHANNEL`, `MPIM`, `IM`)
+
+The naturalOrder option allows consuming messages from the oldest to the newest.
+Originally you would get the newest first and consume backward (message 3 => message 2 => message 1)
+
+IMPORTANT: You can use the conversationType option to read history and messages from a channel that is not only public
+(`PUBLIC_CHANNEL`,`PRIVATE_CHANNEL`, `MPIM`, `IM`)
 
 include::camel-spring-boot::page$slack-starter.adoc[]

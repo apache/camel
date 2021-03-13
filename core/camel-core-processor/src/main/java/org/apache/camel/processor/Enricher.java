@@ -26,6 +26,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
@@ -252,7 +253,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                 }
 
                 // set property with the uri of the endpoint enriched so we can use that for tracing etc
-                exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+                exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
 
                 // return the producer back to the cache
                 try {
@@ -314,7 +315,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         }
 
         // set property with the uri of the endpoint enriched so we can use that for tracing etc
-        exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
 
         // return the producer back to the cache
         try {
@@ -391,7 +392,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
         // if we share unit of work, we need to prepare the resource exchange
         if (isShareUnitOfWork()) {
-            target.setProperty(Exchange.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
+            target.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
             // and then share the unit of work
             target.adapt(ExtendedExchange.class).setUnitOfWork(source.getUnitOfWork());
         }

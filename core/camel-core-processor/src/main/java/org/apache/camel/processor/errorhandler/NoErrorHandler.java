@@ -27,6 +27,7 @@ import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ErrorHandler {
 
@@ -82,4 +83,32 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
     public ErrorHandler clone(Processor output) {
         return new NoErrorHandler(output);
     }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(output);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(output);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(output);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop, do not stop any services which we only do when shutting down
+        // as the error handler can be context scoped, and should not stop in case
+        // a route stops
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(output);
+    }
+
 }

@@ -28,7 +28,9 @@ public class SedaPollEnrichSimpleExpressionTest extends CamelTestSupport {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).pollEnrich(seda("${exchangeProperty.whereFrom}").timeout(1000)).to("mock:result");
+                from(direct("start"))
+                        .pollEnrich(seda("${exchangeProperty.whereFrom}").concurrentConsumers(1), 1000)
+                        .to("mock:result");
             }
         };
     }

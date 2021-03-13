@@ -22,6 +22,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -80,12 +81,12 @@ public class HystrixProcessorCommand extends HystrixCommand {
             LOG.debug("Error occurred processing. Will now run fallback.");
         }
         // store the last to endpoint as the failure endpoint
-        if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+        if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
         }
         // give the rest of the pipeline another chance
-        exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
         exchange.setRouteStop(false);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block

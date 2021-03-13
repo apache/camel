@@ -84,7 +84,7 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
                     e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_SYS_ID.getHeader(),
                             attachmentMetaList.get(0).getTableSysId());
                     e.getIn().setBody(
-                            resolveResourceAsInputStream(e.getContext().getClassResolver(), "classpath:my-content.txt"));
+                            resolveResourceAsInputStream(e.getContext(), "classpath:my-content.txt"));
                 });
 
         Exchange getCreatedResult = template.send(

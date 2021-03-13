@@ -22,8 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,15 +56,9 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
     @BeforeEach
     public void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want
-        // to unit
-        // test that we can pool and store as a local file
+        // to unit test that we can pool and store as a local file
         template.sendBodyAndHeader(getFtpUrl(), logoFile, Exchange.FILE_NAME, "logo.jpeg");
         template.sendBodyAndHeader(getFtpUrl(), logo1File, Exchange.FILE_NAME, "logo1.jpeg");
-    }
-
-    @AfterEach
-    public void cleanup() {
-        FileUtil.removeDir(new File("target/ftptest/"));
     }
 
     @Test
@@ -81,12 +73,12 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
                                          + " but should have been bigger than 10000");
 
         // assert the file
-        File logo1DestFile = new File("target/ftptest/", "logo1.jpeg");
+        File logo1DestFile = testFile("logo1.jpeg").toFile();
         assertTrue(logo1DestFile.exists(), "The binary file should exists");
         assertEquals(logo1FileSize, logo1DestFile.length(), "File size for logo1.jpg does not match");
 
         // assert the file
-        File logoDestFile = new File("target/ftptest", "logo.jpeg");
+        File logoDestFile = testFile("logo.jpeg").toFile();
         assertTrue(logoDestFile.exists(), " The binary file should exists");
         assertEquals(logoFileSize, logoDestFile.length(), "File size for logo1.jpg does not match");
     }
@@ -95,9 +87,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?noop=true";
-
-                from(getFtpUrl()).to(fileUrl, "mock:result");
+                from(getFtpUrl()).to(fileUri("?noop=true"), "mock:result");
             }
         };
     }

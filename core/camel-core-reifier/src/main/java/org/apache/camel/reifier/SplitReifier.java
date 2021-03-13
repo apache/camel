@@ -49,23 +49,24 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Split", definition, isParallelProcessing);
 
-        long timeout = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : 0;
+        long timeout = parseDuration(definition.getTimeout(), 0);
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
-        if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(mandatoryLookup(parseString(definition.getOnPrepareRef()), Processor.class));
+        String ref = parseString(definition.getOnPrepareRef());
+        if (ref != null) {
+            definition.setOnPrepare(mandatoryLookup(ref, Processor.class));
         }
 
         Expression exp = createExpression(definition.getExpression());
+        String delimiter = parseString(definition.getDelimiter());
 
         Splitter answer;
-        if (definition.getDelimiter() != null) {
+        if (delimiter != null) {
             answer = new Splitter(
                     camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing,
                     threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(),
-                    isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException,
-                    parseString(definition.getDelimiter()));
+                    isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException, delimiter);
         } else {
             answer = new Splitter(
                     camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing,

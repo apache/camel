@@ -81,8 +81,10 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Service account key to authenticate an application as a service
-         * account.
+         * The Service account key that can be used as credentials for the
+         * Storage client. It can be loaded by default from classpath, but you
+         * can prefix with classpath:, file:, or http: to load the resource from
+         * different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1078,8 +1080,10 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Service account key to authenticate an application as a service
-         * account.
+         * The Service account key that can be used as credentials for the
+         * Storage client. It can be loaded by default from classpath, but you
+         * can prefix with classpath:, file:, or http: to load the resource from
+         * different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1328,8 +1332,10 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Service account key to authenticate an application as a service
-         * account.
+         * The Service account key that can be used as credentials for the
+         * Storage client. It can be loaded by default from classpath, but you
+         * can prefix with classpath:, file:, or http: to load the resource from
+         * different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

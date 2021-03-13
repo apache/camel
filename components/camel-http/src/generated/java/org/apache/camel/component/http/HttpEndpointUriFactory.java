@@ -15,13 +15,13 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class HttpEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":httpUri";
+    private static final String BASE = "://httpUri";
     private static final String[] SCHEMES = new String[]{"http", "https"};
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(49);
+        Set<String> props = new HashSet<>(51);
         props.add("clientBuilder");
         props.add("authMethodPriority");
         props.add("ignoreResponseBody");
@@ -42,6 +42,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("connectionClose");
         props.add("proxyHost");
         props.add("authPassword");
+        props.add("skipRequestHeaders");
         props.add("lazyStartProducer");
         props.add("preserveHostHeader");
         props.add("httpClientConfigurer");
@@ -54,6 +55,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("proxyAuthScheme");
         props.add("sslContextParameters");
         props.add("httpMethod");
+        props.add("skipResponseHeaders");
         props.add("deleteWithBody");
         props.add("httpUri");
         props.add("headerFilterStrategy");

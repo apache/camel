@@ -39,7 +39,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestS
     public void testFileExistAppendAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeAppendResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(service.getFtpRootDir() + "/allow/hello.txt", "Hello world");
+        mock.expectedFileExists(ftpFile("allow/hello.txt"), "Hello world");
 
         template.sendBody("direct:appendTypeAppend", null);
 
@@ -50,7 +50,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestS
     public void testFileExistOverrideAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeOverrideResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(service.getFtpRootDir() + "/allow/hello.txt", "");
+        mock.expectedFileExists(ftpFile("allow/hello.txt"), "");
 
         template.sendBody("direct:appendTypeOverride", null);
 

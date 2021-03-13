@@ -426,6 +426,39 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointConsumerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointConsumerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The netty component installs a default codec if both, encoder/decoder
          * is null and textline is false. Setting allowDefaultCodec to false
          * prevents the netty component from installing a default codec as the
@@ -2234,6 +2267,39 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointProducerBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointProducerBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The netty component installs a default codec if both, encoder/decoder
          * is null and textline is false. Setting allowDefaultCodec to false
          * prevents the netty component from installing a default codec as the
@@ -3839,6 +3905,39 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointBuilder hostnameVerification(
+                boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group:  security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyEndpointBuilder hostnameVerification(
+                String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The netty component installs a default codec if both, encoder/decoder
          * is null and textline is false. Setting allowDefaultCodec to false
          * prevents the netty component from installing a default codec as the
@@ -4846,7 +4945,7 @@ public interface NettyEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty
          * 
-         * Syntax: <code>netty:protocol:host:port</code>
+         * Syntax: <code>netty:protocol://host:port</code>
          * 
          * Path parameter: protocol (required)
          * The protocol to use which can be tcp or udp.
@@ -4859,7 +4958,7 @@ public interface NettyEndpointBuilderFactory {
          * Path parameter: port (required)
          * The host port number
          * 
-         * @param path protocol:host:port
+         * @param path protocol://host:port
          * @return the dsl builder
          */
         default NettyEndpointBuilder netty(String path) {
@@ -4873,7 +4972,7 @@ public interface NettyEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty
          * 
-         * Syntax: <code>netty:protocol:host:port</code>
+         * Syntax: <code>netty:protocol://host:port</code>
          * 
          * Path parameter: protocol (required)
          * The protocol to use which can be tcp or udp.
@@ -4888,7 +4987,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path protocol:host:port
+         * @param path protocol://host:port
          * @return the dsl builder
          */
         default NettyEndpointBuilder netty(String componentName, String path) {

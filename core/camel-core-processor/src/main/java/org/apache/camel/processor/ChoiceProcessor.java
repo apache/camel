@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -57,14 +58,14 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // callback to restore existing FILTER_MATCHED property on the Exchange
-        final Object existing = exchange.getProperty(Exchange.FILTER_MATCHED);
+        final Object existing = exchange.getProperty(ExchangePropertyKey.FILTER_MATCHED);
         final AsyncCallback choiceCallback = new AsyncCallback() {
             @Override
             public void done(boolean doneSync) {
                 if (existing != null) {
-                    exchange.setProperty(Exchange.FILTER_MATCHED, existing);
+                    exchange.setProperty(ExchangePropertyKey.FILTER_MATCHED, existing);
                 } else {
-                    exchange.removeProperty(Exchange.FILTER_MATCHED);
+                    exchange.removeProperty(ExchangePropertyKey.FILTER_MATCHED);
                 }
                 callback.done(doneSync);
             }

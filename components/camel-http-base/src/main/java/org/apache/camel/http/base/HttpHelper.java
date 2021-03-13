@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -69,7 +70,7 @@ public final class HttpHelper {
         if (contentType != null) {
             String charset = IOHelper.getCharsetNameFromContentType(contentType);
             if (charset != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, charset);
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             }
         }
     }

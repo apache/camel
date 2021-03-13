@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,23 +36,22 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
         CamelContext context = super.createCamelContext();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
+        context.setNameStrategy(new ExplicitCamelContextNameStrategy("my-camel-context"));
         return context;
     }
 
     @Test
     public void testGetSetProperties() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
+
+        assertEquals("19-my-camel-context", context.getManagementName());
+        assertEquals("my-camel-context", context.getName());
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        assertEquals("my-camel-context", name);
 
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");

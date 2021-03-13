@@ -16,46 +16,34 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/in");
-        createDirectory("target/data/changed/out");
-        super.setUp();
-    }
 
     @Test
     public void testChangedReadLockZeroTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/hello1.txt");
+        mock.expectedFileExists(testFile("out/hello1.txt"));
 
-        template.sendBodyAndHeader("file://target/data/changed/in", "Hello World", Exchange.FILE_NAME, "hello1.txt");
+        template.sendBodyAndHeader(fileUri("in"), "Hello World", Exchange.FILE_NAME, "hello1.txt");
 
         Thread.sleep(100);
 
-        File file = new File("target/data/changed/in/hello1.txt");
-        assertTrue(file.delete());
+        Files.delete(testFile("in/hello1.txt"));
 
         mock.reset();
         oneExchangeDone.reset();
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/hello2.txt");
+        mock.expectedFileExists(testFile("out/hello2.txt"));
 
-        template.sendBodyAndHeader("file://target/data/changed/in", "Hello Again World", Exchange.FILE_NAME, "hello2.txt");
+        template.sendBodyAndHeader(fileUri("in"), "Hello Again World", Exchange.FILE_NAME, "hello2.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
@@ -66,9 +54,8 @@ public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0")
-                        .to("file:target/data/changed/out",
-                                "mock:result");
+                from(fileUri("in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0"))
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

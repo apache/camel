@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -48,6 +51,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     private final Processor processor;
     private final AsyncProcessor asyncProcessor;
     private final ExchangeFactory exchangeFactory;
+    private final AtomicReference<AsyncCallback> pooledCallback = new AtomicReference<>();
     private ExceptionHandler exceptionHandler;
     private Route route;
     private String routeId;
@@ -145,6 +149,26 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     }
 
     @Override
+    public AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
+        boolean pooled = exchangeFactory.isPooled();
+        AsyncCallback answer = pooled ? pooledCallback.get() : null;
+        if (answer == null) {
+            answer = doneSync -> {
+                // handle any thrown exception
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange,
+                            exchange.getException());
+                }
+                releaseExchange(exchange, autoRelease);
+            };
+            if (pooled) {
+                pooledCallback.set(answer);
+            }
+        }
+        return answer;
+    }
+
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -172,8 +196,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     @Override
     protected void doBuild() throws Exception {
-        super.doBuild();
-        exchangeFactory.build();
+        LOG.debug("Build consumer: {}", this);
+        ServiceHelper.buildService(exchangeFactory, processor);
     }
 
     @Override
@@ -199,6 +223,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     protected void doShutdown() throws Exception {
         LOG.debug("Shutting down consumer: {}", this);
         ServiceHelper.stopAndShutdownServices(exchangeFactory, processor);
+        pooledCallback.set(null);
     }
 
     /**

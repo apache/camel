@@ -22,33 +22,29 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedRegisterEndpointTest extends ManagementTestSupport {
 
     @Test
     public void testLookupEndpointsByName() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"direct://start\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "direct://start");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("direct://start", uri);
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "log://foo");
         uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("log://foo", uri);
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
         uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 
         String id = (String) mbeanServer.getAttribute(name, "CamelId");
-        assertEquals("camel-1", id);
+        assertEquals(context.getManagementName(), id);
 
         String state = (String) mbeanServer.getAttribute(name, "State");
         assertEquals("Started", state);

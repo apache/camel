@@ -22,8 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
 public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
     private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
@@ -35,7 +33,6 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/exist");
 
         template.sendBodyAndHeader(getFtpUrl(), "Hello World\n", Exchange.FILE_NAME, "hello.txt");
     }
@@ -48,7 +45,7 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
             expectBody = "Hello World\r\nBye World";
         }
         mock.expectedBodiesReceived(expectBody);
-        mock.expectedFileExists(service.getFtpRootDir() + "/exist/hello.txt", expectBody);
+        mock.expectedFileExists(ftpFile("exist/hello.txt"), expectBody);
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();

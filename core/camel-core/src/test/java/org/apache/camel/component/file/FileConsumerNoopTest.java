@@ -16,38 +16,30 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerNoopTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filenoop");
-        super.setUp();
-    }
-
     @Test
     public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("file://target/data/filenoop", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/filenoop", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(new File("target/data/filenoop/hello.txt").exists());
-        assertTrue(new File("target/data/filenoop/bye.txt").exists());
+        assertTrue(Files.exists(testFile("hello.txt")));
+        assertTrue(Files.exists(testFile("bye.txt")));
     }
 
     @Override
@@ -55,7 +47,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filenoop?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class)
+                from(fileUri("?noop=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

@@ -78,14 +78,11 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
         private final boolean success;
 
         @JsonCreator
-        Result(@JsonProperty("actorIds")
-        final List<String> actorIds, @JsonProperty("entityId")
-        final String entityId, @JsonProperty("errors")
-        final List<RestError> errors, @JsonProperty("instanceId")
-        final String instanceId, @JsonProperty("instanceStatus")
-        final String instanceStatus, @JsonProperty("newWorkitemIds")
-        final List<String> newWorkitemIds, @JsonProperty("success")
-        final boolean success) {
+        Result(@JsonProperty("actorIds") final List<String> actorIds, @JsonProperty("entityId") final String entityId,
+               @JsonProperty("errors") final List<RestError> errors, @JsonProperty("instanceId") final String instanceId,
+               @JsonProperty("instanceStatus") final String instanceStatus,
+               @JsonProperty("newWorkitemIds") final List<String> newWorkitemIds,
+               @JsonProperty("success") final boolean success) {
             this.actorIds = actorIds;
             this.entityId = entityId;
             this.errors = errors;

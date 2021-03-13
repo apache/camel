@@ -40,11 +40,6 @@ public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTe
 
     @Test
     public void testProducer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:result");
@@ -57,7 +52,7 @@ public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTe
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals(true, registered, "Should be registered");
+            assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
             assertTrue(uri.equals("direct://start") || uri.equals("mock://result"), uri);

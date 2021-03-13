@@ -65,6 +65,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "host":
         case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverification":
+        case "HostnameVerification": target.setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "KeepAlive": target.setKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "keystorefile":
@@ -212,6 +214,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Encoding": return java.lang.String.class;
         case "host":
         case "Host": return java.lang.String.class;
+        case "hostnameverification":
+        case "HostnameVerification": return boolean.class;
         case "keepalive":
         case "KeepAlive": return boolean.class;
         case "keystorefile":
@@ -360,6 +364,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Encoding": return target.getEncoding();
         case "host":
         case "Host": return target.getHost();
+        case "hostnameverification":
+        case "HostnameVerification": return target.isHostnameVerification();
         case "keepalive":
         case "KeepAlive": return target.isKeepAlive();
         case "keystorefile":

@@ -63,6 +63,7 @@
 
     <properties>
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <build>
@@ -186,8 +187,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

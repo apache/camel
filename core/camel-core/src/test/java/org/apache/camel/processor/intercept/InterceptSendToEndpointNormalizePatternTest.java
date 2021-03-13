@@ -19,10 +19,12 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 /**
  * Unit test for intercepting sending to endpoint
  */
+@ResourceLock("VmComponent")
 public class InterceptSendToEndpointNormalizePatternTest extends ContextTestSupport {
 
     @Test

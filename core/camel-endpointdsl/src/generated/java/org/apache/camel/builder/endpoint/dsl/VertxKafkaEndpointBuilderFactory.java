@@ -766,6 +766,55 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow doing manual commits via
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit.
+         * If this option is enabled then an instance of
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * is stored on the Exchange message header, which allows end users to
+         * access this API and perform manual offset commits via the Kafka
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder allowManualCommit(
+                boolean allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
+            return this;
+        }
+        /**
+         * Whether to allow doing manual commits via
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit.
+         * If this option is enabled then an instance of
+         * org.apache.camel.component.vertx.kafka.offset.VertxKafkaManualCommit
+         * is stored on the Exchange message header, which allows end users to
+         * access this API and perform manual offset commits via the Kafka
+         * consumer. Note: To take full control of the offset committing, you
+         * may need to disable the Kafka Consumer default auto commit behavior
+         * by setting 'enableAutoCommit' to 'false'.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
+         */
+        default VertxKafkaEndpointConsumerBuilder allowManualCommit(
+                String allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
+            return this;
+        }
+        /**
          * The frequency in milliseconds that the consumer offsets are
          * auto-committed to Kafka if enable.auto.commit is set to true.
          * 

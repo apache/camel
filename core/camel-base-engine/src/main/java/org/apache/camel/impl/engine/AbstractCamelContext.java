@@ -76,6 +76,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
@@ -133,6 +134,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReifierStrategy;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -290,6 +292,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
     private volatile RoutesLoader routesLoader;
+    private volatile ResourceLoader resourceLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
     private volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     private volatile RuntimeCamelCatalog runtimeCamelCatalog;
@@ -668,7 +671,7 @@ public abstract class AbstractCamelContext extends BaseService
 
                 if (component != null) {
                     component.setCamelContext(getCamelContextReference());
-                    component.build();
+                    ServiceHelper.buildService(component);
                     postInitComponent(name, component);
                 }
             } catch (Exception e) {
@@ -816,7 +819,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public NormalizedEndpointUri normalizeUri(String uri) {
         try {
-            uri = resolvePropertyPlaceholders(uri);
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
             uri = URISupport.normalizeUri(uri);
             return new NormalizedUri(uri);
         } catch (Exception e) {
@@ -872,14 +875,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
 
-        // in case path has property placeholders then try to let property
-        // component resolve those
+        // in case path has property placeholders then try to let property component resolve those
         if (!normalized) {
-            try {
-                uri = resolvePropertyPlaceholders(uri);
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
         }
 
         final String rawUri = uri;
@@ -1737,7 +1735,7 @@ public abstract class AbstractCamelContext extends BaseService
                             Service service = (Service) language;
                             // init service first
                             CamelContextAware.trySetCamelContext(service, camelContext);
-                            service.init();
+                            ServiceHelper.initService(service);
                             startService(service);
                         } catch (Exception e) {
                             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -1765,9 +1763,14 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
+        return resolvePropertyPlaceholders(text, false);
+    }
+
+    @Override
+    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
-            String answer = getPropertiesComponent().parseUri(text);
+            String answer = getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
             LOG.debug("Resolved text: {} -> {}", text, answer);
             return answer;
         }
@@ -2345,7 +2348,8 @@ public abstract class AbstractCamelContext extends BaseService
         // try to load from maven properties first
         try {
             Properties p = new Properties();
-            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base/pom.properties");
+            is = AbstractCamelContext.class
+                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties");
             if (is != null) {
                 p.load(is);
                 version = p.getProperty("version", "");
@@ -2880,6 +2884,9 @@ public abstract class AbstractCamelContext extends BaseService
         }
         bootstraps.clear();
 
+        if (adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled()) {
+            LOG.info("Pooled mode enabled. Camel pools and reuses objects to reduce JVM object allocations.");
+        }
         if (isLightweight()) {
             LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
             ReifierStrategy.clearReifiers();
@@ -2961,7 +2968,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                lines.add(String.format("    %s %s (%s)", status, id, uri));
             }
             for (Route route : routes) {
                 if (!route.isAutoStartup()) {
@@ -2975,7 +2982,7 @@ public abstract class AbstractCamelContext extends BaseService
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                    lines.add(String.format("    %s %s (%s)", status, id, uri));
                 }
             }
             if (disabled > 0) {
@@ -3365,7 +3372,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                lines.add(String.format("\t%s %s (%s)", status, id, uri));
+                lines.add(String.format("    %s %s (%s)", status, id, uri));
             }
             if (forced > 0) {
                 LOG.info("Routes shutdown summary (total:{} stopped:{} forced:{})", total, stopped, forced);
@@ -3540,30 +3547,33 @@ public abstract class AbstractCamelContext extends BaseService
     protected void logRouteState(Route route, String state) {
         if (LOG.isInfoEnabled()) {
             if (route.getConsumer() != null) {
-                // use basic endpoint uri to not log verbose details or potential sensitive data
+                String id = route.getId();
                 String uri = route.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                LOG.info("Route: {} is {}, was consuming from: {}", route.getId(), state, uri);
+                String line = String.format("%s %s (%s)", state, id, uri);
+                LOG.info(line);
             } else {
-                LOG.info("Route: {} is {}.", route.getId(), state);
+                String id = route.getId();
+                String line = String.format("%s %s", state, id);
+                LOG.info(line);
             }
         }
     }
 
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
-        logRouteState(routeService.getRoute(), "stopped");
+        logRouteState(routeService.getRoute(), "Stopped");
     }
 
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         routeService.shutdown();
-        logRouteState(routeService.getRoute(), "shutdown and removed");
+        logRouteState(routeService.getRoute(), "Shutdown");
     }
 
     protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
         routeService.setRemovingRoutes(false);
         routeService.suspend();
-        logRouteState(routeService.getRoute(), "suspended");
+        logRouteState(routeService.getRoute(), "Suspended");
     }
 
     /**
@@ -3653,6 +3663,7 @@ public abstract class AbstractCamelContext extends BaseService
         getUnitOfWorkFactory();
         getRouteController();
         getRoutesLoader();
+        getResourceLoader();
 
         try {
             getRestRegistryFactory();
@@ -3935,7 +3946,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public boolean isJMXDisabled() {
-        String override = System.getProperty("org.apache.camel.jmx.disabled");
+        String override = System.getProperty(JmxSystemPropertyKeys.DISABLED);
         if (override != null) {
             return "true".equals(override);
         } else {
@@ -4601,6 +4612,23 @@ public abstract class AbstractCamelContext extends BaseService
         this.routesLoader = doAddService(routesLoader);
     }
 
+    @Override
+    public ResourceLoader getResourceLoader() {
+        if (resourceLoader == null) {
+            synchronized (lock) {
+                if (resourceLoader == null) {
+                    setResourceLoader(createResourceLoader());
+                }
+            }
+        }
+        return resourceLoader;
+    }
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = doAddService(resourceLoader);
+    }
+
     public ModelToXMLDumper getModelToXMLDumper() {
         if (modelToXMLDumper == null) {
             synchronized (lock) {
@@ -4859,6 +4887,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
     protected abstract RoutesLoader createRoutesLoader();
+
+    protected abstract ResourceLoader createResourceLoader();
 
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 

@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,22 +27,14 @@ import org.junit.jupiter.api.Test;
  */
 public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        deleteDirectory("target/data/outbox");
-        super.setUp();
-    }
-
     @Test
     public void testMoveDoneCustomHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/outbox/hello.txt");
-        mock.expectedFileExists("target/data/inbox/dones/mydone.txt");
+        mock.expectedFileExists(testFile("outbox/hello.txt"));
+        mock.expectedFileExists(testFile("inbox/dones/mydone.txt"));
 
-        template.sendBodyAndHeader("file:target/data/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("inbox"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -53,9 +44,9 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}")
+                from(fileUri("inbox?initialDelay=0&delay=10&move=${header.bar}"))
                         .setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
-                        .to("mock:result", "file:target/data/outbox");
+                        .to("mock:result", fileUri("outbox"));
             }
         };
     }

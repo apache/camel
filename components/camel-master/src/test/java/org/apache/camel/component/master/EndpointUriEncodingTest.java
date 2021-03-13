@@ -85,7 +85,8 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
                 public Consumer createConsumer(Processor processor) {
                     return new DefaultConsumer(this, processor) {
                         @Override
-                        public void start() {
+                        protected void doStart() throws Exception {
+                            super.doStart();
                             Exchange exchange = createExchange(true);
                             exchange.getMessage().setHeader("foo", foo);
                             exchange.getMessage().setHeader("bar", bar);

@@ -103,16 +103,9 @@ public class JBPMConsumer extends DefaultConsumer implements DeploymentEventList
         exchange.getIn().setBody(body);
 
         if (!endpoint.isSynchronous()) {
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    // handle any thrown exception
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                    }
-                    releaseExchange(exchange, false);
-                }
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, false);
+            getAsyncProcessor().process(exchange, cb);
         } else {
             try {
                 getProcessor().process(exchange);

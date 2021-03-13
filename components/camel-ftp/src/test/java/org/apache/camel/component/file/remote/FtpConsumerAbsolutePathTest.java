@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FtpConsumerAbsolutePathTest extends FtpServerTestSupport {
@@ -37,7 +36,6 @@ public class FtpConsumerAbsolutePathTest extends FtpServerTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/lwd");
         super.setUp();
         prepareFtpServer();
     }

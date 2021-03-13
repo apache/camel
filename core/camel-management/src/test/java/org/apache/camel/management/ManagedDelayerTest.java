@@ -22,6 +22,8 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,11 +32,6 @@ public class ManagedDelayerTest extends ManagementTestSupport {
 
     @Test
     public void testManageDelay() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -45,10 +42,10 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName delayerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mydelayer\"");
+        ObjectName delayerName = getCamelObjectName(TYPE_PROCESSOR, "mydelayer");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route1");
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
 

@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileExclusiveReadNoneStrategyTest.class);
-    private String fileUrl = "file://target/data/exclusiveread/slowfile?noop=true&initialDelay=0&delay=10&readLock=none";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/exclusiveread");
-        createDirectory("target/data/exclusiveread/slowfile");
-        super.setUp();
-    }
+    private String fileUrl = fileUri("slowfile?noop=true&initialDelay=0&delay=10&readLock=none");
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -74,21 +65,20 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
         assertFalse(body.endsWith("Bye World"), "Should not wait and read the entire file");
     }
 
-    private static class MySlowFileProcessor implements Processor {
+    private class MySlowFileProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file with no locks...");
-            File file = new File("target/data/exclusiveread/slowfile/hello.txt");
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write("Hello World".getBytes());
-            for (int i = 0; i < 3; i++) {
-                Thread.sleep(100);
-                fos.write(("Line #" + i).getBytes());
-                LOG.info("Appending to slowfile");
+            try (OutputStream fos = Files.newOutputStream(testFile("slowfile/hello.txt"))) {
+                fos.write("Hello World".getBytes());
+                for (int i = 0; i < 3; i++) {
+                    Thread.sleep(100);
+                    fos.write(("Line #" + i).getBytes());
+                    LOG.info("Appending to slowfile");
+                }
+                fos.write("Bye World".getBytes());
             }
-            fos.write("Bye World".getBytes());
-            fos.close();
             LOG.info("... done creating slowfile");
         }
     }

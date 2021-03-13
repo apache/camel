@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.redis.common;
 
 public final class RedisProperties {
+    public static final String REDIS_CONTAINER = "redis.container";
     public static final String SERVICE_ADDRESS = "redis.service.address";
     public static final String HOST = "redis.host";
     public static final String PORT = "redis.port";

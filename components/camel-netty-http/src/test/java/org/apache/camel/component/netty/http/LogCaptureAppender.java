@@ -43,10 +43,9 @@ public class LogCaptureAppender extends AbstractAppender {
     }
 
     @PluginFactory
-    public static LogCaptureAppender createAppender(@PluginAttribute("name")
-    final String name,
-            @PluginElement("Filter")
-            final Filter filter) {
+    public static LogCaptureAppender createAppender(
+            @PluginAttribute("name") final String name,
+            @PluginElement("Filter") final Filter filter) {
         return new LogCaptureAppender(name, filter, null);
     }
 

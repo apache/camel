@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,21 +27,12 @@ import org.junit.jupiter.api.Test;
  */
 public class FileSortByExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/filesorter/";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filesorter");
-        super.setUp();
-    }
-
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Paris", Exchange.FILE_NAME, "paris.dat");
+        template.sendBodyAndHeader(fileUri(folder), "Hello Paris", Exchange.FILE_NAME, "paris.dat");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(fileUri(folder), "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME,
                 "copenhagen.xml");
     }
 
@@ -53,7 +43,7 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "a/?initialDelay=0&delay=10&sortBy=file:ext").to("mock:result");
+                from(fileUri("a/?initialDelay=0&delay=10&sortBy=file:ext")).to("mock:result");
             }
         });
 
@@ -70,7 +60,7 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=reverse:file:ext").convertBodyTo(String.class)
+                from(fileUri("b/?initialDelay=0&delay=10&sortBy=reverse:file:ext")).convertBodyTo(String.class)
                         .to("mock:reverse");
             }
         });

@@ -24,12 +24,9 @@ import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -37,13 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
     private MyStrategy myStrategy = new MyStrategy();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file");
-        super.setUp();
-    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -55,26 +45,20 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     @Test
     public void testExistingFileExists() throws Exception {
         template.sendBodyAndHeader(
-                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(
-                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
                 "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(
-                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
                 "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists("target/data/file/hello.txt");
-        assertEquals("Bye Existing World 2",
-                context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
+        assertFileExists(testFile("hello.txt"), "Bye Existing World 2");
 
-        assertFileExists("target/data/file/renamed-hello2.txt");
-        assertEquals("Bye Existing World 1",
-                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello2.txt")));
+        assertFileExists(testFile("renamed-hello2.txt"), "Bye Existing World 1");
 
-        assertFileExists("target/data/file/renamed-hello1.txt");
-        assertEquals("Hello World",
-                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello1.txt")));
+        assertFileExists(testFile("renamed-hello1.txt"), "Hello World");
     }
 
     private static class MyStrategy implements FileMoveExistingStrategy {

@@ -26,6 +26,7 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandMetrics;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -187,7 +188,7 @@ public class HystrixProcessor extends AsyncProcessorSupport
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // run this as if we run inside try .. catch so there is no regular Camel error handler
-        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
+        exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
         try {
             HystrixProcessorCommandFallbackViaNetwork fallbackCommand = null;
@@ -205,7 +206,7 @@ public class HystrixProcessor extends AsyncProcessorSupport
             exchange.setException(e);
         }
 
-        exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
+        exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         callback.done(true);
         return true;
     }

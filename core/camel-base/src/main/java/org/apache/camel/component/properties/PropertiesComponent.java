@@ -152,13 +152,18 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public String parseUri(String uri) {
-        return parseUri(uri, propertiesLookup);
+        return parseUri(uri, false);
+    }
+
+    @Override
+    public String parseUri(String uri, boolean keepUnresolvedOptional) {
+        return parseUri(uri, propertiesLookup, keepUnresolvedOptional);
     }
 
     @Override
     public Optional<String> resolveProperty(String key) {
         try {
-            String value = parseUri(key, propertiesLookup);
+            String value = parseUri(key, propertiesLookup, false);
             return Optional.of(value);
         } catch (IllegalArgumentException e) {
             // property not found
@@ -243,7 +248,7 @@ public class PropertiesComponent extends ServiceSupport
         return prop;
     }
 
-    protected String parseUri(String uri, PropertiesLookup properties) {
+    protected String parseUri(String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {
         // enclose tokens if missing
         if (!uri.contains(PREFIX_TOKEN) && !uri.startsWith(PREFIX_TOKEN)) {
             uri = PREFIX_TOKEN + uri;
@@ -253,7 +258,7 @@ public class PropertiesComponent extends ServiceSupport
         }
 
         LOG.trace("Parsing uri {}", uri);
-        return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
+        return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled, keepUnresolvedOptional);
     }
 
     @Override
@@ -604,6 +609,11 @@ public class PropertiesComponent extends ServiceSupport
 
         sources.sort(OrderedComparator.get());
         ServiceHelper.initService(sources);
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(sources);
     }
 
     @Override

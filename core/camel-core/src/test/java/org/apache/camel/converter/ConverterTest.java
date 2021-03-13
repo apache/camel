@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import java.beans.PropertyEditorManager;
-import java.beans.PropertyEditorSupport;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,22 +52,8 @@ public class ConverterTest extends TestSupport {
     protected TypeConverter converter = new DefaultTypeConverter(
             new DefaultPackageScanClassResolver(), new ReflectionInjector(), true);
 
-    public static class IntegerPropertyEditor extends PropertyEditorSupport {
-        @Override
-        public void setAsText(String text) throws IllegalArgumentException {
-            setValue(Integer.valueOf(text));
-        }
-
-        @Override
-        public String getAsText() {
-            Integer value = (Integer) getValue();
-            return value != null ? value.toString() : "";
-        }
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
-        PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
         ServiceHelper.startService(converter);
     }
 

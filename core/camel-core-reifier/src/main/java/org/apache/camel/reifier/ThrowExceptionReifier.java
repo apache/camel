@@ -31,8 +31,9 @@ public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefini
     @Override
     public Processor createProcessor() {
         Exception exception = definition.getException();
-        if (exception == null && definition.getRef() != null) {
-            exception = lookup(parseString(definition.getRef()), Exception.class);
+        String ref = parseString(definition.getRef());
+        if (exception == null && ref != null) {
+            exception = lookup(ref, Exception.class);
         }
 
         Class<? extends Exception> exceptionClass = definition.getExceptionClass();

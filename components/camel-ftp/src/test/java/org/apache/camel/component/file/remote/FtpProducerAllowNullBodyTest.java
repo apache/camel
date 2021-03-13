@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,7 @@ public class FtpProducerAllowNullBodyTest extends FtpServerTestSupport {
     public void testAllowNullBodyTrue() throws Exception {
         template.sendBody(getFtpUrl() + "&allowNullBody=true", null);
 
-        assertFileExists(service.getFtpRootDir() + "/allownull/allowNullBody.txt");
+        assertFileExists(ftpFile("allownull/allowNullBody.txt"));
     }
 
     @Test
@@ -50,7 +48,7 @@ public class FtpProducerAllowNullBodyTest extends FtpServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
 
-        assertFalse(new File(service.getFtpRootDir() + "/allownull/allowNullBody.txt").exists(),
+        assertFalse(ftpFile("allownull/allowNullBody.txt").toFile().exists(),
                 "allowNullBody set to false with null body should not create a new file");
     }
 

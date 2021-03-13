@@ -42,11 +42,6 @@ public class TwoManagedNamePatternTest extends TestSupport {
 
     @Test
     public void testManagedNamePattern() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         camel1 = createCamelContext("foo", "aaa-#name#");
         camel2 = createCamelContext("bar", "bbb-#name#");
 

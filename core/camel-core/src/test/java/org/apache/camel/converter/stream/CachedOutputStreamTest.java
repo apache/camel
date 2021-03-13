@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
@@ -52,7 +53,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setStreamCaching(true);
-        context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
+        context.getStreamCachingStrategy().setSpoolDirectory(testDirectory(true).toFile());
         context.getStreamCachingStrategy().setSpoolThreshold(16);
         return context;
     }
@@ -61,9 +62,6 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
-        deleteDirectory("target/data/cachedir");
-        createDirectory("target/cachedir");
 
         exchange = new DefaultExchange(context);
         UnitOfWork uow = new DefaultUnitOfWork(exchange);
@@ -91,9 +89,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     public void testCachedStreamAccessStreamWhenExchangeOnCompletion() throws Exception {
         context.start();
         CachedOutputStream cos = new CachedOutputStream(exchange, false);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
 
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(files[0].startsWith("cos"), "The file name should start with cos");
@@ -114,9 +112,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
 
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(files[0].startsWith("cos"), "The file name should start with cos");
@@ -154,17 +152,17 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
         cos.flush();
 
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(new File(file, files[0]).length() > 10, "The content is written");
 
         java.io.FileInputStream tmpin = new java.io.FileInputStream(new File(file, files[0]));
         String temp = toString(tmpin);
-        assertTrue(temp.length() > 0 && temp.indexOf("aaa") < 0, "The content is not encrypted");
+        assertTrue(temp.length() > 0 && !temp.contains("aaa"), "The content is not encrypted");
         tmpin.close();
 
         StreamCache cache = cos.newStreamCache();
@@ -196,9 +194,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
 
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(files[0].startsWith("cos"), "The file name should start with cos");
@@ -229,9 +227,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
 
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
 
         assertEquals(0, files.length, "we should have no temp file");
@@ -252,9 +250,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
 
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
 
         assertEquals(0, files.length, "we should have no temp file");
@@ -277,12 +275,12 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
-        cos.write(TEST_STRING.getBytes("UTF-8"));
+        cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
 
         assertEquals(8192, cos.getStrategyBufferSize(), "we should have a custom buffer size");
 
         // make sure things still work after custom buffer size set
-        File file = new File("target/cachedir");
+        File file = testDirectory().toFile();
         String[] files = file.list();
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(files[0].startsWith("cos"), "The file name should start with cos");
@@ -313,7 +311,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         CachedOutputStream cos = new CachedOutputStream(exchange, false);
         // write an empty string
-        cos.write("".getBytes("UTF-8"));
+        cos.write("".getBytes(StandardCharsets.UTF_8));
         InputStream is = cos.getWrappedInputStream();
         assertNotNull(is);
 

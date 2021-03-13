@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
@@ -869,7 +870,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Object exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 }
 
                 if (exception == null) {

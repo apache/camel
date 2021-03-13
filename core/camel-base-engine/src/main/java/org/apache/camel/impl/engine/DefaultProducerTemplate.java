@@ -829,13 +829,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
+        producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
+        ServiceHelper.buildService(producerCache);
+    }
+
+    @Override
     protected void doInit() throws Exception {
         // need to lookup default endpoint as it may have been intercepted
         if (defaultEndpoint != null) {
             defaultEndpoint = camelContext.getEndpoint(defaultEndpoint.getEndpointUri());
         }
-        producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
-        producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
         ServiceHelper.initService(producerCache);
     }
 

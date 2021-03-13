@@ -84,8 +84,14 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         boolean isAllowDuplicates = parseBoolean(config.getAllowDuplicates(), false);
 
         Resequencer resequencer = new Resequencer(camelContext, target, expression, isAllowDuplicates, isReverse);
-        resequencer.setBatchSize(parseInt(config.getBatchSize()));
-        resequencer.setBatchTimeout(parseDuration(config.getBatchTimeout()));
+        Integer num = parseInt(config.getBatchSize());
+        if (num != null) {
+            resequencer.setBatchSize(num);
+        }
+        Long dur = parseDuration(config.getBatchTimeout());
+        if (dur != null) {
+            resequencer.setBatchTimeout(dur);
+        }
         resequencer.setReverse(isReverse);
         resequencer.setAllowDuplicates(isAllowDuplicates);
         if (config.getIgnoreInvalidExchanges() != null) {
@@ -123,11 +129,18 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         comparator.setExpression(expression);
 
         StreamResequencer resequencer = new StreamResequencer(camelContext, target, comparator, expression);
-        resequencer.setTimeout(parseDuration(config.getTimeout()));
-        if (config.getDeliveryAttemptInterval() != null) {
-            resequencer.setDeliveryAttemptInterval(parseDuration(config.getDeliveryAttemptInterval()));
+        Long dur = parseDuration(config.getTimeout());
+        if (dur != null) {
+            resequencer.setTimeout(dur);
         }
-        resequencer.setCapacity(parseInt(config.getCapacity()));
+        dur = parseDuration(config.getDeliveryAttemptInterval());
+        if (dur != null) {
+            resequencer.setDeliveryAttemptInterval(dur);
+        }
+        Integer num = parseInt(config.getCapacity());
+        if (num != null) {
+            resequencer.setCapacity(num);
+        }
         resequencer.setRejectOld(parseBoolean(config.getRejectOld(), false));
         if (config.getIgnoreInvalidExchanges() != null) {
             resequencer.setIgnoreInvalidExchanges(parseBoolean(config.getIgnoreInvalidExchanges(), false));

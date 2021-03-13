@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,19 +35,18 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/");
-        createDirectory("target/data/changed/in");
-        writeFile();
-        // sleep to make the file a little bit old
-        Thread.sleep(100);
         super.setUp();
+        testDirectory("in", true);
+        LOG.debug("Writing file...");
+        Files.write(testFile("in/file.dat"), "Line".getBytes());
+        LOG.debug("Writing file DONE...");
     }
 
     @Test
     public void testChangedReadLockMinAge() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/file.dat");
+        mock.expectedFileExists(testFile("out/file.dat"));
         // We should get the file on the first poll
         mock.expectedMessagesMatches(
                 exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
@@ -55,23 +54,14 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
-    private void writeFile() throws Exception {
-        LOG.debug("Writing file...");
-
-        FileOutputStream fos = new FileOutputStream("target/data/changed/in/file.dat");
-        fos.write("Line".getBytes());
-        fos.flush();
-        fos.close();
-        LOG.debug("Writing file DONE...");
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
-                        .to("file:target/data/changed/out", "mock:result");
+                from(fileUri(
+                        "in?initialDelay=500&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000"))
+                                .to(fileUri("out"), "mock:result");
             }
         };
     }

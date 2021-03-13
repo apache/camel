@@ -28,10 +28,10 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class XmppServerContainer extends GenericContainer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmppServerContainer.class);
+    public static final String VYSPER_IMAGE = "5mattho/vysper-wrapper:0.3";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmppServerContainer.class);
     private static final String CONTAINER_NAME = "vysper-wrapper";
-    private static final String VYSPER_IMAGE = "5mattho/vysper-wrapper:0.3";
     private static final Integer PORT_REST = 8080;
 
     public XmppServerContainer() {

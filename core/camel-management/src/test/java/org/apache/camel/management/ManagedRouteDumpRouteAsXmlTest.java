@@ -35,11 +35,6 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testDumpAsXml() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -67,11 +62,6 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testDumpAsXmlResolvePlaceholder() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -99,11 +89,6 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testDumpAsXmlResolvePlaceholderDelegateEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 

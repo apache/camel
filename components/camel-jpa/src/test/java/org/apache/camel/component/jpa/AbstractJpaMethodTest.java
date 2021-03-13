@@ -45,7 +45,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     protected EntityManager entityManager;
     protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
-    protected Exchange receivedExchange;
+    protected Customer receivedCustomer;
 
     abstract boolean usePersist();
 
@@ -123,7 +123,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
 
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                receivedExchange = e;
+                receivedCustomer = e.getIn().getBody(Customer.class);
                 assertNotNull(e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class));
                 latch.countDown();
             }
@@ -135,8 +135,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         consumer.stop();
         Thread.sleep(1000);
 
-        assertNotNull(receivedExchange);
-        Customer receivedCustomer = receivedExchange.getIn().getBody(Customer.class);
+        assertNotNull(receivedCustomer);
         assertEquals(customer.getName(), receivedCustomer.getName());
         assertEquals(customer.getId(), receivedCustomer.getId());
         assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());

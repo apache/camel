@@ -65,8 +65,9 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
                 parseBoolean(definition.getDynamicUri(), true));
         answer.setCopy(isCopy);
         Processor newExchangeProcessor = definition.getNewExchangeProcessor();
-        if (definition.getNewExchangeProcessorRef() != null) {
-            newExchangeProcessor = mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
+        String ref = parseString(definition.getNewExchangeProcessorRef());
+        if (ref != null) {
+            newExchangeProcessor = mandatoryLookup(ref, Processor.class);
         }
         if (newExchangeProcessor != null) {
             answer.addNewExchangeProcessor(newExchangeProcessor);
@@ -81,8 +82,9 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
             }
         }
         Processor onPrepare = definition.getOnPrepare();
-        if (definition.getOnPrepareRef() != null) {
-            onPrepare = mandatoryLookup(parseString(definition.getOnPrepareRef()), Processor.class);
+        ref = parseString(definition.getOnPrepareRef());
+        if (ref != null) {
+            onPrepare = mandatoryLookup(ref, Processor.class);
         }
         if (onPrepare != null) {
             answer.setOnPrepare(onPrepare);

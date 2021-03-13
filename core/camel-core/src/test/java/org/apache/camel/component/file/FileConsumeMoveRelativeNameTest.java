@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,23 +27,16 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/multidir");
-        super.setUp();
-    }
+    private String fileUrl = fileUri("?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old");
 
     @Test
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
 
-        mock.expectedFileExists("target/data/multidir/.done/bye.txt.old");
-        mock.expectedFileExists("target/data/multidir/.done/sub/hello.txt.old");
-        mock.expectedFileExists("target/data/multidir/.done/sub/sub2/goodday.txt.old");
+        mock.expectedFileExists(testFile(".done/bye.txt.old"));
+        mock.expectedFileExists(testFile(".done/sub/hello.txt.old"));
+        mock.expectedFileExists(testFile(".done/sub/sub2/goodday.txt.old"));
 
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");

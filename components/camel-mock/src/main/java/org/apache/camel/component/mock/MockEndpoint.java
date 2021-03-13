@@ -17,6 +17,7 @@
 package org.apache.camel.component.mock;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -115,7 +116,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile Map<String, Object> expectedHeaderValues;
     private volatile Map<String, Object> actualHeaderValues;
     private volatile Map<String, Object> expectedPropertyValues;
-    private volatile Map<String, Object> actualPropertyValues;
 
     private volatile int counter;
 
@@ -327,7 +327,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         expectedHeaderValues = null;
         actualHeaderValues = null;
         expectedPropertyValues = null;
-        actualPropertyValues = null;
         retainFirst = -1;
         retainLast = -1;
     }
@@ -689,15 +688,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                     Object expectedValue = entry.getValue();
 
                     // we accept that an expectedValue of null also means that the property may be absent
+                    Object actualValue = null;
                     if (expectedValue != null) {
-                        assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
-                        boolean hasKey = exchange.getProperties().containsKey(key);
+                        actualValue = exchange.getProperty(key);
+                        boolean hasKey = actualValue != null;
                         assertTrue("No property with name " + key + " found for message: " + i, hasKey);
                     }
 
-                    Object actualValue = exchange.getProperty(key);
                     actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
                     assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
                 }
             }
@@ -934,8 +932,29 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      *
      * @param name name of file, will cater for / and \ on different OS platforms
      */
+    public void expectedFileExists(final Path name) {
+        expectedFileExists(name.toString(), null);
+    }
+
+    /**
+     * Adds an expectation that a file exists with the given name
+     *
+     * @param name name of file, will cater for / and \ on different OS platforms
+     */
     public void expectedFileExists(final String name) {
         expectedFileExists(name, null);
+    }
+
+    /**
+     * Adds an expectation that a file exists with the given name
+     * <p/>
+     * Will wait at most 5 seconds while checking for the existence of the file.
+     *
+     * @param name    name of file, will cater for / and \ on different OS platforms
+     * @param content content of file to compare, can be <tt>null</tt> to not compare content
+     */
+    public void expectedFileExists(final Path name, final String content) {
+        expectedFileExists(name.toString(), content);
     }
 
     /**
@@ -1608,19 +1627,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (in.hasHeaders()) {
                 actualHeaderValues.putAll(in.getHeaders());
             }
-        }
-
-        if (expectedPropertyValues != null) {
-            if (actualPropertyValues == null) {
-                HeadersMapFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory();
-                if (factory != null) {
-                    actualPropertyValues = factory.newMap();
-                } else {
-                    // should not really happen but some tests dont start camel context
-                    actualPropertyValues = new HashMap<>();
-                }
-            }
-            actualPropertyValues.putAll(copy.getProperties());
         }
 
         if (expectedBodyValues != null) {

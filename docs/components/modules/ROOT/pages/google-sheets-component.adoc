@@ -1,7 +1,7 @@
 [[google-sheets-component]]
 = Google Sheets Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-sheets/src/main/docs/google-sheets-component.adoc
+:page-source: components/camel-google/camel-google-sheets/src/main/docs/google-sheets-component.adoc
 :docTitle: Google Sheets
 :artifactId: camel-google-sheets
 :description: Manage spreadsheets in Google Sheets.

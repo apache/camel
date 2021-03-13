@@ -43,7 +43,7 @@ determines the exchange the queue will be bound to.
 == Options
 
 // component options: START
-The Spring RabbitMQ component supports 20 options, which are listed below.
+The Spring RabbitMQ component supports 23 options, which are listed below.
 
 
 
@@ -60,8 +60,11 @@ The Spring RabbitMQ component supports 20 options, which are listed below.
 | *deadLetterExchangeType* (consumer) | The type of the dead letter exchange. There are 4 enums and the value can be one of: direct, fanout, headers, topic | direct | String
 | *deadLetterQueue* (consumer) | The name of the dead letter queue |  | String
 | *deadLetterRoutingKey* (consumer) | The routing key for the dead letter exchange |  | String
+| *concurrentConsumers* (consumer) | The number of consumers | 1 | int
 | *errorHandler* (consumer) | To use a custom ErrorHandler for handling exceptions from the message listener (consumer) |  | ErrorHandler
 | *listenerContainerFactory* (consumer) | To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages |  | ListenerContainerFactory
+| *maxConcurrentConsumers* (consumer) | The maximum number of consumers (available only with SMLC) |  | Integer
+| *messageListenerContainerType* (consumer) | The type of the MessageListenerContainer. There are 2 enums and the value can be one of: DMLC, SMLC | DMLC | String
 | *prefetchCount* (consumer) | Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput. | 250 | int
 | *shutdownTimeout* (consumer) | The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes they will be allowed to finish processing as long as they can finish within this timeout. | 5000 | long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -93,7 +96,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (26 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,8 +119,12 @@ with the following path and query parameters:
 | *exclusive* (consumer) | Set to true for an exclusive consumer | false | boolean
 | *noLocal* (consumer) | Set to true for an no-local consumer | false | boolean
 | *queues* (consumer) | The queue(s) to use for consuming messages. Multiple queue names can be separated by comma. If none has been configured then Camel will generate an unique id as the queue name for the consumer. |  | String
+| *concurrentConsumers* (consumer) | The number of consumers |  | Integer
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *maxConcurrentConsumers* (consumer) | The maximum number of consumers (available only with SMLC) |  | Integer
+| *messageListenerContainerType* (consumer) | The type of the MessageListenerContainer. There are 2 enums and the value can be one of: DMLC, SMLC | DMLC | String
+| *prefetchCount* (consumer) | Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput. |  | Integer
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *replyTimeout* (producer) | Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging. The default value is 5 seconds. A negative value indicates an indefinite timeout. | 5000 | long
 | *usePublisherConnection* (producer) | Use a separate connection for publishers and consumers | false | boolean

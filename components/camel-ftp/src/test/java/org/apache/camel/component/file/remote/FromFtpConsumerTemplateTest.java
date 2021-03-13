@@ -47,7 +47,7 @@ public class FromFtpConsumerTemplateTest extends FtpServerTestSupport {
         assertEquals("Hello World this file will be deleted", body);
 
         // assert the file is deleted
-        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
+        File file = ftpFile("deletefile/hello.txt").toFile();
         assertFalse(file.exists(), "The file should have been deleted");
     }
 
@@ -65,7 +65,7 @@ public class FromFtpConsumerTemplateTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
+        File file = ftpFile("deletefile/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 

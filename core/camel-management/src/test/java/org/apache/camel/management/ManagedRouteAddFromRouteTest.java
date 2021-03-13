@@ -26,6 +26,7 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -62,13 +63,8 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
 
     @Test
     public void testAddRouteFromRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
+        ObjectName route1 = getCamelObjectName(TYPE_ROUTE, "foo");
 
         // should be started
         String state = (String) mbeanServer.getAttribute(route1, "State");
@@ -82,7 +78,7 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         // find the 2nd route
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
+        ObjectName route2 = getCamelObjectName(TYPE_ROUTE, "bar");
 
         // should be started
         state = (String) mbeanServer.getAttribute(route2, "State");

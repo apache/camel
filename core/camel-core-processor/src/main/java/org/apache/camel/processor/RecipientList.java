@@ -24,6 +24,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -176,7 +177,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         }
 
         // use the evaluate expression result if exists
-        Object recipientList = exchange.removeProperty(Exchange.EVALUATE_EXPRESSION_RESULT);
+        Object recipientList = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
         if (recipientList == null && expression != null) {
             // fallback and evaluate the expression
             recipientList = expression.evaluate(exchange, Object.class);

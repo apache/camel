@@ -16,28 +16,16 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumeSimpleAbsoluteMoveToRelativeTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/move";
-    private String base;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/move");
-        // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/data/move";
-        super.setUp();
-    }
+    private String fileUrl = fileUri();
+    private String base = testDirectory().toAbsolutePath().toString();
 
     @Test
     public void testMoveToSubDir() throws Exception {

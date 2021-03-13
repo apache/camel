@@ -31,12 +31,10 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/xmldata");
         super.setUp();
-
-        template.sendBodyAndHeader("file://target/xmldata",
+        template.sendBodyAndHeader(fileUri(),
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                                            + "<sample>\n<test>Helloooo</test>\n</sample>",
+                                              + "<sample>\n<test>Helloooo</test>\n</sample>",
                 Exchange.FILE_NAME, "hello.xml");
     }
 

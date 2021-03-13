@@ -101,6 +101,7 @@ camel routes without them knowing
 * xref:error-handler.adoc[Error Handler]
 * xref:exchange.adoc[Exchange]
 * xref:exchange-pattern.adoc[Exchange Pattern]
+* xref:exchange-pooling.adoc[Exchange Pooling]
 * xref:expression.adoc[Expression]
 * xref:http-session-handling.adoc[HTTP-Session Handling]
 * xref:injector.adoc[Injector]

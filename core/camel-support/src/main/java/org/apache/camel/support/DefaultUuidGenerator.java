@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.spi.UuidGenerator;
 
 /**
- * Default {@link UuidGenerator} optimized for Camel usage.
+ * Default {@link UuidGenerator} (32 chars) optimized for Camel usage.
  */
 public class DefaultUuidGenerator implements UuidGenerator {
 

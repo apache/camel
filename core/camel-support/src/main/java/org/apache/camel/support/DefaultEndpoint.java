@@ -85,6 +85,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
     private long pollingConsumerBlockTimeout;
+    private boolean pollingConsumerCopy;
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the preferred method of constructing an object
@@ -217,12 +218,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {} copy: {}",
+                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout(),
+                    isPollingConsumerCopy());
         }
         EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
         consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
         consumer.setBlockTimeout(getPollingConsumerBlockTimeout());
+        consumer.setCopy(isPollingConsumerCopy());
         return consumer;
     }
 
@@ -316,13 +319,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.exceptionHandler = exceptionHandler;
     }
 
-    /**
-     * Gets the {@link org.apache.camel.PollingConsumer} queue size, when {@link EventDrivenPollingConsumer} is being
-     * used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer}
-     * and therefore not using the default {@link EventDrivenPollingConsumer} implementation.
-     * <p/>
-     * The default value is <tt>1000</tt>
-     */
     public int getPollingConsumerQueueSize() {
         return pollingConsumerQueueSize;
     }
@@ -338,16 +334,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.pollingConsumerQueueSize = pollingConsumerQueueSize;
     }
 
-    /**
-     * Whether to block when adding to the internal queue off when {@link EventDrivenPollingConsumer} is being used.
-     * Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
-     * therefore not using the default {@link EventDrivenPollingConsumer} implementation.
-     * <p/>
-     * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
-     * when trying to add to the queue, and its full.
-     * <p/>
-     * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
-     */
     public boolean isPollingConsumerBlockWhenFull() {
         return pollingConsumerBlockWhenFull;
     }
@@ -366,12 +352,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.pollingConsumerBlockWhenFull = pollingConsumerBlockWhenFull;
     }
 
-    /**
-     * Sets the timeout in millis to use when adding to the internal queue off when {@link EventDrivenPollingConsumer}
-     * is being used.
-     *
-     * @see #setPollingConsumerBlockWhenFull(boolean)
-     */
     public long getPollingConsumerBlockTimeout() {
         return pollingConsumerBlockTimeout;
     }
@@ -384,6 +364,25 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setPollingConsumerBlockTimeout(long pollingConsumerBlockTimeout) {
         this.pollingConsumerBlockTimeout = pollingConsumerBlockTimeout;
+    }
+
+    public boolean isPollingConsumerCopy() {
+        return pollingConsumerCopy;
+    }
+
+    /**
+     * Sets whether to copy the exchange when adding to the internal queue off when {@link EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * <b>Important:</b> When copy is enabled then the unit of work is handed over from the current exchange to the
+     * copied exchange instance. And therefore its the responsible of the {@link PollingConsumer} to done the unit of
+     * work on the received exchanges. When the polled exchange is no longer needed then MUST call
+     * {@link org.apache.camel.spi.UnitOfWork#done(Exchange)}.
+     *
+     * Default is false to not copy.
+     */
+    public void setPollingConsumerCopy(boolean pollingConsumerCopy) {
+        this.pollingConsumerCopy = pollingConsumerCopy;
     }
 
     @Override

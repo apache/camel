@@ -54,7 +54,7 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
 
         // assert the file is still there
-        File file = new File(service.getFtpRootDir() + "/noop/hello.txt");
+        File file = ftpFile("noop/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 

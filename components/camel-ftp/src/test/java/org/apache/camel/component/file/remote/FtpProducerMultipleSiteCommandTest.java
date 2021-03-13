@@ -38,7 +38,7 @@ public class FtpProducerMultipleSiteCommandTest extends FtpServerTestSupport {
     public void testSiteCommands() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
 
-        File file = new File(service.getFtpRootDir() + "/site/hello.txt");
+        File file = ftpFile("site/hello.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

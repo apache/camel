@@ -30,8 +30,7 @@ final class ZonedDateTimeConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes")
-    final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
         return ZonedDateTime.class.equals(type);
     }
 

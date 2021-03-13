@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,11 +40,6 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
     @Test
     public void testLoadStatisticsAreDisabledByDefault() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -58,7 +54,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         assertFalse(load);
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.asyncSendBody("direct:start", "Hello World");
@@ -75,11 +71,6 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
     @Test
     public void testEnableLoadStatistics() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         context.getManagementStrategy().getManagementAgent().setLoadStatisticsEnabled(true);
 
         context.addRoutes(new RouteBuilder() {
@@ -93,7 +84,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

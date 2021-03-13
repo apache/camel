@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,14 +27,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -64,11 +67,11 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        createDirectory("target/data/my space");
-        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
+        testDirectory("my space", true);
+        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), testFile("my space/log4j2.properties").toFile());
 
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context,
-                "file:target/data/my%20space/log4j2.properties");
+                fileUri("my%20space/log4j2.properties"));
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -211,7 +214,8 @@ public class ResourceHelperTest extends TestSupport {
             ResourceHelper.resolveMandatoryResourceAsInputStream(context, "classpath:notfound.txt");
             fail("Should not find file");
         } catch (FileNotFoundException e) {
-            assertEquals("Cannot find resource: classpath:notfound.txt in classpath for URI: classpath:notfound.txt",
+            assertEquals(
+                    "Cannot find resource: classpath:notfound.txt for URI: classpath:notfound.txt",
                     e.getMessage());
         }
 
@@ -223,8 +227,7 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(),
-                "file:src/test/resources/log4j2.properties");
+        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context, "file:src/test/resources/log4j2.properties");
         assertNotNull(url);
 
         String text = context.getTypeConverter().convertTo(String.class, url);
@@ -239,78 +242,12 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "classpath:log4j2.properties");
+        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context, "classpath:log4j2.properties");
         assertNotNull(url);
 
         String text = context.getTypeConverter().convertTo(String.class, url);
         assertNotNull(text);
         assertTrue(text.contains("rootLogger"));
-
-        context.stop();
-    }
-
-    @Test
-    public void testLoadCustomUrlasInputStream() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-
-        String handlerPackageSystemProp = "java.protocol.handler.pkgs";
-        String customUrlHandlerPackage = "org.apache.camel.urlhandler";
-
-        registerSystemProperty(handlerPackageSystemProp, customUrlHandlerPackage, "|");
-
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "custom://hello");
-        assertNotNull(is);
-
-        assertEquals("hello", IOConverter.toString(IOHelper.buffered(new InputStreamReader(is, "UTF-8"))));
-
-        context.stop();
-    }
-
-    @Test
-    public void testLoadCustomUrlasInputStreamFail() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-
-        try {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "custom://hello");
-            assertNotNull(is);
-        } catch (Exception e) {
-            assertEquals("unknown protocol: custom", e.getMessage());
-        }
-
-        context.stop();
-    }
-
-    @Test
-    public void testLoadCustomUrl() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-
-        String handlerPackageSystemProp = "java.protocol.handler.pkgs";
-        String customUrlHandlerPackage = "org.apache.camel.urlhandler";
-        registerSystemProperty(handlerPackageSystemProp, customUrlHandlerPackage, "|");
-
-        URL url = ResourceHelper.resolveResourceAsUrl(context.getClassResolver(), "custom://hello");
-        assertNotNull(url);
-
-        String text = context.getTypeConverter().convertTo(String.class, url);
-        assertNotNull(text);
-        assertTrue(text.contains("hello"));
-
-        context.stop();
-    }
-
-    @Test
-    public void testLoadCustomUrlFail() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-
-        try {
-            ResourceHelper.resolveResourceAsUrl(context.getClassResolver(), "custom://hello");
-        } catch (Exception e) {
-            assertEquals("unknown protocol: custom", e.getMessage());
-        }
 
         context.stop();
     }
@@ -342,8 +279,8 @@ public class ResourceHelperTest extends TestSupport {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
         assertEquals("http:", ResourceHelper.getScheme("http:www.foo.com"));
-        assertEquals(null, ResourceHelper.getScheme("www.foo.com"));
-        assertEquals(null, ResourceHelper.getScheme("myfile.txt"));
+        assertNull(ResourceHelper.getScheme("www.foo.com"));
+        assertNull(ResourceHelper.getScheme("myfile.txt"));
     }
 
     @Test

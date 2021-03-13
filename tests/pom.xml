@@ -43,7 +43,6 @@
         <module>camel-itest</module>
         <module>camel-itest-cdi</module>
         <module>camel-itest-jms2</module>
-        <module>camel-jmh</module>
         <module>camel-partial-classpath-test</module>
         <module>camel-typeconverterscan-test</module>
     </modules>
@@ -67,29 +66,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <!-- includes these modules when doing the release -->
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>camel-itest-performance</module>
-                <module>camel-performance</module>
-            </modules>
-        </profile>
-
-        <!-- performance tests -->
-        <profile>
-            <id>performance.test</id>
-            <modules>
-                <module>camel-itest-performance</module>
-                <module>camel-performance</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

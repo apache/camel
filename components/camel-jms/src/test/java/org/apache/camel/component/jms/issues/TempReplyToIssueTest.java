@@ -44,10 +44,9 @@ public class TempReplyToIssueTest extends CamelTestSupport {
         assertEquals("Hello Moon", out);
     }
 
-    public String handleMessage(@Header("JMSReplyTo")
-    final Destination jmsReplyTo,
-            @Header("JMSCorrelationID")
-            final String id,
+    public String handleMessage(
+            @Header("JMSReplyTo") final Destination jmsReplyTo,
+            @Header("JMSCorrelationID") final String id,
             @Body String body, Exchange exchange)
             throws Exception {
         assertNotNull(jmsReplyTo);

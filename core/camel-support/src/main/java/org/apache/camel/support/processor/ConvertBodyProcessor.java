@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -96,10 +97,10 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
         String originalCharsetName = null;
         if (charset != null) {
-            originalCharsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            originalCharsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             // override existing charset with configured charset as that is what the user
             // have explicit configured and expects to be used
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
         }
         // use mandatory conversion
         Object value = old.getMandatoryBody(type);
@@ -123,9 +124,9 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         // as that can lead to double converting later on
         if (charset != null) {
             if (originalCharsetName != null && !originalCharsetName.isEmpty()) {
-                exchange.setProperty(Exchange.CHARSET_NAME, originalCharsetName);
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, originalCharsetName);
             } else {
-                exchange.removeProperty(Exchange.CHARSET_NAME);
+                exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
             }
         }
     }

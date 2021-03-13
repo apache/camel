@@ -26,10 +26,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumerPollingStrategy;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     private boolean blockWhenFull = true;
     private long blockTimeout;
     private final int queueCapacity;
+    private boolean copy;
 
     public EventDrivenPollingConsumer(Endpoint endpoint) {
         this(endpoint, 1000);
@@ -92,6 +97,14 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     public void setBlockTimeout(long blockTimeout) {
         this.blockTimeout = blockTimeout;
+    }
+
+    public boolean isCopy() {
+        return copy;
+    }
+
+    public void setCopy(boolean copy) {
+        this.copy = copy;
     }
 
     /**
@@ -162,6 +175,15 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        // we must make a copy as the exchange put on queue is consumed by another part
+        // and it would not reset and return the pooled exchange to the pool
+        boolean pooled = exchange instanceof PooledExchange;
+
+        if (isCopy() || pooled) {
+            // if we copy then we handover completion
+            exchange = prepareCopy(exchange, true);
+        }
+
         if (isBlockWhenFull()) {
             try {
                 if (getBlockTimeout() <= 0) {
@@ -179,6 +201,22 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         } else {
             queue.add(exchange);
         }
+    }
+
+    protected Exchange prepareCopy(Exchange exchange, boolean handover) {
+        // use a new copy of the exchange to route async (and use same message id)
+
+        // if handover we need to do special handover to avoid handing over
+        // RestBindingMarshalOnCompletion as it should not be handed over
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
+                synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
+
+        // we want the copy to have an uow
+        UnitOfWork uow = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
+                .createUnitOfWork(copy);
+        copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+
+        return copy;
     }
 
     public ExceptionHandler getInterruptedExceptionHandler() {
@@ -229,10 +267,20 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // lets add ourselves as a consumer
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        // lets add ourselves as a consumer (only create do not build)
         consumer = createConsumer();
+    }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(consumer);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         // if the consumer has a polling strategy then invoke that
         if (consumer instanceof PollingConsumerPollingStrategy) {
             PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;

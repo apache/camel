@@ -95,7 +95,7 @@ https://github.com/apache/camel/blob/master/components/camel-test-cdi/src/test/j
 
 [source,java]
 ----
-include::{examplesdir}/components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[tags=example]
+include::{examplesdir}/components/camel-test/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[tags=example]
 ----
 
 You can find more testing patterns illustrated in the `camel-example-cdi-test` example
@@ -173,13 +173,13 @@ include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apac
 === Spring Test with XML Config and Declarative Configuration Example
 
 Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
-Testing] https://github.com/apache/camel/blob/master/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
+Testing] https://github.com/apache/camel/blob/master/components/camel-test/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
 using XML Config and pure Spring Test based configuration of the Camel
 Context]:
 
 [source,java]
 ----
-include::{examplesdir}/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
+include::{examplesdir}/components/camel-test/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
 ----
 
 Notice how a custom test runner is used with the `@RunWith` annotation

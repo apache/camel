@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 
@@ -29,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,13 +47,6 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
             // quarkus has no management at all
             return null;
         }
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/cachedir");
-        super.setUp();
     }
 
     @Override
@@ -98,7 +89,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().addSpoolRule(spoolRule);
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
@@ -110,7 +101,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 // check if spool file exists
                                 if (spoolRule.isSpool()) {
-                                    String[] names = new File("target/cachedir").list();
+                                    String[] names = testDirectory().toFile().list();
                                     assertEquals(1, names.length, "There should be a cached spool file");
                                 }
                             }

@@ -109,8 +109,9 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+        String ref = parseString(definition.getAggregationStrategyRef());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {

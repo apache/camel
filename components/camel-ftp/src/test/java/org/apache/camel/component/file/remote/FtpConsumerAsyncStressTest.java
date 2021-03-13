@@ -38,7 +38,7 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/filestress", "Hello World", Exchange.FILE_NAME,
+            template.sendBodyAndHeader("file://{{ftp.root.dir}}/filestress", "Hello World", Exchange.FILE_NAME,
                     i + ".txt");
         }
     }

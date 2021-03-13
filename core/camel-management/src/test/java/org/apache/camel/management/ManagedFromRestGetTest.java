@@ -43,14 +43,9 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
 
     @Test
     public void testFromRestModel() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", null, null);
         assertNotNull(xml);
@@ -80,9 +75,9 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
 
-        assertTrue(xml2.contains(" <to id=\"to1\" uri=\"direct:hello\"/>"));
-        assertTrue(xml2.contains("<to id=\"to2\" uri=\"direct:bye\"/>"));
-        assertTrue(xml2.contains("<to id=\"to3\" uri=\"mock:update\"/>"));
+        assertTrue(xml2.matches("[\\S\\s]* <to id=\"to[0-9]+\" uri=\"direct:hello\"/>[\\S\\s]*"));
+        assertTrue(xml2.matches("[\\S\\s]*<to id=\"to[0-9]+\" uri=\"direct:bye\"/>[\\S\\s]*"));
+        assertTrue(xml2.matches("[\\S\\s]*<to id=\"to[0-9]+\" uri=\"mock:update\"/>[\\S\\s]*"));
 
         // there should be 3 + 2 routes
         assertEquals(3 + 2, context.getRouteDefinitions().size());

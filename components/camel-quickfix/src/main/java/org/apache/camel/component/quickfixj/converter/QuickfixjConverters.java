@@ -100,7 +100,7 @@ public final class QuickfixjConverters {
     }
 
     private static DataDictionary getDataDictionary(Exchange exchange) throws ConfigError {
-        Object dictionaryValue = exchange.getProperties().get(QuickfixjEndpoint.DATA_DICTIONARY_KEY);
+        Object dictionaryValue = exchange.getProperty(QuickfixjEndpoint.DATA_DICTIONARY_KEY);
 
         DataDictionary dataDictionary = null;
         if (dictionaryValue instanceof DataDictionary) {

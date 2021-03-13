@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
+@Deprecated
 public final class JDBCServiceBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(JDBCServiceBuilder.class);
 

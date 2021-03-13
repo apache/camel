@@ -23,16 +23,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.TestSupport;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.TestSupport.createDirectory;
-import static org.apache.camel.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileIdempotentStoreOrderingTest {
+public class FileIdempotentStoreOrderingTest extends TestSupport {
 
     private FileIdempotentRepository fileIdempotentRepository;
     private List<String> files;
@@ -47,12 +46,8 @@ public class FileIdempotentStoreOrderingTest {
 
     @Test
     public void testTrunkStoreNotMaxHit() throws Exception {
-        // ensure empty folder
-        deleteDirectory("target/data/mystore");
-        createDirectory("target/data/mystore");
-
         // given
-        File fileStore = new File("target/data/mystore/data.dat");
+        File fileStore = testDirectory(true).resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(10);
         fileIdempotentRepository.start();
@@ -75,12 +70,8 @@ public class FileIdempotentStoreOrderingTest {
 
     @Test
     public void testTrunkStoreFirstLevelMaxHit() throws Exception {
-        // ensure empty folder
-        deleteDirectory("target/data/mystore");
-        createDirectory("target/data/mystore");
-
         // given
-        File fileStore = new File("target/data/mystore/data.dat");
+        File fileStore = testDirectory(true).resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.start();
@@ -103,12 +94,8 @@ public class FileIdempotentStoreOrderingTest {
 
     @Test
     public void testTrunkStoreFileMaxHit() throws Exception {
-        // ensure empty folder
-        deleteDirectory("target/data/mystore");
-        createDirectory("target/data/mystore");
-
         // given
-        File fileStore = new File("target/data/mystore/data.dat");
+        File fileStore = testDirectory(true).resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.setMaxFileStoreSize(128);

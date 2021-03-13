@@ -30,6 +30,11 @@ public class HttpGetWithBodyMethod extends HttpEntityEnclosingRequestBase {
         setEntity(entity);
     }
 
+    public HttpGetWithBodyMethod(URI uri, HttpEntity entity) {
+        setURI(uri);
+        setEntity(entity);
+    }
+
     @Override
     public String getMethod() {
         return METHOD_NAME;

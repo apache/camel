@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.slack;
 
+import com.slack.api.model.ConversationType;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -49,12 +50,18 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "producer")
     @Deprecated
     private String iconEmoji;
-    @UriParam(label = "consumer", secret = true)
+    @UriParam(secret = true)
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
     @UriParam(label = "consumer", defaultValue = "https://slack.com")
     private String serverUrl = "https://slack.com";
+    @UriParam(label = "consumer", defaultValue = "false", javaType = "boolean",
+              description = "Create exchanges in natural order (oldest to newest) or not")
+    private boolean naturalOrder;
+    @UriParam(label = "consumer", enums = "PUBLIC_CHANNEL,PRIVATE_CHANNEL,MPIM,IM", defaultValue = "PUBLIC_CHANNEL",
+              description = "Type of conversation")
+    private ConversationType conversationType = ConversationType.PUBLIC_CHANNEL;
 
     /**
      * Constructor for SlackEndpoint
@@ -66,11 +73,16 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     public SlackEndpoint(String uri, String channelName, SlackComponent component) {
         super(uri, component);
         this.webhookUrl = component.getWebhookUrl();
+        this.token = component.getToken();
         this.channel = channelName;
     }
 
     @Override
     public Producer createProducer() throws Exception {
+        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(webhookUrl)) {
+            throw new RuntimeCamelException(
+                    "Missing required endpoint configuration: token or webhookUrl must be defined for Slack producer");
+        }
         SlackProducer producer = new SlackProducer(this);
         return producer;
     }
@@ -178,4 +190,25 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         this.serverUrl = serverUrl;
     }
 
+    /**
+     * Is consuming message in natural order
+     */
+    public void setNaturalOrder(boolean naturalOrder) {
+        this.naturalOrder = naturalOrder;
+    }
+
+    public boolean isNaturalOrder() {
+        return naturalOrder;
+    }
+
+    /**
+     * The type of the conversation
+     */
+    public void setConversationType(ConversationType conversationType) {
+        this.conversationType = conversationType;
+    }
+
+    public ConversationType getConversationType() {
+        return conversationType;
+    }
 }

@@ -115,6 +115,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -913,9 +914,14 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
+        return resolvePropertyPlaceholders(text, false);
+    }
+
+    @Override
+    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
-            return getPropertiesComponent().parseUri(text);
+            return getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
         }
         // is the value a known field (currently we only support
         // constants from Exchange.class)
@@ -1789,6 +1795,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public RoutesLoader getRoutesLoader() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ResourceLoader getResourceLoader() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
         throw new UnsupportedOperationException();
     }
 

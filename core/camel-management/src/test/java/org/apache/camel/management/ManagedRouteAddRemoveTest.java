@@ -25,9 +25,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PRODUCER;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,9 +51,6 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
     @Test
     public void testRouteAddRemoteRouteWithTo() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        Assumptions.assumeFalse(isPlatform("aix"));
-
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -61,12 +59,12 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // number of SERVICES
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
         assertEquals(SERVICES, names.size());
 
         // number of producers
-        ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
+        ObjectName onP = getCamelObjectName(TYPE_PRODUCER, "*");
         Set<ObjectName> namesP = mbeanServer.queryNames(onP, null);
         assertEquals(1, namesP.size());
 
@@ -120,14 +118,14 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
         assertEquals(SERVICES, names.size());
 
         // number of producers
-        ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
+        ObjectName onP = getCamelObjectName(TYPE_PRODUCER, "*");
         Set<ObjectName> namesP = mbeanServer.queryNames(onP, null);
         assertEquals(1, namesP.size());
 
@@ -181,14 +179,14 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
         assertEquals(SERVICES, names.size());
 
         // number of producers
-        ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
+        ObjectName onP = getCamelObjectName(TYPE_PRODUCER, "*");
         Set<ObjectName> namesP = mbeanServer.queryNames(onP, null);
         assertEquals(1, namesP.size());
 
@@ -242,7 +240,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
@@ -301,7 +299,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
@@ -361,7 +359,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
@@ -419,7 +417,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);

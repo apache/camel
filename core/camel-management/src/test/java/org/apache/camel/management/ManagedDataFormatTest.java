@@ -32,11 +32,6 @@ public class ManagedDataFormatTest extends ManagementTestSupport {
 
     @Test
     public void testManageDataFormat() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // there should be 1 data format

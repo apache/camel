@@ -54,7 +54,7 @@ route, use the xref:jetty-component.adoc[Jetty Component] instead.
 
 
 // component options: START
-The HTTP component supports 34 options, which are listed below.
+The HTTP component supports 37 options, which are listed below.
 
 
 
@@ -62,8 +62,11 @@ The HTTP component supports 34 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *cookieStore* (producer) | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). |  | CookieStore
+| *copyHeaders* (producer) | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers). | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *responsePayloadStreaming{zwsp}Threshold* (producer) | This threshold in bytes controls whether the response payload should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode. | 8192 | int
+| *skipRequestHeaders* (producer) | Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
+| *skipResponseHeaders* (producer) | Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
 | *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *authCachingDisabled* (advanced) | Disables authentication scheme caching | false | boolean
 | *automaticRetriesDisabled* (advanced) | Disables automatic request recovery and re-execution | false | boolean
@@ -111,7 +114,7 @@ The HTTP component supports 34 options, which are listed below.
 The HTTP endpoint is configured using URI syntax:
 
 ----
-http:httpUri
+http://httpUri
 ----
 
 with the following path and query parameters:
@@ -126,7 +129,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (48 parameters):
+=== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -137,7 +140,7 @@ with the following path and query parameters:
 | *httpBinding* (common) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *bridgeEndpoint* (producer) | If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back. | false | boolean
 | *chunked* (producer) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
-| *clearExpiredCookies* (producer) | Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired. | true | boolean
+| *clearExpiredCookies* (producer) | Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired. If the component has disabled cookie management then this option is disabled too. | true | boolean
 | *connectionClose* (producer) | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false. | false | boolean
 | *copyHeaders* (producer) | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers). | true | boolean
 | *customHostHeader* (producer) | To use custom host header for producer. When not set in query will be ignored. When set will override host header derived from url. |  | String
@@ -152,6 +155,8 @@ with the following path and query parameters:
 | *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *getWithBody* (producer) | Whether the HTTP GET should include the message body or not. By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
+| *skipRequestHeaders* (producer) | Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
+| *skipResponseHeaders* (producer) | Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector. | false | boolean
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int

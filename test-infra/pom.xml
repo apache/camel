@@ -37,7 +37,6 @@
         <module>camel-test-infra-kafka</module>
         <module>camel-test-infra-parent</module>
         <module>camel-test-infra-aws-common</module>
-        <module>camel-test-infra-aws-v1</module>
         <module>camel-test-infra-aws-v2</module>
         <module>camel-test-infra-cassandra</module>
         <module>camel-test-infra-elasticsearch</module>
@@ -72,4 +71,13 @@
         <module>camel-test-infra-fhir</module>
         <module>camel-test-infra-mosquitto</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

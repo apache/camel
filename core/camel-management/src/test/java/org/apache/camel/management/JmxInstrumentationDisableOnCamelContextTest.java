@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.lang.management.ManagementFactory;
 import java.util.Set;
 
 import javax.management.MBeanServerConnection;
@@ -38,6 +39,11 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
     }
 
     @Override
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        return ManagementFactory.getPlatformMBeanServer();
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camel = super.createCamelContext();
         camel.disableJMX();
@@ -47,11 +53,6 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
     @Override
     @Test
     public void testMBeansRegistered() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);

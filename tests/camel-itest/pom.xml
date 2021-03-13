@@ -32,8 +32,9 @@
     <description>Performs cross component integration tests</description>
 
     <properties>
-        <camel.itest.fork.count>1</camel.itest.fork.count>
-        <camel.itest.fork.reuse>true</camel.itest.fork.reuse>
+        <camel.surefire.forkCount>1</camel.surefire.forkCount>
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
+        <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -400,10 +401,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- must for per test -->
-                    <forkCount>${camel.itest.fork.count}</forkCount>
-                    <reuseForks>${camel.itest.fork.reuse}</reuseForks>
-                    <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
                     <systemPropertyVariables>
                         <derby.stream.error.file>target/derby.log</derby.stream.error.file>
                     </systemPropertyVariables>

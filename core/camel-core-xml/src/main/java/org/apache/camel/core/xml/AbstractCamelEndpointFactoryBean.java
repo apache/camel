@@ -31,6 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,7 +49,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
             // resolve placeholders (but leave the original uri unchanged)
-            String resolved = getCamelContext().resolvePropertyPlaceholders(uri);
+            String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(getCamelContext(), uri);
             String target = createUri(resolved);
             this.endpoint = getCamelContext().getEndpoint(target);
             if (endpoint == null) {

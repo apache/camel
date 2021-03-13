@@ -48,6 +48,7 @@ public class BaseNettyTest extends CamelTestSupport {
     public static void startLeakDetection() {
         System.setProperty("io.netty.leakDetection.maxRecords", "100");
         System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
+        System.setProperty("io.netty.leakDetection.targetRecords", "100");
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 

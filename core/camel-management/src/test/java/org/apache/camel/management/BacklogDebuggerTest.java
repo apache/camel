@@ -38,13 +38,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebugger() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -102,13 +98,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerUpdateBodyAndHeader() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -184,13 +176,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerUpdateBodyAndHeaderType() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -266,13 +254,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerRemoveBodyAndHeader() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -346,13 +330,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerSuspendOnlyOneAtBreakpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -409,13 +389,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerConditional() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -500,13 +476,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerStep() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -601,13 +573,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogDebuggerStepCurrentNode() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 

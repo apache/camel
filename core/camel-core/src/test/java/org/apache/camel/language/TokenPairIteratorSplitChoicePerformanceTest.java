@@ -16,8 +16,8 @@
  */
 package org.apache.camel.language;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -52,16 +52,12 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        createDataFile(log, size);
         super.setUp();
+        createDataFile(log, size);
     }
 
     @Test
-    public void testDummy() {
-        // this is a manual test
-    }
-
-    public void xxxtestTokenPairPerformanceRoute() throws Exception {
+    public void testTokenPairPerformanceRoute() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(5, TimeUnit.MINUTES);
@@ -85,7 +81,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/data?initialDelay=0&delay=10&noop=true").process(new Processor() {
+                from(fileUri("?initialDelay=0&delay=10&noop=true")).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         log.info("Starting to process file");
                         watch.restart();
@@ -141,40 +137,36 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
         };
     }
 
-    public static void createDataFile(Logger log, int size) throws Exception {
-        deleteDirectory("target/data/data");
-        createDirectory("target/data");
-
+    public void createDataFile(Logger log, int size) throws Exception {
         log.info("Creating data file ...");
 
-        File file = new File("target/data/data.xml");
-        FileOutputStream fos = new FileOutputStream(file, true);
-        fos.write("<orders>\n".getBytes());
+        try (OutputStream fos = Files.newOutputStream(testFile("data.xml"))) {
+            fos.write("<orders>\n".getBytes());
 
-        for (int i = 0; i < size; i++) {
-            fos.write("<order>\n".getBytes());
-            fos.write(("  <id>" + i + "</id>\n").getBytes());
-            int num = i % 10;
-            if (num >= 0 && num <= 3) {
-                fos.write("  <amount>3</amount>\n".getBytes());
-                fos.write("  <customerId>333</customerId>\n".getBytes());
-            } else if (num >= 4 && num <= 5) {
-                fos.write("  <amount>44</amount>\n".getBytes());
-                fos.write("  <customerId>444</customerId>\n".getBytes());
-            } else if (num >= 6 && num <= 8) {
-                fos.write("  <amount>88</amount>\n".getBytes());
-                fos.write("  <customerId>888</customerId>\n".getBytes());
-            } else {
-                fos.write("  <amount>123</amount>\n".getBytes());
-                fos.write("  <customerId>123123</customerId>\n".getBytes());
+            for (int i = 0; i < size; i++) {
+                fos.write("<order>\n".getBytes());
+                fos.write(("  <id>" + i + "</id>\n").getBytes());
+                int num = i % 10;
+                if (num <= 3) {
+                    fos.write("  <amount>3</amount>\n".getBytes());
+                    fos.write("  <customerId>333</customerId>\n".getBytes());
+                } else if (num <= 5) {
+                    fos.write("  <amount>44</amount>\n".getBytes());
+                    fos.write("  <customerId>444</customerId>\n".getBytes());
+                } else if (num <= 8) {
+                    fos.write("  <amount>88</amount>\n".getBytes());
+                    fos.write("  <customerId>888</customerId>\n".getBytes());
+                } else {
+                    fos.write("  <amount>123</amount>\n".getBytes());
+                    fos.write("  <customerId>123123</customerId>\n".getBytes());
+                }
+                fos.write("  <description>bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla</description>\n"
+                        .getBytes());
+                fos.write("</order>\n".getBytes());
             }
-            fos.write("  <description>bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla</description>\n"
-                    .getBytes());
-            fos.write("</order>\n".getBytes());
-        }
 
-        fos.write("</orders>".getBytes());
-        fos.close();
+            fos.write("</orders>".getBytes());
+        }
 
         log.info("Creating data file done.");
     }

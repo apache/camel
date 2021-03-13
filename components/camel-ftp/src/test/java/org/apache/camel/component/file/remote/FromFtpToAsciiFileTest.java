@@ -53,7 +53,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         // assert the file
-        File file = new File("target/ftptest/deleteme.txt");
+        File file = testFile("deleteme.txt").toFile();
         assertTrue(file.exists(), "The ASCII file should exists");
         assertTrue(file.length() > 10, "File size wrong");
     }
@@ -76,9 +76,8 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).convertBodyTo(String.class)
-                        .to(fileUrl).to("mock:result");
+                        .to(fileUri("?fileExist=Override&noop=true")).to("mock:result");
             }
         };
     }

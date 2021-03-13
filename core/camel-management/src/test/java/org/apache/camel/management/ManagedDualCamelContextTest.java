@@ -41,11 +41,6 @@ public class ManagedDualCamelContextTest extends TestSupport {
 
     @Test
     public void testDualCamelContext() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         CamelContext camel1 = createCamelContext();
         camel1.start();
 
@@ -58,24 +53,25 @@ public class ManagedDualCamelContextTest extends TestSupport {
         assertIsInstanceOf(JmxManagementStrategy.class, camel2.getManagementStrategy());
 
         MBeanServer mbeanServer1 = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> set = mbeanServer1.queryNames(new ObjectName("*:context=camel-1,type=components,*"), null);
+        Set<ObjectName> set = mbeanServer1
+                .queryNames(new ObjectName("*:context=" + camel1.getManagementName() + ",type=components,*"), null);
         assertEquals(2, set.size());
         ObjectName on = set.iterator().next();
         assertTrue(mbeanServer1.isRegistered(on), "Should be registered");
         String state = (String) mbeanServer1.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
         String id = (String) mbeanServer1.getAttribute(on, "CamelId");
-        assertEquals("camel-1", id);
+        assertEquals(camel1.getManagementName(), id);
 
         MBeanServer mbeanServer2 = camel2.getManagementStrategy().getManagementAgent().getMBeanServer();
-        set = mbeanServer1.queryNames(new ObjectName("*:context=camel-2,type=components,*"), null);
+        set = mbeanServer1.queryNames(new ObjectName("*:context=" + camel2.getManagementName() + ",type=components,*"), null);
         assertEquals(2, set.size());
         on = set.iterator().next();
         assertTrue(mbeanServer2.isRegistered(on), "Should be registered");
         state = (String) mbeanServer2.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
         id = (String) mbeanServer2.getAttribute(on, "CamelId");
-        assertEquals("camel-2", id);
+        assertEquals(camel2.getManagementName(), id);
 
         camel1.stop();
         camel2.stop();

@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -39,7 +40,6 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
     private final Iterator<?> iter;
     private boolean ignoreInvalidEndpoints;
-    private ProducerCache producerCache;
+    private final ProducerCache producerCache;
     private int cacheSize;
 
     /**
@@ -115,7 +115,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         public void begin() {
             // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
-            exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
             // if the MEP on the endpoint is different then
@@ -331,9 +331,20 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        ServiceHelper.buildService(producerCache);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(producerCache);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ObjectHelper.notNull(producerCache, "producerCache", this);
         ServiceHelper.startService(producerCache);
     }
 

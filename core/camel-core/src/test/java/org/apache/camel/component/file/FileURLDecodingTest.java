@@ -16,32 +16,18 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.nio.file.Paths;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileURLDecodingTest extends ContextTestSupport {
 
-    static final String TARGET_DIR = "target/data/files";
-
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory(TARGET_DIR);
-        super.setUp();
     }
 
     @Override
@@ -97,11 +83,10 @@ public class FileURLDecodingTest extends ContextTestSupport {
     }
 
     private void assertTargetFile(final String encoded, final String expected) throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("file:" + TARGET_DIR + "?fileName=" + encoded);
+                from("direct:start").to(fileUri("?fileName=" + encoded));
             }
         });
 
@@ -110,9 +95,7 @@ public class FileURLDecodingTest extends ContextTestSupport {
         String result = template.requestBody("direct:start", "Kermit", String.class);
         assertEquals("Kermit", result);
 
-        BufferedReader br = new BufferedReader(new FileReader(Paths.get(TARGET_DIR, expected).toFile()));
-        assertEquals("Kermit", br.readLine());
-        br.close();
+        assertFileExists(testFile(expected), "Kermit");
     }
 
 }

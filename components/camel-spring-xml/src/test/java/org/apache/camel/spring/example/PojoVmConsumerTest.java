@@ -20,9 +20,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@ResourceLock("VmComponent")
 public class PojoVmConsumerTest extends SpringTestSupport {
     protected MockEndpoint resultEndpoint;
 

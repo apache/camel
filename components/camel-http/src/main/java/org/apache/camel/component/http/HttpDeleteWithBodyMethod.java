@@ -30,6 +30,11 @@ public class HttpDeleteWithBodyMethod extends HttpEntityEnclosingRequestBase {
         setEntity(entity);
     }
 
+    public HttpDeleteWithBodyMethod(URI uri, HttpEntity entity) {
+        setURI(uri);
+        setEntity(entity);
+    }
+
     @Override
     public String getMethod() {
         return METHOD_NAME;

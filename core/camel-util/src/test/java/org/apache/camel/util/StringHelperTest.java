@@ -16,10 +16,12 @@
  */
 package org.apache.camel.util;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.StringHelper.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringHelperTest {
 
@@ -53,6 +55,50 @@ public class StringHelperTest {
         assertEquals("available-phone-number-country", camelCaseToDash("available_phone_number_country"));
         assertEquals("available-phone-number-country", camelCaseToDash("availablePhoneNumberCountry"));
         assertEquals("available-phone-number-country", camelCaseToDash("AvailablePhoneNumberCountry"));
+    }
+
+    @Nested
+    class DashToCamelCase {
+
+        @Test
+        void testDashToCamelCaseWithNull() throws Exception {
+            assertThat(dashToCamelCase(null)).isNull();
+        }
+
+        @Test
+        void testDashToCamelCaseWithEmptyValue() throws Exception {
+            assertThat(dashToCamelCase("")).isEmpty();
+        }
+
+        @Test
+        void testDashToCamelCaseWithNoDash() throws Exception {
+            assertThat(dashToCamelCase("a")).isEqualTo("a");
+        }
+
+        @Test
+        void testDashToCamelCaseWithOneDash() throws Exception {
+            assertThat(dashToCamelCase("a-b")).isEqualTo("aB");
+        }
+
+        @Test
+        void testDashToCamelCaseWithSeveralDashes() throws Exception {
+            assertThat(dashToCamelCase("a-bb-cc-dd")).isEqualTo("aBbCcDd");
+        }
+
+        @Test
+        void testDashToCamelCaseWithEndDash() throws Exception {
+            assertThat(dashToCamelCase("a-")).isEqualTo("a");
+        }
+
+        @Test
+        void testDashToCamelCaseWithEndDashes() throws Exception {
+            assertThat(dashToCamelCase("a----")).isEqualTo("a");
+        }
+
+        @Test
+        void testDashToCamelCaseWithSeceralDashesGrouped() throws Exception {
+            assertThat(dashToCamelCase("a--b")).isEqualTo("aB");
+        }
     }
 
     @Test

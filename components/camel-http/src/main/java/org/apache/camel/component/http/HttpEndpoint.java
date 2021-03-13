@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Send requests to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri",
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http://httpUri",
              producerOnly = true, category = { Category.HTTP }, lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
@@ -116,7 +116,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private CookieStore cookieStore = new BasicCookieStore();
     @UriParam(label = "producer", defaultValue = "true",
               description = "Whether to clear expired cookies before sending the HTTP request."
-                            + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
+                            + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired."
+                            + " If the component has disabled cookie management then this option is disabled too.")
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer,security",
               description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
@@ -137,6 +138,16 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will "
                                                 + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
+    @UriParam(label = "producer,advanced",
+              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
+                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
+                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+    private boolean skipRequestHeaders;
+    @UriParam(label = "producer,advanced",
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
+                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
+                            + " with many object allocations for the JVM garbage collector.")
+    private boolean skipResponseHeaders;
 
     public HttpEndpoint() {
     }
@@ -324,7 +335,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     /**
      * Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep
-     * growing by adding new cookies which is newer removed when they are expired.
+     * growing by adding new cookies which is newer removed when they are expired. If the component has disabled cookie
+     * management then this option is disabled too.
      */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
@@ -531,6 +543,31 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     public String getCustomHostHeader() {
         return customHostHeader;
+    }
+
+    public boolean isSkipRequestHeaders() {
+        return skipRequestHeaders;
+    }
+
+    /**
+     * Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers
+     * needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for
+     * the JVM garbage collector.
+     */
+    public void setSkipRequestHeaders(boolean skipRequestHeaders) {
+        this.skipRequestHeaders = skipRequestHeaders;
+    }
+
+    public boolean isSkipResponseHeaders() {
+        return skipResponseHeaders;
+    }
+
+    /**
+     * Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP
+     * headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector.
+     */
+    public void setSkipResponseHeaders(boolean skipResponseHeaders) {
+        this.skipResponseHeaders = skipResponseHeaders;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")

@@ -1,7 +1,7 @@
 [[google-storage-component]]
 = Google Storage Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-storage/src/main/docs/google-storage-component.adoc
+:page-source: components/camel-google/camel-google-storage/src/main/docs/google-storage-component.adoc
 :docTitle: Google Storage
 :artifactId: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
@@ -89,7 +89,7 @@ The Google Storage component supports 16 options, which are listed below.
 | Name | Description | Default | Type
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
 | *configuration* (common) | The component configuration |  | GoogleCloudStorageConfiguration
-| *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
+| *serviceAccountKey* (common) | The Service account key that can be used as credentials for the Storage client. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
 | *storageClient* (common) | *Autowired* The storage client |  | Storage
 | *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String
@@ -132,7 +132,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket bucketName. | true | boolean
-| *serviceAccountKey* (common) | Service account key to authenticate an application as a service account |  | String
+| *serviceAccountKey* (common) | The Service account key that can be used as credentials for the Storage client. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *storageClass* (common) | The Cloud Storage class to use when creating the new buckets | STANDARD | StorageClass
 | *storageClient* (common) | *Autowired* The storage client |  | Storage
 | *storageLocation* (common) | The Cloud Storage location to use when creating the new buckets | US-EAST1 | String

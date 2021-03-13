@@ -87,7 +87,7 @@ public interface Aws2SqsComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: common
          * 
          * @param autoCreateQueue the value to set
@@ -111,6 +111,23 @@ public interface Aws2SqsComponentBuilderFactory {
         default Aws2SqsComponentBuilder configuration(
                 org.apache.camel.component.aws2.sqs.Sqs2Configuration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -193,6 +210,22 @@ public interface Aws2SqsComponentBuilderFactory {
         default Aws2SqsComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -766,11 +799,13 @@ public interface Aws2SqsComponentBuilderFactory {
             case "amazonSQSClient": getOrCreateConfiguration((Sqs2Component) component).setAmazonSQSClient((software.amazon.awssdk.services.sqs.SqsClient) value); return true;
             case "autoCreateQueue": getOrCreateConfiguration((Sqs2Component) component).setAutoCreateQueue((boolean) value); return true;
             case "configuration": ((Sqs2Component) component).setConfiguration((org.apache.camel.component.aws2.sqs.Sqs2Configuration) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Sqs2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "protocol": getOrCreateConfiguration((Sqs2Component) component).setProtocol((java.lang.String) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Sqs2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queueOwnerAWSAccountId": getOrCreateConfiguration((Sqs2Component) component).setQueueOwnerAWSAccountId((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Sqs2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sqs2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Sqs2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sqs2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "attributeNames": getOrCreateConfiguration((Sqs2Component) component).setAttributeNames((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Sqs2Component) component).setBridgeErrorHandler((boolean) value); return true;

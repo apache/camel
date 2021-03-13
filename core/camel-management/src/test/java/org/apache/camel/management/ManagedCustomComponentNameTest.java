@@ -34,11 +34,6 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
 
     @Test
     public void testCustomName() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=components,*"), null);
@@ -51,7 +46,7 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
         assertEquals(ServiceStatus.Started.name(), state);
 
         String id = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", id);
+        assertEquals(context.getManagementName(), id);
 
         context.stop();
 

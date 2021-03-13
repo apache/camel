@@ -67,6 +67,7 @@ public class ProcessorTransformer extends Transformer {
         }
 
         LOG.debug("Sending to transform processor: {}", processor);
+        // must create a copy in this way
         Exchange transformExchange = new DefaultExchange(exchange);
         transformExchange.setIn(message);
         transformExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
@@ -105,6 +106,16 @@ public class ProcessorTransformer extends Transformer {
                     getModel(), getFrom(), getTo(), processor);
         }
         return transformerString;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
     }
 
     @Override

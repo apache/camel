@@ -27,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -299,7 +300,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     @SuppressWarnings("unchecked")
     protected void onEvent(Exchange exchange, ExchangeEvent event, Breakpoint breakpoint) {
         // try to get the last known definition
-        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
         MessageHistory last = list != null ? list.get(list.size() - 1) : null;
         NamedNode definition = last != null ? last.getNode() : null;
 

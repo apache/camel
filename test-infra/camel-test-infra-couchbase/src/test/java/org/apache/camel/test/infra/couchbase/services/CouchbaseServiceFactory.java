@@ -17,29 +17,26 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class CouchbaseServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CouchbaseServiceFactory.class);
-
     private CouchbaseServiceFactory() {
 
     }
 
-    public static CouchbaseService getService() {
-        String instanceType = System.getProperty("couchbase.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-couchbase-instance")) {
-            return new CouchbaseLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new CouchbaseRemoteService();
-        }
-
-        LOG.error("Couchbase instance must be one of 'local-couchbase-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Couchbase instance type");
+    public static SimpleTestServiceBuilder<CouchbaseService> builder() {
+        return new SimpleTestServiceBuilder<>("consul");
     }
 
+    public static CouchbaseService createService() {
+        return builder()
+                .addLocalMapping(CouchbaseLocalContainerService::new)
+                .addRemoteMapping(CouchbaseRemoteService::new)
+                .build();
+    }
+
+    @Deprecated
+    public static CouchbaseService getService() {
+        return createService();
+    }
 }

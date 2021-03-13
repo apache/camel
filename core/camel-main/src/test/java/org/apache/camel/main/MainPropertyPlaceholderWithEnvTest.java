@@ -23,9 +23,14 @@ import java.util.Properties;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class MainPropertyPlaceholderWithEnvTest {
 
     public static final String ENV_PROPERTY_PLACEHOLDER_LOCATION = MainHelper.toEnvVar(Main.PROPERTY_PLACEHOLDER_LOCATION);

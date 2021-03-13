@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -37,54 +32,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
-    private byte[] utf;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        // use utf-8 as original payload with 00e6 which is a danish ae letter
-        utf = "ABC\u00e6".getBytes("utf-8");
-
-        deleteDirectory("target/data/charset");
-        createDirectory("target/data/charset/input");
-
-        log.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
-
-        for (byte b : utf) {
-            log.debug("utf byte: {}", b);
-        }
-
-        // write the byte array to a file using plain API
-        OutputStream fos = Files.newOutputStream(Paths.get("target/data/charset/input/input.txt"));
-        fos.write(utf);
-        fos.close();
-
-        super.setUp();
-    }
+    // use utf-8 as original payload with 00e6 which is a danish ae letter
+    private byte[] utf = "ABC\u00e6D\uD867\uDE3DE\uD83C\uDFF3".getBytes(StandardCharsets.UTF_8);
 
     @Test
     public void testFileProducerCharsetUTFOptimized() throws Exception {
+        testDirectory("input", true);
+
+        log.debug("utf: {}", new String(utf, StandardCharsets.UTF_8));
+        for (byte b : utf) {
+            log.debug("utf byte: {}", b);
+        }
+        // write the byte array to a file using plain API
+        try (OutputStream fos = Files.newOutputStream(testFile("input/input.txt"))) {
+            fos.write(utf);
+        }
+
         oneExchangeDone.matchesWaitTime();
 
-        File file = new File("target/data/charset/output.txt");
-        assertTrue(file.exists(), "File should exist");
+        assertTrue(Files.exists(testFile("output.txt")), "File should exist");
 
-        InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
-        byte[] buffer = new byte[100];
-
-        int len = fis.read(buffer);
-        assertNotEquals(-1, len, "Should read data: " + len);
-        byte[] data = new byte[len];
-        System.arraycopy(buffer, 0, data, 0, len);
-        fis.close();
-
-        // data should be in utf, where the danish ae is -61 -90
-        assertEquals(5, data.length);
-        assertEquals(65, data[0]);
-        assertEquals(66, data[1]);
-        assertEquals(67, data[2]);
-        assertEquals(-61, data[3]);
-        assertEquals(-90, data[4]);
+        byte[] data = Files.readAllBytes(testFile("output.txt"));
+        assertArrayEquals(utf, data);
     }
 
     @Override
@@ -92,9 +61,9 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true")
+                from(fileUri("input?initialDelay=0&delay=10&noop=true"))
                         // no charset so its optimized to write directly
-                        .to("file:target/data/charset/?fileName=output.txt");
+                        .to(fileUri("?fileName=output.txt"));
             }
         };
     }

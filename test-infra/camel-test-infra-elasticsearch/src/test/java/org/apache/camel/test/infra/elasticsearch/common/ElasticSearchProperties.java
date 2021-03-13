@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.elasticsearch.common;
 public final class ElasticSearchProperties {
     public static final String ELASTIC_SEARCH_HOST = "elasticsearch.host";
     public static final String ELASTIC_SEARCH_PORT = "elasticsearch.port";
+    public static final String ELASTIC_SEARCH_CONTAINER = "elasticsearch.container";
 
     private ElasticSearchProperties() {
 

@@ -58,7 +58,7 @@ The Couchbase component supports 3 options, which are listed below.
 The Couchbase endpoint is configured using URI syntax:
 
 ----
-couchbase:protocol:hostname:port
+couchbase:protocol://hostname:port
 ----
 
 with the following path and query parameters:

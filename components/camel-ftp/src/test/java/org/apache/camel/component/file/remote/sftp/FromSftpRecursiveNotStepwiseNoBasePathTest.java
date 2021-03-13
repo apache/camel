@@ -32,7 +32,7 @@ public class FromSftpRecursiveNotStepwiseNoBasePathTest extends BaseServerTestSu
 
     protected String getSftpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}?password=admin&initialDelay=3000&stepwise=false"
-               + "&recursive=true";
+               + "&recursive=true&knownHostsFile=" + service.getKnownHostsFile();
     }
 
     @BeforeEach

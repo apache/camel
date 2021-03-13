@@ -59,14 +59,6 @@
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
-        <module>camel-test-cdi</module>
-        <module>camel-test-spring</module>
-        <module>camel-testcontainers</module>
-        <module>camel-testcontainers-spring</module>
-        <module>camel-test-junit5</module>
-        <module>camel-test-spring-junit5</module>
-        <module>camel-testcontainers-junit5</module>
-        <module>camel-testcontainers-spring-junit5</module>
         <module>camel-spring</module>
         <module>camel-spring-main</module>
         <module>camel-spring-xml</module>
@@ -107,30 +99,8 @@
         <module>camel-atomix</module>
         <module>camel-avro</module>
         <module>camel-avro-rpc</module>
-        <module>camel-aws2-athena</module>
-        <module>camel-aws2-cw</module>
-        <module>camel-aws2-ddb</module>
-        <module>camel-aws2-ec2</module>
-        <module>camel-aws2-ecs</module>
-        <module>camel-aws2-eks</module>
-        <module>camel-aws2-eventbridge</module>
-        <module>camel-aws2-iam</module>
-        <module>camel-aws2-kinesis</module>
-        <module>camel-aws2-kms</module>
-        <module>camel-aws2-lambda</module>
-        <module>camel-aws2-msk</module>
-        <module>camel-aws2-mq</module>
-        <module>camel-aws2-s3</module>
-        <module>camel-aws2-ses</module>
-        <module>camel-aws2-sns</module>
-        <module>camel-aws2-sqs</module>
-        <module>camel-aws2-sts</module>
-        <module>camel-aws2-translate</module>
-        <module>camel-aws-xray</module>
-        <module>camel-azure-storage-blob</module>
-        <module>camel-azure-storage-datalake</module>
-        <module>camel-azure-storage-queue</module>
-        <module>camel-azure-eventhubs</module>
+        <module>camel-aws</module>
+        <module>camel-azure</module>
         <module>camel-barcode</module>
         <module>camel-base64</module>
         <module>camel-bean-validator</module>
@@ -160,11 +130,7 @@
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
         <module>camel-datasonnet</module>
-        <module>camel-debezium-common</module>
-        <module>camel-debezium-mongodb</module>
-        <module>camel-debezium-mysql</module>
-        <module>camel-debezium-postgres</module>
-        <module>camel-debezium-sqlserver</module>
+        <module>camel-debezium</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
         <module>camel-djl</module>
@@ -193,13 +159,7 @@
         <module>camel-geocoder</module>
         <module>camel-git</module>
         <module>camel-github</module>
-        <module>camel-google-bigquery</module>
-        <module>camel-google-calendar</module>
-        <module>camel-google-drive</module>
-        <module>camel-google-mail</module>
-        <module>camel-google-pubsub</module>
-        <module>camel-google-sheets</module>
-		<module>camel-google-storage</module>
+        <module>camel-google</module>
         <module>camel-gora</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
@@ -266,10 +226,7 @@
         <module>camel-mail</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
-        <module>camel-microprofile-config</module>
-        <module>camel-microprofile-fault-tolerance</module>
-        <module>camel-microprofile-health</module>
-        <module>camel-microprofile-metrics</module>
+        <module>camel-microprofile</module>
         <module>camel-milo</module>
         <module>camel-mina</module>
         <module>camel-minio</module>
@@ -371,6 +328,7 @@
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>
+        <module>camel-vertx-common</module>
         <module>camel-vertx-http</module>
         <module>camel-vertx-websocket</module>
         <module>camel-vertx-kafka</module>
@@ -520,8 +478,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.file.stress;
 
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -35,38 +36,22 @@ import org.junit.jupiter.api.Test;
 @Disabled("Manual test")
 public class FileProducerAppendManyMessagesFastTest extends ContextTestSupport {
 
-    private boolean enabled;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        if (!enabled) {
-            return;
-        }
-
-        deleteDirectory("target/data/big");
-        createDirectory("target/data/big");
-        deleteDirectory("target/data/out");
-        createDirectory("target/data/out");
+        super.setUp();
 
         // create a big file
-        File file = new File("target/data/big/data.txt");
-        FileOutputStream fos = new FileOutputStream(file);
-        for (int i = 0; i < 100000; i++) {
-            String s = "Hello World this is a long line with number " + i + LS;
-            fos.write(s.getBytes());
+        try (OutputStream fos = new BufferedOutputStream(Files.newOutputStream(testFile("big/data.txt")))) {
+            for (int i = 0; i < 1000; i++) {
+                String s = "Hello World this is a long line with number " + i + LS;
+                fos.write(s.getBytes());
+            }
         }
-        fos.close();
-
-        super.setUp();
     }
 
     @Test
     public void testBigFile() throws Exception {
-        if (!enabled) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:done");
         mock.expectedMessageCount(1);
         mock.setResultWaitTime(2 * 60000);
@@ -79,11 +64,11 @@ public class FileProducerAppendManyMessagesFastTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/big").process(new Processor() {
+                from(fileUri("big?initialDelay=1000")).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         // store a output stream we use for writing
-                        FileOutputStream fos = new FileOutputStream("target/data/out/also-big.txt", true);
+                        FileOutputStream fos = new FileOutputStream(testFile("out/also-big.txt").toFile(), true);
                         exchange.setProperty("myStream", fos);
                     }
                 }).split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000").process(new Processor() {

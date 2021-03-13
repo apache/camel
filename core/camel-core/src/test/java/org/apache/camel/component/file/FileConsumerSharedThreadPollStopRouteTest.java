@@ -33,8 +33,8 @@ public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerShare
         // thread thread name should be the same
         mock.message(0).header("threadName").isEqualTo(mock.message(1).header("threadName"));
 
-        template.sendBodyAndHeader("file:target/data/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/data/b", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri("a"), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("b"), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -44,10 +44,10 @@ public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerShare
         resetMocks();
         mock.expectedBodiesReceived("Bye World 2");
         // a should not be polled
-        mock.expectedFileExists("target/data/a/hello2.txt");
+        mock.expectedFileExists(testFile("a/hello2.txt"));
 
-        template.sendBodyAndHeader("file:target/data/a", "Hello World 2", Exchange.FILE_NAME, "hello2.txt");
-        template.sendBodyAndHeader("file:target/data/b", "Bye World 2", Exchange.FILE_NAME, "bye2.txt");
+        template.sendBodyAndHeader(fileUri("a"), "Hello World 2", Exchange.FILE_NAME, "hello2.txt");
+        template.sendBodyAndHeader(fileUri("b"), "Bye World 2", Exchange.FILE_NAME, "bye2.txt");
 
         assertMockEndpointsSatisfied();
 

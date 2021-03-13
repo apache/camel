@@ -1,7 +1,7 @@
 [[aws-xray-other]]
 = AWS XRay Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws-xray/src/main/docs/aws-xray.adoc
+:page-source: components/camel-aws/camel-aws-xray/src/main/docs/aws-xray.adoc
 :docTitle: AWS XRay
 :artifactId: camel-aws-xray
 :description: Distributed tracing using AWS XRay

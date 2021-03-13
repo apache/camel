@@ -39,11 +39,6 @@ public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupp
 
     @Test
     public void testManageEndpointUtilizationStatistics() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(4);
 
         template.sendBody("seda:start", "Hello World");

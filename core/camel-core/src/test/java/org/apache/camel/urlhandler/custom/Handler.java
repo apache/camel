@@ -19,23 +19,32 @@ package org.apache.camel.urlhandler.custom;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
+import java.nio.charset.StandardCharsets;
 
-public class Handler extends URLStreamHandler {
+import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceResolverSupport;
+
+public class Handler extends ResourceResolverSupport {
+    public Handler() {
+        super("custom");
+    }
+
     @Override
-    protected URLConnection openConnection(URL u) throws IOException {
-        final String echo = u.getHost();
-        return new URLConnection(u) {
+    protected Resource createResource(String location) {
+        return new Resource() {
             @Override
-            public void connect() throws IOException {
-                connected = true;
+            public String getLocation() {
+                return location;
+            }
+
+            @Override
+            public boolean exists() {
+                return true;
             }
 
             @Override
             public InputStream getInputStream() throws IOException {
-                return new ByteArrayInputStream(echo.getBytes());
+                return new ByteArrayInputStream(getRemaining(location).getBytes(StandardCharsets.UTF_8));
             }
         };
     }

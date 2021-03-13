@@ -1102,13 +1102,8 @@ public class ModelParser extends BaseParser {
         }, noValueHandler());
     }
     protected SagaActionUriDefinition doParseSagaActionUriDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SagaActionUriDefinition(), (def, key, val) -> {
-            if ("uri".equals(key)) {
-                def.setUri(val);
-                return true;
-            }
-            return false;
-        }, noElementHandler(), noValueHandler());
+        return doParse(new SagaActionUriDefinition(),
+            sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected SagaOptionDefinition doParseSagaOptionDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaOptionDefinition(), (def, key, val) -> {

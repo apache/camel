@@ -28,6 +28,7 @@ import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.DefaultAggregateController;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,14 +39,9 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
     @Test
     public void testForceCompletionOfAll() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myAggregator\"");
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "myAggregator");
         assertTrue(mbeanServer.isRegistered(on));
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(0);
@@ -100,14 +96,9 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
     @Test
     public void testForceCompletionOfGroup() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myAggregator\"");
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "myAggregator");
         assertTrue(mbeanServer.isRegistered(on));
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(0);

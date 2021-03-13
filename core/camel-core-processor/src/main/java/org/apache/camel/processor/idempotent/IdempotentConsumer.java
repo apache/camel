@@ -25,6 +25,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
@@ -139,7 +140,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport
 
             if (!newKey) {
                 // mark the exchange as duplicate
-                exchange.setProperty(Exchange.DUPLICATE_MESSAGE, Boolean.TRUE);
+                exchange.setProperty(ExchangePropertyKey.DUPLICATE_MESSAGE, Boolean.TRUE);
 
                 // we already have this key so its a duplicate message
                 onDuplicate(exchange, messageId);

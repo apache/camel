@@ -34,11 +34,6 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
 
     @Test
     public void testRemoveFoo() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer, "foo");
 
@@ -73,11 +68,6 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
 
     @Test
     public void testRemoveBar() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer, "bar");
 

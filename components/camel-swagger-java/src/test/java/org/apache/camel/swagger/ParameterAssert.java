@@ -33,8 +33,7 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
         super(actual);
     }
 
-    public <T> ParameterAssert hasArrayEnumSpecifiedWith(@SuppressWarnings("unchecked")
-    final T... values) {
+    public <T> ParameterAssert hasArrayEnumSpecifiedWith(@SuppressWarnings("unchecked") final T... values) {
         isSerializable();
 
         final SerializableParameter serializableParameter = (SerializableParameter) actual;

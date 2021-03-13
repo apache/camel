@@ -1,7 +1,7 @@
 [[aws2-athena-component]]
 = AWS 2 Athena Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-athena/src/main/docs/aws2-athena-component.adoc
+:page-source: components/camel-aws/camel-aws2-athena/src/main/docs/aws2-athena-component.adoc
 :docTitle: AWS 2 Athena
 :artifactId: camel-aws2-athena
 :description: Access AWS Athena service using AWS SDK version 2.x.

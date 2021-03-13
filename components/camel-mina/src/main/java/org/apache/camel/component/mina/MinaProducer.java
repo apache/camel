@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultProducer;
@@ -131,7 +132,7 @@ public class MinaProducer extends DefaultProducer {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME,
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
                     IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 

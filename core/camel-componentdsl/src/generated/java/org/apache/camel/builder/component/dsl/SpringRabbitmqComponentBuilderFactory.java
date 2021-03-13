@@ -222,6 +222,22 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * The number of consumers.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
          * To use a custom ErrorHandler for handling exceptions from the message
          * listener (consumer).
          * 
@@ -253,6 +269,37 @@ public interface SpringRabbitmqComponentBuilderFactory {
         default SpringRabbitmqComponentBuilder listenerContainerFactory(
                 org.apache.camel.component.springrabbit.ListenerContainerFactory listenerContainerFactory) {
             doSetProperty("listenerContainerFactory", listenerContainerFactory);
+            return this;
+        }
+        /**
+         * The maximum number of consumers (available only with SMLC).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder maxConcurrentConsumers(
+                java.lang.Integer maxConcurrentConsumers) {
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * The type of the MessageListenerContainer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: DMLC
+         * Group: consumer (advanced)
+         * 
+         * @param messageListenerContainerType the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder messageListenerContainerType(
+                java.lang.String messageListenerContainerType) {
+            doSetProperty("messageListenerContainerType", messageListenerContainerType);
             return this;
         }
         /**
@@ -432,8 +479,11 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "deadLetterExchangeType": ((SpringRabbitMQComponent) component).setDeadLetterExchangeType((java.lang.String) value); return true;
             case "deadLetterQueue": ((SpringRabbitMQComponent) component).setDeadLetterQueue((java.lang.String) value); return true;
             case "deadLetterRoutingKey": ((SpringRabbitMQComponent) component).setDeadLetterRoutingKey((java.lang.String) value); return true;
+            case "concurrentConsumers": ((SpringRabbitMQComponent) component).setConcurrentConsumers((int) value); return true;
             case "errorHandler": ((SpringRabbitMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
             case "listenerContainerFactory": ((SpringRabbitMQComponent) component).setListenerContainerFactory((org.apache.camel.component.springrabbit.ListenerContainerFactory) value); return true;
+            case "maxConcurrentConsumers": ((SpringRabbitMQComponent) component).setMaxConcurrentConsumers((java.lang.Integer) value); return true;
+            case "messageListenerContainerType": ((SpringRabbitMQComponent) component).setMessageListenerContainerType((java.lang.String) value); return true;
             case "prefetchCount": ((SpringRabbitMQComponent) component).setPrefetchCount((int) value); return true;
             case "shutdownTimeout": ((SpringRabbitMQComponent) component).setShutdownTimeout((long) value); return true;
             case "lazyStartProducer": ((SpringRabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;

@@ -21,6 +21,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
@@ -119,10 +120,11 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // the repository is scoped per exchange
-        ClaimCheckRepository repo = exchange.getProperty(Exchange.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
+        ClaimCheckRepository repo
+                = exchange.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
         if (repo == null) {
             repo = new DefaultClaimCheckRepository();
-            exchange.setProperty(Exchange.CLAIM_CHECK_REPOSITORY, repo);
+            exchange.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, repo);
         }
 
         try {

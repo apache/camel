@@ -26,36 +26,46 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NsqLocalContainerService implements NsqService, ContainerService<GenericContainer> {
-    protected static final String CONTAINER_NSQLOOKUPD_IMAGE = "nsqio/nsq:v1.2.0";
-    protected static final String CONTAINER_NSQLOOKUPD_NAME = "nsqlookupd";
+    public static final String CONTAINER_NSQLOOKUPD_IMAGE = "nsqio/nsq:v1.2.0";
+    public static final String CONTAINER_NSQD_IMAGE = "nsqio/nsq:v1.2.0";
 
-    protected static final String CONTAINER_NSQD_IMAGE = "nsqio/nsq:v1.2.0";
+    protected static final String CONTAINER_NSQLOOKUPD_NAME = "nsqlookupd";
     protected static final String CONTAINER_NSQD_NAME = "nsqd";
 
     private static final Logger LOG = LoggerFactory.getLogger(NsqLocalContainerService.class);
 
-    private GenericContainer nsqContainer;
-    private GenericContainer nsqLookupContainer;
-    private Network network = Network.newNetwork();
+    private final GenericContainer nsqContainer;
+    private final GenericContainer nsqLookupContainer;
 
     public NsqLocalContainerService() {
-        initContainers();
+        Network network = Network.newNetwork();
+        nsqLookupContainer = initLookupContainer(CONTAINER_NSQLOOKUPD_IMAGE, network, CONTAINER_NSQLOOKUPD_NAME);
+        nsqContainer = initNsqContainer(CONTAINER_NSQD_IMAGE, network, CONTAINER_NSQD_NAME, CONTAINER_NSQLOOKUPD_NAME);
     }
 
-    protected void initContainers() {
-        nsqLookupContainer = new FixedHostPortGenericContainer<>(CONTAINER_NSQLOOKUPD_IMAGE)
-                .withFixedExposedPort(4160, 4160)
-                .withFixedExposedPort(4161, 4161)
-                .withNetworkAliases(CONTAINER_NSQLOOKUPD_NAME)
-                .withCommand("/nsqlookupd").withNetwork(network)
-                .waitingFor(Wait.forLogMessage(".*TCP: listening on.*", 1));
+    public NsqLocalContainerService(GenericContainer nsqContainer, GenericContainer nsqLookupContainer) {
+        this.nsqContainer = nsqContainer;
+        this.nsqLookupContainer = nsqLookupContainer;
+    }
 
-        nsqContainer = new FixedHostPortGenericContainer<>(CONTAINER_NSQD_IMAGE)
+    protected GenericContainer initNsqContainer(String imageName, Network network, String networkAlias, String lookup) {
+        String cmd = String.format("/nsqd --broadcast-address=%s --lookupd-tcp-address=%s:4160", "localhost", lookup);
+
+        return new FixedHostPortGenericContainer<>(imageName)
                 .withFixedExposedPort(4150, 4150)
                 .withFixedExposedPort(4151, 4151)
-                .withNetworkAliases(CONTAINER_NSQD_NAME)
-                .withCommand(String.format("/nsqd --broadcast-address=%s --lookupd-tcp-address=%s:4160", "localhost",
-                        CONTAINER_NSQLOOKUPD_NAME))
+                .withNetworkAliases(networkAlias)
+                .withCommand(cmd)
+                .withNetwork(network)
+                .waitingFor(Wait.forLogMessage(".*TCP: listening on.*", 1));
+    }
+
+    protected GenericContainer initLookupContainer(String imageName, Network network, String networkAlias) {
+        return new FixedHostPortGenericContainer<>(imageName)
+                .withFixedExposedPort(4160, 4160)
+                .withFixedExposedPort(4161, 4161)
+                .withNetworkAliases(networkAlias)
+                .withCommand("/nsqlookupd")
                 .withNetwork(network)
                 .waitingFor(Wait.forLogMessage(".*TCP: listening on.*", 1));
     }

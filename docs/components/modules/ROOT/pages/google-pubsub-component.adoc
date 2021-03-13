@@ -1,7 +1,7 @@
 [[google-pubsub-component]]
 = Google Pubsub Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-pubsub/src/main/docs/google-pubsub-component.adoc
+:page-source: components/camel-google/camel-google-pubsub/src/main/docs/google-pubsub-component.adoc
 :docTitle: Google Pubsub
 :artifactId: camel-google-pubsub
 :description: Send and receive messages to/from Google Cloud Platform PubSub Service.
@@ -46,7 +46,7 @@ Destination Name can be either a topic or a subscription name.
 == Options
 
 // component options: START
-The Google Pubsub component supports 7 options, which are listed below.
+The Google Pubsub component supports 8 options, which are listed below.
 
 
 
@@ -54,6 +54,7 @@ The Google Pubsub component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *endpoint* (common) | Endpoint to use with local Pub/Sub emulator. |  | String
+| *serviceAccountKey* (common) | *Required* The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *publisherCacheSize* (producer) | Maximum number of producers to cache. This could be increased if you have producers for lots of different topics. |  | int
@@ -78,12 +79,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *projectId* | *Required* Project Id |  | String
-| *destinationName* | *Required* Destination Name |  | String
+| *projectId* | *Required* The Google Cloud PubSub Project Id |  | String
+| *destinationName* | *Required* The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name. |  | String
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,6 +94,7 @@ with the following path and query parameters:
 | *concurrentConsumers* (common) | The number of parallel streams consuming from the subscription | 1 | Integer
 | *loggerId* (common) | Logger ID to use when a match to the parent route required |  | String
 | *maxMessagesPerPoll* (common) | The max number of messages to receive from the server in a single API call | 1 | Integer
+| *serviceAccountKey* (common) | *Required* The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *synchronousPull* (common) | Synchronously pull batches of messages | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -184,7 +186,7 @@ It is up for the route to convert/unmarshall the contents.
 
 == Authentication Configuration
 
-The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+The location of the default credentials file is configurable via the serviceAccountKey parameter.
 
 == Rollback and Redelivery
 

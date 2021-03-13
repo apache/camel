@@ -1,7 +1,7 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-google-mail/src/main/docs/google-mail-stream-component.adoc
+:page-source: components/camel-google/camel-google-mail/src/main/docs/google-mail-stream-component.adoc
 :docTitle: Google Mail Stream
 :artifactId: camel-google-mail
 :description: Poll for incoming messages in Google Mail.
@@ -67,7 +67,7 @@ The Google Mail Stream component supports 13 options, which are listed below.
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clientId* (consumer) | Client ID of the mail application |  | String
 | *labels* (consumer) | Comma separated list of labels to take into account |  | String
-| *markAsRead* (consumer) | Mark the message as read once it has been consumed | false | boolean
+| *markAsRead* (consumer) | Mark the message as read once it has been consumed | true | boolean
 | *maxResults* (consumer) | Max results to be returned | 10 | long
 | *query* (consumer) | The query to execute on gmail box | is:unread | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean

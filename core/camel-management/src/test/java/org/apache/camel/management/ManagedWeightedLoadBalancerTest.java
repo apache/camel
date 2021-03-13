@@ -24,17 +24,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
 
     @Test
     public void testManageWeightedLoadBalancer() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedMessageCount(1);
 
@@ -51,14 +47,14 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mysend\"");
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "mysend");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", camelId);
+        assertEquals(context.getManagementName(), camelId);
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);

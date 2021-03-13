@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,7 +26,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,19 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/messages/input");
-        super.setUp();
-    }
-
     @Test
     public void testParis() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/data/messages/input/", "Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri(), "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
@@ -63,7 +56,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("London");
 
-        template.sendBodyAndHeader("file:target/data/messages/input/", "London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(fileUri(), "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
@@ -78,7 +71,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Dublin");
 
-        template.sendBodyAndHeader("file:target/data/messages/input/", "Dublin", Exchange.FILE_NAME, "dublin.txt");
+        template.sendBodyAndHeader(fileUri(), "Dublin", Exchange.FILE_NAME, "dublin.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
@@ -93,7 +86,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Madrid");
 
-        template.sendBodyAndHeader("file:target/data/messages/input/", "Madrid", Exchange.FILE_NAME, "madrid.txt");
+        template.sendBodyAndHeader(fileUri(), "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
@@ -102,16 +95,15 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertFiles("madrid.txt", true);
     }
 
-    private static void assertFiles(String filename, boolean deleted) throws InterruptedException {
+    private void assertFiles(String filename, boolean deleted) throws InterruptedException {
         // file should be deleted as delete=true in parameter in the route below
-        File file = new File("target/data/messages/input/" + filename);
-        Object o2 = !file.exists();
-        assertEquals(deleted, o2, "File " + filename + " should be deleted: " + deleted);
+        Path file = testFile(filename);
+        assertEquals(deleted, !Files.exists(file), "File " + filename + " should be deleted: " + deleted);
 
         // and no lock files
         String lock = filename + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-        file = new File("target/data/messages/input/" + lock);
-        assertFalse(file.exists(), "File " + lock + " should be deleted");
+        file = testFile(lock);
+        assertFalse(Files.exists(file), "File " + lock + " should be deleted");
     }
 
     @Override
@@ -130,7 +122,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/data/messages/input/?initialDelay=0&delay=10&delete=true").process(new MyValidatorProcessor())
+                from(fileUri("?initialDelay=0&delay=10&delete=true")).process(new MyValidatorProcessor())
                         .to("mock:valid");
             }
         };

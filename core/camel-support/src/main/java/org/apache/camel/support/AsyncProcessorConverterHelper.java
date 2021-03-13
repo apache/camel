@@ -103,6 +103,16 @@ public final class AsyncProcessorConverterHelper {
         }
 
         @Override
+        public void build() {
+            ServiceHelper.buildService(processor);
+        }
+
+        @Override
+        public void init() {
+            ServiceHelper.initService(processor);
+        }
+
+        @Override
         public void start() {
             ServiceHelper.startService(processor);
         }

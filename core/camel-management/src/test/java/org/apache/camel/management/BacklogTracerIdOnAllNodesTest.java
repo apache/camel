@@ -34,6 +34,7 @@ import org.apache.camel.model.WhenDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
@@ -41,13 +42,9 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogTracerEventMessage() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on
+                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -76,25 +73,27 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         assertNotNull(route);
 
         ChoiceDefinition choice = (ChoiceDefinition) route.getOutputs().get(0);
-        assertEquals("choice1", choice.getId());
+        assertNotNull(choice.getId());
 
         WhenDefinition when = (WhenDefinition) choice.getOutputs().get(0);
-        assertEquals("when1", when.getId());
+        assertNotNull(when.getId());
 
         LogDefinition log1 = (LogDefinition) when.getOutputs().get(0);
-        assertEquals("log1", log1.getId());
+        assertNotNull(log1.getId());
 
         ToDefinition to1 = (ToDefinition) when.getOutputs().get(1);
         assertEquals("camel", to1.getId());
 
         OtherwiseDefinition other = (OtherwiseDefinition) choice.getOutputs().get(1);
-        assertEquals("otherwise1", other.getId());
+        assertNotNull(other.getId());
 
         LogDefinition log2 = (LogDefinition) other.getOutputs().get(0);
-        assertEquals("log2", log2.getId());
+        assertNotNull(log2.getId());
+        assertNotEquals(log1.getId(), log2.getId());
 
         ToDefinition to2 = (ToDefinition) other.getOutputs().get(1);
-        assertEquals("to1", to2.getId());
+        assertNotNull(to2.getId());
+        assertNotEquals(to1.getId(), to2.getId());
 
         ToDefinition to3 = (ToDefinition) other.getOutputs().get(2);
         assertEquals("foo", to3.getId());
@@ -103,13 +102,13 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         assertEquals("end", to4.getId());
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "to1" }, new String[] { "java.lang.String" });
+                new Object[] { to2.getId() }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(1, events.size());
 
         BacklogTracerEventMessage event1 = events.get(0);
-        assertEquals("to1", event1.getToNode());
+        assertEquals(to2.getId(), event1.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",

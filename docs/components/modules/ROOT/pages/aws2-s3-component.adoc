@@ -1,7 +1,7 @@
 [[aws2-s3-component]]
 = AWS 2 S3 Storage Service Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-s3/src/main/docs/aws2-s3-component.adoc
+:page-source: components/camel-aws/camel-aws2-s3/src/main/docs/aws2-s3-component.adoc
 :docTitle: AWS 2 S3 Storage Service
 :artifactId: camel-aws2-s3
 :description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
@@ -58,7 +58,7 @@ The AWS 2 S3 Storage Service component supports 43 options, which are listed bel
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | *Autowired* Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | S3Client
 | *amazonS3Presigner* (common) | *Autowired* An S3 Presigner for Request, used mainly in createDownloadLink operation |  | S3Presigner
-| *autoCreateBucket* (common) | Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and it will create the destinationBucket if it doesn't exist already. | true | boolean
+| *autoCreateBucket* (common) | Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and it will create the destinationBucket if it doesn't exist already. | false | boolean
 | *configuration* (common) | The component configuration |  | AWS2S3Configuration
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (common) | If we want to use a POJO request as body or not | false | boolean
@@ -139,7 +139,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | *Autowired* Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | S3Client
 | *amazonS3Presigner* (common) | *Autowired* An S3 Presigner for Request, used mainly in createDownloadLink operation |  | S3Presigner
-| *autoCreateBucket* (common) | Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and it will create the destinationBucket if it doesn't exist already. | true | boolean
+| *autoCreateBucket* (common) | Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and it will create the destinationBucket if it doesn't exist already. | false | boolean
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (common) | If we want to use a POJO request as body or not | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String

@@ -25,11 +25,6 @@ public class SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest
         extends ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest.xml");

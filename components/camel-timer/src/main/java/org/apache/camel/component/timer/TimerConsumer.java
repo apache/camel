@@ -204,20 +204,9 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         }
 
         if (!endpoint.isSynchronous()) {
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean cbDoneSync) {
-                    // handle any thrown exception
-                    if (exchange.getException() != null) {
-                        TimerConsumer.this.getExceptionHandler().handleException("Error processing exchange", exchange,
-                                exchange.getException());
-                    }
-                    // sync wil release outside this callback
-                    if (!cbDoneSync) {
-                        TimerConsumer.this.releaseExchange(exchange, false);
-                    }
-                }
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, false);
+            getAsyncProcessor().process(exchange, cb);
         } else {
             try {
                 getProcessor().process(exchange);

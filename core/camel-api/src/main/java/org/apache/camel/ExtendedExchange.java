@@ -171,4 +171,23 @@ public interface ExtendedExchange extends Exchange {
      */
     void setErrorHandlerHandled(Boolean errorHandlerHandled);
 
+    /**
+     * To copy the internal properties from this exchange to the target exchange
+     * <p/>
+     * This method is only intended for Camel internally.
+     *
+     * @param target the target exchange
+     */
+    void copyInternalProperties(Exchange target);
+
+    /**
+     * Gets the internal properties from this exchange. The known set of internal keys is defined in
+     * {@link ExchangePropertyKey}.
+     * <p/>
+     * This method is only intended for Camel internally.
+     *
+     * @return all the internal properties in a Map
+     */
+    Map<String, Object> getInternalProperties();
+
 }

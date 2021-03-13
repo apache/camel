@@ -35,11 +35,6 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
     @Test
     public void testManageEndpointRegistry() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");

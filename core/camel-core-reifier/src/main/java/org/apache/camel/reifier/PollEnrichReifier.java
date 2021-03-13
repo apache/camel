@@ -39,7 +39,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
     public Processor createProcessor() throws Exception {
 
         // if no timeout then we should block, and there use a negative timeout
-        long time = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : -1;
+        long time = parseDuration(definition.getTimeout(), -1);
         boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
 
         PollEnricher enricher;
@@ -62,8 +62,9 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (definition.getAggregateOnException() != null) {
             enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
-        if (definition.getCacheSize() != null) {
-            enricher.setCacheSize(parseInt(definition.getCacheSize()));
+        Integer num = parseInt(definition.getCacheSize());
+        if (num != null) {
+            enricher.setCacheSize(num);
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
@@ -72,8 +73,9 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+        String ref = parseString(definition.getAggregationStrategyRef());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {

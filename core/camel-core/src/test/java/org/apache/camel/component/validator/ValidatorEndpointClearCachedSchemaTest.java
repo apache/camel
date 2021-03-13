@@ -27,7 +27,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultResourceLoader;
+import org.apache.camel.urlhandler.pd.Handler;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,10 +73,9 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        String handlerPackageSystemProp = "java.protocol.handler.pkgs";
-        String customUrlHandlerPackage = "org.apache.camel.urlhandler";
-        registerSystemProperty(handlerPackageSystemProp, customUrlHandlerPackage, "|");
-        return new DefaultCamelContext();
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind(DefaultResourceLoader.RESOURCE_LOADER_KEY_PREFIX + "pd", new Handler());
+        return context;
     }
 
     @Override

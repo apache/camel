@@ -95,7 +95,6 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     public void testLuceneIndexProducer() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
 
-        context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("lucene:stdQuotesIndex:insert?analyzer=#stdAnalyzer&indexDir=#std&srcDir=#load_dir")
@@ -114,14 +113,12 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
 
         mockEndpoint.assertIsSatisfied();
         LOG.debug("------------Completed LuceneIndexProducer Test---------------");
-        context.stop();
     }
 
     @Test
     public void testLucenePhraseQueryProducer() throws Exception {
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
 
-        context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
@@ -152,14 +149,12 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         sendQuery();
         mockSearchEndpoint.assertIsSatisfied();
         LOG.debug("------------Completed LuceneQueryProducer Phrase Test---------------");
-        context.stop();
     }
 
     @Test
     public void testLuceneWildcardQueryProducer() throws Exception {
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
 
-        context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
@@ -189,13 +184,11 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         sendQuery();
         mockSearchEndpoint.assertIsSatisfied();
         LOG.debug("------------Completed LuceneQueryProducer Wildcard Test---------------");
-        context.stop();
     }
 
     @Test
     public void testReturnLuceneDocsQueryProducer() throws Exception {
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
-        context.stop();
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
@@ -238,6 +231,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         mockSearchEndpoint.assertIsSatisfied();
         Map<String, String> errorMap = mockSearchEndpoint.getCamelContext().getGlobalOptions();
         LOG.debug("------------Completed LuceneQueryProducer Wildcard with Return Lucene Docs Test---------------");
+
         context.stop();
         assertTrue(errorMap.get("NO_LUCENE_DOCS_ERROR") == null);
     }

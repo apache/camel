@@ -40,9 +40,9 @@ public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSuppor
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
-        mock.expectedFileExists(service.getFtpRootDir() + "/movefile/.done/hello.txt");
-        mock.expectedFileExists(service.getFtpRootDir() + "/movefile/.done/bye.txt");
-        mock.expectedFileExists(service.getFtpRootDir() + "/movefile/.done/goodday.txt");
+        mock.expectedFileExists(ftpFile("movefile/.done/hello.txt"));
+        mock.expectedFileExists(ftpFile("movefile/.done/bye.txt"));
+        mock.expectedFileExists(ftpFile("movefile/.done/goodday.txt"));
 
         mock.assertIsSatisfied();
     }

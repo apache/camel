@@ -80,6 +80,7 @@
         <module>components</module>
         <module>archetypes</module>
         <module>catalog</module>
+        <module>dsl</module>
         <module>tests</module>
         <module>docs</module>
     </modules>
@@ -215,7 +216,7 @@
                       <requireMavenVersion>
                         <version>3.5.0</version>
                       </requireMavenVersion>
-                    </rules>    
+                    </rules>
                   </configuration>
                 </execution>
               </executions>
@@ -411,6 +412,8 @@
                                 <goal>flatten</goal>
                             </goals>
                             <configuration>
+                                <outputDirectory>${project.build.directory}</outputDirectory>
+                                <flattenedPomFilename>${project.artifactId}-${project.version}.pom</flattenedPomFilename>
                                 <updatePomFile>true</updatePomFile>
                                 <pomElements>
                                     <build>keep</build>

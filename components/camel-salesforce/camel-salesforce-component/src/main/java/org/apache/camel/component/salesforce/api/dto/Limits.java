@@ -104,9 +104,7 @@ public final class Limits implements Serializable {
         private final Map<String, Usage> perApplication = new HashMap<>();
 
         @JsonCreator
-        Usage(@JsonProperty("Max")
-        final int max, @JsonProperty("Remaining")
-        final int remaining) {
+        Usage(@JsonProperty("Max") final int max, @JsonProperty("Remaining") final int remaining) {
             this.max = max;
             this.remaining = remaining;
         }

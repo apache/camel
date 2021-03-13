@@ -17,102 +17,97 @@
 package org.apache.camel.component.slack;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.slack.api.Slack;
+import com.slack.api.SlackConfig;
+import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.response.conversations.ConversationsHistoryResponse;
+import com.slack.api.methods.response.conversations.ConversationsListResponse;
+import com.slack.api.model.Conversation;
+import com.slack.api.model.Message;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.slack.helper.SlackMessage;
+import org.apache.camel.component.slack.helper.SlackHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.json.DeserializationException;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-
-import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
-    private SlackEndpoint slackEndpoint;
+    private static final int CONVERSATIONS_LIST_LIMIT = 200;
+    private final SlackEndpoint slackEndpoint;
+    private Slack slack;
     private String timestamp;
     private String channelId;
-    private CloseableHttpClient client;
 
-    public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, DeserializationException {
+    public SlackConsumer(SlackEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.slackEndpoint = endpoint;
     }
 
     @Override
     protected void doStart() throws Exception {
-        this.client = HttpClientBuilder.create().useSystemProperties().build();
+        SlackConfig config = SlackHelper.createSlackConfig(slackEndpoint.getServerUrl());
+        CustomSlackHttpClient client = new CustomSlackHttpClient();
+        this.slack = Slack.getInstance(config, client);
+        this.channelId = getChannelId(slackEndpoint.getChannel(), null);
         super.doStart();
-        this.channelId = getChannelId(slackEndpoint.getChannel());
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (client != null) {
-            client.close();
+        if (slack != null) {
+            slack.close();
         }
     }
 
     @Override
     protected int poll() throws Exception {
-        Queue<Exchange> exchanges;
+        // Maximum limit is 1000. Slack recommends no more than 200 results at a time.
+        // https://api.slack.com/methods/conversations.history
+        // We set the limit to 1 the first call to set the timestamp of the last message of the history
+        ConversationsHistoryResponse response = slack.methods(slackEndpoint.getToken()).conversationsHistory(req -> req
+                .channel(channelId)
+                .oldest(timestamp)
+                .limit(timestamp != null ? Integer.parseInt(slackEndpoint.getMaxResults()) : 1));
 
-        HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/conversations.history");
-        List<BasicNameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair(SlackConstants.SLACK_CHANNEL_FIELD, channelId));
-        if (ObjectHelper.isNotEmpty(timestamp)) {
-            params.add(new BasicNameValuePair("oldest", timestamp));
+        if (!response.isOk()) {
+            throw new RuntimeCamelException("API request conversations.history to Slack failed: " + response);
         }
-        params.add(new BasicNameValuePair("count", slackEndpoint.getMaxResults()));
-        params.add(new BasicNameValuePair("token", slackEndpoint.getToken()));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
 
-        HttpResponse response = client.execute(httpPost);
-
-        String jsonString = readResponse(response);
-
-        JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
-
-        checkSlackReply(c);
-
-        JsonArray list = c.getCollection("messages");
-        exchanges = createExchanges(list);
+        Queue<Exchange> exchanges = createExchanges(response.getMessages());
         return processBatch(CastUtils.cast(exchanges));
     }
 
-    private Queue<Exchange> createExchanges(List<Object> list) {
+    private Queue<Exchange> createExchanges(final List<Message> list) {
         Queue<Exchange> answer = new LinkedList<>();
         if (ObjectHelper.isNotEmpty(list)) {
-            Iterator it = list.iterator();
-            int i = 0;
-            while (it.hasNext()) {
-                Object object = it.next();
-                JsonObject singleMess = (JsonObject) object;
-                if (i == 0) {
-                    timestamp = (String) singleMess.get("ts");
+            if (slackEndpoint.isNaturalOrder()) {
+                for (int i = list.size() - 1; i >= 0; i--) {
+                    Message message = list.get(i);
+                    if (i == 0) {
+                        timestamp = message.getTs();
+                    }
+                    Exchange exchange = createExchange(message);
+                    answer.add(exchange);
                 }
-                i++;
-                Exchange exchange = createExchange(singleMess);
-                answer.add(exchange);
+            } else {
+                for (int i = 0; i < list.size(); i++) {
+                    Message message = list.get(i);
+                    if (i == 0) {
+                        timestamp = message.getTs();
+                    }
+                    Exchange exchange = createExchange(message);
+                    answer.add(exchange);
+                }
             }
         }
         return answer;
@@ -126,83 +121,51 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, doneSync -> {
-                // noop
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
 
         return total;
     }
 
-    private String getChannelId(String channel) throws IOException, DeserializationException {
-        HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/conversations.list");
+    private String getChannelId(final String channel, final String cursor) {
+        try {
+            // Maximum limit is 1000. Slack recommends no more than 200 results at a time.
+            // https://api.slack.com/methods/conversations.list
+            ConversationsListResponse response = slack.methods(slackEndpoint.getToken()).conversationsList(req -> req
+                    .types(Collections.singletonList(slackEndpoint.getConversationType()))
+                    .cursor(cursor)
+                    .limit(CONVERSATIONS_LIST_LIMIT));
 
-        List<BasicNameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("token", slackEndpoint.getToken()));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-
-        HttpResponse response = client.execute(httpPost);
-
-        String jsonString = readResponse(response);
-        JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
-
-        checkSlackReply(c);
-
-        Collection<JsonObject> channels = c.getCollection("channels");
-        if (channels == null) {
-            throw new RuntimeCamelException("The response was successful but no channel list was provided");
-        }
-
-        for (JsonObject singleChannel : channels) {
-            if (singleChannel.get("name") != null) {
-                if (singleChannel.get("name").equals(channel)) {
-                    if (singleChannel.get("id") != null) {
-                        return (String) singleChannel.get("id");
-                    }
-                }
-            }
-        }
-
-        return jsonString;
-    }
-
-    private void checkSlackReply(JsonObject c) {
-        boolean okStatus = c.getBoolean("ok");
-
-        if (!okStatus) {
-            String errorMessage = c.getString("error");
-
-            if (errorMessage == null || errorMessage.isEmpty()) {
-                errorMessage = "the slack server did not provide error details";
+            if (!response.isOk()) {
+                throw new RuntimeCamelException("API request conversations.list to Slack failed: " + response);
             }
 
-            throw new RuntimeCamelException(String.format("API request to Slack failed: %s", errorMessage));
+            return response.getChannels().stream()
+                    .filter(it -> it.getName().equals(channel))
+                    .map(Conversation::getId)
+                    .findFirst().orElseGet(() -> {
+                        if (ObjectHelper.isEmpty(response.getResponseMetadata().getNextCursor())) {
+                            throw new RuntimeCamelException(String.format("Channel %s not found", channel));
+                        }
+                        return getChannelId(channel, response.getResponseMetadata().getNextCursor());
+                    });
+        } catch (IOException | SlackApiException e) {
+            throw new RuntimeCamelException("API request conversations.list to Slack failed", e);
         }
     }
 
-    public Exchange createExchange(JsonObject object) {
+    private Exchange createExchange(Message object) {
         Exchange exchange = createExchange(true);
-        SlackMessage slackMessage = new SlackMessage();
-        String text = object.getString(SlackConstants.SLACK_TEXT_FIELD);
-        String user = object.getString("user");
-        slackMessage.setText(text);
-        slackMessage.setUser(user);
-        if (ObjectHelper.isNotEmpty(object.get("icons"))) {
-            JsonObject icons = object.getMap("icons");
-            if (ObjectHelper.isNotEmpty(icons.get("emoji"))) {
-                slackMessage.setIconEmoji(icons.getString("emoji"));
-            }
-        }
-        Message message = exchange.getIn();
-        message.setBody(slackMessage);
+        exchange.getIn().setBody(object);
         return exchange;
     }
-
 }

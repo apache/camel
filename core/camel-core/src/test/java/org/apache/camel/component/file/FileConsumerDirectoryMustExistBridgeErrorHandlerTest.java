@@ -18,17 +18,9 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerDirectoryMustExistBridgeErrorHandlerTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/doesnotexists");
-        super.setUp();
-    }
 
     @Test
     public void testBridgeErrorHandler() throws Exception {
@@ -47,9 +39,10 @@ public class FileConsumerDirectoryMustExistBridgeErrorHandlerTest extends Contex
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:target/doesnotexists?initialDelay=1&delay=1"
-                     + "&autoCreate=false&directoryMustExist=true&bridgeErrorHandler=true").routeId("foo").noAutoStartup()
-                             .to("mock:result");
+                from(fileUri("?initialDelay=1&delay=1"
+                             + "&autoCreate=false&directoryMustExist=true&bridgeErrorHandler=true")).routeId("foo")
+                                     .noAutoStartup()
+                                     .to("mock:result");
             }
         };
     }

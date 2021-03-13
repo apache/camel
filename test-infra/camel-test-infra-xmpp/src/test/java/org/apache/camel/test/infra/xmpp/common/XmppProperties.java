@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.xmpp.common;
 
 public final class XmppProperties {
+    public static final String XMPP_CONTAINER = "xmpp.container";
     public static final String XMPP_URL = "xmpp.url";
     public static final String XMPP_HOST = "xmpp.host";
     public static final String XMPP_PORT = "xmpp.port";

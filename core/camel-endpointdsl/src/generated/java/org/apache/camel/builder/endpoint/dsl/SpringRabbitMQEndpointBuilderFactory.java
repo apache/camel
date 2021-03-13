@@ -568,6 +568,36 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return (SpringRabbitMQEndpointConsumerBuilder) this;
         }
         /**
+         * The number of consumers.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * The number of consumers.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder concurrentConsumers(
+                String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
@@ -635,6 +665,85 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         default AdvancedSpringRabbitMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * The maximum number of consumers (available only with SMLC).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder maxConcurrentConsumers(
+                Integer maxConcurrentConsumers) {
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * The maximum number of consumers (available only with SMLC).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder maxConcurrentConsumers(
+                String maxConcurrentConsumers) {
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * The type of the MessageListenerContainer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: DMLC
+         * Group: consumer (advanced)
+         * 
+         * @param messageListenerContainerType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder messageListenerContainerType(
+                String messageListenerContainerType) {
+            doSetProperty("messageListenerContainerType", messageListenerContainerType);
+            return this;
+        }
+        /**
+         * Tell the broker how many messages to send in a single request. Often
+         * this can be set quite high to improve throughput.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
+                int prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * Tell the broker how many messages to send in a single request. Often
+         * this can be set quite high to improve throughput.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder prefetchCount(
+                String prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
         /**

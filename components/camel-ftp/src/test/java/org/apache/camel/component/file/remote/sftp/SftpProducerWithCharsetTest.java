@@ -52,7 +52,7 @@ public class SftpProducerWithCharsetTest extends SftpServerTestSupport {
     }
 
     private String getSftpUri() {
-        return "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&password=admin&charset="
+        return "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&charset="
                + SAMPLE_FILE_CHARSET;
     }
 }

@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -165,7 +166,7 @@ public class StreamProducer extends DefaultProducer {
     }
 
     private Boolean isDone(Exchange exchange) {
-        return exchange != null && exchange.getProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
+        return exchange != null && exchange.getProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
     }
 
     private void closeStream(Exchange exchange, boolean force) throws Exception {

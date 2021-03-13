@@ -49,6 +49,7 @@ import org.apache.camel.util.URISupport;
  */
 @org.apache.camel.spi.annotations.Language("bean")
 public class BeanLanguage extends LanguageSupport implements PropertyConfigurer, StaticService {
+    public static final String LANGUAGE = "bean";
 
     private volatile BeanComponent beanComponent;
     private volatile ParameterMappingStrategy parameterMappingStrategy;

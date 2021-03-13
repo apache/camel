@@ -16,8 +16,9 @@
  */
 package org.apache.camel.spring.processor.idempotent;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -37,27 +38,20 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/idempotent/FileConsumerIdempotentLoadStoreTest.xml");
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/fileidempotent");
-        createDirectory("target/fileidempotent");
-
-        File file = new File("target/fileidempotent/.filestore.dat");
-        FileOutputStream fos = new FileOutputStream(file);
-
-        // insert existing name to the file repo, so we should skip this file
-        String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
-        fos.write(name.getBytes());
-        fos.write(LS.getBytes());
-
-        fos.close();
-
         super.setUp();
+
+        Path file = testFile(".filestore.dat");
+        try (Writer w = Files.newBufferedWriter(file)) {
+            w.write(testFile("report.txt").toAbsolutePath().toString() + LS);
+        }
 
         // add a file to the repo
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
@@ -66,8 +60,8 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
     @Test
     public void testIdempotentLoad() throws Exception {
         // send two files (report.txt exists already in idempotent repo)
-        template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/fileidempotent/", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "report2.txt");
 
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -77,10 +71,10 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         // wait for the exchange to be done, as it only append to idempotent repo after success
         oneExchangeDone.matchesMockWaitTime();
 
-        String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
+        String name = FileUtil.normalizePath(testFile("report.txt").toAbsolutePath().toString());
         assertTrue(repo.contains(name), "Should contain file: " + name);
 
-        String name2 = FileUtil.normalizePath(new File("target/fileidempotent/report2.txt").getAbsolutePath());
+        String name2 = FileUtil.normalizePath(testFile("report2.txt").toAbsolutePath().toString());
         assertTrue(repo.contains(name2), "Should contain file: " + name2);
     }
 

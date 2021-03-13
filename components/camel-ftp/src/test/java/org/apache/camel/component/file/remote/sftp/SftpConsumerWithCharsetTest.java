@@ -72,7 +72,7 @@ public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&charset="
                      + SAMPLE_FILE_CHARSET).routeId("foo").noAutoStartup()
                              .to("mock:result");

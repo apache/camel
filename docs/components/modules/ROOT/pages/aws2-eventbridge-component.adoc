@@ -1,7 +1,7 @@
 [[aws2-eventbridge-component]]
 = AWS 2 Eventbridge Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-eventbridge/src/main/docs/aws2-eventbridge-component.adoc
+:page-source: components/camel-aws/camel-aws2-eventbridge/src/main/docs/aws2-eventbridge-component.adoc
 :docTitle: AWS 2 Eventbridge
 :artifactId: camel-aws2-eventbridge
 :description: Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
@@ -49,7 +49,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Eventbridge component supports 14 options, which are listed below.
+The AWS 2 Eventbridge component supports 16 options, which are listed below.
 
 
 
@@ -61,12 +61,14 @@ The AWS 2 Eventbridge component supports 14 options, which are listed below.
 | *eventPatternFile* (producer) | EventPattern File |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. There are 10 enums and the value can be one of: putRule, putTargets, removeTargets, deleteRule, enableRule, disableRule, describeRule, listRules, listTargetsByRule, listRuleNamesByTarget | putRule | EventbridgeOperations
+| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the Eventbridge client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Eventbridge client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Eventbridge client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -95,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,12 +107,14 @@ with the following path and query parameters:
 | *eventPatternFile* (producer) | EventPattern File |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. There are 10 enums and the value can be one of: putRule, putTargets, removeTargets, deleteRule, enableRule, disableRule, describeRule, listRules, listTargetsByRule, listRuleNamesByTarget | putRule | EventbridgeOperations
+| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the Eventbridge client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Eventbridge client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Eventbridge client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

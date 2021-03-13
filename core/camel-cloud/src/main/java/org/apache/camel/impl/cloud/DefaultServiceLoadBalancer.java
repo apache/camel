@@ -111,15 +111,13 @@ public class DefaultServiceLoadBalancer
                 serviceFilter.getClass(),
                 serviceChooser.getClass());
 
-        ServiceHelper.startService(serviceChooser);
-        ServiceHelper.startService(serviceDiscovery);
+        ServiceHelper.startService(serviceChooser, serviceDiscovery);
     }
 
     @Override
     protected void doStop() throws Exception {
         // Stop services if needed
-        ServiceHelper.stopService(serviceDiscovery);
-        ServiceHelper.stopService(serviceChooser);
+        ServiceHelper.stopService(serviceDiscovery, serviceChooser);
     }
 
     // *************************************

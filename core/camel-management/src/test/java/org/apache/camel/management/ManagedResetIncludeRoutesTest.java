@@ -34,11 +34,6 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
 
     @Test
     public void testReset() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -72,7 +67,7 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
         }
 
         // reset which should reset all routes also
-        ObjectName ctx = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName ctx = getContextObjectName();
         mbeanServer.invoke(ctx, "reset", new Object[] { true }, new String[] { "boolean" });
 
         // should be 0 on the route

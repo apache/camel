@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,8 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
-    private final String fileUrl
-            = "file://target/data/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
     private final Set<String> names = new TreeSet<>();
 
     @Override
@@ -48,26 +45,19 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         return jndi;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/directoryfilter");
-        super.setUp();
-    }
-
     @Test
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir/", "This is a file to be filtered",
+        template.sendBodyAndHeader(fileUri("skipDir/"), "This is a file to be filtered",
                 Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir2/", "This is a file to be filtered",
+        template.sendBodyAndHeader(fileUri("skipDir2/"), "This is a file to be filtered",
                 Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/data/directoryfilter/okDir/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("okDir/"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
 
@@ -88,7 +78,9 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?recursive=true&filter=#myFilter&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

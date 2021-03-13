@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpringJmxRecipientListTest extends SpringTestSupport {
@@ -60,21 +62,21 @@ public class SpringJmxRecipientListTest extends SpringTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // this endpoint is part of the route and should be registered
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"direct://a\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "direct://a");
         assertTrue(mbeanServer.isRegistered(name), "Should be registered");
 
         // endpoints added after routes has been started is by default not registered
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://x\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "mock://x");
         assertFalse(mbeanServer.isRegistered(name), "Should not be registered");
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://y\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "mock://y");
         assertFalse(mbeanServer.isRegistered(name), "Should not be registered");
 
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://z\"");
+        name = getCamelObjectName(TYPE_ENDPOINT, "mock://z");
         assertFalse(mbeanServer.isRegistered(name), "Should not be registered");
 
         // however components is always registered
-        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"mock\"");
+        name = getCamelObjectName(TYPE_COMPONENT, "mock");
         assertTrue(mbeanServer.isRegistered(name), "Should be registered");
     }
 

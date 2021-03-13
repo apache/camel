@@ -26,7 +26,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
@@ -34,7 +33,7 @@ import org.reactivestreams.Publisher;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BackpressurePublisherRoutePolicyTest extends CamelTestSupport {
+public class BackpressurePublisherRoutePolicyTest extends BaseReactiveTest {
 
     @Test
     public void testThatBackpressureCausesTemporaryRouteStop() throws Exception {

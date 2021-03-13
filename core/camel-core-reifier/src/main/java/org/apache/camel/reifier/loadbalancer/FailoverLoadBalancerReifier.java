@@ -57,8 +57,9 @@ public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoa
             answer = new FailOverLoadBalancer(classes);
         }
 
-        if (definition.getMaximumFailoverAttempts() != null) {
-            answer.setMaximumFailoverAttempts(parseInt(definition.getMaximumFailoverAttempts()));
+        Integer num = parseInt(definition.getMaximumFailoverAttempts());
+        if (num != null) {
+            answer.setMaximumFailoverAttempts(num);
         }
         if (definition.getRoundRobin() != null) {
             answer.setRoundRobin(parseBoolean(definition.getRoundRobin(), false));

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.io.FileWriter;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,21 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        deleteDirectory("target/data/reports");
-        super.setUp();
-    }
-
     @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("target/data/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists(testFile("done/paris.txt"), "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -56,27 +46,23 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     @Test
     public void testRenameFileExists() throws Exception {
         // create a file in done to let there be a duplicate file
-        File file = new File("target/data/done");
-        file.mkdirs();
-        FileWriter fw = new FileWriter("target/data/done/london.txt");
-        try {
+        testDirectory("done", true);
+        try (FileWriter fw = new FileWriter(testFile("done/london.txt").toFile())) {
             fw.write("I was there once in London");
             fw.flush();
-        } finally {
-            fw.close();
         }
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello London", Exchange.FILE_NAME, "london.txt");
 
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
         // content of file should be Hello London
-        String content = IOConverter.toString(new File("target/data/done/london.txt"), null);
+        String content = IOConverter.toString(testFile("done/london.txt").toFile(), null);
         assertEquals("Hello London", content, "The file should have been renamed replacing any existing files");
     }
 
@@ -84,7 +70,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?move=../done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
+                from(fileUri("reports?move=../done/${file:name}&initialDelay=0&delay=10")).convertBodyTo(String.class)
                         .to("mock:report");
             }
         };

@@ -19,26 +19,18 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerFileNameFilterTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        super.setUp();
-    }
 
     @Test
     public void testFileConsumer() throws Exception {
         getMockEndpoint("mock:txt").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/inbox", "<customer>123</customer>", Exchange.FILE_NAME, "customer.xml");
-        template.sendBodyAndHeader("file:target/inbox", "<book>Camel Rocks</book>", Exchange.FILE_NAME, "book.xml");
-        template.sendBodyAndHeader("file:target/inbox", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "<customer>123</customer>", Exchange.FILE_NAME, "customer.xml");
+        template.sendBodyAndHeader(fileUri(), "<book>Camel Rocks</book>", Exchange.FILE_NAME, "book.xml");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +40,7 @@ public class FileConsumerFileNameFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/inbox?initialDelay=0&delay=10&fileName=${file:onlyname.noext}.txt")
+                from(fileUri("?initialDelay=0&delay=10&fileName=${file:onlyname.noext}.txt"))
                         .to("mock:txt");
             }
         };

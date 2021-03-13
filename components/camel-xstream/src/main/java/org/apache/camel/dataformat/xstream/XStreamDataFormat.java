@@ -30,6 +30,7 @@ import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -104,8 +105,8 @@ public class XStreamDataFormat extends AbstractXStreamWrapper {
 
     // just make sure the exchange property can override the xmlstream encoding setting
     protected void updateCharacterEncodingInfo(Exchange exchange) {
-        if (exchange.getProperty(Exchange.CHARSET_NAME) == null && encoding != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(encoding));
+        if (exchange.getProperty(ExchangePropertyKey.CHARSET_NAME) == null && encoding != null) {
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.normalizeCharset(encoding));
         }
     }
 

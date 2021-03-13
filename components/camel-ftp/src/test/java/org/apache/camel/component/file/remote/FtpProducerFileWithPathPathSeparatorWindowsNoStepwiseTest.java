@@ -43,7 +43,7 @@ public class FtpProducerFileWithPathPathSeparatorWindowsNoStepwiseTest extends F
         });
         assertNotNull(out);
 
-        File file = new File(service.getFtpRootDir() + "/upload/hello/claus.txt");
+        File file = ftpFile("upload/hello/claus.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
 

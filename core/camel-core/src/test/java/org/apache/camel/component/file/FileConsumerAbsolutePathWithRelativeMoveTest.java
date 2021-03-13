@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -30,25 +27,13 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSupport {
 
-    private String base;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/reports");
-        deleteDirectory("target/data/done");
-        // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/data/reports";
-        super.setUp();
-    }
-
     @Test
     public void testConsumeFromAbsolutePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists(base + "/../done/paris.txt");
+        mock.expectedFileExists(testDirectory("dir").resolve("../done/paris.txt"));
 
-        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri("dir"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
     }
 
@@ -56,8 +41,9 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + base + "?initialDelay=0&delay=10&move=../done/${file:onlyname}").convertBodyTo(String.class)
-                        .to("mock:report");
+                from("file://" + testDirectory("dir").toAbsolutePath()
+                     + "?initialDelay=0&delay=10&move=../done/${file:onlyname}").convertBodyTo(String.class)
+                             .to("mock:report");
             }
         };
     }

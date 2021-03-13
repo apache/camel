@@ -28,13 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
-    private static String url = "file:target/data/pending?initialDelay=0&delay=10&synchronous=true";
+    private String url = fileUri("?initialDelay=0&delay=10&synchronous=true");
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/data/pending");
 
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");

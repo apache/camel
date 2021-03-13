@@ -20,20 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test that file consumer will include pre and postfixes
  */
 public class FileConsumerIncludeNameTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/include");
-        super.setUp();
-    }
 
     @Test
     public void testIncludePreAndPostfixes() throws Exception {
@@ -47,20 +39,19 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     }
 
     private void sendFiles() throws Exception {
-        String url = "file://target/data/include";
-        template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Reports1", Exchange.FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Reports2", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader(url, "Reports3", Exchange.FILE_NAME, "Report3.txt");
-        template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(fileUri(), "Reports1", Exchange.FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "secret.txt");
+        template.sendBodyAndHeader(fileUri(), "Reports2", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(fileUri(), "Reports3", Exchange.FILE_NAME, "Report3.txt");
+        template.sendBodyAndHeader(fileUri(), "Secret2", Exchange.FILE_NAME, "Secret2.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/include/?initialDelay=0&delay=10&include=^report.*txt$").convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&include=^report.*txt$")).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

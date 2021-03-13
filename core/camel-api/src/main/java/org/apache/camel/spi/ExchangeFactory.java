@@ -16,12 +16,10 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
-import org.apache.camel.Service;
 
 /**
  * Factory used by {@link Consumer} to create Camel {@link Exchange} holding the incoming message received by the
@@ -36,50 +34,7 @@ import org.apache.camel.Service;
  * The factory is pluggable which allows to use different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
  */
-public interface ExchangeFactory extends Service, CamelContextAware, NonManagedService, RouteIdAware {
-
-    /**
-     * Utilization statistics of the this factory.
-     */
-    interface Statistics {
-
-        /**
-         * Number of new exchanges created.
-         */
-        long getCreatedCounter();
-
-        /**
-         * Number of exchanges acquired (reused) when using pooled factory.
-         */
-        long getAcquiredCounter();
-
-        /**
-         * Number of exchanges released back to pool
-         */
-        long getReleasedCounter();
-
-        /**
-         * Number of exchanges discarded (thrown away) such as if no space in cache pool.
-         */
-        long getDiscardedCounter();
-
-        /**
-         * Reset the counters
-         */
-        void reset();
-
-        /**
-         * Whether statistics is enabled.
-         */
-        boolean isStatisticsEnabled();
-
-        /**
-         * Sets whether statistics is enabled.
-         *
-         * @param statisticsEnabled <tt>true</tt> to enable
-         */
-        void setStatisticsEnabled(boolean statisticsEnabled);
-    }
+public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware {
 
     /**
      * Service factory key.
@@ -123,45 +78,5 @@ public interface ExchangeFactory extends Service, CamelContextAware, NonManagedS
     default boolean release(Exchange exchange) {
         return true;
     }
-
-    /**
-     * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
-     */
-    int getCapacity();
-
-    /**
-     * The current number of exchanges in the pool
-     */
-    int getSize();
-
-    /**
-     * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
-     */
-    void setCapacity(int capacity);
-
-    /**
-     * Whether statistics is enabled.
-     */
-    boolean isStatisticsEnabled();
-
-    /**
-     * Whether statistics is enabled.
-     */
-    void setStatisticsEnabled(boolean statisticsEnabled);
-
-    /**
-     * Reset the statistics
-     */
-    void resetStatistics();
-
-    /**
-     * Purges the internal cache (if pooled)
-     */
-    void purge();
-
-    /**
-     * Gets the usage statistics
-     */
-    Statistics getStatistics();
 
 }

@@ -1,7 +1,7 @@
 [[aws2-ses-component]]
 = AWS 2 Simple Email Service (SES) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-ses/src/main/docs/aws2-ses-component.adoc
+:page-source: components/camel-aws/camel-aws2-ses/src/main/docs/aws2-ses-component.adoc
 :docTitle: AWS 2 Simple Email Service (SES)
 :artifactId: camel-aws2-ses
 :description: Send e-mails through AWS SES service using AWS SDK version 2.x.
@@ -39,7 +39,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Simple Email Service (SES) component supports 15 options, which are listed below.
+The AWS 2 Simple Email Service (SES) component supports 17 options, which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The AWS 2 Simple Email Service (SES) component supports 15 options, which are li
 | *amazonSESClient* (producer) | *Autowired* To use the AmazonSimpleEmailService as the client |  | SesClient
 | *configuration* (producer) | component configuration |  | Ses2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SES client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
@@ -58,6 +59,7 @@ The AWS 2 Simple Email Service (SES) component supports 15 options, which are li
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -86,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,6 +96,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonSESClient* (producer) | *Autowired* To use the AmazonSimpleEmailService as the client |  | SesClient
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SES client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
@@ -103,6 +106,7 @@ with the following path and query parameters:
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
 | *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

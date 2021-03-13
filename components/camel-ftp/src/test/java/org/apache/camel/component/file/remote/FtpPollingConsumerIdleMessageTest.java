@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +41,7 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
 
     @BeforeEach
     public void setup() throws Exception {
-        new File(service.getFtpRootDir() + "/polling").mkdirs();
+        ftpFile("polling").toFile().mkdirs();
     }
 
     @Override

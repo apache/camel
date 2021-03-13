@@ -18,10 +18,12 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ResourceLock("VmComponent")
 public class ConsumerCamelContextAware extends ContextTestSupport {
 
     @Override

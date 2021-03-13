@@ -53,7 +53,7 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
 
         // assert the file is moved
-        File file = new File(service.getFtpRootDir() + "/movefile/hello.txt.old");
+        File file = ftpFile("movefile/hello.txt.old").toFile();
         assertTrue(file.exists(), "The file should have been moved");
     }
 
@@ -71,7 +71,7 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(service.getFtpRootDir() + "/movefile/hello.txt");
+        File file = ftpFile("movefile/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 

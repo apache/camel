@@ -17,19 +17,22 @@
 
 package org.apache.camel.component.file.remote.services;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
-import org.apache.camel.util.FileUtil;
 import org.apache.ftpserver.ConnectionConfigFactory;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
+import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.impl.DefaultFtpServer;
 import org.apache.ftpserver.impl.FtpIoSession;
@@ -37,30 +40,56 @@ import org.apache.ftpserver.listener.Listener;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
-import org.junit.jupiter.api.Assertions;
+import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FtpEmbeddedService implements FtpService {
+import static org.apache.camel.test.junit5.TestSupport.createCleanDirectory;
+
+public class FtpEmbeddedService extends AbstractTestService implements FtpService {
     protected static final String DEFAULT_LISTENER = "default";
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpEmbeddedService.class);
-    private static final File USERS_FILE = new File("./src/test/resources/users.properties");
-    private static final String FTP_ROOT_DIR = "./target/res/home";
 
     protected FtpServer ftpServer;
+
     protected int port;
 
+    protected Path rootDir;
+
     public FtpEmbeddedService() {
-        port = AvailablePortFinder.getNextAvailable();
     }
 
     public void setUp() throws Exception {
-        FileUtil.removeDir(new File(FTP_ROOT_DIR));
+        rootDir = testDirectory().resolve("res/home");
+        createCleanDirectory(rootDir);
 
         FtpServerFactory factory = createFtpServerFactory();
         ftpServer = factory.createServer();
         ftpServer.start();
+
+        port = ((DefaultFtpServer) ftpServer).getListeners().values().stream()
+                .map(Listener::getPort).findAny().get();
+    }
+
+    private Path testDirectory() {
+        return Paths.get("target", "ftp", context.getRequiredTestClass().getSimpleName());
+    }
+
+    protected void createUser(UserManager userMgr, String name, String password, Path home, boolean writePermission) {
+        try {
+            BaseUser user = new BaseUser();
+            user.setName(name);
+            user.setPassword(password);
+            user.setHomeDirectory(home.toString());
+            if (writePermission) {
+                user.setAuthorities(Collections.singletonList(new WritePermission()));
+            }
+            userMgr.save(user);
+        } catch (FtpException e) {
+            throw new IllegalStateException("Unable to create FTP user", e);
+        }
     }
 
     protected FtpServerFactory createFtpServerFactory() {
@@ -70,8 +99,14 @@ public class FtpEmbeddedService implements FtpService {
         PropertiesUserManagerFactory pumf = new PropertiesUserManagerFactory();
         pumf.setAdminName("admin");
         pumf.setPasswordEncryptor(new ClearTextPasswordEncryptor());
-        pumf.setFile(USERS_FILE);
+        pumf.setFile(null);
         UserManager userMgr = pumf.createUserManager();
+        createUser(userMgr, "admin", "admin", rootDir, true);
+        createUser(userMgr, "scott", "tiger", rootDir, true);
+        createUser(userMgr, "dummy", "foo", rootDir, false);
+        createUser(userMgr, "us@r", "t%st", rootDir, true);
+        createUser(userMgr, "anonymous", null, rootDir, false);
+        createUser(userMgr, "joe", "p+%w0&r)d", rootDir, true);
 
         ListenerFactory factory = new ListenerFactory();
         factory.setPort(port);
@@ -86,13 +121,10 @@ public class FtpEmbeddedService implements FtpService {
     }
 
     public void tearDown() throws Exception {
-        if (ftpServer == null) {
-            return;
-        }
-
         try {
-            ftpServer.stop();
-            ftpServer = null;
+            if (ftpServer != null) {
+                ftpServer.stop();
+            }
         } catch (Exception e) {
             // ignore while shutting down as we could be polling during
             // shutdown
@@ -102,7 +134,13 @@ public class FtpEmbeddedService implements FtpService {
             // unit testing
 
             LOG.trace("Exception while shutting down: {}", e.getMessage(), e);
+        } finally {
+            ftpServer = null;
         }
+
+        //        if (port != null) {
+        //            port.release();
+        //        }
     }
 
     public void disconnectAllSessions() throws IOException {
@@ -117,34 +155,14 @@ public class FtpEmbeddedService implements FtpService {
     }
 
     @Override
-    public void registerProperties() {
-        System.setProperty(FtpProperties.SERVER_HOST, "localhost");
-        System.setProperty(FtpProperties.SERVER_PORT, String.valueOf(port));
-        System.setProperty(FtpProperties.ROOT_DIR, FTP_ROOT_DIR);
+    protected void registerProperties(BiConsumer<String, String> store) {
+        store.accept(FtpProperties.SERVER_HOST, "localhost");
+        store.accept(FtpProperties.SERVER_PORT, String.valueOf(getPort()));
+        store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
     }
 
-    @Override
-    public void initialize() {
-        try {
-            setUp();
-
-            registerProperties();
-        } catch (Exception e) {
-            Assertions.fail("Unable to initialize the FTP server " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void shutdown() {
-        try {
-            tearDown();
-        } catch (Exception e) {
-            Assertions.fail("Unable to terminate the FTP server " + e.getMessage());
-        }
-    }
-
-    public static String getFtpRootDir() {
-        return FTP_ROOT_DIR;
+    public Path getFtpRootDir() {
+        return rootDir;
     }
 
     public void suspend() {
@@ -153,6 +171,8 @@ public class FtpEmbeddedService implements FtpService {
 
     public void resume() {
         ftpServer.resume();
+        port = ((DefaultFtpServer) ftpServer).getListeners().values().stream()
+                .map(Listener::getPort).findAny().get();
     }
 
     public int getPort() {

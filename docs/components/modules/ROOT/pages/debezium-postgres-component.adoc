@@ -1,7 +1,7 @@
 [[debezium-postgres-component]]
 = Debezium PostgresSQL Connector Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-debezium-postgres/src/main/docs/debezium-postgres-component.adoc
+:page-source: components/camel-debezium/camel-debezium-postgres/src/main/docs/debezium-postgres-component.adoc
 :docTitle: Debezium PostgresSQL Connector
 :artifactId: camel-debezium-postgres
 :description: Capture changes from a PostgresSQL database.
@@ -9,6 +9,8 @@
 :supportLevel: Stable
 :component-header: Only consumer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-postgres.adoc[opts=optional]
+//Manually maintained attributes
+:group: Debezium
 
 *Since Camel {since}*
 

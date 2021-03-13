@@ -35,6 +35,10 @@
         <camel.osgi.import.before.defaults>
             com.jcraft.jsch.*;version="[0.1.5,0.2)"
         </camel.osgi.import.before.defaults>
+
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -191,20 +195,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- The default timeout of 5 minutes through the parent pom is not long enough -->
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
 
 </project>

@@ -142,7 +142,7 @@ public class SalesforceConsumer extends DefaultConsumer {
             LOG.debug("Received event {} on channel {}", channel.getId(), channel.getChannelId());
         }
 
-        final Exchange exchange = createExchange(false);
+        final Exchange exchange = createExchange(true);
         final org.apache.camel.Message in = exchange.getIn();
 
         switch (messageKind) {
@@ -159,28 +159,9 @@ public class SalesforceConsumer extends DefaultConsumer {
                 throw new IllegalStateException("Unknown message kind: " + messageKind);
         }
 
-        try {
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    // noop
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Done processing event: {} {}", channel.getId(),
-                                doneSync ? "synchronously" : "asynchronously");
-                    }
-                }
-            });
-        } catch (final Exception e) {
-            final String msg = String.format("Error processing %s: %s", exchange, e);
-            handleException(msg, new SalesforceException(msg, e));
-        } finally {
-            final Exception ex = exchange.getException();
-            if (ex != null) {
-                final String msg = String.format("Unhandled exception: %s", ex.getMessage());
-                handleException(msg, new SalesforceException(msg, ex));
-            }
-            releaseExchange(exchange, false);
-        }
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     @SuppressWarnings("unchecked")

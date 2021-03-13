@@ -113,7 +113,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (schemaResourceUri == null || schemaResourceUri.isEmpty()) {
             return null;
         }
-        InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext().getClassResolver(),
+        InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext(),
                 schemaResourceUri);
         if (is == null) {
             throw new XmlSignatureException(

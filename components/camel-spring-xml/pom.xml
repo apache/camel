@@ -40,6 +40,10 @@
             javax.xml.bind*;version="[2.2,3.0)",
             *
         </camel.osgi.import>
+
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -321,9 +325,35 @@
                 <configuration>
                     <excludes>
                         <exclude>${platform.skip.tests}</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <skipTests>${skipTests}</skipTests>
+                    <reuseForks>true</reuseForks>
+                    <systemPropertyVariables>
+                        <visibleassertions.silence>true</visibleassertions.silence>
+                    </systemPropertyVariables>
+                    <excludes>
+                        <exclude>${platform.skip.tests}</exclude>
+                    </excludes>
+                    <includes>
+                        <include>**/*IntegrationTest.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- unpack sources which are needed for the scheme generator -->

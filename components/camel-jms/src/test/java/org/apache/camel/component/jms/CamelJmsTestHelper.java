@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jms.ConnectionFactory;
@@ -24,6 +26,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.URISupport;
 
 /**
  * A helper for unit testing with Apache ActiveMQ as embedded JMS broker.
@@ -56,12 +59,7 @@ public final class CamelJmsTestHelper {
     }
 
     public static ConnectionFactory createConnectionFactory(String options, Integer maximumRedeliveries) {
-        // using a unique broker name improves testing when running the entire test suite in the same JVM
-        int id = counter.incrementAndGet();
-        String url = "vm://test-broker-" + id + "?broker.persistent=false&broker.useJmx=false";
-        if (options != null) {
-            url = url + "&" + options;
-        }
+        String url = createBrokerUrl(options);
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
         // optimize AMQ to be as fast as possible so unit testing is quicker
         connectionFactory.setCopyMessageOnSend(false);
@@ -84,19 +82,7 @@ public final class CamelJmsTestHelper {
     }
 
     public static ConnectionFactory createPersistentConnectionFactory(String options) {
-        // using a unique broker name improves testing when running the entire test suite in the same JVM
-        int id = counter.incrementAndGet();
-
-        // use an unique data directory in target
-        String dir = "target/activemq-data-" + id;
-
-        // remove dir so its empty on startup
-        FileUtil.removeDir(new File(dir));
-
-        String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
-        if (options != null) {
-            url = url + "&" + options;
-        }
+        String url = createPersistentBrokerUrl(options);
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
         // optimize AMQ to be as fast as possible so unit testing is quicker
         connectionFactory.setCopyMessageOnSend(false);
@@ -106,4 +92,47 @@ public final class CamelJmsTestHelper {
         connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
+
+    public static String createBrokerUrl() {
+        return createBrokerUrl(null);
+    }
+
+    private static String createBrokerUrl(String options) {
+        // using a unique broker name improves testing when running the entire test suite in the same JVM
+        int id = counter.incrementAndGet();
+        Map<String, Object> map = new HashMap<>();
+        map.put("broker.useJmx", false);
+        map.put("broker.persistent", false);
+        return createUri("vm://test-broker-" + id, map, options);
+    }
+
+    public static String createPersistentBrokerUrl() {
+        return createPersistentBrokerUrl(null);
+    }
+
+    public static String createPersistentBrokerUrl(String options) {
+        // using a unique broker name improves testing when running the entire test suite in the same JVM
+        int id = counter.incrementAndGet();
+
+        // use an unique data directory in target
+        String dir = "target/activemq-data-" + id;
+        // remove dir so its empty on startup
+        FileUtil.removeDir(new File(dir));
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("broker.useJmx", false);
+        map.put("broker.persistent", true);
+        map.put("broker.dataDirectory", dir);
+        return createUri("vm://test-broker-" + id, map, options);
+    }
+
+    private static String createUri(String uri, Map<String, Object> map, String options) {
+        try {
+            map.putAll(URISupport.parseQuery(options));
+            return URISupport.appendParametersToURI(uri, map);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
 }

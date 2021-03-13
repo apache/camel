@@ -32,6 +32,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.TCPSSLOptions;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -169,7 +170,7 @@ public final class VertxHttpHelper {
             String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
             charset = HttpHelper.getCharsetFromContentType(contentType);
             if (ObjectHelper.isEmpty(charset)) {
-                charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             }
         }
         return charset;

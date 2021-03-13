@@ -42,19 +42,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.BytesSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlConverterTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/xml");
-        super.setUp();
-    }
 
     @Test
     public void testToResultNoSource() throws Exception {
@@ -245,8 +242,8 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToSaxSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        template.sendBodyAndHeader("file:target/data/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
-        File file = new File("target/data/xml/myxml.xml");
+        template.sendBodyAndHeader(fileUri(), "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = testFile("myxml.xml").toFile();
 
         SAXSource out = conv.toSAXSource(file, null);
         assertNotNull(out);
@@ -257,8 +254,8 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToStAXSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        template.sendBodyAndHeader("file:target/data/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
-        File file = new File("target/data/xml/myxml.xml");
+        template.sendBodyAndHeader(fileUri(), "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = testFile("myxml.xml").toFile();
 
         StAXSource out = conv.toStAXSource(file, null);
         assertNotNull(out);
@@ -438,8 +435,8 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToDomSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        template.sendBodyAndHeader("file:target/data/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
-        File file = new File("target/data/xml/myxml.xml");
+        template.sendBodyAndHeader(fileUri(), "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = testFile("myxml.xml").toFile();
 
         DOMSource out = conv.toDOMSource(file, null);
         assertNotNull(out);

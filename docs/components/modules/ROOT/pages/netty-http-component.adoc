@@ -99,7 +99,7 @@ related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 75 options, which are listed below.
+The Netty HTTP component supports 76 options, which are listed below.
 
 
 
@@ -144,6 +144,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
+| *hostnameVerification* ( security) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
@@ -197,7 +198,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 The Netty HTTP endpoint is configured using URI syntax:
 
 ----
-netty-http:protocol:host:port/path
+netty-http:protocol://host:port/path
 ----
 
 with the following path and query parameters:
@@ -215,7 +216,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (79 parameters):
+=== Query Parameters (80 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -267,6 +268,7 @@ with the following path and query parameters:
 | *producerPoolMinEvictableIdle* (producer) | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor. | 300000 | long
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
 | *useRelativePath* (producer) | Sets whether to use a relative path in HTTP requests. | true | boolean
+| *hostnameVerification* ( security) | To enable/disable hostname verification on SSLEngine | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *configuration* (advanced) | To use a custom configured NettyHttpConfiguration for configuring this endpoint. |  | NettyHttpConfiguration

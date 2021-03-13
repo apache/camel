@@ -36,17 +36,11 @@ public class ManagedNamePatternTest extends ManagementTestSupport {
 
     @Test
     public void testManagedNamePattern() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         assertTrue(context.getManagementName().startsWith("cool"));
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
     }
 

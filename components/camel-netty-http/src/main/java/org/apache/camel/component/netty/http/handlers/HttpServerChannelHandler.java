@@ -36,6 +36,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyConverter;
@@ -321,7 +322,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
@@ -343,7 +344,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
-        Exchange exchange = consumer.createExchange(false);
+        // must be prototype scoped (not pooled) so we create the exchange via endpoint
+        Exchange exchange = consumer.getEndpoint().createExchange();
 
         // create a new IN message as we cannot reuse with netty
         Message in;
@@ -363,7 +365,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
         String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
         }
 

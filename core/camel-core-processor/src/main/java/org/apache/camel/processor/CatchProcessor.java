@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -87,7 +88,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         Exception e = exchange.getException();
         Throwable caught = catches(exchange, e);
         // If a previous catch clause handled the exception or if this clause does not match, exit
-        if (exchange.getProperty(Exchange.EXCEPTION_HANDLED) != null || caught == null) {
+        if (exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED) != null || caught == null) {
             callback.done(true);
             return true;
         }
@@ -97,12 +98,12 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         }
 
         // store the last to endpoint as the failure endpoint
-        if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+        if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
         }
         // give the rest of the pipeline another chance
-        exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
         exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);

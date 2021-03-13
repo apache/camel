@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -160,7 +161,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                 String stringBody = (String) messageBody;
                 hl7MessageBytes = stringBody.getBytes(getConfiguration().getCharset(exchange));
                 if (getConfiguration().hasCharsetName()) {
-                    exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
                 }
             }
 

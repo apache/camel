@@ -66,12 +66,12 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleProduceThroughProxy() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                    + "?username=admin&password=admin&proxy=#proxy",
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = new File(service.getFtpRootDir(), "/hello.txt");
+        File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -79,24 +79,24 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleSubPathProduceThroughProxy() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                    + "/mysub?username=admin&password=admin&proxy=#proxy",
                 "Bye World", Exchange.FILE_NAME,
                 "bye.txt");
 
-        File file = new File(service.getFtpRootDir(), "/mysub/bye.txt");
+        File file = ftpFile("mysub/bye.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
     public void testSftpSimpleTwoSubPathProduceThroughProxy() {
-        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                    + "/mysub/myother?username=admin&password=admin&proxy=#proxy",
                 "Farewell World",
                 Exchange.FILE_NAME, "farewell.txt");
 
-        File file = new File(service.getFtpRootDir(), "/mysub/myother/farewell.txt");
+        File file = ftpFile("mysub/myother/farewell.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Farewell World", context.getTypeConverter().convertTo(String.class, file));
     }

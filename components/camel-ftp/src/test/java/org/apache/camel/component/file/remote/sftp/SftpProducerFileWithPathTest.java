@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
 
     private String getFtpUrl() {
-        return "sftp://admin@localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?password=admin";
+        return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}?password=admin";
     }
 
     @Test
     public void testProducerFileWithPath() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello/claus.txt");
 
-        File file = new File(service.getFtpRootDir() + "/hello/claus.txt");
+        File file = ftpFile("hello/claus.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }
@@ -47,11 +47,11 @@ public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello/claus.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Hello Again World", Exchange.FILE_NAME, "hello/andrea.txt");
 
-        File file = new File(service.getFtpRootDir() + "/hello/claus.txt");
+        File file = ftpFile("hello/claus.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
 
-        file = new File(service.getFtpRootDir() + "/hello/andrea.txt");
+        file = ftpFile("hello/andrea.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello Again World", IOConverter.toString(file, null));
     }
@@ -61,7 +61,7 @@ public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME,
                 "bye/andrea.txt");
 
-        File file = new File(service.getFtpRootDir() + "/bye/andrea.txt");
+        File file = ftpFile("bye/andrea.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Bye World", IOConverter.toString(file, null));
     }
@@ -73,11 +73,11 @@ public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye Again World", Exchange.FILE_NAME,
                 "bye/claus.txt");
 
-        File file = new File(service.getFtpRootDir() + "/bye/andrea.txt");
+        File file = ftpFile("bye/andrea.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Bye World", IOConverter.toString(file, null));
 
-        file = new File(service.getFtpRootDir() + "/bye/claus.txt");
+        file = ftpFile("bye/claus.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Bye Again World", IOConverter.toString(file, null));
     }

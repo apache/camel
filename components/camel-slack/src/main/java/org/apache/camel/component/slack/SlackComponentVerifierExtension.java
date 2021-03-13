@@ -16,29 +16,25 @@
  */
 package org.apache.camel.component.slack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.slack.api.Slack;
+import com.slack.api.SlackConfig;
+import com.slack.api.methods.response.conversations.ConversationsListResponse;
+import com.slack.api.model.ConversationType;
+import com.slack.api.webhook.WebhookResponse;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
+import org.apache.camel.component.slack.helper.SlackHelper;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-
-import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackComponentVerifierExtension extends DefaultComponentVerifierExtension {
+
+    private static final Gson GSON = new Gson();
 
     public SlackComponentVerifierExtension() {
         this("slack");
@@ -57,12 +53,12 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
 
         if (ObjectHelper.isEmpty(parameters.get("token")) && ObjectHelper.isEmpty(parameters.get("webhookUrl"))) {
             builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.GENERIC,
-                    "You must specify a webhookUrl (for producer) or a token (for consumer)").parameterKey("webhookUrl")
-                    .parameterKey("token").build());
+                    "You must specify a webhookUrl (for producer) or a token (for producer and consumer)")
+                    .parameterKey("webhookUrl").parameterKey("token").build());
         }
         if (ObjectHelper.isNotEmpty(parameters.get("token")) && ObjectHelper.isNotEmpty(parameters.get("webhookUrl"))) {
             builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.GENERIC,
-                    "You must specify a webhookUrl (for producer) or a token (for consumer). You can't specify both.")
+                    "You must specify a webhookUrl (for producer) or a token (for producer and consumer). You can't specify both.")
                     .parameterKey("webhookUrl").parameterKey("token").build());
         }
         return builder.build();
@@ -78,35 +74,26 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
     }
 
     private void verifyCredentials(ResultBuilder builder, Map<String, Object> parameters) {
-
         String webhookUrl = (String) parameters.get("webhookUrl");
+        String serverUrl = (String) parameters.get("serverUrl");
 
         if (ObjectHelper.isNotEmpty(webhookUrl)) {
 
             try {
-                HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-                HttpPost httpPost = new HttpPost(webhookUrl);
-
                 // Build Helper object
                 SlackMessage slackMessage;
                 slackMessage = new SlackMessage();
                 slackMessage.setText("Test connection");
 
-                // Set the post body
-                String json = asJson(slackMessage);
-                StringEntity body = new StringEntity(json);
-
-                // Do the post
-                httpPost.setEntity(body);
-
-                HttpResponse response = client.execute(httpPost);
+                SlackConfig config = SlackHelper.createSlackConfig(serverUrl);
+                WebhookResponse response
+                        = Slack.getInstance(config, new CustomSlackHttpClient()).send(webhookUrl, GSON.toJson(slackMessage));
 
                 // 2xx is OK, anything else we regard as failure
-                if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                    builder
-                            .error(ResultErrorBuilder
-                                    .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl")
-                                    .parameterKey("webhookUrl").build());
+                if (response.getCode() < 200 || response.getCode() > 299) {
+                    builder.error(ResultErrorBuilder
+                            .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl")
+                            .parameterKey("webhookUrl").build());
                 }
             } catch (Exception e) {
                 builder.error(ResultErrorBuilder
@@ -118,23 +105,13 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
             String token = (String) parameters.get("token");
 
             try {
-                HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-                HttpPost httpPost = new HttpPost(parameters.get("serverUrl") + "/api/conversations.list");
+                SlackConfig config = SlackHelper.createSlackConfig(serverUrl);
+                ConversationsListResponse response = Slack.getInstance(config, new CustomSlackHttpClient()).methods(token)
+                        .conversationsList(req -> req
+                                .types(Collections.singletonList(ConversationType.PUBLIC_CHANNEL))
+                                .limit(1));
 
-                List<BasicNameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("token", token));
-                httpPost.setEntity(new UrlEncodedFormEntity(params));
-
-                HttpResponse response = client.execute(httpPost);
-
-                String jsonString = readResponse(response.getEntity().getContent());
-                if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                    builder.error(ResultErrorBuilder
-                            .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token")
-                            .parameterKey("token").build());
-                }
-                JsonObject obj = (JsonObject) Jsoner.deserialize(jsonString);
-                if (obj.get("ok") != null && obj.get("ok").equals(false)) {
+                if (!response.isOk()) {
                     builder.error(ResultErrorBuilder
                             .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token")
                             .parameterKey("token").build());
@@ -144,18 +121,6 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
                         .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token")
                         .parameterKey("token").build());
             }
-
         }
     }
-
-    protected String asJson(SlackMessage message) {
-        Map<String, Object> jsonMap = new HashMap<>();
-
-        // Put the values in a map
-        jsonMap.put(SlackConstants.SLACK_TEXT_FIELD, message.getText());
-
-        // Generate a JSONObject
-        return new JsonObject(jsonMap).toJson();
-    }
-
 }

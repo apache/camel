@@ -42,10 +42,8 @@ public final class ReferenceId implements Serializable {
     private final String referenceId;
 
     @JsonCreator
-    ReferenceId(@JsonProperty("referenceId")
-    final String referenceId, @JsonProperty("id")
-    final String id, @JsonProperty("errors")
-    final List<RestError> errors) {
+    ReferenceId(@JsonProperty("referenceId") final String referenceId, @JsonProperty("id") final String id,
+                @JsonProperty("errors") final List<RestError> errors) {
         this.referenceId = referenceId;
         this.id = id;
         this.errors = errors;

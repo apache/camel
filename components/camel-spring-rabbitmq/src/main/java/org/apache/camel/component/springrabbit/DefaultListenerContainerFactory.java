@@ -20,6 +20,8 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.*;
+
 /**
  * Default {@link ListenerContainerFactory}.
  */
@@ -27,7 +29,13 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
 
     @Override
     public AbstractMessageListenerContainer createListenerContainer(SpringRabbitMQEndpoint endpoint) {
-        DefaultMessageListenerContainer listener = new DefaultMessageListenerContainer(endpoint.getConnectionFactory());
+        AbstractMessageListenerContainer listener;
+        if (endpoint.getMessageListenerContainerType().equalsIgnoreCase(SIMPLE_MESSAGE_LISTENER_CONTAINER)) {
+            listener = new CamelSimpleMessageListenerContainer(endpoint);
+        } else {
+            listener = new CamelDirectMessageListenerContainer(endpoint);
+        }
+
         if (endpoint.getQueues() != null) {
             listener.setQueueNames(endpoint.getQueues().split(","));
         }
@@ -47,7 +55,8 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         if (endpoint.getComponent().getErrorHandler() != null) {
             listener.setErrorHandler(endpoint.getComponent().getErrorHandler());
         }
-        listener.setPrefetchCount(endpoint.getComponent().getPrefetchCount());
+
+        listener.setPrefetchCount(endpoint.getPrefetchCount());
         listener.setShutdownTimeout(endpoint.getComponent().getShutdownTimeout());
         listener.setConsumerArguments(endpoint.getConsumerArgs());
         return listener;

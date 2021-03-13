@@ -16,9 +16,13 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Service;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -29,9 +33,21 @@ public final class SpringTestHelper {
     }
 
     public static CamelContext createSpringCamelContext(ContextTestSupport test, String classpathUri) throws Exception {
+        return createSpringCamelContext(test, classpathUri, Collections.emptyMap());
+    }
+
+    public static CamelContext createSpringCamelContext(ContextTestSupport test, String classpathUri, Map<String, Object> beans)
+            throws Exception {
         test.setUseRouteBuilder(false);
 
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(classpathUri);
+        boolean isNoStart = DefaultCamelContext.isNoStart();
+        final AbstractXmlApplicationContext applicationContext;
+        try {
+            DefaultCamelContext.setNoStart(true);
+            applicationContext = new ClassPathXmlApplicationContext(classpathUri);
+        } finally {
+            DefaultCamelContext.setNoStart(isNoStart);
+        }
         test.setCamelContextService(new Service() {
             public void start() {
                 applicationContext.start();
@@ -42,6 +58,14 @@ public final class SpringTestHelper {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext, true);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, false);
+        for (Map.Entry<String, Object> entry : beans.entrySet()) {
+            context.getRegistry().bind(entry.getKey(), entry.getValue());
+        }
+        if (!isNoStart) {
+            context.start();
+        }
+
+        return context;
     }
 }

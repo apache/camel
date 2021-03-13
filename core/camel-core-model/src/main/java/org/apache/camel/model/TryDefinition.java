@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslProperty;
 
 /**
  * Marks the beginning of a try, catch, finally block
@@ -38,8 +39,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {
+    @DslProperty
     @XmlTransient
     private List<CatchDefinition> catchClauses;
+    @DslProperty
     @XmlTransient
     private FinallyDefinition finallyClause;
     @XmlTransient
@@ -136,11 +139,21 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // Properties
     // -------------------------------------------------------------------------
 
+    @XmlTransient
+    public void setCatchClauses(List<CatchDefinition> catchClauses) {
+        this.catchClauses = catchClauses;
+    }
+
     public List<CatchDefinition> getCatchClauses() {
         if (catchClauses == null) {
             checkInitialized();
         }
         return catchClauses;
+    }
+
+    @XmlTransient
+    public void setFinallyClause(FinallyDefinition finallyClause) {
+        this.finallyClause = finallyClause;
     }
 
     public FinallyDefinition getFinallyClause() {

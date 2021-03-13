@@ -38,7 +38,7 @@ public class FtpChangedZeroLengthReadLockTest extends FtpServerTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/zerofile.dat");
+        mock.expectedFileExists(testFile("zerofile.dat"));
 
         writeZeroFile();
 
@@ -46,8 +46,8 @@ public class FtpChangedZeroLengthReadLockTest extends FtpServerTestSupport {
     }
 
     private void writeZeroFile() throws Exception {
-        createDirectory(service.getFtpRootDir() + "/changed");
-        FileOutputStream fos = new FileOutputStream(service.getFtpRootDir() + "/changed/zerofile.dat", true);
+        createDirectory(ftpFile("changed"));
+        FileOutputStream fos = new FileOutputStream(ftpFile("changed/zerofile.dat").toFile(), true);
         fos.flush();
         fos.close();
     }
@@ -57,7 +57,7 @@ public class FtpChangedZeroLengthReadLockTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl()).to("file:target/changed/out", "mock:result");
+                from(getFtpUrl()).to(fileUri(), "mock:result");
             }
         };
     }

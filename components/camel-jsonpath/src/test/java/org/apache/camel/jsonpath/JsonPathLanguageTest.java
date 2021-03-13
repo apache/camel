@@ -58,9 +58,10 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         LOG.debug("Authors {}", authors);
 
         assertNotNull(authors);
-        assertEquals(2, authors.size());
+        assertEquals(3, authors.size());
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
+        assertEquals("John O'Niel", authors.get(2));
 
         exp = lan.createExpression("$.store.bicycle.price");
         String price = exp.evaluate(exchange, String.class);

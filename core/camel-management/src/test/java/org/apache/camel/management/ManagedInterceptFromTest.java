@@ -24,11 +24,6 @@ public class ManagedInterceptFromTest extends ManagementTestSupport {
 
     @Test
     public void testManageWithInterceptFrom() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedMessageCount(1);
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");

@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -30,23 +29,9 @@ import org.junit.jupiter.api.Test;
 @Disabled("Manual test")
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
 
-    private String fileUrl = "target/data/filesorter/";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filesorter");
-        super.setUp();
-    }
-
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Test
-    public void testDummy() {
-        // need a single test method to not fail because of no test methods
     }
 
     /**
@@ -62,21 +47,19 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
     public void testMemoryLeak() throws Exception {
         // run this manually and browse the memory usage, eg in IDEA there is a
         // Statistics tab
-
-        deleteDirectory("target/data/filesorter/archiv");
         for (int c = 0; c < 100; c++) {
-            template.sendBodyAndHeader(fileUrl + "c", "test", Exchange.FILE_NAME, c + ".dat");
+            template.sendBodyAndHeader(fileUri("c"), "test", Exchange.FILE_NAME, c + ".dat");
         }
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + fileUrl + "/c/?sortBy=ignoreCase:file:name").process(new Processor() {
+                from(fileUri("c/?sortBy=ignoreCase:file:name")).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         StringBuilder buf = new StringBuilder(10000000);
                         buf.setLength(1000000);
                         exchange.getIn().setBody(buf.toString());
                     }
-                }).to("file:target/data/filesorter/archiv");
+                }).to(fileUri("archiv"));
             }
         });
         context.start();

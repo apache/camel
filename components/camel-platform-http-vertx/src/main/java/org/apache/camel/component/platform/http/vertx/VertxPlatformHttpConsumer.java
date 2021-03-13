@@ -36,6 +36,7 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -221,7 +222,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         final Message in = toCamelMessage(ctx, exchange);
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
         }
         return exchange;
@@ -257,7 +258,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             if (m.canHaveBody()) {
                 final Buffer body = ctx.getBody();
                 if (body != null) {
-                    result.setBody(body.getBytes());
+                    result.setBody(body);
                 } else {
                     result.setBody(null);
                 }

@@ -22,28 +22,24 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedCanekContextExchangeStatisticsTest extends ManagementTestSupport {
 
     @Test
     public void testExchangesCompletedStatistics() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
 
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName route1 = getCamelObjectName(TYPE_ROUTE, "route1");
         Long completed1 = (Long) mbeanServer.getAttribute(route1, "ExchangesCompleted");
         assertEquals(0, completed1.longValue());
 
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
+        ObjectName route2 = getCamelObjectName(TYPE_ROUTE, "route2");
         Long completed2 = (Long) mbeanServer.getAttribute(route1, "ExchangesCompleted");
         assertEquals(0, completed2.longValue());
 

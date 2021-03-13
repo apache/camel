@@ -1,7 +1,7 @@
 [[aws2-ec2-component]]
 = AWS 2 Elastic Compute Cloud (EC2) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-aws2-ec2/src/main/docs/aws2-ec2-component.adoc
+:page-source: components/camel-aws/camel-aws2-ec2/src/main/docs/aws2-ec2-component.adoc
 :docTitle: AWS 2 Elastic Compute Cloud (EC2)
 :artifactId: camel-aws2-ec2
 :description: Manage AWS EC2 instances using AWS SDK version 2.x.
@@ -44,7 +44,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 Elastic Compute Cloud (EC2) component supports 13 options, which are listed below.
+The AWS 2 Elastic Compute Cloud (EC2) component supports 15 options, which are listed below.
 
 
 
@@ -56,6 +56,7 @@ The AWS 2 Elastic Compute Cloud (EC2) component supports 13 options, which are l
 | *configuration* (producer) | The component configuration |  | AWS2EC2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. There are 11 enums and the value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | AWS2EC2Operations
+| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
@@ -63,6 +64,7 @@ The AWS 2 Elastic Compute Cloud (EC2) component supports 13 options, which are l
 | *region* (producer) | The region in which EC2 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
@@ -89,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -99,6 +101,7 @@ with the following path and query parameters:
 | *amazonEc2Client* (producer) | *Autowired* To use a existing configured AmazonEC2Client as client |  | Ec2Client
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. There are 11 enums and the value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | AWS2EC2Operations
+| *overrideEndpoint* (producer) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
@@ -106,6 +109,7 @@ with the following path and query parameters:
 | *region* (producer) | The region in which EC2 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 |===
 // endpoint options: END
 

@@ -73,10 +73,10 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
             } else if (name.contains("mock://mock2")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
                 ids2.add(id);
-            } else if (name.contains("file://target/route1")) {
+            } else if (name.contains("file://target/data/DualCamelContextManagedAutoAssignedNameTest/route1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
                 ids1.add(id);
-            } else if (name.contains("file://target/route2")) {
+            } else if (name.contains("file://target/data/DualCamelContextManagedAutoAssignedNameTest/route2")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
                 ids2.add(id);
             }

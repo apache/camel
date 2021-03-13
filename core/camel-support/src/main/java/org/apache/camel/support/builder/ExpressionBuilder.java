@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -225,7 +226,7 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Exception exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 }
                 return exception;
             }
@@ -251,7 +252,7 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Exception exception = exchange.getException(type);
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                     return ObjectHelper.getException(type, exception);
                 }
                 return exception;
@@ -416,7 +417,7 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Exception exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 }
                 return exception != null ? exception.getMessage() : null;
             }
@@ -438,7 +439,7 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Exception exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 }
                 if (exception != null) {
                     StringWriter sw = new StringWriter();
@@ -985,7 +986,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return exchange.getProperty(Exchange.STEP_ID);
+                return exchange.getProperty(ExchangePropertyKey.STEP_ID);
             }
 
             @Override

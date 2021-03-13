@@ -24,10 +24,18 @@ import org.slf4j.LoggerFactory;
 public class HBaseLocalContainerService implements HBaseService, ContainerService<HBaseContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(HBaseLocalContainerService.class);
 
-    private HBaseContainer container;
+    private final HBaseContainer container;
 
     public HBaseLocalContainerService() {
-        container = new HBaseContainer();
+        container = initContainer();
+    }
+
+    public HBaseLocalContainerService(HBaseContainer container) {
+        this.container = container;
+    }
+
+    protected HBaseContainer initContainer() {
+        return new HBaseContainer();
     }
 
     @Override

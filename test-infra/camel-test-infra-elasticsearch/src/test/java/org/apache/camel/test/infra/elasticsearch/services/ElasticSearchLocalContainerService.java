@@ -24,20 +24,27 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
+    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch-oss:7.3.2";
+
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);
-    private static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch-oss:7.3.2";
     private static final int ELASTIC_SEARCH_PORT = 9200;
 
-    private ElasticsearchContainer container;
+    private final ElasticsearchContainer container;
 
     public ElasticSearchLocalContainerService() {
-        String containerName = System.getProperty("elasticsearch.container");
+        this(System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER, DEFAULT_ELASTIC_SEARCH_CONTAINER));
+    }
 
-        if (containerName == null || containerName.isEmpty()) {
-            containerName = DEFAULT_ELASTIC_SEARCH_CONTAINER;
-        }
+    public ElasticSearchLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
 
-        container = new ElasticsearchContainer(containerName);
+    public ElasticSearchLocalContainerService(ElasticsearchContainer container) {
+        this.container = container;
+    }
+
+    protected ElasticsearchContainer initContainer(String imageName) {
+        return new ElasticsearchContainer(imageName);
     }
 
     @Override

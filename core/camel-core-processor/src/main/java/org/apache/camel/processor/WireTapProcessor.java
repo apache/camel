@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -252,7 +253,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
         copy.setPattern(ExchangePattern.InOnly);
         // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
         // close its own created stream cache(s)
-        copy.removeProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK);
+        copy.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
         return copy;
     }
 
@@ -313,6 +314,16 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     public boolean isDynamicUri() {
         return dynamicUri;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(processor);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(processor);
     }
 
     @Override

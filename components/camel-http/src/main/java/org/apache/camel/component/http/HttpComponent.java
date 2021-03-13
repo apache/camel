@@ -153,20 +153,35 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             + " should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode.")
     protected int responsePayloadStreamingThreshold = 8192;
     @Metadata(label = "advanced", description = "Disables automatic redirect handling")
-    private boolean redirectHandlingDisabled;
+    protected boolean redirectHandlingDisabled;
     @Metadata(label = "advanced", description = "Disables automatic request recovery and re-execution")
-    private boolean automaticRetriesDisabled;
+    protected boolean automaticRetriesDisabled;
     @Metadata(label = "advanced", description = "Disables automatic content decompression")
-    private boolean contentCompressionDisabled;
+    protected boolean contentCompressionDisabled;
     @Metadata(label = "advanced", description = "Disables state (cookie) management")
-    private boolean cookieManagementDisabled;
+    protected boolean cookieManagementDisabled;
     @Metadata(label = "advanced", description = "Disables authentication scheme caching")
-    private boolean authCachingDisabled;
+    protected boolean authCachingDisabled;
     @Metadata(label = "advanced", description = "Disables connection state tracking")
-    private boolean connectionStateDisabled;
+    protected boolean connectionStateDisabled;
     @Metadata(label = "advanced",
               description = "Disables the default user agent set by this builder if none has been provided by the user")
-    private boolean defaultUserAgentDisabled;
+    protected boolean defaultUserAgentDisabled;
+    @Metadata(label = "producer",
+              defaultValue = "true",
+              description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+                            + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
+    protected boolean copyHeaders = true;
+    @Metadata(label = "producer,advanced",
+              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
+                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
+                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+    protected boolean skipRequestHeaders;
+    @Metadata(label = "producer,advanced",
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
+                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
+                            + " with many object allocations for the JVM garbage collector.")
+    protected boolean skipResponseHeaders;
 
     public HttpComponent() {
         this(HttpEndpoint.class);
@@ -343,6 +358,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         LOG.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
+        endpoint.setCopyHeaders(copyHeaders);
+        endpoint.setSkipRequestHeaders(skipRequestHeaders);
+        endpoint.setSkipResponseHeaders(skipResponseHeaders);
 
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
@@ -868,6 +886,30 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setDefaultUserAgentDisabled(boolean defaultUserAgentDisabled) {
         this.defaultUserAgentDisabled = defaultUserAgentDisabled;
+    }
+
+    public boolean isCopyHeaders() {
+        return copyHeaders;
+    }
+
+    public void setCopyHeaders(boolean copyHeaders) {
+        this.copyHeaders = copyHeaders;
+    }
+
+    public boolean isSkipRequestHeaders() {
+        return skipRequestHeaders;
+    }
+
+    public void setSkipRequestHeaders(boolean skipRequestHeaders) {
+        this.skipRequestHeaders = skipRequestHeaders;
+    }
+
+    public boolean isSkipResponseHeaders() {
+        return skipResponseHeaders;
+    }
+
+    public void setSkipResponseHeaders(boolean skipResponseHeaders) {
+        this.skipResponseHeaders = skipResponseHeaders;
     }
 
     @Override

@@ -107,7 +107,7 @@ public class SalesforceConsumerTest {
         when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
         when(context.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
-        when(exchangeFactory.create(endpoint, false)).thenReturn(exchange);
+        when(exchangeFactory.create(endpoint, true)).thenReturn(exchange);
         when(exchange.adapt(ExtendedExchange.class)).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         final SalesforceComponent component = mock(SalesforceComponent.class);

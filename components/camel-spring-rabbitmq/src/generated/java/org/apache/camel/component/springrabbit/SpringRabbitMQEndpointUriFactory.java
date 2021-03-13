@@ -20,8 +20,9 @@ public class SpringRabbitMQEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(27);
+        Set<String> props = new HashSet<>(31);
         props.add("asyncConsumer");
+        props.add("prefetchCount");
         props.add("synchronous");
         props.add("messageConverter");
         props.add("exchangeType");
@@ -32,9 +33,12 @@ public class SpringRabbitMQEndpointUriFactory extends org.apache.camel.support.c
         props.add("messagePropertiesConverter");
         props.add("exclusive");
         props.add("disableReplyTo");
+        props.add("maxConcurrentConsumers");
         props.add("deadLetterExchange");
         props.add("exchangePattern");
         props.add("deadLetterExchangeType");
+        props.add("concurrentConsumers");
+        props.add("messageListenerContainerType");
         props.add("args");
         props.add("lazyStartProducer");
         props.add("deadLetterQueue");

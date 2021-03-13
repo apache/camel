@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
@@ -424,7 +425,7 @@ public class MinaConsumer extends DefaultConsumer {
             Exchange exchange = createExchange(session, object);
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME,
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
                         IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
             }
 

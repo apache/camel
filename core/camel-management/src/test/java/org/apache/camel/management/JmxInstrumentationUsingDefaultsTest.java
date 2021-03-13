@@ -17,23 +17,21 @@
 package org.apache.camel.management;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
-import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,15 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This test verifies JMX is enabled by default and it uses local mbean server to conduct the test as connector server
  * is not enabled by default.
  */
-public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
+public class JmxInstrumentationUsingDefaultsTest extends ManagementTestSupport {
 
     protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServerConnection mbsc;
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     protected void assertDefaultDomain() throws IOException {
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
@@ -63,11 +57,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Test
     public void testMBeansRegistered() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertDefaultDomain();
 
         template.sendBody("direct:start", "Hello World");
@@ -95,11 +84,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Test
     public void testCounters() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
@@ -178,9 +162,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        releaseMBeanServers();
         super.setUp();
-
         await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> {
             mbsc = getMBeanConnection();
             return true;
@@ -192,7 +174,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     public void tearDown() throws Exception {
         try {
             super.tearDown();
-            releaseMBeanServers();
             mbsc = null;
         } finally {
             // restore environment to original state
@@ -203,16 +184,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         }
     }
 
-    protected void releaseMBeanServers() {
-        for (MBeanServer server : MBeanServerFactory.findMBeanServer(null)) {
-            MBeanServerFactory.releaseMBeanServer(server);
-        }
-    }
-
     protected MBeanServerConnection getMBeanConnection() throws Exception {
-        if (mbsc == null) {
-            mbsc = ManagementFactory.getPlatformMBeanServer();
-        }
-        return mbsc;
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 }

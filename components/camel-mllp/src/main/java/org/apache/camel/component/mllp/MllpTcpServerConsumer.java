@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -231,7 +232,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
         if (getConfiguration().hasCharsetName()) {
-            exchange.setProperty(Exchange.CHARSET_NAME, getConfiguration().getCharsetName());
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, getConfiguration().getCharsetName());
         }
         try {
             createUoW(exchange);

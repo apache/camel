@@ -100,6 +100,16 @@ public final class EventNotifierProducer extends DefaultAsyncProducer {
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ServiceHelper.buildService(producer);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(producer);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(producer);
     }

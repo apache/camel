@@ -46,6 +46,35 @@ public final class ServiceHelper {
     }
 
     /**
+     * Builds the given {@code value} if it's a {@link Service} or a collection of it.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     */
+    public static void buildService(Object value) {
+        if (value instanceof Service) {
+            ((Service) value).build();
+        } else if (value instanceof Iterable) {
+            for (Object o : (Iterable) value) {
+                buildService(o);
+            }
+        }
+    }
+
+    /**
+     * Builds each element of the given {@code services} if {@code services} itself is not {@code null}, otherwise this
+     * method would return immediately.
+     *
+     * @see #buildService(Object)
+     */
+    public static void buildService(Object... services) {
+        if (services != null) {
+            for (Object o : services) {
+                buildService(o);
+            }
+        }
+    }
+
+    /**
      * Initializes the given {@code value} if it's a {@link Service} or a collection of it.
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.

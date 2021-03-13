@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -31,14 +32,9 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testPerformanceCounterStats() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "foo");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

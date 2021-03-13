@@ -63,6 +63,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
@@ -438,7 +439,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
             return result.get();
         } else {
             throw new IllegalArgumentException(
-                    "Cannot find ModelJAXBContextFactory on classpath. Add either camel-xml-io or camel-xml-jaxb to classpath.");
+                    "Cannot find XMLRoutesDefinitionLoader on classpath. Add either camel-xml-io or camel-xml-jaxb to classpath.");
         }
     }
 
@@ -451,6 +452,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 RoutesLoader.class);
 
         return result.orElseGet(DefaultRoutesLoader::new);
+    }
+
+    @Override
+    protected ResourceLoader createResourceLoader() {
+        Optional<ResourceLoader> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                ResourceLoader.FACTORY,
+                ResourceLoader.class);
+
+        return result.orElseGet(DefaultResourceLoader::new);
     }
 
     @Override
@@ -552,7 +564,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ExchangeFactory.FACTORY,
                 ExchangeFactory.class);
 
-        return result.orElseGet(DefaultExchangeFactory::new);
+        // TODO: experiment to use pooled by default (revert this commit after testing)
+        return result.orElseGet(PooledExchangeFactory::new);
     }
 
     @Override

@@ -27,20 +27,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentConsumerTest extends ContextTestSupport {
-    protected Endpoint startEndpoint;
-    protected MockEndpoint resultEndpoint;
-    private File store = new File("target/data/idempotentfilestore.dat");
+
+    private File store = testFile("idempotentfilestore.dat").toFile();
     private IdempotentRepository repo;
 
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
+        Endpoint startEndpoint = resolveMandatoryEndpoint("direct:start");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+
         assertFalse(repo.contains("1"));
         assertFalse(repo.contains("2"));
         assertFalse(repo.contains("3"));
@@ -48,13 +49,13 @@ public class FileIdempotentConsumerTest extends ContextTestSupport {
 
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
 
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("4", "four");
-        sendMessage("1", "one");
-        sendMessage("3", "three");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "2", "two");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "2", "two");
+        sendMessage(startEndpoint, "4", "four");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "3", "three");
 
         resultEndpoint.assertIsSatisfied();
 
@@ -64,7 +65,7 @@ public class FileIdempotentConsumerTest extends ContextTestSupport {
         assertTrue(repo.contains("4"));
     }
 
-    protected void sendMessage(final Object messageId, final Object body) {
+    protected void sendMessage(final Endpoint startEndpoint, final Object messageId, final Object body) {
         template.send(startEndpoint, new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
@@ -76,27 +77,12 @@ public class FileIdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        // delete file store before testing
-        if (store.exists()) {
-            store.delete();
-        }
-
-        repo = FileIdempotentRepository.fileIdempotentRepository(store);
-
-        // let's add 4 to start with
-        repo.add("4");
-
-        super.setUp();
-        startEndpoint = resolveMandatoryEndpoint("direct:start");
-        resultEndpoint = getMockEndpoint("mock:result");
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                repo = FileIdempotentRepository.fileIdempotentRepository(store);
+                // let's add 4 to start with
+                repo.add("4");
                 from("direct:start").idempotentConsumer(header("messageId"), repo).to("mock:result");
             }
         };

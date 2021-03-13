@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -252,14 +253,14 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         // do not share unit of work
         exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
 
-        exchange.setProperty(Exchange.SPLIT_INDEX, index);
+        exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
 
         if (hdfsFile.hasNext()) {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.TRUE);
             // streaming mode, so set total size when we are complete based on the index
-            exchange.setProperty(Exchange.SPLIT_SIZE, index + 1);
+            exchange.setProperty(ExchangePropertyKey.SPLIT_SIZE, index + 1);
         }
     }
 

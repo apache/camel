@@ -16,33 +16,29 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerLocalWorkDirectoryDirectTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd&noop=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/lwd/?password=admin&delay=5000"
+               + "&localWorkDirectory=" + testDirectory("lwd")
+               + "&noop=true";
     }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/lwd");
-        deleteDirectory("target/out");
         super.setUp();
         prepareFtpServer();
     }
@@ -67,20 +63,17 @@ public class FtpConsumerLocalWorkDirectoryDirectTest extends FtpServerTestSuppor
         assertTrue(notify.matchesWaitTime(), "Should process one file");
 
         // and the out file should exists
-        File out = new File("target/out/hello.txt");
-        assertTrue(out.exists(), "file should exists");
-        assertEquals("Hello World", IOConverter.toString(out, null));
+        assertFileExists(testFile("out/hello.txt"), "Hello World");
 
         // now the lwd file should be deleted
-        File local = new File("target/lwd/hello.txt");
-        assertFalse(local.exists(), "Local work file should have been deleted");
+        assertFileNotExists(testFile("lwd/hello.txt"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).to("file://target/out");
+                from(getFtpUrl()).to(fileUri("out"));
             }
         };
     }

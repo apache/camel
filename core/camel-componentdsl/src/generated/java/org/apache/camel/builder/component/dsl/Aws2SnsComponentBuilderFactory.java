@@ -70,7 +70,7 @@ public interface Aws2SnsComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param autoCreateTopic the value to set
@@ -186,6 +186,23 @@ public interface Aws2SnsComponentBuilderFactory {
         default Aws2SnsComponentBuilder messageStructure(
                 java.lang.String messageStructure) {
             doSetProperty("messageStructure", messageStructure);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
         }
         /**
@@ -346,6 +363,22 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
          * Set whether the SNS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
@@ -443,6 +476,7 @@ public interface Aws2SnsComponentBuilderFactory {
             case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
             case "messageGroupIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Sns2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Sns2Component) component).setProxyPort((java.lang.Integer) value); return true;
@@ -453,6 +487,7 @@ public interface Aws2SnsComponentBuilderFactory {
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
             case "subscribeSNStoSQS": getOrCreateConfiguration((Sns2Component) component).setSubscribeSNStoSQS((boolean) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sns2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Sns2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sns2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((Sns2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;

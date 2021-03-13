@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
     protected String getFtpUrl() {
-        return "sftp://admin@localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "/foo/bar/baz/xxx?password=admin";
+        return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/foo/bar/baz/xxx?password=admin";
     }
 
     @AfterEach
     public void cleanupDir() {
-        FileUtil.removeDir(new File(service.getFtpRootDir(), "/foo/bar/baz/xxx"));
+        FileUtil.removeDir(new File(service.getFtpRootDir().toFile(), "/foo/bar/baz/xxx"));
     }
 
     @Test
@@ -45,10 +45,10 @@ public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
         SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
-        assertTrue(new File(service.getFtpRootDir() + "/foo/bar/baz/xxx").exists());
+        assertTrue(ftpFile("foo/bar/baz/xxx").toFile().exists());
         // producer should create necessary subdirs
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "sub1/sub2/hello.txt");
-        assertTrue(new File(service.getFtpRootDir() + "/foo/bar/baz/xxx/sub1/sub2").exists());
+        assertTrue(ftpFile("foo/bar/baz/xxx/sub1/sub2").toFile().exists());
 
         // to see if another connect causes problems with autoCreate=true
         endpoint.stop();

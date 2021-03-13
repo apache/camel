@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.LoggingExceptionHandler;
@@ -167,7 +168,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void handleDoneFile(Exchange exchange) {
         // must be last in batch to delete the done file name
         // delete done file if used (and not noop=true)
-        boolean complete = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+        boolean complete = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
         if (endpoint.getDoneFileName() != null && !endpoint.isNoop()) {
             // done file must be in same path as the original input file
             String doneFileName = endpoint.createDoneFileName(absoluteFileName);

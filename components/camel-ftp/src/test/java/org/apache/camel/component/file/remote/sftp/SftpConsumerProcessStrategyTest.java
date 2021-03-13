@@ -40,7 +40,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
         // create file using regular file
         template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        String out = consumer.receiveBody("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+        String out = consumer.receiveBody("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                           + "?username=admin&password=admin&processStrategy=#myStrategy",
                 5000, String.class);
         assertNotNull(out);

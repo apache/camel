@@ -32,6 +32,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.vertx.common.VertxBufferConverter;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.URISupport;

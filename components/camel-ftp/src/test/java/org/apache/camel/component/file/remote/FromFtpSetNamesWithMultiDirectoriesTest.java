@@ -25,10 +25,8 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -40,13 +38,6 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/ftpsetnamestest");
-        super.setUp();
     }
 
     @Test
@@ -67,12 +58,12 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         assertTrue(bytes.length > 10000, "Logo size wrong");
 
         // assert the file
-        File file = new File("target/ftpsetnamestest/data1/logo1.jpeg");
+        File file = testFile("data1/logo1.jpeg").toFile();
         assertTrue(file.exists(), "The binary file should exists");
         assertTrue(file.length() > 10000, "Logo size wrong");
 
         // assert the file
-        file = new File("target/ftpsetnamestest/data2/logo2.png");
+        file = testFile("data2/logo2.png").toFile();
         assertTrue(file.exists(), " The binary file should exists");
         assertTrue(file.length() > 50000, "Logo size wrong");
     }
@@ -106,7 +97,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to("file:target/ftpsetnamestest", "mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to(fileUri(), "mock:result");
             }
         };
     }

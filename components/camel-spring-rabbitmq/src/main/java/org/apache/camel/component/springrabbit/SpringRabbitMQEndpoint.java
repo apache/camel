@@ -47,6 +47,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.support.converter.MessageConverter;
 
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
+
 /**
  * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
  */
@@ -154,6 +156,16 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
+    @UriParam(label = "consumer,advanced",
+              description = "Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput.")
+    private Integer prefetchCount;
+    @UriParam(label = "consumer,advanced", defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER, enums = "DMLC,SMLC",
+              description = "The type of the MessageListenerContainer")
+    private String messageListenerContainerType = DIRECT_MESSAGE_LISTENER_CONTAINER;
+    @UriParam(label = "consumer,advanced", description = "The number of consumers")
+    private Integer concurrentConsumers;
+    @UriParam(label = "consumer,advanced", description = "The maximum number of consumers (available only with SMLC)")
+    private Integer maxConcurrentConsumers;
 
     public SpringRabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
         super(endpointUri, component);
@@ -345,6 +357,38 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         this.synchronous = synchronous;
     }
 
+    public Integer getPrefetchCount() {
+        return prefetchCount;
+    }
+
+    public void setPrefetchCount(Integer prefetchCount) {
+        this.prefetchCount = prefetchCount;
+    }
+
+    public String getMessageListenerContainerType() {
+        return messageListenerContainerType;
+    }
+
+    public void setMessageListenerContainerType(String messageListenerContainerType) {
+        this.messageListenerContainerType = messageListenerContainerType;
+    }
+
+    public Integer getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public Integer getMaxConcurrentConsumers() {
+        return maxConcurrentConsumers;
+    }
+
+    public void setMaxConcurrentConsumers(Integer maxConcurrentConsumers) {
+        this.maxConcurrentConsumers = maxConcurrentConsumers;
+    }
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer();
@@ -478,8 +522,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
     public void declareElements(AbstractMessageListenerContainer container) {
         AmqpAdmin admin = null;
-        if (container instanceof DefaultMessageListenerContainer) {
-            admin = ((DefaultMessageListenerContainer) container).getAmqpAdmin();
+        if (container instanceof MessageListenerContainer) {
+            admin = ((MessageListenerContainer) container).getAmqpAdmin();
         }
         if (admin != null && autoDeclare) {
             // bind dead letter exchange

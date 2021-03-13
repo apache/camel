@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,21 +31,16 @@ public class ManagedUnregisterRouteTest extends ManagementTestSupport {
 
     @Test
     public void testUnregisterRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "route1");
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String id = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", id);
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", camelId);
+        assertEquals(context.getManagementName(), camelId);
 
         context.stop();
 

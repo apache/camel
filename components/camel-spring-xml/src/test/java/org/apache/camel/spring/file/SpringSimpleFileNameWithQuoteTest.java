@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,15 +38,9 @@ public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport 
         result.expectedBodiesReceived(expectedBody);
         result.expectedHeaderReceived("foo", "\"hello.txt\" abc");
 
-        template.sendBodyAndHeader("file:target/foo", expectedBody, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), expectedBody, Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/foo");
-        super.setUp();
-    }
 }

@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,13 +39,6 @@ public class NewFileConsumeTest extends ContextTestSupport {
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/consumefile");
-        super.setUp();
-    }
-
-    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
@@ -58,15 +49,10 @@ public class NewFileConsumeTest extends ContextTestSupport {
         comp.setCamelContext(context);
 
         // create a file to consume
-        createDirectory("target/data/consumefile");
-        FileOutputStream fos = new FileOutputStream(new File("target/data/consumefile/hello.txt"));
-        try {
-            fos.write("Hello World".getBytes());
-        } finally {
-            fos.close();
-        }
+        Files.createDirectories(testDirectory());
+        Files.write(testFile("hello.txt"), "Hello World".getBytes());
 
-        Endpoint endpoint = comp.createEndpoint("file://target/data/consumefile", "target/data/consumefile",
+        Endpoint endpoint = comp.createEndpoint(fileUri(), testDirectory().toString(),
                 new HashMap<String, Object>());
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {

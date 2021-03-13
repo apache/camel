@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 
 public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport {
     private static final String SAMPLE_FILE_NAME_1 = String.format("sample-1-%s.txt",
@@ -53,14 +52,13 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
 
         // File is deleted
         Thread.sleep(250);
-        File deletedFile = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME_1);
-        assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile);
+        assertFileNotExists(ftpFile(SAMPLE_FILE_NAME_1));
     }
 
     @Test
     public void testConsumeMove() throws Exception {
         // moved file after its processed
-        String movedFile = service.getFtpRootDir() + "/.camel/" + SAMPLE_FILE_NAME_2;
+        String movedFile = ".camel/" + SAMPLE_FILE_NAME_2;
 
         // prepare sample file to be consumed by FTP consumer
         createSampleFile(SAMPLE_FILE_NAME_2);
@@ -70,7 +68,7 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(SAMPLE_FILE_PAYLOAD);
         // use mock to assert that the file will be moved there eventually
-        mock.expectedFileExists(movedFile);
+        mock.expectedFileExists(ftpFile(movedFile));
 
         context.getRouteController().startRoute("bar");
 
@@ -103,8 +101,7 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
     }
 
     private void createSampleFile(String fileName) throws IOException {
-        File file = new File(service.getFtpRootDir() + "/" + fileName);
-        FileUtils.write(file, SAMPLE_FILE_PAYLOAD, SAMPLE_FILE_CHARSET);
+        Files.write(ftpFile(fileName), SAMPLE_FILE_PAYLOAD.getBytes(SAMPLE_FILE_CHARSET));
     }
 
 }

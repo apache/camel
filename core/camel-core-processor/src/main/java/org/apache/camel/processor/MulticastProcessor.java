@@ -42,6 +42,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
@@ -586,6 +587,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 return false;
             }
 
+            // accept the exchange as a result
+            completion.submit(exchangeResult -> exchangeResult.accept(exchange));
+
             // aggregate exchanges if any
             aggregate();
 
@@ -764,16 +768,16 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
-        exchange.setProperty(Exchange.MULTICAST_INDEX, index);
+        exchange.setProperty(ExchangePropertyKey.MULTICAST_INDEX, index);
         if (hasNext) {
-            exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.FALSE);
+            exchange.setProperty(ExchangePropertyKey.MULTICAST_COMPLETE, Boolean.FALSE);
         } else {
-            exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.TRUE);
+            exchange.setProperty(ExchangePropertyKey.MULTICAST_COMPLETE, Boolean.TRUE);
         }
     }
 
     protected Integer getExchangeIndex(Exchange exchange) {
-        return exchange.getProperty(Exchange.MULTICAST_INDEX, Integer.class);
+        return exchange.getProperty(ExchangePropertyKey.MULTICAST_INDEX, Integer.class);
     }
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
@@ -807,8 +811,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
             // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
             // Set therefore the unit of work of the  parent route as stream cache unit of work,
             // if it is not already set.
-            if (copy.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                copy.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
+            if (copy.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                copy.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
             }
             // if we share unit of work, we need to prepare the child exchange
             if (isShareUnitOfWork()) {
@@ -869,7 +873,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         if (route != this.route && this.route != null) {
             throw new UnsupportedOperationException("Is this really correct ?");
         }
-        boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
+        boolean tryBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
         if (!tryBlock && route != null) {
@@ -895,7 +899,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                boolean child = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
+                boolean child = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
 
                 // must start the error handler
                 ServiceHelper.startService(answer);
@@ -935,7 +939,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      */
     protected Processor createUnitOfWorkProcessor(Route route, Processor processor, Exchange exchange) {
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        UnitOfWork parent = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
             return internalProcessorFactory.addChildUnitOfWorkProcessorAdvice(camelContext, processor, route, parent);
         } else {
@@ -953,7 +957,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param parentExchange the parent exchange
      */
     protected void prepareSharedUnitOfWork(Exchange childExchange, Exchange parentExchange) {
-        childExchange.setProperty(Exchange.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
+        childExchange.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
     }
 
     @Override
@@ -1010,7 +1014,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     protected static void setToEndpoint(Exchange exchange, Processor processor) {
         if (processor instanceof Producer) {
             Producer producer = (Producer) processor;
-            exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
         }
     }
 
@@ -1019,7 +1023,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
         // prefer to use per Exchange aggregation strategy over a global strategy
         if (exchange != null) {
-            Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+            Map<?, ?> property = exchange.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, Map.class);
             Map<Object, AggregationStrategy> map = CastUtils.cast(property);
             if (map != null) {
                 answer = map.get(this);
@@ -1039,7 +1043,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param aggregationStrategy the strategy
      */
     protected void setAggregationStrategyOnExchange(Exchange exchange, AggregationStrategy aggregationStrategy) {
-        Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map<?, ?> property = exchange.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
             map = new ConcurrentHashMap<>();
@@ -1051,7 +1055,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // store the strategy using this processor as the key
         // (so we can store multiple strategies on the same exchange)
         map.put(this, aggregationStrategy);
-        exchange.setProperty(Exchange.AGGREGATION_STRATEGY, map);
+        exchange.setProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, map);
     }
 
     /**
@@ -1060,7 +1064,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param exchange the current exchange
      */
     protected void removeAggregationStrategyFromExchange(Exchange exchange) {
-        Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map<?, ?> property = exchange.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
             return;

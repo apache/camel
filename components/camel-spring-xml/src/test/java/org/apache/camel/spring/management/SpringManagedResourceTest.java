@@ -24,11 +24,6 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringManagedResourceTest extends ManagedResourceTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedResourceTest.xml");
     }

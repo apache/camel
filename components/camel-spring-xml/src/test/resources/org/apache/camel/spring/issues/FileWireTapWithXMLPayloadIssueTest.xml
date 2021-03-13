@@ -26,7 +26,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="file://target/xmldata?initialDelay=0&amp;delay=10"/>
+            <from uri="file://target/data/FileWireTapWithXMLPayloadIssueTest?initialDelay=0&amp;delay=10"/>
             <convertBodyTo type="java.lang.String"/>
             <wireTap uri="mock:wiretap"/>
             <to uri="mock:result"/>
