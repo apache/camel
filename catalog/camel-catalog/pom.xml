@@ -129,6 +129,8 @@
                             <goal>prepare-assembly</goal>
                             <!-- update secrets in camel-util -->
                             <goal>update-sensitive-helper</goal>
+                            <!-- update names in camel-main -->
+                            <goal>update-main-helper</goal>
                         </goals>
                         <phase>process-resources</phase>
                     </execution>

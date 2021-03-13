@@ -1180,8 +1180,24 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(
-                    new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+            Map<String, String> env = MainHelper
+                    .filterEnvVariables(new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
+            LOG.debug("Gathered {} ENV variables to configure components, dataformats, languages", env.size());
+
+            // special configuration when using ENV variables as we need to extract the ENV variables
+            // that are for the out of the box components first, and then afterwards for any 3rd party custom components
+            Properties propENV = new OrderedProperties();
+            MainHelper.addComponentEnvVariables(env, propENV, false);
+            MainHelper.addDataFormatEnvVariables(env, propENV, false);
+            MainHelper.addLanguageEnvVariables(env, propENV, false);
+
+            if (!env.isEmpty()) {
+                LOG.debug("Remaining {} ENV variables to configure custom components, dataformats, languages", env.size());
+                MainHelper.addComponentEnvVariables(env, propENV, true);
+                MainHelper.addDataFormatEnvVariables(env, propENV, true);
+                MainHelper.addLanguageEnvVariables(env, propENV, true);
+            }
+
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
             }
