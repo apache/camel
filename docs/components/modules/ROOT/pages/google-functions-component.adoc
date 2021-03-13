@@ -1,7 +1,7 @@
 [[google-functions-component]]
 = GoogleCloudFunctions Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-google-functionssrcmaindocsgoogle-functions-component.adoc
+:page-source: components/camel-google/camel-google-functions/src/main/docs/google-functions-component.adoc
 :docTitle: GoogleCloudFunctions
 :artifactId: camel-google-functions
 :description: Store and retrieve objects from Google Cloud Functions Service using the google-cloud-storage library.
