@@ -37,6 +37,10 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     public PooledExchangeFactory() {
     }
 
+    public PooledExchangeFactory(Consumer consumer) {
+        super(consumer);
+    }
+
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
@@ -44,10 +48,6 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         // load the class on first exchange to be created
         DefaultPooledExchange dummy = new DefaultPooledExchange(camelContext);
         LOG.trace("Warming up PooledExchangeFactory loaded class: {}", dummy.getClass().getName());
-    }
-
-    public PooledExchangeFactory(Consumer consumer) {
-        super(consumer);
     }
 
     @Override
