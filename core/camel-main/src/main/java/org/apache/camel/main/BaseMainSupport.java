@@ -68,7 +68,10 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.main.MainHelper.*;
+import static org.apache.camel.main.MainHelper.computeProperties;
+import static org.apache.camel.main.MainHelper.optionKey;
+import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
+import static org.apache.camel.main.MainHelper.validateOptionAndValue;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -83,6 +86,7 @@ public abstract class BaseMainSupport extends BaseService {
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
+    private final MainHelper helper;
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
     protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
@@ -94,10 +98,12 @@ public abstract class BaseMainSupport extends BaseService {
     protected Properties overrideProperties;
 
     protected BaseMainSupport() {
+        helper = new MainHelper();
     }
 
     protected BaseMainSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
+        helper = new MainHelper();
     }
 
     private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
@@ -331,7 +337,8 @@ public abstract class BaseMainSupport extends BaseService {
             String locations = propertyPlaceholderLocations;
             if (locations == null) {
                 locations
-                        = lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION).orElse(defaultPropertyPlaceholderLocation);
+                        = helper.lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION)
+                                .orElse(defaultPropertyPlaceholderLocation);
             }
             if (locations != null) {
                 locations = locations.trim();
@@ -349,7 +356,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         Properties ip = initialProperties;
         if (ip == null || ip.isEmpty()) {
-            Optional<String> location = lookupPropertyFromSysOrEnv(INITIAL_PROPERTIES_LOCATION);
+            Optional<String> location = helper.lookupPropertyFromSysOrEnv(INITIAL_PROPERTIES_LOCATION);
             if (location.isPresent()) {
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
                     ip = new Properties();
@@ -363,7 +370,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         Properties op = overrideProperties;
         if (op == null || op.isEmpty()) {
-            Optional<String> location = lookupPropertyFromSysOrEnv(OVERRIDE_PROPERTIES_LOCATION);
+            Optional<String> location = helper.lookupPropertyFromSysOrEnv(OVERRIDE_PROPERTIES_LOCATION);
             if (location.isPresent()) {
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
                     op = new Properties();
@@ -419,7 +426,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         // we are now done with the main helper during bootstrap
-        camelContext.adapt(ExtendedCamelContext.class).addBootstrap(MainHelper::bootstrapDone);
+        helper.bootstrapDone();
     }
 
     protected void configureStartupRecorder(CamelContext camelContext) {
@@ -579,7 +586,7 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from ENV (override existing)
         Properties propENV = null;
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
                 LOG.debug("Properties from OS environment variables:");
@@ -591,7 +598,7 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from JVM (override existing)
         Properties propJVM = null;
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
             if (!propJVM.isEmpty()) {
                 prop.putAll(propJVM);
                 LOG.debug("Properties from JVM system properties:");
@@ -671,7 +678,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+            Properties propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
                 LOG.debug("Properties from OS environment variables:");
@@ -682,7 +689,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
             if (!propJVM.isEmpty()) {
                 prop.putAll(propJVM);
                 LOG.debug("Properties from JVM system properties:");
@@ -1051,14 +1058,14 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+            Properties propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
             }
         }
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
             if (!propJVM.isEmpty()) {
                 prop.putAll(propJVM);
             }
@@ -1100,7 +1107,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            Properties propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
             // special handling of these so remove them
             // ENV variables cannot use dash so replace with dot
             propENV.remove(INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
@@ -1112,7 +1119,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
             // special handling of these so remove them
             propJVM.remove(INITIAL_PROPERTIES_LOCATION);
             propJVM.remove(StringHelper.dashToCamelCase(INITIAL_PROPERTIES_LOCATION));
@@ -1190,15 +1197,15 @@ public abstract class BaseMainSupport extends BaseService {
             // special configuration when using ENV variables as we need to extract the ENV variables
             // that are for the out of the box components first, and then afterwards for any 3rd party custom components
             Properties propENV = new OrderedProperties();
-            MainHelper.addComponentEnvVariables(env, propENV, false);
-            MainHelper.addDataFormatEnvVariables(env, propENV, false);
-            MainHelper.addLanguageEnvVariables(env, propENV, false);
+            helper.addComponentEnvVariables(env, propENV, false);
+            helper.addDataFormatEnvVariables(env, propENV, false);
+            helper.addLanguageEnvVariables(env, propENV, false);
 
             if (!env.isEmpty()) {
                 LOG.debug("Remaining {} ENV variables to configure custom components, dataformats, languages", env.size());
-                MainHelper.addComponentEnvVariables(env, propENV, true);
-                MainHelper.addDataFormatEnvVariables(env, propENV, true);
-                MainHelper.addLanguageEnvVariables(env, propENV, true);
+                helper.addComponentEnvVariables(env, propENV, true);
+                helper.addDataFormatEnvVariables(env, propENV, true);
+                helper.addLanguageEnvVariables(env, propENV, true);
             }
 
             if (!propENV.isEmpty()) {
@@ -1207,7 +1214,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = loadJvmSystemPropertiesAsProperties(
+            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(
                     new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
             if (!propJVM.isEmpty()) {
                 prop.putAll(propJVM);
