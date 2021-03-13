@@ -61,7 +61,7 @@ public class AWS2S3Component extends DefaultComponent {
         if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonS3Client() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
 
         return endpoint;
