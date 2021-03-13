@@ -417,6 +417,9 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             });
         }
+
+        // we are now done with the main helper during bootstrap
+        camelContext.adapt(ExtendedCamelContext.class).addBootstrap(MainHelper::bootstrapDone);
     }
 
     protected void configureStartupRecorder(CamelContext camelContext) {

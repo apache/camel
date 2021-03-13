@@ -481,6 +481,13 @@ public final class MainHelper {
     private MainHelper() {
     }
 
+    public static void bootstrapDone() {
+        // after bootstrap then these maps are no longer needed
+        COMPONENT_ENV_NAMES.clear();
+        DATAFORMAT_ENV_NAMES.clear();
+        LANGUAGE_ENV_NAMES.clear();
+    }
+
     public static String toEnvVar(String name) {
         return name.toUpperCase(Locale.US).replaceAll("[^\\w]", "-").replace('-', '_');
     }
