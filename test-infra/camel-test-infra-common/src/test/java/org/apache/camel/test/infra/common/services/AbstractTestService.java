@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public abstract class AbstractTestService implements TestService, BeforeAllCallback, AfterAllCallback  {
+public abstract class AbstractTestService implements TestService, BeforeAllCallback, AfterAllCallback {
 
     protected ExtensionContext context;
 
