@@ -98,19 +98,19 @@ public class UpdateMainHelper extends AbstractGeneratorMojo {
 
                 if (isComponent) {
                     ComponentModel cm = JsonMapper.generateComponentModel(json);
-                    components.add(asEnvName("CAMEL_COMPONENT_", cm.getScheme()));
+                    components.add(asEnvName(cm.getScheme()));
                     if (cm.getAlternativeSchemes() != null) {
                         String[] aliases = cm.getAlternativeSchemes().split(",");
                         for (String alias : aliases) {
-                            components.add(asEnvName("CAMEL_COMPONENT_", alias));
+                            components.add(asEnvName(alias));
                         }
                     }
                 } else if (isDataFormat) {
                     DataFormatModel dm = JsonMapper.generateDataFormatModel(json);
-                    dataformats.add(asEnvName("CAMEL_DATAFORMAT_", dm.getName()));
+                    dataformats.add(asEnvName(dm.getName()));
                 } else if (isLanguage) {
                     LanguageModel lm = JsonMapper.generateLanguageModel(json);
-                    languages.add(asEnvName("CAMEL_LANGUAGE_", lm.getName()));
+                    languages.add(asEnvName(lm.getName()));
                 }
             } catch (Exception e) {
                 throw new MojoExecutionException("Error loading json: " + name, e);
@@ -164,8 +164,8 @@ public class UpdateMainHelper extends AbstractGeneratorMojo {
         return false;
     }
 
-    private static String asEnvName(String prefix, String name) {
-        return prefix + name.toUpperCase(Locale.US).replace('-', '_');
+    private static String asEnvName(String name) {
+        return name.toUpperCase(Locale.US).replace('-', '_');
     }
 
 }
