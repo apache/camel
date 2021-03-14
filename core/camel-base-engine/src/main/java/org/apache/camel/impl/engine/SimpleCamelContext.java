@@ -564,8 +564,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ExchangeFactory.FACTORY,
                 ExchangeFactory.class);
 
-        // TODO: experiment to use pooled by default (revert this commit after testing)
-        return result.orElseGet(PooledExchangeFactory::new);
+        return result.orElseGet(PrototypeExchangeFactory::new);
     }
 
     @Override
