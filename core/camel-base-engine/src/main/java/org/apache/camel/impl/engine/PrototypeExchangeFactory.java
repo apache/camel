@@ -107,11 +107,6 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
     }
 
     @Override
-    public void resetStatistics() {
-        statistics.reset();
-    }
-
-    @Override
     public boolean isPooled() {
         return false;
     }
@@ -131,7 +126,6 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
             exchangeFactoryManager.removeExchangeFactory(this);
         }
         logUsageSummary(LOG, "PrototypeExchangeFactory", 0);
-        statistics.reset();
     }
 
     void logUsageSummary(Logger log, String name, int pooled) {

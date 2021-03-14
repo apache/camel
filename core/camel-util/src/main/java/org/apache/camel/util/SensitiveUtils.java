@@ -93,11 +93,11 @@ public final class SensitiveUtils {
     }
 
     /**
-     * Whether the given configuration property contains a sensitive
-     * a sensitive key (such as password, accesstoken, etc.)
+     * Whether the given configuration property contains a sensitive a sensitive key (such as password, accesstoken,
+     * etc.)
      *
-     * @param text  the configuration property
-     * @return true if sensitive, false otherwise
+     * @param  text the configuration property
+     * @return      true if sensitive, false otherwise
      */
     public static boolean containsSensitive(String text) {
         int lastPeriod = text.lastIndexOf('.');

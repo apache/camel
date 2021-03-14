@@ -24,10 +24,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.PooledObjectFactory;
 import org.apache.camel.support.service.ServiceSupport;
 
+/**
+ * Base class for building {@link PooledObjectFactory} based factories.
+ */
 public abstract class PooledObjectFactorySupport<T> extends ServiceSupport implements PooledObjectFactory<T> {
 
-    protected final UtilizationStatistics statistics = new UtilizationStatistics();
-
+    protected UtilizationStatistics statistics;
     protected CamelContext camelContext;
     protected BlockingQueue<T> pool;
     protected int capacity = 100;
@@ -38,6 +40,9 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
         super.doBuild();
         if (isPooled()) {
             this.pool = new ArrayBlockingQueue<>(capacity);
+        }
+        if (isStatisticsEnabled()) {
+            this.statistics = new UtilizationStatistics();
         }
     }
 
@@ -82,7 +87,9 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
 
     @Override
     public void resetStatistics() {
-        statistics.reset();
+        if (statistics != null) {
+            statistics.reset();
+        }
     }
 
     @Override
@@ -105,9 +112,13 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        statistics.reset();
+        if (statistics != null) {
+            statistics.reset();
+            statistics = null;
+        }
         if (pool != null) {
             pool.clear();
+            pool = null;
         }
     }
 
