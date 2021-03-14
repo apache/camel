@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
@@ -83,6 +84,7 @@ class AbstractExchange implements ExtendedExchange {
     boolean interruptable = true;
     boolean redeliveryExhausted;
     Boolean errorHandlerHandled;
+    AsyncCallback defaultConsumerCallback; // optimize (do not reset)
 
     public AbstractExchange(CamelContext context) {
         this.context = context;
@@ -845,6 +847,16 @@ class AbstractExchange implements ExtendedExchange {
             }
         }
         return map;
+    }
+
+    @Override
+    public AsyncCallback getDefaultConsumerCallback() {
+        return defaultConsumerCallback;
+    }
+
+    @Override
+    public void setDefaultConsumerCallback(AsyncCallback defaultConsumerCallback) {
+        this.defaultConsumerCallback = defaultConsumerCallback;
     }
 
     protected String createExchangeId() {
