@@ -86,7 +86,6 @@ public abstract class BaseMainSupport extends BaseService {
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
-    private final MainHelper helper;
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
     protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
@@ -96,6 +95,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
+    private final MainHelper helper;
 
     protected BaseMainSupport() {
         helper = new MainHelper();
