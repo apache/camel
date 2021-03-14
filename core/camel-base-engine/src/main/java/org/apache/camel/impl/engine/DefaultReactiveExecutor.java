@@ -99,6 +99,16 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+        // force to create and load the class during build time so the JVM does not
+        // load the class on first exchange to be created
+        Worker dummy = new Worker(0, this);
+        LOG.trace("Warming up DefaultReactiveExecutor loaded class: {}", dummy.getClass().getName());
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (LOG.isDebugEnabled() && statisticsEnabled) {
             LOG.debug("Stopping DefaultReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
