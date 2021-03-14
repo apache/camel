@@ -24,10 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("TODO: Fix me")
 public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupport {
 
     @Test
@@ -85,9 +83,6 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                                     // otherwise do a rollback
                                     throw new CamelExchangeException("Cannot find the data file " + name, exchange);
                                 }
-
-                                // and remember to done the UoW
-                                data.getUnitOfWork().done(data);
                             }
                         }).to("mock:start");
 
