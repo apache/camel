@@ -128,6 +128,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         // only create pooled task factory
         if (pooled) {
+
+            // force to create and load the class during build time so the JVM does not
+            // load the class on first exchange to be created
+            AsyncAfterTask dummy = new AsyncAfterTask(null);
+            LOG.trace("Warming up CamelInternalPooledTaskFactory loaded class: {}", dummy.getClass().getName());
+
             taskFactory = new CamelInternalPooledTaskFactory();
             int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
