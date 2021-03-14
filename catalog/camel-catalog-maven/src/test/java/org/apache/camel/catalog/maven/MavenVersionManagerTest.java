@@ -59,7 +59,7 @@ public class MavenVersionManagerTest {
     }
 
     @Test
-    public void testEndpointOptions217() throws Exception {
+    public void testEndpointOptions217() {
         CamelCatalog catalog = new DefaultCamelCatalog(false);
         catalog.setVersionManager(new MavenVersionManager());
         catalog.loadVersion("2.17.1");
@@ -77,7 +77,7 @@ public class MavenVersionManagerTest {
     }
 
     @Test
-    public void testEndpointOptions218OrNewer() throws Exception {
+    public void testEndpointOptions218OrNewer() {
         CamelCatalog catalog = new DefaultCamelCatalog(false);
 
         String json = catalog.componentJSonSchema("ahc");
@@ -88,7 +88,7 @@ public class MavenVersionManagerTest {
     }
 
     @Test
-    public void testRuntimeProviderLoadVersion() throws Exception {
+    public void testRuntimeProviderLoadVersion() {
         CamelCatalog catalog = new DefaultCamelCatalog(false);
         catalog.setVersionManager(new MavenVersionManager());
         catalog.setRuntimeProvider(new DefaultRuntimeProvider());
@@ -113,7 +113,7 @@ public class MavenVersionManagerTest {
     }
 
     @Test
-    public void testRuntimeProviderLoadVersionWithCaching() throws Exception {
+    public void testRuntimeProviderLoadVersionWithCaching() {
         CamelCatalog catalog = new DefaultCamelCatalog(true);
         catalog.setVersionManager(new MavenVersionManager());
         catalog.setRuntimeProvider(new DefaultRuntimeProvider());
@@ -138,7 +138,7 @@ public class MavenVersionManagerTest {
     }
 
     @Test
-    public void testLoadUnknownVersion() throws Exception {
+    public void testLoadUnknownVersion() {
         MavenVersionManager manager = new MavenVersionManager();
         String current = manager.getLoadedVersion();
         assertNull(current);

@@ -141,7 +141,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     // CHECKSTYLE:OFF
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
 
         Set<File> javaFiles = new LinkedHashSet<>();
         Set<File> xmlFiles = new LinkedHashSet<>();
@@ -401,8 +401,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     @SuppressWarnings("unchecked")
     private String templateCoverageData(
             String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered,
-            AtomicInteger coveredNodes)
-            throws MojoExecutionException {
+            AtomicInteger coveredNodes) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PrintStream sw = new PrintStream(bos);
 

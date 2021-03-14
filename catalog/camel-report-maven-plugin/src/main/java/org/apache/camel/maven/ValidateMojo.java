@@ -372,7 +372,7 @@ public class ValidateMojo extends AbstractExecMojo {
         return -1;
     }
 
-    protected void doExecuteRoutes(CamelCatalog catalog) throws MojoExecutionException, MojoFailureException {
+    protected void doExecuteRoutes(CamelCatalog catalog) throws MojoExecutionException {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
         List<CamelSimpleExpressionDetails> simpleExpressions = new ArrayList<>();
         List<CamelRouteDetails> routeIds = new ArrayList<>();

@@ -36,7 +36,7 @@ class RoasterJavaPartialRouteDslTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterJavaPartialRouteDslTest.class);
 
     @Test
-    void parseTree() throws Exception {
+    void parseTree() {
         String pathToFile = "src/test/java/org/apache/camel/parser/java/MyPartialRoute.java";
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File(pathToFile));
 

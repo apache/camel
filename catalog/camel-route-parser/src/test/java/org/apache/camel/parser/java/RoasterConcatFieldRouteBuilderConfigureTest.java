@@ -35,7 +35,7 @@ public class RoasterConcatFieldRouteBuilderConfigureTest {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterConcatFieldRouteBuilderConfigureTest.class);
 
     @Test
-    void parse() throws Exception {
+    void parse() {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyConcatFieldRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
