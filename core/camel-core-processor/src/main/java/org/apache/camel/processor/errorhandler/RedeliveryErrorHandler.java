@@ -1559,18 +1559,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return false;
     }
 
-    /**
-     * Gets the number of exchanges that are pending for redelivery
-     */
-    public int getPendingRedeliveryCount() {
-        int answer = redeliverySleepCounter.get();
-        if (executorService instanceof ThreadPoolExecutor) {
-            answer += ((ThreadPoolExecutor) executorService).getQueue().size();
-        }
-
-        return answer;
-    }
-
     @Override
     protected void doStart() throws Exception {
         // determine if redeliver is enabled or not
