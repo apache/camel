@@ -58,8 +58,7 @@ class AbstractExchange implements ExtendedExchange {
     static final Object[] EMPTY_INTERNAL_PROPERTIES = new Object[INTERNAL_LENGTH];
 
     final CamelContext context;
-    // optimize to create properties always and with a reasonable small size
-    final Map<String, Object> properties = new ConcurrentHashMap<>(8);
+    Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
     // optimize for internal exchange properties (not intended for end users)
     final Object[] internalProperties = new Object[INTERNAL_LENGTH];
     long created;
@@ -265,7 +264,7 @@ class AbstractExchange implements ExtendedExchange {
             answer = internalProperties[key.ordinal()];
             // if the property is not an internal then fallback to lookup in the properties map
         }
-        if (answer == null) {
+        if (answer == null && properties != null) {
             answer = properties.get(name);
         }
         return answer;
@@ -329,8 +328,11 @@ class AbstractExchange implements ExtendedExchange {
             setProperty(key, value);
         } else if (value != null) {
             // avoid the NullPointException
+            if (properties == null) {
+                this.properties = new ConcurrentHashMap<>(8);
+            }
             properties.put(name, value);
-        } else {
+        } else if (properties != null) {
             // if the value is null, we just remove the key from the map
             properties.remove(name);
         }
@@ -338,7 +340,11 @@ class AbstractExchange implements ExtendedExchange {
 
     @Override
     public void setProperties(Map<String, Object> properties) {
-        this.properties.clear();
+        if (this.properties == null) {
+            this.properties = new ConcurrentHashMap<>(8);
+        } else {
+            this.properties.clear();
+        }
         this.properties.putAll(properties);
     }
 
@@ -363,7 +369,9 @@ class AbstractExchange implements ExtendedExchange {
     public boolean removeProperties(String pattern, String... excludePatterns) {
         // special optimized
         if (excludePatterns == null && "*".equals(pattern)) {
-            properties.clear();
+            if (properties != null) {
+                properties.clear();
+            }
             // reset array by copying over from empty which is a very fast JVM optimized operation
             System.arraycopy(EMPTY_INTERNAL_PROPERTIES, 0, this.internalProperties, 0, INTERNAL_LENGTH);
             return true;
@@ -382,27 +390,29 @@ class AbstractExchange implements ExtendedExchange {
         }
 
         // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
-        Set<String> toBeRemoved = null;
-        for (String key : properties.keySet()) {
-            if (PatternHelper.matchPattern(key, pattern)) {
-                if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
-                    continue;
+        if (properties != null) {
+            Set<String> toBeRemoved = null;
+            for (String key : properties.keySet()) {
+                if (PatternHelper.matchPattern(key, pattern)) {
+                    if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
+                        continue;
+                    }
+                    matches = true;
+                    if (toBeRemoved == null) {
+                        toBeRemoved = new HashSet<>();
+                    }
+                    toBeRemoved.add(key);
                 }
-                matches = true;
-                if (toBeRemoved == null) {
-                    toBeRemoved = new HashSet<>();
-                }
-                toBeRemoved.add(key);
             }
-        }
 
-        if (matches && toBeRemoved != null) {
-            if (toBeRemoved.size() == properties.size()) {
-                // special optimization when all should be removed
-                properties.clear();
-            } else {
-                for (String key : toBeRemoved) {
-                    properties.remove(key);
+            if (matches && toBeRemoved != null) {
+                if (toBeRemoved.size() == properties.size()) {
+                    // special optimization when all should be removed
+                    properties.clear();
+                } else {
+                    for (String key : toBeRemoved) {
+                        properties.remove(key);
+                    }
                 }
             }
         }
@@ -412,6 +422,9 @@ class AbstractExchange implements ExtendedExchange {
 
     @Override
     public Map<String, Object> getProperties() {
+        if (properties == null) {
+            this.properties = new ConcurrentHashMap<>(8);
+        }
         return properties;
     }
 
@@ -419,7 +432,7 @@ class AbstractExchange implements ExtendedExchange {
     public Map<String, Object> getAllProperties() {
         // include also internal properties (creates a new map)
         Map<String, Object> map = getInternalProperties();
-        if (!properties.isEmpty()) {
+        if (properties != null && !properties.isEmpty()) {
             map.putAll(properties);
         }
         return map;
@@ -427,7 +440,7 @@ class AbstractExchange implements ExtendedExchange {
 
     @Override
     public boolean hasProperties() {
-        return !properties.isEmpty();
+        return properties != null && !properties.isEmpty();
     }
 
     @Override
