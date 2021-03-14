@@ -344,6 +344,7 @@ public interface Aws2SqsComponentBuilderFactory {
          * @param deleteIfFiltered the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Aws2SqsComponentBuilder deleteIfFiltered(
                 boolean deleteIfFiltered) {
             doSetProperty("deleteIfFiltered", deleteIfFiltered);

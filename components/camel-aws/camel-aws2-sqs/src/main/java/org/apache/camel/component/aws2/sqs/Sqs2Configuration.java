@@ -60,6 +60,7 @@ public class Sqs2Configuration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
     @UriParam(label = "consumer", defaultValue = "true")
+    @Deprecated
     private boolean deleteIfFiltered = true;
     @UriParam(label = "consumer")
     private Integer visibilityTimeout;

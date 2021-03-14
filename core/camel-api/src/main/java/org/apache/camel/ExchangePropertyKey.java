@@ -43,7 +43,6 @@ public enum ExchangePropertyKey {
     FAILURE_HANDLED(Exchange.FAILURE_HANDLED),
     FAILURE_ROUTE_ID(Exchange.FAILURE_ROUTE_ID),
     FATAL_FALLBACK_ERROR_HANDLER(Exchange.FATAL_FALLBACK_ERROR_HANDLER),
-    FILTER_MATCHED(Exchange.FILTER_MATCHED),
     GROUPED_EXCHANGE(Exchange.GROUPED_EXCHANGE),
     INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED),
     LOOP_INDEX(Exchange.LOOP_INDEX),
@@ -123,8 +122,6 @@ public enum ExchangePropertyKey {
                 return FAILURE_ROUTE_ID;
             case Exchange.FATAL_FALLBACK_ERROR_HANDLER:
                 return FATAL_FALLBACK_ERROR_HANDLER;
-            case Exchange.FILTER_MATCHED:
-                return FILTER_MATCHED;
             case Exchange.GROUPED_EXCHANGE:
                 return GROUPED_EXCHANGE;
             case Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED:

@@ -136,6 +136,7 @@ public interface Exchange {
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
+    @Deprecated
     String FILTER_MATCHED = "CamelFilterMatched";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 

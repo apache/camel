@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -61,20 +60,6 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // callback to restore existing FILTER_MATCHED property on the Exchange
-        final Object existing = exchange.getProperty(ExchangePropertyKey.FILTER_MATCHED);
-        final AsyncCallback choiceCallback = new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                if (existing != null) {
-                    exchange.setProperty(ExchangePropertyKey.FILTER_MATCHED, existing);
-                } else {
-                    exchange.removeProperty(ExchangePropertyKey.FILTER_MATCHED);
-                }
-                callback.done(doneSync);
-            }
-        };
-
         // find the first matching filter and process the exchange using it
         for (int i = 0; i < len; i++) {
             FilterProcessor filter = filters[i];
@@ -91,7 +76,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
             // check for error if so we should break out
             if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
                 // okay there was an error in the predicate so we should exit
-                choiceCallback.done(true);
+                callback.done(true);
                 return true;
             }
 
@@ -101,16 +86,16 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
             }
 
             // okay we found a filter then process it directly via its processor as we have already done the matching
-            return filter.getProcessor().process(exchange, choiceCallback);
+            return filter.getProcessor().process(exchange, callback);
         }
 
         if (otherwise != null) {
             // no filter matched then use otherwise
             notFiltered++;
-            return otherwise.process(exchange, choiceCallback);
+            return otherwise.process(exchange, callback);
         } else {
             // when no filter matches and there is no otherwise, then just continue
-            choiceCallback.done(true);
+            callback.done(true);
             return true;
         }
     }

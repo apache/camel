@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -28,10 +27,6 @@ public class FilterNotMatchedTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(true);
-
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isNotNull();
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(true);
 
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
 
@@ -42,9 +37,6 @@ public class FilterNotMatchedTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isNotNull();
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(false);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 

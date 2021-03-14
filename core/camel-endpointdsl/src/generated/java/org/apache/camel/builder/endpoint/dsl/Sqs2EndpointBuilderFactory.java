@@ -536,6 +536,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @param deleteIfFiltered the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Sqs2EndpointConsumerBuilder deleteIfFiltered(
                 boolean deleteIfFiltered) {
             doSetProperty("deleteIfFiltered", deleteIfFiltered);
@@ -556,6 +557,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @param deleteIfFiltered the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default Sqs2EndpointConsumerBuilder deleteIfFiltered(
                 String deleteIfFiltered) {
             doSetProperty("deleteIfFiltered", deleteIfFiltered);
