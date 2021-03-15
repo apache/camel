@@ -404,7 +404,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     /**
-     * Sub taks processed reactive via the {@link ReactiveExecutor}.
+     * Sub task processed reactive via the {@link ReactiveExecutor}.
      */
     protected class MulticastReactiveTask extends MulticastTask {
 
