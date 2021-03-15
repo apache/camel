@@ -55,17 +55,17 @@ public class SecretsManagerProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-            case listSecrets:
-                listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
-                break;
-            case createSecret:
-                createSecret(getEndpoint().getSecretsManagerClient(), exchange);
-                break;
-            case getSecret:
-                getSecret(getEndpoint().getSecretsManagerClient(), exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        case listSecrets:
+            listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
+            break;
+        case createSecret:
+            createSecret(getEndpoint().getSecretsManagerClient(), exchange);
+            break;
+        case getSecret:
+            getSecret(getEndpoint().getSecretsManagerClient(), exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -86,7 +86,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     public String toString() {
         if (secretsManagerProducerToString == null) {
             secretsManagerProducerToString = "SecretsManagerProducer["
-                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return secretsManagerProducerToString;
     }
@@ -98,19 +98,12 @@ public class SecretsManagerProducer extends DefaultProducer {
 
     private void listSecrets(SecretsManagerClient secretsManagerClient, Exchange exchange)
             throws InvalidPayloadException {
+        ListSecretsRequest request = null;
+        ListSecretsResponse result;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListSecretsRequest) {
-                ListSecretsResponse result;
-                try {
-                    ListSecretsRequest request = (ListSecretsRequest) payload;
-                    result = secretsManagerClient.listSecrets(request);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("List Secrets command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
+                request = (ListSecretsRequest) payload;
             }
         } else {
             Builder builder = ListSecretsRequest.builder();
@@ -118,17 +111,16 @@ public class SecretsManagerProducer extends DefaultProducer {
                 int maxRes = exchange.getIn().getHeader(SecretsManagerConstants.MAX_RESULTS, Integer.class);
                 builder.maxResults(maxRes);
             }
-            ListSecretsResponse result;
-            try {
-                ListSecretsRequest request = builder.build();
-                result = secretsManagerClient.listSecrets(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("List Secrets command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            request = builder.build();
         }
+        try {
+            result = secretsManagerClient.listSecrets(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("List Secrets command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void createSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
