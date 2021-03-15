@@ -21,5 +21,6 @@ public enum SecretsManagerOperations {
     listSecrets,
     createSecret,
     getSecret,
-    describeSecret
+    describeSecret,
+    deleteSecret
 }

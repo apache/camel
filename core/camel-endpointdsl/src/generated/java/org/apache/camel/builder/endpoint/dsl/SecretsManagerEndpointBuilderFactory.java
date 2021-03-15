@@ -432,7 +432,8 @@ public interface SecretsManagerEndpointBuilderFactory {
         listSecrets,
         createSecret,
         getSecret,
-        describeSecret;
+        describeSecret,
+        deleteSecret;
     }
 
     /**

@@ -32,6 +32,8 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
@@ -68,6 +70,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 break;
             case describeSecret:
                 describeSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case deleteSecret:
+                deleteSecret(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -223,6 +228,35 @@ public class SecretsManagerProducer extends DefaultProducer {
             result = secretsManagerClient.describeSecret(request);
         } catch (AwsServiceException ase) {
             LOG.trace("Describe Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void deleteSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        DeleteSecretRequest request = null;
+        DeleteSecretResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteSecretRequest) {
+                request = (DeleteSecretRequest) payload;
+            }
+        } else {
+            DeleteSecretRequest.Builder builder = DeleteSecretRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
+                String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
+                builder.secretId(secretId);
+            } else {
+                throw new IllegalArgumentException("Secret Id must be specified");
+            }
+            request = builder.build();
+        }
+        try {
+            result = secretsManagerClient.deleteSecret(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Delete Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
