@@ -37,7 +37,7 @@ public class RoasterMySedaRouteBuilderTest {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterMySedaRouteBuilderTest.class);
 
     @Test
-    void parse() {
+    void parse() throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MySedaRouteBuilder.java"));
 

@@ -134,7 +134,8 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+            public void startElement(
+                    final String uri, final String localName, final String qName, final Attributes attributes) {
                 addTextIfNeeded();
 
                 if (rootNames != null && !found) {

@@ -36,7 +36,7 @@ public class RoasterRouteBuilderEmptyUriTest {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterRouteBuilderEmptyUriTest.class);
 
     @Test
-    void parse() {
+    void parse() throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRouteEmptyUriTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);

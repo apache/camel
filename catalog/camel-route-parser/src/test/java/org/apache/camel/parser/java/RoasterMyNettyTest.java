@@ -35,7 +35,7 @@ public class RoasterMyNettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterMyNettyTest.class);
 
     @Test
-    void parse() {
+    void parse() throws Exception {
         JavaClassSource clazz
                 = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyNettyTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
