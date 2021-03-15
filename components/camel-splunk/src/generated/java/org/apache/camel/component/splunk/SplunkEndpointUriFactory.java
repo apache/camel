@@ -20,7 +20,7 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(44);
+        Set<String> props = new HashSet<>(45);
         props.add("backoffMultiplier");
         props.add("scheme");
         props.add("earliestTime");
@@ -60,6 +60,7 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
         props.add("startScheduler");
         props.add("initEarliestTime");
         props.add("name");
+        props.add("tcpReceiverLocalPort");
         props.add("sslProtocol");
         props.add("latestTime");
         props.add("eventHost");
