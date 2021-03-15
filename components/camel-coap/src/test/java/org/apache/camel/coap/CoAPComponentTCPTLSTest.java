@@ -23,7 +23,7 @@ public class CoAPComponentTCPTLSTest extends CoAPComponentTLSTestBase {
 
     @Override
     protected String getProtocol() {
-        return "coaps-tcp";
+        return "coaps+tcp";
     }
 
     @Override
