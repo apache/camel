@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import javax.jms.Connection;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -31,6 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.jms.Connection;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,12 +46,7 @@ public class DlqTest extends CamelSpringTestSupport {
 
         LOG.info("Wait for dlq message...");
 
-        assertTrue(Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return broker.getAdminView().getTotalEnqueueCount() == 2;
-            }
-        }));
+        assertTrue(Wait.waitFor(() -> broker.getAdminView().getTotalEnqueueCount() == 2));
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {

@@ -16,16 +16,15 @@
  */
 package org.apache.camel.support.jsse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
-
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TrustManagersParameters extends JsseParameters {
 
@@ -93,8 +92,8 @@ public class TrustManagersParameters extends JsseParameters {
                 tmf = TrustManagerFactory.getInstance(tmfAlgorithm, this.parsePropertyValue(this.getProvider()));
             }
 
-            LOG.debug("TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].",
-                    new Object[] { tmf, tmf.getProvider(), tmf.getAlgorithm() });
+            LOG.debug("TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].", tmf, tmf.getProvider(),
+                    tmf.getAlgorithm());
 
             KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
             tmf.init(ks);

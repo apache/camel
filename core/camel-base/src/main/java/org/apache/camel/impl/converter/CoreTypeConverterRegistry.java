@@ -16,13 +16,6 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.LongAdder;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -46,6 +39,13 @@ import org.apache.camel.util.DoubleMap;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 public class CoreTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
@@ -388,8 +388,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     protected Object doConvertTo(
             final Class<?> type, final Exchange exchange, final Object value,
-            final boolean tryConvert)
-            throws Exception {
+            final boolean tryConvert) {
         boolean trace = LOG.isTraceEnabled();
         boolean statisticsEnabled = statistics.isStatisticsEnabled();
 
@@ -455,11 +454,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                         type);
             }
             Object rc;
-            if (tryConvert) {
-                rc = bulk.convertTo(value.getClass(), type, exchange, value);
-            } else {
-                rc = bulk.convertTo(value.getClass(), type, exchange, value);
-            }
+            rc = bulk.convertTo(value.getClass(), type, exchange, value);
             if (rc != null) {
                 return rc;
             }
@@ -694,10 +689,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 }
 
                 // lets test for Object based converters as last resort
-                converter = getTypeConverter(toType, Object.class);
-                if (converter != null) {
-                    return converter;
-                }
+                return getTypeConverter(toType, Object.class);
             }
         }
 

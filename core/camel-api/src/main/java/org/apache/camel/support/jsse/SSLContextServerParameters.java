@@ -16,19 +16,18 @@
  */
 package org.apache.camel.support.jsse;
 
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.camel.RuntimeCamelException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocketFactory;
-
-import org.apache.camel.RuntimeCamelException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SSLContextServerParameters extends BaseSSLContextParameters {
 
@@ -93,27 +92,24 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             final ClientAuthentication clientAuthValue
                     = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
-            Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
-                @Override
-                public SSLEngine configure(SSLEngine engine) {
-                    LOG.trace("Configuring client-auth on SSLEngine [{}] to [{}].", engine, clientAuthValue);
-                    switch (clientAuthValue) {
-                        case NONE:
-                            engine.setWantClientAuth(false);
-                            engine.setNeedClientAuth(false);
-                            break;
-                        case WANT:
-                            engine.setWantClientAuth(true);
-                            break;
-                        case REQUIRE:
-                            engine.setNeedClientAuth(true);
-                            break;
-                        default:
-                            throw new RuntimeCamelException("Unknown ClientAuthentication value: " + clientAuthValue);
-                    }
-
-                    return engine;
+            Configurer<SSLEngine> sslEngineConfigurer = engine -> {
+                LOG.trace("Configuring client-auth on SSLEngine [{}] to [{}].", engine, clientAuthValue);
+                switch (clientAuthValue) {
+                    case NONE:
+                        engine.setWantClientAuth(false);
+                        engine.setNeedClientAuth(false);
+                        break;
+                    case WANT:
+                        engine.setWantClientAuth(true);
+                        break;
+                    case REQUIRE:
+                        engine.setNeedClientAuth(true);
+                        break;
+                    default:
+                        throw new RuntimeCamelException("Unknown ClientAuthentication value: " + clientAuthValue);
                 }
+
+                return engine;
             };
 
             sslEngineConfigurers.add(sslEngineConfigurer);
@@ -132,27 +128,24 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             final ClientAuthentication clientAuthValue
                     = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
-            Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
-                @Override
-                public SSLServerSocket configure(SSLServerSocket socket) {
-                    LOG.trace("Configuring client-auth on SSLServerSocket [{}] to [{}].", socket, clientAuthValue);
-                    switch (clientAuthValue) {
-                        case NONE:
-                            socket.setWantClientAuth(false);
-                            socket.setNeedClientAuth(false);
-                            break;
-                        case WANT:
-                            socket.setWantClientAuth(true);
-                            break;
-                        case REQUIRE:
-                            socket.setNeedClientAuth(true);
-                            break;
-                        default:
-                            throw new RuntimeCamelException("Unknown ClientAuthentication value: " + clientAuthValue);
-                    }
-
-                    return socket;
+            Configurer<SSLServerSocket> sslServerSocketConfigurer = socket -> {
+                LOG.trace("Configuring client-auth on SSLServerSocket [{}] to [{}].", socket, clientAuthValue);
+                switch (clientAuthValue) {
+                    case NONE:
+                        socket.setWantClientAuth(false);
+                        socket.setNeedClientAuth(false);
+                        break;
+                    case WANT:
+                        socket.setWantClientAuth(true);
+                        break;
+                    case REQUIRE:
+                        socket.setNeedClientAuth(true);
+                        break;
+                    default:
+                        throw new RuntimeCamelException("Unknown ClientAuthentication value: " + clientAuthValue);
                 }
+
+                return socket;
             };
 
             sslServerSocketConfigurers.add(sslServerSocketConfigurer);
@@ -172,20 +165,18 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextServerParameters[clientAuthentication=");
-        builder.append(clientAuthentication);
-        builder.append(", getCipherSuites()=");
-        builder.append(getCipherSuites());
-        builder.append(", getCipherSuitesFilter()=");
-        builder.append(getCipherSuitesFilter());
-        builder.append(", getSecureSocketProtocols()=");
-        builder.append(getSecureSocketProtocols());
-        builder.append(", getSecureSocketProtocolsFilter()=");
-        builder.append(getSecureSocketProtocolsFilter());
-        builder.append(", getSessionTimeout()=");
-        builder.append(getSessionTimeout());
-        builder.append("]");
-        return builder.toString();
+        return "SSLContextServerParameters[clientAuthentication=" +
+               clientAuthentication +
+               ", getCipherSuites()=" +
+               getCipherSuites() +
+               ", getCipherSuitesFilter()=" +
+               getCipherSuitesFilter() +
+               ", getSecureSocketProtocols()=" +
+               getSecureSocketProtocols() +
+               ", getSecureSocketProtocolsFilter()=" +
+               getSecureSocketProtocolsFilter() +
+               ", getSessionTimeout()=" +
+               getSessionTimeout() +
+               "]";
     }
 }

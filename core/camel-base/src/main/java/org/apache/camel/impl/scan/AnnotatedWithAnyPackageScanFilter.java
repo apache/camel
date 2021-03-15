@@ -16,18 +16,18 @@
  */
 package org.apache.camel.impl.scan;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.ObjectHelper;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * Package scan filter for testing if a given class is annotated with any of the annotations.
  */
 public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
-    private Set<Class<? extends Annotation>> annotations;
-    private boolean checkMetaAnnotations;
+    private final Set<Class<? extends Annotation>> annotations;
+    private final boolean checkMetaAnnotations;
 
     public AnnotatedWithAnyPackageScanFilter(Set<Class<? extends Annotation>> annotations) {
         this(annotations, false);

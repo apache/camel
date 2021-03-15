@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.lang.reflect.Constructor;
-
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.Service;
 import org.apache.camel.component.jms.JmsConfiguration;
@@ -29,6 +25,9 @@ import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.jms.ConnectionFactory;
+import java.lang.reflect.Constructor;
 
 public class ActiveMQConfiguration extends JmsConfiguration {
     private ActiveMQComponent activeMQComponent;
@@ -199,8 +198,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     protected ConnectionFactory createPooledConnectionFactory(ActiveMQConnectionFactory connectionFactory) {
         try {
-            Class type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
-            Constructor constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);
+            Class<?> type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
+            Constructor<?> constructor = type.getConstructor(ActiveMQConnectionFactory.class);
             return (ConnectionFactory) constructor.newInstance(connectionFactory);
         } catch (Exception e) {
             throw new RuntimeException("Failed to instantiate PooledConnectionFactory: " + e, e);

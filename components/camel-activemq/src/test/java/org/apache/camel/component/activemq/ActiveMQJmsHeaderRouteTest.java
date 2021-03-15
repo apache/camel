@@ -16,15 +16,9 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.jms.Destination;
-
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,6 +26,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jms.Destination;
+import java.util.Date;
+import java.util.List;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -87,13 +85,11 @@ public class ActiveMQJmsHeaderRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:test.a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // lets set the custom JMS headers using the Camel API
-                        exchange.getIn().setHeader("JMSReplyTo", replyQueue);
-                        exchange.getIn().setHeader("JMSCorrelationID", correlationID);
-                        exchange.getIn().setHeader("JMSType", messageType);
-                    }
+                from("activemq:test.a").process(exchange -> {
+                    // lets set the custom JMS headers using the Camel API
+                    exchange.getIn().setHeader("JMSReplyTo", replyQueue);
+                    exchange.getIn().setHeader("JMSCorrelationID", correlationID);
+                    exchange.getIn().setHeader("JMSType", messageType);
                 }).to("activemq:test.b?preserveMessageQos=true");
 
                 from("activemq:test.b").to("mock:result");

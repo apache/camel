@@ -16,10 +16,10 @@
  */
 package org.apache.camel.impl.scan;
 
+import org.apache.camel.spi.PackageScanFilter;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.apache.camel.spi.PackageScanFilter;
 
 /**
  * <code>CompositePackageScanFilter</code> allows multiple {@link PackageScanFilter}s to be composed into a single
@@ -27,7 +27,7 @@ import org.apache.camel.spi.PackageScanFilter;
  * composite contains
  */
 public class CompositePackageScanFilter implements PackageScanFilter {
-    private Set<PackageScanFilter> filters;
+    private final Set<PackageScanFilter> filters;
 
     public CompositePackageScanFilter() {
         filters = new LinkedHashSet<>();

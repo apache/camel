@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.apache.camel.Converter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.camel.Converter;
 
 /**
  * Some core java.util Collection based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
@@ -99,9 +99,7 @@ public final class CollectionConverter {
 
     @Converter(order = 6)
     public static Set<Object> toSet(Object[] array) {
-        Set<Object> answer = new HashSet<>();
-        answer.addAll(Arrays.asList(array));
-        return answer;
+        return new HashSet<>(Arrays.asList(array));
     }
 
     @Converter(order = 7)

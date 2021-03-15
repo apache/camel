@@ -16,19 +16,19 @@
  */
 package org.apache.camel.health;
 
+import org.apache.camel.Builder;
+import org.apache.camel.util.ObjectHelper;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.camel.Builder;
-import org.apache.camel.util.ObjectHelper;
-
 /**
  * A builder helper to create a {@link HealthCheck} result.
  */
 public final class HealthCheckResultBuilder implements Builder<HealthCheck.Result> {
-    private HealthCheck check;
+    private final HealthCheck check;
     private String message;
     private Throwable error;
     private Map<String, Object> details;

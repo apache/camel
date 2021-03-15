@@ -16,6 +16,17 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.NonManagedService;
+import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
+import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
+import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
+import org.apache.camel.impl.scan.CompositePackageScanFilter;
+import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,17 +47,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-
-import org.apache.camel.NonManagedService;
-import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
-import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
-import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
-import org.apache.camel.impl.scan.CompositePackageScanFilter;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
@@ -164,7 +164,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
             log.trace("Searching for: {} in package: {} using classloader: {}",
-                    new Object[] { test, packageName, loader.getClass().getName() });
+                    test, packageName, loader.getClass().getName());
         }
 
         Enumeration<URL> urls;

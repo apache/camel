@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spi;
 
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.Set;
-
 import org.apache.camel.StaticService;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * A resolver that can find classes based on package scanning.

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.support.jsse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.Security;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SecureRandomParameters extends JsseParameters {
 
@@ -62,7 +62,7 @@ public class SecureRandomParameters extends JsseParameters {
         }
 
         LOG.debug("SecureRandom [{}] is using provider [{}] and algorithm [{}].",
-                new Object[] { secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm() });
+                secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm());
 
         return secureRandom;
     }
@@ -108,12 +108,10 @@ public class SecureRandomParameters extends JsseParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SecureRandomParameters[algorithm=");
-        builder.append(algorithm);
-        builder.append(", provider=");
-        builder.append(provider);
-        builder.append("]");
-        return builder.toString();
+        return "SecureRandomParameters[algorithm=" +
+               algorithm +
+               ", provider=" +
+               provider +
+               "]";
     }
 }

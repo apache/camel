@@ -16,6 +16,12 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.IOHelper;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,13 +29,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
-
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.util.IOHelper;
 
 /**
  * Default factory finder.
@@ -65,9 +64,8 @@ public class DefaultFactoryFinder implements FactoryFinder {
 
     @Override
     public Optional<Class<?>> findClass(String key) {
-        final String classKey = key;
 
-        Class<?> clazz = addToClassMap(classKey, () -> {
+        Class<?> clazz = addToClassMap(key, () -> {
             Properties prop = doFindFactoryProperties(key);
             if (prop != null) {
                 return doNewInstance(prop, true).orElse(null);
@@ -80,9 +78,8 @@ public class DefaultFactoryFinder implements FactoryFinder {
 
     @Override
     public Optional<Class<?>> findOptionalClass(String key) {
-        final String classKey = key;
 
-        Class<?> clazz = addToClassMap(classKey, () -> {
+        Class<?> clazz = addToClassMap(key, () -> {
             Properties prop = doFindFactoryProperties(key);
             if (prop != null) {
                 return doNewInstance(prop, false).orElse(null);
@@ -146,15 +143,12 @@ public class DefaultFactoryFinder implements FactoryFinder {
             }
         }
 
-        Class<?> suppliedClass = classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
-            @Override
-            public Class<?> apply(String classKey) {
-                try {
-                    return mappingFunction.get();
-                } catch (Exception e) {
-                    classesNotFoundExceptions.put(key, e);
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
+        Class<?> suppliedClass = classMap.computeIfAbsent(key, classKey -> {
+            try {
+                return mappingFunction.get();
+            } catch (Exception e) {
+                classesNotFoundExceptions.put(key, e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         });
 

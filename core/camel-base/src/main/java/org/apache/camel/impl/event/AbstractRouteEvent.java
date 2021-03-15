@@ -16,18 +16,18 @@
  */
 package org.apache.camel.impl.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent.RouteEvent;
+
+import java.util.EventObject;
 
 /**
  * Base class for {@link CamelContext} events.
  */
 public abstract class AbstractRouteEvent extends EventObject implements RouteEvent {
     private static final long serialVersionUID = 1L;
-    private Route route;
+    private final Route route;
 
     public AbstractRouteEvent(Route source) {
         super(source);

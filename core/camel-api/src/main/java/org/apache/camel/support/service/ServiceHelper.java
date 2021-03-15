@@ -16,12 +16,6 @@
  */
 package org.apache.camel.support.service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.camel.Channel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -32,6 +26,12 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A collection of helper methods for working with {@link Service} objects.
@@ -53,8 +53,8 @@ public final class ServiceHelper {
     public static void buildService(Object value) {
         if (value instanceof Service) {
             ((Service) value).build();
-        } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+        } else if (value instanceof Iterable<?>) {
+            for (Object o : (Iterable<?>) value) {
                 buildService(o);
             }
         }
@@ -82,8 +82,8 @@ public final class ServiceHelper {
     public static void initService(Object value) {
         if (value instanceof Service) {
             ((Service) value).init();
-        } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+        } else if (value instanceof Iterable<?>) {
+            for (Object o : (Iterable<?>) value) {
                 initService(o);
             }
         }
@@ -111,8 +111,8 @@ public final class ServiceHelper {
     public static void startService(Object value) {
         if (value instanceof Service) {
             ((Service) value).start();
-        } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+        } else if (value instanceof Iterable<?>) {
+            for (Object o : (Iterable<?>) value) {
                 startService(o);
             }
         }
@@ -160,8 +160,8 @@ public final class ServiceHelper {
     public static void stopService(Object value) {
         if (value instanceof Service) {
             ((Service) value).stop();
-        } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+        } else if (value instanceof Iterable<?>) {
+            for (Object o : (Iterable<?>) value) {
                 stopService(o);
             }
         }
@@ -422,9 +422,7 @@ public final class ServiceHelper {
     public static boolean isStopped(Object value) {
         if (value instanceof StatefulService) {
             StatefulService service = (StatefulService) value;
-            if (service.isStopping() || service.isStopped()) {
-                return true;
-            }
+            return service.isStopping() || service.isStopped();
         }
         return false;
     }
@@ -439,9 +437,7 @@ public final class ServiceHelper {
     public static boolean isStarted(Object value) {
         if (value instanceof StatefulService) {
             StatefulService service = (StatefulService) value;
-            if (service.isStarting() || service.isStarted()) {
-                return true;
-            }
+            return service.isStarting() || service.isStarted();
         }
         return false;
     }
@@ -456,9 +452,7 @@ public final class ServiceHelper {
     public static boolean isSuspended(Object value) {
         if (value instanceof StatefulService) {
             StatefulService service = (StatefulService) value;
-            if (service.isSuspending() || service.isSuspended()) {
-                return true;
-            }
+            return service.isSuspending() || service.isSuspended();
         }
         return false;
     }

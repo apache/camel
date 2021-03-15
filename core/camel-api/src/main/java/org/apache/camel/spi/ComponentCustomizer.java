@@ -16,13 +16,13 @@
  */
 package org.apache.camel.spi;
 
-import java.util.function.BiPredicate;
-
 import org.apache.camel.Component;
 import org.apache.camel.Ordered;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
+
+import java.util.function.BiPredicate;
 
 /**
  * To apply custom configurations to {@link Component} instances.
@@ -103,12 +103,7 @@ public interface ComponentCustomizer extends Ordered {
          * @return false
          */
         static Policy none() {
-            return new Policy() {
-                @Override
-                public boolean test(String s, Component target) {
-                    return false;
-                }
-            };
+            return (s, target) -> false;
         }
 
         /**
@@ -117,12 +112,7 @@ public interface ComponentCustomizer extends Ordered {
          * @return true
          */
         static Policy any() {
-            return new Policy() {
-                @Override
-                public boolean test(String s, Component target) {
-                    return true;
-                }
-            };
+            return (s, target) -> true;
         }
     }
 
@@ -159,12 +149,7 @@ public interface ComponentCustomizer extends Ordered {
         }
 
         public ComponentCustomizer build(ThrowingConsumer<T, Exception> consumer) {
-            return build(new ThrowingBiConsumer<String, T, Exception>() {
-                @Override
-                public void accept(String name, T target) throws Exception {
-                    consumer.accept(target);
-                }
-            });
+            return build((name, target) -> consumer.accept(target));
         }
 
         public ComponentCustomizer build(ThrowingBiConsumer<String, T, Exception> consumer) {
@@ -204,29 +189,14 @@ public interface ComponentCustomizer extends Ordered {
             if (type.equals(Component.class)) {
                 return this.condition != null
                         ? this.condition
-                        : new BiPredicate<String, Component>() {
-                            @Override
-                            public boolean test(String s, Component language) {
-                                return true;
-                            }
-                        };
+                        : (s, language) -> true;
             }
 
             if (condition == null) {
-                return new BiPredicate<String, Component>() {
-                    @Override
-                    public boolean test(String name, Component target) {
-                        return type.isAssignableFrom(target.getClass());
-                    }
-                };
+                return (name, target) -> type.isAssignableFrom(target.getClass());
             }
 
-            return new BiPredicate<String, Component>() {
-                @Override
-                public boolean test(String name, Component target) {
-                    return type.isAssignableFrom(target.getClass()) && condition.test(name, target);
-                }
-            };
+            return (name, target) -> type.isAssignableFrom(target.getClass()) && condition.test(name, target);
         }
     }
 }

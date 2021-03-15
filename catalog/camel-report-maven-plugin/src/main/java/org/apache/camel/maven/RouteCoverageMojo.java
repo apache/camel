@@ -16,6 +16,36 @@
  */
 package org.apache.camel.maven;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.camel.maven.model.RouteCoverageNode;
+import org.apache.camel.parser.RouteBuilderParser;
+import org.apache.camel.parser.XmlRouteParser;
+import org.apache.camel.parser.helper.RouteCoverageHelper;
+import org.apache.camel.parser.model.CamelNodeDetails;
+import org.apache.camel.parser.model.CoverageData;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.exec.AbstractExecMojo;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,39 +62,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import edu.emory.mathcs.backport.java.util.Collections;
-import org.apache.camel.maven.model.RouteCoverageNode;
-import org.apache.camel.parser.RouteBuilderParser;
-import org.apache.camel.parser.XmlRouteParser;
-import org.apache.camel.parser.helper.RouteCoverageHelper;
-import org.apache.camel.parser.model.CamelNodeDetails;
-import org.apache.camel.parser.model.CoverageData;
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.exec.AbstractExecMojo;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Performs route coverage reports after running Camel unit tests with camel-test modules

@@ -16,19 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
@@ -55,6 +42,18 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Base {@link org.apache.camel.spi.ExecutorServiceManager} which can be used for implementations
  */
@@ -68,7 +67,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
-    private ThreadPoolProfile defaultProfile;
+    private final ThreadPoolProfile defaultProfile;
 
     public BaseExecutorServiceManager(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -468,7 +467,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     }
 
     @Override
-    protected void doShutdown() throws Exception {
+    protected void doShutdown() {
         // shutdown all remainder executor services by looping and doing this aggressively
         // as by normal all threads pool should have been shutdown using proper lifecycle
         // by their EIPs, components etc. This is acting as a fail-safe during shutdown
@@ -508,13 +507,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         executorServices.clear();
 
         // do not clear the default profile as we could potential be restarted
-        Iterator<ThreadPoolProfile> it = threadPoolProfiles.values().iterator();
-        while (it.hasNext()) {
-            ThreadPoolProfile profile = it.next();
-            if (!profile.isDefaultProfile()) {
-                it.remove();
-            }
-        }
+        threadPoolProfiles.values().removeIf(profile -> !profile.isDefaultProfile());
 
         ServiceHelper.stopAndShutdownServices(threadPoolFactory);
     }

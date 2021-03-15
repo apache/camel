@@ -16,6 +16,11 @@
  */
 package org.apache.camel.health;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,11 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper for invoking {@link HealthCheck}'s.
@@ -114,8 +114,7 @@ public final class HealthCheckHelper {
             // check one by one.
             return registry.stream()
                     .collect(Collectors.groupingBy(HealthCheckHelper::getGroup))
-                    .entrySet().stream()
-                    .map(Map.Entry::getValue)
+                    .values().stream()
                     .flatMap(Collection::stream)
                     .filter(check -> !filter.test(check))
                     .sorted(Comparator.comparingInt(HealthCheck::getOrder))

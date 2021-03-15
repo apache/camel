@@ -16,20 +16,6 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
@@ -43,6 +29,21 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isPublic;
@@ -65,7 +66,7 @@ import static java.lang.reflect.Modifier.isStatic;
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
     protected PackageScanClassResolver resolver;
     protected Set<Class<?>> visitedClasses = new HashSet<>();
     protected Set<String> visitedURIs = new HashSet<>();
@@ -194,7 +195,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
 
         // return the packages which is not FQN classes
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     /**
@@ -211,7 +212,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             findPackages(packages, ccl);
         }
         findPackages(packages, getClass().getClassLoader());
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException {
@@ -391,8 +392,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) && (parameterTypes.length == 1
-                || (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
+        return parameterTypes.length == 1 || parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1]);
     }
 
     protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
@@ -406,9 +406,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidFallbackConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) && (parameterTypes.length == 3
-                || (parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1]))
-                        && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
+        return parameterTypes.length == 3 || parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1])
+                && TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1]);
     }
 
     /**
@@ -428,7 +427,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
         }
 
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
 }

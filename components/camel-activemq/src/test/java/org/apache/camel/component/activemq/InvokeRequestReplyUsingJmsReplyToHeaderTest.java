@@ -16,21 +16,19 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jms.Destination;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jms.Destination;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -48,26 +46,18 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
     protected String replyQueueName = "queue://test.reply";
     protected Object correlationID = "ABC-123";
     protected Object groupID = "GROUP-XYZ";
-    private MyServer myBean = new MyServer();
+    private final MyServer myBean = new MyServer();
 
     @Test
     public void testPerformRequestReplyOverJms() throws Exception {
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("cheese", 123);
-        headers.put("JMSReplyTo", replyQueueName);
-        headers.put("JMSCorrelationID", correlationID);
-        headers.put("JMSXGroupID", groupID);
-
-        Exchange reply = template.request("activemq:test.server?replyTo=queue:test.reply", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("James");
-                Map<String, Object> headers = new HashMap<>();
-                headers.put("cheese", 123);
-                headers.put("JMSReplyTo", replyQueueName);
-                headers.put("JMSCorrelationID", correlationID);
-                headers.put("JMSXGroupID", groupID);
-                exchange.getIn().setHeaders(headers);
-            }
+        Exchange reply = template.request("activemq:test.server?replyTo=queue:test.reply", exchange -> {
+            exchange.getIn().setBody("James");
+            Map<String, Object> headers1 = new HashMap<>();
+            headers1.put("cheese", 123);
+            headers1.put("JMSReplyTo", replyQueueName);
+            headers1.put("JMSCorrelationID", correlationID);
+            headers1.put("JMSXGroupID", groupID);
+            exchange.getIn().setHeaders(headers1);
         });
 
         Message in = reply.getIn();

@@ -16,14 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToStartRouteException;
@@ -43,6 +35,14 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Internal route startup manager used by {@link AbstractCamelContext} to safely start internal route services during
@@ -461,11 +461,7 @@ class InternalRouteStartupManager {
         }
 
         // check in progress list
-        if (routeInputs.contains(endpoint)) {
-            return false;
-        }
-
-        return true;
+        return !routeInputs.contains(endpoint);
     }
 
 }

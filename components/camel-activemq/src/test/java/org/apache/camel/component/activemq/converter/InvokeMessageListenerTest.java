@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.activemq.converter;
 
-import java.util.List;
-
-import javax.jms.Message;
-import javax.jms.TextMessage;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -28,10 +23,14 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import java.util.List;
+
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * 
@@ -50,7 +49,7 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
         listener.assertMessagesArrived(1, 5000);
 
         List<Message> list = listener.flushMessages();
-        assertTrue(!list.isEmpty(), "Should have received some messages!");
+        assertFalse(list.isEmpty(), "Should have received some messages!");
         Message message = list.get(0);
 
         LOG.debug("Received: " + message);

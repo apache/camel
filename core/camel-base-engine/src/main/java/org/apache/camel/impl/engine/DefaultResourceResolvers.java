@@ -16,6 +16,16 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.annotations.ResourceResolver;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ResourceResolverSupport;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,16 +38,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.annotations.ResourceResolver;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.ResourceResolverSupport;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class DefaultResourceResolvers {
     private DefaultResourceResolvers() {
@@ -78,10 +78,10 @@ public final class DefaultResourceResolvers {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     if (!exists()) {
-                        throw new FileNotFoundException(path.toString() + " does not exists");
+                        throw new FileNotFoundException(path + " does not exists");
                     }
                     if (Files.isDirectory(path)) {
-                        throw new FileNotFoundException(path.toString() + " is a directory");
+                        throw new FileNotFoundException(path + " is a directory");
                     }
 
                     return Files.newInputStream(path);

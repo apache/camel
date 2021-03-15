@@ -18,6 +18,8 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.util.StringHelper;
 
+import java.util.Objects;
+
 public final class PropertiesLocation {
     private final String resolver;
     private final String path;
@@ -92,10 +94,10 @@ public final class PropertiesLocation {
         if (optional != location.optional) {
             return false;
         }
-        if (resolver != null ? !resolver.equals(location.resolver) : location.resolver != null) {
+        if (!Objects.equals(resolver, location.resolver)) {
             return false;
         }
-        return path != null ? path.equals(location.path) : location.path == null;
+        return Objects.equals(path, location.path);
     }
 
     @Override

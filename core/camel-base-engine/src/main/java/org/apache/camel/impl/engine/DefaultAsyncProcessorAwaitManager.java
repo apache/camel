@@ -16,14 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
@@ -39,6 +31,14 @@ import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager, StaticService {
 
@@ -255,18 +255,16 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     private static String dumpBlockedThread(AwaitThread entry) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("Blocked Thread\n");
-        sb.append(
-                "---------------------------------------------------------------------------------------------------------------------------------------\n");
 
-        sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append("\n");
-        sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
-        sb.append(style("RouteId:")).append(safeNull(entry.getRouteId())).append("\n");
-        sb.append(style("NodeId:")).append(safeNull(entry.getNodeId())).append("\n");
-        sb.append(style("Duration:")).append(entry.getWaitDuration()).append(" msec.\n");
-        return sb.toString();
+        return "\n" +
+               "Blocked Thread\n" +
+               "---------------------------------------------------------------------------------------------------------------------------------------\n"
+               +
+               style("Id:") + entry.getBlockedThread().getId() + "\n" +
+               style("Name:") + entry.getBlockedThread().getName() + "\n" +
+               style("RouteId:") + safeNull(entry.getRouteId()) + "\n" +
+               style("NodeId:") + safeNull(entry.getNodeId()) + "\n" +
+               style("Duration:") + entry.getWaitDuration() + " msec.\n";
     }
 
     private static String style(String label) {

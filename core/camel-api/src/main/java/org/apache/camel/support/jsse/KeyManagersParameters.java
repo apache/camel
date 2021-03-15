@@ -16,16 +16,15 @@
  */
 package org.apache.camel.support.jsse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A representation of configuration options for creating and loading {@link KeyManager} instance(s).
@@ -92,7 +91,7 @@ public class KeyManagersParameters extends JsseParameters {
         }
 
         LOG.debug("KeyManagerFactory [{}], initialized from [{}], is using provider [{}] and algorithm [{}].",
-                new Object[] { kmf, this, kmf.getProvider(), kmf.getAlgorithm() });
+                kmf, this, kmf.getProvider(), kmf.getAlgorithm());
 
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {
@@ -186,16 +185,14 @@ public class KeyManagersParameters extends JsseParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("KeyManagersParameters[keyStore=");
-        builder.append(keyStore);
-        builder.append(", keyPassword=");
-        builder.append("********");
-        builder.append(", provider=");
-        builder.append(provider);
-        builder.append(", algorithm=");
-        builder.append(algorithm);
-        builder.append("]");
-        return builder.toString();
+        return "KeyManagersParameters[keyStore=" +
+               keyStore +
+               ", keyPassword=" +
+               "********" +
+               ", provider=" +
+               provider +
+               ", algorithm=" +
+               algorithm +
+               "]";
     }
 }

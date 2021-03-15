@@ -23,6 +23,6 @@ public enum BeanScope {
 
     Singleton,
     Request,
-    Prototype;
+    Prototype
 
 }

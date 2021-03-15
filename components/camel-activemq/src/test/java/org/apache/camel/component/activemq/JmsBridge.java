@@ -16,15 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.jms.Connection;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerPluginSupport;
@@ -41,6 +32,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.jms.Connection;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsBridge extends CamelSpringTestSupport {
@@ -53,8 +52,8 @@ public class JmsBridge extends CamelSpringTestSupport {
     int messageCount;
     final int backLog = 50;
     final int errorLimit = 10;
-    AtomicInteger sendCount = new AtomicInteger();
-    AtomicInteger connectionCount = new AtomicInteger();
+    final AtomicInteger sendCount = new AtomicInteger();
+    final AtomicInteger connectionCount = new AtomicInteger();
 
     @Test
     public void testBridgeWorks() throws Exception {

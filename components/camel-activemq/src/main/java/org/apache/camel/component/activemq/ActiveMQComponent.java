@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.activemq.Service;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -35,6 +31,10 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The ActiveMQ Component.
@@ -187,11 +187,10 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected String convertPathToActualDestination(String path, Map<String, Object> parameters) {
         // support ActiveMQ destination options using the destination. prefix
         // http://activemq.apache.org/destination-options.html
-        Map options = PropertiesHelper.extractProperties(parameters, "destination.");
+        Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "destination.");
 
         String query;
         try {

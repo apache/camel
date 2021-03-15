@@ -16,11 +16,9 @@
  */
 package org.apache.camel.support.jsse;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.util.List;
+import org.apache.camel.CamelContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -29,10 +27,11 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
-
-import org.apache.camel.CamelContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.util.List;
 
 /**
  * Represents {@link SSLContext} configuration options used in instantiating an {@code SSLContext} instance.
@@ -382,35 +381,33 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextParameters[keyManagers=");
-        builder.append(keyManagers);
-        builder.append(", trustManagers=");
-        builder.append(trustManagers);
-        builder.append(", secureRandom=");
-        builder.append(secureRandom);
-        builder.append(", clientParameters=");
-        builder.append(clientParameters);
-        builder.append(", serverParameters=");
-        builder.append(serverParameters);
-        builder.append(", provider=");
-        builder.append(provider);
-        builder.append(", secureSocketProtocol=");
-        builder.append(secureSocketProtocol);
-        builder.append(", certAlias=");
-        builder.append(certAlias);
-        builder.append(", getCipherSuites()=");
-        builder.append(getCipherSuites());
-        builder.append(", getCipherSuitesFilter()=");
-        builder.append(getCipherSuitesFilter());
-        builder.append(", getSecureSocketProtocols()=");
-        builder.append(getSecureSocketProtocols());
-        builder.append(", getSecureSocketProtocolsFilter()=");
-        builder.append(getSecureSocketProtocolsFilter());
-        builder.append(", getSessionTimeout()=");
-        builder.append(getSessionTimeout());
-        builder.append("]");
-        return builder.toString();
+        return "SSLContextParameters[keyManagers=" +
+               keyManagers +
+               ", trustManagers=" +
+               trustManagers +
+               ", secureRandom=" +
+               secureRandom +
+               ", clientParameters=" +
+               clientParameters +
+               ", serverParameters=" +
+               serverParameters +
+               ", provider=" +
+               provider +
+               ", secureSocketProtocol=" +
+               secureSocketProtocol +
+               ", certAlias=" +
+               certAlias +
+               ", getCipherSuites()=" +
+               getCipherSuites() +
+               ", getCipherSuitesFilter()=" +
+               getCipherSuitesFilter() +
+               ", getSecureSocketProtocols()=" +
+               getSecureSocketProtocols() +
+               ", getSecureSocketProtocolsFilter()=" +
+               getSecureSocketProtocolsFilter() +
+               ", getSessionTimeout()=" +
+               getSessionTimeout() +
+               "]";
     }
 
 }

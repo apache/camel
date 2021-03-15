@@ -16,6 +16,22 @@
  */
 package org.apache.camel.support.jsse;
 
+import org.apache.camel.support.jsse.FilterParameters.Patterns;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SNIServerName;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLContextSpi;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSessionContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -32,23 +48,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SNIServerName;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLContextSpi;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSessionContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-
-import org.apache.camel.support.jsse.FilterParameters.Patterns;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents configuration options that can be applied in the client-side or server-side context depending on what they
@@ -323,52 +322,48 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
+        Configurer<SSLEngine> sslEngineConfigurer = engine -> {
 
-            @Override
-            public SSLEngine configure(SSLEngine engine) {
+            Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
+                    .filter(enabledCipherSuites, Arrays.asList(engine.getSSLParameters().getCipherSuites()),
+                            Arrays.asList(engine.getEnabledCipherSuites()),
+                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
+                            !allowPassthrough);
 
-                Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
-                        .filter(enabledCipherSuites, Arrays.asList(engine.getSSLParameters().getCipherSuites()),
-                                Arrays.asList(engine.getEnabledCipherSuites()),
-                                enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
-                                !allowPassthrough);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(SSL_ENGINE_CIPHER_SUITE_LOG_MSG,
-                            engine,
-                            enabledCipherSuites,
-                            enabledCipherSuitePatterns,
-                            engine.getSSLParameters().getCipherSuites(),
-                            engine.getEnabledCipherSuites(),
-                            defaultEnabledCipherSuitePatterns,
-                            filteredCipherSuites);
-                }
-
-                engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
-
-                Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
-                        .filter(enabledSecureSocketProtocols, Arrays.asList(engine.getSSLParameters().getProtocols()),
-                                Arrays.asList(engine.getEnabledProtocols()),
-                                enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
-                                !allowPassthrough);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(SSL_ENGINE_PROTOCOL_LOG_MSG,
-                            engine,
-                            enabledSecureSocketProtocols,
-                            enabledSecureSocketProtocolsPatterns,
-                            engine.getSSLParameters().getProtocols(),
-                            engine.getEnabledProtocols(),
-                            defaultEnabledSecureSocketProtocolsPatterns,
-                            filteredSecureSocketProtocols);
-                }
-
-                engine.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
-
-                return engine;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(SSL_ENGINE_CIPHER_SUITE_LOG_MSG,
+                        engine,
+                        enabledCipherSuites,
+                        enabledCipherSuitePatterns,
+                        engine.getSSLParameters().getCipherSuites(),
+                        engine.getEnabledCipherSuites(),
+                        defaultEnabledCipherSuitePatterns,
+                        filteredCipherSuites);
             }
+
+            engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+
+            Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
+                    .filter(enabledSecureSocketProtocols, Arrays.asList(engine.getSSLParameters().getProtocols()),
+                            Arrays.asList(engine.getEnabledProtocols()),
+                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
+                            !allowPassthrough);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(SSL_ENGINE_PROTOCOL_LOG_MSG,
+                        engine,
+                        enabledSecureSocketProtocols,
+                        enabledSecureSocketProtocolsPatterns,
+                        engine.getSSLParameters().getProtocols(),
+                        engine.getEnabledProtocols(),
+                        defaultEnabledSecureSocketProtocolsPatterns,
+                        filteredSecureSocketProtocols);
+            }
+
+            engine.setEnabledProtocols(
+                    filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+
+            return engine;
         };
 
         List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<>();
@@ -395,15 +390,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         final List<Configurer<SSLSocket>> sslSocketConfigurers = this.getSSLSocketFactorySSLSocketConfigurers(context);
 
-        Configurer<SSLSocketFactory> sslSocketFactoryConfigurer = new Configurer<SSLSocketFactory>() {
-
-            @Override
-            public SSLSocketFactory configure(SSLSocketFactory factory) {
-                return new SSLSocketFactoryDecorator(
-                        factory,
-                        sslSocketConfigurers);
-            }
-        };
+        Configurer<SSLSocketFactory> sslSocketFactoryConfigurer = factory -> new SSLSocketFactoryDecorator(
+                factory,
+                sslSocketConfigurers);
 
         List<Configurer<SSLSocketFactory>> sslSocketFactoryConfigurers = new LinkedList<>();
         sslSocketFactoryConfigurers.add(sslSocketFactoryConfigurer);
@@ -430,15 +419,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         final List<Configurer<SSLServerSocket>> sslServerSocketConfigurers
                 = this.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
 
-        Configurer<SSLServerSocketFactory> sslServerSocketFactoryConfigurer = new Configurer<SSLServerSocketFactory>() {
-
-            @Override
-            public SSLServerSocketFactory configure(SSLServerSocketFactory factory) {
-                return new SSLServerSocketFactoryDecorator(
-                        factory,
-                        sslServerSocketConfigurers);
-            }
-        };
+        Configurer<SSLServerSocketFactory> sslServerSocketFactoryConfigurer = factory -> new SSLServerSocketFactoryDecorator(
+                factory,
+                sslServerSocketConfigurers);
 
         List<Configurer<SSLServerSocketFactory>> sslServerSocketFactoryConfigurers = new LinkedList<>();
         sslServerSocketFactoryConfigurers.add(sslServerSocketFactoryConfigurer);
@@ -490,56 +473,52 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLSocket> sslSocketConfigurer = new Configurer<SSLSocket>() {
+        Configurer<SSLSocket> sslSocketConfigurer = socket -> {
 
-            @Override
-            public SSLSocket configure(SSLSocket socket) {
-
-                if (!getSNIHostNames().isEmpty()) {
-                    SSLParameters sslParameters = socket.getSSLParameters();
-                    sslParameters.setServerNames(getSNIHostNames());
-                    socket.setSSLParameters(sslParameters);
-                }
-
-                Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
-                        .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
-                                Arrays.asList(socket.getEnabledCipherSuites()),
-                                enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
-                                !allowPassthrough);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(SSL_SOCKET_CIPHER_SUITE_LOG_MSG,
-                            socket,
-                            enabledCipherSuites,
-                            enabledCipherSuitePatterns,
-                            socket.getSSLParameters().getCipherSuites(),
-                            socket.getEnabledCipherSuites(),
-                            defaultEnabledCipherSuitePatterns,
-                            filteredCipherSuites);
-                }
-
-                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
-
-                Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
-                        .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
-                                Arrays.asList(socket.getEnabledProtocols()),
-                                enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
-                                !allowPassthrough);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(SSL_SOCKET_PROTOCOL_LOG_MSG,
-                            socket,
-                            enabledSecureSocketProtocols,
-                            enabledSecureSocketProtocolsPatterns,
-                            socket.getSSLParameters().getProtocols(),
-                            socket.getEnabledProtocols(),
-                            defaultEnabledSecureSocketProtocolsPatterns,
-                            filteredSecureSocketProtocols);
-                }
-
-                socket.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
-                return socket;
+            if (!getSNIHostNames().isEmpty()) {
+                SSLParameters sslParameters = socket.getSSLParameters();
+                sslParameters.setServerNames(getSNIHostNames());
+                socket.setSSLParameters(sslParameters);
             }
+
+            Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
+                    .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
+                            Arrays.asList(socket.getEnabledCipherSuites()),
+                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
+                            !allowPassthrough);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(SSL_SOCKET_CIPHER_SUITE_LOG_MSG,
+                        socket,
+                        enabledCipherSuites,
+                        enabledCipherSuitePatterns,
+                        socket.getSSLParameters().getCipherSuites(),
+                        socket.getEnabledCipherSuites(),
+                        defaultEnabledCipherSuitePatterns,
+                        filteredCipherSuites);
+            }
+
+            socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+
+            Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
+                    .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
+                            Arrays.asList(socket.getEnabledProtocols()),
+                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
+                            !allowPassthrough);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(SSL_SOCKET_PROTOCOL_LOG_MSG,
+                        socket,
+                        enabledSecureSocketProtocols,
+                        enabledSecureSocketProtocolsPatterns,
+                        socket.getSSLParameters().getProtocols(),
+                        socket.getEnabledProtocols(),
+                        defaultEnabledSecureSocketProtocolsPatterns,
+                        filteredSecureSocketProtocols);
+            }
+
+            socket.setEnabledProtocols(
+                    filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+            return socket;
         };
 
         List<Configurer<SSLSocket>> sslSocketConfigurers = new LinkedList<>();
@@ -591,51 +570,47 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
+        Configurer<SSLServerSocket> sslServerSocketConfigurer = socket -> {
 
-            @Override
-            public SSLServerSocket configure(SSLServerSocket socket) {
+            Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
+                    .filter(enabledCipherSuites, Arrays.asList(socket.getSupportedCipherSuites()),
+                            Arrays.asList(socket.getEnabledCipherSuites()),
+                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
+                            !allowPassthrough);
 
-                Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
-                        .filter(enabledCipherSuites, Arrays.asList(socket.getSupportedCipherSuites()),
-                                Arrays.asList(socket.getEnabledCipherSuites()),
-                                enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
-                                !allowPassthrough);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(SSL_SERVER_SOCKET_CIPHER_SUITE_LOG_MSG,
-                            socket,
-                            enabledCipherSuites,
-                            enabledCipherSuitePatterns,
-                            socket.getSupportedCipherSuites(),
-                            socket.getEnabledCipherSuites(),
-                            defaultEnabledCipherSuitePatterns,
-                            filteredCipherSuites);
-                }
-
-                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
-
-                Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
-                        .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
-                                Arrays.asList(socket.getEnabledProtocols()),
-                                enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
-                                !allowPassthrough);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG,
-                            socket,
-                            enabledSecureSocketProtocols,
-                            enabledSecureSocketProtocolsPatterns,
-                            socket.getSupportedProtocols(),
-                            socket.getEnabledProtocols(),
-                            defaultEnabledSecureSocketProtocolsPatterns,
-                            filteredSecureSocketProtocols);
-                }
-
-                socket.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
-                return socket;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(SSL_SERVER_SOCKET_CIPHER_SUITE_LOG_MSG,
+                        socket,
+                        enabledCipherSuites,
+                        enabledCipherSuitePatterns,
+                        socket.getSupportedCipherSuites(),
+                        socket.getEnabledCipherSuites(),
+                        defaultEnabledCipherSuitePatterns,
+                        filteredCipherSuites);
             }
+
+            socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+
+            Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
+                    .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
+                            Arrays.asList(socket.getEnabledProtocols()),
+                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
+                            !allowPassthrough);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG,
+                        socket,
+                        enabledSecureSocketProtocols,
+                        enabledSecureSocketProtocolsPatterns,
+                        socket.getSupportedProtocols(),
+                        socket.getEnabledProtocols(),
+                        defaultEnabledSecureSocketProtocolsPatterns,
+                        filteredSecureSocketProtocols);
+            }
+
+            socket.setEnabledProtocols(
+                    filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+            return socket;
         };
 
         List<Configurer<SSLServerSocket>> sslServerSocketConfigurers = new LinkedList<>();

@@ -23,7 +23,7 @@ public class CamelContextStartupFailureEvent extends AbstractContextEvent
         implements CamelEvent.CamelContextStartupFailureEvent {
     private static final long serialVersionUID = -4271899927507894567L;
 
-    private Throwable cause;
+    private final Throwable cause;
 
     public CamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         super(context);

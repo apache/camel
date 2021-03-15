@@ -16,22 +16,21 @@
  */
 package org.apache.camel.support.jsse;
 
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedKeyManager;
+import javax.net.ssl.X509KeyManager;
 import java.net.Socket;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.X509ExtendedKeyManager;
-import javax.net.ssl.X509KeyManager;
 
 /**
  * KeyManager to select a key with desired alias while delegating processing to specified KeyManager Can be used both
  * with server and client sockets
  */
 public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
-    private String keyAlias;
-    private X509KeyManager keyManager;
+    private final String keyAlias;
+    private final X509KeyManager keyManager;
 
     /**
      * Construct KeyManager instance

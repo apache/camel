@@ -16,13 +16,6 @@
  */
 package org.apache.camel.impl.debugger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
@@ -33,6 +26,13 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -266,8 +266,7 @@ public final class BacklogTracer extends ServiceSupport {
     }
 
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
-        List<BacklogTracerEventMessage> answer = new ArrayList<>();
-        answer.addAll(queue);
+        List<BacklogTracerEventMessage> answer = new ArrayList<>(queue);
         if (isRemoveOnDump()) {
             queue.clear();
         }

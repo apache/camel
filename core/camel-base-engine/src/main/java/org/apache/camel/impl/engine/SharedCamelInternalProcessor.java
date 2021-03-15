@@ -16,11 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.RejectedExecutionException;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -40,6 +35,11 @@ import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.OrderedComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * A Shared (thread safe) internal {@link Processor} that Camel routing engine used during routing for cross cutting
@@ -73,7 +73,6 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedCamelInternalProcessor.class);
     private static final Object[] EMPTY_STATES = new Object[0];
-    private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final AsyncProcessorAwaitManager awaitManager;
     private final ShutdownStrategy shutdownStrategy;
@@ -81,7 +80,6 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
     private byte statefulAdvices;
 
     public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice... advices) {
-        this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
