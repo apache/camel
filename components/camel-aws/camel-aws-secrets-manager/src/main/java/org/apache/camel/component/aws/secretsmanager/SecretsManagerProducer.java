@@ -55,17 +55,17 @@ public class SecretsManagerProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listSecrets:
-            listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
-            break;
-        case createSecret:
-            createSecret(getEndpoint().getSecretsManagerClient(), exchange);
-            break;
-        case getSecret:
-            getSecret(getEndpoint().getSecretsManagerClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listSecrets:
+                listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case createSecret:
+                createSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case getSecret:
+                getSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -86,7 +86,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     public String toString() {
         if (secretsManagerProducerToString == null) {
             secretsManagerProducerToString = "SecretsManagerProducer["
-                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return secretsManagerProducerToString;
     }
