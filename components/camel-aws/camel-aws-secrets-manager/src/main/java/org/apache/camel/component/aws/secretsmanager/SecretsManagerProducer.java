@@ -55,17 +55,17 @@ public class SecretsManagerProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listSecrets:
-            listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
-            break;
-        case createSecret:
-            createSecret(getEndpoint().getSecretsManagerClient(), exchange);
-            break;
-        case getSecret:
-            getSecret(getEndpoint().getSecretsManagerClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listSecrets:
+                listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case createSecret:
+                createSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case getSecret:
+                getSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -86,7 +86,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     public String toString() {
         if (secretsManagerProducerToString == null) {
             secretsManagerProducerToString = "SecretsManagerProducer["
-                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return secretsManagerProducerToString;
     }
@@ -179,6 +179,7 @@ public class SecretsManagerProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
+            request = builder.build();
         }
         try {
             result = secretsManagerClient.getSecretValue(request);
@@ -192,8 +193,6 @@ public class SecretsManagerProducer extends DefaultProducer {
         } else {
             message.setBody(result.secretString());
         }
-    }
-
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
