@@ -293,17 +293,17 @@ public abstract class MainSupport extends BaseMainSupport {
                 long sec = durationMaxSeconds;
                 int exit = durationHitExitCode;
                 if (sec > 0) {
-                    LOG.info("Waiting for: {} seconds", sec);
+                    LOG.info("Waiting until complete: Duration max {} seconds", sec);
                     shutdownStrategy.await(sec, TimeUnit.SECONDS);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
                     if (idle > 0 && max > 0) {
-                        LOG.info("Waiting to be idle for: {} seconds or until: {} messages has been processed", idle, max);
+                        LOG.info("Waiting until complete: Duration idle {} seconds or max {} messages processed", idle, max);
                     } else if (idle > 0) {
-                        LOG.info("Waiting to be idle for: {} seconds", idle);
+                        LOG.info("Waiting until complete: Duration idle {} seconds", idle);
                     } else {
-                        LOG.info("Waiting until: {} messages has been processed", max);
+                        LOG.info("Waiting until complete: Duration max {} messages processed", max);
                     }
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.await();
