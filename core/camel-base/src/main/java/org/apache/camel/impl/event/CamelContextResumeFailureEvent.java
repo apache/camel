@@ -22,7 +22,7 @@ import org.apache.camel.spi.CamelEvent;
 public class CamelContextResumeFailureEvent extends AbstractContextEvent implements CamelEvent.CamelContextResumeFailureEvent {
     private static final long serialVersionUID = -4271899927507894566L;
 
-    private Throwable cause;
+    private final Throwable cause;
 
     public CamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
         super(context);

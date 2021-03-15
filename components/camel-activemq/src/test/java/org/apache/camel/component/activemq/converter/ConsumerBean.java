@@ -16,20 +16,19 @@
  */
 package org.apache.camel.component.activemq.converter;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsumerBean implements MessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumerBean.class);
-    private final List<Message> messages = new ArrayList();
+    private final List<Message> messages = new ArrayList<>();
     private boolean verbose;
     private String id;
 
@@ -41,9 +40,8 @@ public class ConsumerBean implements MessageListener {
     }
 
     public List<Message> flushMessages() {
-        List<Message> answer = null;
         synchronized (this.messages) {
-            answer = new ArrayList(this.messages);
+            List<Message> answer = new ArrayList<>(this.messages);
             this.messages.clear();
             return answer;
         }
@@ -83,13 +81,13 @@ public class ConsumerBean implements MessageListener {
     }
 
     public void waitForMessagesToArrive(int messageCount, long maxWaitTime) {
-        long maxRemainingMessageCount = (long) Math.max(0, messageCount - this.messages.size());
+        long maxRemainingMessageCount = Math.max(0, messageCount - this.messages.size());
         LOG.info("Waiting for (" + maxRemainingMessageCount + ") message(s) to arrive");
         long start = System.currentTimeMillis();
 
         for (long endTime = start + maxWaitTime;
              maxRemainingMessageCount > 0L;
-             maxRemainingMessageCount = (long) Math.max(0, messageCount - this.messages.size())) {
+             maxRemainingMessageCount = Math.max(0, messageCount - this.messages.size())) {
             try {
                 synchronized (this.messages) {
                     this.messages.wait(1000L);
@@ -111,7 +109,7 @@ public class ConsumerBean implements MessageListener {
         this.waitForMessagesToArrive(total);
         synchronized (this.messages) {
             int count = this.messages.size();
-            assertEquals((long) total, (long) count, "Messages received");
+            assertEquals(total, (long) count, "Messages received");
         }
     }
 
@@ -119,7 +117,7 @@ public class ConsumerBean implements MessageListener {
         this.waitForMessagesToArrive(total, maxWaitTime);
         synchronized (this.messages) {
             int count = this.messages.size();
-            assertEquals((long) total, (long) count, "Messages received");
+            assertEquals(total, (long) count, "Messages received");
         }
     }
 

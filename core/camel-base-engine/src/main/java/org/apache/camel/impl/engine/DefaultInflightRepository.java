@@ -16,16 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
@@ -35,6 +25,16 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Default {@link org.apache.camel.spi.InflightRepository}.
@@ -183,12 +183,12 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         // sort by duration and grab the first
-        Exchange first = values.sorted((e1, e2) -> {
+        Exchange first = values.min((e1, e2) -> {
             long d1 = getExchangeDuration(e1);
             long d2 = getExchangeDuration(e2);
             // need the biggest number first
             return -1 * Long.compare(d1, d2);
-        }).findFirst().orElse(null);
+        }).orElse(null);
 
         if (first != null) {
             return new InflightExchangeEntry(first);
@@ -254,7 +254,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public String getNodeId() {
             return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
         }
@@ -265,7 +264,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public String getAtRouteId() {
             return ExchangeHelper.getAtRouteId(exchange);
         }

@@ -16,12 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.RejectedExecutionException;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -67,6 +61,12 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
@@ -276,7 +276,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback originalCallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
@@ -700,7 +699,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         private final Route route;
         private String routeId;
-        private UnitOfWorkFactory uowFactory;
+        private final UnitOfWorkFactory uowFactory;
 
         public UnitOfWorkProcessorAdvice(Route route, CamelContext camelContext) {
             this.route = route;

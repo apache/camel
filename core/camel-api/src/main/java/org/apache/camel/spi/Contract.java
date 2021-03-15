@@ -125,10 +125,8 @@ public class Contract {
             }
         }
         if (getOutputType() != null || targetContract.getOutputType() != null) {
-            if (getOutputType() == null || targetContract.getOutputType() == null
-                    || !getOutputType().equals(targetContract.getOutputType())) {
-                return false;
-            }
+            return getOutputType() != null && targetContract.getOutputType() != null
+                    && getOutputType().equals(targetContract.getOutputType());
         }
         return true;
     }

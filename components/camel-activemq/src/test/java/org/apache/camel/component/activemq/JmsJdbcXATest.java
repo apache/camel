@@ -16,16 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.concurrent.Executors;
-
-import javax.jms.Connection;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.sql.DataSource;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerPluginSupport;
@@ -40,6 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.jms.Connection;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.concurrent.Executors;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -110,33 +109,19 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         // TM stays actively committing first message ack which won't get
         // redelivered - xa once only delivery
         LOG.info("waiting for recovery to complete");
-        assertTrue("recovery complete in time", Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return broker.getBroker().getPreparedTransactions(null).length == 0;
-            }
-        }));
+        assertTrue("recovery complete in time",
+                Wait.waitFor(() -> broker.getBroker().getPreparedTransactions(null).length == 0));
         // verify recovery complete
         assertEquals(0, broker.getBroker().getPreparedTransactions(null).length, "recovery complete");
 
         final java.sql.Connection freshConnection = getJDBCConnection();
-        assertTrue("did not get replay", Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return 1 == dumpDb(freshConnection);
-            }
-        }));
+        assertTrue("did not get replay", Wait.waitFor(() -> 1 == dumpDb(freshConnection)));
         assertEquals(1, dumpDb(freshConnection), "still one message in db");
 
         // let once complete ok
         sendJMSMessageToKickOffRoute();
 
-        assertTrue("got second message", Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return 2 == dumpDb(freshConnection);
-            }
-        }));
+        assertTrue("got second message", Wait.waitFor(() -> 2 == dumpDb(freshConnection)));
         assertEquals(2, dumpDb(freshConnection), "two messages in db");
     }
 
@@ -182,15 +167,12 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
                         // die before doing the commit
                         // so commit will hang as if reply is lost
                         context.setDontSendReponse(true);
-                        Executors.newSingleThreadExecutor().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                LOG.info("Stopping broker post commit...");
-                                try {
-                                    broker.stop();
-                                } catch (Exception e) {
-                                    LOG.warn("Failed to stop the broker: {}", e.getMessage(), e);
-                                }
+                        Executors.newSingleThreadExecutor().execute(() -> {
+                            LOG.info("Stopping broker post commit...");
+                            try {
+                                broker.stop();
+                            } catch (Exception e) {
+                                LOG.warn("Failed to stop the broker: {}", e.getMessage(), e);
                             }
                         });
                     }

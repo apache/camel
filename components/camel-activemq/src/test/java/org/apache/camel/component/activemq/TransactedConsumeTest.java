@@ -16,13 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.jms.Connection;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.PolicyEntry;
@@ -42,6 +35,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.jms.Connection;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import java.util.concurrent.atomic.AtomicLong;
+
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,12 +56,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
 
         LOG.info("Wait for dequeue message...");
 
-        assertTrue(Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return broker.getAdminView().getTotalDequeueCount() >= messageCount;
-            }
-        }, 20 * 60 * 1000));
+        assertTrue(Wait.waitFor(() -> broker.getAdminView().getTotalDequeueCount() >= messageCount, 20 * 60 * 1000));
         long duration = System.currentTimeMillis() - firstConsumed.get();
         LOG.info("Done message consumption in " + duration + "millis");
     }

@@ -16,13 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
@@ -38,6 +31,13 @@ import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class DefaultFluentProducerTemplate extends ServiceSupport implements FluentProducerTemplate {
 
@@ -221,10 +221,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
-        Object b = type != null
+        clone.body = type != null
                 ? clone.context.getTypeConverter().convertTo(type, body)
                 : body;
-        clone.body = b;
         return clone;
     }
 

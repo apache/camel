@@ -16,14 +16,6 @@
  */
 package org.apache.camel.impl.debugger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -44,6 +36,14 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * The default implementation of the {@link Debugger}.
  */
@@ -63,7 +63,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         private final List<Condition> conditions;
 
         private BreakpointConditions(Breakpoint breakpoint) {
-            this(breakpoint, new ArrayList<Condition>());
+            this(breakpoint, new ArrayList<>());
         }
 
         private BreakpointConditions(Breakpoint breakpoint, List<Condition> conditions) {
@@ -162,11 +162,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
 
     @Override
     public void removeBreakpoint(Breakpoint breakpoint) {
-        for (BreakpointConditions condition : breakpoints) {
-            if (condition.getBreakpoint().equals(breakpoint)) {
-                breakpoints.remove(condition);
-            }
-        }
+        breakpoints.removeIf(condition -> condition.getBreakpoint().equals(breakpoint));
     }
 
     @Override

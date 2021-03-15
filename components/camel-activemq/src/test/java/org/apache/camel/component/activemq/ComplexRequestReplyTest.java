@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.pool.PooledConnectionFactory;
@@ -32,6 +30,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ComplexRequestReplyTest {
@@ -44,9 +44,6 @@ public class ComplexRequestReplyTest {
     private CamelContext brokerAContext;
     private CamelContext brokerBContext;
 
-    private String brokerAUri;
-    private String brokerBUri;
-
     private String connectionUri;
 
     private final String fromEndpoint = "direct:test";
@@ -57,9 +54,9 @@ public class ComplexRequestReplyTest {
     public void setUp() throws Exception {
 
         createBrokerA();
-        brokerAUri = brokerA.getTransportConnectors().get(0).getPublishableConnectString();
+        String brokerAUri = brokerA.getTransportConnectors().get(0).getPublishableConnectString();
         createBrokerB();
-        brokerBUri = brokerB.getTransportConnectors().get(0).getPublishableConnectString();
+        String brokerBUri = brokerB.getTransportConnectors().get(0).getPublishableConnectString();
 
         connectionUri = "failover:(" + brokerAUri + "," + brokerBUri + ")?randomize=false";
         senderContext = createSenderContext();

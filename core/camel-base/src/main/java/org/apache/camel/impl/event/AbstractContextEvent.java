@@ -16,17 +16,17 @@
  */
 package org.apache.camel.impl.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent.CamelContextEvent;
+
+import java.util.EventObject;
 
 /**
  * Base class for {@link CamelContext} events.
  */
 public abstract class AbstractContextEvent extends EventObject implements CamelContextEvent {
     private static final long serialVersionUID = 1L;
-    private CamelContext context;
+    private final CamelContext context;
 
     public AbstractContextEvent(CamelContext source) {
         super(source);

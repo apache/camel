@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.activemq;
 
-import javax.jms.Connection;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
+
+import javax.jms.Connection;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -61,8 +61,6 @@ public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        AbstractApplicationContext context
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-createbody.xml");
-        return context;
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-createbody.xml");
     }
 }

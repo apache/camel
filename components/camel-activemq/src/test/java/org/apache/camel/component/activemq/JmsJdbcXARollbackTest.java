@@ -16,18 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import javax.jms.Connection;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.SharedDeadLetterStrategy;
@@ -42,6 +30,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.jms.Connection;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,12 +101,7 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         sendJMSMessageToKickOffRoute();
 
         // should go to dlq eventually
-        Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return consumedFrom(SharedDeadLetterStrategy.DEFAULT_DEAD_LETTER_QUEUE_NAME);
-            }
-        });
+        Wait.waitFor(() -> consumedFrom(SharedDeadLetterStrategy.DEFAULT_DEAD_LETTER_QUEUE_NAME));
         assertEquals(0, dumpDb(jdbcConn), "message in db, commit to db worked");
         assertFalse(consumedFrom("scp_transacted_out"), "Nothing to to out q");
 

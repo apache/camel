@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support.jsse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -24,9 +27,6 @@ import java.security.Security;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A representation of configuration options for creating and loading a {@link KeyStore} instance.
@@ -175,7 +175,7 @@ public class KeyStoreParameters extends JsseParameters {
             }
 
             LOG.debug("KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
-                    new Object[] { ks, this, ks.getProvider(), ks.getType(), aliases });
+                    ks, this, ks.getProvider(), ks.getType(), aliases);
         }
 
         return ks;
@@ -183,16 +183,14 @@ public class KeyStoreParameters extends JsseParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("KeyStoreParameters[type=");
-        builder.append(type);
-        builder.append(", password=");
-        builder.append("********");
-        builder.append(", provider=");
-        builder.append(provider);
-        builder.append(", resource=");
-        builder.append(resource);
-        builder.append("]");
-        return builder.toString();
+        return "KeyStoreParameters[type=" +
+               type +
+               ", password=" +
+               "********" +
+               ", provider=" +
+               provider +
+               ", resource=" +
+               resource +
+               "]";
     }
 }

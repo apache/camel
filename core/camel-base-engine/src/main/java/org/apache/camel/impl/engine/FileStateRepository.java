@@ -16,13 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -35,6 +28,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This {@link FileStateRepository} class is a file-based implementation of a {@link StateRepository}.
@@ -106,6 +106,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         if (value.contains(STORE_DELIMITER)) {
             throw new IllegalArgumentException("Value " + value + " contains illegal character: <newline>");
         }
+        //FIXME synchronized on non-final field
         synchronized (cache) {
             cache.put(key, value);
             if (fileStore.length() < maxFileStoreSize) {
@@ -121,6 +122,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     @Override
     @ManagedOperation(description = "Gets the value of the given key from store")
     public String getState(String key) {
+        //FIXME synchronized on non-final field
         synchronized (cache) {
             return cache.get(key);
         }
@@ -131,6 +133,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      */
     @ManagedOperation(description = "Reset and reloads the file store")
     public synchronized void reset() throws IOException {
+        //FIXME synchronized on non-final field
         synchronized (cache) {
             // trunk and clear, before we reload the store
             trunkStore();

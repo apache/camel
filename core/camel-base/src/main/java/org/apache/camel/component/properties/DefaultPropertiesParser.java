@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.apache.camel.spi.PropertiesComponent.OPTIONAL_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
@@ -97,7 +97,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @return       Evaluated string
          */
         public String parse(String input) {
-            return doParse(input, new HashSet<String>());
+            return doParse(input, new HashSet<>());
         }
 
         /**
@@ -278,10 +278,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             if (value == null) {
                 if (!optional) {
-                    StringBuilder esb = new StringBuilder();
-                    esb.append("Property with key [").append(key).append("] ");
-                    esb.append("not found in properties from text: ").append(input);
-                    throw new IllegalArgumentException(esb.toString());
+                    String esb = "Property with key [" + key + "] " +
+                                 "not found in properties from text: " + input;
+                    throw new IllegalArgumentException(esb);
                 } else {
                     if (keepUnresolvedOptional) {
                         // mark the key as unresolved

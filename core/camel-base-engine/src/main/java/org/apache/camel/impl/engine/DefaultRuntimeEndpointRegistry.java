@@ -16,14 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -42,6 +34,14 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements CamelContextAware, RuntimeEndpointRegistry {
 
@@ -228,7 +228,6 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void notify(CamelEvent event) throws Exception {
         if (event instanceof RouteAddedEvent) {
             RouteAddedEvent rse = (RouteAddedEvent) event;

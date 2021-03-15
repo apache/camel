@@ -16,33 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CatalogCamelContext;
@@ -183,6 +156,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
 import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
@@ -225,12 +224,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
     private Set<LogListener> logListeners;
-    private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
-        @Override
-        public Set<String> initialValue() {
-            return new HashSet<>();
-        }
-    };
+    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
     private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -376,12 +370,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
 
         // add a cleaner for FactoryFinder used only when bootstrapping the context
-        this.bootstraps.add(new BootstrapCloseable() {
-            @Override
-            public void close() throws IOException {
-                bootstrapFactories.clear();
-            }
-        });
+        this.bootstraps.add(() -> bootstrapFactories.clear());
 
         if (build) {
             try {
@@ -591,12 +580,9 @@ public abstract class AbstractCamelContext extends BaseService
             final AtomicBoolean created = new AtomicBoolean();
 
             // atomic operation to get/create a component. Avoid global locks.
-            final Component component = components.computeIfAbsent(name, new Function<String, Component>() {
-                @Override
-                public Component apply(String comp) {
-                    created.set(true);
-                    return AbstractCamelContext.this.initComponent(name, autoCreateComponents);
-                }
+            final Component component = components.computeIfAbsent(name, comp -> {
+                created.set(true);
+                return AbstractCamelContext.this.initComponent(name, autoCreateComponents);
             });
 
             // Start the component after its creation as if it is a component proxy
@@ -1710,52 +1696,49 @@ public abstract class AbstractCamelContext extends BaseService
     public Language resolveLanguage(String name) {
         LOG.debug("Resolving language: {}", name);
 
-        return languages.computeIfAbsent(name, new Function<String, Language>() {
-            @Override
-            public Language apply(String s) {
-                StartupStep step = null;
-                // only record startup step during startup (not started)
-                if (!isStarted() && startupStepRecorder.isEnabled()) {
-                    step = startupStepRecorder.beginStep(Language.class, name, "Resolve Language");
-                }
-
-                final CamelContext camelContext = getCamelContextReference();
-
-                // as first iteration, check if there is a language instance for the given name
-                // bound to the registry
-                Language language = ResolverHelper.lookupLanguageInRegistryWithFallback(camelContext, name);
-
-                if (language == null) {
-                    // language not known, then use resolver
-                    language = getLanguageResolver().resolveLanguage(name, camelContext);
-                }
-
-                if (language != null) {
-                    if (language instanceof Service) {
-                        try {
-                            Service service = (Service) language;
-                            // init service first
-                            CamelContextAware.trySetCamelContext(service, camelContext);
-                            ServiceHelper.initService(service);
-                            startService(service);
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
-                    }
-
-                    // inject CamelContext if aware
-                    CamelContextAware.trySetCamelContext(language, camelContext);
-
-                    for (LifecycleStrategy strategy : lifecycleStrategies) {
-                        strategy.onLanguageCreated(name, language);
-                    }
-                }
-
-                if (step != null) {
-                    startupStepRecorder.endStep(step);
-                }
-                return language;
+        return languages.computeIfAbsent(name, s -> {
+            StartupStep step = null;
+            // only record startup step during startup (not started)
+            if (!isStarted() && startupStepRecorder.isEnabled()) {
+                step = startupStepRecorder.beginStep(Language.class, name, "Resolve Language");
             }
+
+            final CamelContext camelContext = getCamelContextReference();
+
+            // as first iteration, check if there is a language instance for the given name
+            // bound to the registry
+            Language language = ResolverHelper.lookupLanguageInRegistryWithFallback(camelContext, name);
+
+            if (language == null) {
+                // language not known, then use resolver
+                language = getLanguageResolver().resolveLanguage(name, camelContext);
+            }
+
+            if (language != null) {
+                if (language instanceof Service) {
+                    try {
+                        Service service = (Service) language;
+                        // init service first
+                        CamelContextAware.trySetCamelContext(service, camelContext);
+                        ServiceHelper.initService(service);
+                        startService(service);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
+                }
+
+                // inject CamelContext if aware
+                CamelContextAware.trySetCamelContext(language, camelContext);
+
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onLanguageCreated(name, language);
+                }
+            }
+
+            if (step != null) {
+                startupStepRecorder.endStep(step);
+            }
+            return language;
         });
     }
 
@@ -2491,7 +2474,6 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.info("CamelContext ({}) vetoed to not initialize due to {}", getName(), vetoed.getMessage());
                 // swallow exception and change state of this camel context to stopped
                 fail(vetoed);
-                return;
             }
         }
     }
@@ -4160,7 +4142,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public DataFormat resolveDataFormat(String name) {
-        final DataFormat answer = dataformats.computeIfAbsent(name, s -> {
+        return dataformats.computeIfAbsent(name, s -> {
             StartupStep step = null;
             // only record startup step during startup (not started)
             if (!isStarted() && startupStepRecorder.isEnabled()) {
@@ -4186,8 +4168,6 @@ public abstract class AbstractCamelContext extends BaseService
 
             return df;
         });
-
-        return answer;
     }
 
     @Override

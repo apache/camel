@@ -16,19 +16,18 @@
  */
 package org.apache.camel.support.jsse;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SNIServerName;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocketFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Configuration model for client side JSSE options.
@@ -37,7 +36,7 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextClientParameters.class);
 
-    private List<SNIServerName> sniHostNames = new ArrayList<>();
+    private final List<SNIServerName> sniHostNames = new ArrayList<>();
 
     public void addAllSniHostNames(List<String> sniHostNames) {
         for (String sniHostName : sniHostNames) {
@@ -95,18 +94,16 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextClientParameters[getCipherSuites()=");
-        builder.append(getCipherSuites());
-        builder.append(", getCipherSuitesFilter()=");
-        builder.append(getCipherSuitesFilter());
-        builder.append(", getSecureSocketProtocols()=");
-        builder.append(getSecureSocketProtocols());
-        builder.append(", getSecureSocketProtocolsFilter()=");
-        builder.append(getSecureSocketProtocolsFilter());
-        builder.append(", getSessionTimeout()=");
-        builder.append(getSessionTimeout());
-        builder.append("]");
-        return builder.toString();
+        return "SSLContextClientParameters[getCipherSuites()=" +
+               getCipherSuites() +
+               ", getCipherSuitesFilter()=" +
+               getCipherSuitesFilter() +
+               ", getSecureSocketProtocols()=" +
+               getSecureSocketProtocols() +
+               ", getSecureSocketProtocolsFilter()=" +
+               getSecureSocketProtocolsFilter() +
+               ", getSessionTimeout()=" +
+               getSessionTimeout() +
+               "]";
     }
 }

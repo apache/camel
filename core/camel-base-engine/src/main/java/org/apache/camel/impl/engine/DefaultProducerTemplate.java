@@ -16,14 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
@@ -43,6 +35,14 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate et al) for working with Camel and sending
@@ -512,45 +512,37 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     // -----------------------------------------------------------------------
 
     protected Processor createBodyAndHeaderProcessor(final Object body, final String header, final Object headerValue) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setHeader(header, headerValue);
-                in.setBody(body);
-            }
+        return exchange -> {
+            Message in = exchange.getIn();
+            in.setHeader(header, headerValue);
+            in.setBody(body);
         };
     }
 
     protected Processor createBodyAndHeaders(final Object body, final Map<String, Object> headers) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                if (headers != null) {
-                    for (Map.Entry<String, Object> header : headers.entrySet()) {
-                        in.setHeader(header.getKey(), header.getValue());
-                    }
+        return exchange -> {
+            Message in = exchange.getIn();
+            if (headers != null) {
+                for (Map.Entry<String, Object> header : headers.entrySet()) {
+                    in.setHeader(header.getKey(), header.getValue());
                 }
-                in.setBody(body);
             }
+            in.setBody(body);
         };
     }
 
     protected Processor createBodyAndPropertyProcessor(final Object body, final String property, final Object propertyValue) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                exchange.setProperty(property, propertyValue);
-                Message in = exchange.getIn();
-                in.setBody(body);
-            }
+        return exchange -> {
+            exchange.setProperty(property, propertyValue);
+            Message in = exchange.getIn();
+            in.setBody(body);
         };
     }
 
     protected Processor createSetBodyProcessor(final Object body) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-            }
+        return exchange -> {
+            Message in = exchange.getIn();
+            in.setBody(body);
         };
     }
 

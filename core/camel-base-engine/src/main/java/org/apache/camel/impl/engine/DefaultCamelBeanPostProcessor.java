@@ -16,15 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
@@ -43,6 +34,15 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -112,7 +112,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         if (enabled) {
             // do bean binding on simple types first, and then afterwards on complex types
             injectFirstPass(bean, beanName, type -> !isComplexUserType(type));
-            injectSecondPass(bean, beanName, type -> isComplexUserType(type));
+            injectSecondPass(bean, beanName, DefaultCamelBeanPostProcessor::isComplexUserType);
         }
 
         return bean;
@@ -155,7 +155,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     protected boolean canPostProcessBean(Object bean, String beanName) {
-        if (beanName != null && "properties".equals(beanName)) {
+        if ("properties".equals(beanName)) {
             // we cannot process the properties component
             // its instantiated very eager during creation of camel context
             return false;

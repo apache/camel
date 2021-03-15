@@ -48,10 +48,6 @@ public class CipherSuitesParameters {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("CipherSuitesParameters[cipherSuite=");
-        builder.append(getCipherSuite());
-        builder.append("]");
-        return builder.toString();
+        return "CipherSuitesParameters[cipherSuite=" + getCipherSuite() + "]";
     }
 }

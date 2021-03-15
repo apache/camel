@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Predicate;
-
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedProperties;
+
+import java.util.Map;
+import java.util.Properties;
+import java.util.function.Predicate;
 
 /**
  * Base class for {@link LoadablePropertiesSource} which can load properties from a source such as classpath or file
@@ -117,8 +117,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
                 break;
             }
         }
-        String answer = s.substring(0, endIndex);
-        return answer;
+        return s.substring(0, endIndex);
     }
 
 }
