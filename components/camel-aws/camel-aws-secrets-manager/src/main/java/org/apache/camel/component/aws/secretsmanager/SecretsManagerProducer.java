@@ -32,6 +32,8 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
@@ -63,6 +65,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 break;
             case getSecret:
                 getSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case describeSecret:
+                describeSecret(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -193,6 +198,35 @@ public class SecretsManagerProducer extends DefaultProducer {
         } else {
             message.setBody(result.secretString());
         }
+    }
+
+    private void describeSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        DescribeSecretRequest request = null;
+        DescribeSecretResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DescribeSecretRequest) {
+                request = (DescribeSecretRequest) payload;
+            }
+        } else {
+            DescribeSecretRequest.Builder builder = DescribeSecretRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
+                String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
+                builder.secretId(secretId);
+            } else {
+                throw new IllegalArgumentException("Secret Id must be specified");
+            }
+            request = builder.build();
+        }
+        try {
+            result = secretsManagerClient.describeSecret(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Describe Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

@@ -431,7 +431,8 @@ public interface SecretsManagerEndpointBuilderFactory {
     enum SecretsManagerOperations {
         listSecrets,
         createSecret,
-        getSecret;
+        getSecret,
+        describeSecret;
     }
 
     /**
