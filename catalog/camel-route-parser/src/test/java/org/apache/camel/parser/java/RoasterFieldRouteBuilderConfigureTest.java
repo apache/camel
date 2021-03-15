@@ -35,7 +35,7 @@ public class RoasterFieldRouteBuilderConfigureTest {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterFieldRouteBuilderConfigureTest.class);
 
     @Test
-    void parse() throws Exception {
+    void parse() {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyFieldRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");

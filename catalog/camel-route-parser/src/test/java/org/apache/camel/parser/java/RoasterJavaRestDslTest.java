@@ -38,7 +38,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
     }
 
     @Test
-    void parseRestConfiguration() throws Exception {
+    void parseRestConfiguration() {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
@@ -74,7 +74,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
     }
 
     @Test
-    void parseRestService() throws Exception {
+    void parseRestService() {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 

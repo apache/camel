@@ -16,7 +16,6 @@
  */
 package org.apache.camel.parser.helper;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -136,8 +134,7 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
-                    throws SAXException {
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
                 addTextIfNeeded();
 
                 if (rootNames != null && !found) {
@@ -227,12 +224,12 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void characters(final char ch[], final int start, final int length) throws SAXException {
+            public void characters(final char ch[], final int start, final int length) {
                 textBuffer.append(ch, start, length);
             }
 
             @Override
-            public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+            public InputSource resolveEntity(String publicId, String systemId) {
                 // do not resolve external dtd
                 return new InputSource(new StringReader(""));
             }

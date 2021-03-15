@@ -49,8 +49,7 @@ public final class CamelXmlTreeParserHelper {
             CamelNodeDetails parent = outputs.get(0);
 
             // we dont want the route element and only start with from
-            for (int i = 0; i < outputs.size(); i++) {
-                CamelNodeDetails node = outputs.get(i);
+            for (CamelNodeDetails node : outputs) {
                 String name = node.getName();
 
                 if ("from".equals(name)) {

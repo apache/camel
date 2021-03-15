@@ -452,16 +452,18 @@ public final class CamelJavaTreeParserHelper {
                     // include extended when we concat on 2 or more lines
                     List extended = ie.extendedOperands();
                     if (extended != null) {
+                        StringBuilder answerBuilder = new StringBuilder(answer);
                         for (Object ext : extended) {
                             String val3 = getLiteralValue(clazz, block, (Expression) ext);
                             if (numeric) {
                                 long num3 = val3 != null ? Long.parseLong(val3) : 0;
-                                long num = Long.parseLong(answer);
-                                answer = Long.toString(num + num3);
+                                long num = Long.parseLong(answerBuilder.toString());
+                                answerBuilder = new StringBuilder(Long.toString(num + num3));
                             } else {
-                                answer += val3 != null ? val3 : "";
+                                answerBuilder.append(val3 != null ? val3 : "");
                             }
                         }
+                        answer = answerBuilder.toString();
                     }
                 }
             }
@@ -489,7 +491,7 @@ public final class CamelJavaTreeParserHelper {
 
         try {
             int current = 0;
-            try (BufferedReader br = new BufferedReader(new FileReader(new File(fullyQualifiedFileName)))) {
+            try (BufferedReader br = new BufferedReader(new FileReader(fullyQualifiedFileName))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     lines++;
