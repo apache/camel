@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
+import java.util.Base64;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -26,7 +28,10 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.Builder;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
@@ -50,6 +55,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
             case listSecrets:
                 listSecrets(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case createSecret:
+                createSecret(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -110,6 +118,51 @@ public class SecretsManagerProducer extends DefaultProducer {
                 result = secretsManagerClient.listSecrets(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("List Secrets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void createSecret(SecretsManagerClient secretsManagerClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateSecretRequest) {
+                CreateSecretResponse result;
+                try {
+                    CreateSecretRequest request = (CreateSecretRequest) payload;
+                    result = secretsManagerClient.createSecret(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            CreateSecretRequest.Builder builder = CreateSecretRequest.builder();
+            CreateSecretResponse result;
+            try {
+                String payload = exchange.getIn().getMandatoryBody(String.class);
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME))) {
+                    String secretName = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME, String.class);
+                    builder.name(secretName);
+                } else {
+                    throw new IllegalArgumentException("Secret Name must be specified");
+                }
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION))) {
+                    String descr = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION, String.class);
+                    builder.description(descr);
+                }
+                if (getConfiguration().isBinaryPayload()) {
+                    builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+                } else {
+                    builder.secretString((String) payload);
+                }
+                result = secretsManagerClient.createSecret(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

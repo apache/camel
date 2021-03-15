@@ -39,7 +39,7 @@ public class CoAPRestComponentTCPTLSTest extends CoAPRestComponentTestBase {
 
     @Override
     protected String getProtocol() {
-        return "coaps+tcp";
+        return "coaps-tcp";
     }
 
     @Override

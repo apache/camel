@@ -32,7 +32,7 @@ public class CoAPRestComponentTCPTest extends CoAPRestComponentTestBase {
 
     @Override
     protected String getProtocol() {
-        return "coap+tcp";
+        return "coap-tcp";
     }
 
     @Override

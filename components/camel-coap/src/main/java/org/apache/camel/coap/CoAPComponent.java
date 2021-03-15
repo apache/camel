@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link CoAPEndpoint}.
  */
-@Component("coap,coaps,coap+tcp,coaps+tcp")
+@Component("coap,coaps,coap-tcp,coaps-tcp")
 public class CoAPComponent extends DefaultComponent implements RestConsumerFactory {
     static final int DEFAULT_PORT = 5684;
     private static final Logger LOG = LoggerFactory.getLogger(CoAPComponent.class);

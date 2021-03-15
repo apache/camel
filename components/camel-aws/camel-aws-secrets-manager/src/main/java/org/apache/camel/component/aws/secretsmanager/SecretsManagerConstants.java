@@ -22,4 +22,6 @@ package org.apache.camel.component.aws.secretsmanager;
 public interface SecretsManagerConstants {
     String OPERATION = "CamelAwsSecretsManagerOperation";
     String MAX_RESULTS = "CamelAwsSecretsManagerMaxResults";
+    String SECRET_NAME = "CamelAwsSecretsManagerSecretName";
+    String SECRET_DESCRIPTION = "CamelAwsSecretsManagerSecretDescription";
 }

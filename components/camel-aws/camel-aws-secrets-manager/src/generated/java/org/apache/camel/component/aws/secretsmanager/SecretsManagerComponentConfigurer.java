@@ -32,6 +32,8 @@ public class SecretsManagerComponentConfigurer extends PropertyConfigurerSupport
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "binarypayload":
+        case "binaryPayload": getOrCreateConfiguration(target).setBinaryPayload(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.secretsmanager.SecretsManagerConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -71,6 +73,8 @@ public class SecretsManagerComponentConfigurer extends PropertyConfigurerSupport
         case "accessKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "binarypayload":
+        case "binaryPayload": return boolean.class;
         case "configuration": return org.apache.camel.component.aws.secretsmanager.SecretsManagerConfiguration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -106,6 +110,8 @@ public class SecretsManagerComponentConfigurer extends PropertyConfigurerSupport
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "binarypayload":
+        case "binaryPayload": return getOrCreateConfiguration(target).isBinaryPayload();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

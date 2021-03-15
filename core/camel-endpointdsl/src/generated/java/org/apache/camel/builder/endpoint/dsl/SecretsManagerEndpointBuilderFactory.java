@@ -37,6 +37,38 @@ public interface SecretsManagerEndpointBuilderFactory {
             extends
                 EndpointProducerBuilder {
         /**
+         * Set if the secret is binary or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param binaryPayload the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder binaryPayload(
+                boolean binaryPayload) {
+            doSetProperty("binaryPayload", binaryPayload);
+            return this;
+        }
+        /**
+         * Set if the secret is binary or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param binaryPayload the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder binaryPayload(String binaryPayload) {
+            doSetProperty("binaryPayload", binaryPayload);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -397,7 +429,8 @@ public interface SecretsManagerEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations</code> enum.
      */
     enum SecretsManagerOperations {
-        listSecrets;
+        listSecrets,
+        createSecret;
     }
 
     /**
