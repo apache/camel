@@ -70,8 +70,8 @@ public class SecretsManagerProducer extends DefaultProducer {
     }
 
     private SecretsManagerOperations determineOperation(Exchange exchange) {
-        SecretsManagerOperations operation
-                = exchange.getIn().getHeader(SecretsManagerConstants.OPERATION, SecretsManagerOperations.class);
+        SecretsManagerOperations operation = exchange.getIn().getHeader(SecretsManagerConstants.OPERATION,
+                SecretsManagerOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -85,8 +85,8 @@ public class SecretsManagerProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (secretsManagerProducerToString == null) {
-            secretsManagerProducerToString
-                    = "SecretsManagerProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            secretsManagerProducerToString = "SecretsManagerProducer["
+                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return secretsManagerProducerToString;
     }
@@ -96,7 +96,8 @@ public class SecretsManagerProducer extends DefaultProducer {
         return (SecretsManagerEndpoint) super.getEndpoint();
     }
 
-    private void listSecrets(SecretsManagerClient secretsManagerClient, Exchange exchange) throws InvalidPayloadException {
+    private void listSecrets(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListSecretsRequest) {
@@ -130,52 +131,47 @@ public class SecretsManagerProducer extends DefaultProducer {
         }
     }
 
-    private void createSecret(SecretsManagerClient secretsManagerClient, Exchange exchange) throws InvalidPayloadException {
+    private void createSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        CreateSecretRequest request = null;
+        CreateSecretResponse result;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CreateSecretRequest) {
-                CreateSecretResponse result;
-                try {
-                    CreateSecretRequest request = (CreateSecretRequest) payload;
-                    result = secretsManagerClient.createSecret(request);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
+                request = (CreateSecretRequest) payload;
             }
         } else {
             CreateSecretRequest.Builder builder = CreateSecretRequest.builder();
-            CreateSecretResponse result;
-            try {
-                String payload = exchange.getIn().getMandatoryBody(String.class);
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME))) {
-                    String secretName = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME, String.class);
-                    builder.name(secretName);
-                } else {
-                    throw new IllegalArgumentException("Secret Name must be specified");
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION))) {
-                    String descr = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION, String.class);
-                    builder.description(descr);
-                }
-                if (getConfiguration().isBinaryPayload()) {
-                    builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
-                } else {
-                    builder.secretString((String) payload);
-                }
-                result = secretsManagerClient.createSecret(builder.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            String payload = exchange.getIn().getMandatoryBody(String.class);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME))) {
+                String secretName = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_NAME, String.class);
+                builder.name(secretName);
+            } else {
+                throw new IllegalArgumentException("Secret Name must be specified");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION))) {
+                String descr = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION, String.class);
+                builder.description(descr);
+            }
+            if (getConfiguration().isBinaryPayload()) {
+                builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+            } else {
+                builder.secretString((String) payload);
+            }
+            request = builder.build();
         }
+        try {
+            result = secretsManagerClient.createSecret(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
-    private void getSecret(SecretsManagerClient secretsManagerClient, Exchange exchange) throws InvalidPayloadException {
+    private void getSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetSecretValueRequest) {
