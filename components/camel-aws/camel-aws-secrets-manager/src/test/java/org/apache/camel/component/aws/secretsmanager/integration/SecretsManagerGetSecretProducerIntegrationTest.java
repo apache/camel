@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-//@Disabled("This test must be manually started, you need to specify AWS Credentials")
+@Disabled("This test must be manually started, you need to specify AWS Credentials")
 public class SecretsManagerGetSecretProducerIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
