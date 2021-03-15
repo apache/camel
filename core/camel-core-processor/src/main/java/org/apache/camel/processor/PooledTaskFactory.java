@@ -23,6 +23,13 @@ import org.apache.camel.support.PooledObjectFactorySupport;
 public abstract class PooledTaskFactory extends PooledObjectFactorySupport<PooledExchangeTask>
         implements PooledExchangeTaskFactory {
 
+    public PooledTaskFactory() {
+    }
+
+    public PooledTaskFactory(Object source) {
+        super(source);
+    }
+
     @Override
     public PooledExchangeTask acquire() {
         return pool.poll();
@@ -67,6 +74,10 @@ public abstract class PooledTaskFactory extends PooledObjectFactorySupport<Poole
 
     @Override
     public String toString() {
-        return "PooledTaskFactory[capacity: " + getCapacity() + "]";
+        if (source != null) {
+            return "PooledTaskFactory[source: " + source + ", capacity: " + getCapacity() + "]";
+        } else {
+            return "PooledTaskFactory[capacity: " + getCapacity() + "]";
+        }
     }
 }

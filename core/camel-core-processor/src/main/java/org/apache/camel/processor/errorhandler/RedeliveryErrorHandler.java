@@ -46,6 +46,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -779,7 +780,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 outputAsync.process(exchange, doneSync -> {
                     // only continue with callback if we are done
                     if (isDone(exchange)) {
-                        reactiveExecutor.schedule(callback);
+                        AsyncCallback cb = callback;
+                        taskFactory.release(this);
+                        reactiveExecutor.schedule(cb);
                     } else {
                         // error occurred so loop back around and call ourselves
                         reactiveExecutor.schedule(this);
@@ -1594,7 +1597,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {
-            taskFactory = new PooledTaskFactory() {
+            String id = output instanceof IdAware ? ((IdAware) output).getId() : output.toString();
+            taskFactory = new PooledTaskFactory(id) {
                 @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
                     return simpleTask ? new SimpleTask() : new RedeliveryTask();

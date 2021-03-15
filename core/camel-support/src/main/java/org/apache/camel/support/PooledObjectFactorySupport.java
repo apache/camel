@@ -29,11 +29,20 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public abstract class PooledObjectFactorySupport<T> extends ServiceSupport implements PooledObjectFactory<T> {
 
+    protected final Object source;
     protected UtilizationStatistics statistics;
     protected CamelContext camelContext;
     protected BlockingQueue<T> pool;
     protected int capacity = 100;
     protected boolean statisticsEnabled;
+
+    public PooledObjectFactorySupport() {
+        this.source = null;
+    }
+
+    public PooledObjectFactorySupport(Object source) {
+        this.source = source;
+    }
 
     @Override
     protected void doBuild() throws Exception {
