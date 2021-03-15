@@ -24,4 +24,5 @@ public interface SecretsManagerConstants {
     String MAX_RESULTS = "CamelAwsSecretsManagerMaxResults";
     String SECRET_NAME = "CamelAwsSecretsManagerSecretName";
     String SECRET_DESCRIPTION = "CamelAwsSecretsManagerSecretDescription";
+    String SECRET_ID = "CamelAwsSecretsManagerSecretId";
 }

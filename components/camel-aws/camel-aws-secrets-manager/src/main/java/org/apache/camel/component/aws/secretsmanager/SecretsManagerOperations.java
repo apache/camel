@@ -19,5 +19,6 @@ package org.apache.camel.component.aws.secretsmanager;
 public enum SecretsManagerOperations {
 
     listSecrets,
-    createSecret
+    createSecret,
+    getSecret
 }

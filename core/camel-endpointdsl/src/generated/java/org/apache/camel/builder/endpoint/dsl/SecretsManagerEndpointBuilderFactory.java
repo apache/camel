@@ -430,7 +430,8 @@ public interface SecretsManagerEndpointBuilderFactory {
      */
     enum SecretsManagerOperations {
         listSecrets,
-        createSecret;
+        createSecret,
+        getSecret;
     }
 
     /**
