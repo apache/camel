@@ -1139,12 +1139,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-kubernetes</artifactId>
+        <artifactId>camel-kotlin-dsl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-kotlin-dsl</artifactId>
+        <artifactId>camel-kubernetes</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
