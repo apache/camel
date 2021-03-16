@@ -57,6 +57,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": target.setMaxConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": target.setMaximumRetryAttempts(property(camelContext, int.class, value)); return true;
         case "messageconverter":
         case "messageConverter": target.setMessageConverter(property(camelContext, org.springframework.amqp.support.converter.MessageConverter.class, value)); return true;
         case "messagelistenercontainertype":
@@ -68,8 +70,13 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "prefetchcount":
         case "prefetchCount": target.setPrefetchCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "queues": target.setQueues(property(camelContext, java.lang.String.class, value)); return true;
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": target.setRejectAndDontRequeue(property(camelContext, boolean.class, value)); return true;
         case "replytimeout":
         case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "retry": target.setRetry(property(camelContext, org.springframework.retry.interceptor.RetryOperationsInterceptor.class, value)); return true;
+        case "retrydelay":
+        case "retryDelay": target.setRetryDelay(property(camelContext, int.class, value)); return true;
         case "routingkey":
         case "routingKey": target.setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -120,6 +127,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": return boolean.class;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return java.lang.Integer.class;
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": return int.class;
         case "messageconverter":
         case "messageConverter": return org.springframework.amqp.support.converter.MessageConverter.class;
         case "messagelistenercontainertype":
@@ -131,8 +140,13 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "prefetchcount":
         case "prefetchCount": return java.lang.Integer.class;
         case "queues": return java.lang.String.class;
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": return boolean.class;
         case "replytimeout":
         case "replyTimeout": return long.class;
+        case "retry": return org.springframework.retry.interceptor.RetryOperationsInterceptor.class;
+        case "retrydelay":
+        case "retryDelay": return int.class;
         case "routingkey":
         case "routingKey": return java.lang.String.class;
         case "synchronous": return boolean.class;
@@ -184,6 +198,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return target.getMaxConcurrentConsumers();
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": return target.getMaximumRetryAttempts();
         case "messageconverter":
         case "messageConverter": return target.getMessageConverter();
         case "messagelistenercontainertype":
@@ -195,8 +211,13 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "prefetchcount":
         case "prefetchCount": return target.getPrefetchCount();
         case "queues": return target.getQueues();
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": return target.isRejectAndDontRequeue();
         case "replytimeout":
         case "replyTimeout": return target.getReplyTimeout();
+        case "retry": return target.getRetry();
+        case "retrydelay":
+        case "retryDelay": return target.getRetryDelay();
         case "routingkey":
         case "routingKey": return target.getRoutingKey();
         case "synchronous": return target.isSynchronous();

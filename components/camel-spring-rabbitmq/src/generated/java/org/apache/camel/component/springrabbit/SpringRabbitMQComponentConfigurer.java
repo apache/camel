@@ -55,6 +55,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "listenerContainerFactory": target.setListenerContainerFactory(property(camelContext, org.apache.camel.component.springrabbit.ListenerContainerFactory.class, value)); return true;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": target.setMaxConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": target.setMaximumRetryAttempts(property(camelContext, int.class, value)); return true;
         case "messageconverter":
         case "messageConverter": target.setMessageConverter(property(camelContext, org.springframework.amqp.support.converter.MessageConverter.class, value)); return true;
         case "messagelistenercontainertype":
@@ -63,6 +65,13 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": target.setRejectAndDontRequeue(property(camelContext, boolean.class, value)); return true;
+        case "replytimeout":
+        case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "retry": target.setRetry(property(camelContext, org.springframework.retry.interceptor.RetryOperationsInterceptor.class, value)); return true;
+        case "retrydelay":
+        case "retryDelay": target.setRetryDelay(property(camelContext, int.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.setShutdownTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "testconnectiononstartup":
@@ -113,6 +122,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "listenerContainerFactory": return org.apache.camel.component.springrabbit.ListenerContainerFactory.class;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return java.lang.Integer.class;
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": return int.class;
         case "messageconverter":
         case "messageConverter": return org.springframework.amqp.support.converter.MessageConverter.class;
         case "messagelistenercontainertype":
@@ -121,6 +132,13 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": return boolean.class;
+        case "replytimeout":
+        case "replyTimeout": return long.class;
+        case "retry": return org.springframework.retry.interceptor.RetryOperationsInterceptor.class;
+        case "retrydelay":
+        case "retryDelay": return int.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return long.class;
         case "testconnectiononstartup":
@@ -167,6 +185,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "listenerContainerFactory": return target.getListenerContainerFactory();
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return target.getMaxConcurrentConsumers();
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": return target.getMaximumRetryAttempts();
         case "messageconverter":
         case "messageConverter": return target.getMessageConverter();
         case "messagelistenercontainertype":
@@ -175,6 +195,13 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
         case "prefetchcount":
         case "prefetchCount": return target.getPrefetchCount();
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": return target.isRejectAndDontRequeue();
+        case "replytimeout":
+        case "replyTimeout": return target.getReplyTimeout();
+        case "retry": return target.getRetry();
+        case "retrydelay":
+        case "retryDelay": return target.getRetryDelay();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getShutdownTimeout();
         case "testconnectiononstartup":

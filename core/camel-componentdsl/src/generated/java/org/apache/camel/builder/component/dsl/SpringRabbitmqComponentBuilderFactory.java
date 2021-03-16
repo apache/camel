@@ -222,6 +222,57 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * How many times a Rabbitmq consumer will retry the same message if
+         * Camel failed to process the message.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: consumer
+         * 
+         * @param maximumRetryAttempts the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder maximumRetryAttempts(
+                int maximumRetryAttempts) {
+            doSetProperty("maximumRetryAttempts", maximumRetryAttempts);
+            return this;
+        }
+        /**
+         * Whether a Rabbitmq consumer should reject the message without
+         * requeuing. This enables failed messages to be sent to a Dead Letter
+         * Exchange/Queue, if the broker is so configured.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param rejectAndDontRequeue the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder rejectAndDontRequeue(
+                boolean rejectAndDontRequeue) {
+            doSetProperty("rejectAndDontRequeue", rejectAndDontRequeue);
+            return this;
+        }
+        /**
+         * Delay in msec a Rabbitmq consumer will wait before redelivering a
+         * message that Camel failed to process.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param retryDelay the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder retryDelay(int retryDelay) {
+            doSetProperty("retryDelay", retryDelay);
+            return this;
+        }
+        /**
          * The number of consumers.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -320,6 +371,23 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Custom retry configuration to use. If this is configured then the
+         * other settings such as maximumRetryAttempts for retry are not in use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder retry(
+                org.springframework.retry.interceptor.RetryOperationsInterceptor retry) {
+            doSetProperty("retry", retry);
+            return this;
+        }
+        /**
          * The time to wait for workers in milliseconds after the container is
          * stopped. If any workers are active when the shutdown signal comes
          * they will be allowed to finish processing as long as they can finish
@@ -360,6 +428,23 @@ public interface SpringRabbitmqComponentBuilderFactory {
         default SpringRabbitmqComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Specify the timeout in milliseconds to be used when waiting for a
+         * reply message when doing request/reply messaging. The default value
+         * is 5 seconds. A negative value indicates an indefinite timeout.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: producer
+         * 
+         * @param replyTimeout the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder replyTimeout(long replyTimeout) {
+            doSetProperty("replyTimeout", replyTimeout);
             return this;
         }
         /**
@@ -479,14 +564,19 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "deadLetterExchangeType": ((SpringRabbitMQComponent) component).setDeadLetterExchangeType((java.lang.String) value); return true;
             case "deadLetterQueue": ((SpringRabbitMQComponent) component).setDeadLetterQueue((java.lang.String) value); return true;
             case "deadLetterRoutingKey": ((SpringRabbitMQComponent) component).setDeadLetterRoutingKey((java.lang.String) value); return true;
+            case "maximumRetryAttempts": ((SpringRabbitMQComponent) component).setMaximumRetryAttempts((int) value); return true;
+            case "rejectAndDontRequeue": ((SpringRabbitMQComponent) component).setRejectAndDontRequeue((boolean) value); return true;
+            case "retryDelay": ((SpringRabbitMQComponent) component).setRetryDelay((int) value); return true;
             case "concurrentConsumers": ((SpringRabbitMQComponent) component).setConcurrentConsumers((int) value); return true;
             case "errorHandler": ((SpringRabbitMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
             case "listenerContainerFactory": ((SpringRabbitMQComponent) component).setListenerContainerFactory((org.apache.camel.component.springrabbit.ListenerContainerFactory) value); return true;
             case "maxConcurrentConsumers": ((SpringRabbitMQComponent) component).setMaxConcurrentConsumers((java.lang.Integer) value); return true;
             case "messageListenerContainerType": ((SpringRabbitMQComponent) component).setMessageListenerContainerType((java.lang.String) value); return true;
             case "prefetchCount": ((SpringRabbitMQComponent) component).setPrefetchCount((int) value); return true;
+            case "retry": ((SpringRabbitMQComponent) component).setRetry((org.springframework.retry.interceptor.RetryOperationsInterceptor) value); return true;
             case "shutdownTimeout": ((SpringRabbitMQComponent) component).setShutdownTimeout((long) value); return true;
             case "lazyStartProducer": ((SpringRabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "replyTimeout": ((SpringRabbitMQComponent) component).setReplyTimeout((long) value); return true;
             case "autowiredEnabled": ((SpringRabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "ignoreDeclarationExceptions": ((SpringRabbitMQComponent) component).setIgnoreDeclarationExceptions((boolean) value); return true;
             case "messageConverter": ((SpringRabbitMQComponent) component).setMessageConverter((org.springframework.amqp.support.converter.MessageConverter) value); return true;
