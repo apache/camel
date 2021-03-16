@@ -207,6 +207,9 @@ This operation will get the `CloudFunction` object for the project `myProject`, 
 --------------------------------------------------------------------------------
 //call function
 from("direct:start")
+.process(exchange -> {
+  exchange.getIn().setBody("just a message");
+})
 .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=callFunction")
 .log("body:${body}")
 .to("mock:result");

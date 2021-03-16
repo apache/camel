@@ -31,7 +31,6 @@ public class GoogleCloudFunctionsComponent extends DefaultComponent {
     private GoogleCloudFunctionsConfiguration configuration = new GoogleCloudFunctionsConfiguration();
 
     public GoogleCloudFunctionsComponent() {
-        super(null);
     }
 
     public GoogleCloudFunctionsComponent(CamelContext context) {

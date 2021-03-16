@@ -16,14 +16,7 @@
  */
 package org.apache.camel.component.google.functions;
 
-import java.io.FileInputStream;
-
-import com.google.api.client.util.Strings;
-import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.auth.Credentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
-import com.google.cloud.functions.v1.CloudFunctionsServiceSettings;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -81,28 +74,15 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
         if (configuration.getClient() != null) {
             cloudFunctionsClient = configuration.getClient();
         } else {
-            if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-                Credentials myCredentials = ServiceAccountCredentials
-                        .fromStream(new FileInputStream(configuration.getServiceAccountKey()));
-                CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
-                        .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
-                cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
-            } else {
-                //it needs to define the  environment variable GOOGLE_APPLICATION_CREDENTIALS with the service account file
-                //more info at https://cloud.google.com/docs/authentication/production
-                CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder().build();
-                cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
-            }
+            cloudFunctionsClient = GoogleCloudFunctionsClientFactory.create(this.getCamelContext(), configuration);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (configuration.getClient() == null) {
-            if (cloudFunctionsClient != null) {
-                cloudFunctionsClient.close();
-            }
+        if (configuration.getClient() == null && cloudFunctionsClient != null) {
+            cloudFunctionsClient.close();
         }
     }
 

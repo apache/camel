@@ -34,7 +34,6 @@
 
   <properties>
     <firstVersion>3.9.0</firstVersion>
-    <google-cloud-functions-version>1.0.8</google-cloud-functions-version>
   </properties>
 
   <dependencyManagement>
@@ -48,7 +47,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-functions-bom</artifactId>
-        <version>${google-cloud-functions-version}</version>
+        <version>${google-cloud-functions-bom-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -79,7 +78,7 @@
       <groupId>com.google.api</groupId>
       <artifactId>gax-grpc</artifactId>
       <classifier>testlib</classifier>
-      <version>1.62.0</version>
+      <version>${google-cloud-functions-gax-grpc-version}</version>
       <scope>test</scope>
     </dependency>
 
