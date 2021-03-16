@@ -167,7 +167,7 @@ public class Jt400Configuration {
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
 
         URI uri = new URI(endpointUri);
-        String[] credentials = uri.getUserInfo().split(":");
+        String[] credentials = uri.getUserInfo().split(":", 2);
         systemName = uri.getHost();
         userID = credentials[0];
         password = credentials[1];
