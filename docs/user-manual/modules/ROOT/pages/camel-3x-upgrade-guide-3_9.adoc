@@ -104,6 +104,12 @@ the one to use above, and then add which -starter JARs you want to use in your C
 - Camel-AWS-S3 has been removed. Please switch to Camel-AWS2-S3.
 - Camel-AWS-SWF has been removed. There won't be a replacement for it.
 
+=== camel-aws2-sqs
+
+The option `deleteIfFiltered` has been changed to use a different exchange property with key `Sqs2Constants.SQS_DELETE_FILTERED`
+which must be set. Beforehand a property by Filter EIP was being used, however this property has been removed due
+to optimizing core Camel.
+
 === Camel-Azure component
 
 - Camel-Azure has been removed. Please switch to Camel-Azure-Storage-Blob and Camel-Azure-Storage-Queue.

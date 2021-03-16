@@ -69,7 +69,7 @@ The AWS 2 Simple Queue Service (SQS) component supports 43 options, which are li
 | *concurrentConsumers* (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
 | *defaultVisibilityTimeout* (consumer) | The default visibility timeout (in seconds) |  | Integer
 | *deleteAfterRead* (consumer) | Delete message from SQS after it has been read | true | boolean
-| *deleteIfFiltered* (consumer) | *Deprecated* Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route, then don't send DeleteMessage. | true | boolean
+| *deleteIfFiltered* (consumer) | Whether or not to send the DeleteMessage to the SQS queue if the exchange has property with key Sqs2Constants#SQS_DELETE_FILTERED (CamelAwsSqsDeleteFiltered) set to true. | true | boolean
 | *extendMessageVisibility* (consumer) | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs. | false | boolean
 | *kmsDataKeyReusePeriodSeconds* (consumer) | The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) and 86,400 seconds (24 hours). Default: 300 (5 minutes). |  | Integer
 | *kmsMasterKeyId* (consumer) | The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. |  | String
@@ -147,7 +147,7 @@ with the following path and query parameters:
 | *concurrentConsumers* (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
 | *defaultVisibilityTimeout* (consumer) | The default visibility timeout (in seconds) |  | Integer
 | *deleteAfterRead* (consumer) | Delete message from SQS after it has been read | true | boolean
-| *deleteIfFiltered* (consumer) | *Deprecated* Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route, then don't send DeleteMessage. | true | boolean
+| *deleteIfFiltered* (consumer) | Whether or not to send the DeleteMessage to the SQS queue if the exchange has property with key Sqs2Constants#SQS_DELETE_FILTERED (CamelAwsSqsDeleteFiltered) set to true. | true | boolean
 | *extendMessageVisibility* (consumer) | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs. | false | boolean
 | *kmsDataKeyReusePeriodSeconds* (consumer) | The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) and 86,400 seconds (24 hours). Default: 300 (5 minutes). |  | Integer
 | *kmsMasterKeyId* (consumer) | The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. |  | String
@@ -323,13 +323,17 @@ of the route, use a Filter:
 ------------------------------------------------------------------------------------------------------
 from("aws2-sqs://MyQueue?amazonSQSClient=#client&defaultVisibilityTimeout=5000&deleteIfFiltered=false&deleteAfterRead=false")
 .filter("${header.login} == true")
-.to("mock:result");
+  .setProperty(Sqs2Constants.SQS_DELETE_FILTERED, constant(true))
+  .to("mock:filter");
 ------------------------------------------------------------------------------------------------------
 
 In the above code, if an exchange doesn't have an appropriate header, it
 will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 milliseconds, the message will become visible to other
 consumers.
+
+Note we must set the property `Sqs2Constants.SQS_DELETE_FILTERED` to `true` to
+instruct Camel to send the DeleteMessage, if being filtered.
 
 == Available Producer Operations
 - single message (default)
