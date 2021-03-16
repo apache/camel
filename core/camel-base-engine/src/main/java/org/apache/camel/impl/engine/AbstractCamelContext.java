@@ -53,6 +53,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.FailedToStartComponentException;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.IsSingleton;
@@ -2828,6 +2829,18 @@ public abstract class AbstractCamelContext extends BaseService
         vetoed = null;
         startDate = System.currentTimeMillis();
         stopWatch.restart();
+
+        // ensure components are started
+        for (Map.Entry<String, Component> entry : components.entrySet()) {
+            StartupStep step = startupStepRecorder.beginStep(Component.class, entry.getKey(), "Start Component");
+            try {
+                ServiceHelper.startService(entry.getValue());
+            } catch (Exception e) {
+                throw new FailedToStartComponentException(entry.getKey(), e.getMessage(), e);
+            } finally {
+                startupStepRecorder.endStep(step);
+            }
+        }
 
         // Start the route controller
         ServiceHelper.startService(this.routeController);
