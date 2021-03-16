@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
@@ -43,10 +45,13 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.ThrowingBiConsumer;
+import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,14 +61,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
-    private AtomicBoolean initialized = new AtomicBoolean();
+
+    private final AtomicBoolean initialized = new AtomicBoolean();
+    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
+    private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
+    private final List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
+
     private RestsDefinition restCollection = new RestsDefinition();
     private RestConfigurationDefinition restConfiguration;
-    private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
-    private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
-    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
 
     public RouteBuilder() {
         this(null);
@@ -71,19 +78,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RouteBuilder(CamelContext context) {
         super(context);
-    }
-
-    /**
-     * Override this method to define ordering of {@link RouteBuilder} classes that are added to Camel from various
-     * runtimes such as camel-main, camel-spring-boot. This allows end users to control the ordering if some routes must
-     * be added and started before others.
-     * <p/>
-     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards. So if you want to
-     * be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
-     */
-    @Override
-    public int getOrder() {
-        return LOWEST;
     }
 
     /**
@@ -105,6 +99,56 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 rbc.accept(this);
             }
         });
+    }
+
+    /**
+     * Loads {@link RoutesBuilder} from {@link Resource} using the given consumer to create a {@link RouteBuilder}
+     * instance.
+     *
+     * @param  resource the resource to be loaded.
+     * @param  consumer the function used to create a {@link RoutesBuilder}
+     * @return          a {@link RoutesBuilder}
+     */
+    public static RouteBuilder loadRoutesBuilder(
+            Resource resource, ThrowingBiConsumer<Reader, RouteBuilder, Exception> consumer) {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                CamelContextAware.trySetCamelContext(resource, getContext());
+
+                try (Reader reader = resource.getReader()) {
+                    consumer.accept(reader, this);
+                }
+            }
+        };
+    }
+
+    /**
+     * Loads {@link RoutesBuilder} using the given consumer to create a {@link RouteBuilder} instance.
+     *
+     * @param  consumer the function used to create a {@link RoutesBuilder}
+     * @return          a {@link RoutesBuilder}
+     */
+    public static RouteBuilder loadRoutesBuilder(ThrowingConsumer<RouteBuilder, Exception> consumer) {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                consumer.accept(this);
+            }
+        };
+    }
+
+    /**
+     * Override this method to define ordering of {@link RouteBuilder} classes that are added to Camel from various
+     * runtimes such as camel-main, camel-spring-boot. This allows end users to control the ordering if some routes must
+     * be added and started before others.
+     * <p/>
+     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards. So if you want to
+     * be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
+     */
+    @Override
+    public int getOrder() {
+        return LOWEST;
     }
 
     @Override
@@ -593,20 +637,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return restCollection;
     }
 
-    public RestConfigurationDefinition getRestConfiguration() {
-        return restConfiguration;
-    }
-
     public void setRestCollection(RestsDefinition restCollection) {
         this.restCollection = restCollection;
     }
 
-    public void setRouteCollection(RoutesDefinition routeCollection) {
-        this.routeCollection = routeCollection;
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
     }
 
     public RoutesDefinition getRouteCollection() {
         return this.routeCollection;
+    }
+
+    public void setRouteCollection(RoutesDefinition routeCollection) {
+        this.routeCollection = routeCollection;
     }
 
     public RouteTemplatesDefinition getRouteTemplateCollection() {
@@ -628,5 +672,4 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected void configureRouteTemplate(RouteTemplateDefinition routeTemplate) {
         // noop
     }
-
 }

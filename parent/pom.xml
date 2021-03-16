@@ -220,6 +220,7 @@
         <google-cloud-bom-version>16.3.0</google-cloud-bom-version>
         <google-cloud-guava-version>30.0-jre</google-cloud-guava-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
+        <graaljs-version>21.0.0.2</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
         <grpc-version>1.28.1</grpc-version>
@@ -2700,6 +2701,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-yaml-dsl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-js-dsl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
