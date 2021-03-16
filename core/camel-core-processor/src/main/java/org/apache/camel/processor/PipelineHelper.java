@@ -29,6 +29,10 @@ public final class PipelineHelper {
     private PipelineHelper() {
     }
 
+    public static void warmup(Logger log) {
+        log.trace("Warming up PipelineHelper");
+    }
+
     /**
      * Should we continue processing the exchange?
      *

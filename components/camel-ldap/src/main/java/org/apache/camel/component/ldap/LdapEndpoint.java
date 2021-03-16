@@ -95,7 +95,7 @@ public class LdapEndpoint extends DefaultEndpoint {
         this.pageSize = pageSize;
     }
 
-    public int getPageSize() {
+    public Integer getPageSize() {
         return pageSize;
     }
 

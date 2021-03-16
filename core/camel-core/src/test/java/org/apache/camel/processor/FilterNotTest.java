@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,6 @@ public class FilterNotTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(true);
 
         template.sendBody("direct:start", "<notMatched/>");
 

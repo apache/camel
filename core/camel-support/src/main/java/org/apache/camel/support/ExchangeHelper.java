@@ -56,6 +56,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -66,6 +67,10 @@ public final class ExchangeHelper {
      * Utility classes should not have a public constructor.
      */
     private ExchangeHelper() {
+    }
+
+    public static void warmup(Logger log) {
+        log.trace("Warming up ExchangeHelper");
     }
 
     /**

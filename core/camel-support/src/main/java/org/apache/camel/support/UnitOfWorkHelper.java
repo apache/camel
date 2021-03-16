@@ -38,6 +38,10 @@ public final class UnitOfWorkHelper {
     private UnitOfWorkHelper() {
     }
 
+    public static void warmup(Logger log) {
+        log.trace("Warming up UnitOfWorkHelper");
+    }
+
     /**
      * Done and stop the {@link UnitOfWork}.
      *

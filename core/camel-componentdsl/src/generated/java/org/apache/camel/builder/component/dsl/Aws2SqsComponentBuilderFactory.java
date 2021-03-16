@@ -331,10 +331,9 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether or not to send the DeleteMessage to the SQS queue if an
-         * exchange fails to get through a filter. If 'false' and exchange does
-         * not make it through a Camel filter upstream in the route, then don't
-         * send DeleteMessage.
+         * Whether or not to send the DeleteMessage to the SQS queue if the
+         * exchange has property with key Sqs2Constants#SQS_DELETE_FILTERED
+         * (CamelAwsSqsDeleteFiltered) set to true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

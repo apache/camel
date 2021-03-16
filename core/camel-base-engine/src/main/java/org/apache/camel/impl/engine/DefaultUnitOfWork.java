@@ -84,6 +84,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
         doOnPrepare(exchange);
     }
 
+    static void warmup(Logger log) {
+        log.trace("Warming up DefaultUnitOfWork");
+    }
+
     UnitOfWork newInstance(Exchange exchange) {
         return new DefaultUnitOfWork(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
     }

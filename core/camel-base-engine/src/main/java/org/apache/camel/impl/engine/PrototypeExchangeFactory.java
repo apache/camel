@@ -51,6 +51,13 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
     protected void doBuild() throws Exception {
         super.doBuild();
         this.exchangeFactoryManager = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
+        // force to create and load the class during build time so the JVM does not
+        // load the class on first exchange to be created
+        DefaultExchange dummy = new DefaultExchange(camelContext);
+        // force message init to load classes
+        dummy.getIn();
+        dummy.getIn().getHeaders();
+        LOG.trace("Warming up PrototypeExchangeFactory loaded class: {}", dummy.getClass().getName());
     }
 
     @Override
@@ -107,11 +114,6 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
     }
 
     @Override
-    public void resetStatistics() {
-        statistics.reset();
-    }
-
-    @Override
     public boolean isPooled() {
         return false;
     }
@@ -131,7 +133,6 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
             exchangeFactoryManager.removeExchangeFactory(this);
         }
         logUsageSummary(LOG, "PrototypeExchangeFactory", 0);
-        statistics.reset();
     }
 
     void logUsageSummary(Logger log, String name, int pooled) {

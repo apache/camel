@@ -190,4 +190,18 @@ public interface ExtendedExchange extends Exchange {
      */
     Map<String, Object> getInternalProperties();
 
+    /**
+     * Callback used by {@link Consumer} if the consumer is completing the exchange processing with default behaviour.
+     *
+     * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
+     */
+    AsyncCallback getDefaultConsumerCallback();
+
+    /**
+     * Callback used by {@link Consumer} if the consumer is completing the exchange processing with default behaviour.
+     *
+     * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
+     */
+    void setDefaultConsumerCallback(AsyncCallback callback);
+
 }

@@ -23,6 +23,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "binarypayload":
+        case "binaryPayload": target.getConfiguration().setBinaryPayload(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations.class, value)); return true;
@@ -59,6 +61,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
+        case "binarypayload":
+        case "binaryPayload": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations.class;
@@ -91,6 +95,8 @@ public class SecretsManagerEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
+        case "binarypayload":
+        case "binaryPayload": return target.getConfiguration().isBinaryPayload();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

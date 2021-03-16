@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -37,26 +39,31 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
     public DefaultPooledExchange(CamelContext context) {
         super(context);
         this.originalPattern = getPattern();
+        this.properties = new ConcurrentHashMap<>(8);
     }
 
     public DefaultPooledExchange(CamelContext context, ExchangePattern pattern) {
         super(context, pattern);
         this.originalPattern = pattern;
+        this.properties = new ConcurrentHashMap<>(8);
     }
 
     public DefaultPooledExchange(Exchange parent) {
         super(parent);
         this.originalPattern = parent.getPattern();
+        this.properties = new ConcurrentHashMap<>(8);
     }
 
     public DefaultPooledExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
         this.originalPattern = getPattern();
+        this.properties = new ConcurrentHashMap<>(8);
     }
 
     public DefaultPooledExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         super(fromEndpoint, pattern);
         this.originalPattern = pattern;
+        this.properties = new ConcurrentHashMap<>(8);
     }
 
     public boolean isAutoRelease() {

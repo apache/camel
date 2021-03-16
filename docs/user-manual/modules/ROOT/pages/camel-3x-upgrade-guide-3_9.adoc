@@ -45,6 +45,11 @@ These keys are used in camel-core such as the routing engine, EIPs and others th
 state on the `Exchange` which is done as exchange properties. Because Camel end users can also store
 exchange properties then before they would get mixed together. What we have done now is to separate them.
 
+=== Choice and Filter EIP
+
+The `choice` and `filter` EIPs no longer store exchange property `Exchange.FILTER_MATCHED`.
+The reason is the information is seldom in use, and by removing we were able to optimize camel-core.
+
 === Modularized camel-spring
 
 The `camel-spring` component has been modularized into:
@@ -98,6 +103,12 @@ the one to use above, and then add which -starter JARs you want to use in your C
 - Camel-AWS-CW has been removed. Please switch to Camel-AWS2-CW.
 - Camel-AWS-S3 has been removed. Please switch to Camel-AWS2-S3.
 - Camel-AWS-SWF has been removed. There won't be a replacement for it.
+
+=== camel-aws2-sqs
+
+The option `deleteIfFiltered` has been changed to use a different exchange property with key `Sqs2Constants.SQS_DELETE_FILTERED`
+which must be set. Beforehand a property by Filter EIP was being used, however this property has been removed due
+to optimizing core Camel.
 
 === Camel-Azure component
 

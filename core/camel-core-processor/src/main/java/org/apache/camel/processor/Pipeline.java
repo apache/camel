@@ -171,17 +171,18 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     protected void doBuild() throws Exception {
+        // force to create and load the class during build time so the JVM does not
+        // load the class on first exchange to be created
+        PipelineHelper.warmup(LOG);
+        PipelineTask dummy = new PipelineTask();
+        LOG.trace("Warming up Pipeline loaded class: {}", dummy.getClass().getName());
+
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {
-            taskFactory = new PooledTaskFactory() {
+            taskFactory = new PooledTaskFactory(getId()) {
                 @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
                     return new PipelineTask();
-                }
-
-                @Override
-                public String toString() {
-                    return "PooledTaskFactory[capacity: " + getCapacity() + "]";
                 }
             };
             int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
@@ -189,18 +190,8 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         } else {
             taskFactory = new PrototypeTaskFactory() {
                 @Override
-                public boolean isPooled() {
-                    return false;
-                }
-
-                @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
                     return new PipelineTask();
-                }
-
-                @Override
-                public String toString() {
-                    return "PrototypeTaskFactory";
                 }
             };
         }

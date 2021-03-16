@@ -25,12 +25,14 @@ import org.junit.jupiter.api.Test;
 
 public class MainHelperTest {
 
+    private MainHelper helper = new MainHelper();
+
     @Test
     public void testAddComponentEnvVariables() {
         Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_COMPONENT_" });
         env.put("CAMEL_COMPONENT_AWS2_S3_ACCESS_KEY", "mysecretkey");
         Properties prop = new OrderedProperties();
-        MainHelper.addComponentEnvVariables(env, prop, false);
+        helper.addComponentEnvVariables(env, prop, false);
 
         Assertions.assertEquals(0, env.size());
         Assertions.assertEquals(1, prop.size());
@@ -43,7 +45,7 @@ public class MainHelperTest {
         env.put("CAMEL_DATAFORMAT_BASE64_LINE_LENGTH", "64");
         env.put("CAMEL_DATAFORMAT_JACKSONXML_PRETTYPRINT", "true");
         Properties prop = new OrderedProperties();
-        MainHelper.addDataFormatEnvVariables(env, prop, false);
+        helper.addDataFormatEnvVariables(env, prop, false);
 
         Assertions.assertEquals(0, env.size());
         Assertions.assertEquals(2, prop.size());
@@ -56,7 +58,7 @@ public class MainHelperTest {
         Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_LANGUAGE_" });
         env.put("CAMEL_LANGUAGE_JOOR_PRE_COMPILE", "false");
         Properties prop = new OrderedProperties();
-        MainHelper.addLanguageEnvVariables(env, prop, false);
+        helper.addLanguageEnvVariables(env, prop, false);
 
         Assertions.assertEquals(0, env.size());
         Assertions.assertEquals(1, prop.size());
@@ -70,13 +72,13 @@ public class MainHelperTest {
         env.put("CAMEL_COMPONENT_FOO_VERBOSE", "true");
         env.put("CAMEL_COMPONENT_FOO_PRETTY_PRINT", "false");
         Properties prop = new OrderedProperties();
-        MainHelper.addComponentEnvVariables(env, prop, false);
+        helper.addComponentEnvVariables(env, prop, false);
 
         Assertions.assertEquals(2, env.size());
         Assertions.assertEquals(1, prop.size());
         Assertions.assertEquals("mysecretkey", prop.getProperty("camel.component.aws2-s3.access-key"));
 
-        MainHelper.addComponentEnvVariables(env, prop, true);
+        helper.addComponentEnvVariables(env, prop, true);
 
         Assertions.assertEquals(0, env.size());
         Assertions.assertEquals(3, prop.size());

@@ -93,6 +93,8 @@ public interface PooledObjectFactory<T> extends Service, CamelContextAware {
 
     /**
      * Gets the usage statistics
+     *
+     * @return the statistics, or null if statistics is not enabled
      */
     Statistics getStatistics();
 

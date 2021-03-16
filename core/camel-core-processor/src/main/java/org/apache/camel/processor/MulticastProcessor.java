@@ -405,7 +405,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     /**
-     * Sub taks processed reactive via the {@link ReactiveExecutor}.
+     * Sub task processed reactive via the {@link ReactiveExecutor}.
      */
     protected class MulticastReactiveTask extends MulticastTask {
 
@@ -587,11 +587,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 return false;
             }
 
-            // accept the exchange as a result
-            completion.submit(exchangeResult -> exchangeResult.accept(exchange));
+            completion.submit(exchangeResult -> {
+                // accept the exchange as a result
+                exchangeResult.accept(exchange);
 
-            // aggregate exchanges if any
-            aggregate();
+                // aggregate exchanges if any
+                aggregate();
+            });
 
             // next step
             return true;

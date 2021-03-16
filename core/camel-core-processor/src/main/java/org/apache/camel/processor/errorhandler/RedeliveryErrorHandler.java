@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -47,6 +46,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -387,8 +387,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         public void run() {
             // can we still run
             boolean run = true;
-            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
-            if (forceShutdown) {
+            if (shutdownStrategy.isForceShutdown()) {
                 run = false;
             }
             if (run && isStoppingOrStopped()) {
@@ -781,7 +780,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 outputAsync.process(exchange, doneSync -> {
                     // only continue with callback if we are done
                     if (isDone(exchange)) {
-                        reactiveExecutor.schedule(callback);
+                        AsyncCallback cb = callback;
+                        taskFactory.release(this);
+                        reactiveExecutor.schedule(cb);
                     } else {
                         // error occurred so loop back around and call ourselves
                         reactiveExecutor.schedule(this);
@@ -792,8 +793,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         protected boolean isRunAllowed() {
             // if camel context is forcing a shutdown then do not allow running
-            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
-            if (forceShutdown) {
+            if (shutdownStrategy.isForceShutdown()) {
                 return false;
             }
 
@@ -1561,18 +1561,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         return false;
     }
 
-    /**
-     * Gets the number of exchanges that are pending for redelivery
-     */
-    public int getPendingRedeliveryCount() {
-        int answer = redeliverySleepCounter.get();
-        if (executorService instanceof ThreadPoolExecutor) {
-            answer += ((ThreadPoolExecutor) executorService).getQueue().size();
-        }
-
-        return answer;
-    }
-
     @Override
     protected void doStart() throws Exception {
         // determine if redeliver is enabled or not
@@ -1602,9 +1590,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         simpleTask = deadLetter == null && !redeliveryEnabled && (exceptionPolicies == null || exceptionPolicies.isEmpty())
                 && onPrepareProcessor == null;
 
+        // force to create and load the class during build time so the JVM does not
+        // load the class on first exchange to be created
+        Object dummy = simpleTask ? new SimpleTask() : new RedeliveryTask();
+        LOG.trace("Warming up RedeliveryErrorHandler loaded class: {}", dummy.getClass().getName());
+
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {
-            taskFactory = new PooledTaskFactory() {
+            String id = output instanceof IdAware ? ((IdAware) output).getId() : output.toString();
+            taskFactory = new PooledTaskFactory(id) {
                 @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
                     return simpleTask ? new SimpleTask() : new RedeliveryTask();

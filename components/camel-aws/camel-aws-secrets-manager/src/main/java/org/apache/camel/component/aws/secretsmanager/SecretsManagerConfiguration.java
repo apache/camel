@@ -56,6 +56,8 @@ public class SecretsManagerConfiguration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean binaryPayload;
 
     public SecretsManagerClient getSecretsManagerClient() {
         return secretsManagerClient;
@@ -189,6 +191,17 @@ public class SecretsManagerConfiguration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    public boolean isBinaryPayload() {
+        return binaryPayload;
+    }
+
+    /**
+     * Set if the secret is binary or not
+     */
+    public void setBinaryPayload(boolean binaryPayload) {
+        this.binaryPayload = binaryPayload;
     }
 
     // *************************************************

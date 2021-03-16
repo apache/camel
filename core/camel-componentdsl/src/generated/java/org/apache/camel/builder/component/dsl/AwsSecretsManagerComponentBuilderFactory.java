@@ -51,6 +51,22 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             extends
                 ComponentBuilder<SecretsManagerComponent> {
         /**
+         * Set if the secret is binary or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param binaryPayload the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder binaryPayload(
+                boolean binaryPayload) {
+            doSetProperty("binaryPayload", binaryPayload);
+            return this;
+        }
+        /**
          * Component configuration.
          * 
          * The option is a:
@@ -328,6 +344,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "binaryPayload": getOrCreateConfiguration((SecretsManagerComponent) component).setBinaryPayload((boolean) value); return true;
             case "configuration": ((SecretsManagerComponent) component).setConfiguration((org.apache.camel.component.aws.secretsmanager.SecretsManagerConfiguration) value); return true;
             case "lazyStartProducer": ((SecretsManagerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((SecretsManagerComponent) component).setOperation((org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations) value); return true;
