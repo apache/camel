@@ -37,6 +37,7 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sts.StsClient;
@@ -164,6 +165,10 @@ public final class AWSSDKClientUtils {
 
     public static LambdaClient newLambdaClient() {
         return newClient("Lambda", LambdaClient::builder, LambdaClient.class);
+    }
+
+    public static SecretsManagerClient newSecretsManagerClient() {
+        return newClient("SecretsManager", SecretsManagerClient::builder, SecretsManagerClient.class);
     }
 
     public static StsClient newSTSClient() {

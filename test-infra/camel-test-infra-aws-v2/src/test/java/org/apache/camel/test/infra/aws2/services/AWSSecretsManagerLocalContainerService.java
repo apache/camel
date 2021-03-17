@@ -17,31 +17,9 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-public enum Service {
-    CLOUD_WATCH("cloudwatch"),
-    EC2("ec2"),
-    EVENT_BRIDGE("eventbridge"),
-    IAM("iam"),
-    KINESIS("kinesis"),
-    KMS("kms"),
-    LAMBDA("lambda"),
-    S3("s3"),
-    SECRETS_MANAGER("secretsmanager"),
-    SNS("sns"),
-    SQS("sqs"),
-    STS("sts");
+public class AWSSecretsManagerLocalContainerService extends AWSLocalContainerService {
 
-    private final String serviceName;
-
-    Service(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public static String serviceName(Service service) {
-        return service.serviceName;
+    public AWSSecretsManagerLocalContainerService() {
+        super(Service.SECRETS_MANAGER);
     }
 }
