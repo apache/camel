@@ -26,4 +26,5 @@ public interface SecretsManagerConstants {
     String SECRET_DESCRIPTION = "CamelAwsSecretsManagerSecretDescription";
     String SECRET_ID = "CamelAwsSecretsManagerSecretId";
     String LAMBDA_ROTATION_FUNCTION_ARN = "CamelAwsSecretsManagerLambdaRotationFunctionArn";
+    String SECRET_VERSION_ID = "CamelAwsSecretsManagerSecretVersionId";
 }

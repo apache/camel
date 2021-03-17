@@ -208,6 +208,9 @@ public class SecretsManagerProducer extends DefaultProducer {
         } else {
             message.setBody(result.secretString());
         }
+        if (ObjectHelper.isNotEmpty(result.versionId())) {
+            exchange.getMessage().setHeader(SecretsManagerConstants.SECRET_VERSION_ID, result.versionId());
+        }
     }
 
     private void describeSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
