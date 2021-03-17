@@ -134,7 +134,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (43 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -164,6 +164,7 @@ with the following path and query parameters:
 | *raw* (producer) | Should the payload be inserted raw | false | boolean
 | *source* (producer) | Splunk source argument |  | String
 | *sourceType* (producer) | Splunk sourcetype argument |  | String
+| *tcpReceiverLocalPort* (producer) | Splunk tcp receiver port defined locally on splunk server. (For example if splunk port 9997 is mapped to 12345, tcpReceiverLocalPort has to be 9997) |  | Integer
 | *tcpReceiverPort* (producer) | Splunk tcp receiver port |  | int
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int

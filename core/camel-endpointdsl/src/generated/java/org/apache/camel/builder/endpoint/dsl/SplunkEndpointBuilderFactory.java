@@ -1339,6 +1339,41 @@ public interface SplunkEndpointBuilderFactory {
             return this;
         }
         /**
+         * Splunk tcp receiver port defined locally on splunk server. (For
+         * example if splunk port 9997 is mapped to 12345, tcpReceiverLocalPort
+         * has to be 9997).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param tcpReceiverLocalPort the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointProducerBuilder tcpReceiverLocalPort(
+                Integer tcpReceiverLocalPort) {
+            doSetProperty("tcpReceiverLocalPort", tcpReceiverLocalPort);
+            return this;
+        }
+        /**
+         * Splunk tcp receiver port defined locally on splunk server. (For
+         * example if splunk port 9997 is mapped to 12345, tcpReceiverLocalPort
+         * has to be 9997).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param tcpReceiverLocalPort the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointProducerBuilder tcpReceiverLocalPort(
+                String tcpReceiverLocalPort) {
+            doSetProperty("tcpReceiverLocalPort", tcpReceiverLocalPort);
+            return this;
+        }
+        /**
          * Splunk tcp receiver port.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
