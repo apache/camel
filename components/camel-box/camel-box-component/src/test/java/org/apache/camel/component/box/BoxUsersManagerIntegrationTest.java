@@ -86,7 +86,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testCreateAppUser() throws Exception {
         //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
-        assumeTrue(jwtAuthentoication, "Test has to be executed with standard authentication.");
+        assumeTrue(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         com.box.sdk.BoxUser result = null;
 
@@ -117,7 +117,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testCreateEnterpriseUser() throws Exception {
         //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
-        assumeFalse(jwtAuthentoication, "Test has to be executed with standard authentication.");
+        assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
         if (enterpriseUser1Login != null && "".equals(enterpriseUser1Login.trim())) {
@@ -158,7 +158,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testDeleteUser() throws Exception {
         //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
-        assumeTrue(jwtAuthentoication, "Test has to be executed with standard authentication.");
+        assumeTrue(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         BoxUser.Info info = BoxUser.createAppUser(getConnection(), CAMEL_TEST_CREATE_APP_USER_NAME);
 
@@ -245,7 +245,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testUpdateUserInfo() throws Exception {
         //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
-        assumeFalse(jwtAuthentoication, "Test has to be executed with standard authentication.");
+        assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         BoxUser.Info info = testUser.getInfo();
         info.setJobTitle(CAMEL_TEST_USER_JOB_TITLE);
@@ -269,7 +269,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testmMoveFolderToUser() throws Exception {
         //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
-        assumeFalse(jwtAuthentoication, "Test has to be executed with standard authentication.");
+        assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
         String enterpriseUser2Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER2_LOGIN_KEY);

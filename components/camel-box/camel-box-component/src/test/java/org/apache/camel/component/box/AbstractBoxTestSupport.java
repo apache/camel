@@ -39,7 +39,7 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
 
     protected BoxFolder testFolder;
     protected BoxFile testFile;
-    protected boolean jwtAuthentoication;
+    protected boolean jwtAuthentication;
     protected Map<String, Object> options;
 
     @Override
@@ -72,7 +72,7 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
 
         //initialize flag, whether is box configuration JWT
         String authenticationType = properties.getProperty("authenticationType");
-        jwtAuthentoication = !BoxConfiguration.STANDARD_AUTHENTICATION.equals(authenticationType);
+        jwtAuthentication = !BoxConfiguration.STANDARD_AUTHENTICATION.equals(authenticationType);
 
         return context;
     }
