@@ -1221,7 +1221,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directory to store the recording. By default the user home directory will be used. Use false to turn off saving
+     * Directory to store the recording. By default the current directory will be used. Use false to turn off saving
      * recording to disk.
      */
     public void setStartupRecorderDir(String startupRecorderDir) {
@@ -2044,7 +2044,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directory to store the recording. By default the user home directory will be used.
+     * Directory to store the recording. By default the current directory will be used.
      */
     public T withStartupRecorderDir(String startupRecorderDir) {
         this.startupRecorderDir = startupRecorderDir;

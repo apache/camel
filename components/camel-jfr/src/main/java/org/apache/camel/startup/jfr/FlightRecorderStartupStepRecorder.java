@@ -62,7 +62,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
 
             if (!"false".equals(getRecordingDir())) {
                 // recording to disk can be turned off by setting to false
-                Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
+                Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(".");
                 Path file = Files.createTempFile(dir, "camel-recording", ".jfr");
                 // when stopping then the recording is automatic dumped by flight recorder
                 rec.setDestination(file);
