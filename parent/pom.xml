@@ -265,7 +265,7 @@
         <jackson2-version>2.11.4</jackson2-version>
         <jackrabbit-version>2.21.5</jackrabbit-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
-        <jasminb-jsonapi-version>0.10</jasminb-jsonapi-version>
+        <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
         <jandex-version>2.2.3.Final</jandex-version>
         <jasn1-version>1.11.3</jasn1-version>
         <jasypt-version>1.9.3</jasypt-version>
