@@ -43,7 +43,6 @@ import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.B
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.RotationRulesType;
 
 /**
  * A Producer which sends messages to the Amazon Secrets Manager Service SDK v2
@@ -284,7 +283,8 @@ public class SecretsManagerProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN))) {
-                String lambdaRotationArn = exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN, String.class);
+                String lambdaRotationArn
+                        = exchange.getIn().getHeader(SecretsManagerConstants.LAMBDA_ROTATION_FUNCTION_ARN, String.class);
                 builder.rotationLambdaARN(lambdaRotationArn);
             }
             request = builder.build();
