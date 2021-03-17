@@ -132,3 +132,7 @@ Camel-jmh, camel-performance and camel-itest-performance have been moved to a ne
 === Camel-Debezium
 
 The camel-debezium-parent module has been renamed to camel-debezium-common-parent, while the old the name is now used as parent name for the middle folder. This is an internal change that shouldn't affect end users, added here for tracking purpose anyway.
+
+=== camel-jclouds
+
+The camel-jclouds feature for Camel on Karaf has been removed.
