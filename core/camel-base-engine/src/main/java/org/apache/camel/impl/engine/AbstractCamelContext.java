@@ -2830,20 +2830,8 @@ public abstract class AbstractCamelContext extends BaseService
         startDate = System.currentTimeMillis();
         stopWatch.restart();
 
-        // ensure components are started
-        for (Map.Entry<String, Component> entry : components.entrySet()) {
-            StartupStep step = startupStepRecorder.beginStep(Component.class, entry.getKey(), "Start Component");
-            try {
-                ServiceHelper.startService(entry.getValue());
-            } catch (Exception e) {
-                throw new FailedToStartComponentException(entry.getKey(), e.getMessage(), e);
-            } finally {
-                startupStepRecorder.endStep(step);
-            }
-        }
-
         // Start the route controller
-        ServiceHelper.startService(this.routeController);
+        startService(this.routeController);
 
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
@@ -3067,7 +3055,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (!lifecycleStrategies.isEmpty()) {
             StartupStep subStep
                     = startupStepRecorder.beginStep(CamelContext.class, getName(), "LifecycleStrategy onContextStarting");
-            ServiceHelper.startService(lifecycleStrategies);
+            startServices(lifecycleStrategies);
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 try {
                     strategy.onContextStarting(this);
@@ -3084,6 +3072,18 @@ public abstract class AbstractCamelContext extends BaseService
                 }
             }
             startupStepRecorder.endStep(subStep);
+        }
+
+        // ensure components are started
+        for (Map.Entry<String, Component> entry : components.entrySet()) {
+            StartupStep step = startupStepRecorder.beginStep(Component.class, entry.getKey(), "Start Component");
+            try {
+                startService(entry.getValue());
+            } catch (Exception e) {
+                throw new FailedToStartComponentException(entry.getKey(), e.getMessage(), e);
+            } finally {
+                startupStepRecorder.endStep(step);
+            }
         }
 
         if (!startupListeners.isEmpty()) {
@@ -3108,9 +3108,6 @@ public abstract class AbstractCamelContext extends BaseService
 
         // must let some bootstrap service be started before we can notify the starting event
         EventHelper.notifyCamelContextStarting(this);
-
-        // start components
-        startServices(components.values());
 
         if (isUseDataType()) {
             // log if DataType has been enabled
@@ -3468,7 +3465,7 @@ public abstract class AbstractCamelContext extends BaseService
             aware.setCamelContext(getCamelContextReference());
         }
 
-        service.start();
+        ServiceHelper.startService(service);
     }
 
     private void startServices(Collection<?> services) throws Exception {
