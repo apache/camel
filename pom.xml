@@ -352,6 +352,7 @@
                             <exclude>**/MySecondFooConfigurer.java</exclude>
                             <exclude>**/MySecondBarConfigurer.java</exclude>
                             <exclude>**/stockquote-response.xml</exclude>
+                            <exclude>**/org.apache.camel.dsl.kotlin.KotlinDSL.classname</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                         </excludes>
