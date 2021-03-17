@@ -433,7 +433,8 @@ public interface SecretsManagerEndpointBuilderFactory {
         createSecret,
         getSecret,
         describeSecret,
-        deleteSecret;
+        deleteSecret,
+        rotateSecret;
     }
 
     /**
