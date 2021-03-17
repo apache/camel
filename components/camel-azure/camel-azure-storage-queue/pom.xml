@@ -45,7 +45,6 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-queue</artifactId>
-            <version>${azure-storage-queue-java-sdk12-version}</version>
         </dependency>
 
         <!-- extras -->

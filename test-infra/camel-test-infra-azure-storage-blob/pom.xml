@@ -57,7 +57,6 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
-            <version>${azure-storage-blob-java-sdk12-version}</version>
         </dependency>
     </dependencies>
 
