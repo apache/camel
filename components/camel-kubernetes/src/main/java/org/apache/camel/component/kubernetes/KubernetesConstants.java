@@ -76,6 +76,8 @@ public interface KubernetesConstants {
     String KUBERNETES_CRD_LABELS = "CamelKubernetesCRDLabels";
     String KUBERNETES_CRD_INSTANCE = "CamelKubernetesCRDInstance";
 
+    String KUBERNETES_DELETE_RESULT = "CamelKubernetesDeleteResult";
+
     // Consumer
     String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";
     String KUBERNETES_EVENT_TIMESTAMP = "CamelKubernetesEventTimestamp";
