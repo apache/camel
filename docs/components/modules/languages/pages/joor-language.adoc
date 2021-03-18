@@ -59,7 +59,9 @@ The jOOR language allows the following functions to be used in the script:
 | Function | Description
 | bodyAs(type) | To convert the body to the given type.
 | headerAs(name, type) | To convert the header with the name to the given type.
+| headerAs(name, defaultValue, type) | To convert the header with the name to the given type. If no header exists then use the given default value.
 | exchangePropertyAs(name, type) | To convert the exchange property with the name to the given type.
+| exchangePropertyAs(name, defaultValue, type) | To convert the exchange property with the name to the given type. If no exchange property exists then use the given default value.
 | optionalBodyAs(type) | To convert the body to the given type returned wrapped in `java.util.Optional`.
 | optionalHeaderAs(name, type) | To convert the header with the name to the given type returned wrapped in `java.util.Optional`.
 | optionalExchangePropertyAs(name, type) | To convert the exchange property with the name to the given type returned wrapped in `java.util.Optional`.
@@ -290,7 +292,7 @@ from("jms:incoming")
 Here the jOOR script is externalized into the file `src/main/resources/orders.joor` which allows you to edit this source
 file while running the Camel application and try the changes with hot-reloading.
 
-In XML DSL its a little bit easier as you can turn off pre-compilation in the `<joor>` XML element:
+In XML DSL it's easier because you can turn off pre-compilation in the `<joor>` XML element:
 
 [source,xml]
 ----

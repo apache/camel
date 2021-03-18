@@ -42,15 +42,25 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
     private static final Pattern BODY_AS_PATTERN = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(.class)\\)");
     private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)\\)");
     private static final Pattern HEADER_AS_PATTERN
-            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
+            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*),\\s*([A-Za-z0-9.$]*.class)\\)");
     private static final Pattern HEADER_AS_PATTERN_NO_CLASS
-            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
+            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
+    private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN
+            = Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
+    private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN_NO_CLASS
+            = Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN
             = Pattern.compile(
-                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)(.class)\\)");
+                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*.class)\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS
             = Pattern.compile(
-                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*,\\s*[A-Za-z0-9.$]*)\\)");
+                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN
+            = Pattern.compile(
+                    "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
+    private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN_NO_CLASS
+            = Pattern.compile(
+                    "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
@@ -212,15 +222,23 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         matcher = BODY_AS_PATTERN_NO_CLASS.matcher(script);
         script = matcher.replaceAll("$1(message, $2.class)");
 
+        matcher = HEADER_AS_DEFAULT_VALUE_PATTERN.matcher(script);
+        script = matcher.replaceAll("$1(message, $2, $3, $4)");
+        matcher = HEADER_AS_DEFAULT_VALUE_PATTERN_NO_CLASS.matcher(script);
+        script = matcher.replaceAll("$1(message, $2, $3, $4.class)");
         matcher = HEADER_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("$1(message, $2$3)");
+        script = matcher.replaceAll("$1(message, $2, $3)");
         matcher = HEADER_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("$1(message, $2.class)");
+        script = matcher.replaceAll("$1(message, $2, $3.class)");
 
+        matcher = EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN.matcher(script);
+        script = matcher.replaceAll("$1(exchange, $2, $3, $4)");
+        matcher = EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN_NO_CLASS.matcher(script);
+        script = matcher.replaceAll("$1(exchange, $2, $3, $4.class)");
         matcher = EXCHANGE_PROPERTY_AS_PATTERN.matcher(script);
-        script = matcher.replaceAll("$1(exchange, $2$3)");
+        script = matcher.replaceAll("$1(exchange, $2, $3)");
         matcher = EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS.matcher(script);
-        script = matcher.replaceAll("$1(exchange, $2.class)");
+        script = matcher.replaceAll("$1(exchange, $2, $3.class)");
         return script;
     }
 

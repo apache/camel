@@ -147,6 +147,18 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testExchangeHeaderAsDefaultValue() throws Exception {
+        exchange.getIn().setHeader("foo", 22);
+
+        assertExpression("2 * headerAs('dog', 33, int.class)", "66");
+        assertExpression("3 * headerAs('dog', 33, Integer.class)", "99");
+        assertExpression("2 * headerAs('dog', 33, int)", "66");
+        assertExpression("3 * headerAs('dog', 33, Integer)", "99");
+
+        assertExpression("'Hello ' + headerAs('dog', 'World', String)", "Hello World");
+    }
+
+    @Test
     public void testExchangeOptionalHeaderAs() throws Exception {
         exchange.getIn().setHeader("foo", 22);
 
@@ -186,6 +198,18 @@ public class JoorLanguageTest extends LanguageTestSupport {
         assertExpression("3 * exchangePropertyAs(\"bar\", java.lang.Integer.class)", "66");
         assertExpression("3 * exchangePropertyAs(\"bar\", java.lang.Integer)", "66");
         assertExpression("var num = exchangePropertyAs(\"bar\", int); return num * 4", "88");
+    }
+
+    @Test
+    public void testExchangePropertyDefaultValueAs() throws Exception {
+        exchange.setProperty("bar", 22);
+
+        assertExpression("2 * exchangePropertyAs('dog', 33, int.class)", "66");
+        assertExpression("3 * exchangePropertyAs('dog', 33, Integer.class)", "99");
+        assertExpression("2 * exchangePropertyAs('dog', 33, int)", "66");
+        assertExpression("3 * exchangePropertyAs('dog', 33, Integer)", "99");
+
+        assertExpression("'Hello ' + exchangePropertyAs('dog', 'World', String)", "Hello World");
     }
 
     @Test
