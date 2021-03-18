@@ -102,13 +102,6 @@ public class PrepareExampleMojo extends AbstractMojo {
             for (File file : examples) {
                 if (file.isDirectory()) {
 
-                    // must match filter
-                    if (filter != null && !filter.isEmpty()) {
-                        if (!file.getName().startsWith(filter)) {
-                            continue;
-                        }
-                    }
-
                     File pom = new File(file, "pom.xml");
                     if (pom.exists()) {
                         String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
