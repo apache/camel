@@ -323,6 +323,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a component to the context.
      *
+     * Notice the component will be auto-started if Camel is already started.
+     *
      * @param componentName the name the component is registered as
      * @param component     the component
      */

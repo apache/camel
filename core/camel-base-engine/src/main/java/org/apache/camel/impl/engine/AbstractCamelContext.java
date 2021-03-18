@@ -550,7 +550,13 @@ public abstract class AbstractCamelContext extends BaseService
     public void addComponent(String componentName, final Component component) {
         ObjectHelper.notNull(component, "component");
         component.setCamelContext(getCamelContextReference());
-        ServiceHelper.initService(component);
+        if (isStarted()) {
+            // start component if context is already started (camel will start components when it starts)
+            ServiceHelper.startService(component);
+        } else {
+            // otherwise init the component
+            ServiceHelper.initService(component);
+        }
         Component oldValue = components.putIfAbsent(componentName, component);
         if (oldValue != null) {
             throw new IllegalArgumentException("Cannot add component as its already previously added: " + componentName);
