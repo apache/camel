@@ -22,7 +22,10 @@ import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -33,13 +36,17 @@ public class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
 
     @Test
     public void testFileProducerCharsetUTFtoUTF() throws Exception {
+        byte[] source = DATA.getBytes(StandardCharsets.UTF_8);
         try (OutputStream fos = Files.newOutputStream(testFile("input.txt"))) {
-            fos.write(DATA.getBytes(StandardCharsets.UTF_8));
+            fos.write(source);
         }
 
         oneExchangeDone.matchesWaitTime();
 
-        assertFileExists(testFile("output.txt"), DATA);
+        assertFileExists(testFile("output.txt"));
+        byte[] target = Files.readAllBytes(testFile("output.txt"));
+
+        assertTrue(ObjectHelper.equalByteArray(source, target));
     }
 
     @Override
