@@ -103,6 +103,10 @@ public class ManifestPlugin extends BundlePlugin {
             return;
         }
 
+        // avoid noisy logging
+        PatchedLog plog = new PatchedLog(getLog());
+        setLog(plog);
+
         Analyzer analyzer;
         try {
             analyzer = getAnalyzer(project, instructions, classpath);
