@@ -474,11 +474,13 @@ public abstract class BaseMainSupport extends BaseService {
             mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
         }
 
-        if ("false".equals(mainConfigurationProperties.getStartupRecorder())) {
+        if ("off".equals(mainConfigurationProperties.getStartupRecorder())
+                || "false".equals(mainConfigurationProperties.getStartupRecorder())) {
             camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setEnabled(false);
         } else if ("logging".equals(mainConfigurationProperties.getStartupRecorder())) {
             camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(new LoggingStartupStepRecorder());
-        } else if ("java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
+        } else if ("jfr".equals(mainConfigurationProperties.getStartupRecorder())
+                || "java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
                 || mainConfigurationProperties.getStartupRecorder() == null) {
             // try to auto discover camel-jfr to use
             StartupStepRecorder fr = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()

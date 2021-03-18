@@ -108,6 +108,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
     private boolean routeControllerUnhealthyOnExhausted;
+    @Metadata(enums = "false,off,java-flight-recorder,jfr,logging")
     private String startupRecorder;
     private int startupRecorderMaxDepth = -1;
     private boolean startupRecorderRecording;
@@ -1147,10 +1148,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
-     * logging, java-flight-recorder
-     *
-     * The default is false.
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false (or
+     * off), logging, java-flight-recorder (or jfr).
      */
     public void setStartupRecorder(String startupRecorder) {
         this.startupRecorder = startupRecorder;
@@ -1985,8 +1984,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false,
-     * logging, java-flight-recorder
+     * To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false (or
+     * off), logging, java-flight-recorder (or jfr).
      *
      * The default is false.
      */
