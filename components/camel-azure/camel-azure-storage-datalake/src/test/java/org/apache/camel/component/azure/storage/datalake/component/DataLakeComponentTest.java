@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.storage.datalake.component;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClient;
+import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeEndpoint;
 import org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition;
@@ -70,13 +71,16 @@ class DataLakeComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProducerWithoutFileName() {
+    public void testProducerWithoutFileName() throws Exception {
         context.getRegistry().bind("credentials", storageSharedKeyCredentials());
         final DataLakeEndpoint endpoint = (DataLakeEndpoint) context
                 .getEndpoint("azure-storage-datalake:cameltesting/abc?sharedKeyCredential=#credentials&operation=deleteFile");
 
         DefaultExchange exchange = new DefaultExchange(context);
-        assertThrows(IllegalArgumentException.class, () -> endpoint.createProducer().process(exchange));
+
+        Producer producer = endpoint.createProducer();
+
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
     }
 
     private StorageSharedKeyCredential storageSharedKeyCredentials() {

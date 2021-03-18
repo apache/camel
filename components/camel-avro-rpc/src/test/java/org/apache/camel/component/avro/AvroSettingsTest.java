@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.avro;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -24,43 +25,50 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AvroSettingsTest extends AvroTestSupport {
 
+    private void runTest(RouteBuilder rb) {
+        CamelContext context = context();
+
+        assertThrows(FailedToCreateRouteException.class, () -> context.addRoutes(rb));
+    }
+
     @Test
     public void testConsumerForUnknownMessage() {
-        assertThrows(FailedToCreateRouteException.class, () -> {
-            context().addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("avro:http:localhost:" + avroPort
-                         + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").to("log:test");
-                }
-            });
-        });
+        RouteBuilder rb = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("avro:http:localhost:" + avroPort
+                     + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").to("log:test");
+            }
+        };
+
+        runTest(rb);
     }
 
     @Test
     public void testProducerForUnknownMessage() {
-        assertThrows(FailedToCreateRouteException.class, () -> {
-            context().addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:test").to("avro:http:localhost:" + avroPort
-                                           + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
-                }
-            });
-        });
+        RouteBuilder rb = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:test").to("avro:http:localhost:" + avroPort
+                                       + "/notValid?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
+            }
+        };
+
+        runTest(rb);
+
     }
 
     @Test
     public void testProducerForNonSingleParamMessage() {
-        assertThrows(FailedToCreateRouteException.class, () -> {
-            context().addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:test")
-                            .to("avro:http:localhost:" + avroPort
-                                + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true");
-                }
-            });
-        });
+        RouteBuilder rb = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:test")
+                        .to("avro:http:localhost:" + avroPort
+                            + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true");
+            }
+        };
+
+        runTest(rb);
     }
 }

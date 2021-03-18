@@ -125,16 +125,18 @@ public class CMTest {
     public void testNotRequiredProductToken() throws Throwable {
         String schemedUri
                 = "cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&testConnectionOnStartup=true";
+
         assertThrows(ResolveEndpointFailedException.class,
-                () -> camelContext.getEndpoint(schemedUri).start());
+                () -> camelContext.getEndpoint(schemedUri));
     }
 
     @Test
     public void testNotRequiredDefaultFrom() throws Throwable {
         String schemedUri
                 = "cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&testConnectionOnStartup=true";
+
         assertThrows(ResolveEndpointFailedException.class,
-                () -> camelContext.getEndpoint(schemedUri).start());
+                () -> camelContext.getEndpoint(schemedUri));
     }
 
     @Test

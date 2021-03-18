@@ -133,8 +133,10 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testUntarWithCorruptedTarFile() throws Exception {
+        final File body = new File("src/test/resources/data/corrupt.tar");
+
         assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:corruptUntar", new File("src/test/resources/data/corrupt.tar")));
+                () -> template.sendBody("direct:corruptUntar", body));
     }
 
     @Test
@@ -238,9 +240,11 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testUnzipMaxDecompressedSize() throws Exception {
+        final byte[] files = getTaredText("file");
+
         // We are only allowing 10 bytes to be decompressed, so we expect an error
         assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:untarMaxDecompressedSize", getTaredText("file")));
+                () -> template.sendBody("direct:untarMaxDecompressedSize", files));
     }
 
     @Override

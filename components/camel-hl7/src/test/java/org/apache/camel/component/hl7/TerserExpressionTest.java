@@ -59,8 +59,12 @@ public class TerserExpressionTest extends CamelTestSupport {
 
     @Test
     public void testTerserInvalidExpression() throws Exception {
+        final Message adt01Message = createADT01Message();
+
         assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:test4", createADT01Message()));
+                () -> {
+                    template.sendBody("direct:test4", adt01Message);
+                });
     }
 
     @Test

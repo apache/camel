@@ -387,8 +387,9 @@ public class RestOpenApiEndpointV3Test {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
+        final URI uri = URI.create("non-existant.json");
         assertThrows(IllegalArgumentException.class,
-                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json")));
+                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, uri));
     }
 
     @Test

@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -263,9 +264,12 @@ public class CMISProducerTest extends CMISTestSupport {
         List<String> unsuccessfullyDeletedObjects = exchange.getMessage().getBody(List.class);
         assertTrue(unsuccessfullyDeletedObjects.isEmpty());
 
+        final Session session = createSession();
+        final String id = folder.getId();
+
         assertThrows(CmisObjectNotFoundException.class, () -> {
             // Try to get already deleted object by id should throw
-            createSession().getObject(folder.getId());
+            session.getObject(id);
         });
     }
 

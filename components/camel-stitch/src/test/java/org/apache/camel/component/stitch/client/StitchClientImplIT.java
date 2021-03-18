@@ -27,6 +27,7 @@ import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchResponse;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -104,6 +105,7 @@ class StitchClientImplIT {
                 .withKeyNames("id")
                 .build();
 
-        assertThrows(StitchException.class, () -> client.batch(body).block());
+        final Mono<StitchResponse> batch = client.batch(body);
+        assertThrows(StitchException.class, () -> batch.block());
     }
 }

@@ -60,6 +60,27 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             }
         };
         context.addRoutes(builder);
+        runTest(routeId);
+    }
+
+    @Test
+    public void testSyncInOnlyException() throws Exception {
+        // Setup
+        String routeId = "testSyncInOnlyExceptionRoute";
+        RouteBuilder builder = new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId(routeId)
+                        .setBody(simple("${body.getParameter(\"Request\")}"))
+                        .throwException(new IllegalArgumentException("Illegal contennt!"))
+                        .to("mock:result");
+            }
+        };
+        context.addRoutes(builder);
+        assertThrows(WorkItemHandlerRuntimeException.class, () -> runTest(routeId));
+    }
+
+    private void runTest(String routeId) throws Exception {
         try {
             // Register the Camel Context with the jBPM ServiceRegistry.
             ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, context);
@@ -86,50 +107,6 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             context.removeRoute(routeId);
             ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         }
-    }
-
-    @Test
-    public void testSyncInOnlyException() throws Exception {
-        // Setup
-        String routeId = "testSyncInOnlyExceptionRoute";
-        RouteBuilder builder = new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").routeId(routeId)
-                        .setBody(simple("${body.getParameter(\"Request\")}"))
-                        .throwException(new IllegalArgumentException("Illegal contennt!"))
-                        .to("mock:result");
-            }
-        };
-        context.addRoutes(builder);
-        assertThrows(WorkItemHandlerRuntimeException.class, () -> {
-            try {
-                // Register the Camel Context with the jBPM ServiceRegistry.
-                ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, context);
-
-                // Test
-                String expectedBody = "helloRequest";
-                resultEndpoint.expectedBodiesReceived(expectedBody);
-
-                WorkItemImpl workItem = new WorkItemImpl();
-                workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, "start");
-                workItem.setParameter("Request", expectedBody);
-
-                TestWorkItemManager manager = new TestWorkItemManager();
-
-                WorkItemHandler handler = new InOnlyCamelWorkItemHandler();
-
-                handler.executeWorkItem(workItem, manager);
-
-                // Assertions
-                assertThat(manager.getResults().size(), equalTo(0));
-                resultEndpoint.assertIsSatisfied();
-            } finally {
-                // Cleanup
-                context.removeRoute(routeId);
-                ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
-            }
-        });
     }
 
     @Test

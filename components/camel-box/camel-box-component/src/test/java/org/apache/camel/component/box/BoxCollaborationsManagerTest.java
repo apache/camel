@@ -30,13 +30,15 @@ class BoxCollaborationsManagerTest {
     public void testAddFolderCollaborationNullFolderId() {
         BoxCollaborationsManager bcm = new BoxCollaborationsManager(null);
 
+        BoxUser user = new BoxUser(null, "id");
+
         assertThrows(IllegalArgumentException.class,
-                () -> bcm.addFolderCollaboration(null, new BoxUser(null, "id"), BoxCollaboration.Role.EDITOR));
+                () -> bcm.addFolderCollaboration(null, user, BoxCollaboration.Role.EDITOR));
 
         assertThrows(IllegalArgumentException.class,
                 () -> bcm.addFolderCollaboration("123", null, BoxCollaboration.Role.EDITOR));
 
         assertThrows(IllegalArgumentException.class,
-                () -> bcm.addFolderCollaboration("123", new BoxUser(null, "id"), null));
+                () -> bcm.addFolderCollaboration("123", user, null));
     }
 }

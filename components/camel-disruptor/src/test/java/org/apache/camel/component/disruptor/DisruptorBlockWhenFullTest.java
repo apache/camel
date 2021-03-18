@@ -61,15 +61,13 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
 
     @Test
     void testDisruptorExceptionWhenFull() throws Exception {
-        assertThrows(CamelExecutionException.class, () -> {
-            getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
+        getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
 
-            final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
-            assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
+        final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
+        assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
 
-            sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20);
-            assertMockEndpointsSatisfied();
-        });
+        assertThrows(CamelExecutionException.class,
+                () -> sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20));
     }
 
     /**

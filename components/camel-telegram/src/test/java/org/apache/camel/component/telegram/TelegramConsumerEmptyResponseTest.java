@@ -44,10 +44,11 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
         Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .until(() -> getMockRoutes().getMock("getUpdates").getRecordedMessages().size() >= 1);
 
+        endpoint.setResultWaitTime(500L);
+        endpoint.expectedMinimumMessageCount(1);
+
         /* Then make sure that the consumer has sent zero exchanges to the route */
         assertThrows(AssertionError.class, () -> {
-            endpoint.setResultWaitTime(500L);
-            endpoint.expectedMinimumMessageCount(1);
             endpoint.assertIsSatisfied();
         });
     }

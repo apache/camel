@@ -40,7 +40,11 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
         conf.setCacheName(randomString());
         conf.setCreateCacheIfNotExists(false);
 
+        final JCacheManager<Object, Object> objectObjectJCacheManager = new JCacheManager<>(conf);
+
         assertThrows(IllegalStateException.class,
-                () -> new JCacheManager<>(conf).getCache());
+                () -> {
+                    objectObjectJCacheManager.getCache();
+                });
     }
 }

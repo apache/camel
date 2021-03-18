@@ -106,8 +106,9 @@ public class DebeziumPostgresComponentTest {
             // set configurations
             debeziumComponent.setConfiguration(null);
 
+            final Map<String, Object> parameters = Collections.emptyMap();
             assertThrows(IllegalArgumentException.class, () -> {
-                debeziumComponent.createEndpoint(uri, remaining, Collections.emptyMap());
+                debeziumComponent.createEndpoint(uri, remaining, parameters);
             });
         }
     }
@@ -122,8 +123,9 @@ public class DebeziumPostgresComponentTest {
             // set configurations
             debeziumComponent.setConfiguration(null);
 
+            final Map<String, Object> parameters = Collections.emptyMap();
             assertThrows(IllegalArgumentException.class, () -> {
-                debeziumComponent.createEndpoint(uri, remaining, Collections.emptyMap());
+                debeziumComponent.createEndpoint(uri, remaining, parameters);
             });
         }
     }

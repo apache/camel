@@ -131,7 +131,8 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
     @Test
     public void sendMessageWithoutParameters() throws Exception {
-        assertThrows(RuntimeExchangeException.class,
-                () -> producer.process(createExchangeWithBody(new HashMap<>())));
+        final Exchange exchangeWithBody = createExchangeWithBody(new HashMap<>());
+
+        assertThrows(RuntimeExchangeException.class, () -> producer.process(exchangeWithBody));
     }
 }

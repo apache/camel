@@ -63,8 +63,12 @@ public class ConnectorConfigGeneratorTest {
 
     @Test
     void testIfItHandlesWrongClassInput() {
+        final MySqlConnector connector = new MySqlConnector();
+        final Map<String, Object> overridenDefaultValues = Collections.emptyMap();
+        final Set<String> requiredFields = Collections.emptySet();
+
         assertThrows(IllegalArgumentException.class, () -> {
-            ConnectorConfigGenerator.create(new MySqlConnector(), getClass(), Collections.emptySet(), Collections.emptyMap());
+            ConnectorConfigGenerator.create(connector, getClass(), requiredFields, overridenDefaultValues);
         });
     }
 
