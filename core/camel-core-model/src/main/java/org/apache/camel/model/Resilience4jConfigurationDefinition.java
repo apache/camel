@@ -198,7 +198,7 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Configures the max amount of concurrent calls the bulkhead will support.
      */
     public Resilience4jConfigurationDefinition bulkheadMaxConcurrentCalls(int bulkheadMaxConcurrentCalls) {
-        setBulkheadMaxWaitDuration(Integer.toString(bulkheadMaxConcurrentCalls));
+        setBulkheadMaxConcurrentCalls(Integer.toString(bulkheadMaxConcurrentCalls));
         return this;
     }
 

@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadConfig;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -66,7 +67,9 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     private String id;
     private final CircuitBreakerConfig circuitBreakerConfig;
     private final BulkheadConfig bulkheadConfig;
+    private Bulkhead bulkhead;
     private final TimeLimiterConfig timeLimiterConfig;
+    private TimeLimiter timeLimiter;
     private final Processor processor;
     private final Processor fallback;
     private boolean shutdownExecutorService;
@@ -80,6 +83,17 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         this.timeLimiterConfig = timeLimiterConfig;
         this.processor = processor;
         this.fallback = fallback;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        if (timeLimiterConfig != null) {
+            timeLimiter = TimeLimiter.of(id, timeLimiterConfig);
+        }
+        if (bulkheadConfig != null) {
+            bulkhead = Bulkhead.of(id, bulkheadConfig);
+        }
     }
 
     @Override
@@ -357,31 +371,39 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
         Callable<Exchange> task;
 
-        if (timeLimiterConfig != null) {
-            // timeout handling is more complex with thread-pools
-
-            TimeLimiter tl = TimeLimiter.of(id, timeLimiterConfig);
+        if (timeLimiter != null) {
             Supplier<CompletableFuture<Exchange>> futureSupplier;
             if (executorService == null) {
                 futureSupplier = () -> CompletableFuture.supplyAsync(() -> processInCopy(exchange));
             } else {
                 futureSupplier = () -> CompletableFuture.supplyAsync(() -> processInCopy(exchange), executorService);
             }
-            task = TimeLimiter.decorateFutureSupplier(tl, futureSupplier);
+            task = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
         } else {
             task = new CircuitBreakerTask(() -> processInCopy(exchange));
         }
 
-        if (bulkheadConfig != null) {
-            Bulkhead bh = Bulkhead.of(id, bulkheadConfig);
-            task = Bulkhead.decorateCallable(bh, task);
+        if (bulkhead != null) {
+            task = Bulkhead.decorateCallable(bulkhead, task);
         }
 
         task = CircuitBreaker.decorateCallable(circuitBreaker, task);
-
-        Function<Throwable, Exchange> fallbackTask = new CircuitBreakerFallbackTask(this.fallback, exchange);
-        Try.ofCallable(task).recover(fallbackTask).andFinally(() -> callback.done(false)).get();
-        return false;
+        Function<Throwable, Exchange> fallbackTask = new CircuitBreakerFallbackTask(this.id, this.fallback, exchange);
+        try {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} using circuit breaker: {}", exchange.getExchangeId(), id);
+            }
+            Try.ofCallable(task).recover(fallbackTask).get();
+        } catch (Throwable e) {
+            exchange.setException(e);
+        }
+        if (LOG.isTraceEnabled()) {
+            boolean failed = exchange.isFailed();
+            LOG.trace("Processing exchange: {} using circuit breaker: {} complete (failed: {})", exchange.getExchangeId(), id,
+                    failed);
+        }
+        callback.done(true);
+        return true;
     }
 
     private Exchange processInCopy(Exchange exchange) {
@@ -442,16 +464,23 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
     private static final class CircuitBreakerFallbackTask implements Function<Throwable, Exchange> {
 
+        private final String id;
         private final Processor processor;
         private final Exchange exchange;
 
-        private CircuitBreakerFallbackTask(Processor processor, Exchange exchange) {
+        private CircuitBreakerFallbackTask(String id, Processor processor, Exchange exchange) {
+            this.id = id;
             this.processor = processor;
             this.exchange = exchange;
         }
 
         @Override
         public Exchange apply(Throwable throwable) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} recover task using circuit breaker: {} from: {}", exchange.getExchangeId(),
+                        id, throwable);
+            }
+
             if (processor == null) {
                 if (throwable instanceof TimeoutException) {
                     // the circuit breaker triggered a timeout (and there is no
@@ -464,14 +493,29 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                     return exchange;
                 } else if (throwable instanceof CallNotPermittedException) {
                     // the circuit breaker triggered a call rejected
+                    // where the circuit breaker is half-open / open and therefore
+                    // we should just set properties and do not set any exception
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
-                    throw RuntimeExchangeException.wrapRuntimeException(throwable);
+                    return exchange;
+                } else if (throwable instanceof BulkheadFullException) {
+                    // the circuit breaker bulkhead is full
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
+                    exchange.setException(throwable);
+                    return exchange;
                 } else {
-                    // throw exception so resilient4j know it was a failure
-                    throw RuntimeExchangeException.wrapRuntimeException(throwable);
+                    // other kind of exception
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
+                    exchange.setException(throwable);
+                    return exchange;
                 }
             }
 
@@ -498,7 +542,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                 // process the fallback until its fully done
                 processor.process(exchange);
                 LOG.debug("Running fallback: {} with exchange: {} done", processor, exchange);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 exchange.setException(e);
             }
 
