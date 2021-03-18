@@ -28,7 +28,7 @@
   <bean id="quartzDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
     <!-- refer the embedded database we setup inside SpringQuartzConsumerClusteredAppDatabase.xml -->
-    <property name="url" value="jdbc:derby:memory:quartz-db" />
+    <property name="url" value="jdbc:derby:memory:{{testClassSimpleName}}" />
     <property name="username" value="sa" />
     <property name="password" value="" />
   </bean>
@@ -43,23 +43,23 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-        <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext2"/>
+        <entry key="CamelQuartzCamelContext-camelContext-{{testClassSimpleName}}" value-ref="camelContext2-{{testClassSimpleName}}"/>
       </map>
     </property>
     <property name="quartzProperties">
       <props>
-        <prop key="org.quartz.scheduler.instanceName">myscheduler</prop>
+        <prop key="org.quartz.scheduler.instanceName">myscheduler-{{testClassSimpleName}}</prop>
         <prop key="org.quartz.scheduler.instanceId">app-two</prop>
         <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
         <prop key="org.terracotta.quartz.skipUpdateCheck">true</prop>
         <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
         <prop key="org.quartz.jobStore.isClustered">true</prop>
-        <prop key="org.quartz.jobStore.clusterCheckinInterval">5000</prop>
+        <prop key="org.quartz.jobStore.clusterCheckinInterval">500</prop>
       </props>
     </property>
   </bean>
 
-  <camelContext id="camelContext2" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext2-{{testClassSimpleName}}" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
     <route id="myRoute">
       <from uri="quartz://app/test?trigger.repeatInterval=1000&amp;trigger.repeatCount=-1" />

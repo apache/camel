@@ -36,7 +36,6 @@ public class QuartzComponentCamelContextSharedSchedulerTest {
     @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -46,7 +45,6 @@ public class QuartzComponentCamelContextSharedSchedulerTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        camel2.setName("camel-2");
 
         Scheduler camel1Scheduler = camel1.getComponent("quartz", QuartzComponent.class).getScheduler();
         QuartzComponent camel2QuartzComponent = camel2.getComponent("quartz", QuartzComponent.class);

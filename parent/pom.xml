@@ -41,6 +41,7 @@
         <camel.surefire.forkTimeout>600</camel.surefire.forkTimeout>
         <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
         <camel.surefire.parallel>false</camel.surefire.parallel>
+        <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
         <cxf.xjc.jvmArgs/>
         <trimStackTrace>false</trimStackTrace>
         <!-- dependency versions -->
@@ -4516,6 +4517,8 @@
                             junit.jupiter.execution.parallel.enabled = ${camel.surefire.parallel}
                             junit.jupiter.execution.parallel.mode.default = same_thread
                             junit.jupiter.execution.parallel.mode.classes.default = concurrent
+                            junit.jupiter.execution.parallel.config.strategy = dynamic
+                            junit.jupiter.execution.parallel.config.dynamic.factor = ${camel.surefire.parallel.factor}
                         </configurationParameters>
                     </properties>
                 </configuration>

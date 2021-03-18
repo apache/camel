@@ -28,19 +28,15 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CronScheduledRoutePolicyTest extends CamelTestSupport {
+public class CronScheduledRoutePolicyTest {
+}
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
+class CronTest1 extends NoBuilderTest {
     @Test
     public void testScheduledStartRoutePolicyWithTwoRoutes() throws Exception {
         MockEndpoint success1 = context.getEndpoint("mock:success1", MockEndpoint.class);
@@ -81,7 +77,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         success1.assertIsSatisfied();
         success2.assertIsSatisfied();
     }
+}
 
+class CronTest2 extends NoBuilderTest {
     @Test
     public void testScheduledStopRoutePolicyWithTwoRoutes() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
@@ -112,7 +110,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
         assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
     }
+}
 
+class CronTest3 extends NoBuilderTest {
     @Test
     public void testScheduledStartRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -143,7 +143,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
+}
 
+class CronTest4 extends NoBuilderTest {
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
@@ -167,7 +169,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         Thread.sleep(5000);
         assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
     }
+}
 
+class CronTest5 extends NoBuilderTest {
     @Test
     public void testScheduledStartAndStopRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -223,7 +227,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
         success.assertIsSatisfied();
     }
+}
 
+class CronTest6 extends NoBuilderTest {
     @Test
     public void testScheduledStopRoutePolicyWithExtraPolicy() throws Exception {
         final MyRoutePolicy myPolicy = new MyRoutePolicy();
@@ -252,7 +258,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         assertTrue(myPolicy.isStart(), "Should have called onStart");
         assertTrue(myPolicy.isStop(), "Should have called onStop");
     }
+}
 
+class CronTest7 extends NoBuilderTest {
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
@@ -279,7 +287,9 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         SuspendableService ss = (SuspendableService) consumer;
         assertTrue(ss.isSuspended(), "Consumer should be suspended");
     }
+}
 
+class CronTest8 extends NoBuilderTest {
     @Test
     public void testScheduledResumeRoutePolicy() throws Exception {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -310,5 +320,4 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
         success.assertIsSatisfied();
     }
-
 }

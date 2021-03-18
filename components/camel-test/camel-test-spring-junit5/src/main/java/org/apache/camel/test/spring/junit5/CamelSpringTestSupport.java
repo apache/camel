@@ -16,11 +16,21 @@
  */
 package org.apache.camel.test.spring.junit5;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.properties.DefaultPropertiesParser;
+import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -29,10 +39,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -217,5 +232,69 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         // don't start the springCamelContext if we
         return SpringCamelContext.springCamelContext(applicationContext, false);
+    }
+
+    public static final String TEST_CLASS_NAME_PROPERTY = "testClassName";
+    public static final String TEST_CLASS_SIMPLE_NAME_PROPERTY = "testClassSimpleName";
+
+    public AbstractXmlApplicationContext newAppContext(String configLocation) throws BeansException {
+        return newAppContext(configLocation, getClass());
+    }
+
+    public static AbstractXmlApplicationContext newAppContext(String configLocation, Class<?> clazz) {
+        Map<String, String> props = new HashMap<>();
+        props.put(TEST_CLASS_NAME_PROPERTY, clazz.getName());
+        props.put(TEST_CLASS_SIMPLE_NAME_PROPERTY, clazz.getSimpleName());
+        return new MyXmlApplicationContext(configLocation, clazz, props);
+
+    }
+
+    public static class MyXmlApplicationContext extends AbstractXmlApplicationContext {
+        private final Resource[] configResources;
+
+        public MyXmlApplicationContext(String configLocation, Class<?> clazz, Map<String, String> properties) {
+            super(null);
+            configResources = new Resource[] {
+                    new TranslatedResource(new ClassPathResource(configLocation, clazz), properties)
+            };
+            refresh();
+        }
+
+        @Override
+        protected Resource[] getConfigResources() {
+            return configResources;
+        }
+    }
+
+    public static class TranslatedResource extends AbstractResource {
+
+        private final Resource delegate;
+        private final Map<String, String> properties;
+
+        public TranslatedResource(Resource delegate, Map<String, String> properties) {
+            this.delegate = delegate;
+            this.properties = properties;
+        }
+
+        @Override
+        public String getDescription() {
+            return delegate.getDescription();
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            StringWriter sw = new StringWriter();
+            try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
+                char[] buf = new char[32768];
+                int l;
+                while ((l = r.read(buf)) > 0) {
+                    sw.write(buf, 0, l);
+                }
+            }
+            PropertiesParser parser = new DefaultPropertiesParser();
+            String before = sw.toString();
+            String after = parser.parseUri(before, properties::get, false, true);
+            return new ByteArrayInputStream(after.getBytes(StandardCharsets.UTF_8));
+        }
     }
 }

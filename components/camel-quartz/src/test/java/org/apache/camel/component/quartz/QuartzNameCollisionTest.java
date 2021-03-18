@@ -40,7 +40,6 @@ public class QuartzNameCollisionTest {
     @Test
     public void testDupeName() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -64,7 +63,6 @@ public class QuartzNameCollisionTest {
     @Test
     public void testDupeNameMultiContext() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -74,7 +72,6 @@ public class QuartzNameCollisionTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        camel2.setName("camel-2");
         camel2.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -90,7 +87,6 @@ public class QuartzNameCollisionTest {
     @Test
     public void testNoStatefulCollisionError() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -100,7 +96,6 @@ public class QuartzNameCollisionTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        camel2.setName("camel-2");
         camel2.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -145,7 +140,6 @@ public class QuartzNameCollisionTest {
     @Test
     public void testRemoveJob() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

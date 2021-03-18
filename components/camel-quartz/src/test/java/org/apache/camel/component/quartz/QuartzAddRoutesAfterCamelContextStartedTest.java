@@ -36,7 +36,7 @@ public class QuartzAddRoutesAfterCamelContextStartedTest extends BaseQuartzTest 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=1000&trigger.repeatCount=1").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=1").to("mock:result");
             }
         });
 

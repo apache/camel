@@ -31,7 +31,6 @@ public class QuartzTwoCamelContextTest {
     @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
-        camel1.setName("camel-1");
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -41,7 +40,6 @@ public class QuartzTwoCamelContextTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        camel2.setName("camel-2");
         camel2.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -80,7 +78,6 @@ public class QuartzTwoCamelContextTest {
         camel2.stop();
 
         DefaultCamelContext camel3 = new DefaultCamelContext();
-        camel3.setName("camel-3");
         camel3.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
