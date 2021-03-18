@@ -107,7 +107,8 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         parameters.put("objectType", "test");
         parameters.put("objectName", "incident");
 
+        final MetaDataExtension extension = getExtension();
         assertThrows(UnsupportedOperationException.class,
-                () -> getExtension().meta(parameters));
+                () -> extension.meta(parameters));
     }
 }

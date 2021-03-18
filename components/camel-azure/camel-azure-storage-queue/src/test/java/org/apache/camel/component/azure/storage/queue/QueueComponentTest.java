@@ -20,6 +20,7 @@ import java.time.Duration;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.queue.QueueServiceClient;
+import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.support.DefaultExchange;
@@ -96,13 +97,15 @@ class QueueComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoQueueNameProducerWithOpNeedsQueueName() {
+    public void testNoQueueNameProducerWithOpNeedsQueueName() throws Exception {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
         final QueueEndpoint endpoint = (QueueEndpoint) context
                 .getEndpoint("azure-storage-queue://camelazure?credentials=#creds&operation=deleteQueue");
 
-        assertThrows(IllegalArgumentException.class, () -> endpoint.createProducer().process(new DefaultExchange(context)));
+        Producer producer = endpoint.createProducer();
+        DefaultExchange exchange = new DefaultExchange(context);
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
     }
 
     @Test

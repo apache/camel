@@ -73,7 +73,9 @@ public class MicroProfileMetricsHelperTest {
 
     @Test
     public void testGetMetricRegistryWhenNoRegistryConfigured() {
+        final DefaultCamelContext camelContext = new DefaultCamelContext();
+
         assertThrows(IllegalStateException.class,
-                () -> MicroProfileMetricsHelper.getMetricRegistry(new DefaultCamelContext()));
+                () -> MicroProfileMetricsHelper.getMetricRegistry(camelContext));
     }
 }

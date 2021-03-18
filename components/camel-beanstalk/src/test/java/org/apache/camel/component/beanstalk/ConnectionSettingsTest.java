@@ -48,8 +48,9 @@ public class ConnectionSettingsTest {
 
     @Test
     void notValidHost() {
+        final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
+
         assertThrows(IllegalArgumentException.class, () -> {
-            final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
             factory.parseUri("not_valid?host/tube?");
         }, "Calling on not valid URI must raise exception");
     }

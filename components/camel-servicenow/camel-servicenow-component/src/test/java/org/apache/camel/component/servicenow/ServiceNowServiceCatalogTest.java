@@ -61,15 +61,17 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
 
     @Test
     public void testWrongSubject() throws Exception {
+        final Map<String, Object> invalid = kvBuilder()
+                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
+                .build();
+
         assertThrows(CamelExecutionException.class,
                 () -> template.requestBodyAndHeaders(
                         "direct:servicenow",
                         null,
-                        kvBuilder()
-                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                                .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
-                                .build(),
+                        invalid,
                         List.class));
     }
 

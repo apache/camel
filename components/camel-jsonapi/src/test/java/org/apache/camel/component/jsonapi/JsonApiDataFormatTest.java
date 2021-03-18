@@ -98,8 +98,10 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         String jsonApiInput = "{\"data\":{\"type\":\"animal\",\"id\":\"camel\",\"attributes\":{\"humps\":\"2\"}}}";
 
         Exchange exchange = new DefaultExchange(context);
+        final ByteArrayInputStream stream = new ByteArrayInputStream(jsonApiInput.getBytes());
+
         assertThrows(UnregisteredTypeException.class,
-                () -> jsonApiDataFormat.unmarshal(exchange, new ByteArrayInputStream(jsonApiInput.getBytes())));
+                () -> jsonApiDataFormat.unmarshal(exchange, stream));
     }
 
     @Test

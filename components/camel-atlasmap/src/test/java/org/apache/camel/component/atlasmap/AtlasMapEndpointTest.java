@@ -65,11 +65,13 @@ public class AtlasMapEndpointTest {
         perform(ds, "my-source-doc", "my-target-doc", false);
     }
 
+    private void execute() throws Exception {
+        perform(new ArrayList<>(), null, null, true);
+    }
+
     @Test
     public void noConversionIfNoDataSource() throws Exception {
-        assertThrows(AssertionFailedError.class, () -> {
-            perform(new ArrayList<>(), null, null, true);
-        });
+        assertThrows(AssertionFailedError.class, this::execute);
     }
 
     @Test
@@ -196,5 +198,4 @@ public class AtlasMapEndpointTest {
         when(exchange.getMessage()).thenReturn(outMessage);
         endpoint.onExchange(exchange);
     }
-
 }

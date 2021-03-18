@@ -45,14 +45,22 @@ public class CouchbaseEndpointTest {
 
     @Test
     public void testHostnameRequired() throws Exception {
+        final CouchbaseComponent component = new CouchbaseComponent();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", new CouchbaseComponent()));
+                () -> {
+                    new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", component);
+                });
     }
 
     @Test
     public void testSchemeRequired() throws Exception {
+        final CouchbaseComponent component = new CouchbaseComponent();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
+                () -> {
+                    new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", component);
+                });
     }
 
     @Test
@@ -62,8 +70,12 @@ public class CouchbaseEndpointTest {
 
     @Test
     public void testCouchbaseEndpointWithoutProtocol() throws Exception {
+        final CouchbaseComponent component = new CouchbaseComponent();
+
         assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", new CouchbaseComponent()));
+                () -> {
+                    new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", component);
+                });
     }
 
     @Test
@@ -96,7 +108,7 @@ public class CouchbaseEndpointTest {
     }
 
     @Test
-    public void testCouchbaseEndpontSettersAndGetters() {
+    public void testCouchbaseEndpointSettersAndGetters() {
         CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
 
         endpoint.setProtocol("couchbase");
