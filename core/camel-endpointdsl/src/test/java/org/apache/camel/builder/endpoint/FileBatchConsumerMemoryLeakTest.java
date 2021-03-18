@@ -16,18 +16,19 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+
 /**
  * Unit test to test CAMEL-1652
  */
 @Disabled("Manual test")
-public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
+public class FileBatchConsumerMemoryLeakTest extends BaseEndpointDslTest {
 
     private String fileUrl = "target/data/filesorter/";
 

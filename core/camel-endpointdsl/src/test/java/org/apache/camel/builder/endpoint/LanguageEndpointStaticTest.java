@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,7 @@ import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.direct;
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.language;
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
 
-public class LanguageEndpointStaticTest extends ContextTestSupport {
+public class LanguageEndpointStaticTest extends BaseEndpointDslTest {
 
     @Test
     public void testLanguage() throws Exception {

@@ -16,28 +16,16 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.junit.jupiter.api.Test;
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
-public class AwsS3PollEnrichTest extends BaseEndpointDslTest {
+public abstract class BaseEndpointDslTest extends CamelTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Test
-    public void test() throws Exception {
-        context.addRoutes(new EndpointRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .pollEnrich(aws2S3("test-bucket").fileName("${body}"))
-                        .to("mock:result");
-
-            }
-        });
-        context.start();
-
-        context.stop();
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // do not use JMX while testing
+        context.disableJMX();
+        return context;
     }
 }

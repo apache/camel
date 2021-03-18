@@ -18,16 +18,16 @@ package org.apache.camel.builder.endpoint;
 
 import java.util.Properties;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class HttpsBasicAuthTest extends ContextTestSupport {
+public class HttpsBasicAuthTest extends BaseEndpointDslTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -52,7 +52,7 @@ public class HttpsBasicAuthTest extends ContextTestSupport {
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
-                HttpEndpoint he = assertIsInstanceOf(HttpEndpoint.class, endpoint);
+                HttpEndpoint he = TestSupport.assertIsInstanceOf(HttpEndpoint.class, endpoint);
                 assertEquals("scott", he.getAuthUsername());
                 assertEquals("tiger", he.getAuthPassword());
             }

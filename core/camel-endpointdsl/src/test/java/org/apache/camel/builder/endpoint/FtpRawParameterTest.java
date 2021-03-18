@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.FtpEndpoint;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FtpRawParameterTest extends ContextTestSupport {
+public class FtpRawParameterTest extends BaseEndpointDslTest {
 
     @Test
     public void testRaw() throws Exception {

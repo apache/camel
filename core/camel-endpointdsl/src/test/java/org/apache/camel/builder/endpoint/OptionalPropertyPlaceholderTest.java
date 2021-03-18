@@ -18,12 +18,11 @@ package org.apache.camel.builder.endpoint;
 
 import java.util.Properties;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OptionalPropertyPlaceholderTest extends CamelTestSupport {
+public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
 
     @Override
     public boolean isUseRouteBuilder() {

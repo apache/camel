@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +27,7 @@ import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
 /**
  * Its not exactly @EndpointInject but we can simulate it via endpoint builders
  */
-public class EndpointInjectTest extends ContextTestSupport {
+public class EndpointInjectTest extends BaseEndpointDslTest {
 
     private final EndpointProducerBuilder foo = mock("result").expectedCount(3);
 
