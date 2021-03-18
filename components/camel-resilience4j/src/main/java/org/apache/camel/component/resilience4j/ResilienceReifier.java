@@ -120,7 +120,12 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             builder.maxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls()));
         }
         if (config.getBulkheadMaxWaitDuration() != null) {
-            builder.maxWaitDuration(Duration.ofMillis(parseLong(config.getBulkheadMaxWaitDuration())));
+            long duration = parseLong(config.getBulkheadMaxWaitDuration());
+            if (duration <= 0) {
+                builder.maxWaitDuration(Duration.ZERO);
+            } else {
+                builder.maxWaitDuration(Duration.ofMillis(duration));
+            }
         }
         return builder.build();
     }
