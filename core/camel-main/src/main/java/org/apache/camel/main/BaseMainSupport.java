@@ -1290,8 +1290,9 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log which options was not set
         if (!properties.isEmpty()) {
-            for (PropertyOptionKey pok : properties.keySet()) {
-                Map<String, Object> values = properties.get(pok);
+            for (Map.Entry<PropertyOptionKey, Map<String, Object>> entry : properties.entrySet()) {
+                PropertyOptionKey pok = entry.getKey();
+                Map<String, Object> values = entry.getValue();
                 values.forEach((k, v) -> {
                     String stringValue = v != null ? v.toString() : null;
                     LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}",

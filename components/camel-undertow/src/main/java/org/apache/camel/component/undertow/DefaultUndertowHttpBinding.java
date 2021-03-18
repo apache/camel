@@ -271,9 +271,11 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             // Remove this as it's an unwanted artifact of our Undertow predicate chain
             predicateContextParams.remove("remaining");
 
-            for (String paramName : predicateContextParams.keySet()) {
-                LOG.trace("REST Template Variable {}: {})", paramName, predicateContextParams.get(paramName));
-                headersMap.put(paramName, predicateContextParams.get(paramName));
+            for (Map.Entry<String, Object> paramEntry : predicateContextParams.entrySet()) {
+                String paramName = paramEntry.getKey();
+
+                LOG.trace("REST Template Variable {}: {})", paramName, paramEntry.getValue());
+                headersMap.put(paramName, paramEntry.getValue());
             }
         }
 

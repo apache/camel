@@ -227,8 +227,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
-            for (String componentClass : grModels.keySet()) {
-                List<ComponentModel> compModels = grModels.get(componentClass);
+            for (List<ComponentModel> compModels : grModels.values()) {
                 ComponentModel model = compModels.get(0); // They should be
                                                          // equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());

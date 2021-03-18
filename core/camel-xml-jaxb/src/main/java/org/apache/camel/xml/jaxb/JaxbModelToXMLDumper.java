@@ -102,9 +102,11 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
-        for (String nsPrefix : namespaces.keySet()) {
+        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+            String nsPrefix = entry.getKey();
+
             String prefix = nsPrefix.equals("xmlns") ? nsPrefix : "xmlns:" + nsPrefix;
-            documentElement.setAttribute(prefix, namespaces.get(nsPrefix));
+            documentElement.setAttribute(prefix, entry.getValue());
         }
 
         // We invoke the type converter directly because we need to pass some

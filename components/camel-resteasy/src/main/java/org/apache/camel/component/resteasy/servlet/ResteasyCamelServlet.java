@@ -341,9 +341,9 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         HttpConsumer answer = consumers.get(path);
 
         if (answer == null) {
-            for (String key : consumers.keySet()) {
-                if (consumers.get(key).getEndpoint().isMatchOnUriPrefix() && path.startsWith(key)) {
-                    answer = consumers.get(key);
+            for (Map.Entry<String, HttpConsumer> consumerEntry : consumers.entrySet()) {
+                if (consumerEntry.getValue().getEndpoint().isMatchOnUriPrefix() && path.startsWith(consumerEntry.getKey())) {
+                    answer = consumerEntry.getValue();
                     break;
                 }
             }

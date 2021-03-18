@@ -247,9 +247,10 @@ public class CdiCamelExtension implements Extension {
         Set<SyntheticBean<?>> extraBeans = new HashSet<>();
 
         // Add beans from Camel XML resources
-        for (AnnotatedType<?> annotatedType : resources.keySet()) {
+        for (Map.Entry<AnnotatedType<?>, ImportResource> entry : resources.entrySet()) {
+            AnnotatedType<?> annotatedType = entry.getKey();
             XmlCdiBeanFactory factory = XmlCdiBeanFactory.with(manager, environment, this);
-            ImportResource resource = resources.get(annotatedType);
+            ImportResource resource = entry.getValue();
             for (String path : resource.value()) {
                 try {
                     extraBeans.addAll(factory.beansFrom(path, annotatedType));

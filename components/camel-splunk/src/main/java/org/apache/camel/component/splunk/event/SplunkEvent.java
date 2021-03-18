@@ -376,13 +376,13 @@ public class SplunkEvent implements Serializable {
         if (useInternalDate) {
             event.append(DATE_FORMATTER.print(new Date().getTime())).append(PAIRDELIM);
         }
-        for (String key : this.event.keySet()) {
-            event.append(key);
+        for (Map.Entry<String, String> eventEntry : this.event.entrySet()) {
+            event.append(eventEntry.getKey());
             event.append(KVDELIM);
             if (quoteValues) {
-                event.append(QUOTE).append(this.event.get(key)).append(QUOTE).append(PAIRDELIM);
+                event.append(QUOTE).append(eventEntry.getValue()).append(QUOTE).append(PAIRDELIM);
             } else {
-                event.append(this.event.get(key)).append(PAIRDELIM);
+                event.append(eventEntry.getValue()).append(PAIRDELIM);
             }
         }
         // trim off trailing pair delim char(s)
