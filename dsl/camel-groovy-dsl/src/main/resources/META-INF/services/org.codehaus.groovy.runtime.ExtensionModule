@@ -1,0 +1,6 @@
+moduleName=camel-k-loader-groovy
+moduleVersion=1.0.0
+extensionClasses=\
+  org.apache.camel.dsl.groovy.extensions.ExpressionClauseExtensions,\
+  org.apache.camel.dsl.groovy.extensions.ProcessorDefinitionExtensions,\
+  org.apache.camel.dsl.groovy.extensions.CamelContextExtensions

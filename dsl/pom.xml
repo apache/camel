@@ -34,6 +34,7 @@
     <description>Camel DSLs Modules</description>
 
     <modules>
+        <module>camel-groovy-dsl</module>
         <module>camel-java-joor-dsl</module>
         <module>camel-xml-io-dsl</module>
         <module>camel-xml-jaxb-dsl</module>

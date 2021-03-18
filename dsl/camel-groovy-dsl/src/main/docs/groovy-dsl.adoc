@@ -1,0 +1,13 @@
+[[groovy-dsl-other]]
+= Groovy DSL
+:docTitle: Groovy Dsl
+:artifactId: camel-groovy-dsl
+:description: Camel DSL with Groovy
+:supportLevel: Experimental
+:since: 3.
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/groovy-dsl.adoc[opts=optional]
+//Manually maintained attributes
+:group: DSL
+
+See https://camel.apache.org/manual/latest/dsl.html
