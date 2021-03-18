@@ -44,12 +44,6 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     private Recording rec;
     private FlightRecorderListener frl;
 
-    public FlightRecorderStartupStepRecorder() {
-        setEnabled(true);
-        // pre-empty enable recording so we have as early as possible recording started
-        setRecording(true);
-    }
-
     @Override
     public void doStart() throws Exception {
         super.doStart();
