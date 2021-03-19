@@ -395,3 +395,5 @@ This will require specifying the destinationBucket option. As example:
 --------------------------------------------------------------------------------
 
 In this case the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
+
+include::camel-spring-boot::page$google-storage-starter.adoc[]
