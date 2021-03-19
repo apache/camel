@@ -26,11 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  */
 public class AdvisoryConsumerExample extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AdvisoryConsumerExample.class);
 
     @Test
     public void testWorks() throws Exception {
@@ -48,7 +51,7 @@ public class AdvisoryConsumerExample extends CamelTestSupport {
                 from("activemq:InitialQueue").to("log:Messages");
 
                 from("activemq:topic:ActiveMQ.Advisory.Queue?cacheLevelName=CACHE_CONSUMER").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Message in = exchange.getIn();
                         if (in instanceof JmsMessage) {
                             JmsMessage jmsMessage = (JmsMessage) in;
@@ -58,7 +61,7 @@ public class AdvisoryConsumerExample extends CamelTestSupport {
                                 DataStructure structure = activeMQMessage.getDataStructure();
                                 if (structure instanceof DestinationInfo) {
                                     DestinationInfo destinationInfo = (DestinationInfo) structure;
-                                    System.out.println("Received: " + destinationInfo);
+                                    LOG.info("Received: {}", destinationInfo);
                                 }
                             }
                         }

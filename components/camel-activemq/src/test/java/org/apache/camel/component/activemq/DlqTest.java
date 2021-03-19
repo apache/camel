@@ -46,12 +46,7 @@ public class DlqTest extends CamelSpringTestSupport {
 
         LOG.info("Wait for dlq message...");
 
-        assertTrue(Wait.waitFor(new Wait.Condition() {
-            @Override
-            public boolean isSatisified() throws Exception {
-                return broker.getAdminView().getTotalEnqueueCount() == 2;
-            }
-        }));
+        assertTrue(Wait.waitFor(() -> broker.getAdminView().getTotalEnqueueCount() == 2));
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
@@ -67,7 +62,7 @@ public class DlqTest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
+    private BrokerService createBroker(boolean deleteAllMessages) {
         BrokerService brokerService = new BrokerService();
         brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
         brokerService.setBrokerName("testDlq");
@@ -93,7 +88,7 @@ public class DlqTest extends CamelSpringTestSupport {
     }
 
     public static class CanError {
-        public String enrich(String body) throws Exception {
+        public String enrich(String body) {
             LOG.info("Got body: " + body);
             throw new RuntimeException("won't enrich today!");
         }

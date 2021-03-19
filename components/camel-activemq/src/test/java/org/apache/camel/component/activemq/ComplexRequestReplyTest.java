@@ -66,7 +66,7 @@ public class ComplexRequestReplyTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         try {
             shutdownBrokerA();
         } catch (Exception ex) {
@@ -85,7 +85,7 @@ public class ComplexRequestReplyTest {
         LOG.info("*** Sending Request 1");
         String response = (String) requester.requestBody(fromEndpoint, "This is a request");
         assertNotNull(response);
-        LOG.info("Got response: " + response);
+        LOG.info("Got response: {}", response);
 
         /**
          * You actually don't need to restart the broker, just wait long enough and the next next send will take out a
@@ -106,7 +106,7 @@ public class ComplexRequestReplyTest {
         LOG.info("*** Sending Request 2");
         response = (String) requester.requestBody(fromEndpoint, "This is a request");
         assertNotNull(response);
-        LOG.info("Got response: " + response);
+        LOG.info("Got response: {}", response);
     }
 
     private CamelContext createSenderContext() throws Exception {

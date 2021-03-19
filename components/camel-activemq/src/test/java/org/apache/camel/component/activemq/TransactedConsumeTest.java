@@ -64,7 +64,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             }
         }, 20 * 60 * 1000));
         long duration = System.currentTimeMillis() - firstConsumed.get();
-        LOG.info("Done message consumption in " + duration + "millis");
+        LOG.info("Done message consumption in {} millis", duration);
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
@@ -98,7 +98,8 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
         // AMQPersistenceAdapter amq = new AMQPersistenceAdapter();
         // amq.setDirectory(new File("target/data"));
         // brokerService.setPersistenceAdapter(amq);
-        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService.getPersistenceAdapter();
+        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService
+                .getPersistenceAdapter();
         kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
         brokerService.addConnector("tcp://localhost:61616");
         return brokerService;
@@ -136,7 +137,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             ActiveMQTextMessage m = (ActiveMQTextMessage) ((JmsMessage) exchange.getIn()).getJmsMessage();
             // Thread.currentThread().sleep(500);
             if (consumed.get() % 500 == 0) {
-                LOG.info("received on " + m.getConnection().toString());
+                LOG.info("received on {}", m.getConnection());
             }
         }
     }
