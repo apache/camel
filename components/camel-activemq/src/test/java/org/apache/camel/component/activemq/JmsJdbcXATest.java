@@ -55,9 +55,8 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
 
     public java.sql.Connection initDb() throws Exception {
         String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, "
-                                 + "messageId varchar(96) NOT NULL, "
-                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, "
-                                 + "PRIMARY KEY (id) )";
+                                 + "messageId varchar(96) NOT NULL, " + "messageCorrelationId varchar(96) NOT NULL, "
+                                 + "messageContent varchar(2048) NOT NULL, " + "PRIMARY KEY (id) )";
 
         java.sql.Connection conn = getJDBCConnection();
         try {
@@ -85,8 +84,8 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: "
-                     + resultSet.getString(3) + ", content: " + resultSet.getString(4));
+            LOG.info("message - seq: {}, id: {}, corr: {}, content: {}", resultSet.getInt(1), resultSet.getString(2),
+                    resultSet.getString(3), resultSet.getString(4));
         }
         return count;
     }
@@ -175,7 +174,8 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
             broker = createBroker(true);
             broker.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
-                public void commitTransaction(ConnectionContext context, TransactionId xid, boolean onePhase) throws Exception {
+                public void commitTransaction(ConnectionContext context, TransactionId xid, boolean onePhase)
+                        throws Exception {
                     if (onePhase) {
                         super.commitTransaction(context, xid, onePhase);
                     } else {

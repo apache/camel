@@ -31,9 +31,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
     BrokerService broker;
-    int messageCount;
+    final int messagesSent = 1;
+    int messagesToConsume;
 
     @Test
     public void testTransactedRoute() throws Exception {
@@ -41,6 +44,7 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
 
         // camel route will use a single transaction for send and and ack
         consumeMessages();
+        assertEquals(0, messagesToConsume, "Some messages were not consumed");
     }
 
     private void consumeMessages() throws Exception {
@@ -52,7 +56,7 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageConsumer consumer = session.createConsumer(new ActiveMQQueue("to"));
 
-        int messagesToConsume = messageCount;
+        messagesToConsume = messagesSent;
         while (messagesToConsume > 0) {
             Message message = consumer.receive(5000);
             if (message != null) {
@@ -68,8 +72,8 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageProducer producer = session.createProducer(new ActiveMQQueue("from"));
-        TextMessage message = session.createTextMessage("Some Text, messageCount:" + messageCount++);
-        message.setIntProperty("seq", messageCount);
+        TextMessage message = session.createTextMessage("Some Text, messageCount:" + messagesSent);
+        message.setIntProperty("seq", messagesSent);
         producer.send(message);
         connection.close();
     }

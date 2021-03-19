@@ -44,7 +44,7 @@ public class AMQ2611Test {
 
     public static class Consumer {
         public void consume(@Body String message) {
-            LOG.info("consume message = " + message);
+            LOG.info("consume message = {}", message);
         }
     }
 

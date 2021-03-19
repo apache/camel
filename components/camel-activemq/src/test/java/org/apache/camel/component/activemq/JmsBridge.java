@@ -62,7 +62,7 @@ public class JmsBridge extends CamelSpringTestSupport {
 
         consumeMessages();
 
-        LOG.info("ConnectionCount: " + connectionCount.get());
+        LOG.info("ConnectionCount: {}", connectionCount.get());
         assertEquals(5 + errorLimit, connectionCount.get(), "x connections");
     }
 
@@ -121,7 +121,9 @@ public class JmsBridge extends CamelSpringTestSupport {
             brokerSub = createBroker("sub", 61617, true);
             brokerSub.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
-                public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend)
+                public void send(
+                        ProducerBrokerExchange producerExchange,
+                        org.apache.activemq.command.Message messageSend)
                         throws Exception {
                     if (sendCount.incrementAndGet() <= errorLimit) {
                         throw new RuntimeException("You need to try send " + errorLimit + " times!");

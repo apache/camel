@@ -66,7 +66,7 @@ public class ActiveMQJmsHeaderRouteTest extends CamelTestSupport {
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
-        LOG.info("Reply to is: " + replyTo);
+        LOG.info("Reply to is: {}", replyTo);
         Destination destination = assertIsInstanceOf(Destination.class, replyTo);
         assertEquals(replyQueue.toString(), destination.toString(), "ReplyTo");
     }

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * 
@@ -50,13 +50,13 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
         listener.assertMessagesArrived(1, 5000);
 
         List<Message> list = listener.flushMessages();
-        assertTrue(!list.isEmpty(), "Should have received some messages!");
+        assertFalse(list.isEmpty(), "Should have received some messages!");
         Message message = list.get(0);
 
-        LOG.debug("Received: " + message);
+        LOG.debug("Received: {}", message);
 
         TextMessage textMessage = assertIsInstanceOf(TextMessage.class, message);
-        assertEquals(expectedBody, textMessage.getText(), "Text mesage body: " + textMessage);
+        assertEquals(expectedBody, textMessage.getText(), "Text message body: " + textMessage);
     }
 
     @Override

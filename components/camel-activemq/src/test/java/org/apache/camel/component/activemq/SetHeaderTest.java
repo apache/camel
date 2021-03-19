@@ -58,7 +58,7 @@ public class SetHeaderTest {
         List<Exchange> list = expectedEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             Object body = exchange.getIn().getBody();
-            LOG.debug("Received: body: " + body + " of type: " + ObjectHelper.className(body) + " on: " + exchange);
+            LOG.debug("Received: body: {} of type: {} on: {}", body, ObjectHelper.className(body), exchange);
         }
     }
 }
