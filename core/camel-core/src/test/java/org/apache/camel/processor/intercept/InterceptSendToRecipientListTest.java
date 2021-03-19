@@ -44,7 +44,7 @@ public class InterceptSendToRecipientListTest extends ContextTestSupport {
                 interceptSendToEndpoint("seda:b*").skipSendToOriginalEndpoint().to("mock:intercepted");
 
                 from("direct:start")
-                    .recipientList().header("whereTo").to("mock:result");
+                        .recipientList().header("whereTo").to("mock:result");
 
             }
         };
