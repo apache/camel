@@ -73,6 +73,10 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "class":
             case "cm-sms":
             case "cmis":
+            case "coap":
+            case "coap+tcp":
+            case "coaps":
+            case "coaps+tcp":
             case "cometd":
             case "cometds":
             case "consul":
