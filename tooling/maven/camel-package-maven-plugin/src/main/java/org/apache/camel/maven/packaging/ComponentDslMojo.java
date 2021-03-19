@@ -169,8 +169,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
-            for (String componentClass : grModels.keySet()) {
-                List<ComponentModel> compModels = grModels.get(componentClass);
+            for (List<ComponentModel> compModels : grModels.values()) {
                 for (ComponentModel model : compModels) {
                     // if more than one, we have a component class with multiple components aliases
                     createComponentDsl(model);

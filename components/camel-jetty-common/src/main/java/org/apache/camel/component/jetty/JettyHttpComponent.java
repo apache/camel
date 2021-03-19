@@ -1318,8 +1318,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     protected void doStop() throws Exception {
         super.doStop();
         if (CONNECTORS.size() > 0) {
-            for (String connectorKey : CONNECTORS.keySet()) {
-                ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
+            for (Map.Entry<String, ConnectorRef> connectorEntry : CONNECTORS.entrySet()) {
+                ConnectorRef connectorRef = connectorEntry.getValue();
                 if (connectorRef != null && connectorRef.getRefCount() == 0) {
                     connectorRef.server.removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
@@ -1328,7 +1328,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                     removeServerMBean(connectorRef.server);
                     connectorRef.server.stop();
                     //removeServerMBean(connectorRef.connector);
-                    CONNECTORS.remove(connectorKey);
+                    CONNECTORS.remove(connectorEntry.getKey());
                 }
             }
         }

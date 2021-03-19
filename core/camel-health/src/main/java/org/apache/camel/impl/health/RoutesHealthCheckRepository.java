@@ -133,9 +133,9 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
 
     private HealthCheckConfiguration matchConfiguration(String id) {
         if (configurations != null) {
-            for (String key : configurations.keySet()) {
-                if (PatternHelper.matchPattern(id, key)) {
-                    return configurations.get(key);
+            for (Map.Entry<String, HealthCheckConfiguration> configurationEntry : configurations.entrySet()) {
+                if (PatternHelper.matchPattern(id, configurationEntry.getKey())) {
+                    return configurationEntry.getValue();
                 }
             }
         }

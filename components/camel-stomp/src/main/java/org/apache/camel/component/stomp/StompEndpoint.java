@@ -207,9 +207,9 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
     private void populateCustomHeadersToStompFrames(final StompFrame frame) {
         Properties customHeaders = configuration.getCustomHeaders();
         if (customHeaders != null) {
-            for (Object key : customHeaders.keySet()) {
-                frame.addHeader(StompFrame.encodeHeader(key.toString()),
-                        StompFrame.encodeHeader(customHeaders.get(key).toString()));
+            for (Map.Entry<Object, Object> customHeaderEntry : customHeaders.entrySet()) {
+                frame.addHeader(StompFrame.encodeHeader(customHeaderEntry.getKey().toString()),
+                        StompFrame.encodeHeader(customHeaderEntry.getValue().toString()));
             }
         }
     }

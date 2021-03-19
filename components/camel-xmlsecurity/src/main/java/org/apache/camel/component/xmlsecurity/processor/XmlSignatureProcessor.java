@@ -91,9 +91,9 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (props == null) {
             return;
         }
-        for (String prop : props.keySet()) {
-            Object val = props.get(prop);
-            cryptoContext.setProperty(prop, val);
+        for (Map.Entry<String, ?> prop : props.entrySet()) {
+            Object val = prop.getValue();
+            cryptoContext.setProperty(prop.getKey(), val);
             LOG.debug("Context property {} set to value {}", prop, val);
         }
     }

@@ -135,8 +135,8 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     public void link(Map<String, Object> model) throws Exception {
 
         // Iterate class by class
-        for (String link : annotatedLinkFields.keySet()) {
-            List<Field> linkFields = annotatedLinkFields.get(link);
+        for (Map.Entry<String, List<Field>> entry : annotatedLinkFields.entrySet()) {
+            List<Field> linkFields = entry.getValue();
 
             // Iterate through Link fields list
             for (Field field : linkFields) {
