@@ -58,6 +58,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
+    public static final String TEST_CLASS_NAME_PROPERTY = "testClassName";
+    public static final String TEST_CLASS_SIMPLE_NAME_PROPERTY = "testClassSimpleName";
+
     protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<>();
     protected static Object lock = new Object();
 
@@ -233,9 +236,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         // don't start the springCamelContext if we
         return SpringCamelContext.springCamelContext(applicationContext, false);
     }
-
-    public static final String TEST_CLASS_NAME_PROPERTY = "testClassName";
-    public static final String TEST_CLASS_SIMPLE_NAME_PROPERTY = "testClassSimpleName";
 
     public AbstractXmlApplicationContext newAppContext(String configLocation) throws BeansException {
         return newAppContext(configLocation, getClass());
