@@ -268,7 +268,7 @@ public class SalesforceSession extends ServiceSupport {
                     for (SalesforceSessionListener listener : listeners) {
                         try {
                             listener.onLogin(accessToken, instanceUrl);
-                        } catch (Throwable t) {
+                        } catch (Exception t) {
                             LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
                         }
                     }
@@ -332,7 +332,7 @@ public class SalesforceSession extends ServiceSupport {
             for (SalesforceSessionListener listener : listeners) {
                 try {
                     listener.onLogout();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
                 }
             }

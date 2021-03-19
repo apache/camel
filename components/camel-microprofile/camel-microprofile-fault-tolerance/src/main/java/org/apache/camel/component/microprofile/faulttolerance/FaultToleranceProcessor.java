@@ -239,7 +239,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
             exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
             exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // some other kind of exception
             exchange.setException(e);
         }
@@ -318,7 +318,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
             if (exchange.getException() != null) {

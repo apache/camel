@@ -310,7 +310,7 @@ public class RedisAggregationRepository extends ServiceSupport
                             key);
                     LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
-                } catch (Throwable throwable) {
+                } catch (Exception throwable) {
                     transaction.rollback();
 
                     final String msg = String.format(

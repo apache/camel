@@ -228,7 +228,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 totalCounter += messageCounter;
             }
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error getting MinioObject due: {}", e.getMessage());
             throw e;
 

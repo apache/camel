@@ -66,7 +66,7 @@ public class StaxConverter {
                 }
             });
             i = Integer.parseInt(s);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //ignore 
             i = 20;
         }
@@ -76,7 +76,7 @@ public class StaxConverter {
             if (cores > i) {
                 i = cores;
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             // ignore
             i = 20;
         }
@@ -349,7 +349,7 @@ public class StaxConverter {
     private static void setProperty(XMLInputFactory f, String p, Object o) {
         try {
             f.setProperty(p, o);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //ignore
         }
     }

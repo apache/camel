@@ -165,7 +165,7 @@ public class XMLConverterHelper {
                         "Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}",
                         e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
                 factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // okay we cannot load fallback then throw original exception
                 throw cause;
             }

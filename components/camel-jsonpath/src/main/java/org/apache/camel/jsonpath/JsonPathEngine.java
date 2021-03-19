@@ -276,7 +276,7 @@ public class JsonPathEngine {
                         LOG.debug("JacksonJsonAdapter found on classpath and enabled for camel-jsonpath: {}", adapter);
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.debug(
                         "Cannot load {} from classpath to enable JacksonJsonAdapter due {}. JacksonJsonAdapter is not enabled.",
                         JACKSON_JSON_ADAPTER, e.getMessage(),

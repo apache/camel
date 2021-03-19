@@ -264,7 +264,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 BeanIntrospection beanIntrospection
                         = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), mail, "peek", true);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
                 LOG.trace("Error setting peak property to true on: {}. This exception is ignored.", mail, e);
             }

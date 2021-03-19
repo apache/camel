@@ -255,7 +255,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         public void done(boolean doneSync) {
             try {
                 doDone();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             } finally {
                 // ensure callback is called
@@ -356,7 +356,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                         }
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
         }

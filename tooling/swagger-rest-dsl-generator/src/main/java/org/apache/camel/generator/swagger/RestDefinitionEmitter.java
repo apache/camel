@@ -46,7 +46,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
             final Method declaredMethod = type.getMethod(method, parameterTypesOf(arguments));
 
             variable = declaredMethod.invoke(variable, arguments);
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             } else {

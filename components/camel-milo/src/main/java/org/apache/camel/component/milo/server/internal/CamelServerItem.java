@@ -117,7 +117,7 @@ public class CamelServerItem {
         for (final Consumer<T> listener : list) {
             try {
                 consumer.accept(listener);
-            } catch (final Throwable e) {
+            } catch (final Exception e) {
                 if (errors == null) {
                     errors = new LinkedList<>();
                 }

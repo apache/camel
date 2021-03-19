@@ -431,7 +431,7 @@ public class MinaConsumer extends DefaultConsumer {
 
             try {
                 getProcessor().process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             }
 

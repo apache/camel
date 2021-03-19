@@ -226,7 +226,7 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                 LOG.trace("onMessage.sendReply START");
                 try {
                     sendReply(replyDestination, message, exchange, body);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     rce = new RuntimeCamelException(e);
                 }
                 LOG.trace("onMessage.sendReply END");
