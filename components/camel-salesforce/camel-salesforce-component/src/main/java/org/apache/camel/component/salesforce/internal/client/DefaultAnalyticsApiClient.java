@@ -301,7 +301,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     private void marshalRequest(Object input, Request request) throws SalesforceException {
         try {
             request.content(new BytesContentProvider(objectMapper.writeValueAsBytes(input)));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error marshaling request for {%s:%s} : %s", request.getMethod(), request.getURI(),
                             e.getMessage()),
@@ -314,7 +314,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         try {
             return objectMapper.readValue(response, responseTypeReference);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
                             e.getMessage()),
@@ -330,7 +330,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         try {
             return objectMapper.readValue(response, responseClass);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
                             e.getMessage()),

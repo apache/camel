@@ -40,7 +40,7 @@ public class CamelTearDownRule extends ExternalResource {
         if (support != null && support.isCreateCamelContextPerClass()) {
             try {
                 support.tearDownCreateCamelContextPerClass();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
             }
         }

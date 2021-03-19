@@ -101,7 +101,7 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                     public void run() {
                         try {
                             solver.solve(body);
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             exchange.setException(new Exception("Asynchronously solving failed for solverId " + solverId, e));
                         }
                     }

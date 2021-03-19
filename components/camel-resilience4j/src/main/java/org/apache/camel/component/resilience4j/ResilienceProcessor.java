@@ -395,7 +395,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                 LOG.trace("Processing exchange: {} using circuit breaker: {}", exchange.getExchangeId(), id);
             }
             Try.ofCallable(task).recover(fallbackTask).get();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
         if (LOG.isTraceEnabled()) {
@@ -424,7 +424,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                 exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
                 exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
         if (exchange.getException() != null) {

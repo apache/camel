@@ -83,7 +83,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 // no binding in use call the producer directly
                 return producer.process(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;

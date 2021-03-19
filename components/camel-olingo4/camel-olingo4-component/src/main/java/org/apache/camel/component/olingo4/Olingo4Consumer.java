@@ -109,8 +109,8 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
                 return processed;
             }
 
-        } catch (Throwable t) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(t);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

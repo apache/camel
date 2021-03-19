@@ -79,7 +79,7 @@ public final class InetAddressUtil {
     public static String getLocalHostNameSafe() {
         try {
             return getLocalHostName();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         return null;

@@ -515,7 +515,7 @@ public class SubscriptionManager {
             client.getSubscriptionManager().addSubscriptionListener(new SubscriptionListenerImpl());
 
             return new Connected(client, manager);
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             // clean up
             client.disconnect();
             throw e;

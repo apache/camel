@@ -138,7 +138,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (consumer.getConfiguration().isSync()) {
                 sendResponse(message, ctx, exchange);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             consumer.getExceptionHandler().handleException(e);
         } finally {
             consumer.doneUoW(exchange);
@@ -152,7 +152,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
                 if (consumer.getConfiguration().isSync()) {
                     sendResponse(message, ctx, exchange);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 consumer.getExceptionHandler().handleException(e);
             } finally {
                 consumer.doneUoW(exchange);

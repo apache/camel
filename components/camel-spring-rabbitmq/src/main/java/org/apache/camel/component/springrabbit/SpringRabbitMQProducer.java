@@ -114,7 +114,7 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
                 // in only
                 return processInOnly(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // must catch exception to ensure callback is invoked as expected
             // to let Camel error handling deal with this
             exchange.setException(e);
@@ -166,7 +166,7 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
                         if (!headers.isEmpty()) {
                             exchange.getMessage().getHeaders().putAll(headers);
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         exchange.setException(e);
                     } finally {
                         callback.done(false);

@@ -115,7 +115,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
             oldExchange.setProperty(propertyName, newExchange.getIn().getBody(Document.class));
             xslt.process(oldExchange);
             return oldExchange;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             oldExchange.setException(e);
         }
 

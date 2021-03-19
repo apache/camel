@@ -315,7 +315,7 @@ public class KubernetesLeadershipController implements Service {
                     this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
                     this.lockConfiguration.getKubernetesResourceName(),
                     this.lockConfiguration.getGroupName());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn(logPrefix() + " Unable to retrieve the current lease resource "
                      + this.lockConfiguration.getKubernetesResourceName()
                      + " for group " + this.lockConfiguration.getGroupName() + " from Kubernetes");
@@ -326,7 +326,7 @@ public class KubernetesLeadershipController implements Service {
         Set<String> members;
         try {
             members = Objects.requireNonNull(pullClusterMembers(), "Retrieved a null set of members");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn(logPrefix() + " Unable to retrieve the list of cluster members from Kubernetes");
             LOG.debug(logPrefix() + " Exception thrown during Pod list lookup", e);
             return false;

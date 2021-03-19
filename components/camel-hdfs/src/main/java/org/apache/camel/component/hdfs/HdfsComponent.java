@@ -51,8 +51,9 @@ public class HdfsComponent extends DefaultComponent {
     protected void initHdfs() {
         try {
             URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
-        } catch (Throwable e) {
-            // ignore as its most likely already set
+        } catch (Error e) {
+            // The setURLStreamHandlerFactory throws an error if the factory is already set, which is why
+            // we have the unusual catch for a java.lang.Error
             LOG.debug("Cannot set URLStreamHandlerFactory due {}. This exception will be ignored.", e.getMessage(), e);
         }
     }

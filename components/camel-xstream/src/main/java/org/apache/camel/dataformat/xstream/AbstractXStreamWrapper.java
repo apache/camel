@@ -177,7 +177,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport
                             if (method != null) {
                                 ObjectHelper.invokeMethod(method, converter, xstream);
                             }
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             // swallow, as it just means the user never add an XStream setter, which is optional
                         }
                     }

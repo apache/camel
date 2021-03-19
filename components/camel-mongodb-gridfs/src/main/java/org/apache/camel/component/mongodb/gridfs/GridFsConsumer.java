@@ -184,7 +184,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 cursor = null;
                 Thread.sleep(endpoint.getDelay());
             }
-        } catch (Throwable e1) {
+        } catch (Exception e1) {
             // ignore
         }
         if (cursor != null) {

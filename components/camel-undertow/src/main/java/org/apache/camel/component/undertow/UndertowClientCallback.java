@@ -232,7 +232,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     // we end Camel exchange here
                     finish(result);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 hasFailedWith(e);
             }
         }));
