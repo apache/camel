@@ -43,6 +43,8 @@ import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.B
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
 /**
  * A Producer which sends messages to the Amazon Secrets Manager Service SDK v2
@@ -78,6 +80,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 break;
             case rotateSecret:
                 rotateSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case updateSecret:
+                updateSecret(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -296,6 +301,42 @@ public class SecretsManagerProducer extends DefaultProducer {
             result = secretsManagerClient.rotateSecret(request);
         } catch (AwsServiceException ase) {
             LOG.trace("Rotate Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void updateSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        UpdateSecretRequest request = null;
+        UpdateSecretResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(UpdateSecretRequest.class);
+        } else {
+            UpdateSecretRequest.Builder builder = UpdateSecretRequest.builder();
+            String payload = exchange.getIn().getMandatoryBody(String.class);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
+                String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
+                builder.secretId(secretId);
+            } else {
+                throw new IllegalArgumentException("Secret Id must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION))) {
+                String descr = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_DESCRIPTION, String.class);
+                builder.description(descr);
+            }
+            if (getConfiguration().isBinaryPayload()) {
+                builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+            } else {
+                builder.secretString((String) payload);
+            }
+            request = builder.build();
+        }
+        try {
+            result = secretsManagerClient.updateSecret(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Update Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

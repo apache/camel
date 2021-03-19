@@ -23,5 +23,6 @@ public enum SecretsManagerOperations {
     getSecret,
     describeSecret,
     deleteSecret,
-    rotateSecret
+    rotateSecret,
+    updateSecret
 }
