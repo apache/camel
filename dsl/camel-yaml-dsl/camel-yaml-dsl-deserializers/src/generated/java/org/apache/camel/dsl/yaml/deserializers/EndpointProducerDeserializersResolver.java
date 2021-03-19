@@ -126,6 +126,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "google-bigquery-sql":
             case "google-calendar":
             case "google-drive":
+            case "google-functions":
             case "google-mail":
             case "google-pubsub":
             case "google-sheets":
