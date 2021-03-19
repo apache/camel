@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.jms.Connection;
@@ -34,27 +35,26 @@ import org.apache.activemq.store.kahadb.disk.journal.Journal;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsMessage;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TransactedConsumeTest extends CamelSpringTestSupport {
+public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TransactedConsumeTest.class);
+
     static AtomicLong firstConsumed = new AtomicLong();
     static AtomicLong consumed = new AtomicLong();
-    private static final Logger LOG = LoggerFactory.getLogger(TransactedConsumeTest.class);
     BrokerService broker;
-    int messageCount = 100000;
+    int messageCount = 10000;
 
     @Test
     public void testConsume() throws Exception {
-
         LOG.info("Wait for dequeue message...");
 
         assertTrue(Wait.waitFor(new Wait.Condition() {
@@ -68,8 +68,10 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://test");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
+        factory.setUseAsyncSend(true);
         factory.setWatchTopicAdvisories(false);
+        factory.setObjectMessageSerializationDefered(true);
         Connection connection = factory.createConnection();
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -83,36 +85,31 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("test");
-
+    private BrokerService createBroker() throws Exception {
+        BrokerService brokerService = createBroker(true, true);
+        brokerService.setUseJmx(true);
+        brokerService.getManagementContext().setUseMBeanServer(false);
         PolicyMap policyMap = new PolicyMap();
         PolicyEntry defaultPolicy = new PolicyEntry();
         policyMap.setDefaultEntry(defaultPolicy);
         brokerService.setDestinationPolicy(policyMap);
 
         brokerService.setAdvisorySupport(false);
-        brokerService.setDataDirectory("target/data");
+        brokerService.setDataDirectory(testDirectory().toString());
         // AMQPersistenceAdapter amq = new AMQPersistenceAdapter();
         // amq.setDirectory(new File("target/data"));
         // brokerService.setPersistenceAdapter(amq);
         KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService
                 .getPersistenceAdapter();
         kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
-        brokerService.addConnector("tcp://localhost:61616");
         return brokerService;
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-
-        deleteDirectory("target/data");
-
         // make broker available to recovery processing on app context start
         try {
-            broker = createBroker(true);
+            broker = createBroker();
             broker.start();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start broker", e);
@@ -124,7 +121,14 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to fill q", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/transactedconsume.xml");
+        return super.createApplicationContext();
+    }
+
+    @Override
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("brokerUri", getBrokerUri(broker));
+        return map;
     }
 
     static class ConnectionLog implements Processor {

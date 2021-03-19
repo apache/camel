@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.activemq.support.ActiveMQSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ComplexRequestReplyTest {
+public class ComplexRequestReplyTest implements ActiveMQSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplexRequestReplyTest.class);
 
@@ -56,10 +57,10 @@ public class ComplexRequestReplyTest {
     @BeforeEach
     public void setUp() throws Exception {
 
-        createBrokerA();
-        brokerAUri = brokerA.getTransportConnectors().get(0).getPublishableConnectString();
+        createBrokerA(null);
+        brokerAUri = getBrokerUri(brokerA);
         createBrokerB();
-        brokerBUri = brokerB.getTransportConnectors().get(0).getPublishableConnectString();
+        brokerBUri = getBrokerUri(brokerB);
 
         connectionUri = "failover:(" + brokerAUri + "," + brokerBUri + ")?randomize=false";
         senderContext = createSenderContext();
@@ -93,15 +94,16 @@ public class ComplexRequestReplyTest {
          * see the failure.
          */
 
-        TimeUnit.SECONDS.sleep(20);
+        TimeUnit.SECONDS.sleep(2);
 
         /**
          * I restart the broker after the wait that exceeds the idle timeout value of the PooledConnectionFactory to
          * show that it doesn't matter now as the older connection has already been closed.
          */
         LOG.info("Restarting Broker A now.");
+        String prevUri = getBrokerUri(brokerA);
         shutdownBrokerA();
-        createBrokerA();
+        createBrokerA(prevUri);
 
         LOG.info("*** Sending Request 2");
         response = (String) requester.requestBody(fromEndpoint, "This is a request");
@@ -136,8 +138,15 @@ public class ComplexRequestReplyTest {
         return camelContext;
     }
 
-    private void createBrokerA() throws Exception {
-        brokerA = createBroker("brokerA");
+    private void createBrokerA(String uri) throws Exception {
+        if (uri == null) {
+            brokerA = createBroker("brokerA", true, true);
+        } else {
+            brokerA = createBroker("brokerA", false, false);
+            brokerA.addConnector(uri);
+        }
+        brokerA.setPersistent(false);
+        brokerA.setAdvisorySupport(true);
         brokerAContext = createBrokerCamelContext("brokerA");
         brokerA.start();
         brokerA.waitUntilStarted();
@@ -154,7 +163,9 @@ public class ComplexRequestReplyTest {
     }
 
     private void createBrokerB() throws Exception {
-        brokerB = createBroker("brokerB");
+        brokerB = createBroker("brokerB", true, true);
+        brokerB.setAdvisorySupport(true);
+        brokerB.setPersistent(false);
         brokerBContext = createBrokerCamelContext("brokerB");
         brokerB.start();
         brokerB.waitUntilStarted();
@@ -170,21 +181,11 @@ public class ComplexRequestReplyTest {
         }
     }
 
-    private BrokerService createBroker(String name) throws Exception {
-        BrokerService service = new BrokerService();
-        service.setPersistent(false);
-        service.setUseJmx(false);
-        service.setBrokerName(name);
-        service.addConnector("tcp://localhost:0");
-
-        return service;
-    }
-
     private CamelContext createBrokerCamelContext(String brokerName) throws Exception {
 
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.addComponent("activemq",
-                ActiveMQComponent.activeMQComponent("vm://" + brokerName + "?create=false&waitForStart=10000"));
+                ActiveMQComponent.activeMQComponent(vmUri(brokerName + "?create=false&waitForStart=1000")));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

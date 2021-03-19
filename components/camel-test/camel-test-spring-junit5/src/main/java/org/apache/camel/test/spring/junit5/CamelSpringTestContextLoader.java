@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
@@ -31,6 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
@@ -68,6 +70,9 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
             GenericApplicationContext context = createContext(testClass, mergedConfig);
             prepareContext(context, mergedConfig);
             loadBeanDefinitions(context, mergedConfig);
+            AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
+            customizeContext(context, mergedConfig);
+
             return loadContext(context, testClass);
         } finally {
             CamelAnnotationsHandler.cleanup(testClass);
@@ -95,7 +100,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
 
         try {
             GenericApplicationContext context = createContext(testClass, null);
-            loadBeanDefinitions(context, locations);
+            loadBeanDefinitions(context, testClass, locations);
             return loadContext(context, testClass);
         } finally {
             CamelAnnotationsHandler.cleanup(testClass);
@@ -153,12 +158,18 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     }
 
     protected void loadBeanDefinitions(GenericApplicationContext context, MergedContextConfiguration mergedConfig) {
-        new XmlBeanDefinitionReader(context).loadBeanDefinitions(mergedConfig.getLocations());
+        loadBeanDefinitions(context, mergedConfig.getTestClass(), mergedConfig.getLocations());
         new AnnotatedBeanDefinitionReader(context).register(mergedConfig.getClasses());
     }
 
-    protected void loadBeanDefinitions(GenericApplicationContext context, String... locations) {
-        new XmlBeanDefinitionReader(context).loadBeanDefinitions(locations);
+    protected void loadBeanDefinitions(GenericApplicationContext context, Class<?> clazz, String... locations) {
+        Map<String, String> props = CamelSpringTestSupport.getTranslationProperties(clazz);
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(context);
+        for (String location : locations) {
+            Resource r = reader.getResourceLoader().getResource(location);
+            Resource t = new CamelSpringTestSupport.TranslatedResource(r, props);
+            reader.loadBeanDefinitions(t);
+        }
     }
 
     /**

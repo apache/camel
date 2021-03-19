@@ -46,7 +46,7 @@
     <!-- configuration for activemq-camel endpoint -->
 
     <bean id="camelConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}?broker.persistent=false"/>
         <property name="trustedPackages">
             <list>
                 <value>org.apache.camel</value>
@@ -65,7 +65,7 @@
     <!-- configuration for activemq-activemq endpoint -->
 
     <bean id="activemqConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}?broker.persistent=false"/>
         <property name="trustedPackages">
             <list>
                 <value>org.apache.activemq</value>
@@ -84,7 +84,7 @@
     <!-- configuration for activemq-empty endpoint -->
 
     <bean id="emptyConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}?broker.persistent=false"/>
         <property name="trustedPackages">
             <list>
                 <value></value>
@@ -103,7 +103,7 @@
     <!-- configuration for activemq-trusted endpoint -->
 
     <bean id="trustedConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}?broker.persistent=false"/>
         <property name="trustAllPackages" value="true"/>
     </bean>
 

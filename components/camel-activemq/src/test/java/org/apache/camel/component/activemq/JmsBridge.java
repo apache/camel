@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jms.Connection;
@@ -34,16 +35,15 @@ import org.apache.activemq.broker.ProducerBrokerExchange;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConnectionInfo;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsBridge extends CamelSpringTestSupport {
+public class JmsBridge extends ActiveMQSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBridge.class);
 
@@ -67,8 +67,7 @@ public class JmsBridge extends CamelSpringTestSupport {
     }
 
     private void consumeMessages() throws Exception {
-
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://sub");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri("sub"));
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -85,7 +84,7 @@ public class JmsBridge extends CamelSpringTestSupport {
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://pub");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri("pub"));
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -100,25 +99,11 @@ public class JmsBridge extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(String name, int port, boolean deleteAllMessages) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName(name);
-        brokerService.setAdvisorySupport(false);
-        brokerService.setUseJmx(false);
-        brokerService.setDataDirectory("target/data");
-        if (port > 0) {
-            brokerService.addConnector("tcp://0.0.0.0:" + port);
-        }
-        return brokerService;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-
         try {
-            brokerSub = createBroker("sub", 61617, true);
+            brokerSub = createBroker("sub", true, true);
             brokerSub.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
                 public void send(
@@ -142,13 +127,21 @@ public class JmsBridge extends CamelSpringTestSupport {
             } });
             brokerSub.start();
 
-            brokerPub = createBroker("pub", 61616, true);
+            brokerPub = createBroker("pub", true, true);
             brokerPub.start();
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsBridge.xml");
+        return super.createApplicationContext();
+    }
+
+    @Override
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("subBrokerUri", getBrokerUri(brokerSub));
+        map.put("pubBrokerUri", getBrokerUri(brokerPub));
+        return map;
     }
 }

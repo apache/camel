@@ -28,14 +28,14 @@
     ">
 
     <bean id="transactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-      <property name="connectionFactory" ref="pooledConnectionFactory"/>
+        <property name="connectionFactory" ref="pooledConnectionFactory"/>
     </bean>
 
-      <bean id="localJMS" class="org.apache.camel.component.activemq.ActiveMQComponent">
-            <property name="connectionFactory" ref="pooledConnectionFactory"/>
-            <property name="transactionManager" ref="transactionManager"/>
-            <property name="transacted" value="true"/>
-      </bean>
+    <bean id="localJMS" class="org.apache.camel.component.activemq.ActiveMQComponent">
+        <property name="connectionFactory" ref="pooledConnectionFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transacted" value="true"/>
+    </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route id="orders">
@@ -49,7 +49,7 @@
     </camelContext>
 
    <bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-       <property name="brokerURL" value="vm://testDlq" />
+       <property name="brokerURL" value="vm://{{testClassSimpleName}}" />
        <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
    </bean>
 

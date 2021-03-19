@@ -237,16 +237,36 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         return SpringCamelContext.springCamelContext(applicationContext, false);
     }
 
+<<<<<<< HEAD
+=======
+    public static final String TEST_CLASS_NAME_PROPERTY = "testClassName";
+    public static final String TEST_CLASS_SIMPLE_NAME_PROPERTY = "testClassSimpleName";
+    public static final String TEST_DIRECTORY_PROPERTY = "testDirectory";
+
+>>>>>>> 12c7ea28844 (Make camel-jms tests run in parallel)
     public AbstractXmlApplicationContext newAppContext(String configLocation) throws BeansException {
-        return newAppContext(configLocation, getClass());
+        return newAppContext(configLocation, getClass(), getTranslationProperties());
+    }
+
+    protected Map<String, String> getTranslationProperties() {
+        return getTranslationProperties(getClass());
+    }
+
+    static Map<String, String> getTranslationProperties(Class<?> testClass) {
+        Map<String, String> props = new HashMap<>();
+        props.put(TEST_CLASS_NAME_PROPERTY, testClass.getName());
+        props.put(TEST_CLASS_SIMPLE_NAME_PROPERTY, testClass.getSimpleName());
+        props.put(TEST_DIRECTORY_PROPERTY, testDirectory(testClass, false).toString());
+        return props;
     }
 
     public static AbstractXmlApplicationContext newAppContext(String configLocation, Class<?> clazz) {
-        Map<String, String> props = new HashMap<>();
-        props.put(TEST_CLASS_NAME_PROPERTY, clazz.getName());
-        props.put(TEST_CLASS_SIMPLE_NAME_PROPERTY, clazz.getSimpleName());
-        return new MyXmlApplicationContext(configLocation, clazz, props);
+        Map<String, String> props = getTranslationProperties(clazz);
+        return newAppContext(configLocation, clazz, props);
+    }
 
+    public static MyXmlApplicationContext newAppContext(String configLocation, Class<?> clazz, Map<String, String> props) {
+        return new MyXmlApplicationContext(configLocation, clazz, props);
     }
 
     public static class MyXmlApplicationContext extends AbstractXmlApplicationContext {

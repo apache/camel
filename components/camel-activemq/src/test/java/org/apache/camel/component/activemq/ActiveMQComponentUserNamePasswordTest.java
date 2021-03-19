@@ -16,20 +16,13 @@
  */
 package org.apache.camel.component.activemq;
 
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ActiveMQComponentUserNamePasswordTest extends CamelSpringTestSupport {
-
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/ActiveMQComponentUserNamePassword.xml");
-    }
+public class ActiveMQComponentUserNamePasswordTest extends ActiveMQSpringTestSupport {
 
     @Test
     public void testActiveMQ() throws Exception {

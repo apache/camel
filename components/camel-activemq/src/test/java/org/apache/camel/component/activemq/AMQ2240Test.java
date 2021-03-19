@@ -21,6 +21,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.activemq.AMQ2611Test.Consumer;
+import org.apache.camel.component.activemq.support.ActiveMQSupport;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AMQ2240Test {
+public class AMQ2240Test implements ActiveMQSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AMQ2240Test.class);
 
@@ -46,10 +47,11 @@ public class AMQ2240Test {
 
     @Test
     public void testBadVMTransportOptionsJMSPrefix() {
-        final String vmUri = "vm://localhost?jms.redeliveryPolicy.maximumRedeliveries=0&"
-                             + "jms.redeliveryPolicy.initialRedeliveryDelay=500&"
-                             + "jms.useAsyncSend=false&jms.sendTimeout=ABC&"
-                             + "jms.maxXXXXReconnectAttempts=1&jms.timeout=3000";
+        final String vmUri
+                = vmUri("?jms.redeliveryPolicy.maximumRedeliveries=0&"
+                        + "jms.redeliveryPolicy.initialRedeliveryDelay=500&"
+                        + "jms.useAsyncSend=false&jms.sendTimeout=ABC&"
+                        + "jms.maxXXXXReconnectAttempts=1&jms.timeout=3000");
 
         LOG.info("creating context with bad URI: {}", vmUri);
         ActiveMQComponent amq = ActiveMQComponent.activeMQComponent(vmUri);
@@ -61,7 +63,7 @@ public class AMQ2240Test {
 
     @Test
     public void testBadVMTransportOptionsBrokerPrefix() throws Exception {
-        final String vmUri = "vm://localhost?broker.XXX=foo&broker.persistent=XXX&broker.useJmx=false";
+        final String vmUri = vmUri("?broker.XXX=foo&broker.persistent=XXX&broker.useJmx=false");
 
         LOG.info("creating context with bad URI: {}", vmUri);
         ActiveMQComponent amq = ActiveMQComponent.activeMQComponent(vmUri);

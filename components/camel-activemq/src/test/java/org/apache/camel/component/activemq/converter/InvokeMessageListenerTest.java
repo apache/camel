@@ -23,7 +23,7 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * 
  */
-public class InvokeMessageListenerTest extends CamelTestSupport {
+public class InvokeMessageListenerTest extends ActiveMQTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(InvokeMessageListenerTest.class);
     protected String startEndpointUri = "activemq:queue:test.a";
     protected ConsumerBean listener = new ConsumerBean();
@@ -62,7 +63,7 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
         return camelContext;
     }
 

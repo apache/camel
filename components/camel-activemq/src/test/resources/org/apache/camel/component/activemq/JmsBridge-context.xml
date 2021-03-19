@@ -45,7 +45,7 @@
     <bean id="cfPub" class="org.apache.activemq.ActiveMQConnectionFactory">
         <!-- we don't want mesages to go to the DLQ, hense infinite redeliveries -->
         <property name="brokerURL"
-                  value="failover:(tcp://localhost:61616)?jms.redeliveryPolicy.maximumRedeliveries=-1"/>
+                  value="failover:({{pubBrokerUri}})?jms.redeliveryPolicy.maximumRedeliveries=-1"/>
     </bean>
 
     <bean id="pooledCfPub" class="org.apache.activemq.pool.PooledConnectionFactory">
@@ -62,7 +62,7 @@
 
     <!-- to broker -->
     <bean id="cfSub" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="failover:(tcp://localhost:61617)"/>
+        <property name="brokerURL" value="failover:({{subBrokerUri}})"/>
         <property name="disableTimeStampsByDefault" value="true"/>
         <property name="copyMessageOnSend" value="false"/>
     </bean>

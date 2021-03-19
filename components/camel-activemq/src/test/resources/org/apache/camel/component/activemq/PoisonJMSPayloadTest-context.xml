@@ -46,7 +46,7 @@
     <!-- configuration for activemq-activemq endpoint -->
 
     <bean id="activemqConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}?broker.persistent=false"/>
         <property name="trustedPackages">
             <list>
                 <value>org.apache.activemq</value>

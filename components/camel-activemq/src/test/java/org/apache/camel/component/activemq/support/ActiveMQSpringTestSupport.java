@@ -14,30 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.activemq;
+package org.apache.camel.component.activemq.support;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.nio.file.Path;
 
-/**
- * 
- */
-@CamelSpringTest
-public class CamelDestinationExclusiveConsumerTest {
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
-    @Autowired
-    protected CamelContext camelContext;
+public abstract class ActiveMQSpringTestSupport extends CamelSpringTestSupport implements ActiveMQSupport {
 
-    @EndpointInject("mock:results")
-    protected MockEndpoint expectedEndpoint;
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext(getClass().getSimpleName() + "-context.xml");
+    }
 
-    @Test
-    public void testMocksAreValid() throws Exception {
-        expectedEndpoint.expectedMessageCount(1);
-        MockEndpoint.assertIsSatisfied(camelContext);
+    public Path testDirectory() {
+        return CamelTestSupport.testDirectory(getClass(), false);
+    }
+
+    protected int getShutdownTimeout() {
+        return 1;
     }
 }

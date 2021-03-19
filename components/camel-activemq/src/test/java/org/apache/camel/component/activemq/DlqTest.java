@@ -25,17 +25,16 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DlqTest extends CamelSpringTestSupport {
+public class DlqTest extends ActiveMQSpringTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(DlqTest.class);
     BrokerService broker;
     int messageCount;
@@ -50,7 +49,7 @@ public class DlqTest extends CamelSpringTestSupport {
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://testDlq");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         factory.setWatchTopicAdvisories(false);
         Connection connection = factory.createConnection();
         connection.start();
@@ -62,29 +61,18 @@ public class DlqTest extends CamelSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker(boolean deleteAllMessages) {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName("testDlq");
-        brokerService.setAdvisorySupport(false);
-        brokerService.setDataDirectory("target/data");
-        return brokerService;
-    }
-
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-
-        deleteDirectory("target/data");
-
         // make broker available to recovery processing on app context start
         try {
-            broker = createBroker(true);
+            broker = createBroker(true, false);
+            broker.setUseJmx(true);
             broker.start();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/dlq.xml");
+        return super.createApplicationContext();
     }
 
     public static class CanError {

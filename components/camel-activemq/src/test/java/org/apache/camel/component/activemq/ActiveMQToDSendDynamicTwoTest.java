@@ -17,13 +17,13 @@
 package org.apache.camel.component.activemq;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ActiveMQToDSendDynamicTwoTest extends CamelTestSupport {
+public class ActiveMQToDSendDynamicTwoTest extends ActiveMQTestSupport {
 
     @Test
     public void testToD() throws Exception {
@@ -44,7 +44,7 @@ public class ActiveMQToDSendDynamicTwoTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+                context.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
 
                 // route message dynamic using toD
                 from("direct:start").toD("activemq:queue:${header.where}");

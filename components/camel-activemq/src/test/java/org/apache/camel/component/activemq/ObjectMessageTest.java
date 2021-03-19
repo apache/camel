@@ -23,24 +23,22 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ObjectMessageTest extends CamelSpringTestSupport {
+public class ObjectMessageTest extends ActiveMQSpringTestSupport {
 
     @Test
     public void testUntrusted() throws Exception {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(vmUri());
         Connection conn = factory.createConnection();
         conn.start();
         Session sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -85,10 +83,4 @@ public class ObjectMessageTest extends CamelSpringTestSupport {
         assertEquals("test", received.payload);
     }
 
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        AbstractApplicationContext context
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-object-message.xml");
-        return context;
-    }
 }

@@ -24,27 +24,26 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: e1 -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="file://src/test/data?noop=true"/>
-      <to uri="activemq:queue:foo"/>
-    </route>
-    <route>
-      <!-- use consumer.exclusive ActiveMQ destination option, notice we have to prefix with destination. -->
-      <from uri="activemq:foo?destination.consumer.exclusive=true&amp;destination.consumer.prefetchSize=50"/>
-      <to uri="mock:results"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: e1 -->
+    <!-- START SNIPPET: e1 -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="file://src/test/data?noop=true"/>
+            <to uri="activemq:queue:foo"/>
+        </route>
+        <route>
+            <!-- use consumer.exclusive ActiveMQ destination option, notice we have to prefix with destination. -->
+            <from uri="activemq:foo?destination.consumer.exclusive=true&amp;destination.consumer.prefetchSize=50"/>
+            <to uri="mock:results"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
 
-  <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
-  </bean>
-  
-  <bean id="activemq" 
-      class="org.apache.camel.component.activemq.ActiveMQComponent">
-      <property name="brokerURL" value="vm://localhost"/>
-   </bean>
+    <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}?broker.persistent=false"/>
+    </bean>
+
+    <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
+        <property name="brokerURL" value="vm://{{testClassSimpleName}}"/>
+    </bean>
 
 </beans>

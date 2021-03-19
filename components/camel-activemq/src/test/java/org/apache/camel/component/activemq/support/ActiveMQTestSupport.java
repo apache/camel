@@ -14,23 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.activemq;
+package org.apache.camel.component.activemq.support;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
+import java.nio.file.Path;
 
-/**
- * 
- */
-public class SetGroupIdProcessor implements Processor {
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        // lets copy the IN to the OUT message
-        Message out = exchange.getMessage();
-        out.copyFrom(exchange.getIn());
+import org.apache.camel.test.junit5.CamelTestSupport;
 
-        // now lets set a header
-        out.setHeader("JMSXGroupID", "ABC");
+public class ActiveMQTestSupport extends CamelTestSupport implements ActiveMQSupport {
+
+    public Path testDirectory() {
+        return CamelTestSupport.testDirectory(getClass(), false);
     }
 }

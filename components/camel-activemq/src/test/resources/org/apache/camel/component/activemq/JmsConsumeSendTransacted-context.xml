@@ -28,9 +28,8 @@
 
   <context:annotation-config />
 
-
   <bean id="cf" class="org.apache.activemq.ActiveMQConnectionFactory">
-      <property name="brokerURL" value="failover:(tcp://localhost:61616)"/>
+      <property name="brokerURL" value="failover:({{brokerUri}})"/>
   </bean>
 
   <bean id="pooledCf" class="org.apache.activemq.pool.PooledConnectionFactory">

@@ -19,12 +19,12 @@ package org.apache.camel.component.activemq;
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsConsumer;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsProducer;
 import org.apache.camel.support.processor.CamelLogProcessor;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 
  */
-public class ActiveMQConfigureTest extends CamelTestSupport {
+public class ActiveMQConfigureTest extends ActiveMQTestSupport {
 
     @Test
     public void testJmsTemplateUsesPoolingConnectionFactory() throws Exception {

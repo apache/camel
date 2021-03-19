@@ -30,7 +30,7 @@
     <context:annotation-config/>
 
     <bean id="vhfBatchListenerJMSConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616?jms.prefetchPolicy.all=1"/>
+        <property name="brokerURL" value="{{brokerUri}}?jms.prefetchPolicy.all=1"/>
     </bean>
 
     <bean id="vhfBatchListenerPooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
@@ -53,6 +53,7 @@
         <property name="transacted" value="true"/>
         <property name="concurrentConsumers" value="1"/>
         <property name="cacheLevelName" value="CACHE_CONSUMER"/>
+        <property name="receiveTimeout" value="50"/>
     </bean>
 
     <!-- JMS Transaction policy -->

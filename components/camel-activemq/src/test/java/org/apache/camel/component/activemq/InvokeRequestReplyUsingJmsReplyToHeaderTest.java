@@ -27,7 +27,7 @@ import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.activemq.support.ActiveMQTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +43,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 
  */
-public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSupport {
+public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends ActiveMQTestSupport {
+
     private static final transient Logger LOG = LoggerFactory
             .getLogger(InvokeRequestReplyUsingJmsReplyToHeaderTest.class);
+
     protected String replyQueueName = "queue://test.reply";
     protected Object correlationID = "ABC-123";
     protected Object groupID = "GROUP-XYZ";
@@ -95,7 +97,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
         // END SNIPPET: example
 
         return camelContext;

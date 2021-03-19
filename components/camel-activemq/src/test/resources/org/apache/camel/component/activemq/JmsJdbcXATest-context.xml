@@ -35,7 +35,7 @@
     <bean id="xidFactory" class="org.apache.geronimo.transaction.manager.XidFactoryImpl"/>
     <!-- Transaction log -->
     <bean id="transactionLog" class="org.jencks.factory.HowlLogFactoryBean">
-        <property name="logFileDir" value="target/data/howl/txlog"/>
+        <property name="logFileDir" value="{{testDirectory}}/txlog"/>
         <property name="xidFactory" ref="xidFactory"/>
     </bean>
     <bean id="jenckTransactionManager" class="org.jencks.factory.TransactionManagerFactoryBean">
@@ -43,7 +43,7 @@
     </bean>
 
     <bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQXAConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616?jms.dispatchAsync=false&amp;jms.redeliveryPolicy.maximumRedeliveries=2&amp;jms.redeliveryPolicy.initialRedeliveryDelay=100"/>
+        <property name="brokerURL" value="{{brokerUri}}?jms.dispatchAsync=false"/>
     </bean>
 
     <!-- register ActiveMQ with Geronimo to allow out of band transaction recovery/completion on a new connection
@@ -82,7 +82,7 @@
 
     <bean id="managedDataSourceWithRecovery" class="org.apache.commons.dbcp2.managed.BasicManagedDataSource" destroy-method="close">
         <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
-        <property name="url" value="jdbc:derby:target/XatestDs;create=true" />
+        <property name="url" value="jdbc:derby:{{testDirectory}}/XatestDs;create=true" />
         <property name="username" value="user" />
         <property name="password" value="secret" />
         <property name="transactionManager" ref="jenckTransactionManager" />
@@ -93,24 +93,19 @@
         <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
     </bean>
 
-    <bean id="markRollback" class="org.apache.camel.component.activemq.JmsJdbcXARollbackTest.MarkRollbackOnly"/>
-
     <!-- the route, from jms to jdbc in an xa transaction -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route id="queueToDbTransacted">
             <from uri="activemq:queue:scp_transacted"/>
             <transacted ref="required"/>
-            <bean ref="markRollback" method="enrich" />
             <convertBodyTo type="java.lang.String"/>
             <to uri="log:BeforeSettingBody?showAll=true"/>
-            <to uri="activemq:queue:scp_transacted_out"/>
             <setBody>
                 <simple>INSERT INTO SCP_INPUT_MESSAGES(messageId, messageCorrelationId, messageContent)
                     VALUES('${in.header.JMSMessageId}','${in.header.JMSCorrelationId}','${in.body}')
                 </simple>
             </setBody>
             <to uri="jdbc:managedDataSourceWithRecovery?resetAutoCommit=false"/>
-
         </route>
     </camelContext>
 
