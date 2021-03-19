@@ -43,6 +43,10 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "box":
             case "browse":
             case "cmis":
+            case "coap":
+            case "coap+tcp":
+            case "coaps":
+            case "coaps+tcp":
             case "cometd":
             case "cometds":
             case "consul":
