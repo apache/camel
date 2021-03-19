@@ -636,6 +636,20 @@ public final class RouteDefinitionHelper {
             List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<>();
 
+        // check if there is a clash
+        Iterator<OnCompletionDefinition> it
+                = ProcessorDefinitionHelper.filterTypeInOutputs(abstracts, OnCompletionDefinition.class);
+        int count = 0;
+        while (it.hasNext()) {
+            OnCompletionDefinition ocd = it.next();
+            if (ocd.isRouteScoped()) {
+                count++;
+            }
+        }
+        if (count > 1) {
+            throw new IllegalArgumentException("Only 1 onCompletion is allowed per route.");
+        }
+
         // find the route scoped onCompletions
         for (ProcessorDefinition out : abstracts) {
             if (out instanceof OnCompletionDefinition) {

@@ -50,6 +50,21 @@ exchange properties then before they would get mixed together. What we have done
 The `choice` and `filter` EIPs no longer store exchange property `Exchange.FILTER_MATCHED`.
 The reason is the information is seldom in use, and by removing we were able to optimize camel-core.
 
+=== OnCompletion EIP
+
+Camel now validates that a route has only 1 onCompletion. Previously users could have code such as:
+
+[source,java]
+----
+from("direct:start")
+        .onCompletion().onCompleteOnly().to("mock:ok").end()
+        .onCompletion().onFailureOnly().to("mock:error").end()
+        .to("mock:result");
+----
+
+Which would lead to the last onCompletion override the first, meaning that only `onCompletion().onFailureOnly()`
+would be active. Now this is checked on startup and Camel reports an error.
+
 === Modularized camel-spring
 
 The `camel-spring` component has been modularized into:

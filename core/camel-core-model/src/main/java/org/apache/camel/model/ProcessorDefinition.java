@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -3557,11 +3558,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
-        // we must remove all existing on completion definition (as they are
-        // global)
-        // and thus we are the only one as route scoped should override any
-        // global scoped
+
+        Iterator<OnCompletionDefinition> it
+                = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), OnCompletionDefinition.class);
+        // check if there is a clash
+        while (it.hasNext()) {
+            OnCompletionDefinition ocd = it.next();
+            if (ocd.isRouteScoped()) {
+                throw new IllegalArgumentException("Only 1 onCompletion is allowed per route.");
+            }
+        }
+        // remove all on completions as they would be global scoped and we add a route scoped which
+        // should override the global
         answer.removeAllOnCompletionDefinition(this);
+
+        // create new block with the onCompletion
         popBlock();
         addOutput(answer);
         pushBlock(answer);
