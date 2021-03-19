@@ -273,3 +273,5 @@ from("direct:start")
 .log("body:${body}")
 .to("mock:result");
 --------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$google-functions-starter.adoc[]
