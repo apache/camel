@@ -33,7 +33,6 @@ import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EmptyAsyncCallback;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -225,11 +224,9 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      * @return          the exchange to process by this consumer.
      */
     protected Exchange prepareExchange(Exchange exchange) {
-        // send a new copied exchange with new camel context
-        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, getEndpoint().getCamelContext());
-        // set the from endpoint
-        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(getEndpoint());
-        return newExchange;
+        // this consumer grabbed the exchange so mark its from this route
+        exchange.adapt(ExtendedExchange.class).setFromRouteId(getRouteId());
+        return exchange;
     }
 
     /**
