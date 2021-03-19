@@ -20,14 +20,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on an issue on the camel user forum.
  */
-public class InterceptSendToIssue extends ContextTestSupport {
+public class InterceptSendToIssueTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptSendTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedMessageCount(1);
