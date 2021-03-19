@@ -596,7 +596,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
             });
 
             // next step
-            return true;
+            if (hasNext && !isParallelProcessing()) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
