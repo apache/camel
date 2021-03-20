@@ -706,6 +706,23 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom strategy with the consumer to control how to handle
+         * exceptions thrown from the Kafka broker while pooling messages.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param kafkaConsumerReconnectExceptionStrategy the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder kafkaConsumerReconnectExceptionStrategy(
+                org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy kafkaConsumerReconnectExceptionStrategy) {
+            doSetProperty("kafkaConsumerReconnectExceptionStrategy", kafkaConsumerReconnectExceptionStrategy);
+            return this;
+        }
+        /**
          * Factory to use for creating KafkaManualCommit instances. This allows
          * to plugin a custom factory to create custom KafkaManualCommit
          * instances in case special logic is needed when doing manual commits
@@ -1930,6 +1947,7 @@ public interface KafkaComponentBuilderFactory {
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;
             case "topicIsPattern": getOrCreateConfiguration((KafkaComponent) component).setTopicIsPattern((boolean) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((KafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
+            case "kafkaConsumerReconnectExceptionStrategy": ((KafkaComponent) component).setKafkaConsumerReconnectExceptionStrategy((org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy) value); return true;
             case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;

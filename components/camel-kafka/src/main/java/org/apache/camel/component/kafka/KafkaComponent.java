@@ -37,6 +37,9 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
     @Metadata(autowired = true, label = "advanced")
     private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
+    @Metadata(label = "consumer,advanced")
+    private KafkaConsumerReconnectExceptionStrategy kafkaConsumerReconnectExceptionStrategy
+            = new DefaultKafkaConsumerReconnectExceptionStrategy();
 
     public KafkaComponent() {
     }
@@ -125,4 +128,16 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.kafkaClientFactory = kafkaClientFactory;
     }
 
+    public KafkaConsumerReconnectExceptionStrategy getKafkaConsumerReconnectExceptionStrategy() {
+        return kafkaConsumerReconnectExceptionStrategy;
+    }
+
+    /**
+     * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
+     * pooling messages.
+     */
+    public void setKafkaConsumerReconnectExceptionStrategy(
+            KafkaConsumerReconnectExceptionStrategy kafkaConsumerReconnectExceptionStrategy) {
+        this.kafkaConsumerReconnectExceptionStrategy = kafkaConsumerReconnectExceptionStrategy;
+    }
 }

@@ -47,7 +47,6 @@ import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.header.Header;
@@ -417,22 +416,36 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.info("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
                 Thread.currentThread().interrupt();
-            } catch (KafkaException e) {
-                // some kind of error in kafka, it may happen during
-                // unsubscribing or during normal processing
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Exception caught while polling " + threadId + " from kafka topic " + topicName
+                              + ". Deciding what to do.",
+                            e);
+                }
                 if (unsubscribing) {
+                    // some kind of error in kafka, it may happen during unsubscribing
                     getExceptionHandler().handleException("Error unsubscribing " + threadId + " from kafka topic " + topicName,
                             e);
                 } else {
-                    LOG.debug("KafkaException consuming {} from topic {} causedby {}. Will attempt to re-connect on next run",
-                            threadId, topicName, e.getMessage());
-                    reConnect = true;
+                    boolean retry = getEndpoint().getComponent().getKafkaConsumerReconnectExceptionStrategy().reconnect(e);
+                    if (retry) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "KafkaException consuming {} from topic {} causedby {}. Will attempt to re-connect on next run",
+                                    threadId, topicName, e.getMessage());
+                        }
+                        reConnect = true;
+                    } else {
+                        getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic " + topicName,
+                                e);
+                    }
                 }
-            } catch (Exception e) {
-                getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic", e);
             } finally {
-                LOG.debug("Closing {}", threadId);
-                IOHelper.close(consumer);
+                // only close if not re-connecting
+                if (!reConnect) {
+                    LOG.debug("Closing {}", threadId);
+                    IOHelper.close(consumer);
+                }
             }
 
             return reConnect;

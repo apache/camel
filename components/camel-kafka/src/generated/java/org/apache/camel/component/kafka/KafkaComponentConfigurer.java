@@ -86,6 +86,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "interceptorClasses": getOrCreateConfiguration(target).setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "kafkaclientfactory":
         case "kafkaClientFactory": target.setKafkaClientFactory(property(camelContext, org.apache.camel.component.kafka.KafkaClientFactory.class, value)); return true;
+        case "kafkaconsumerreconnectexceptionstrategy":
+        case "kafkaConsumerReconnectExceptionStrategy": target.setKafkaConsumerReconnectExceptionStrategy(property(camelContext, org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy.class, value)); return true;
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
@@ -290,6 +292,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "interceptorClasses": return java.lang.String.class;
         case "kafkaclientfactory":
         case "kafkaClientFactory": return org.apache.camel.component.kafka.KafkaClientFactory.class;
+        case "kafkaconsumerreconnectexceptionstrategy":
+        case "kafkaConsumerReconnectExceptionStrategy": return org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy.class;
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
@@ -490,6 +494,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "interceptorClasses": return getOrCreateConfiguration(target).getInterceptorClasses();
         case "kafkaclientfactory":
         case "kafkaClientFactory": return target.getKafkaClientFactory();
+        case "kafkaconsumerreconnectexceptionstrategy":
+        case "kafkaConsumerReconnectExceptionStrategy": return target.getKafkaConsumerReconnectExceptionStrategy();
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
