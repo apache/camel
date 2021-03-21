@@ -332,6 +332,9 @@ public class KafkaConsumer extends DefaultConsumer {
             // allow to re-connect thread in case we use that to retry failed messages
             boolean unsubscribing = false;
 
+            TopicPartition partition = null;
+            long partitionLastOffset = -1;
+
             try {
                 while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()
                         && retry.get() && !reconnect.get()) {
@@ -343,8 +346,8 @@ public class KafkaConsumer extends DefaultConsumer {
 
                     Iterator<TopicPartition> partitionIterator = allRecords.partitions().iterator();
                     while (partitionIterator.hasNext()) {
-                        TopicPartition partition = partitionIterator.next();
-                        long partitionLastOffset = -1;
+                        partition = partitionIterator.next();
+                        partitionLastOffset = -1;
 
                         Iterator<ConsumerRecord<Object, Object>> recordIterator = allRecords.records(partition).iterator();
                         LOG.debug("Records count {} received for partition {}", allRecords.records(partition).size(),
@@ -476,6 +479,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                     "KafkaException consuming {} from topic {} causedby {}. Will attempt again polling the same message",
                                     threadId, topicName, e.getMessage(), e);
                         }
+                        // consumer retry the same message again
                         retry.set(true);
                     } else if (PollOnError.RECONNECT == onError) {
                         LOG.warn(
@@ -486,13 +490,13 @@ public class KafkaConsumer extends DefaultConsumer {
                                     "{} consuming {} from topic {} causedby {}. Will attempt to re-connect on next run",
                                     e.getClass().getName(), threadId, topicName, e.getMessage(), e);
                         }
-                        // re-connect so the consumer can try again
+                        // re-connect so the consumer can try the same message again
                         reconnect.set(true);
-                    } else if (PollOnError.ROUTE_WITH_EXCEPTION
-                               == onError) {
+                    } else if (PollOnError.ROUTE_WITH_EXCEPTION == onError) {
                         // use bridge error handler to route with exception
                         bridge.handleException(e);
-                        // TODO: need to move offset +1
+                        // skip this poison message and seek to next message
+                        seekToNextOffset(partitionLastOffset);
                     } else if (PollOnError.DISCARD_MESSAGE == onError) {
                         // discard message
                         LOG.warn(
@@ -503,8 +507,8 @@ public class KafkaConsumer extends DefaultConsumer {
                                     "{} consuming {} from topic {} causedby {}. Will discard the message and continue to poll the next message.",
                                     e.getClass().getName(), threadId, topicName, e.getMessage(), e);
                         }
-                        // and then re-try so the consumer can continue
-                        // TODO: need to move offset +1
+                        // skip this poison message and seek to next message
+                        seekToNextOffset(partitionLastOffset);
                     } else if (PollOnError.STOP_CONSUMER == onError) {
                         // stop and terminate consumer
                         LOG.warn(
@@ -524,6 +528,28 @@ public class KafkaConsumer extends DefaultConsumer {
                 if (!retry.get() && !reconnect.get()) {
                     LOG.debug("Closing consumer {}", threadId);
                     IOHelper.close(consumer);
+                }
+            }
+        }
+
+        private void seekToNextOffset(long partitionLastOffset) {
+            boolean logged = false;
+            Set<TopicPartition> tps = (Set<TopicPartition>) consumer.assignment();
+            if (tps != null && partitionLastOffset != -1) {
+                long next = partitionLastOffset + 1;
+                LOG.info("Consumer seeking to next offset {} to continue polling next message from topic: {}", next, topicName);
+                for (TopicPartition tp : tps) {
+                    consumer.seek(tp, next);
+                }
+            } else if (tps != null) {
+                for (TopicPartition tp : tps) {
+                    long next = consumer.position(tp) + 1;
+                    if (!logged) {
+                        LOG.info("Consumer seeking to next offset {} to continue polling next message from topic: {}", next,
+                                topicName);
+                        logged = true;
+                    }
+                    consumer.seek(tp, next);
                 }
             }
         }
