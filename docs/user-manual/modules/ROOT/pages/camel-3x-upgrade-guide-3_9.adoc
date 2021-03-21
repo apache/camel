@@ -151,3 +151,16 @@ The camel-debezium-parent module has been renamed to camel-debezium-common-paren
 === camel-jclouds
 
 The camel-jclouds feature for Camel on Karaf has been removed.
+
+=== camel-kafka
+
+The camel-kafka consumer has been improved to be more roboust and have more confirations how to deal with exceptions while polling from Kafka Brokers.
+In case of any exception thrown, then previously the consumer will re-connect and therefore try again. This leads to Kafka broker would reasign the partions,
+but it may assign back the same consumer again, or another standby consumer.
+
+The new behavior is to only retry certain kind of exceptions which Kafka has marked as retryable. Any other exceptions is now
+causing Camel error handler to handle the caused exception (will log by default but you can use onException etc), and then
+skip to next offset so the next message can be polled and processed by Camel.
+
+See the updated camel-kafka documentation for more details.
+
