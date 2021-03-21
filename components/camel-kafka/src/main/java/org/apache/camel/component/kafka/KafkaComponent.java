@@ -39,8 +39,8 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
     @Metadata(autowired = true, label = "consumer,advanced")
     private PollExceptionStrategy pollExceptionStrategy;
-    @Metadata(label = "consumer", defaultValue = "ROUTE_WITH_EXCEPTION")
-    private PollOnError pollOnError = PollOnError.ROUTE_WITH_EXCEPTION;
+    @Metadata(label = "consumer", defaultValue = "ERROR_HANDLER")
+    private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
 
     public KafkaComponent() {
     }
@@ -148,6 +148,13 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
     /**
      * What to do if kafka threw an exception while polling for new messages.
+     *
+     * The default is ERROR_HANDLER.
+     *
+     * DISCARD will discard the message and continue to poll next message. ERROR_HANDLER will use Camel's error handler
+     * to process the exception, and afterwards continue to poll next message. RECONNECT will re-connect the consumer
+     * and try poll the message again RETRY will let the consumer retry polling the same message again STOP_CONSUMER
+     * will stop the consumer (have to be manually started/restarted)
      */
     public void setPollOnError(PollOnError pollOnError) {
         this.pollOnError = pollOnError;

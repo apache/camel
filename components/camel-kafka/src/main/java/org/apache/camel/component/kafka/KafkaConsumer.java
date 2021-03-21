@@ -461,7 +461,7 @@ public class KafkaConsumer extends DefaultConsumer {
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Exception caught while polling " + threadId + " from kafka topic " + topicName
-                              + ". Deciding what to do.",
+                              + " at offset " + lastProcessedOffset + ". Deciding what to do.",
                             e);
                 }
                 if (unsubscribing) {
@@ -492,12 +492,12 @@ public class KafkaConsumer extends DefaultConsumer {
                         }
                         // re-connect so the consumer can try the same message again
                         reconnect.set(true);
-                    } else if (PollOnError.ROUTE_WITH_EXCEPTION == onError) {
+                    } else if (PollOnError.ERROR_HANDLER == onError) {
                         // use bridge error handler to route with exception
                         bridge.handleException(e);
                         // skip this poison message and seek to next message
                         seekToNextOffset(partitionLastOffset);
-                    } else if (PollOnError.DISCARD_MESSAGE == onError) {
+                    } else if (PollOnError.DISCARD == onError) {
                         // discard message
                         LOG.warn(
                                 "{} consuming {} from topic {} causedby {}. Will discard the message and continue to poll the next message (stracktrace in DEBUG logging level).",

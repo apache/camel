@@ -1025,7 +1025,15 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * What to do if kafka threw an exception while polling for new
-         * messages.
+         * messages. Will by default use the value from the component
+         * configuration unless an explicit value has been configured on the
+         * endpoint level. DISCARD will discard the message and continue to poll
+         * next message. ERROR_HANDLER will use Camel's error handler to process
+         * the exception, and afterwards continue to poll next message.
+         * RECONNECT will re-connect the consumer and try poll the message again
+         * RETRY will let the consumer retry polling the same message again
+         * STOP_CONSUMER will stop the consumer (have to be manually
+         * started/restarted).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
@@ -1042,7 +1050,15 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * What to do if kafka threw an exception while polling for new
-         * messages.
+         * messages. Will by default use the value from the component
+         * configuration unless an explicit value has been configured on the
+         * endpoint level. DISCARD will discard the message and continue to poll
+         * next message. ERROR_HANDLER will use Camel's error handler to process
+         * the exception, and afterwards continue to poll next message.
+         * RECONNECT will re-connect the consumer and try poll the message again
+         * RETRY will let the consumer retry polling the same message again
+         * STOP_CONSUMER will stop the consumer (have to be manually
+         * started/restarted).
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
@@ -4380,11 +4396,11 @@ public interface KafkaEndpointBuilderFactory {
      * enum.
      */
     enum PollOnError {
-        RETRY,
+        DISCARD,
+        ERROR_HANDLER,
         RECONNECT,
-        STOP_CONSUMER,
-        ROUTE_WITH_EXCEPTION,
-        DISCARD_MESSAGE;
+        RETRY,
+        STOP_CONSUMER;
     }
 
     public interface KafkaBuilders {
