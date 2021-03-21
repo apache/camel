@@ -45,7 +45,7 @@ determines the exchange the queue will be bound to.
 == Options
 
 // component options: START
-The Spring RabbitMQ component supports 28 options, which are listed below.
+The Spring RabbitMQ component supports 29 options, which are listed below.
 
 
 
@@ -73,6 +73,7 @@ The Spring RabbitMQ component supports 28 options, which are listed below.
 | *prefetchCount* (consumer) | Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput. | 250 | int
 | *retry* (consumer) | Custom retry configuration to use. If this is configured then the other settings such as maximumRetryAttempts for retry are not in use. |  | RetryOperationsInterceptor
 | *shutdownTimeout* (consumer) | The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes they will be allowed to finish processing as long as they can finish within this timeout. | 5000 | long
+| *allowNullBody* (producer) | Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *replyTimeout* (producer) | Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging. The default value is 5 seconds. A negative value indicates an indefinite timeout. | 5000 | long
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean

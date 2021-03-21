@@ -407,6 +407,24 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow sending messages with no body. If this option is
+         * false and the message body is null, then an
+         * MessageConversionException is thrown.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder allowNullBody(
+                boolean allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -575,6 +593,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "prefetchCount": ((SpringRabbitMQComponent) component).setPrefetchCount((int) value); return true;
             case "retry": ((SpringRabbitMQComponent) component).setRetry((org.springframework.retry.interceptor.RetryOperationsInterceptor) value); return true;
             case "shutdownTimeout": ((SpringRabbitMQComponent) component).setShutdownTimeout((long) value); return true;
+            case "allowNullBody": ((SpringRabbitMQComponent) component).setAllowNullBody((boolean) value); return true;
             case "lazyStartProducer": ((SpringRabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "replyTimeout": ((SpringRabbitMQComponent) component).setReplyTimeout((long) value); return true;
             case "autowiredEnabled": ((SpringRabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
