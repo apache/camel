@@ -509,7 +509,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         }
                         // skip this poison message and seek to next message
                         seekToNextOffset(partitionLastOffset);
-                    } else if (PollOnError.STOP_CONSUMER == onError) {
+                    } else if (PollOnError.STOP == onError) {
                         // stop and terminate consumer
                         LOG.warn(
                                 "{} consuming {} from topic {} causedby {}. Will stop consumer (stacktrace in DEBUG logging level).",

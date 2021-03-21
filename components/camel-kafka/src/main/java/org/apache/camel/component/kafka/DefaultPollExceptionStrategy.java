@@ -36,7 +36,7 @@ public class DefaultPollExceptionStrategy implements PollExceptionStrategy {
             return PollOnError.RETRY;
         } else if (exception instanceof WakeupException) {
             // waking up to stop
-            return PollOnError.STOP_CONSUMER;
+            return PollOnError.STOP;
         }
 
         return pollOnError;
