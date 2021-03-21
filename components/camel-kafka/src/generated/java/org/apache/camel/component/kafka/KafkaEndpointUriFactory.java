@@ -20,7 +20,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(97);
+        Set<String> props = new HashSet<>(98);
         props.add("synchronous");
         props.add("queueBufferingMaxMessages");
         props.add("allowManualCommit");
@@ -38,6 +38,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("breakOnFirstError");
         props.add("requestRequiredAcks");
         props.add("enableIdempotence");
+        props.add("pollOnError");
         props.add("fetchWaitMaxMs");
         props.add("retries");
         props.add("maxPollRecords");

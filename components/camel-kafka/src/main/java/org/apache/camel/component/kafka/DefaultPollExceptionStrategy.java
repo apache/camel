@@ -19,16 +19,26 @@ package org.apache.camel.component.kafka;
 import org.apache.kafka.common.errors.RetriableException;
 import org.apache.kafka.common.errors.WakeupException;
 
-public class DefaultKafkaConsumerReconnectExceptionStrategy implements KafkaConsumerReconnectExceptionStrategy {
+public class DefaultPollExceptionStrategy implements PollExceptionStrategy {
+
+    private PollOnError pollOnError;
+
+    public DefaultPollExceptionStrategy() {
+    }
+
+    public DefaultPollExceptionStrategy(PollOnError pollOnError) {
+        this.pollOnError = pollOnError;
+    }
 
     @Override
-    public boolean reconnect(Exception exception) {
-        // only reconnect exceptions that indicates its recoverable or if some external thread is waking up the kafka consumer
-        if (exception instanceof RetriableException || exception instanceof WakeupException) {
-            return true;
+    public PollOnError handleException(Exception exception) {
+        if (exception instanceof RetriableException) {
+            return PollOnError.RETRY;
+        } else if (exception instanceof WakeupException) {
+            // waking up to stop
+            return PollOnError.STOP_CONSUMER;
         }
 
-        // cannot recover so let Camel exception handler deal with it
-        return false;
+        return pollOnError;
     }
 }

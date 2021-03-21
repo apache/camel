@@ -17,18 +17,18 @@
 package org.apache.camel.component.kafka;
 
 /**
- * Strategy to decide when a Kafka exception was thrown during pooling, how to handle this, either be re-connecting with
- * a new session and retry polling again, or let Camel {@link org.apache.camel.spi.ExceptionHandler} handle the
- * exception.
+ * Strategy to decide when a Kafka exception was thrown during polling, how to handle this. For example by re-connecting
+ * and polling the same message again, by stopping the consumer (allows to re-balance and let another consumer try), or
+ * to let Camel route the message as an exception which allows Camel error handling to handle the exception, or to
+ * discard this message and poll the next message.
  */
-public interface KafkaConsumerReconnectExceptionStrategy {
+public interface PollExceptionStrategy {
 
     /**
-     * Whether to reconnect or let Camel {@link org.apache.camel.spi.ExceptionHandler} handle the exception.
+     * Controls how to handle the exception while polling from Kafka.
      *
      * @param  exception the caused exception which typically would be a {@link org.apache.kafka.common.KafkaException}
-     * @return           true to re-connect, false to let Camel {@link org.apache.camel.spi.ExceptionHandler} handle the
-     *                   exception
+     * @return           how to handle the exception
      */
-    boolean reconnect(Exception exception);
+    PollOnError handleException(Exception exception);
 }

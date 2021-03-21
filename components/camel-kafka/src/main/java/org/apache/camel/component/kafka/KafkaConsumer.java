@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
@@ -38,6 +39,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
+import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -64,12 +66,24 @@ public class KafkaConsumer extends DefaultConsumer {
     // This list helps working around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
+    private final BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
+    private PollExceptionStrategy pollExceptionStrategy;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
         this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        if (endpoint.getComponent().getPollExceptionStrategy() != null) {
+            pollExceptionStrategy = endpoint.getComponent().getPollExceptionStrategy();
+        } else {
+            pollExceptionStrategy = new DefaultPollExceptionStrategy(endpoint.getConfiguration().getPollOnError());
+        }
     }
 
     @Override
@@ -140,6 +154,10 @@ public class KafkaConsumer extends DefaultConsumer {
 
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                // signal kafka consumer to stop
+                for (KafkaFetchRecords task : tasks) {
+                    task.stop();
+                }
                 int timeout = getEndpoint().getConfiguration().getShutdownTimeout();
                 LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
@@ -182,13 +200,13 @@ public class KafkaConsumer extends DefaultConsumer {
         @Override
         public void run() {
             boolean first = true;
-            boolean reConnect = true;
+            final AtomicBoolean reTry = new AtomicBoolean(true);
+            final AtomicBoolean reConnect = new AtomicBoolean(true);
 
-            while (reConnect) {
+            while (reTry.get() || reConnect.get()) {
                 try {
-                    if (!first) {
-                        // re-initialize on re-connect so we have a fresh
-                        // consumer
+                    if (first || reConnect.get()) {
+                        // re-initialize on re-connect so we have a fresh consumer
                         doInit();
                     }
                 } catch (Exception e) {
@@ -199,19 +217,25 @@ public class KafkaConsumer extends DefaultConsumer {
                 if (!first) {
                     // skip one poll timeout before trying again
                     long delay = endpoint.getConfiguration().getPollTimeoutMs();
-                    LOG.info("Reconnecting {} to topic {} after {} ms", threadId, topicName, delay);
+                    String prefix = reConnect.get() ? "Reconnecting" : "Retrying";
+                    LOG.info("{} {} to topic {} after {} ms", prefix, threadId, topicName, delay);
                     try {
                         Thread.sleep(delay);
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                        boolean stopping = endpoint.getCamelContext().isStopping();
+                        if (stopping) {
+                            LOG.info(
+                                    "CamelContext is stopping so terminating KafkaConsumer thread: {} receiving from topic: {}",
+                                    threadId, topicName);
+                            return;
+                        }
                     }
                 }
 
                 first = false;
 
-                // doRun keeps running until we either shutdown or is told to
-                // re-connect
-                reConnect = doRun();
+                // doRun keeps running until we either shutdown or is told to re-connect
+                doRun(reTry, reConnect);
             }
 
             LOG.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
@@ -238,64 +262,79 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         @SuppressWarnings("unchecked")
-        protected boolean doRun() {
+        protected void doRun(AtomicBoolean retry, AtomicBoolean reconnect) {
+            if (reconnect.get()) {
+                // on first run or reconnecting
+                doReconnectRun();
+                // set reconnect to false as its done now
+                reconnect.set(false);
+            }
+            // polling
+            doPollRun(retry, reconnect);
+        }
+
+        protected void doReconnectRun() {
+            if (topicPattern != null) {
+                LOG.info("Subscribing {} to topic pattern {}", threadId, topicName);
+                consumer.subscribe(topicPattern, this);
+            } else {
+                LOG.info("Subscribing {} to topic {}", threadId, topicName);
+                consumer.subscribe(Arrays.asList(topicName.split(",")), this);
+            }
+
+            StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
+            if (offsetRepository != null) {
+                // This poll to ensures we have an assigned partition
+                // otherwise seek won't work
+                ConsumerRecords poll = consumer.poll(100);
+
+                for (TopicPartition topicPartition : (Set<TopicPartition>) consumer.assignment()) {
+                    String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));
+                    if (offsetState != null && !offsetState.isEmpty()) {
+                        // The state contains the last read offset so you
+                        // need to seek from the next one
+                        long offset = deserializeOffsetValue(offsetState) + 1;
+                        LOG.debug("Resuming partition {} from offset {} from state", topicPartition.partition(), offset);
+                        consumer.seek(topicPartition, offset);
+                    } else {
+                        // If the init poll has returned some data of a
+                        // currently unknown topic/partition in the state
+                        // then resume from their offset in order to avoid
+                        // losing data
+                        List<ConsumerRecord<Object, Object>> partitionRecords = poll.records(topicPartition);
+                        if (!partitionRecords.isEmpty()) {
+                            long offset = partitionRecords.get(0).offset();
+                            LOG.debug("Resuming partition {} from offset {}", topicPartition.partition(), offset);
+                            consumer.seek(topicPartition, offset);
+                        }
+                    }
+                }
+            } else if (endpoint.getConfiguration().getSeekTo() != null) {
+                if (endpoint.getConfiguration().getSeekTo().equals("beginning")) {
+                    LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
+                    // This poll to ensures we have an assigned partition
+                    // otherwise seek won't work
+                    consumer.poll(Duration.ofMillis(100));
+                    consumer.seekToBeginning(consumer.assignment());
+                } else if (endpoint.getConfiguration().getSeekTo().equals("end")) {
+                    LOG.debug("{} is seeking to the end on topic {}", threadId, topicName);
+                    // This poll to ensures we have an assigned partition
+                    // otherwise seek won't work
+                    consumer.poll(Duration.ofMillis(100));
+                    consumer.seekToEnd(consumer.assignment());
+                }
+            }
+        }
+
+        protected void doPollRun(AtomicBoolean retry, AtomicBoolean reconnect) {
+            StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
+
             // allow to re-connect thread in case we use that to retry failed messages
-            boolean reConnect = false;
             boolean unsubscribing = false;
 
             try {
-                if (topicPattern != null) {
-                    LOG.info("Subscribing {} to topic pattern {}", threadId, topicName);
-                    consumer.subscribe(topicPattern, this);
-                } else {
-                    LOG.info("Subscribing {} to topic {}", threadId, topicName);
-                    consumer.subscribe(Arrays.asList(topicName.split(",")), this);
-                }
-
-                StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
-                if (offsetRepository != null) {
-                    // This poll to ensures we have an assigned partition
-                    // otherwise seek won't work
-                    ConsumerRecords poll = consumer.poll(100);
-
-                    for (TopicPartition topicPartition : (Set<TopicPartition>) consumer.assignment()) {
-                        String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));
-                        if (offsetState != null && !offsetState.isEmpty()) {
-                            // The state contains the last read offset so you
-                            // need to seek from the next one
-                            long offset = deserializeOffsetValue(offsetState) + 1;
-                            LOG.debug("Resuming partition {} from offset {} from state", topicPartition.partition(), offset);
-                            consumer.seek(topicPartition, offset);
-                        } else {
-                            // If the init poll has returned some data of a
-                            // currently unknown topic/partition in the state
-                            // then resume from their offset in order to avoid
-                            // losing data
-                            List<ConsumerRecord<Object, Object>> partitionRecords = poll.records(topicPartition);
-                            if (!partitionRecords.isEmpty()) {
-                                long offset = partitionRecords.get(0).offset();
-                                LOG.debug("Resuming partition {} from offset {}", topicPartition.partition(), offset);
-                                consumer.seek(topicPartition, offset);
-                            }
-                        }
-                    }
-                } else if (endpoint.getConfiguration().getSeekTo() != null) {
-                    if (endpoint.getConfiguration().getSeekTo().equals("beginning")) {
-                        LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
-                        // This poll to ensures we have an assigned partition
-                        // otherwise seek won't work
-                        consumer.poll(Duration.ofMillis(100));
-                        consumer.seekToBeginning(consumer.assignment());
-                    } else if (endpoint.getConfiguration().getSeekTo().equals("end")) {
-                        LOG.debug("{} is seeking to the end on topic {}", threadId, topicName);
-                        // This poll to ensures we have an assigned partition
-                        // otherwise seek won't work
-                        consumer.poll(Duration.ofMillis(100));
-                        consumer.seekToEnd(consumer.assignment());
-                    }
-                }
-
-                while (isRunAllowed() && !reConnect && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
+                while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()
+                        && retry.get() && !reconnect.get()) {
 
                     // flag to break out processing on the first exception
                     boolean breakOnErrorHit = false;
@@ -391,11 +430,11 @@ public class KafkaConsumer extends DefaultConsumer {
 
                     if (breakOnErrorHit) {
                         // force re-connect
-                        reConnect = true;
+                        reconnect.set(true);
                     }
                 }
 
-                if (!reConnect) {
+                if (!reconnect.get()) {
                     if (isAutoCommitEnabled()) {
                         if ("async".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
                             LOG.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
@@ -427,28 +466,66 @@ public class KafkaConsumer extends DefaultConsumer {
                     getExceptionHandler().handleException("Error unsubscribing " + threadId + " from kafka topic " + topicName,
                             e);
                 } else {
-                    boolean retry = getEndpoint().getComponent().getKafkaConsumerReconnectExceptionStrategy().reconnect(e);
-                    if (retry) {
+                    PollOnError onError = pollExceptionStrategy.handleException(e);
+                    if (PollOnError.RETRY == onError) {
+                        LOG.warn(
+                                "{} consuming {} from topic {} causedby {}. Will attempt again polling the same message (stacktrace in DEBUG logging level)",
+                                e.getClass().getName(), threadId, topicName, e.getMessage());
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(
-                                    "KafkaException consuming {} from topic {} causedby {}. Will attempt to re-connect on next run",
-                                    threadId, topicName, e.getMessage());
+                                    "KafkaException consuming {} from topic {} causedby {}. Will attempt again polling the same message",
+                                    threadId, topicName, e.getMessage(), e);
                         }
-                        reConnect = true;
-                    } else {
-                        getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic " + topicName,
-                                e);
+                        retry.set(true);
+                    } else if (PollOnError.RECONNECT == onError) {
+                        LOG.warn(
+                                "{} consuming {} from topic {} causedby {}. Will attempt to re-connect on next run (stacktrace in DEBUG logging level)",
+                                e.getClass().getName(), threadId, topicName, e.getMessage());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "{} consuming {} from topic {} causedby {}. Will attempt to re-connect on next run",
+                                    e.getClass().getName(), threadId, topicName, e.getMessage(), e);
+                        }
+                        // re-connect so the consumer can try again
+                        reconnect.set(true);
+                    } else if (PollOnError.ROUTE_WITH_EXCEPTION
+                               == onError) {
+                        // use bridge error handler to route with exception
+                        bridge.handleException(e);
+                        // TODO: need to move offset +1
+                    } else if (PollOnError.DISCARD_MESSAGE == onError) {
+                        // discard message
+                        LOG.warn(
+                                "{} consuming {} from topic {} causedby {}. Will discard the message and continue to poll the next message (stracktrace in DEBUG logging level).",
+                                e.getClass().getName(), threadId, topicName, e.getMessage());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "{} consuming {} from topic {} causedby {}. Will discard the message and continue to poll the next message.",
+                                    e.getClass().getName(), threadId, topicName, e.getMessage(), e);
+                        }
+                        // and then re-try so the consumer can continue
+                        // TODO: need to move offset +1
+                    } else if (PollOnError.STOP_CONSUMER == onError) {
+                        // stop and terminate consumer
+                        LOG.warn(
+                                "{} consuming {} from topic {} causedby {}. Will stop consumer (stacktrace in DEBUG logging level).",
+                                e.getClass().getName(), threadId, topicName, e.getMessage());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "{} consuming {} from topic {} causedby {}. Will stop consumer.",
+                                    e.getClass().getName(), threadId, topicName, e.getMessage(), e);
+                        }
+                        retry.set(false);
+                        reconnect.set(false);
                     }
                 }
             } finally {
-                // only close if not re-connecting
-                if (!reConnect) {
-                    LOG.debug("Closing {}", threadId);
+                // only close if not retry or re-connecting
+                if (!retry.get() && !reconnect.get()) {
+                    LOG.debug("Closing consumer {}", threadId);
                     IOHelper.close(consumer);
                 }
             }
-
-            return reConnect;
         }
 
         private void commitOffset(
@@ -468,7 +545,13 @@ public class KafkaConsumer extends DefaultConsumer {
             }
         }
 
-        private void shutdown() {
+        void stop() {
+            // As advised in the KAFKA-1894 ticket, calling this wakeup method
+            // breaks the infinite loop
+            consumer.wakeup();
+        }
+
+        void shutdown() {
             // As advised in the KAFKA-1894 ticket, calling this wakeup method
             // breaks the infinite loop
             consumer.wakeup();

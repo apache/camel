@@ -1024,6 +1024,40 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * What to do if kafka threw an exception while polling for new
+         * messages.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param pollOnError the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder pollOnError(PollOnError pollOnError) {
+            doSetProperty("pollOnError", pollOnError);
+            return this;
+        }
+        /**
+         * What to do if kafka threw an exception while polling for new
+         * messages.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param pollOnError the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder pollOnError(String pollOnError) {
+            doSetProperty("pollOnError", pollOnError);
+            return this;
+        }
+        /**
          * The timeout used when polling the KafkaConsumer.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -4339,6 +4373,18 @@ public interface KafkaEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>org.apache.camel.component.kafka.PollOnError</code>
+     * enum.
+     */
+    enum PollOnError {
+        RETRY,
+        RECONNECT,
+        STOP_CONSUMER,
+        ROUTE_WITH_EXCEPTION,
+        DISCARD_MESSAGE;
     }
 
     public interface KafkaBuilders {

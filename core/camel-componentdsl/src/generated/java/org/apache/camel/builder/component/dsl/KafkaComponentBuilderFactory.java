@@ -606,6 +606,24 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * What to do if kafka threw an exception while polling for new
+         * messages.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param pollOnError the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder pollOnError(
+                org.apache.camel.component.kafka.PollOnError pollOnError) {
+            doSetProperty("pollOnError", pollOnError);
+            return this;
+        }
+        /**
          * The timeout used when polling the KafkaConsumer.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -706,23 +724,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom strategy with the consumer to control how to handle
-         * exceptions thrown from the Kafka broker while pooling messages.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param kafkaConsumerReconnectExceptionStrategy the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder kafkaConsumerReconnectExceptionStrategy(
-                org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy kafkaConsumerReconnectExceptionStrategy) {
-            doSetProperty("kafkaConsumerReconnectExceptionStrategy", kafkaConsumerReconnectExceptionStrategy);
-            return this;
-        }
-        /**
          * Factory to use for creating KafkaManualCommit instances. This allows
          * to plugin a custom factory to create custom KafkaManualCommit
          * instances in case special logic is needed when doing manual commits
@@ -740,6 +741,23 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder kafkaManualCommitFactory(
                 org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
+            return this;
+        }
+        /**
+         * To use a custom strategy with the consumer to control how to handle
+         * exceptions thrown from the Kafka broker while pooling messages.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollExceptionStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollExceptionStrategy the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder pollExceptionStrategy(
+                org.apache.camel.component.kafka.PollExceptionStrategy pollExceptionStrategy) {
+            doSetProperty("pollExceptionStrategy", pollExceptionStrategy);
             return this;
         }
         /**
@@ -1941,14 +1959,15 @@ public interface KafkaComponentBuilderFactory {
             case "maxPollRecords": getOrCreateConfiguration((KafkaComponent) component).setMaxPollRecords((java.lang.Integer) value); return true;
             case "offsetRepository": getOrCreateConfiguration((KafkaComponent) component).setOffsetRepository((org.apache.camel.spi.StateRepository) value); return true;
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;
+            case "pollOnError": getOrCreateConfiguration((KafkaComponent) component).setPollOnError((org.apache.camel.component.kafka.PollOnError) value); return true;
             case "pollTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setPollTimeoutMs((java.lang.Long) value); return true;
             case "seekTo": getOrCreateConfiguration((KafkaComponent) component).setSeekTo((java.lang.String) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setSessionTimeoutMs((java.lang.Integer) value); return true;
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;
             case "topicIsPattern": getOrCreateConfiguration((KafkaComponent) component).setTopicIsPattern((boolean) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((KafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
-            case "kafkaConsumerReconnectExceptionStrategy": ((KafkaComponent) component).setKafkaConsumerReconnectExceptionStrategy((org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy) value); return true;
             case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
+            case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;

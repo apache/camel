@@ -86,8 +86,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "interceptorClasses": getOrCreateConfiguration(target).setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "kafkaclientfactory":
         case "kafkaClientFactory": target.setKafkaClientFactory(property(camelContext, org.apache.camel.component.kafka.KafkaClientFactory.class, value)); return true;
-        case "kafkaconsumerreconnectexceptionstrategy":
-        case "kafkaConsumerReconnectExceptionStrategy": target.setKafkaConsumerReconnectExceptionStrategy(property(camelContext, org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy.class, value)); return true;
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
@@ -136,6 +134,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": getOrCreateConfiguration(target).setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": getOrCreateConfiguration(target).setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollexceptionstrategy":
+        case "pollExceptionStrategy": target.setPollExceptionStrategy(property(camelContext, org.apache.camel.component.kafka.PollExceptionStrategy.class, value)); return true;
+        case "pollonerror":
+        case "pollOnError": getOrCreateConfiguration(target).setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
         case "pollTimeoutMs": getOrCreateConfiguration(target).setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "producerbatchsize":
@@ -228,7 +230,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"kafkaClientFactory"};
+        return new String[]{"kafkaClientFactory","pollExceptionStrategy"};
     }
 
     @Override
@@ -292,8 +294,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "interceptorClasses": return java.lang.String.class;
         case "kafkaclientfactory":
         case "kafkaClientFactory": return org.apache.camel.component.kafka.KafkaClientFactory.class;
-        case "kafkaconsumerreconnectexceptionstrategy":
-        case "kafkaConsumerReconnectExceptionStrategy": return org.apache.camel.component.kafka.KafkaConsumerReconnectExceptionStrategy.class;
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
@@ -342,6 +342,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "pollexceptionstrategy":
+        case "pollExceptionStrategy": return org.apache.camel.component.kafka.PollExceptionStrategy.class;
+        case "pollonerror":
+        case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
         case "pollTimeoutMs": return java.lang.Long.class;
         case "producerbatchsize":
@@ -494,8 +498,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "interceptorClasses": return getOrCreateConfiguration(target).getInterceptorClasses();
         case "kafkaclientfactory":
         case "kafkaClientFactory": return target.getKafkaClientFactory();
-        case "kafkaconsumerreconnectexceptionstrategy":
-        case "kafkaConsumerReconnectExceptionStrategy": return target.getKafkaConsumerReconnectExceptionStrategy();
         case "kafkamanualcommitfactory":
         case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
@@ -544,6 +546,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": return getOrCreateConfiguration(target).getPartitionKey();
         case "partitioner": return getOrCreateConfiguration(target).getPartitioner();
+        case "pollexceptionstrategy":
+        case "pollExceptionStrategy": return target.getPollExceptionStrategy();
+        case "pollonerror":
+        case "pollOnError": return getOrCreateConfiguration(target).getPollOnError();
         case "polltimeoutms":
         case "pollTimeoutMs": return getOrCreateConfiguration(target).getPollTimeoutMs();
         case "producerbatchsize":

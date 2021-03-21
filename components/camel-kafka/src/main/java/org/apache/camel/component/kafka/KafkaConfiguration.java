@@ -140,6 +140,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
+    @UriParam(label = "consumer")
+    private PollOnError pollOnError;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -1724,5 +1726,16 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public PollOnError getPollOnError() {
+        return pollOnError;
+    }
+
+    /**
+     * What to do if kafka threw an exception while polling for new messages.
+     */
+    public void setPollOnError(PollOnError pollOnError) {
+        this.pollOnError = pollOnError;
     }
 }

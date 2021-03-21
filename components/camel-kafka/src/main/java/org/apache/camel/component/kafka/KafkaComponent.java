@@ -37,9 +37,10 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
     @Metadata(autowired = true, label = "advanced")
     private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
-    @Metadata(label = "consumer,advanced")
-    private KafkaConsumerReconnectExceptionStrategy kafkaConsumerReconnectExceptionStrategy
-            = new DefaultKafkaConsumerReconnectExceptionStrategy();
+    @Metadata(autowired = true, label = "consumer,advanced")
+    private PollExceptionStrategy pollExceptionStrategy;
+    @Metadata(label = "consumer", defaultValue = "ROUTE_WITH_EXCEPTION")
+    private PollOnError pollOnError = PollOnError.ROUTE_WITH_EXCEPTION;
 
     public KafkaComponent() {
     }
@@ -63,6 +64,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         KafkaConfiguration copy = getConfiguration().copy();
         endpoint.setConfiguration(copy);
         endpoint.getConfiguration().setTopic(remaining);
+        endpoint.getConfiguration().setPollOnError(pollOnError);
 
         setProperties(endpoint, parameters);
 
@@ -128,16 +130,26 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.kafkaClientFactory = kafkaClientFactory;
     }
 
-    public KafkaConsumerReconnectExceptionStrategy getKafkaConsumerReconnectExceptionStrategy() {
-        return kafkaConsumerReconnectExceptionStrategy;
+    public PollExceptionStrategy getPollExceptionStrategy() {
+        return pollExceptionStrategy;
     }
 
     /**
      * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
      * pooling messages.
      */
-    public void setKafkaConsumerReconnectExceptionStrategy(
-            KafkaConsumerReconnectExceptionStrategy kafkaConsumerReconnectExceptionStrategy) {
-        this.kafkaConsumerReconnectExceptionStrategy = kafkaConsumerReconnectExceptionStrategy;
+    public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
+        this.pollExceptionStrategy = pollExceptionStrategy;
+    }
+
+    public PollOnError getPollOnError() {
+        return pollOnError;
+    }
+
+    /**
+     * What to do if kafka threw an exception while polling for new messages.
+     */
+    public void setPollOnError(PollOnError pollOnError) {
+        this.pollOnError = pollOnError;
     }
 }
