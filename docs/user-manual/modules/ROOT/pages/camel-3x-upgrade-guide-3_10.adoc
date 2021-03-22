@@ -6,6 +6,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.9 to 3.10
 
+=== API changes
+
+The method `concurrentTasks` on `org.apache.camel.support.DefaultScheduledPollConsumerScheduler ` has been renamed to `concurrentConsumers`.
+
 === camel-scheduler
 
 The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.
