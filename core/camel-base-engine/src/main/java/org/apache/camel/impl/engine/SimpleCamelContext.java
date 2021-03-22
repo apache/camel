@@ -439,7 +439,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
             return result.get();
         } else {
             throw new IllegalArgumentException(
-                    "Cannot find XMLRoutesDefinitionLoader on classpath. Add either camel-xml-io or camel-xml-jaxb to classpath.");
+                    "Cannot find XMLRoutesDefinitionLoader on classpath. Add either camel-xml-io-dsl or camel-xml-jaxb-dsl to classpath.");
         }
     }
 
