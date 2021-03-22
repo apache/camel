@@ -29,8 +29,6 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrenttasks":
-        case "concurrentTasks": target.setConcurrentTasks(property(camelContext, int.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -41,6 +39,8 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.setPoolSize(property(camelContext, int.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -74,8 +74,6 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "concurrenttasks":
-        case "concurrentTasks": return int.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -86,6 +84,8 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "initialDelay": return long.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "poolsize":
+        case "poolSize": return int.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "runlogginglevel":
@@ -120,8 +120,6 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "concurrenttasks":
-        case "concurrentTasks": return target.getConcurrentTasks();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -132,6 +130,8 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "initialDelay": return target.getInitialDelay();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
+        case "poolsize":
+        case "poolSize": return target.getPoolSize();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":

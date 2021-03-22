@@ -1,0 +1,19 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.9 to 3.10
+
+=== camel-scheduler
+
+The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.
+The scheduler has also been fixed to only schedule triggering by one, and not as mistakenly by causing
+concurrent triggering which causes routing mistakes.
+
+The option configures the pool size of the scheduled thread pool used by the scheduler.
+
+If the scheduler thread is being blocked by anywhere in the downstream routing, and you want the scheduler
+to schedule with a fixed interval, you can use the Threads EIP as queue for pending tasks.
+

@@ -33,7 +33,7 @@ public class SchedulerComponent extends DefaultComponent {
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
     @Metadata(defaultValue = "1", label = "scheduler")
-    private int concurrentTasks = 1;
+    private int poolSize = 1;
 
     public SchedulerComponent() {
     }
@@ -41,34 +41,34 @@ public class SchedulerComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SchedulerEndpoint answer = new SchedulerEndpoint(uri, this, remaining);
-        answer.setConcurrentTasks(getConcurrentTasks());
+        answer.setPoolSize(getPoolSize());
         setProperties(answer, parameters);
         return answer;
     }
 
-    public int getConcurrentTasks() {
-        return concurrentTasks;
+    public int getPoolSize() {
+        return poolSize;
     }
 
     /**
-     * Number of threads used by the scheduling thread pool.
+     * Number of core threads in the thread pool used by the scheduling thread pool.
      * <p/>
      * Is by default using a single thread
      */
-    public void setConcurrentTasks(int concurrentTasks) {
-        this.concurrentTasks = concurrentTasks;
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
 
     protected ScheduledExecutorService addConsumer(SchedulerConsumer consumer) {
         String name = consumer.getEndpoint().getName();
-        int concurrentTasks = consumer.getEndpoint().getConcurrentTasks();
+        int poolSize = consumer.getEndpoint().getPoolSize();
 
         ScheduledExecutorService answer;
         synchronized (executors) {
             answer = executors.get(name);
             if (answer == null) {
                 answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "scheduler://" + name,
-                        concurrentTasks);
+                        poolSize);
                 executors.put(name, answer);
                 // store new reference counter
                 refCounts.put(name, new AtomicInteger(1));

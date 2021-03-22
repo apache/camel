@@ -39,13 +39,11 @@ public class TwoSchedulerConcurrentTasksOneRouteTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // number of concurrent task a thread pool should have
+                // number of core threads a thread pool should have
                 SchedulerComponent comp = context.getComponent("scheduler", SchedulerComponent.class);
-                comp.setConcurrentTasks(2);
+                comp.setPoolSize(2);
 
-                // let this route scheduler use all 2 concurrent tasks at the
-                // same time
-                from("scheduler://foo?delay=250&scheduler.concurrentTasks=2").process(new Processor() {
+                from("scheduler://foo?delay=250").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         if (sleep.compareAndSet(true, false)) {
