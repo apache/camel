@@ -21,6 +21,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringRabbitMQComponent target = (SpringRabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "amqpadmin":
         case "amqpAdmin": target.setAmqpAdmin(property(camelContext, org.springframework.amqp.core.AmqpAdmin.class, value)); return true;
         case "autodeclare":
@@ -88,6 +90,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
         case "amqpadmin":
         case "amqpAdmin": return org.springframework.amqp.core.AmqpAdmin.class;
         case "autodeclare":
@@ -151,6 +155,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringRabbitMQComponent target = (SpringRabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return target.isAllowNullBody();
         case "amqpadmin":
         case "amqpAdmin": return target.getAmqpAdmin();
         case "autodeclare":

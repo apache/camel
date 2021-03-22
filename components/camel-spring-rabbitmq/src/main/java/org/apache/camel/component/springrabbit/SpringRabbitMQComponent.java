@@ -109,6 +109,9 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "consumer", defaultValue = "true",
               description = "Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured.")
     private boolean rejectAndDontRequeue = true;
+    @Metadata(label = "producer", defaultValue = "false",
+              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
+    private boolean allowNullBody;
 
     @Override
     protected void doInit() throws Exception {
@@ -118,7 +121,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
             setHeaderFilterStrategy(new SpringRabbitMQHeaderFilterStrategy());
         }
         if (messageConverter == null) {
-            messageConverter = new DefaultMessageConverter(getCamelContext());
+            messageConverter = new DefaultMessageConverter(getCamelContext(), allowNullBody);
         }
         if (messagePropertiesConverter == null) {
             messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext(), getHeaderFilterStrategy());
@@ -344,5 +347,13 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setRejectAndDontRequeue(boolean rejectAndDontRequeue) {
         this.rejectAndDontRequeue = rejectAndDontRequeue;
+    }
+
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
     }
 }
