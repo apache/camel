@@ -46,10 +46,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransactedConsumeTest.class);
-
     static AtomicLong firstConsumed = new AtomicLong();
     static AtomicLong consumed = new AtomicLong();
+
+    private static final Logger LOG = LoggerFactory.getLogger(TransactedConsumeTest.class);
+
     BrokerService broker;
     int messageCount = 10000;
 

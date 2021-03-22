@@ -51,9 +51,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class JmsJdbcXARollbackTest extends ActiveMQSpringTestSupport {
 
+    static TransactionManager transactionManager;
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXARollbackTest.class);
 
-    static TransactionManager transactionManager;
     BrokerService broker;
     int messageCount;
 
