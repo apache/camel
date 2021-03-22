@@ -41,7 +41,7 @@ public class MultiCastParallelAndStreamCachingWithEncryptionTest extends Context
             public void configure() throws Exception {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory(fileUri());
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(5000L);
                 context.getStreamCachingStrategy().setSpoolCipher("AES/CTR/NoPadding");
 
