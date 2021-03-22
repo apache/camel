@@ -140,6 +140,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
+    @UriParam(label = "consumer")
+    private PollOnError pollOnError;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -1724,5 +1726,24 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public PollOnError getPollOnError() {
+        return pollOnError;
+    }
+
+    /**
+     * What to do if kafka threw an exception while polling for new messages.
+     *
+     * Will by default use the value from the component configuration unless an explicit value has been configured on
+     * the endpoint level.
+     *
+     * DISCARD will discard the message and continue to poll next message. ERROR_HANDLER will use Camel's error handler
+     * to process the exception, and afterwards continue to poll next message. RECONNECT will re-connect the consumer
+     * and try poll the message again RETRY will let the consumer retry polling the same message again STOP will stop
+     * the consumer (have to be manually started/restarted if the consumer should be able to consume messages again)
+     */
+    public void setPollOnError(PollOnError pollOnError) {
+        this.pollOnError = pollOnError;
     }
 }

@@ -37,6 +37,10 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
     @Metadata(autowired = true, label = "advanced")
     private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
+    @Metadata(autowired = true, label = "consumer,advanced")
+    private PollExceptionStrategy pollExceptionStrategy;
+    @Metadata(label = "consumer", defaultValue = "ERROR_HANDLER")
+    private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
 
     public KafkaComponent() {
     }
@@ -60,6 +64,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         KafkaConfiguration copy = getConfiguration().copy();
         endpoint.setConfiguration(copy);
         endpoint.getConfiguration().setTopic(remaining);
+        endpoint.getConfiguration().setPollOnError(pollOnError);
 
         setProperties(endpoint, parameters);
 
@@ -125,4 +130,33 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.kafkaClientFactory = kafkaClientFactory;
     }
 
+    public PollExceptionStrategy getPollExceptionStrategy() {
+        return pollExceptionStrategy;
+    }
+
+    /**
+     * To use a custom strategy with the consumer to control how to handle exceptions thrown from the Kafka broker while
+     * pooling messages.
+     */
+    public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
+        this.pollExceptionStrategy = pollExceptionStrategy;
+    }
+
+    public PollOnError getPollOnError() {
+        return pollOnError;
+    }
+
+    /**
+     * What to do if kafka threw an exception while polling for new messages.
+     *
+     * The default is ERROR_HANDLER.
+     *
+     * DISCARD will discard the message and continue to poll next message. ERROR_HANDLER will use Camel's error handler
+     * to process the exception, and afterwards continue to poll next message. RECONNECT will re-connect the consumer
+     * and try poll the message again RETRY will let the consumer retry polling the same message again STOP will stop
+     * the consumer (have to be manually started/restarted if the consumer should be able to consume messages again)
+     */
+    public void setPollOnError(PollOnError pollOnError) {
+        this.pollOnError = pollOnError;
+    }
 }

@@ -124,6 +124,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollonerror":
+        case "pollOnError": target.getConfiguration().setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
         case "pollTimeoutMs": target.getConfiguration().setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "producerbatchsize":
@@ -318,6 +320,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "pollonerror":
+        case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
         case "pollTimeoutMs": return java.lang.Long.class;
         case "producerbatchsize":
@@ -513,6 +517,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return target.getConfiguration().getPartitionKey();
         case "partitioner": return target.getConfiguration().getPartitioner();
+        case "pollonerror":
+        case "pollOnError": return target.getConfiguration().getPollOnError();
         case "polltimeoutms":
         case "pollTimeoutMs": return target.getConfiguration().getPollTimeoutMs();
         case "producerbatchsize":

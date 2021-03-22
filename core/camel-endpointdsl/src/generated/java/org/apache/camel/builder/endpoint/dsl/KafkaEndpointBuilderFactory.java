@@ -1024,6 +1024,56 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * What to do if kafka threw an exception while polling for new
+         * messages. Will by default use the value from the component
+         * configuration unless an explicit value has been configured on the
+         * endpoint level. DISCARD will discard the message and continue to poll
+         * next message. ERROR_HANDLER will use Camel's error handler to process
+         * the exception, and afterwards continue to poll next message.
+         * RECONNECT will re-connect the consumer and try poll the message again
+         * RETRY will let the consumer retry polling the same message again STOP
+         * will stop the consumer (have to be manually started/restarted if the
+         * consumer should be able to consume messages again).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param pollOnError the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder pollOnError(PollOnError pollOnError) {
+            doSetProperty("pollOnError", pollOnError);
+            return this;
+        }
+        /**
+         * What to do if kafka threw an exception while polling for new
+         * messages. Will by default use the value from the component
+         * configuration unless an explicit value has been configured on the
+         * endpoint level. DISCARD will discard the message and continue to poll
+         * next message. ERROR_HANDLER will use Camel's error handler to process
+         * the exception, and afterwards continue to poll next message.
+         * RECONNECT will re-connect the consumer and try poll the message again
+         * RETRY will let the consumer retry polling the same message again STOP
+         * will stop the consumer (have to be manually started/restarted if the
+         * consumer should be able to consume messages again).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param pollOnError the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder pollOnError(String pollOnError) {
+            doSetProperty("pollOnError", pollOnError);
+            return this;
+        }
+        /**
          * The timeout used when polling the KafkaConsumer.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -4339,6 +4389,18 @@ public interface KafkaEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>org.apache.camel.component.kafka.PollOnError</code>
+     * enum.
+     */
+    enum PollOnError {
+        DISCARD,
+        ERROR_HANDLER,
+        RECONNECT,
+        RETRY,
+        STOP;
     }
 
     public interface KafkaBuilders {
