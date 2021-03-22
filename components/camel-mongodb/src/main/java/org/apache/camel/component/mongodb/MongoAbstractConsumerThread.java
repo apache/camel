@@ -64,26 +64,39 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     @Override
     public void run() {
         stoppedLatch = new CountDownLatch(1);
-        while (keepRunning) {
-            doRun();
-            // regenerate the cursor, if reading failed for some reason
-            if (keepRunning) {
-                cursor.close();
-                regeneratingCursor();
-
-                if (cursorRegenerationDelayEnabled) {
-                    try {
-                        Thread.sleep(cursorRegenerationDelay);
-                    } catch (InterruptedException ignored) {
+        try {
+            while (keepRunning) {
+                try {
+                    doRun();
+                } catch (Exception e) {
+                    if (keepRunning) {
+                        log.warn("Exception from consuming from MongoDB caused by " + e.getMessage()
+                                 + ". Will try again on next poll.");
+                    } else {
+                        log.warn("Exception from consuming from MongoDB caused by " + e.getMessage()
+                                 + ". ConsumerThread will be stopped.",
+                                e);
                     }
                 }
+                // regenerate the cursor, if reading failed for some reason
+                if (keepRunning) {
+                    cursor.close();
+                    regeneratingCursor();
 
-                cursor = initializeCursor();
+                    if (cursorRegenerationDelayEnabled) {
+                        try {
+                            Thread.sleep(cursorRegenerationDelay);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+
+                    cursor = initializeCursor();
+                }
             }
+        } finally {
+            stopped = true;
+            stoppedLatch.countDown();
         }
-
-        stopped = true;
-        stoppedLatch.countDown();
     }
 
     protected void stop() throws Exception {

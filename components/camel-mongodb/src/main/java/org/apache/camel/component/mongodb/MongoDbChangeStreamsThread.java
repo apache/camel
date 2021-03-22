@@ -96,9 +96,9 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             // it throws exception when cursor is closed in another thread
             // there is no way to stop hasNext() before closing cursor
             if (keepRunning) {
-                throw e;
-            } else {
                 log.debug("Exception from MongoDB, will regenerate cursor.", e);
+            } else {
+                throw e;
             }
         }
     }
