@@ -40,7 +40,6 @@ public class CamelSpringTestContextLoaderTestExecutionListener extends AbstractT
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
-        CamelSpringTestHelper.setTestClass(testContext.getTestClass());
         CamelSpringTestHelper.setTestContext(testContext);
     }
 }

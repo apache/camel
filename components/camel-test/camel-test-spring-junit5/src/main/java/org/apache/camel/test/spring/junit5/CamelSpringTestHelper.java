@@ -39,7 +39,6 @@ public final class CamelSpringTestHelper {
 
     private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<>();
     private static ThreadLocal<String> originalExcludeRoutesValue = new ThreadLocal<>();
-    private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<>();
     private static ThreadLocal<TestContext> testContext = new ThreadLocal<>();
 
     private CamelSpringTestHelper() {
@@ -62,15 +61,15 @@ public final class CamelSpringTestHelper {
     }
 
     public static Class<?> getTestClass() {
-        return testClazz.get();
-    }
-
-    public static void setTestClass(Class<?> testClass) {
-        testClazz.set(testClass);
+        return getTestContext().getTestClass();
     }
 
     public static Method getTestMethod() {
-        return testContext.get().getTestMethod();
+        return getTestContext().getTestMethod();
+    }
+
+    public static TestContext getTestContext() {
+        return testContext.get();
     }
 
     public static void setTestContext(TestContext context) {
