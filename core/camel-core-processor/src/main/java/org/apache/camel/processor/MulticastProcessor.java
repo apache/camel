@@ -64,6 +64,7 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
@@ -72,6 +73,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -310,10 +312,42 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     protected void schedule(Runnable runnable) {
         if (isParallelProcessing()) {
-            executorService.submit(() -> reactiveExecutor.schedule(runnable));
+            Runnable task = prepareParallelTask(runnable);
+            executorService.submit(() -> reactiveExecutor.schedule(task));
         } else {
             reactiveExecutor.schedule(runnable);
         }
+    }
+
+    private Runnable prepareParallelTask(Runnable runnable) {
+        Runnable answer = runnable;
+
+        // if MDC is enabled we need to propagate the information
+        // to the sub task which is executed on another thread from the thread pool
+        if (camelContext.isUseMDCLogging()) {
+            String pattern = camelContext.getMDCLoggingKeysPattern();
+            Map<String, String> mdc = MDC.getCopyOfContextMap();
+            if (mdc != null && !mdc.isEmpty()) {
+                answer = () -> {
+                    try {
+                        if (pattern == null || "*".equals(pattern)) {
+                            mdc.forEach(MDC::put);
+                        } else {
+                            final String[] patterns = pattern.split(",");
+                            mdc.forEach((k, v) -> {
+                                if (PatternHelper.matchPatterns(k, patterns)) {
+                                    MDC.put(k, v);
+                                }
+                            });
+                        }
+                    } finally {
+                        runnable.run();
+                    }
+                };
+            }
+        }
+
+        return answer;
     }
 
     protected abstract class MulticastTask implements Runnable {
@@ -329,6 +363,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final AtomicInteger nbAggregated = new AtomicInteger();
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
+        final Map<String, String> mdc;
 
         MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             this.original = original;
@@ -341,11 +376,26 @@ public class MulticastProcessor extends AsyncProcessorSupport
             if (timeout > 0) {
                 schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             }
+            // if MDC is enabled we must make a copy in this constructor when the task
+            // is created by the caller thread, and then propagate back when run is called
+            // which can happen from another thread
+            if (isParallelProcessing() && original.getContext().isUseMDCLogging()) {
+                this.mdc = MDC.getCopyOfContextMap();
+            } else {
+                this.mdc = null;
+            }
         }
 
         @Override
         public String toString() {
             return "MulticastTask";
+        }
+
+        @Override
+        public void run() {
+            if (this.mdc != null) {
+                this.mdc.forEach(MDC::put);
+            }
         }
 
         protected void aggregate() {
@@ -415,6 +465,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
         @Override
         public void run() {
+            super.run();
+
             try {
                 if (done.get()) {
                     return;
@@ -509,6 +561,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
         @Override
         public void run() {
+            super.run();
+
             boolean next = true;
             while (next) {
                 try {

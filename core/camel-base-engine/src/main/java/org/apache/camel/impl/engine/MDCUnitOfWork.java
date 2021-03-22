@@ -206,15 +206,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         return "MDCUnitOfWork";
     }
 
-    private static boolean matchPatterns(String value, String[] patterns) {
-        for (String pattern : patterns) {
-            if (PatternHelper.matchPattern(value, pattern)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * {@link AsyncCallback} which preserves {@link org.slf4j.MDC} when the asynchronous routing engine is being used.
      */
@@ -247,7 +238,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
                     } else {
                         final String[] patterns = pattern.split(",");
                         mdc.forEach((k, v) -> {
-                            if (matchPatterns(k, patterns)) {
+                            if (PatternHelper.matchPatterns(k, patterns)) {
                                 custom.put(k, v);
                             }
                         });
