@@ -108,7 +108,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         scheduler.setUseFixedDelay(sqsConsumer.isUseFixedDelay());
         scheduler.setInitialDelay(sqsConsumer.getInitialDelay());
         scheduler.setTimeUnit(sqsConsumer.getTimeUnit());
-        scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
+        scheduler.setConcurrentConsumers(configuration.getConcurrentConsumers());
         sqsConsumer.setScheduler(scheduler);
         return sqsConsumer;
     }

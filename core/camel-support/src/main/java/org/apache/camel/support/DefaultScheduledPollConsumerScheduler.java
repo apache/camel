@@ -48,6 +48,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     private volatile List<ScheduledFuture<?>> futures = new ArrayList<>();
     private Runnable task;
     private int poolSize = 1;
+    private int concurrentConsumers = 1;
 
     private long initialDelay = -1;
     private long delay = -1;
@@ -111,6 +112,14 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
     public int getPoolSize() {
         return poolSize;
     }
@@ -170,16 +179,20 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
                             currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
-                futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
-                        getTimeUnit()));
+                for (int i = 0; i < concurrentConsumers; i++) {
+                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
+                            getTimeUnit()));
+                }
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
                             currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
-                futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
-                        getTimeUnit()));
+                for (int i = 0; i < concurrentConsumers; i++) {
+                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
+                            getTimeUnit()));
+                }
             }
         }
     }
