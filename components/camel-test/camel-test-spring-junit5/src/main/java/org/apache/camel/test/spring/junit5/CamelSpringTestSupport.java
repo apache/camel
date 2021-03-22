@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
@@ -297,18 +300,30 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
         @Override
         public InputStream getInputStream() throws IOException {
-            StringWriter sw = new StringWriter();
-            try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
-                char[] buf = new char[32768];
-                int l;
-                while ((l = r.read(buf)) > 0) {
-                    sw.write(buf, 0, l);
+            if (properties.size() > 0) {
+                StringWriter sw = new StringWriter();
+                try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
+                    char[] buf = new char[32768];
+                    int l;
+                    while ((l = r.read(buf)) > 0) {
+                        sw.write(buf, 0, l);
+                    }
                 }
+                PropertiesParser parser = new DefaultPropertiesParser();
+                String before = sw.toString();
+                String p = properties.keySet().stream().map(Pattern::quote)
+                        .collect(Collectors.joining("|", Pattern.quote("{{") + "(", ")" + Pattern.quote("}}")));
+                Matcher m = Pattern.compile(p).matcher(before);
+                StringBuffer sb = new StringBuffer(before.length());
+                while (m.find()) {
+                    m.appendReplacement(sb, properties.get(m.group(1)));
+                }
+                m.appendTail(sb);
+                String after = sb.toString();
+                return new ByteArrayInputStream(after.getBytes(StandardCharsets.UTF_8));
+            } else {
+                return delegate.getInputStream();
             }
-            PropertiesParser parser = new DefaultPropertiesParser();
-            String before = sw.toString();
-            String after = parser.parseUri(before, properties::get, false, true);
-            return new ByteArrayInputStream(after.getBytes(StandardCharsets.UTF_8));
         }
     }
 }
