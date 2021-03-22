@@ -120,4 +120,14 @@ public interface Component extends CamelContextAware, Service {
         return null;
     }
 
+    /**
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
+     */
+    default boolean isAutowiredEnabled() {
+        return true;
+    }
+
 }
