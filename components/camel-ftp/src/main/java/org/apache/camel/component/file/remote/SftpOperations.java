@@ -928,7 +928,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         LOG.trace("storeFile({})", name);
 
-        boolean answer = false;
+        boolean answer;
         String currentDir = null;
         String path = FileUtil.onlyPath(name);
         String targetName = name;
