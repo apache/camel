@@ -60,6 +60,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
     public static final String TEST_CLASS_NAME_PROPERTY = "testClassName";
     public static final String TEST_CLASS_SIMPLE_NAME_PROPERTY = "testClassSimpleName";
+    public static final String TEST_DIRECTORY_PROPERTY = "testDirectory";
 
     protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<>();
     protected static Object lock = new Object();
@@ -237,13 +238,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         return SpringCamelContext.springCamelContext(applicationContext, false);
     }
 
-<<<<<<< HEAD
-=======
-    public static final String TEST_CLASS_NAME_PROPERTY = "testClassName";
-    public static final String TEST_CLASS_SIMPLE_NAME_PROPERTY = "testClassSimpleName";
-    public static final String TEST_DIRECTORY_PROPERTY = "testDirectory";
-
->>>>>>> 12c7ea28844 (Make camel-jms tests run in parallel)
     public AbstractXmlApplicationContext newAppContext(String configLocation) throws BeansException {
         return newAppContext(configLocation, getClass(), getTranslationProperties());
     }
