@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -72,6 +74,8 @@ public class JsonPathEngine {
         if (options != null) {
             builder.options(options);
         }
+        builder.jsonProvider(new JacksonJsonProvider());
+        builder.mappingProvider(new JacksonMappingProvider());
         if (suppressExceptions) {
             builder.options(SUPPRESS_EXCEPTIONS);
         }
