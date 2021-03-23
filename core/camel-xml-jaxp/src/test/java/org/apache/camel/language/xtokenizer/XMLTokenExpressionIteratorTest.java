@@ -436,7 +436,7 @@ public class XMLTokenExpressionIteratorTest {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator(path, mode);
         xtei.setNamespaces(nsmap);
 
-        Iterator<?> it = xtei.createIterator(in, "utf-8");
+        Iterator<?> it = xtei.createIterator(in);
         List<String> results = new ArrayList<>();
         while (it.hasNext()) {
             results.add((String) it.next());
