@@ -140,8 +140,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
-    @UriParam(label = "consumer")
-    private PollOnError pollOnError;
+    @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER")
+    private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)

@@ -41,7 +41,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private PollExceptionStrategy pollExceptionStrategy;
 
     public KafkaComponent() {
-        configuration.setPollOnError(PollOnError.ERROR_HANDLER);
     }
 
     public KafkaComponent(CamelContext context) {
