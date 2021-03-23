@@ -42,6 +42,8 @@ public final class AvailablePortFinder {
 
         void release();
 
+        String toString();
+
         default void afterAll(ExtensionContext context) throws Exception {
             release();
         }
@@ -78,6 +80,10 @@ public final class AvailablePortFinder {
                 public void release() {
                     AvailablePortFinder.this.release(this);
                 }
+
+                public String toString() {
+                    return Integer.toString(getPort());
+                }
             };
             Port prv = INSTANCE.portMapping.putIfAbsent(port, p);
             if (prv == null) {
@@ -99,6 +105,10 @@ public final class AvailablePortFinder {
                     @Override
                     public void release() {
                         AvailablePortFinder.this.release(this);
+                    }
+
+                    public String toString() {
+                        return Integer.toString(getPort());
                     }
                 };
                 Port prv = INSTANCE.portMapping.putIfAbsent(port, p);

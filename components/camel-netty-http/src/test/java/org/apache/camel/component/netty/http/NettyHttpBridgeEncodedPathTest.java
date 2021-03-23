@@ -22,21 +22,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
-    private int port1;
-    private int port2;
-    private int port3;
-    private int port4;
+    AvailablePortFinder.Port port1 = port;
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
     public void testEncodedQuery() throws Exception {
@@ -68,11 +73,6 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
-                port1 = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-                port4 = getNextPort();
 
                 errorHandler(noErrorHandler());
 
