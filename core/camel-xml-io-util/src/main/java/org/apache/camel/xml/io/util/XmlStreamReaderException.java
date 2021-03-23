@@ -33,7 +33,7 @@
  */
 
 // CHECKSTYLE:OFF
-package org.apache.camel.xml.io;
+package org.apache.camel.xml.io.util;
 
 import java.io.IOException;
 import java.io.InputStream;
