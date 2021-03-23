@@ -301,6 +301,14 @@ public final class FileUtil {
         // need to normalize path before compacting
         path = normalizePath(path);
 
+        // preserve scheme
+        String scheme = null;
+        if (hasScheme(path)) {
+            int pos = path.indexOf(':');
+            scheme = path.substring(0, pos);
+            path = path.substring(pos + 1);
+        }
+
         // preserve ending slash if given in input path
         boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
 
@@ -332,6 +340,10 @@ public final class FileUtil {
 
         // build path based on stack
         StringBuilder sb = new StringBuilder();
+        if (scheme != null) {
+            sb.append(scheme);
+            sb.append(":");
+        }
 
         for (int i = 0; i < cntSlashsAtStart; i++) {
             sb.append(separator);
@@ -552,6 +564,20 @@ public final class FileUtil {
                 throw e;
             }
         }
+    }
+
+    /**
+     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
+     *
+     * @param  uri the URI
+     * @return     <tt>true</tt> if the URI starts with a scheme
+     */
+    private static boolean hasScheme(String uri) {
+        if (uri == null) {
+            return false;
+        }
+
+        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:");
     }
 
 }
