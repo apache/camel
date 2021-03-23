@@ -23,9 +23,12 @@ import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathTest extends CamelTestSupport {
 
     @Test

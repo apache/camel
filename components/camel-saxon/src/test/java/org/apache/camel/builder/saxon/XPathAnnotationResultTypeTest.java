@@ -24,9 +24,12 @@ import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
 

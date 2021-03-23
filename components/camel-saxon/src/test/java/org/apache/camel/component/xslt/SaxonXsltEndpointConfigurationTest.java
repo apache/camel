@@ -24,7 +24,7 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
 import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,7 +60,7 @@ public class SaxonXsltEndpointConfigurationTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xslt/SaxonXsltEndpointConfigurationTest.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext("SaxonXsltEndpointConfigurationTest.xml");
     }
 }

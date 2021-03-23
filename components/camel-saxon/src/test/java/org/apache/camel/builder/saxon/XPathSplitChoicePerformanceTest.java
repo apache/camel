@@ -34,8 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -86,7 +84,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data?noop=true")
+                from(fileUri("?noop=true"))
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 log.info("Starting to process file");
@@ -153,13 +151,12 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
         };
     }
 
-    public static void createDataFile(Logger log, int size) throws Exception {
-        deleteDirectory("target/data");
-        createDirectory("target/data");
+    public void createDataFile(Logger log, int size) throws Exception {
+        deleteTestDirectory();
 
         log.info("Creating data file ...");
 
-        File file = new File("target/data/data.xml");
+        File file = testDirectory(true).resolve("data.xml").toFile();
         FileOutputStream fos = new FileOutputStream(file, true);
         fos.write("<orders>\n".getBytes());
 
