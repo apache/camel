@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
@@ -245,6 +246,10 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         return newAppContext(configLocation, getClass(), getTranslationProperties());
     }
 
+    public AbstractXmlApplicationContext newAppContext(String... configLocations) throws BeansException {
+        return newAppContext(configLocations, getClass(), getTranslationProperties());
+    }
+
     protected Map<String, String> getTranslationProperties() {
         return getTranslationProperties(getClass());
     }
@@ -266,14 +271,22 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         return new MyXmlApplicationContext(configLocation, clazz, props);
     }
 
+    public static MyXmlApplicationContext newAppContext(String[] configLocations, Class<?> clazz, Map<String, String> props) {
+        return new MyXmlApplicationContext(configLocations, clazz, props);
+    }
+
     public static class MyXmlApplicationContext extends AbstractXmlApplicationContext {
         private final Resource[] configResources;
 
         public MyXmlApplicationContext(String configLocation, Class<?> clazz, Map<String, String> properties) {
+            this(new String[] { configLocation }, clazz, properties);
+        }
+
+        public MyXmlApplicationContext(String[] configLocations, Class<?> clazz, Map<String, String> properties) {
             super(null);
-            configResources = new Resource[] {
-                    new TranslatedResource(new ClassPathResource(configLocation, clazz), properties)
-            };
+            configResources = Stream.of(configLocations)
+                    .map(loc -> new TranslatedResource(new ClassPathResource(loc, clazz), properties))
+                    .toArray(Resource[]::new);
             refresh();
         }
 

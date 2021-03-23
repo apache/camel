@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpringTestSupport {
 
@@ -32,8 +31,8 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
+        return newAppContext(
+                "JdbcSpringDataSource.xml", "JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
     }
 
     @Test

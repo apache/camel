@@ -45,6 +45,7 @@ public class SqlEndpointTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
+                .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();

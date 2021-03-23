@@ -40,7 +40,7 @@ public class SqlProducerNamedParametersTest extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        db = new EmbeddedDatabaseBuilder()
+        db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();

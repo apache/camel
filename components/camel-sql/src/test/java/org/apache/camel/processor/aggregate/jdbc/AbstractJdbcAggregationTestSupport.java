@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTestSupport {
 
@@ -61,7 +60,8 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
+        return newAppContext(
+                "JdbcSpringDataSource.xml", "JdbcSpringDataSource.xml");
     }
 
     protected Exchange repoAddAndGet(String key, Exchange exchange) {

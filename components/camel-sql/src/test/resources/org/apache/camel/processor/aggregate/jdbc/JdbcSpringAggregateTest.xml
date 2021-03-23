@@ -29,8 +29,6 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <import resource="JdbcSpringDataSource.xml" />
-
     <!-- aggregate the messages using this strategy -->
     <bean id="myAggregatorStrategy" class="org.apache.camel.processor.aggregate.jdbc.AbstractJdbcAggregationTestSupport$MyAggregationStrategy"/>
 
