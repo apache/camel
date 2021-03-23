@@ -34,7 +34,7 @@ Out of the box camel provides the following implementations:
 
 On Spring/Blueprint all the _Service Registry_ instances are automatically added to the camel context.
 
-== Serice Registry Usage
+== Service Registry Usage
 
 The _Service Registry SPI_ is leveraged by the following new implementations:
 
