@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
@@ -41,16 +42,16 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
     public void testGet() throws Exception {
         final com.google.api.services.drive.model.ChangeList list = requestBody("direct://LIST", null);
         List<Change> items = list.getItems();
-        if (!items.isEmpty()) {
-            Change change = items.get(0);
-            Long id = change.getId();
+        assumeFalse(items.isEmpty());
 
-            // using String message body for single parameter "changeId"
-            final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
+        Change change = items.get(0);
+        Long id = change.getId();
 
-            assertNotNull(result, "get result");
-            LOG.debug("get: " + result);
-        }
+        // using String message body for single parameter "changeId"
+        final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
+
+        assertNotNull(result, "get result");
+        LOG.debug("get: " + result);
     }
 
     @Test
