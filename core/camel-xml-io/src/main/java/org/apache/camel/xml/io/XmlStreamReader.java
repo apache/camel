@@ -53,8 +53,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Character stream that handles (or at least attemtps to) all the necessary
- * Voodo to figure out the charset encoding of the XML document within the
+ * Character stream that handles (or at least attempts to) all the necessary
+ * Voodoo to figure out the charset encoding of the XML document within the
  * stream.
  * <p>
  * IMPORTANT: This class is not related in any way to the org.xml.sax.XMLReader.
