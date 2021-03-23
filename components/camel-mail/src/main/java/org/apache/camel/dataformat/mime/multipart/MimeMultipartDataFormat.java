@@ -119,6 +119,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                     part.setHeader(CONTENT_TYPE, ct);
                     if (!contentType.match("text/*") && binaryContent) {
                         part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
+                    } else {
+                        setContentTransferEncoding(part, contentType);
                     }
                     // Set headers to the attachment
                     for (String headerName : attachment.getHeaderNames()) {
@@ -156,7 +158,6 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                         headers.add(h.getName());
                     }
                 }
-                mm.saveChanges();
             }
             mm.writeTo(stream, headers.toArray(new String[0]));
         } else {
@@ -183,6 +184,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private void writeBodyPart(byte[] bodyContent, Part part, ContentType contentType) throws MessagingException {
         DataSource ds = new ByteArrayDataSource(bodyContent, contentType.toString());
         part.setDataHandler(new DataHandler(ds));
+        setContentTransferEncoding(part, contentType);
+    }
+
+    private void setContentTransferEncoding(Part part, ContentType contentType) throws MessagingException {
         part.setHeader(CONTENT_TYPE, contentType.toString());
         if (contentType.match("text/*")) {
             part.setHeader(CONTENT_TRANSFER_ENCODING, "8bit");
