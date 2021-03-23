@@ -37,7 +37,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     @BindToRegistry("sharedBoss")
     private EventLoopGroup sharedWorkerGroup = new NettyServerBossPoolBuilder().withBossCount(20).build();
     private int before;
-    protected AvailablePortFinder.Port[] ports;
+    private AvailablePortFinder.Port[] ports;
 
     @Override
     protected boolean useJmx() {

@@ -42,10 +42,10 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnsharableCodecsConflictsTest.class);
 
-    private Processor processor = new P();
-
     @RegisterExtension
     protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
+    private Processor processor = new P();
 
     @BindToRegistry("length-decoder")
     private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);

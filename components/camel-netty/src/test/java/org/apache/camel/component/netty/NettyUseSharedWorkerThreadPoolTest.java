@@ -27,16 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
+    @RegisterExtension
+    protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
     @BindToRegistry("sharedServerPool")
     private EventLoopGroup sharedWorkerServerGroup
             = new NettyWorkerPoolBuilder().withWorkerCount(2).withName("NettyServer").build();
     @BindToRegistry("sharedClientPool")
     private EventLoopGroup sharedWorkerClientGroup
             = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
-    @RegisterExtension
-    protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-    @RegisterExtension
-    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
 
     @Override
     protected boolean useJmx() {
