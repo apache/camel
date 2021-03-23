@@ -20,7 +20,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +35,85 @@ public final class AvailablePortFinder {
 
     private static final Logger LOG = LoggerFactory.getLogger(AvailablePortFinder.class);
 
+    private static final AvailablePortFinder INSTANCE = new AvailablePortFinder();
+
+    public interface Port extends AfterAllCallback, AutoCloseable {
+        int getPort();
+
+        void release();
+
+        default void afterAll(ExtensionContext context) throws Exception {
+            release();
+        }
+
+        @Override
+        default void close() {
+            release();
+        }
+    }
+
+    private final Map<Integer, Port> portMapping = new ConcurrentHashMap<>();
+
     /**
      * Creates a new instance.
      */
     private AvailablePortFinder() {
         // Do nothing
+    }
+
+    public static Port find() {
+        return INSTANCE.findPort();
+    }
+
+    synchronized Port findPort() {
+        while (true) {
+            final int port = probePort(0);
+            Port p = new Port() {
+                @Override
+                public int getPort() {
+                    return port;
+                }
+
+                @Override
+                public void release() {
+                    AvailablePortFinder.this.release(this);
+                }
+            };
+            Port prv = INSTANCE.portMapping.putIfAbsent(port, p);
+            if (prv == null) {
+                return p;
+            }
+        }
+    }
+
+    synchronized Port findPort(int fromPort, int toPort) {
+        for (int i = fromPort; i <= toPort; i++) {
+            try {
+                final int port = probePort(i);
+                Port p = new Port() {
+                    @Override
+                    public int getPort() {
+                        return port;
+                    }
+
+                    @Override
+                    public void release() {
+                        AvailablePortFinder.this.release(this);
+                    }
+                };
+                Port prv = INSTANCE.portMapping.putIfAbsent(port, p);
+                if (prv == null) {
+                    return p;
+                }
+            } catch (IllegalStateException e) {
+                // do nothing, let's try the next port
+            }
+        }
+        throw new IllegalStateException("Cannot find free port");
+    }
+
+    synchronized void release(Port port) {
+        INSTANCE.portMapping.remove(port.getPort(), port);
     }
 
     /**
@@ -45,7 +123,9 @@ public final class AvailablePortFinder {
      * @return                       the available port
      */
     public static int getNextAvailable() {
-        return probePort(0);
+        try (Port port = INSTANCE.findPort()) {
+            return port.getPort();
+        }
     }
 
     /**
@@ -58,14 +138,9 @@ public final class AvailablePortFinder {
      * @return                       the available port
      */
     public static int getNextAvailable(int fromPort, int toPort) {
-        for (int i = fromPort; i <= toPort; i++) {
-            try {
-                return probePort(i);
-            } catch (IllegalStateException e) {
-                // do nothing, let's try the next port
-            }
+        try (Port port = INSTANCE.findPort(fromPort, toPort)) {
+            return port.getPort();
         }
-        throw new IllegalStateException("Cannot find free port");
     }
 
     /**

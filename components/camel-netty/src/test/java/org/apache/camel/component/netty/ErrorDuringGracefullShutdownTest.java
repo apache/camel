@@ -21,13 +21,16 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Regression test for CAMEL-9527
  */
+@Isolated
 class ErrorDuringGracefullShutdownTest extends BaseNettyTest {
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
