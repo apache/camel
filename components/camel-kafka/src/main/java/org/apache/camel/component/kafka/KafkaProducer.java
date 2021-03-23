@@ -189,8 +189,6 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     String innerTopic = msgTopic;
                     Object innerKey = null;
                     Integer innerPartitionKey = null;
-                    boolean hasPartitionKey = false;
-                    boolean hasMessageKey = false;
 
                     Object value = next;
                     Exchange ex = null;
@@ -214,18 +212,15 @@ public class KafkaProducer extends DefaultAsyncProducer {
                             innerPartitionKey = endpoint.getConfiguration().getPartitionKey() != null
                                     ? endpoint.getConfiguration().getPartitionKey()
                                     : innerMmessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
-                            hasPartitionKey = innerPartitionKey != null;
                         }
 
                         if (innerMmessage.getHeader(KafkaConstants.KEY) != null) {
                             innerKey = endpoint.getConfiguration().getKey() != null
                                     ? endpoint.getConfiguration().getKey() : innerMmessage.getHeader(KafkaConstants.KEY);
-
-                            final Object messageKey = innerKey != null
-                                    ? tryConvertToSerializedType(innerExchange, innerKey,
-                                            endpoint.getConfiguration().getKeySerializer())
-                                    : null;
-                            hasMessageKey = messageKey != null;
+                            if (innerKey != null) {
+                                innerKey = tryConvertToSerializedType(innerExchange, innerKey,
+                                        endpoint.getConfiguration().getKeySerializer());
+                            }
                         }
 
                         ex = innerExchange == null ? exchange : innerExchange;
@@ -234,17 +229,9 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
                     }
 
-                    if (hasPartitionKey && hasMessageKey) {
-                        return new KeyValueHolder(
-                                body,
-                                new ProducerRecord(innerTopic, innerPartitionKey, null, innerKey, value, propagatedHeaders));
-                    } else if (hasMessageKey) {
-                        return new KeyValueHolder(
-                                body, new ProducerRecord(innerTopic, null, null, innerKey, value, propagatedHeaders));
-                    } else {
-                        return new KeyValueHolder(
-                                body, new ProducerRecord(innerTopic, null, null, null, value, propagatedHeaders));
-                    }
+                    return new KeyValueHolder(
+                            body,
+                            new ProducerRecord(innerTopic, innerPartitionKey, null, innerKey, value, propagatedHeaders));
                 }
 
                 @Override
@@ -258,27 +245,19 @@ public class KafkaProducer extends DefaultAsyncProducer {
         final Integer partitionKey = endpoint.getConfiguration().getPartitionKey() != null
                 ? endpoint.getConfiguration().getPartitionKey()
                 : exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
-        final boolean hasPartitionKey = partitionKey != null;
 
         // endpoint take precedence over header configuration
         Object key = endpoint.getConfiguration().getKey() != null
                 ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
-        final Object messageKey = key != null
-                ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializer()) : null;
-        final boolean hasMessageKey = messageKey != null;
+        if (key != null) {
+            key = tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializer());
+        }
 
         // must convert each entry of the iterator into the value according to
         // the serializer
         Object value = tryConvertToSerializedType(exchange, msg, endpoint.getConfiguration().getValueSerializer());
 
-        ProducerRecord record;
-        if (hasPartitionKey && hasMessageKey) {
-            record = new ProducerRecord(topic, partitionKey, null, key, value, propagatedHeaders);
-        } else if (hasMessageKey) {
-            record = new ProducerRecord(topic, null, null, key, value, propagatedHeaders);
-        } else {
-            record = new ProducerRecord(topic, null, null, null, value, propagatedHeaders);
-        }
+        ProducerRecord record = new ProducerRecord(topic, partitionKey, null, key, value, propagatedHeaders);
         return Collections.singletonList(new KeyValueHolder<Object, ProducerRecord>((Object) exchange, record)).iterator();
     }
 
