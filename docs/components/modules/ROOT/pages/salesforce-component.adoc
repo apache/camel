@@ -160,7 +160,14 @@ results) using result link returned from the 'query' API
 * composite - submit up to 25 possibly related REST requests and receive individual responses. It's also possible to use "raw" composite without limitation.
 * composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
 * composite-batch - submit a composition of requests in batch
-* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns the  information about archived Task and Event records.
+* compositeRetrieveSObjectCollections - Retrieve one or more records of the same object type.
+* compositeCreateSObjectCollections - Add up to 200 records, returning a list of SaveSObjectResult objects.
+* compositeUpdateSObjectCollections - Update up to 200 records, returning a list of SaveSObjectResult objects.
+* compositeUpsertSObjectCollections - Create or update (upsert) up to 200 records based on an external ID field.
+Returns a list of UpsertSObjectResult objects.
+* compositeDeleteSObjectCollections - Delete up to 200 records, returning a list of SaveSObjectResult objects.
+* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns
+the  information about archived Task and Event records.
 * getBlobField - Retrieves the specified blob field from an individual record.
 * apexCall - Executes a user defined APEX REST API call.
 
@@ -669,6 +676,60 @@ With this approach, you have the complete control on the Salesforce request.
 `compositeMethod` option to override to the other supported value, `GET`, which returns a list of
 other available composite resources.
 
+== Using Composite SObject Collections
+
+The SObject Collections API executes actions on multiple records in one request. Use sObject Collections to reduce the number of round-trips between the client and server. The entire request counts as a single call toward your API limits. This resource is available in API version 42.0 and later. `SObject` records (aka DTOs) supplied to these operations must be instances of subclasses of `AbstractDescribedSObjectBase`. See the Maven Plugin section for information on generating these DTO classes. These operations serialize supplied DTOs to JSON.
+
+=== compositeRetrieveSObjectCollections
+Retrieve one or more records of the same object type.
+|===
+| Parameter | Type | Description | Default | Required
+
+| ids | List of String or comma-separated string | A list of one or more IDs of the objects to return. All IDs must belong to the same object type. | | x
+| fields | List of String or comma-separated string | A list of fields to include in the response. The field names you specify must be valid, and you must have read-level permissions to each field. | | x
+| sObjectName | String | Type of SObject, e.g. `Account` | | x
+| sObjectClass | String | Fully-qualified class name of DTO class to use for deserializing the response. | | Required if `sObjectName` parameter does not resolve to a class that exists in the package specified by the `package` option.
+|===
+
+=== compositeCreateSObjectCollections
+Add up to 200 records, returning a list of SaveSObjectResult objects. Mixed SObject types is supported.
+|===
+| Parameter | Type | Description| Default| Required
+
+| request body | List of `SObject` | A list of SObjects to create | | x
+| allOrNone | boolean | Indicates whether to roll back the entire request when the creation of any object fails (true) or to continue with the independent creation of other objects in the request. | false |
+|===
+
+=== compositeUpdateSObjectCollections
+Update up to 200 records, returning a list of SaveSObjectResult objects. Mixed SObject types is supported.
+|===
+| Parameter | Type | Description | Default | Required
+
+| request body | List of `SObject` | A list of SObjects to update | | x
+| allOrNone | boolean | Indicates whether to roll back the entire request when the update of any object fails (true) or to continue with the independent update of other objects in the request. | false |
+|===
+
+=== compositeUpsertSObjectCollections
+Create or update (upsert) up to 200 records based on an external ID field, returning a list of UpsertSObjectResult
+objects. Mixed SObject types is not supported.
+|===
+| Parameter | Type | Description | Default | Required
+
+| request body | List of `SObject` | A list of SObjects to upsert | | x
+| allOrNone | boolean |  Indicates whether to roll back the entire request when the upsert of any object fails (true) or to continue with the independent upsert of other objects in the request. | false |
+| sObjectName | String | Type of SObject, e.g. `Account` | | x
+| sObjectIdName | String | Name of External ID field | | x
+|===
+
+=== compositeDeleteSObjectCollections
+Delete up to 200 records, returning a list of DeleteSObjectResult objects. Mixed SObject types is supported.
+|===
+| Parameter | Type | Description | Default | Required
+
+| ids | List of String or comma-separated string | A list of up to 200 IDs of objects to be deleted. | | x
+| allOrNone | boolean | Indicates whether to roll back the entire request when the upsert of any object fails (true) or to continue with the independent upsert of other objects in the request. | false |
+|===
+
 
 ==  Sending null values to salesforce
 
@@ -717,14 +778,8 @@ for details on how to generate the DTO.
 
 == Options
 
-
-
-
-
-
-
 // component options: START
-The Salesforce component supports 79 options, which are listed below.
+The Salesforce component supports 80 options, which are listed below.
 
 
 
@@ -782,6 +837,7 @@ The Salesforce component supports 79 options, which are listed below.
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *allOrNone* (producer) | Composite API option to indicate to rollback all records if any are not successful. | false | boolean
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -837,12 +893,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operationName* | The operation to use. There are 59 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob |  | OperationName
+| *operationName* | The operation to use. There are 64 enums and the value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite, compositeRetrieveSObjectCollections, compositeCreateSObjectCollections, compositeUpdateSObjectCollections, compositeUpsertSObjectCollections, compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob, bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob, bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults, bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob, bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob, bulk2DeleteQueryJob |  | OperationName
 | *topicName* | The name of the topic/channel to use |  | String
 |===
 
 
-=== Query Parameters (49 parameters):
+=== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -894,6 +950,7 @@ with the following path and query parameters:
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *allOrNone* (producer) | Composite API option to indicate to rollback all records if any are not successful. | false | boolean
 | *apexUrl* (producer) | APEX method URL |  | String
 | *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean

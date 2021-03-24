@@ -873,6 +873,22 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Composite API option to indicate to rollback all records if any are
+         * not successful.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allOrNone the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder allOrNone(boolean allOrNone) {
+            doSetProperty("allOrNone", allOrNone);
+            return this;
+        }
+        /**
          * APEX method URL.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1423,6 +1439,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;
             case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;

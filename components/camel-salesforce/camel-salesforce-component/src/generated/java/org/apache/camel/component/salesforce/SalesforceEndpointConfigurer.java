@@ -21,6 +21,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": target.getConfiguration().setAllOrNone(property(camelContext, boolean.class, value)); return true;
         case "apexmethod":
         case "apexMethod": target.getConfiguration().setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "apexqueryparams":
@@ -124,6 +126,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return boolean.class;
         case "apexmethod":
         case "apexMethod": return java.lang.String.class;
         case "apexqueryparams":
@@ -228,6 +232,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return target.getConfiguration().isAllOrNone();
         case "apexmethod":
         case "apexMethod": return target.getConfiguration().getApexMethod();
         case "apexqueryparams":
