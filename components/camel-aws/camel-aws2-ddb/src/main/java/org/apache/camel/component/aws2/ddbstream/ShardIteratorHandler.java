@@ -58,6 +58,10 @@ class ShardIteratorHandler {
         if (currentShardIterator == null) {
             ListStreamsResponse streamsListResult = getClient().listStreams(
                     ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
+            if (streamsListResult.streams().isEmpty()) {
+                throw new IllegalArgumentException(
+                    "There is no stream associated with table configured. Please create one.");
+            }
             final String streamArn = streamsListResult.streams().get(0).streamArn(); // XXX
             // assumes
             // there
