@@ -144,8 +144,18 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         // ensure folder is open
-        if (!folder.isOpen()) {
-            folder.open(Folder.READ_WRITE);
+        try {
+            if (!folder.isOpen()) {
+                folder.open(Folder.READ_WRITE);
+            }
+        } catch (MessagingException e) {
+            // some kind of connectivity error, so lets re-create connection
+            String msg = "Error opening mail folder due to " + e.getMessage() + ". Will re-create connection on next poll.";
+            LOG.warn(msg);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(msg, e);
+            }
+            disconnect();
         }
 
         try {
@@ -193,20 +203,24 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         // should we disconnect, the header can override the configuration
         boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
         if (disconnect) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
-            }
-            try {
-                store.close();
-            } catch (Exception e) {
-                LOG.debug("Could not disconnect from {}. This exception is ignored.",
-                        getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
-            }
-            store = null;
-            folder = null;
+            disconnect();
         }
 
         return polledMessages;
+    }
+
+    private void disconnect() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
+        }
+        try {
+            store.close();
+        } catch (Exception e) {
+            LOG.debug("Could not disconnect from {}. This exception is ignored.",
+                    getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
+        }
+        store = null;
+        folder = null;
     }
 
     @Override
