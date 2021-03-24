@@ -35,11 +35,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
 
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
-
     @Produce("direct:start")
     protected ProducerTemplate sender;
+
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testGETClientRoute() throws Exception {

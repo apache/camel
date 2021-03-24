@@ -42,14 +42,14 @@ import org.slf4j.LoggerFactory;
 @Component("jetty")
 public class JettyHttpComponent9 extends JettyHttpComponent {
 
+    public static Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
+
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent9.class);
 
     @Override
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
         return new JettyHttpEndpoint9(this, endpointUri.toString(), httpUri);
     }
-
-    public static Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
 
     @Override
     protected AbstractConnector createConnectorJettyInternal(
