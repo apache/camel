@@ -137,7 +137,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String compositeMethod;
     @UriParam(label = "producer", defaultValue = "false", description = "Composite API option to indicate" +
                                                                         " to rollback all records if any are not successful.")
-    private boolean allOrNone = false;
+    private boolean allOrNone;
     @UriParam(label = "producer")
     private String apexUrl;
     @UriParam

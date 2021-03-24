@@ -28,7 +28,7 @@ public class SObjectCollection implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean allOrNone = false;
+    private boolean allOrNone;
     private List<AbstractDescribedSObjectBase> records = new ArrayList<>();
 
     public boolean isAllOrNone() {
