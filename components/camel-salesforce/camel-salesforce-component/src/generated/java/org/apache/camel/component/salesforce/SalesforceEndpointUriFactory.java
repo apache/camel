@@ -20,7 +20,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(51);
+        Set<String> props = new HashSet<>(52);
         props.add("initialReplayIdMap");
         props.add("notifyForOperations");
         props.add("sObjectQuery");
@@ -70,6 +70,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("operationName");
         props.add("pkChunking");
         props.add("notFoundBehaviour");
+        props.add("allOrNone");
         props.add("topicName");
         props.add("notifyForOperationDelete");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

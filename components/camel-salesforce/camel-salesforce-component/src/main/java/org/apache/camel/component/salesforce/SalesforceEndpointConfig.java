@@ -52,6 +52,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public static final String SOBJECT_NAME = "sObjectName";
     public static final String SOBJECT_ID = "sObjectId";
+    public static final String SOBJECT_IDS = "sObjectIds";
     public static final String SOBJECT_FIELDS = "sObjectFields";
     public static final String SOBJECT_EXT_ID_NAME = "sObjectIdName";
     public static final String SOBJECT_EXT_ID_VALUE = "sObjectIdValue";
@@ -63,6 +64,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String APEX_URL = "apexUrl";
     public static final String COMPOSITE_METHOD = "compositeMethod";
     public static final String LIMIT = "limit";
+    public static final String ALL_OR_NONE = "allOrNone";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -133,6 +135,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String apexMethod;
     @UriParam(label = "producer")
     private String compositeMethod;
+    @UriParam(label = "producer", defaultValue = "false", description = "Composite API option to indicate" +
+                                                                        " to rollback all records if any are not successful.")
+    private boolean allOrNone = false;
     @UriParam(label = "producer")
     private String apexUrl;
     @UriParam
@@ -404,6 +409,14 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setCompositeMethod(String compositeMethod) {
         this.compositeMethod = compositeMethod;
+    }
+
+    public boolean isAllOrNone() {
+        return allOrNone;
+    }
+
+    public void setAllOrNone(boolean allOrNone) {
+        this.allOrNone = allOrNone;
     }
 
     public ApprovalRequest getApproval() {

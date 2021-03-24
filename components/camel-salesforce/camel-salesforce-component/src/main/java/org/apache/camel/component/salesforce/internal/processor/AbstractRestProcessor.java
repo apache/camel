@@ -51,7 +51,6 @@ import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APE
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_URL;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_CLASS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_FIELDS;
@@ -66,7 +65,6 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
 
     private RestClient restClient;
-    private Map<String, Class<?>> classMap;
     private NotFoundBehaviour notFoundBehaviour;
 
     // used in unit tests
@@ -93,10 +91,6 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         if (restClient == null) {
             this.restClient = salesforceComponent.createRestClientFor(endpoint);
         }
-        if (classMap == null) {
-            this.classMap = endpoint.getComponent().getClassMap();
-        }
-
         ServiceHelper.startService(restClient);
     }
 
@@ -746,25 +740,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             return;
         }
 
-        Class<?> sObjectClass;
-
-        if (sObjectName != null) {
-            // lookup class from class map
-            sObjectClass = classMap.get(sObjectName);
-            if (null == sObjectClass) {
-                throw new SalesforceException(String.format("No class found for SObject %s", sObjectName), null);
-            }
-
-        } else {
-
-            // use custom response class property
-            final String className = getParameter(SOBJECT_CLASS, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            try {
-                sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
-            } catch (ClassNotFoundException e) {
-                throw new SalesforceException(String.format("SObject class not found %s, %s", className, e.getMessage()), e);
-            }
-        }
+        Class<?> sObjectClass = getSObjectClass(sObjectName, exchange);
         exchange.setProperty(RESPONSE_CLASS, sObjectClass);
     }
 
