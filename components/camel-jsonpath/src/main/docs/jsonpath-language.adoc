@@ -80,8 +80,11 @@ follows
 
 == Syntax
 
-See the https://code.google.com/p/json-path/[JSonPath] project page for
+See the https://github.com/json-path/JsonPath[JSonPath] project page for
 further examples.
+
+WARNING: The `concat` function in https://github.com/json-path/JsonPath[JSonPath] has a https://issues.apache.org/jira/browse/CAMEL-16393[bug] and does not work. Do not use this function.
+You can instead store information in Camel exchange properties or headers and then concat those together afterwards using Camel's simple language.
 
 == Easy Syntax
 
@@ -134,8 +137,8 @@ Camel JSonPath supports message body using the following types:
 | List | Message bodies as `java.util.List` types
 | POJO | *Optional* If Jackson is on the classpath, then camel-jsonpath
   is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
-  which is supported by JSonPath. For example you can add `camel-jackson` as dependency to include Jackson.
-| InputStream | If none of the above types matches, then Camel will attempt to read the message body as an `java.io.InputStream`.
+  which is supported by JSonPath. For example, you can add `camel-jackson` as dependency to include Jackson.
+| InputStream | If none of the above types matches, then Camel will attempt to read the message body as a `java.io.InputStream`.
 |===
 
 If a message body is of unsupported type then an exception is thrown by default, however you
