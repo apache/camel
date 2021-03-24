@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.http.common.HttpMessage;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -42,6 +43,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +60,10 @@ public class HttpRouteTest extends BaseJettyTest {
 
     protected String expectedBody = "<hello>world!</hello>";
 
-    private int port1;
-    private int port2;
-    private int port3;
-    private int port4;
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
     public void testEndpoint() throws Exception {
@@ -202,11 +204,6 @@ public class HttpRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-                port4 = getNextPort();
-
                 // enable stream cache
                 context.setStreamCaching(true);
 

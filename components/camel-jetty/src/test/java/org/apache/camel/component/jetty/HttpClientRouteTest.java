@@ -38,9 +38,6 @@ public class HttpClientRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientRouteTest.class);
 
-    private int port1;
-    private int port2;
-
     @Test
     public void testHttpRouteWithMessageHeader() throws Exception {
         testHttpClient("direct:start");
@@ -109,9 +106,6 @@ public class HttpClientRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor clientProc = new Processor() {

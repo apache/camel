@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,19 +38,39 @@ public final class AvailablePortFinder {
 
     private static final AvailablePortFinder INSTANCE = new AvailablePortFinder();
 
-    public interface Port extends AfterAllCallback, AutoCloseable {
-        int getPort();
+    public class Port implements BeforeEachCallback, AfterAllCallback, AutoCloseable {
+        final int port;
+        String testClass;
+        Throwable creation;
 
-        void release();
+        public Port(int port) {
+            this.port = port;
+            this.creation = new Throwable();
+        }
 
-        String toString();
+        public int getPort() {
+            return port;
+        }
 
-        default void afterAll(ExtensionContext context) throws Exception {
+        public void release() {
+            AvailablePortFinder.this.release(this);
+        }
+
+        public String toString() {
+            return Integer.toString(port);
+        }
+
+        public void beforeEach(ExtensionContext context) throws Exception {
+            testClass = context.getTestClass().map(Class::getName).orElse(null);
+            LOG.info("Registering port {} for test {}", port, testClass);
+        }
+
+        public void afterAll(ExtensionContext context) throws Exception {
             release();
         }
 
         @Override
-        default void close() {
+        public void close() {
             release();
         }
     }
@@ -70,21 +91,7 @@ public final class AvailablePortFinder {
     synchronized Port findPort() {
         while (true) {
             final int port = probePort(0);
-            Port p = new Port() {
-                @Override
-                public int getPort() {
-                    return port;
-                }
-
-                @Override
-                public void release() {
-                    AvailablePortFinder.this.release(this);
-                }
-
-                public String toString() {
-                    return Integer.toString(getPort());
-                }
-            };
+            Port p = new Port(port);
             Port prv = INSTANCE.portMapping.putIfAbsent(port, p);
             if (prv == null) {
                 return p;
@@ -96,21 +103,7 @@ public final class AvailablePortFinder {
         for (int i = fromPort; i <= toPort; i++) {
             try {
                 final int port = probePort(i);
-                Port p = new Port() {
-                    @Override
-                    public int getPort() {
-                        return port;
-                    }
-
-                    @Override
-                    public void release() {
-                        AvailablePortFinder.this.release(this);
-                    }
-
-                    public String toString() {
-                        return Integer.toString(getPort());
-                    }
-                };
+                Port p = new Port(port);
                 Port prv = INSTANCE.portMapping.putIfAbsent(port, p);
                 if (prv == null) {
                     return p;

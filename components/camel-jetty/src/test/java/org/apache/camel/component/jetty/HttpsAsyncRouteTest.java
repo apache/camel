@@ -37,15 +37,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ResourceLock(SSL_SYSPROPS)
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
@@ -53,9 +56,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        port1 = getNextPort();
-        port2 = getNextPort();
-
         super.setUp();
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,

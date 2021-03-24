@@ -26,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
-    private int port1;
-    private int port2;
-
     @Test
     public void testJettyHttpClient() throws Exception {
         String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null,
@@ -40,10 +37,6 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {

@@ -18,28 +18,16 @@ package org.apache.camel.component.jetty;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";
     private String body2 = "Bye " + body;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/cachedir");
-        createDirectory("target/cachedir");
-        super.setUp();
-    }
 
     @Test
     public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
@@ -49,8 +37,7 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
         // give time for file to be deleted
         Thread.sleep(500);
         // the temporary files should have been deleted
-        File file = new File("target/cachedir");
-        String[] files = file.list();
+        String[] files = testDirectory().toFile().list();
         assertEquals(0, files.length, "There should be no files");
     }
 
@@ -61,7 +48,7 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
-                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.setStreamCaching(true);
 

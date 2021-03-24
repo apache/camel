@@ -26,9 +26,6 @@ public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {

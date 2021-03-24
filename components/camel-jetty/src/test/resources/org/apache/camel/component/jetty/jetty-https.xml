@@ -34,19 +34,10 @@
         </property>
     </bean>
 
-
-    <bean id="dynaPort" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass">
-            <value>org.apache.camel.test.AvailablePortFinder</value>
-        </property>
-        <property name="targetMethod">
-            <value>getNextAvailable</value>
-        </property>
-    </bean>
-
+    <bean id="dynaPort" class="org.apache.camel.test.AvailablePortFinder" factory-method="find" destroy-method="release" />
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="input1" uri="jetty:https://localhost:#{dynaPort}/test"/>
+        <endpoint id="input1" uri="jetty:https://localhost:#{dynaPort.port}/test"/>
 
         <route>
             <from uri="ref:input1"/>

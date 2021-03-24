@@ -39,8 +39,6 @@ public class HandlerTest extends BaseJettyTest {
     private StatisticsHandler statisticsHandler3 = new StatisticsHandler();
 
     private String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
-    private int port1;
-    private int port2;
 
     @Test
     public void testWithOneHandler() throws Exception {
@@ -98,9 +96,6 @@ public class HandlerTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 from("jetty:http://localhost:" + port1 + "/?handlers=#statisticsHandler1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getMessage().setBody(htmlResponse);

@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jetty.JettyHttpComponent;
@@ -47,6 +48,8 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
         return new JettyHttpEndpoint9(this, endpointUri.toString(), httpUri);
     }
+
+    public static Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
 
     @Override
     protected AbstractConnector createConnectorJettyInternal(
@@ -114,6 +117,8 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                         sslcf.getExcludeProtocols());
             }
 
+            String ckey = endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
+            connectorCreation.computeIfAbsent(ckey, c -> new Throwable());
             return result;
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);

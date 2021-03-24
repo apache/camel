@@ -43,15 +43,20 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
+@ResourceLock(SSL_SYSPROPS)
+@DisabledOnOs(value = OS.WINDOWS, disabledReason = "these tests does not run well on Windows")
 public class HttpsRouteTest extends BaseJettyTest {
 
     public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
@@ -61,8 +66,6 @@ public class HttpsRouteTest extends BaseJettyTest {
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
-    protected int port1;
-    protected int port2;
 
     public String getHttpProducerScheme() {
         return "https://";
@@ -71,12 +74,8 @@ public class HttpsRouteTest extends BaseJettyTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        port1 = getNextPort();
-        port2 = getNextPort();
-
         super.setUp();
-        // ensure jsse clients can validate the self signed dummy localhost
-        // cert,
+        // ensure jsse clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
@@ -119,11 +118,6 @@ public class HttpsRouteTest extends BaseJettyTest {
 
     @Test
     public void testEndpoint() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEndpointA = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpointA.expectedBodiesReceived(expectedBody);
         MockEndpoint mockEndpointB = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
@@ -149,27 +143,16 @@ public class HttpsRouteTest extends BaseJettyTest {
 
     @Test
     public void testEndpointWithoutHttps() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
-        try {
-            template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
-            fail("expect exception on access to https endpoint via http");
-        } catch (RuntimeCamelException expected) {
-        }
+        assertThrows(RuntimeCamelException.class,
+                () -> template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type",
+                        "application/xml"),
+                "expect exception on access to https endpoint via http");
         assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 
     @Test
     public void testHelloEndpoint() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -188,16 +171,9 @@ public class HttpsRouteTest extends BaseJettyTest {
 
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
-        try {
-            new URL("http://localhost:" + port1 + "/hello").openStream();
-            fail("expected SocketException on use ot http");
-        } catch (SocketException expected) {
-        }
+        assertThrows(SocketException.class,
+                () -> new URL("http://localhost:" + port1 + "/hello").openStream(),
+                "expected SocketException on use of http");
     }
 
     protected void invokeHttpEndpoint() throws IOException {

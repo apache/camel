@@ -25,13 +25,10 @@ import org.apache.http.NoHttpResponseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
-
-    private int port1;
-    private int port2;
 
     @Test
     public void testTwoServerPorts() throws Exception {
@@ -61,14 +58,9 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         reply = template.requestBody("direct:a", "Earth", String.class);
         assertEquals("Bye Earth", reply);
 
-        try {
-            reply = template.requestBody("direct:b", "Moon", String.class);
-            // expert the exception here
-            fail("Expert the exception here");
-        } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof NoHttpResponseException, "Should get the ConnectException");
-        }
-
+        Exception ex = assertThrows(Exception.class,
+                () -> template.requestBody("direct:b", "Moon", String.class));
+        assertTrue(ex.getCause() instanceof NoHttpResponseException, "Should get the ConnectException");
     }
 
     @Override
@@ -76,9 +68,6 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 from("direct:a").to("http://localhost:" + port1 + "/myapp");
 
                 from("direct:b").to("http://localhost:" + port2 + "/myotherapp");

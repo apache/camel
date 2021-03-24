@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.File;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit testing demonstrating how to store incoming requests as files and serving a response back.
@@ -49,18 +44,7 @@ public class HttpToFileTest extends BaseJettyTest {
         // give file some time to save
         Thread.sleep(500);
 
-        File file = new File("target/myworld/hello.txt");
-        assertTrue(file.exists(), "File should exists");
-
-        String content = IOConverter.toString(file, null);
-        assertEquals("Hello World", content, "File content");
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/myworld");
-        super.setUp();
+        assertFileExists(testFile("hello.txt"), "Hello World");
     }
 
     @Override
@@ -74,7 +58,7 @@ public class HttpToFileTest extends BaseJettyTest {
 
                 // store the content from the queue as a file
                 from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class)
-                        .to("file://target/myworld/").to("mock:result");
+                        .to(fileUri()).to("mock:result");
             }
         };
     }

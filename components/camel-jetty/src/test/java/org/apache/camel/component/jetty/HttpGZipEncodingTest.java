@@ -37,9 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
           + "have to be changed to stay meaningful.")
 public class HttpGZipEncodingTest extends BaseJettyTest {
 
-    private int port1;
-    private int port2;
-
     @Test
     public void testHttpProducerWithGzip() throws Exception {
         String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer",
@@ -73,9 +70,6 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 context.getRegistry(Registry.class).bind("configurer", new HttpClientConfigurer() {
