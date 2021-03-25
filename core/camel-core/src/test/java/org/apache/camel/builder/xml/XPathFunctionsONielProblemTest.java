@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 /**
  * XPath with and without header test.
  */
-public class XPathFunctionsTest extends ContextTestSupport {
+public class XPathFunctionsONielProblemTest extends ContextTestSupport {
 
     @Test
     public void testChoiceWithHeaderAndPropertiesSelectCamel() throws Exception {
@@ -40,9 +40,9 @@ public class XPathFunctionsTest extends ContextTestSupport {
     @Test
     public void testChoiceWithNoHeaderAndPropertiesSelectDonkey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:donkey");
-        mock.expectedBodiesReceived("<name>Donkey Kong</name>");
+        mock.expectedBodiesReceived("<name>Kong</name>");
 
-        template.sendBody("direct:in", "<name>Donkey Kong</name>");
+        template.sendBody("direct:in", "<name>Kong</name>");
 
         mock.assertIsSatisfied();
     }
@@ -78,7 +78,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
                         // here we use the simple language to evaluate the
                         // expression
                         // which at runtime will be evaluated to 'Donkey Kong'
-                        .when().xpath("//name = function:simple('Donkey {{bar}}')").to("mock:donkey").otherwise()
+                        .when().xpath("//name = function:simple('{{bar}}')").to("mock:donkey").otherwise()
                         .to("mock:other").end();
                 // END SNIPPET: ex
             }

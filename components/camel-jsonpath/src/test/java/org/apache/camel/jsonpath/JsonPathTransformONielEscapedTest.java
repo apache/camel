@@ -48,7 +48,7 @@ public class JsonPathTransformONielEscapedTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         List<?> titles = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
-        assertEquals("Camel in Space", titles.get(0));
+        assertEquals("Camels in Space", titles.get(0));
     }
 
 }

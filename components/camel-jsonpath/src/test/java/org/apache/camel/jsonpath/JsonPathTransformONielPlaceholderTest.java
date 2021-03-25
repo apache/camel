@@ -18,14 +18,30 @@ package org.apache.camel.jsonpath;
 
 import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JsonPathTransformONielTest extends CamelTestSupport {
+public class JsonPathTransformONielPlaceholderTest extends CamelTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        PropertiesComponent pc = context.getPropertiesComponent();
+        Properties props = new Properties();
+        props.put("who", "John O'Niel");
+        props.put("search", "Sword's of Honour");
+        pc.setInitialProperties(props);
+
+        return context;
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -33,7 +49,7 @@ public class JsonPathTransformONielTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .transform().jsonpath("$.store.book[?(@.author == \"John O'Niel\")].title")
+                        .transform().jsonpath("$.store.book[?(@.author == '{{who}}' || @.title == '{{search}}')].title")
                         .to("mock:authors");
             }
         };
@@ -48,7 +64,9 @@ public class JsonPathTransformONielTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         List<?> titles = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
-        assertEquals("Camels in Space", titles.get(0));
+        assertEquals(2, titles.size());
+        assertEquals("Sword's of Honour", titles.get(0));
+        assertEquals("Camels in Space", titles.get(1));
     }
 
 }
