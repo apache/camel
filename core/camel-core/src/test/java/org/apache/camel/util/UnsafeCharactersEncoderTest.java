@@ -89,8 +89,8 @@ public class UnsafeCharactersEncoderTest {
     }
 
     @Test
-    public void testPasswordEncodingInRawMode(){
-        String password= "RAW(%j#7%c6i)";
+    public void testPasswordEncodingInRawMode() {
+        String password = "RAW(%j#7%c6i)";
         String result = UnsafeUriCharactersEncoder.encode(password, true);
         // remove RAW
         result = result.substring(4);
