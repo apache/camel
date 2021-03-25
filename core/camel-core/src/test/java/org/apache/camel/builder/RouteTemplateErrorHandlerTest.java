@@ -16,9 +16,13 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.Channel;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultRoute;
+import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.TestSupport.unwrapChannel;
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,18 +48,27 @@ public class RouteTemplateErrorHandlerTest {
             });
 
             assertThat(context.getRouteDefinitions()).first().satisfies(d -> {
-                assertThat(d.getErrorHandlerFactory()).isInstanceOfSatisfying(ErrorHandlerBuilderRef.class, r -> {
-                    assertThat(r.getRef()).isEqualTo("myErrorHandler");
+                assertThat(d.getErrorHandlerFactory()).isInstanceOfSatisfying(ErrorHandlerBuilderRef.class, h -> {
+                    assertThat(h.getRef()).isEqualTo("myErrorHandler");
                 });
             });
 
             assertThat(context.getRouteTemplateDefinitions()).first().satisfies(d -> {
-                assertThat(d.route().getErrorHandlerFactory()).isInstanceOfSatisfying(ErrorHandlerBuilderRef.class, r -> {
-                    assertThat(r.getRef()).isEqualTo("myErrorHandler");
+                assertThat(d.route().getErrorHandlerFactory()).isInstanceOfSatisfying(ErrorHandlerBuilderRef.class, h -> {
+                    assertThat(h.getRef()).isEqualTo("myErrorHandler");
                 });
             });
 
-            context.addRouteFromTemplate("myTemplate", "", mapOf("", ""));
+            context.addRouteFromTemplate("myId", "myTemplate", mapOf("foo", "f", "bar", "b"));
+            context.start();
+
+            assertThat(context.getRoutes()).allSatisfy(r -> {
+                assertThat(r).isInstanceOfSatisfying(DefaultRoute.class, dr -> {
+                    Channel channel = unwrapChannel(r.getProcessor());
+                    assertThat(channel).isNotNull();
+                    assertThat(channel.getErrorHandler()).isInstanceOf(NoErrorHandler.class);
+                });
+            });
         }
     }
 }
