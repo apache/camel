@@ -986,7 +986,6 @@ public abstract class BaseMainSupport extends BaseService {
                     ((HealthCheck) hc).getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
                     ((HealthCheck) hc).getConfiguration().setInterval(hcc.getInterval());
                 } else if (hc instanceof HealthCheckRepository) {
-                    ((HealthCheckRepository) hc).setEnabled(hcc.isEnabled());
                     ((HealthCheckRepository) hc).addConfiguration(id, hcc);
                 }
             }
