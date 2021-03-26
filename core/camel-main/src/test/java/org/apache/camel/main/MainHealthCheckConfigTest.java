@@ -16,14 +16,20 @@
  */
 package org.apache.camel.main;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.camel.impl.health.HealthCheckRegistryRepository;
 import org.apache.camel.impl.health.RoutesHealthCheckRepository;
 import org.junit.jupiter.api.Test;
 
@@ -69,6 +75,56 @@ public class MainHealthCheckConfigTest {
             HealthCheckConfiguration seda = configurations.get("seda");
             assertNotNull(seda);
             assertFalse(seda.isEnabled());
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testMainBasicHealthCheckConfiguration() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new Routes());
+        main.addInitialProperty("camel.health.config[custom].parent", "registry-health-check-repository");
+        main.addInitialProperty("camel.health.config[custom].enabled", "false");
+        main.addInitialProperty("camel.health.config[custom].interval", "20s");
+        main.addInitialProperty("camel.health.config[custom].failure-threshold", "10");
+
+        main.start();
+        try {
+            CamelContext camelContext = main.getCamelContext();
+            assertNotNull(camelContext);
+
+            HealthCheck healthCheck = new AbstractHealthCheck("custom") {
+                @Override
+                protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                    // Noop
+                }
+            };
+
+            // This configuration will be overridden by the camel-main config properties
+            healthCheck.getConfiguration().setEnabled(true);
+            healthCheck.getConfiguration().setInterval(10);
+            healthCheck.getConfiguration().setFailureThreshold(5);
+            camelContext.getRegistry().bind("custom", healthCheck);
+
+            HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
+            assertNotNull(healthCheckRegistry);
+
+            Optional<HealthCheckRepository> repository = healthCheckRegistry.getRepository("registry-health-check-repository");
+            assertTrue(repository.isPresent());
+
+            HealthCheckRegistryRepository registryRepository = (HealthCheckRegistryRepository) repository.get();
+            assertTrue(registryRepository.isEnabled());
+
+            List<HealthCheck> healthChecks = registryRepository.stream().collect(Collectors.toList());
+            assertEquals(1, healthChecks.size());
+
+            HealthCheck myCustomCheck = healthChecks.get(0);
+            HealthCheckConfiguration configuration = myCustomCheck.getConfiguration();
+            assertNotNull(configuration);
+            assertFalse(configuration.isEnabled());
+            assertEquals(20000, configuration.getInterval());
+            assertEquals(10, configuration.getFailureThreshold());
         } finally {
             main.stop();
         }
