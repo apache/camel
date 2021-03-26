@@ -127,10 +127,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         ListSecretsRequest request = null;
         ListSecretsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListSecretsRequest) {
-                request = (ListSecretsRequest) payload;
-            }
+        	request = exchange.getIn().getMandatoryBody(ListSecretsRequest.class);
         } else {
             Builder builder = ListSecretsRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.MAX_RESULTS))) {
