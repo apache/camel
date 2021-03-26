@@ -19,7 +19,9 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
 
-    private int nextPort;
+    @RegisterExtension
+    AvailablePortFinder.Port nextPort = AvailablePortFinder.find();
 
     @Test
     public void testHttpRedirectNoLocation() throws Exception {
@@ -51,8 +54,6 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                nextPort = getNextPort();
-
                 from("netty-http:http://localhost:" + nextPort + "/test")
                         .process(exchange -> exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302));
             }

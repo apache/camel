@@ -49,7 +49,7 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 context.addComponent("dummy", new DummyComponent());
-                from("master:test:dummy://path?foo=hello}+world&bar=RAW(hello}+world)")
+                from("master:test:dummy://path?foo=hello} world&bar=RAW(hello}+world)")
                         .to("mock:result");
             }
         };

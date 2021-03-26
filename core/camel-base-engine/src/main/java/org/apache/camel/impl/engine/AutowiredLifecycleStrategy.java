@@ -41,8 +41,8 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
 
     @Override
     public void onComponentAdd(String name, Component component) {
-        // autowiring can be turned off on context level
-        boolean enabled = camelContext.isAutowiredEnabled();
+        // autowiring can be turned off on context level and per component
+        boolean enabled = camelContext.isAutowiredEnabled() && component.isAutowiredEnabled();
         if (enabled) {
             autwire(name, "component", component);
         }

@@ -35,13 +35,13 @@
 
     <modules>
         <module>camel-util</module>
-        <module>camel-api</module>
         <module>camel-core-catalog</module>
         <module>camel-support</module>
         <module>camel-management-api</module>
         <module>camel-management</module>
         <module>camel-base</module>
         <module>camel-base-engine</module>
+        <module>camel-xml-io-util</module>
         <module>camel-xml-jaxp</module>
         <module>camel-cluster</module>
         <module>camel-core-engine</module>

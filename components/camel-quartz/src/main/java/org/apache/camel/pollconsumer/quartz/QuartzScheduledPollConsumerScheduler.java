@@ -168,6 +168,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
     @Override
     protected void doStart() throws Exception {
         StringHelper.notEmpty(cron, "cron", this);
+        // special for cron where we replace + as space
+        cron = cron.replace('+', ' ');
 
         if (quartzScheduler == null) {
             // get the scheduler form the quartz component

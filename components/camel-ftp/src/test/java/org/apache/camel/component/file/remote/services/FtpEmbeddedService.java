@@ -107,6 +107,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         createUser(userMgr, "us@r", "t%st", rootDir, true);
         createUser(userMgr, "anonymous", null, rootDir, false);
         createUser(userMgr, "joe", "p+%w0&r)d", rootDir, true);
+        createUser(userMgr, "jane", "%j#7%c6i", rootDir, true);
 
         ListenerFactory factory = new ListenerFactory();
         factory.setPort(port);

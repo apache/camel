@@ -25,9 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTwoServerPortsTest extends BaseJettyTest {
 
-    private int port1;
-    private int port2;
-
     @Test
     public void testTwoServerPorts() throws Exception {
         String reply = template.requestBody("direct:a", "World", String.class);
@@ -48,9 +45,6 @@ public class HttpTwoServerPortsTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 from("direct:a").to("http://localhost:" + port1 + "/myapp");
 
                 from("direct:b").to("http://localhost:" + port2 + "/myotherapp");

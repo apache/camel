@@ -297,7 +297,16 @@ public class FileOperations implements GenericFileOperations<File> {
                 // using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
-                    body = ((WrappedFile<?>) body).getFile();
+                    WrappedFile wrapped = (WrappedFile) body;
+                    body = wrapped.getFile();
+                    if (!(body instanceof File)) {
+                        // the wrapped file may be from remote (FTP) which then can store
+                        // a local java.io.File handle if storing to local work-dir so check for that
+                        Object maybeFile = wrapped.getBody();
+                        if (maybeFile instanceof File) {
+                            body = maybeFile;
+                        }
+                    }
                 }
                 if (body instanceof File) {
                     source = (File) body;

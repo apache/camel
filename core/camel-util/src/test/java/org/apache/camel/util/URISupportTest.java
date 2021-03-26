@@ -134,12 +134,12 @@ public class URISupportTest {
     @Test
     public void testNormalizeHttpEndpointURLEncodedParameter() throws Exception {
         String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
-        assertEquals("http://www.google.com?q=S%C3%B8ren+Hansen", out);
+        assertEquals("http://www.google.com?q=S%C3%B8ren%20Hansen", out);
     }
 
     @Test
     public void testParseParametersURLEncodedValue() throws Exception {
-        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren+Hansen");
+        String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
         URI uri = new URI(out);
 
         Map<String, Object> parameters = URISupport.parseParameters(uri);
@@ -200,12 +200,12 @@ public class URISupportTest {
 
     @Test
     public void testParseParameters() throws Exception {
-        URI u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
+        URI u = new URI("quartz:myGroup/myTimerName?cron=0%200%20*%20*%20*%20?");
         Map<String, Object> params = URISupport.parseParameters(u);
         assertEquals(1, params.size());
         assertEquals("0 0 * * * ?", params.get("cron"));
 
-        u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?&bar=123");
+        u = new URI("quartz:myGroup/myTimerName?cron=0%200%20*%20*%20*%20?&bar=123");
         params = URISupport.parseParameters(u);
         assertEquals(2, params.size());
         assertEquals("0 0 * * * ?", params.get("cron"));
@@ -226,8 +226,8 @@ public class URISupportTest {
         // create new uri with the parameters
         URI out = URISupport.createRemainingURI(new URI(uri), map);
         assertNotNull(out);
-        assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toString());
-        assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toASCIIString());
+        assertEquals("http://localhost:23271/myapp/mytest?foo=abc%20def&bar=123%2C456&name=S%C3%B8ren", out.toString());
+        assertEquals("http://localhost:23271/myapp/mytest?foo=abc%20def&bar=123%2C456&name=S%C3%B8ren", out.toASCIIString());
     }
 
     @Test
@@ -348,12 +348,12 @@ public class URISupportTest {
     public void testRawParameter() throws Exception {
         String out = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some+chat", out);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some%20chat", out);
 
         String out2 = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat",
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some%20chat",
                 out2);
     }
 
@@ -361,12 +361,12 @@ public class URISupportTest {
     public void testRawParameterCurly() throws Exception {
         String out = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some+chat", out);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some%20chat", out);
 
         String out2 = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat",
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some%20chat",
                 out2);
     }
 
@@ -575,6 +575,19 @@ public class URISupportTest {
         assertEquals(null, URISupport.extractQuery("file:foo"));
         assertEquals("recursive=true", URISupport.extractQuery("file:foo?recursive=true"));
         assertEquals("recursive=true&delete=true", URISupport.extractQuery("file:foo?recursive=true&delete=true"));
+    }
+
+    @Test
+    public void testPlusInQuery() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("param1", "+447777111222");
+        String q = URISupport.createQueryString(map);
+        assertEquals("param1=%2B447777111222", q);
+
+        // will be double encoded however
+        map.put("param1", "%2B447777111222");
+        q = URISupport.createQueryString(map);
+        assertEquals("param1=%252B447777111222", q);
     }
 
 }

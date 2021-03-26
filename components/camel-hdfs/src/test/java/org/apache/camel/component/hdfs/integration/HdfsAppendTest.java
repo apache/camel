@@ -29,12 +29,15 @@ import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(value = OS.MAC, disabledReason = "Temporarily disabled due to CAMEL-16387")
 public class HdfsAppendTest extends CamelTestSupport {
     @RegisterExtension
     public static HDFSService service = HDFSServiceFactory.createService();

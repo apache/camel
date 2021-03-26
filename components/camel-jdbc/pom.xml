@@ -35,6 +35,8 @@
     <properties>
         <firstVersion>1.2.0</firstVersion>
         <label>database</label>
+
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>

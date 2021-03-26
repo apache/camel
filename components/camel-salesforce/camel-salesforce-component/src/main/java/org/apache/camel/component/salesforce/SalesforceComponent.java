@@ -348,6 +348,12 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     protected void doBuild() throws Exception {
         super.doBuild();
 
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         if (loginConfig == null) {
             loginConfig = new SalesforceLoginConfig();
             loginConfig.setInstanceUrl(instanceUrl);
@@ -365,11 +371,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         } else {
             LOG.debug("Using shared login configuration: {}", loginConfig);
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
 
         // create a Jetty HttpClient if not already set
         if (httpClient == null) {

@@ -435,7 +435,8 @@ public interface SecretsManagerEndpointBuilderFactory {
         describeSecret,
         deleteSecret,
         rotateSecret,
-        updateSecret;
+        updateSecret,
+        replicateSecretToRegions;
     }
 
     /**

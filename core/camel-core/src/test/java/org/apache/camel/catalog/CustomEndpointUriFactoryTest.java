@@ -225,13 +225,34 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         params.put("cql", "insert into test_data(id, text) values (now(), ?)");
 
         Assertions.assertEquals(
-                "cql:localhost/test?cql=insert+into+test_data%28id%2C+text%29+values+%28now%28%29%2C+%3F%29",
+                "cql:localhost/test?cql=insert%20into%20test_data%28id%2C%20text%29%20values%20%28now%28%29%2C%20%3F%29",
                 assembler.buildUri("cql", new LinkedHashMap<>(params)));
         Assertions.assertEquals(
-                "cql:localhost/test?cql=insert+into+test_data%28id%2C+text%29+values+%28now%28%29%2C+%3F%29",
+                "cql:localhost/test?cql=insert%20into%20test_data%28id%2C%20text%29%20values%20%28now%28%29%2C%20%3F%29",
                 assembler.buildUri("cql", new LinkedHashMap<>(params), true));
         Assertions.assertEquals(
                 "cql:localhost/test?cql=insert into test_data(id, text) values (now(), ?)",
+                assembler.buildUri("cql", new LinkedHashMap<>(params), false));
+    }
+
+    @Test
+    public void testCQLWithPlus() throws Exception {
+        EndpointUriFactory assembler = new MyCQLAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("host", "localhost");
+        params.put("keyspace", "test");
+        params.put("cql", "add(4 + 5)");
+
+        Assertions.assertEquals(
+                "cql:localhost/test?cql=add%284%20%2B%205%29",
+                assembler.buildUri("cql", new LinkedHashMap<>(params)));
+        Assertions.assertEquals(
+                "cql:localhost/test?cql=add%284%20%2B%205%29",
+                assembler.buildUri("cql", new LinkedHashMap<>(params), true));
+        Assertions.assertEquals(
+                "cql:localhost/test?cql=add(4 + 5)",
                 assembler.buildUri("cql", new LinkedHashMap<>(params), false));
     }
 

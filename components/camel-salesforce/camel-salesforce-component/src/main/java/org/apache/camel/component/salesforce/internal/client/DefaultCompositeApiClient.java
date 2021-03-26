@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
@@ -71,10 +72,12 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private final XStream xStreamCompositeTree;
 
-    public DefaultCompositeApiClient(final SalesforceEndpointConfig configuration, final PayloadFormat format,
+    public DefaultCompositeApiClient(
+                                     final SalesforceEndpointConfig configuration, final PayloadFormat format,
                                      final String version, final SalesforceSession session,
                                      final SalesforceHttpClient httpClient, final SalesforceLoginConfig loginConfig)
                                                                                                                      throws SalesforceException {
+
         super(version, session, httpClient, loginConfig);
         this.format = format;
 
@@ -208,6 +211,11 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return jsonReaderFor(expectedType).readValue(responseStream);
     }
 
+    <T> List<T> fromJsonList(final Class<T> expectedType, final InputStream responseStream) throws IOException {
+        final CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(List.class, expectedType);
+        return mapper.readValue(responseStream, collectionType);
+    }
+
     ObjectReader jsonReaderFor(final Class<?> type) {
         return mapper.readerFor(type);
     }
@@ -329,5 +337,4 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         return new ByteArrayInputStream(out.toByteArray());
     }
-
 }

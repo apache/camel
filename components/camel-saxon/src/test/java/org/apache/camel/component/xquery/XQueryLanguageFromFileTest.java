@@ -20,10 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  *
@@ -40,11 +37,11 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         other.expectedMessageCount(1);
         other.message(0).body(String.class).contains("Bye World");
 
-        template.sendBodyAndHeader("file:target/xquery",
+        template.sendBodyAndHeader(fileUri(),
                 "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
                 Exchange.FILE_NAME, "claus.xml");
 
-        template.sendBodyAndHeader("file:target/xquery",
+        template.sendBodyAndHeader(fileUri(),
                 "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
@@ -52,18 +49,11 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/xquery");
-        super.setUp();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xquery")
+                from(fileUri())
                         .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
                         .convertBodyTo(String.class)

@@ -73,7 +73,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
                         // $type is a variable for the header with key type
                         // here we use the properties function to lookup foo from
                         // the properties files
-                        // which at runtime will be evaluted to 'Camel'
+                        // which at runtime will be evaluated to 'Camel'
                         .when().xpath("$type = function:properties('foo')").to("mock:camel")
                         // here we use the simple language to evaluate the
                         // expression

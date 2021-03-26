@@ -41,6 +41,9 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.Builder;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
+import software.amazon.awssdk.services.secretsmanager.model.ReplicaRegionType;
+import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsRequest;
+import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsResponse;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretRequest;
@@ -84,6 +87,9 @@ public class SecretsManagerProducer extends DefaultProducer {
             case updateSecret:
                 updateSecret(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
+            case replicateSecretToRegions:
+                replicateSecretToRegions(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -121,10 +127,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         ListSecretsRequest request = null;
         ListSecretsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListSecretsRequest) {
-                request = (ListSecretsRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(ListSecretsRequest.class);
         } else {
             Builder builder = ListSecretsRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.MAX_RESULTS))) {
@@ -148,10 +151,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         CreateSecretRequest request = null;
         CreateSecretResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateSecretRequest) {
-                request = (CreateSecretRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(CreateSecretRequest.class);
         } else {
             CreateSecretRequest.Builder builder = CreateSecretRequest.builder();
             String payload = exchange.getIn().getMandatoryBody(String.class);
@@ -187,10 +187,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         GetSecretValueRequest request = null;
         GetSecretValueResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetSecretValueRequest) {
-                request = (GetSecretValueRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(GetSecretValueRequest.class);
         } else {
             GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
@@ -223,10 +220,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         DescribeSecretRequest request = null;
         DescribeSecretResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeSecretRequest) {
-                request = (DescribeSecretRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(DescribeSecretRequest.class);
         } else {
             DescribeSecretRequest.Builder builder = DescribeSecretRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
@@ -252,10 +246,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         DeleteSecretRequest request = null;
         DeleteSecretResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteSecretRequest) {
-                request = (DeleteSecretRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteSecretRequest.class);
         } else {
             DeleteSecretRequest.Builder builder = DeleteSecretRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
@@ -337,6 +328,43 @@ public class SecretsManagerProducer extends DefaultProducer {
             result = secretsManagerClient.updateSecret(request);
         } catch (AwsServiceException ase) {
             LOG.trace("Update Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void replicateSecretToRegions(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        ReplicateSecretToRegionsRequest request = null;
+        ReplicateSecretToRegionsResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(ReplicateSecretToRegionsRequest.class);
+        } else {
+            ReplicateSecretToRegionsRequest.Builder builder = ReplicateSecretToRegionsRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
+                String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
+                builder.secretId(secretId);
+            } else {
+                throw new IllegalArgumentException("Secret Id must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_REPLICATION_REGIONS))) {
+                String regions = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_REPLICATION_REGIONS, String.class);
+                String[] s = regions.split(",");
+                for (String region : s) {
+                    ReplicaRegionType.Builder regionType = ReplicaRegionType.builder();
+                    regionType.region(region);
+                    builder.addReplicaRegions(regionType.build());
+                }
+            } else {
+                throw new IllegalArgumentException("Replica Regions must be specified");
+            }
+            request = builder.build();
+        }
+        try {
+            result = secretsManagerClient.replicateSecretToRegions(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Replicate Secret to region command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

@@ -37,9 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
 
-    private int port1;
-    private int port2;
-
     private static class MultipartHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         MultipartHeaderFilterStrategy() {
             initialize();
@@ -77,9 +74,6 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {

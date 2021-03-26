@@ -66,7 +66,7 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         scheduler.setUseFixedDelay(ironMQConsumer.isUseFixedDelay());
         scheduler.setInitialDelay(ironMQConsumer.getInitialDelay());
         scheduler.setTimeUnit(ironMQConsumer.getTimeUnit());
-        scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
+        scheduler.setConcurrentConsumers(configuration.getConcurrentConsumers());
         ironMQConsumer.setScheduler(scheduler);
         return ironMQConsumer;
     }

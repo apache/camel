@@ -70,7 +70,7 @@
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
-    <aws-java-sdk2-version>2.16.23</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.16.27</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-sdk-bom-version>1.0.2</azure-sdk-bom-version>
@@ -119,7 +119,7 @@
     <cassandra-version>3.11.8</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
-    <chunk-templates-version>3.5.0</chunk-templates-version>
+    <chunk-templates-version>3.6.1</chunk-templates-version>
     <citrus-version>2.8.0</citrus-version>
     <classgraph-version>4.8.52</classgraph-version>
     <cmis-version>1.1.0</cmis-version>
@@ -178,7 +178,7 @@
     <dnsjava-version>3.3.1</dnsjava-version>
     <docker-java-version>3.2.7</docker-java-version>
     <dozer-version>6.5.0</dozer-version>
-    <dropbox-version>3.1.5</dropbox-version>
+    <dropbox-version>3.2.0</dropbox-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <ehcache3-version>3.9.0</ehcache3-version>
     <elasticsearch-rest-cluster-runner-version>7.8.0.0</elasticsearch-rest-cluster-runner-version>
@@ -276,7 +276,7 @@
     <icu4j-version>68.2</icu4j-version>
     <ignite-version>2.9.1</ignite-version>
     <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-    <infinispan-version>12.0.1.Final</infinispan-version>
+    <infinispan-version>12.0.2.Final</infinispan-version>
     <influx-guava-version>20.0</influx-guava-version>
     <influx-java-driver-version>2.21</influx-java-driver-version>
     <irclib-version>1.10</irclib-version>
@@ -361,7 +361,6 @@
     <json-path-version>2.4.0</json-path-version>
     <json-schema-validator-version>2.2.14</json-schema-validator-version>
     <json-simple-version>1.1.1</json-simple-version>
-    <json-smart-version>2.3</json-smart-version>
     <jsonassert-version>1.5.0</jsonassert-version>
     <jsonata4java-version>1.5.0</jsonata4java-version>
     <jsoup-version>1.13.1</jsoup-version>
@@ -404,7 +403,7 @@
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-model-version>3.2.5</maven-model-version>
-    <maven-owasp-plugin-version>6.1.2</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>6.1.3</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.0</maven-plugin-plugin-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -437,14 +436,14 @@
     <mustache-java-version>0.9.7</mustache-java-version>
     <mvel-version>2.4.12.Final</mvel-version>
     <mybatis-version>3.5.6</mybatis-version>
-    <narayana-version>5.10.6.Final</narayana-version>
+    <narayana-version>5.11.0.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
     <netty-version>4.1.60.Final</netty-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <networknt-json-schema-validator-version>1.0.49</networknt-json-schema-validator-version>
+    <networknt-json-schema-validator-version>1.0.50</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
@@ -475,7 +474,7 @@
     <pubnub-version>4.25.0</pubnub-version>
     <pulsar-version>2.7.1</pulsar-version>
     <qpid-broker-version>8.0.4</qpid-broker-version>
-    <qpid-jms-client-version>0.56.0</qpid-jms-client-version>
+    <qpid-jms-client-version>0.57.0</qpid-jms-client-version>
     <qpid-proton-j-version>0.33.8</qpid-proton-j-version>
     <quartz-version>2.3.2</quartz-version>
     <quickfixj-version>2.2.0</quickfixj-version>

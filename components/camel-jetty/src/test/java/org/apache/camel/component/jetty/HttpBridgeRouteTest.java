@@ -30,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpBridgeRouteTest extends BaseJettyTest {
 
-    protected int port1;
-    protected int port2;
-
     @Test
     public void testHttpClient() throws Exception {
         String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
@@ -55,9 +52,6 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {

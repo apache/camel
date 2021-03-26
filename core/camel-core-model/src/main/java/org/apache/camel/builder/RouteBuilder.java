@@ -506,6 +506,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         super.setErrorHandlerBuilder(errorHandlerBuilder);
         getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
+        getRouteTemplateCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
     /**

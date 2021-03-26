@@ -31,12 +31,15 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
-    static int port = AvailablePortFinder.getNextAvailable();
 
     @Produce("direct:start")
     protected ProducerTemplate sender;
+
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testGETClientRoute() throws Exception {
@@ -94,7 +97,8 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RestConfigurationDefinition restConfig = restConfiguration().scheme("https").host("localhost").port(port);
+                RestConfigurationDefinition restConfig
+                        = restConfiguration().scheme("https").host("localhost").port(port.getPort());
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
@@ -117,7 +121,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                     }
                 });
 
-                from("direct:start").toF(getClientURI(), port).to("mock:result");
+                from("direct:start").toF(getClientURI(), port.getPort()).to("mock:result");
             }
         };
     }

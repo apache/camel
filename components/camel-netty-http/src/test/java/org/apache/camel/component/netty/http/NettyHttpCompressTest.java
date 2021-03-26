@@ -27,9 +27,11 @@ import io.netty.handler.codec.http.HttpContentDecompressor;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
 public class NettyHttpCompressTest extends BaseNettyTest {
 
     // setup the decompress decoder here
@@ -42,7 +44,6 @@ public class NettyHttpCompressTest extends BaseNettyTest {
 
     @Test
     public void testContentType() throws Exception {
-
         byte[] data = "Hello World".getBytes(Charset.forName("UTF-8"));
         Map<String, Object> headers = new HashMap<>();
         headers.put("content-type", "text/plain; charset=\"UTF-8\"");
@@ -51,7 +52,6 @@ public class NettyHttpCompressTest extends BaseNettyTest {
                 headers, String.class);
         // The decoded out has some space to clean up.
         assertEquals("Bye World", out.trim());
-
     }
 
     @Override

@@ -20,15 +20,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
-    private int port1;
-    private int port2;
-    private int port3;
+    AvailablePortFinder.Port port1 = port;
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
 
     @Test
     public void testProxy() throws Exception {
@@ -74,10 +78,6 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-
                 from("netty-http:http://0.0.0.0:" + port1 + "/foo")
                         .to("netty-http:http://localhost:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 

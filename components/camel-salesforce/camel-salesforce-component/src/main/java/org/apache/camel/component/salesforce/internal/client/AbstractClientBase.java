@@ -277,6 +277,12 @@ public abstract class AbstractClientBase extends ServiceSupport
     }
 
     final List<RestError> readErrorsFrom(
+            final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper)
+            throws IOException, JsonParseException, JsonMappingException {
+        return readErrorsFrom(responseContent, format, objectMapper, null);
+    }
+
+    final List<RestError> readErrorsFrom(
             final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper,
             final XStream xStream)
             throws IOException, JsonParseException, JsonMappingException {
@@ -345,7 +351,6 @@ public abstract class AbstractClientBase extends ServiceSupport
                 }
             }
         }
-
         return answer;
     }
 }

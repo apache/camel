@@ -40,6 +40,7 @@ public class ProducerUseMessageBodyForTemplateTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
+                .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
         super.setUp();
     }

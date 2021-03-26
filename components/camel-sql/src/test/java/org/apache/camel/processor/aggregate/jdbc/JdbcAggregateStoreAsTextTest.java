@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,8 +41,8 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateStoreAsText.xml");
+        return newAppContext(
+                "JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText.xml");
     }
 
     @Override
@@ -51,7 +50,7 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         super.postProcessTest();
 
         repo = applicationContext.getBean("repo3", JdbcAggregationRepository.class);
-        dataSource = context.getRegistry().lookupByNameAndType("dataSource3", DataSource.class);
+        dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }

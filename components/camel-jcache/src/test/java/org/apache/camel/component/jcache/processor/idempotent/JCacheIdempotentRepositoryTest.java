@@ -21,6 +21,7 @@ import javax.cache.Cache;
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
+import org.apache.camel.component.jcache.support.HazelcastTest;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@HazelcastTest
 public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(JCacheIdempotentRepositoryTest.class);
 

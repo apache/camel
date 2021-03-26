@@ -621,6 +621,7 @@ public interface KafkaComponentBuilderFactory {
          * &lt;code&gt;org.apache.camel.component.kafka.PollOnError&lt;/code&gt;
          * type.
          * 
+         * Default: ERROR_HANDLER
          * Group: consumer
          * 
          * @param pollOnError the value to set

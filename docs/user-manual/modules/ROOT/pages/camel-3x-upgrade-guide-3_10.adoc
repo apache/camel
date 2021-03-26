@@ -1,0 +1,42 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.9 to 3.10
+
+=== API changes
+
+The method `concurrentTasks` on `org.apache.camel.support.DefaultScheduledPollConsumerScheduler ` has been renamed to `concurrentConsumers`.
+
+=== Endpoint URIs with spaces
+
+The URI encoder/decode in camel-core has been improved to avoid in some use-cases to use `+` (plus sign)
+as a space in query parameters. Now spaces are encoded to decimal `%20`.
+
+The decoder will now also decode a `+` (plus sign) as plus.
+
+For example before you may call a REST endpoint with a query parameter with the value `Hello World`
+
+    to("rest:get:foo/?msg=Hello+World")
+
+Which should now be either
+
+    to("rest:get:foo/?msg=Hello World")
+
+or use decimal encoded space
+
+    to("rest:get:foo/?msg=Hello%20World")
+
+=== camel-scheduler
+
+The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.
+The scheduler has also been fixed to only schedule triggering by one, and not as mistakenly by causing
+concurrent triggering which causes routing mistakes.
+
+The option configures the pool size of the scheduled thread pool used by the scheduler.
+
+If the scheduler thread is being blocked by anywhere in the downstream routing, and you want the scheduler
+to schedule with a fixed interval, you can use the Threads EIP as queue for pending tasks.
+

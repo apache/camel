@@ -291,6 +291,42 @@ public class FileUtilTest extends TestSupport {
         assertEquals(in, out);
     }
 
+    @Test
+    public void testCompactFilePath() {
+        // should preserve the file: scheme prefix
+        if (FileUtil.isWindows()) {
+            assertEquals("file:..\\foo", FileUtil.compactPath("file:..\\foo"));
+            assertEquals("file:..\\..\\foo", FileUtil.compactPath("file:..\\..\\foo"));
+            assertEquals("file:..\\..\\foo\\bar", FileUtil.compactPath("file:..\\..\\foo\\bar"));
+            assertEquals("file:..\\..\\foo", FileUtil.compactPath("file:..\\..\\foo\\bar\\.."));
+            assertEquals("file:foo", FileUtil.compactPath("file:foo"));
+            assertEquals("file:bar", FileUtil.compactPath("file:foo\\..\\bar"));
+            assertEquals("file:bar\\baz", FileUtil.compactPath("file:foo\\..\\bar\\baz"));
+            assertEquals("file:foo\\baz", FileUtil.compactPath("file:foo\\bar\\..\\baz"));
+            assertEquals("file:baz", FileUtil.compactPath("file:foo\\bar\\..\\..\\baz"));
+            assertEquals("file:..\\baz", FileUtil.compactPath("file:foo\\bar\\..\\..\\..\\baz"));
+            assertEquals("file:..\\foo\\bar", FileUtil.compactPath("file:..\\foo\\bar"));
+            assertEquals("file:foo\\bar\\baz", FileUtil.compactPath("file:foo\\bar\\.\\baz"));
+            assertEquals("file:foo\\bar\\baz", FileUtil.compactPath("file:foo\\bar\\\\baz"));
+            assertEquals("file:\\foo\\bar\\baz", FileUtil.compactPath("file:\\foo\\bar\\baz"));
+        } else {
+            assertEquals("file:../foo", FileUtil.compactPath("file:../foo"));
+            assertEquals("file:../../foo", FileUtil.compactPath("file:../../foo"));
+            assertEquals("file:../../foo/bar", FileUtil.compactPath("file:../../foo/bar"));
+            assertEquals("file:../../foo", FileUtil.compactPath("file:../../foo/bar/.."));
+            assertEquals("file:foo", FileUtil.compactPath("file:foo"));
+            assertEquals("file:bar", FileUtil.compactPath("file:foo/../bar"));
+            assertEquals("file:bar/baz", FileUtil.compactPath("file:foo/../bar/baz"));
+            assertEquals("file:foo/baz", FileUtil.compactPath("file:foo/bar/../baz"));
+            assertEquals("file:baz", FileUtil.compactPath("file:foo/bar/../../baz"));
+            assertEquals("file:../baz", FileUtil.compactPath("file:foo/bar/../../../baz"));
+            assertEquals("file:../foo/bar", FileUtil.compactPath("file:../foo/bar"));
+            assertEquals("file:foo/bar/baz", FileUtil.compactPath("file:foo/bar/./baz"));
+            assertEquals("file:foo/bar/baz", FileUtil.compactPath("file:foo/bar//baz"));
+            assertEquals("file:/foo/bar/baz", FileUtil.compactPath("file:/foo/bar/baz"));
+        }
+    }
+
     @BeforeEach
     void createTestDir() throws IOException {
         Files.createDirectories(testDirectory());

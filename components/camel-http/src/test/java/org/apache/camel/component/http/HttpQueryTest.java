@@ -41,7 +41,7 @@ public class HttpQueryTest extends BaseHttpTest {
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
                 .registerHandler("/", new BasicValidationHandler(GET.name(), "hl=en&q=camel", null, getExpectedContent()))
-                .registerHandler("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent()))
+                .registerHandler("/test/", new BasicValidationHandler(GET.name(), "my=@ camel", null, getExpectedContent()))
                 .registerHandler("/user/pass",
                         new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent()))
                 .create();

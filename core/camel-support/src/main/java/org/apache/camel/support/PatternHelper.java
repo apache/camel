@@ -65,6 +65,23 @@ public final class PatternHelper {
     }
 
     /**
+     * Matches the name with the given patterns (case insensitive).
+     *
+     * @param  name     the name
+     * @param  patterns pattern(s) to match
+     * @return          <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @see             #matchPattern(String, String)
+     */
+    public static boolean matchPatterns(String name, String[] patterns) {
+        for (String pattern : patterns) {
+            if (PatternHelper.matchPattern(name, pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Matches the name with the given pattern (case insensitive).
      * <p/>
      * The match rules are applied in this order:
