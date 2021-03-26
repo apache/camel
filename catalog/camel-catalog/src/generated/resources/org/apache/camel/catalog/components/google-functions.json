@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-functions",
     "title": "GoogleCloudFunctions",
-    "description": "Store and retrieve objects from Google Cloud Functions Service using the google-cloud-storage library.",
+    "description": "Manage and invoke Google Cloud Functions",
     "deprecated": false,
     "firstVersion": "3.9.0",
     "label": "cloud",
