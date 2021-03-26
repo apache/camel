@@ -1653,8 +1653,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * GoogleCloudFunctions (camel-google-functions)
-     * Store and retrieve objects from Google Cloud Functions Service using the
-     * google-cloud-storage library.
+     * Manage and invoke Google Cloud Functions
      * 
      * Category: cloud
      * Since: 3.9

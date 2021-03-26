@@ -2,7 +2,7 @@
 = GoogleCloudFunctions Component
 :docTitle: GoogleCloudFunctions
 :artifactId: camel-google-functions
-:description: Store and retrieve objects from Google Cloud Functions Service using the google-cloud-storage library.
+:description: Manage and invoke Google Cloud Functions
 :since: 3.9
 :supportLevel: Preview
 :component-header: Only producer is supported
