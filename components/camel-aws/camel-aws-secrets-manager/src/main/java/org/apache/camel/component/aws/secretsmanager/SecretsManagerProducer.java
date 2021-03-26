@@ -127,7 +127,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         ListSecretsRequest request = null;
         ListSecretsResponse result;
         if (getConfiguration().isPojoRequest()) {
-        	request = exchange.getIn().getMandatoryBody(ListSecretsRequest.class);
+            request = exchange.getIn().getMandatoryBody(ListSecretsRequest.class);
         } else {
             Builder builder = ListSecretsRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.MAX_RESULTS))) {
@@ -187,7 +187,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         GetSecretValueRequest request = null;
         GetSecretValueResponse result;
         if (getConfiguration().isPojoRequest()) {
-        	request = exchange.getIn().getMandatoryBody(GetSecretValueRequest.class);
+            request = exchange.getIn().getMandatoryBody(GetSecretValueRequest.class);
         } else {
             GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
