@@ -94,7 +94,7 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
                             // we will fail if we cannot create it
                             log.error(
                                     "Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
-                                    getCreateString(), e.getMessage());
+                                    getCreateString(), dae.getMessage());
                             throw dae;
                         }
                     } else {
