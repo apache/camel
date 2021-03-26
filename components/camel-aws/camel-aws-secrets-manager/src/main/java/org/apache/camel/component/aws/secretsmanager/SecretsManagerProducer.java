@@ -246,10 +246,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         DeleteSecretRequest request = null;
         DeleteSecretResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteSecretRequest) {
-                request = (DeleteSecretRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteSecretRequest.class);
         } else {
             DeleteSecretRequest.Builder builder = DeleteSecretRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
