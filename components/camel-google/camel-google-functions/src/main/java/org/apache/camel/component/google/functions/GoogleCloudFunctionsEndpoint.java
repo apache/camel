@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Store and retrieve objects from Google Cloud Functions Service using the google-cloud-storage library.
+ * Manage and invoke Google Cloud Functions
  * 
  * Google Functions Endpoint definition represents a function within the GCP and contains configuration to customize the
  * behavior of Producer.
