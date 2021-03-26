@@ -16,19 +16,43 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
+
+    private HazelcastInstance hazelcastInstance;
+
+    @BeforeAll
+    public void beforeEach() {
+        Config config = new Config();
+        config.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
+        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+    }
+
+    @AfterAll
+    public void afterEach() {
+        if (hazelcastInstance != null) {
+            hazelcastInstance.shutdown();
+        }
+    }
 
     @Test
     public void testExchangeTransferEnabled() throws InterruptedException {
@@ -65,7 +89,15 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
     }
 
     @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        HazelcastCamelTestHelper.registerHazelcastComponents(context, hazelcastInstance);
+        return context;
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

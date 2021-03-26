@@ -88,8 +88,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                    <reuseForks>true</reuseForks>
+<!--                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>-->
                     <systemProperties>
                         <property>
                             <name>hazelcast.logging.type</name>

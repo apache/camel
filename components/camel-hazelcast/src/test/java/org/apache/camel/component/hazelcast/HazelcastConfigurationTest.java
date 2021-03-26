@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.map.HazelcastMapComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -110,7 +111,7 @@ public class HazelcastConfigurationTest {
                 HazelcastInstance hz = endpoint.getHazelcastInstance();
                 assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
                 assertFalse(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-                assertTrue(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+                assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
                 assertEquals(5701, hz.getConfig().getNetworkConfig().getPort());
             }
         } finally {
@@ -229,36 +230,35 @@ public class HazelcastConfigurationTest {
     public void testMix() throws Exception {
         DefaultCamelContext context = null;
 
-        try {
+        try (AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+             AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+             AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+             AvailablePortFinder.Port port4 = AvailablePortFinder.find()) {
             String instanceName = UUID.randomUUID().toString();
 
             Config namedConfig = new Config();
             namedConfig.setInstanceName("named-" + instanceName);
-            namedConfig.getNetworkConfig().setPort(9001);
-            namedConfig.getNetworkConfig().getJoin().getAwsConfig().setEnabled(false);
-            namedConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-            namedConfig.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+            namedConfig.getMetricsConfig().setEnabled(false);
+            namedConfig.getNetworkConfig().setPort(port1.getPort());
+            namedConfig.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
 
             Config customConfig = new Config();
             customConfig.setInstanceName("custom-" + instanceName);
-            customConfig.getNetworkConfig().setPort(9002);
-            customConfig.getNetworkConfig().getJoin().getAwsConfig().setEnabled(false);
-            customConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-            customConfig.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+            customConfig.getMetricsConfig().setEnabled(false);
+            customConfig.getNetworkConfig().setPort(port2.getPort());
+            customConfig.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
 
             Config sharedConfig = new Config();
-            sharedConfig.setInstanceName("custom-" + instanceName);
-            sharedConfig.getNetworkConfig().setPort(9003);
-            sharedConfig.getNetworkConfig().getJoin().getAwsConfig().setEnabled(false);
-            sharedConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-            sharedConfig.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+            sharedConfig.setInstanceName("shared-" + instanceName);
+            sharedConfig.getMetricsConfig().setEnabled(false);
+            sharedConfig.getNetworkConfig().setPort(port3.getPort());
+            sharedConfig.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
 
             Config componentConfig = new Config();
-            sharedConfig.setInstanceName("component-" + instanceName);
-            sharedConfig.getNetworkConfig().setPort(9004);
-            sharedConfig.getNetworkConfig().getJoin().getAwsConfig().setEnabled(false);
-            sharedConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-            sharedConfig.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+            componentConfig.setInstanceName("component-" + instanceName);
+            componentConfig.getMetricsConfig().setEnabled(false);
+            componentConfig.getNetworkConfig().setPort(port4.getPort());
+            componentConfig.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
 
             HazelcastInstance hzNamed = Hazelcast.newHazelcastInstance(namedConfig);
             HazelcastInstance hzShared = Hazelcast.newHazelcastInstance(sharedConfig);

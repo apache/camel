@@ -22,8 +22,11 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSupport {
+
     private static HazelcastInstance hzOne;
     private static HazelcastInstance hzTwo;
 
@@ -49,9 +52,9 @@ public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSup
     private static Config createConfig(String name) {
         Config config = new Config();
         config.setInstanceName(name);
+        config.getMetricsConfig().setEnabled(false);
         config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
         config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true).addMember("127.0.0.1");
-
         return config;
     }
 }
