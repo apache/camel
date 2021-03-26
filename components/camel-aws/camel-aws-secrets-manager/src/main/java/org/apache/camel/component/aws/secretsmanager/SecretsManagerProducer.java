@@ -151,10 +151,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         CreateSecretRequest request = null;
         CreateSecretResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateSecretRequest) {
-                request = (CreateSecretRequest) payload;
-            }
+            request = exchange.getIn().getMandatoryBody(CreateSecretRequest.class);
         } else {
             CreateSecretRequest.Builder builder = CreateSecretRequest.builder();
             String payload = exchange.getIn().getMandatoryBody(String.class);
