@@ -44,7 +44,7 @@ public class FileURLDecodingTest extends ContextTestSupport {
 
     @Test
     public void testFilePlus() throws Exception {
-        assertTargetFile("data+.txt", "data .txt");
+        assertTargetFile("data .txt", "data .txt");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class FileURLDecodingTest extends ContextTestSupport {
 
     @Test
     public void testFile2B() throws Exception {
-        assertTargetFile("data%2B.txt", "data .txt");
+        assertTargetFile("data .txt", "data .txt");
     }
 
     @Test

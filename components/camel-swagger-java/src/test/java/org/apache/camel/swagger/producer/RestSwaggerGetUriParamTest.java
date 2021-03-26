@@ -29,7 +29,7 @@ public class RestSwaggerGetUriParamTest extends CamelTestSupport {
 
     @Test
     public void testSwaggerGet() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Donald+Duck");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Donald%20Duck");
 
         template.sendBodyAndHeader("direct:start", null, "name", "Donald Duck");
 

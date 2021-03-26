@@ -89,6 +89,17 @@ public class UnsafeCharactersEncoderTest {
     }
 
     @Test
+    public void testPlusInQuery() {
+        String beforeEncoding = "http://www.example.com?param1=%2B447777111222";
+        String afterEncoding = "http://www.example.com?param1=%2B447777111222";
+        testEncoding(beforeEncoding, afterEncoding);
+
+        beforeEncoding = "http://www.example.com?param1=+447777111222";
+        afterEncoding = "http://www.example.com?param1=+447777111222";
+        testEncoding(beforeEncoding, afterEncoding);
+    }
+
+    @Test
     public void testPasswordEncodingInRawMode() {
         String password = "RAW(%j#7%c6i)";
         String result = UnsafeUriCharactersEncoder.encode(password, true);

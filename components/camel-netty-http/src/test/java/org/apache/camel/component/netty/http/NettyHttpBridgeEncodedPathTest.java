@@ -80,7 +80,8 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                     // %2B becomes decoded to a space
                     Object s = exchange.getIn().getHeader("param1");
                     // can be either + or %2B
-                    assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
+                    assertTrue(s.equals(" 447777111222") || s.equals("%20447777111222") || s.equals("+447777111222")
+                            || s.equals("%2B447777111222"));
 
                     // send back the query
                     exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
