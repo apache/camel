@@ -70,6 +70,7 @@ echo "##########################################################################
 for comp in ${COMPLIST[*]}; do
   src=${comp%:*}
   dest=${comp#*:}
+  mkdir -p ${SITE_DIR}/${VERSION}/camel-website/static/schema/${dest}/
   cp ${DOWNLOAD}/${VERSION}/org/apache/camel/${src}/${VERSION}/*.xsd ${SITE_DIR}/${VERSION}/camel-website/static/schema/${dest}/
   # update_latest_released_schema("${SITE_DIR}/content/schema/${dest}/")
 done
