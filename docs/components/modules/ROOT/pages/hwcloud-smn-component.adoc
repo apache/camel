@@ -6,7 +6,7 @@
 :artifactId: camel-huaweicloud-smn
 :description: Huawei Cloud component to integrate with SimpleNotification services
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/hwcloud-smn.adoc[opts=optional]
 

@@ -6,7 +6,7 @@
 :artifactId: camel-azure-storage-datalake
 :description: Camel Azure Datalake Gen2 Component
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-datalake.adoc[opts=optional]
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactId: camel-stitch
 :description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stitch.adoc[opts=optional]
 

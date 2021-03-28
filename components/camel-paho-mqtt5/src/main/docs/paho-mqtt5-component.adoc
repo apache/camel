@@ -4,7 +4,7 @@
 :artifactId: camel-paho-mqtt5
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
 :since: 3.8
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/paho-mqtt5.adoc[opts=optional]
 
