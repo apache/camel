@@ -73,7 +73,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     @EndpointInject("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1")
     private Endpoint toStrings;
 
-    @EndpointInject("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1&partitionKey=1")
+    @EndpointInject("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1&partitionKey=0")
     private Endpoint toStrings2;
 
     @EndpointInject("kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
@@ -163,9 +163,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        sendMessagesInRoute(messageInTopic, stringsTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "1");
+        sendMessagesInRoute(messageInTopic, stringsTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "0");
         sendMessagesInRoute(messageInOtherTopic, stringsTemplate, "IT test message in other topic",
-                KafkaConstants.PARTITION_KEY, "1", KafkaConstants.TOPIC,
+                KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
 
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_STRINGS, TOPIC_STRINGS_IN_HEADER, messagesLatch);
@@ -196,7 +196,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         sendMessagesInRoute(messageInTopic, stringsTemplate2, "IT test message", (String[]) null);
         sendMessagesInRoute(messageInOtherTopic, stringsTemplate2, "IT test message in other topic",
-                KafkaConstants.PARTITION_KEY, "1", KafkaConstants.TOPIC,
+                KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
 
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_STRINGS, TOPIC_STRINGS_IN_HEADER, messagesLatch);
@@ -225,9 +225,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        sendMessagesInRoute(messageInTopic, interceptedTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "1");
+        sendMessagesInRoute(messageInTopic, interceptedTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "0");
         sendMessagesInRoute(messageInOtherTopic, interceptedTemplate, "IT test message in other topic",
-                KafkaConstants.PARTITION_KEY, "1", KafkaConstants.TOPIC,
+                KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_INTERCEPTED, TOPIC_STRINGS_IN_HEADER, messagesLatch);
 
@@ -251,12 +251,12 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
             msgs.add("Message " + x);
         }
 
-        sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "1");
+        sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "0");
         msgs = new ArrayList<>();
         for (int x = 0; x < messageInOtherTopic; x++) {
             msgs.add("Other Message " + x);
         }
-        sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "1", KafkaConstants.TOPIC,
+        sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
 
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_STRINGS, TOPIC_STRINGS_IN_HEADER, messagesLatch);

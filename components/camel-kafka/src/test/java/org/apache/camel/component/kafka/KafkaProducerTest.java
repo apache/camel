@@ -277,6 +277,19 @@ public class KafkaProducerTest {
     }
 
     @Test
+    public void processSendsMessageWithPartitionKeyHeaderOnly() throws Exception {
+        endpoint.getConfiguration().setTopic("someTopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(out);
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
+
+        producer.process(exchange);
+
+        verifySendMessage(4, "someTopic");
+        assertRecordMetadataExists();
+    }
+
+    @Test
     public void processSendsMessageWithMessageKeyHeader() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
@@ -376,6 +389,14 @@ public class KafkaProducerTest {
         Mockito.verify(producer.getKafkaProducer()).send(captor.capture());
         assertEquals(partitionKey, captor.getValue().partition());
         assertEquals(messageKey, captor.getValue().key());
+        assertEquals(topic, captor.getValue().topic());
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected void verifySendMessage(Integer partitionKey, String topic) {
+        ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
+        Mockito.verify(producer.getKafkaProducer()).send(captor.capture());
+        assertEquals(partitionKey, captor.getValue().partition());
         assertEquals(topic, captor.getValue().topic());
     }
 
