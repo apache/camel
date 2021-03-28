@@ -22,7 +22,7 @@ mkdir ${DOWNLOAD} 2>/dev/null
 
 # The following component contain schema definitions that must be published
 RUNDIR=$(cd ${0%/*} && echo $PWD)
-COMPLIST=( "camel-spring:spring"
+COMPLIST=( "camel-spring-xml:spring-xml"
   "camel-cxf:cxf"
   "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
