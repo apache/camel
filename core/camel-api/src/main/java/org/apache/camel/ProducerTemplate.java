@@ -928,9 +928,9 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an asynchronous exchange to the given endpoint.
      *
-     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool,
-     * when the task is running to send the exchange asynchronously. In other words mind about thread-safety
-     * when using the transformer processor.
+     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
+     * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
+     * transformer processor.
      *
      * @param  endpointUri the endpoint URI to send the exchange to
      * @param  processor   the transformer used to populate the new exchange
@@ -1025,10 +1025,10 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an asynchronous exchange to the given endpoint.
      *
-     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool,
-     * when the task is running to send the exchange asynchronously. In other words mind about thread-safety
-     * when using the transformer processor.
-
+     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
+     * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
+     * transformer processor.
+     * 
      * @param  endpoint  the endpoint to send the exchange to
      * @param  processor the transformer used to populate the new exchange
      * @return           a handle to be used to get the response in the future
