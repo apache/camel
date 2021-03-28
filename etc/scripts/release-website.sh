@@ -76,26 +76,7 @@ for comp in ${COMPLIST[*]}; do
 done
 echo
 
-echo "################################################################################"
-echo "                  DOWNLOADING MANUALS FROM APACHE REPOSITORY                     "
-echo "################################################################################"
-wget -e robots=off --wait 3 --no-check-certificate \
- -r -np "--reject=txt" "--accept=html,pdf" "--follow-tags=" \
- -P "${DOWNLOAD}/${VERSION}" -nH "--cut-dirs=3" "--level=1" "--ignore-length" \
- "http://repository.apache.org/content/repositories/releases/org/apache/camel/camel-manual/${VERSION}/"
-
-echo "################################################################################"
-echo "                           CHECKOUT MANUAL WEBSITE                             "
-echo "################################################################################"
-cd "${SITE_DIR}/${VERSION}" && svn co --non-interactive "${WEBSITE_URL}/manual/"
-
-echo "################################################################################"
-echo "                           PUBLISH CAMEL MANUAL                                "
-echo "################################################################################"
-cp ${DOWNLOAD}/${VERSION}/org/apache/camel/camel-manual/${VERSION}/camel-manual-${VERSION}.* ${SITE_DIR}/${VERSION}/manual/
-echo
-
-echo "NOTE: Manual steps required! Check the schemas and manual files for new artifacts,"
+echo "NOTE: Manual steps required! Check the schemas for new artifacts,"
 echo "      add them to the repository as required and commit your changes. This step"
 echo "      is intentionally not automated at this point to avoid errors."
 echo
@@ -103,9 +84,5 @@ echo "cd ${SITE_DIR}/${VERSION}/camel-website/"
 echo "git status"
 echo "git add <schema-${VERSION}-qualifier>.xsd"
 echo "git commit -m \"Add XML schemas for Camel ${VERSION}\""
-echo
-echo "cd ${SITE_DIR}/${VERSION}/manual/"
-echo "svn status"
-echo "svn add camel-manual-${VERSION}.html"
-echo "svn ci -m \"Uploading released manuals for camel-${VERSION}\""
+echo "git push"
 echo
