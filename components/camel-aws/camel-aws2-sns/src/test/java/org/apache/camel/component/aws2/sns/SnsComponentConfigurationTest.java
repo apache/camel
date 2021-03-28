@@ -110,7 +110,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         Sns2Endpoint endpoint = (Sns2Endpoint) component
                 .createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy"
-                                + "&policy=file:src/test/resources/org/apache/camel/component/aws2/sns/policy.txt&subject=The+subject+message");
+                                + "&policy=file:src/test/resources/org/apache/camel/component/aws2/sns/policy.txt&subject=The%20subject%20message");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
