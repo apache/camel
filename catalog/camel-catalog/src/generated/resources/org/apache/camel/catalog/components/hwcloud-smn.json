@@ -8,7 +8,7 @@
     "firstVersion": "3.8.0",
     "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.huaweicloud.smn.SimpleNotificationComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-smn",
     "version": "3.10.0-SNAPSHOT",

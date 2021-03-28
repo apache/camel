@@ -8,7 +8,7 @@
     "firstVersion": "3.8.0",
     "label": "cloud,api,compute,bigdata",
     "javaType": "org.apache.camel.component.stitch.StitchComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stitch",
     "version": "3.10.0-SNAPSHOT",
