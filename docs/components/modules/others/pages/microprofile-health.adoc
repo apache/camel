@@ -31,13 +31,13 @@ for this component:
 == Usage
 
 By default, Camel health checks are registered as both MicroProfile Health liveness and readiness checks. To have finer control over whether a Camel health check should
-be considered either a readiness or liveness check, you can extend the `AbstractCamelMicroProfileLivenessCheck` and `AbstractCamelMicroProfileReadinessCheck` classes.
+be considered either a readiness or liveness check, you can extend `AbstractHealthCheck` and override the `isLiveness()` and `isReadiness()` methods.
 
 For example, to have a check registered exclusively as a liveness check:
 
 [source,java]
 ----
-public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
+public class MyHealthCheck extends AbstractHealthCheck {
 
     public MyHealthCheck() {
         super("my-liveness-check-id");
@@ -53,6 +53,10 @@ public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
         } else {
             builder.down();
         }
+    }
+
+    public boolean isReadiness() {
+        return false;
     }
 }
 ----
