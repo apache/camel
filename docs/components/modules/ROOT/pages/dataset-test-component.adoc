@@ -128,4 +128,4 @@ To see how you can set other expectations on the test endpoint, see the
 xref:mock-component.adoc[Mock] component.
 
 
-include::camel-spring-boot::page$dataset-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$dataset-starter.adoc[]

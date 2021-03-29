@@ -119,4 +119,4 @@ If you use Maven you can just add the following to your pom.xml:
 </dependency>
 ----
 
-include::camel-spring-boot::page$base64-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$base64-starter.adoc[]

@@ -254,4 +254,4 @@ public class KubernetesCreateJob extends RouteBuilder {
 --------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$kubernetes-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]

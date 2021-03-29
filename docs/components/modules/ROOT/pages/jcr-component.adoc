@@ -142,4 +142,4 @@ all the children.
 ---------------------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$jcr-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jcr-starter.adoc[]

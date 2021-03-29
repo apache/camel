@@ -227,4 +227,4 @@ To use Protobuf in your camel routes you need to add the a dependency on
 </dependency>
 -----------------------------------------
 
-include::camel-spring-boot::page$protobuf-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$protobuf-starter.adoc[]

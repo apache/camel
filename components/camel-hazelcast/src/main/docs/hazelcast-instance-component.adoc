@@ -112,4 +112,4 @@ Header Variables inside the response message:
 |`CamelHazelcastInstancePort` |`Integer` |port number of the instance
 |=======================================================================
 
-include::camel-spring-boot::page$hazelcast-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$hazelcast-starter.adoc[]

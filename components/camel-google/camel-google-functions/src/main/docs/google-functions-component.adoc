@@ -272,4 +272,4 @@ from("direct:start")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-include::camel-spring-boot::page$google-functions-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$google-functions-starter.adoc[]
