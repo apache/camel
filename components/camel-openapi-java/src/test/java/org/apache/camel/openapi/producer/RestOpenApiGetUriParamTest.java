@@ -29,7 +29,7 @@ public class RestOpenApiGetUriParamTest extends CamelTestSupport {
 
     @Test
     public void testOpenApiGet() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Donald+Duck");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Donald%20Duck");
 
         template.sendBodyAndHeader("direct:start", null, "name", "Donald Duck");
 
