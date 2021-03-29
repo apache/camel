@@ -378,13 +378,13 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         if (timeLimiter != null) {
             Supplier<CompletableFuture<Exchange>> futureSupplier;
             if (executorService == null) {
-                futureSupplier = () -> CompletableFuture.supplyAsync(() -> processInCopy(exchange));
+                futureSupplier = () -> CompletableFuture.supplyAsync(() -> processTask(exchange));
             } else {
-                futureSupplier = () -> CompletableFuture.supplyAsync(() -> processInCopy(exchange), executorService);
+                futureSupplier = () -> CompletableFuture.supplyAsync(() -> processTask(exchange), executorService);
             }
             task = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
         } else {
-            task = new CircuitBreakerTask(() -> processInCopy(exchange));
+            task = new CircuitBreakerTask(() -> processTask(exchange));
         }
 
         if (bulkhead != null) {
@@ -410,7 +410,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         return true;
     }
 
-    private Exchange processInCopy(Exchange exchange) {
+    private Exchange processTask(Exchange exchange) {
         Exchange copy = null;
         UnitOfWork uow = null;
         try {

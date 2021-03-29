@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -45,7 +46,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -301,17 +302,27 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
         @Override
         public Exchange call() throws Exception {
+            Exchange copy = null;
+            UnitOfWork uow = null;
+
             // turn of interruption to allow fault tolerance to process the exchange under its handling
             exchange.adapt(ExtendedExchange.class).setInterruptable(false);
 
             try {
                 LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
+
                 // prepare a copy of exchange so downstream processors don't
                 // cause side-effects if they mutate the exchange
                 // in case timeout processing and continue with the fallback etc
-                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
+                copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
+                // prepare uow on copy
+                uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
+                copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+
                 // process the processor until its fully done
                 processor.process(copy);
+
+                // handle the processing result
                 if (copy.getException() != null) {
                     exchange.setException(copy.getException());
                 } else {
@@ -320,17 +331,13 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
                 }
-                if (copy.getUnitOfWork() == null) {
-                    // handover completions and done them manually to ensure they are being executed
-                    List<Synchronization> synchronizations = copy.adapt(ExtendedExchange.class).handoverCompletions();
-                    UnitOfWorkHelper.doneSynchronizations(copy, synchronizations, LOG);
-                } else {
-                    // done the unit of work
-                    copy.getUnitOfWork().done(exchange);
-                }
             } catch (Exception e) {
                 exchange.setException(e);
+            } finally {
+                // must done uow
+                UnitOfWorkHelper.doneUow(uow, copy);
             }
+
             if (exchange.getException() != null) {
                 // force exception so the circuit breaker can react
                 throw exchange.getException();
