@@ -20,7 +20,10 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 
 /**
  * Ensures the implemented health check will be considered as a MicroProfile Health readiness check
+ *
+ * @deprecated extend {@link AbstractHealthCheck} then override and return false from isLiveness
  */
+@Deprecated
 public abstract class AbstractCamelMicroProfileReadinessCheck extends AbstractHealthCheck {
 
     public AbstractCamelMicroProfileReadinessCheck(String id) {

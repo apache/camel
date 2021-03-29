@@ -20,9 +20,9 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import io.smallrye.health.SmallRyeHealth;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
+import org.apache.camel.impl.health.ContextHealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse.State;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,9 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
     @Test
     public void testCamelContextHealthCheckUpStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
-        CamelMicroProfileContextCheck check = new CamelMicroProfileContextCheck();
+        context.getExtension(HealthCheckRegistry.class).register(new ContextHealthCheck());
+
+        CamelMicroProfileReadinessCheck check = new CamelMicroProfileReadinessCheck();
         check.setCamelContext(context);
         reporter.addHealthCheck(check);
 
@@ -47,16 +49,17 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-context-check", State.UP, checks.getJsonObject(0), checksJson -> {
-            assertEquals(ServiceStatus.Started.toString(), checksJson.getString("contextStatus"));
-            assertEquals("health-context", checksJson.getString("name"));
+        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), checksJson -> {
+            assertEquals(State.UP.name(), checksJson.getString("context"));
         });
     }
 
     @Test
     public void testCamelContextHealthCheckDownStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
-        CamelMicroProfileContextCheck check = new CamelMicroProfileContextCheck();
+        context.getExtension(HealthCheckRegistry.class).register(new ContextHealthCheck());
+
+        CamelMicroProfileReadinessCheck check = new CamelMicroProfileReadinessCheck();
         check.setCamelContext(context);
         reporter.addHealthCheck(check);
 
@@ -65,15 +68,13 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-
         assertEquals(State.DOWN.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-context-check", State.DOWN, checks.getJsonObject(0), checksJson -> {
-            assertEquals(ServiceStatus.Stopped.toString(), checksJson.getString("contextStatus"));
-            assertEquals("health-context", checksJson.getString("name"));
+        assertHealthCheckOutput("camel-readiness-checks", State.DOWN, checks.getJsonObject(0), checksJson -> {
+            assertEquals(State.DOWN.name(), checksJson.getString("context"));
         });
     }
 

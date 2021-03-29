@@ -50,11 +50,8 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
 
         if (camelContext != null) {
             Collection<Result> results = HealthCheckHelper.invoke(camelContext,
-                    (HealthCheckFilter) check ->
-                    // skip context as we have our own context check
-                    check.getId().equals("context")
-                            // or if not accepted
-                            || check instanceof AbstractHealthCheck && !acceptHealthCheck((AbstractHealthCheck) check));
+                    (HealthCheckFilter) check -> check instanceof AbstractHealthCheck
+                            && !acceptHealthCheck((AbstractHealthCheck) check));
 
             for (Result result : results) {
                 Map<String, Object> details = result.getDetails();
