@@ -197,4 +197,4 @@ i.e. You may have an instance in NYC and an instance in SFO. You would configure
 	</route>
 ----
 
-include::camel-spring-boot::page$dns-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$dns-starter.adoc[]

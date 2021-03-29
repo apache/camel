@@ -443,4 +443,4 @@ argument to the JVM:
 -------------------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$jpa-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jpa-starter.adoc[]

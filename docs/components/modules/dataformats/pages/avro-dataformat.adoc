@@ -85,4 +85,4 @@ The Avro dataformat supports 1 options, which are listed below.
 |===
 // dataformat options: END
 
-include::camel-spring-boot::page$avro-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$avro-starter.adoc[]

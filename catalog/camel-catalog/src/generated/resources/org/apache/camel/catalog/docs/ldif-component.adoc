@@ -192,4 +192,4 @@ if (results.size() > 0) {
 }
 ----
 
-include::camel-spring-boot::page$ldif-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$ldif-starter.adoc[]

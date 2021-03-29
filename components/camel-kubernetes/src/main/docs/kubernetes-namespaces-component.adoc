@@ -161,4 +161,4 @@ This consumer will return a list of events on the namespace default.
 
 
 
-include::camel-spring-boot::page$kubernetes-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$kubernetes-starter.adoc[]

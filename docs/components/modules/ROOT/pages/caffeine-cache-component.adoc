@@ -150,4 +150,4 @@ CaffeineConstants.ACTION_HAS_RESULT
 CaffeineConstants.ACTION_SUCCEEDED
 ------------------------------------------------------------
 
-include::camel-spring-boot::page$caffeine-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$caffeine-starter.adoc[]

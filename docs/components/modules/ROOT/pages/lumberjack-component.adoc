@@ -127,4 +127,4 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------------------------
 
-include::camel-spring-boot::page$lumberjack-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$lumberjack-starter.adoc[]

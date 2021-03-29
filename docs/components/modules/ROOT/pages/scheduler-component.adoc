@@ -174,4 +174,4 @@ scheduler, every time the consumer has completed processing the
 exchange.
 
 
-include::camel-spring-boot::page$scheduler-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$scheduler-starter.adoc[]

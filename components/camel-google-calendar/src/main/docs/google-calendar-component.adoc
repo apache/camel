@@ -634,4 +634,4 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 // endpoint options: END
 
 
-include::camel-spring-boot::page$google-calendar-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$google-calendar-starter.adoc[]

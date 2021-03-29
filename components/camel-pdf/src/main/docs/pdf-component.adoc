@@ -118,4 +118,4 @@ https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encrypt
 |=======================================================================
 
 
-include::camel-spring-boot::page$pdf-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$pdf-starter.adoc[]

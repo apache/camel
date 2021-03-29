@@ -621,4 +621,4 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 --------------------------------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$spring-ws-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$spring-ws-starter.adoc[]

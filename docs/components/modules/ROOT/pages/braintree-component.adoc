@@ -1112,4 +1112,4 @@ For more information on the endpoints and options see Braintree
 references at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
 
 
-include::camel-spring-boot::page$braintree-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$braintree-starter.adoc[]

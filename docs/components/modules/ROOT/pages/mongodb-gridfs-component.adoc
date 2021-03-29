@@ -220,4 +220,4 @@ template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$mongodb-gridfs-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$mongodb-gridfs-starter.adoc[]
