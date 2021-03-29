@@ -49,6 +49,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -415,7 +416,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         getEndpoint().getObjectStat(objectName, message);
 
         if (getConfiguration().isIncludeBody()) {
-            message.setBody(getEndpoint().readInputStream(minioObject));
+            message.setBody(IOUtils.toByteArray(minioObject));
             if (getConfiguration().isAutoCloseBody()) {
                 exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                     @Override
