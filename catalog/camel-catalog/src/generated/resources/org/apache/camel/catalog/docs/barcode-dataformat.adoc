@@ -144,4 +144,4 @@ You can find the ORIENTATION as header variable:
 |=======================================================================
  
 
-include::camel-spring-boot::page$barcode-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$barcode-starter.adoc[]

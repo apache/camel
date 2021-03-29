@@ -141,4 +141,4 @@ from("direct:template")
 ----
 
 
-//include::camel-spring-boot::page$kamelet-starter.adoc[]
+//include::{page-component-version}@camel-spring-boot::page$kamelet-starter.adoc[]

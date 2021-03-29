@@ -185,4 +185,4 @@ from("direct:start").
  
 
 
-include::camel-spring-boot::page$xmpp-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$xmpp-starter.adoc[]

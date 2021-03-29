@@ -38,4 +38,4 @@ The RSS dataformat has no options.
 // dataformat options: END
 
 
-include::camel-spring-boot::page$rss-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$rss-starter.adoc[]

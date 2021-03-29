@@ -212,4 +212,4 @@ public static class FilterBean {
 ----
 
 
-include::camel-spring-boot::page$rss-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$rss-starter.adoc[]

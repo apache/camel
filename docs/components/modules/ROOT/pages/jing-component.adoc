@@ -128,4 +128,4 @@ schema (which is supplied on the classpath).
     </camelContext>
 ----
 
-include::camel-spring-boot::page$jing-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jing-starter.adoc[]

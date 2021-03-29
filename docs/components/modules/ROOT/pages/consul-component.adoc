@@ -175,4 +175,4 @@ with the following path and query parameters:
 |CamelConsulValueAsString|boolean|To transform values retrieved from Consul i.e. on KV endpoint to string.
 |=======================================================================
 
-include::camel-spring-boot::page$consul-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$consul-starter.adoc[]

@@ -129,4 +129,4 @@ The same route using xref:ROOT:mina-component.adoc[Mina Component]
 -------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$syslog-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$syslog-starter.adoc[]
