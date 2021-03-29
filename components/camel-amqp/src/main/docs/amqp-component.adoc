@@ -404,4 +404,4 @@ Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
 prefix, so you don't have to configure it explicitly.
 
 
-include::camel-spring-boot::page$amqp-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$amqp-starter.adoc[]

@@ -309,4 +309,4 @@ from("direct:order")
   .toD("spring-rabbit:order-${header.orderType}");
 ----
 
-include::camel-spring-boot::page$spring-rabbitmq-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$spring-rabbitmq-starter.adoc[]

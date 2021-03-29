@@ -275,4 +275,4 @@ from("jt400://username:password@system/lib.lib/MSGOUTQ.DTAQ")
 -------------------------------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$jt400-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jt400-starter.adoc[]

@@ -641,4 +641,4 @@ below:
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$netty-http-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$netty-http-starter.adoc[]

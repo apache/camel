@@ -323,4 +323,4 @@ int size = seda.getExchanges().size();
 ----
 
 
-include::camel-spring-boot::page$seda-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$seda-starter.adoc[]

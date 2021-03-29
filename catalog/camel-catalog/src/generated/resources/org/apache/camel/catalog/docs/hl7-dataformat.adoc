@@ -411,4 +411,4 @@ repository].
 ----
 
 
-include::camel-spring-boot::page$hl7-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$hl7-starter.adoc[]

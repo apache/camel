@@ -172,4 +172,4 @@ the download page for the latest versions).
 </dependency>
 ---------------------------------------
 
-include::camel-spring-boot::page$groovy-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$groovy-starter.adoc[]

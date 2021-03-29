@@ -140,4 +140,4 @@ from("direct:start").to("nsq:myTopic");
 ----
 
 
-include::camel-spring-boot::page$nsq-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$nsq-starter.adoc[]

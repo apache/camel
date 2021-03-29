@@ -142,4 +142,4 @@ from("direct:in").
  
 
 
-include::camel-spring-boot::page$jolt-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jolt-starter.adoc[]
