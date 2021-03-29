@@ -36,7 +36,7 @@ public class WebhookUriEncodingTest extends WebhookTestBase {
         Message result = exchange.getMessage();
         assertEquals("msg: webhook", result.getBody(String.class));
         assertEquals("hello} world", result.getHeader("foo"));
-        assertEquals("hello}+world", result.getHeader("bar"));
+        assertEquals("hello} world", result.getHeader("bar"));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class WebhookUriEncodingTest extends WebhookTestBase {
                         .host("0.0.0.0")
                         .port(port);
 
-                from("webhook:wb-delegate://xx?webhookBasePath=/base&webhookPath=/uri&foo=hello}+world&bar=RAW(hello}+world)")
+                from("webhook:wb-delegate://xx?webhookBasePath=/base&webhookPath=/uri&foo=hello} world&bar=RAW(hello} world)")
                         .transform(body().prepend("msg: "));
 
             }
