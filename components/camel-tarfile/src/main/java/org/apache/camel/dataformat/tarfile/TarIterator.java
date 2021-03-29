@@ -52,6 +52,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private final Exchange exchange;
     private volatile TarArchiveInputStream tarInputStream;
     private volatile Message parent;
+    private volatile boolean first;
     private boolean allowEmptyDirectory;
 
     public TarIterator(Exchange exchange, InputStream inputStream) {
@@ -69,6 +70,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
             }
         }
         parent = null;
+        first = true;
     }
 
     @Override
@@ -87,6 +89,9 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 } else {
                     availableDataInCurrentEntry = true;
                 }
+                if (first && parent == null) {
+                    throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
+                }
             }
             return availableDataInCurrentEntry;
         } catch (IOException exception) {
@@ -101,6 +106,12 @@ public class TarIterator implements Iterator<Message>, Closeable {
         }
         Message answer = parent;
         parent = null;
+
+        if (first && answer == null) {
+            throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
+        }
+
+        first = false;
         checkNullAnswer(answer);
 
         return answer;

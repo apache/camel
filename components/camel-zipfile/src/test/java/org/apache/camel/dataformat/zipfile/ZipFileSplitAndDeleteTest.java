@@ -82,14 +82,14 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
                 ZipFileDataFormat dataFormat = new ZipFileDataFormat();
                 dataFormat.setUsingIterator(true);
 
-                from("file://target/testDeleteZipFileWhenUnmarshalWithDataFormat?delete=true")
+                from("file://target/testDeleteZipFileWhenUnmarshalWithDataFormat?delay=10&delete=true")
                         .unmarshal(dataFormat)
                         .split(bodyAs(Iterator.class)).streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();
 
-                from("file://target/testDeleteZipFileWhenUnmarshalWithSplitter?delete=true")
+                from("file://target/testDeleteZipFileWhenUnmarshalWithSplitter?delay=10&delete=true")
                         .split(new ZipSplitter()).streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
