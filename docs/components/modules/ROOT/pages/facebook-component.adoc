@@ -353,4 +353,4 @@ CamelFacebook.query header.
         .to("facebook://posts");
 --------------------------------------------------------
 
-include::camel-spring-boot::page$facebook-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$facebook-starter.adoc[]

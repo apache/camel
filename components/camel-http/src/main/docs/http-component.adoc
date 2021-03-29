@@ -698,4 +698,4 @@ property.
 </bean>
 ----------------------------------------------------------------------------
 
-include::camel-spring-boot::page$http-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$http-starter.adoc[]

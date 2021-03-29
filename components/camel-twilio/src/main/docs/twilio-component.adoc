@@ -227,4 +227,4 @@ All result message bodies utilize objects provided by the Twilio Java SDK.
 Producer endpoints can specify the option name for incoming message body
 in the *inBody* endpoint parameter.
 
-include::camel-spring-boot::page$twilio-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$twilio-starter.adoc[]

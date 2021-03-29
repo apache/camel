@@ -47,4 +47,4 @@ The RSS dataformat supports 1 options, which are listed below.
 // dataformat options: END
 ND
 
-include::camel-spring-boot::page$rss-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$rss-starter.adoc[]

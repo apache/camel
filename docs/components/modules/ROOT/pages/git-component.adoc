@@ -153,4 +153,4 @@ from("git:///tmp/testRepo?type=commit")
                         .to(....)
 ---------------------------------------
 
-include::camel-spring-boot::page$git-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$git-starter.adoc[]

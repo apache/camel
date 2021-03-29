@@ -177,4 +177,4 @@ And the equivalent Spring sample:
  
 
 
-include::camel-spring-boot::page$ahc-ws-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$ahc-ws-starter.adoc[]

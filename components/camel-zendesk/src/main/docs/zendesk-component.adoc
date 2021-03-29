@@ -141,4 +141,4 @@ All result message bodies utilize objects provided by the Zendesk Java Client.
 Producer endpoints can specify the option name for incoming message body
 in the *inBody* endpoint parameter.
 
-include::camel-spring-boot::page$zendesk-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$zendesk-starter.adoc[]

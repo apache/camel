@@ -174,4 +174,4 @@ from("direct:in").
   to("jslt:com/acme/MyResponse.json?allowContextMapAll=true");
 ---------------------------------------------------------------------
 
-include::camel-spring-boot::page$jslt-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jslt-starter.adoc[]

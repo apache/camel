@@ -268,4 +268,4 @@ Required:
 * `IssueWatchersRemove`: A list of strings with the usernames to remove from the watcher list.
 
 
-include::camel-spring-boot::page$jira-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$jira-starter.adoc[]

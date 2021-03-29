@@ -162,4 +162,4 @@ This route will consume the next ten events starting from the date of polling.
 
    
 
-include::camel-spring-boot::page$google-sheets-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$google-sheets-starter.adoc[]

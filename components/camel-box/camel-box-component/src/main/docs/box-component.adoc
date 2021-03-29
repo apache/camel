@@ -814,4 +814,4 @@ from("direct:foo")
     .to("file://...");
 ----
 
-include::camel-spring-boot::page$box-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$box-starter.adoc[]

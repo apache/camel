@@ -15,4 +15,4 @@ provide connectivity to Azure services from Camel.
 |https://azure.microsoft.com/services/storage/queues[Storage Queue Service] |xref:azure-queue-component.adoc[Azure-Queue] |Supports storing and retrieving of messages in the queues
 |=======================================================================
 
-include::camel-spring-boot::page$azure-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$azure-starter.adoc[]

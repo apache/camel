@@ -152,4 +152,4 @@ This route will consume unread messages with labels Github and Apache and it wil
 
    
 
-include::camel-spring-boot::page$google-mail-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]

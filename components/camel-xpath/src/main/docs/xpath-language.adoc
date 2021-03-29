@@ -497,4 +497,4 @@ eg to refer to a file on the classpath you can do:
 
 The XPath language is part of camel-core.
 
-include::camel-spring-boot::page$xpath-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$xpath-starter.adoc[]

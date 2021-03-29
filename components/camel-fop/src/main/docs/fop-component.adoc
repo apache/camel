@@ -175,4 +175,4 @@ from("file:source/data/xml")
 ---------------------------------
 
 
-include::camel-spring-boot::page$fop-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$fop-starter.adoc[]

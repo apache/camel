@@ -238,4 +238,4 @@ Spring XML Recipient
 
 This data format is provided within the *camel-xmlsecurity* component.
 
-include::camel-spring-boot::page$xmlsecurity-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$xmlsecurity-starter.adoc[]

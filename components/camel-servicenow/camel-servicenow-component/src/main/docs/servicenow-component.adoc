@@ -360,4 +360,4 @@ FluentProducerTemplate.on(context)
     .send();
 -------------------------------------------------------------------------------------------------------------------
 
-include::camel-spring-boot::page$servicenow-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$servicenow-starter.adoc[]

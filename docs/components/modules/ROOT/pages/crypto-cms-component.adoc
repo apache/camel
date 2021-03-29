@@ -411,4 +411,4 @@ from("direct:start")
     </route>    
 ----
 
-include::camel-spring-boot::page$crypto-cms-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$crypto-cms-starter.adoc[]

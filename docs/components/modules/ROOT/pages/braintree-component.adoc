@@ -875,4 +875,4 @@ body in the *inBody* endpoint parameter.
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$braintree-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$braintree-starter.adoc[]

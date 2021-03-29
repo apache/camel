@@ -198,4 +198,4 @@ option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages.     
 
-include::camel-spring-boot::page$google-mail-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$google-mail-starter.adoc[]

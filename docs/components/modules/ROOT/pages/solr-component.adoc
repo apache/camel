@@ -235,4 +235,4 @@ Tutorial]
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
 
-include::camel-spring-boot::page$solr-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$solr-starter.adoc[]
