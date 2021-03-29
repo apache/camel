@@ -213,7 +213,7 @@
       "org.apache.camel.dsl.yaml.deserializers.model.OutputAwareFromDefinition" : {
         "type" : "object",
         "properties" : {
-          "properties" : {
+          "parameters" : {
             "type" : "object"
           },
           "steps" : {
@@ -743,7 +743,7 @@
         }, {
           "type" : "object",
           "properties" : {
-            "properties" : {
+            "parameters" : {
               "type" : "object"
             },
             "uri" : {
@@ -922,7 +922,7 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
-            "properties" : {
+            "parameters" : {
               "type" : "object"
             },
             "uri" : {
@@ -941,7 +941,7 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
-            "properties" : {
+            "parameters" : {
               "type" : "object"
             },
             "uri" : {
@@ -2032,7 +2032,7 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
-            "properties" : {
+            "parameters" : {
               "type" : "object"
             },
             "uri" : {
@@ -2418,11 +2418,11 @@
             "inherit-error-handler" : {
               "type" : "boolean"
             },
+            "parameters" : {
+              "type" : "object"
+            },
             "pattern" : {
               "type" : "string"
-            },
-            "properties" : {
-              "type" : "object"
             },
             "uri" : {
               "type" : "string"
@@ -2451,6 +2451,9 @@
             },
             "inherit-error-handler" : {
               "type" : "boolean"
+            },
+            "parameters" : {
+              "type" : "object"
             },
             "pattern" : {
               "type" : "string"
@@ -2733,6 +2736,9 @@
           },
           "on-prepare-ref" : {
             "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
           },
           "pattern" : {
             "type" : "string"

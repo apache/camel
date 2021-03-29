@@ -19,11 +19,9 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteDefinition
-import spock.lang.Ignore
 
 class RoutesTest extends YamlTestSupport {
 
-    @Ignore
     def "load from"() {
         when:
             loadRoutes '''
@@ -43,7 +41,29 @@ class RoutesTest extends YamlTestSupport {
                 }
             }
     }
-    @Ignore
+
+    def "load from with parameters"() {
+        when:
+            loadRoutes '''
+                - from:
+                    uri: "direct:info"
+                    parameters:
+                      timeout: 1234    
+                    steps:
+                      - log: "message"
+            '''
+        then:
+            context.routeDefinitions.size() == 1
+
+            with(context.routeDefinitions[0], RouteDefinition) {
+                input.endpointUri == 'direct:info?timeout=1234'
+
+                with (outputs[0], LogDefinition) {
+                    message == 'message'
+                }
+            }
+    }
+
     def "load multi from "() {
         when:
             loadRoutes '''
@@ -89,6 +109,29 @@ class RoutesTest extends YamlTestSupport {
 
             with(context.routeDefinitions[0], RouteDefinition) {
                 input.endpointUri == 'direct:info'
+
+                with (outputs[0], LogDefinition) {
+                    message == 'message'
+                }
+            }
+    }
+
+    def "load route with parameters"() {
+        when:
+            loadRoutes '''
+                - route:
+                    from:
+                      uri: "direct:info"
+                      parameters:
+                        timeout: 1234
+                    steps:
+                      - log: "message"
+            '''
+        then:
+            context.routeDefinitions.size() == 1
+
+            with(context.routeDefinitions[0], RouteDefinition) {
+                input.endpointUri == 'direct:info?timeout=1234'
 
                 with (outputs[0], LogDefinition) {
                     message == 'message'

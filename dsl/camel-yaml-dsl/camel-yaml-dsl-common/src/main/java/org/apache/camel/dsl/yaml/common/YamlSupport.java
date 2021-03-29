@@ -211,7 +211,7 @@ public final class YamlSupport {
             final YamlDeserializationContext dc = getDeserializationContext(node);
 
             String uri = null;
-            Map<String, Object> properties = null;
+            Map<String, Object> parameters = null;
 
             for (NodeTuple tuple : mn.getValue()) {
                 final String key = asText(tuple.getKeyNode());
@@ -228,20 +228,20 @@ public final class YamlSupport {
 
                         uri = asText(val);
                         break;
-                    case "properties":
+                    case "parameters":
                         if (answer != null) {
                             throw new IllegalArgumentException(
                                     "uri and properties are not supported when using Endpoint DSL ");
                         }
 
-                        properties = asScalarMap(tuple.getValueNode());
+                        parameters = asScalarMap(tuple.getValueNode());
                         break;
                     default:
                         String endpointUri = endpointResolver.apply(key, val);
                         if (endpointUri != null) {
-                            if (uri != null || properties != null) {
+                            if (uri != null || parameters != null) {
                                 throw new IllegalArgumentException(
-                                        "uri and properties are not supported when using Endpoint DSL ");
+                                        "uri and parameters are not supported when using Endpoint DSL ");
                             }
                             answer = endpointUri;
                         } else {
@@ -252,7 +252,7 @@ public final class YamlSupport {
 
             if (answer == null) {
                 ObjectHelper.notNull(uri, "The uri must set");
-                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties);
+                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), uri, parameters);
             }
         }
 

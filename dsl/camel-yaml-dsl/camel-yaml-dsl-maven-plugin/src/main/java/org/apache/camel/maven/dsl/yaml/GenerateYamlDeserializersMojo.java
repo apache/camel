@@ -500,14 +500,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             );
         }
 
-        if (extendsType(info, SEND_DEFINITION_CLASS)) {
-            setProperty.beginControlFlow("case $S:", "properties");
+        if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
+            setProperty.beginControlFlow("case $S:", "parameters");
             setProperty.beginControlFlow("if (target.getUri() == null)");
-            setProperty.addStatement("throw new IllegalStateException(\"url must be set before setting properties\")");
+            setProperty.addStatement("throw new IllegalStateException(\"url must be set before setting parameters\")");
             setProperty.endControlFlow();
-            setProperty.addStatement("java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node))");
+            setProperty.addStatement("java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node))");
             setProperty.addStatement("$T dc = getDeserializationContext(node)", CN_DESERIALIZATION_CONTEXT);
-            setProperty.addStatement("String uri = $T.createEndpointUri(dc.getCamelContext(), target.getUri(), properties)", CN_YAML_SUPPORT);
+            setProperty.addStatement("String uri = $T.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters)", CN_YAML_SUPPORT);
             setProperty.addStatement("target.setUri(uri)");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
@@ -525,7 +525,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
             properties.add(
                 yamlProperty(
-                    "properties",
+                    "parameters",
                     "object")
             );
         } else if (implementType(info, HAS_EXPRESSION_TYPE_CLASS)) {
