@@ -31,6 +31,10 @@
     <name>Camel :: Bindy</name>
     <description>Camel Bindy data format support</description>
 
+    <properties>
+        <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Duser.language=en -Duser.region=GB</camel.surefire.fork.vmargs>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -77,14 +81,4 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Duser.language=en -Duser.region=GB</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
