@@ -37,4 +37,4 @@ their `pom.xml` for this component:
 // endpoint options: START
 // endpoint options: END
 
-include::{page-component-version}@camel-spring-boot::page$spring-xml-starter.adoc[]
+include::{page-component-version}@camel-spring-boot::page$spring-boot-xml.adoc[]
