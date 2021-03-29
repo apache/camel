@@ -5872,7 +5872,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "uri", type = "string", required = true),
-                    @YamlProperty(name = "properties", type = "object")
+                    @YamlProperty(name = "parameters", type = "object")
             }
     )
     public static class InOnlyDefinitionDeserializer extends YamlDeserializerBase<InOnlyDefinition> {
@@ -5904,13 +5904,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
-                case "properties": {
+                case "parameters": {
                     if (target.getUri() == null) {
-                        throw new IllegalStateException("url must be set before setting properties");
+                        throw new IllegalStateException("url must be set before setting parameters");
                     }
-                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node));
                     YamlDeserializationContext dc = getDeserializationContext(node);
-                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters);
                     target.setUri(uri);
                     break;
                 }
@@ -5937,7 +5937,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "uri", type = "string", required = true),
-                    @YamlProperty(name = "properties", type = "object")
+                    @YamlProperty(name = "parameters", type = "object")
             }
     )
     public static class InOutDefinitionDeserializer extends YamlDeserializerBase<InOutDefinition> {
@@ -5969,13 +5969,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
-                case "properties": {
+                case "parameters": {
                     if (target.getUri() == null) {
-                        throw new IllegalStateException("url must be set before setting properties");
+                        throw new IllegalStateException("url must be set before setting parameters");
                     }
-                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node));
                     YamlDeserializationContext dc = getDeserializationContext(node);
-                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters);
                     target.setUri(uri);
                     break;
                 }
@@ -11817,7 +11817,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "uri", type = "string", required = true),
-                    @YamlProperty(name = "properties", type = "object")
+                    @YamlProperty(name = "parameters", type = "object")
             }
     )
     public static class SagaActionUriDefinitionDeserializer extends YamlDeserializerBase<SagaActionUriDefinition> {
@@ -11849,13 +11849,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
-                case "properties": {
+                case "parameters": {
                     if (target.getUri() == null) {
-                        throw new IllegalStateException("url must be set before setting properties");
+                        throw new IllegalStateException("url must be set before setting parameters");
                     }
-                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node));
                     YamlDeserializationContext dc = getDeserializationContext(node);
-                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters);
                     target.setUri(uri);
                     break;
                 }
@@ -14147,7 +14147,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "pattern", type = "string"),
                     @YamlProperty(name = "uri", type = "string", required = true),
-                    @YamlProperty(name = "properties", type = "object")
+                    @YamlProperty(name = "parameters", type = "object")
             }
     )
     public static class ToDefinitionDeserializer extends YamlDeserializerBase<ToDefinition> {
@@ -14184,13 +14184,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
-                case "properties": {
+                case "parameters": {
                     if (target.getUri() == null) {
-                        throw new IllegalStateException("url must be set before setting properties");
+                        throw new IllegalStateException("url must be set before setting parameters");
                     }
-                    java.util.Map<String, Object> properties = asScalarMap(asMappingNode(node));
+                    java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node));
                     YamlDeserializationContext dc = getDeserializationContext(node);
-                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), properties);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters);
                     target.setUri(uri);
                     break;
                 }
@@ -14221,7 +14221,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "pattern", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", required = true)
+                    @YamlProperty(name = "uri", type = "string", required = true),
+                    @YamlProperty(name = "parameters", type = "object")
             }
     )
     public static class ToDynamicDefinitionDeserializer extends YamlDeserializerBase<ToDynamicDefinition> {
@@ -14278,8 +14279,25 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "parameters": {
+                    if (target.getUri() == null) {
+                        throw new IllegalStateException("url must be set before setting parameters");
+                    }
+                    java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node));
+                    YamlDeserializationContext dc = getDeserializationContext(node);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters);
+                    target.setUri(uri);
+                    break;
+                }
                 default: {
-                    return false;
+                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
+                    if (uri == null) {
+                        return false;
+                    }
+                    if (target.getUri() != null) {
+                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
+                    }
+                    target.setUri(uri);
                 }
             }
             return true;
@@ -15847,7 +15865,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "processor-ref", type = "string"),
                     @YamlProperty(name = "on-prepare-ref", type = "string"),
                     @YamlProperty(name = "pattern", type = "string"),
-                    @YamlProperty(name = "uri", type = "string", required = true)
+                    @YamlProperty(name = "uri", type = "string", required = true),
+                    @YamlProperty(name = "parameters", type = "object")
             }
     )
     public static class WireTapDefinitionDeserializer extends YamlDeserializerBase<WireTapDefinition> {
@@ -15934,8 +15953,25 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setUri(val);
                     break;
                 }
+                case "parameters": {
+                    if (target.getUri() == null) {
+                        throw new IllegalStateException("url must be set before setting parameters");
+                    }
+                    java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node));
+                    YamlDeserializationContext dc = getDeserializationContext(node);
+                    String uri = YamlSupport.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters);
+                    target.setUri(uri);
+                    break;
+                }
                 default: {
-                    return false;
+                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
+                    if (uri == null) {
+                        return false;
+                    }
+                    if (target.getUri() != null) {
+                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
+                    }
+                    target.setUri(uri);
                 }
             }
             return true;

@@ -50,7 +50,7 @@ class ToTest extends YamlTestSupport {
                         steps:    
                           - to: 
                               uri: "direct"
-                              properties:
+                              parameters:
                                 name: "start"
                     '''),
                 asResource('endpoint', '''

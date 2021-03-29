@@ -30,7 +30,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "uri", type = "string", required = true),
-                  @YamlProperty(name = "properties", type = "object")
+                  @YamlProperty(name = "parameters", type = "object")
           })
 public class FromDefinitionDeserializer implements ConstructNode {
     @Override

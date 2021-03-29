@@ -95,6 +95,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.model.ProcessorDefinition");
     public static final DotName SEND_DEFINITION_CLASS
             = DotName.createSimple("org.apache.camel.model.SendDefinition");
+    public static final DotName TO_DYNAMIC_DEFINITION_CLASS
+        = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
+
 
     public static final DotName YAML_TYPE_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");

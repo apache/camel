@@ -40,7 +40,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "uri", type = "string", required = true),
-                  @YamlProperty(name = "properties", type = "object"),
+                  @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
 public class RouteFromDefinitionDeserializer extends YamlDeserializerBase<OutputAwareFromDefinition> {
@@ -80,7 +80,7 @@ public class RouteFromDefinitionDeserializer extends YamlDeserializerBase<Output
                 case "uri":
                     uri = asText(val);
                     break;
-                case "properties":
+                case "parameters":
                     properties = asScalarMap(tuple.getValueNode());
                     break;
                 default:
