@@ -127,7 +127,7 @@ In the location above we defined a location using the file scheme using
 the JVM system property with key `karaf.home`.
 
 To use an OS environment variable instead you would have to prefix with
-env:
+`env:`. You can also prefix with `env.`, however this style is not recommended because all the other functions use colon.
 
 [source]
 ----
