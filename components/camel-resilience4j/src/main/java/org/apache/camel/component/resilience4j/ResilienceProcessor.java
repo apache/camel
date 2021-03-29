@@ -47,8 +47,10 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -423,6 +425,15 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                 exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
                 exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
             }
+            if (copy.getUnitOfWork() == null) {
+                // handover completions and done them manually to ensure they are being executed
+                List<Synchronization> synchronizations = copy.adapt(ExtendedExchange.class).handoverCompletions();
+                UnitOfWorkHelper.doneSynchronizations(copy, synchronizations, LOG);
+            } else {
+                // done the unit of work
+                copy.getUnitOfWork().done(exchange);
+            }
+
         } catch (Throwable e) {
             exchange.setException(e);
         }
