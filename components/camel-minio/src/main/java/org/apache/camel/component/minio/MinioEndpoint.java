@@ -45,6 +45,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -137,7 +138,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         getObjectStat(objectName, message);
 
         if (getConfiguration().isIncludeBody()) {
-            message.setBody(readInputStream(minioObject));
+            message.setBody(IOUtils.toByteArray(minioObject));
             if (getConfiguration().isAutoCloseBody()) {
                 exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                     @Override
