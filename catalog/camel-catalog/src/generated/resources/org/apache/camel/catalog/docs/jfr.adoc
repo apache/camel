@@ -30,5 +30,3 @@ JFR recordings can be started either at:
 - When starting Camel by setting `camel.main.startup-recorder-recording=true`.
 
 See the `camel-example-flight-recorder` from the Camel Examples.
-
-include::{page-component-version}@camel-spring-boot::page$jfr-starter.adoc[]
