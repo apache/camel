@@ -173,24 +173,24 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void deleteFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-    	DeleteFunctionRequest request = null;
-    	DeleteFunctionResponse result;
+        DeleteFunctionRequest request = null;
+        DeleteFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
             request = exchange.getIn().getMandatoryBody(DeleteFunctionRequest.class);
         } else {
-        	DeleteFunctionRequest.Builder builder = DeleteFunctionRequest.builder();
-        	builder.functionName(getEndpoint().getFunction());
-        	request = builder.build();
+            DeleteFunctionRequest.Builder builder = DeleteFunctionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
         }
-            try {
-                result = lambdaClient
-                        .deleteFunction(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+        try {
+            result = lambdaClient
+                    .deleteFunction(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listFunctions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
