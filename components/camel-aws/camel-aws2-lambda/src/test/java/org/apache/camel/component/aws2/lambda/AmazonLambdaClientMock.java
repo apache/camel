@@ -227,7 +227,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
         result.functions(listFunctions);
         return result.build();
     }
-    
+
     @Override
     public ListFunctionsResponse listFunctions(ListFunctionsRequest request) {
 
@@ -250,7 +250,6 @@ public class AmazonLambdaClientMock implements LambdaClient {
         result.functions(listFunctions);
         return result.build();
     }
-
 
     @Override
     public ListTagsResponse listTags(ListTagsRequest listTagsRequest) {
