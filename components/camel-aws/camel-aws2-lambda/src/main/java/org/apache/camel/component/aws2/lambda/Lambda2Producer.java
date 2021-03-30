@@ -152,31 +152,24 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void getFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	GetFunctionRequest request = null;
+    	GetFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetFunctionRequest) {
-                GetFunctionResponse result;
-                try {
-                    result = lambdaClient.getFunction((GetFunctionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(GetFunctionRequest.class);
         } else {
-            GetFunctionResponse result;
-            try {
-                result = lambdaClient
-                        .getFunction(GetFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            GetFunctionRequest.Builder builder = GetFunctionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
         }
+        try {
+            result = lambdaClient
+                    .getFunction(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void deleteFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
