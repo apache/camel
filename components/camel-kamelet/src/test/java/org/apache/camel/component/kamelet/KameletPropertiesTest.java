@@ -111,7 +111,7 @@ public class KameletPropertiesTest extends CamelTestSupport {
 
     @Test
     public void urlEncodingIsRespected() {
-        assertThat(context.getEndpoint("kamelet:timer-source?message=Hello Kamelets&period=1000", KameletEndpoint.class)
+        assertThat(context.getEndpoint("kamelet:timer-source?message=Hello+Kamelets&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
                         .containsEntry("message", "Hello Kamelets");
         assertThat(context.getEndpoint("kamelet:timer-source?message=Hi%20Kamelets&period=1000", KameletEndpoint.class)

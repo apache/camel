@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.util.StringHelper;
-
 /**
  * Copied from org.apache.camel.util.URISupport
  */
@@ -427,10 +425,7 @@ public final class URISupport {
     private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
             throws UnsupportedEncodingException {
         if (encode) {
-            // the URLEncoder is for HTML forms, so it encodes spaces as + sign
-            // but we want this to be decimal encoded for URI query parameter
             String encoded = URLEncoder.encode(key, CHARSET);
-            encoded = StringHelper.replaceAll(encoded, "+", "%20");
             rc.append(encoded);
         } else {
             rc.append(key);
@@ -446,10 +441,7 @@ public final class URISupport {
         });
         if (!isRaw) {
             if (encode) {
-                // the URLEncoder is for HTML forms, so it encodes spaces as + sign
-                // but we want this to be decimal encoded for URI query parameter
                 String encoded = URLEncoder.encode(value, CHARSET);
-                encoded = StringHelper.replaceAll(encoded, "+", "%20");
                 rc.append(encoded);
             } else {
                 rc.append(value);

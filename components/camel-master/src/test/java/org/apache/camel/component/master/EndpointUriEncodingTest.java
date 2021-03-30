@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class EndpointUriEncodingTest extends CamelTestSupport {
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("foo").isEqualTo("hello} world");
@@ -49,7 +49,7 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 context.addComponent("dummy", new DummyComponent());
-                from("master:test:dummy://path?foo=hello} world&bar=RAW(hello}+world)")
+                from("master:test:dummy://path?foo=hello}+world&bar=RAW(hello}+world)")
                         .to("mock:result");
             }
         };

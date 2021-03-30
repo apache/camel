@@ -30,7 +30,7 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
     public void testJettyHttpClient() throws Exception {
         String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null,
                 String.class);
-        assertEquals("param1=%2B447777111222", response, "Get a wrong response");
+        assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
     @Override

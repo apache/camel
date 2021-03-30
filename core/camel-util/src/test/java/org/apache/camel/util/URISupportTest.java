@@ -134,7 +134,7 @@ public class URISupportTest {
     @Test
     public void testNormalizeHttpEndpointURLEncodedParameter() throws Exception {
         String out = URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen");
-        assertEquals("http://www.google.com?q=S%C3%B8ren%20Hansen", out);
+        assertEquals("http://www.google.com?q=S%C3%B8ren+Hansen", out);
     }
 
     @Test
@@ -226,8 +226,8 @@ public class URISupportTest {
         // create new uri with the parameters
         URI out = URISupport.createRemainingURI(new URI(uri), map);
         assertNotNull(out);
-        assertEquals("http://localhost:23271/myapp/mytest?foo=abc%20def&bar=123%2C456&name=S%C3%B8ren", out.toString());
-        assertEquals("http://localhost:23271/myapp/mytest?foo=abc%20def&bar=123%2C456&name=S%C3%B8ren", out.toASCIIString());
+        assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toString());
+        assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toASCIIString());
     }
 
     @Test
@@ -348,12 +348,12 @@ public class URISupportTest {
     public void testRawParameter() throws Exception {
         String out = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some%20chat", out);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some+chat", out);
 
         String out2 = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some%20chat",
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat",
                 out2);
     }
 
@@ -361,12 +361,12 @@ public class URISupportTest {
     public void testRawParameterCurly() throws Exception {
         String out = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some%20chat", out);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some+chat", out);
 
         String out2 = URISupport.normalizeUri(
                 "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some%20chat",
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat",
                 out2);
     }
 

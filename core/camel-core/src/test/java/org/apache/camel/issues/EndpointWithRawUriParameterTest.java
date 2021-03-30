@@ -152,7 +152,8 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         template.sendBody("direct:plus", "Hello World");
 
-        getMockEndpoint("mock:result").assertIsSatisfied();
+        // should fail as the password has + sign which gets escaped
+        getMockEndpoint("mock:result").assertIsNotSatisfied();
     }
 
     @Test
