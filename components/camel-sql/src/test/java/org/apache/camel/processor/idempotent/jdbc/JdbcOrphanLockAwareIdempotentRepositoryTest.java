@@ -18,7 +18,8 @@ package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
 
-import org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepositoryOrphanLockRemoval.ProcessorNameAndMessageId;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentRepository.ProcessorNameAndMessageId;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -32,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(Lifecycle.PER_CLASS)
-public class JdbcMessageIdRepositoryOrphanLockRemovalTest {
+public class JdbcOrphanLockAwareIdempotentRepositoryTest {
 
     private static final String APP_NAME = "APP_1";
 
     private EmbeddedDatabase dataSource;
 
-    private JdbcMessageIdRepositoryOrphanLockRemoval jdbcMessageIdRepository;
+    private JdbcOrphanLockAwareIdempotentRepository jdbcMessageIdRepository;
 
     @BeforeAll
     public void setup() throws Exception {
@@ -47,7 +48,7 @@ public class JdbcMessageIdRepositoryOrphanLockRemovalTest {
                 .addScript("classpath:sql/idempotentWithOrphanLockRemoval.sql")
                 .generateUniqueName(true)
                 .build();
-        jdbcMessageIdRepository = new JdbcMessageIdRepositoryOrphanLockRemoval(dataSource, APP_NAME);
+        jdbcMessageIdRepository = new JdbcOrphanLockAwareIdempotentRepository(dataSource, APP_NAME, new DefaultCamelContext());
         jdbcMessageIdRepository.setLockMaxAgeMillis(3000_00L);
         jdbcMessageIdRepository.setLockKeepAliveIntervalMillis(3000L);
         jdbcMessageIdRepository.doInit();

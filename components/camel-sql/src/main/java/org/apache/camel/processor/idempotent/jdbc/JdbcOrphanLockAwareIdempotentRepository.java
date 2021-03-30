@@ -19,8 +19,8 @@ package org.apache.camel.processor.idempotent.jdbc;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ShutdownableService;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -45,13 +48,17 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * *
  */
-public class JdbcMessageIdRepositoryOrphanLockRemoval extends JdbcMessageIdRepository {
+public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository implements ShutdownableService {
 
     private final StampedLock sl = new StampedLock();
 
     private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = new HashSet<>();
 
-    private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    private ExecutorServiceManager executorServiceManager;
+
+    private ScheduledExecutorService executorService;
+
+    private CamelContext context;
 
     /** Max age of read lock in milliseconds **/
     private long lockMaxAgeMillis;
@@ -62,22 +69,26 @@ public class JdbcMessageIdRepositoryOrphanLockRemoval extends JdbcMessageIdRepos
     private String updateTimestampQuery
             = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
 
-    public JdbcMessageIdRepositoryOrphanLockRemoval() {
+    public JdbcOrphanLockAwareIdempotentRepository(CamelContext camelContext) {
         super();
+        this.context = camelContext;
     }
 
-    public JdbcMessageIdRepositoryOrphanLockRemoval(DataSource dataSource, String processorName) {
+    public JdbcOrphanLockAwareIdempotentRepository(DataSource dataSource, String processorName, CamelContext camelContext) {
         super(dataSource, processorName);
+        this.context = camelContext;
     }
 
-    public JdbcMessageIdRepositoryOrphanLockRemoval(DataSource dataSource, TransactionTemplate transactionTemplate,
-                                                    String processorName) {
+    public JdbcOrphanLockAwareIdempotentRepository(DataSource dataSource, TransactionTemplate transactionTemplate,
+                                                   String processorName, CamelContext camelContext) {
         super(dataSource, transactionTemplate, processorName);
+        this.context = camelContext;
     }
 
-    public JdbcMessageIdRepositoryOrphanLockRemoval(JdbcTemplate jdbcTemplate,
-                                                    TransactionTemplate transactionTemplate) {
+    public JdbcOrphanLockAwareIdempotentRepository(JdbcTemplate jdbcTemplate,
+                                                   TransactionTemplate transactionTemplate, CamelContext camelContext) {
         super(jdbcTemplate, transactionTemplate);
+        this.context = camelContext;
     }
 
     @Override
@@ -87,9 +98,9 @@ public class JdbcMessageIdRepositoryOrphanLockRemoval extends JdbcMessageIdRepos
          * which had acquired the lock has died
          */
         String orphanLockRecoverQueryString = getQueryString() + " AND createdAt >= ?";
-        Timestamp xMinsAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
+        Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
         return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key,
-                xMinsAgo);
+                xMillisAgo);
     }
 
     @Override
@@ -126,11 +137,14 @@ public class JdbcMessageIdRepositoryOrphanLockRemoval extends JdbcMessageIdRepos
         if (lockMaxAgeMillis <= lockKeepAliveIntervalMillis) {
             throw new IllegalStateException("value of lockMaxAgeMillis cannot be <= lockKeepAliveIntervalMillis");
         }
+        Objects.requireNonNull(this.context, () -> "context cannot be null");
+
         super.doInit();
         if (getTableName() != null) {
             updateTimestampQuery = updateTimestampQuery.replaceFirst(DEFAULT_TABLENAME, getTableName());
         }
-
+        executorServiceManager = context.getExecutorServiceManager();
+        executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getName());
         /**
          * Schedule a task which will keep updating the timestamp on the acquired locks at lockKeepAliveInterval so that
          * the timestamp does not reaches lockMaxAge
@@ -150,6 +164,27 @@ public class JdbcMessageIdRepositoryOrphanLockRemoval extends JdbcMessageIdRepos
             sl.unlockWrite(stamp);
         }
 
+    }
+
+    void keepAlive() {
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        long stamp = sl.readLock();
+        try {
+            List<Object[]> args = processorNameMessageIdSet.stream()
+                    .map(processorNameMessageId -> new Object[] {
+                            currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
+                    .collect(Collectors.toList());
+            transactionTemplate.execute(status -> jdbcTemplate.batchUpdate(getUpdateTimestampQuery(), args));
+        } catch (Exception e) {
+            log.error("failed updating createdAt in keepAlive due to ", e);
+        } finally {
+            sl.unlockRead(stamp);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        executorServiceManager.shutdownGraceful(executorService);
     }
 
     public Set<ProcessorNameAndMessageId> getProcessorNameMessageIdSet() {
@@ -178,20 +213,6 @@ public class JdbcMessageIdRepositoryOrphanLockRemoval extends JdbcMessageIdRepos
 
     public void setLockKeepAliveIntervalMillis(long lockKeepAliveIntervalMillis) {
         this.lockKeepAliveIntervalMillis = lockKeepAliveIntervalMillis;
-    }
-
-    void keepAlive() {
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        long stamp = sl.readLock();
-        try {
-            List<Object[]> args = processorNameMessageIdSet.stream()
-                    .map(processorNameMessageId -> new Object[] {
-                            currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
-                    .collect(Collectors.toList());
-            transactionTemplate.execute(status -> jdbcTemplate.batchUpdate(getUpdateTimestampQuery(), args));
-        } finally {
-            sl.unlockRead(stamp);
-        }
     }
 
     class LockKeepAliveTask implements Runnable {
