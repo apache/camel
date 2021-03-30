@@ -194,30 +194,22 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void listFunctions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	ListFunctionsRequest request = null;
+    	ListFunctionsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListFunctionsRequest) {
-                ListFunctionsResponse result;
-                try {
-                    result = lambdaClient.listFunctions((ListFunctionsRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListFunctionsRequest.class);
         } else {
-            ListFunctionsResponse result;
+            ListFunctionsRequest.Builder builder = ListFunctionsRequest.builder();
+            request = builder.build();
+        }
             try {
-                result = lambdaClient.listFunctions();
+                result = lambdaClient.listFunctions(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
