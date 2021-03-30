@@ -53,6 +53,7 @@ import software.amazon.awssdk.services.lambda.model.ListAliasesRequest;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsRequest;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
+import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.ListTagsRequest;
 import software.amazon.awssdk.services.lambda.model.ListTagsResponse;
@@ -226,6 +227,30 @@ public class AmazonLambdaClientMock implements LambdaClient {
         result.functions(listFunctions);
         return result.build();
     }
+    
+    @Override
+    public ListFunctionsResponse listFunctions(ListFunctionsRequest request) {
+
+        ListFunctionsResponse.Builder result = ListFunctionsResponse.builder();
+        Collection<FunctionConfiguration> listFunctions = new ArrayList<>();
+        FunctionConfiguration.Builder configuration = FunctionConfiguration.builder();
+        configuration.functionName("GetHelloWithName");
+        configuration.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+        configuration.runtime("nodejs6.10");
+        configuration.role("arn:aws:iam::643534317684:role/lambda-execution-role");
+        configuration.handler("GetHelloWithName.handler");
+        configuration.codeSize(640L);
+        configuration.codeSha256("PKt5ygvZ6G8vWJASlWIypsBmKzAdmRrvTO/eBH06mBA=");
+        configuration.memorySize(128);
+        configuration.timeout(3);
+        configuration.lastModified(Instant.now().toString());
+        configuration.version("$LATEST");
+        configuration.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
+        listFunctions.add(configuration.build());
+        result.functions(listFunctions);
+        return result.build();
+    }
+
 
     @Override
     public ListTagsResponse listTags(ListTagsRequest listTagsRequest) {
