@@ -538,7 +538,7 @@
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.15.2</testcontainers-version>
-        <tika-version>1.25</tika-version>
+        <tika-version>1.26</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
         <undertow-version>2.2.3.Final</undertow-version>
