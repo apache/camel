@@ -370,26 +370,13 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+    	UpdateFunctionCodeRequest request = null;
+    	UpdateFunctionCodeResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UpdateFunctionCodeRequest) {
-                UpdateFunctionCodeResponse result;
-                try {
-                    result = lambdaClient.updateFunctionCode((UpdateFunctionCodeRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(UpdateFunctionCodeRequest.class);
         } else {
-            UpdateFunctionCodeResponse result;
-
-            try {
-                UpdateFunctionCodeRequest.Builder request
-                        = UpdateFunctionCodeRequest.builder().functionName(getEndpoint().getFunction());
+        	UpdateFunctionCodeRequest.Builder builder = UpdateFunctionCodeRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
 
                 if (ObjectHelper.isEmpty(exchange.getIn().getBody())
                         && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
@@ -399,10 +386,13 @@ public class Lambda2Producer extends DefaultProducer {
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
                     Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
-                    request.publish(publish);
+                    builder.publish(publish);
                 }
 
-                result = lambdaClient.updateFunctionCode(request.build());
+                request = builder.build();
+        }
+        try {
+                result = lambdaClient.updateFunctionCode(request);
 
             } catch (AwsServiceException ase) {
                 LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -411,7 +401,6 @@ public class Lambda2Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
