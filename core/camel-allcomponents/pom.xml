@@ -195,6 +195,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-azure-cosmosdb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-eventhubs</artifactId>
 		</dependency>
 		<dependency>

@@ -928,6 +928,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "AzureCosmosdbComponentBuilderFactory": {
+    "kind": "component",
+    "name": "azure-cosmosdb",
+    "title": "Azure CosmosDB",
+    "description": "Azure Cosmos DB is Microsofts globally distributed, multi-model database service for operational and analytics workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This component interacts with Azure CosmosDB through Azure SQL API",
+    "deprecated": false,
+    "firstVersion": "3.10.0",
+    "label": "cloud,database",
+    "javaType": "org.apache.camel.component.azure.cosmosdb.CosmosDbComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-cosmosdb",
+    "version": "3.10.0-SNAPSHOT",
+    "scheme": "azure-cosmosdb",
+    "extendsScheme": "",
+    "syntax": "azure-cosmosdb:namespace\/eventHubName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "AzureEventhubsComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-eventhubs",
