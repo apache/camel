@@ -1101,7 +1101,7 @@ public class CamelCatalogTest {
         result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price ^^^ 10)]");
         assertFalse(result.isSuccess());
         assertEquals("$.store.book[?(@.price ^^^ 10)]", result.getText());
-        assertEquals("Illegal syntax: $.store.book[?(@.price ^^^ 10)]", result.getError());
+        assertEquals("Expected character: )", result.getError());
     }
 
     @Test
