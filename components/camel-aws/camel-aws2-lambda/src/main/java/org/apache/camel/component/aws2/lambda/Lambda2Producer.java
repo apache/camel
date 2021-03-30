@@ -404,41 +404,32 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateEventSourceMappingRequest) {
-                CreateEventSourceMappingResponse result;
-                try {
-                    result = lambdaClient.createEventSourceMapping((CreateEventSourceMappingRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+        CreateEventSourceMappingRequest request = null;
+        CreateEventSourceMappingResponse result;
+    	if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(CreateEventSourceMappingRequest.class);
         } else {
-            CreateEventSourceMappingResponse result;
-            try {
-                CreateEventSourceMappingRequest.Builder request
-                        = CreateEventSourceMappingRequest.builder().functionName(getEndpoint().getFunction());
+                CreateEventSourceMappingRequest.Builder builder = CreateEventSourceMappingRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN))) {
-                    request.eventSourceArn(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN, String.class));
+                	builder.eventSourceArn(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN, String.class));
                 } else {
                     throw new IllegalArgumentException("Event Source Arn must be specified");
                 }
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE))) {
                     Integer batchSize = exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
-                    request.batchSize(batchSize);
+                    builder.batchSize(batchSize);
                 }
-                result = lambdaClient.createEventSourceMapping(request.build());
+                request = builder.build();
+        }
+            try {
+                result = lambdaClient.createEventSourceMapping(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void deleteEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
