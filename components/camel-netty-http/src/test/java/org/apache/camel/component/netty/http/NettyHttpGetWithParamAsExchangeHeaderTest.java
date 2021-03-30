@@ -91,6 +91,19 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
     }
 
     @Test
+    public void testHttpGetWithSpaceAsPlusInParams() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("message", " World");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        // parameter starts with a space
+        template.requestBody(serverUri + "&message=+World", null, Object.class);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     @Disabled("HTTP_QUERY not yet supported")
     public void testHttpGetWithParamsViaHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

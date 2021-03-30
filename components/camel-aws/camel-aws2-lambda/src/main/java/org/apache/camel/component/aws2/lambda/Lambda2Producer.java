@@ -152,308 +152,255 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void getFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        GetFunctionRequest request = null;
+        GetFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetFunctionRequest) {
-                GetFunctionResponse result;
-                try {
-                    result = lambdaClient.getFunction((GetFunctionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(GetFunctionRequest.class);
         } else {
-            GetFunctionResponse result;
-            try {
-                result = lambdaClient
-                        .getFunction(GetFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            GetFunctionRequest.Builder builder = GetFunctionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
         }
+        try {
+            result = lambdaClient
+                    .getFunction(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void deleteFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        DeleteFunctionRequest request = null;
+        DeleteFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteFunctionRequest) {
-                DeleteFunctionResponse result;
-                try {
-                    result = lambdaClient.deleteFunction((DeleteFunctionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteFunctionRequest.class);
         } else {
-            DeleteFunctionResponse result;
-            try {
-                result = lambdaClient
-                        .deleteFunction(DeleteFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            DeleteFunctionRequest.Builder builder = DeleteFunctionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
         }
+        try {
+            result = lambdaClient
+                    .deleteFunction(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listFunctions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        ListFunctionsRequest request = null;
+        ListFunctionsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListFunctionsRequest) {
-                ListFunctionsResponse result;
-                try {
-                    result = lambdaClient.listFunctions((ListFunctionsRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListFunctionsRequest.class);
         } else {
-            ListFunctionsResponse result;
-            try {
-                result = lambdaClient.listFunctions();
-            } catch (AwsServiceException ase) {
-                LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            ListFunctionsRequest.Builder builder = ListFunctionsRequest.builder();
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.listFunctions(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        InvokeRequest request = null;
+        InvokeResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof InvokeRequest) {
-                InvokeResponse result;
-                try {
-                    result = lambdaClient.invoke((InvokeRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result.payload().asUtf8String());
-            }
+            request = exchange.getIn().getMandatoryBody(InvokeRequest.class);
         } else {
-            InvokeResponse result;
-            try {
-                InvokeRequest request = InvokeRequest.builder().functionName(getEndpoint().getFunction())
-                        .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
-                result = lambdaClient.invoke(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result.payload().asUtf8String());
+            InvokeRequest.Builder builder = InvokeRequest.builder();
+            request = builder.functionName(getEndpoint().getFunction())
+                    .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
         }
+        try {
+            result = lambdaClient.invoke(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result.payload().asUtf8String());
     }
 
     @SuppressWarnings("unchecked")
     private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+        CreateFunctionRequest request = null;
+        CreateFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateFunctionRequest) {
-                CreateFunctionResponse result;
-                try {
-                    result = lambdaClient.createFunction((CreateFunctionRequest) payload);
-
-                } catch (AwsServiceException ase) {
-                    LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(CreateFunctionRequest.class);
         } else {
-            CreateFunctionResponse result;
+            CreateFunctionRequest.Builder builder = CreateFunctionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
 
-            try {
-                CreateFunctionRequest.Builder request
-                        = CreateFunctionRequest.builder().functionName(getEndpoint().getFunction());
-
-                FunctionCode.Builder functionCode = FunctionCode.builder();
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
-                    String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
-                    functionCode.s3Bucket(s3Bucket);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
-                    String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
-                    functionCode.s3Key(s3Key);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
-                    String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
-                    functionCode.s3ObjectVersion(s3ObjectVersion);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
-                    String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
-                    File fileLocalPath = new File(zipFile);
-                    try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
-                        functionCode.zipFile(SdkBytes.fromInputStream(inputStream));
-                    }
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                    functionCode.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
-                        || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
-                    request.code(functionCode.build());
-                } else {
-                    throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ROLE))) {
-                    request.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
-                } else {
-                    throw new IllegalArgumentException("Role must be specified");
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RUNTIME))) {
-                    request.runtime(exchange.getIn().getHeader(Lambda2Constants.RUNTIME, String.class));
-                } else {
-                    throw new IllegalArgumentException("Runtime must be specified");
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.HANDLER))) {
-                    request.handler(exchange.getIn().getHeader(Lambda2Constants.HANDLER, String.class));
-                } else {
-                    throw new IllegalArgumentException("Handler must be specified");
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION))) {
-                    String description = exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION, String.class);
-                    request.description(description);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN))) {
-                    String targetArn = exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN, String.class);
-                    request.deadLetterConfig(DeadLetterConfig.builder().targetArn(targetArn).build());
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE))) {
-                    Integer memorySize = exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE, Integer.class);
-                    request.memorySize(memorySize);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN))) {
-                    String kmsKeyARN = exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN, String.class);
-                    request.kmsKeyArn(kmsKeyARN);
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
-                    Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
-                    request.publish(publish);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TIMEOUT))) {
-                    Integer timeout = exchange.getIn().getHeader(Lambda2Constants.TIMEOUT, Integer.class);
-                    request.timeout(timeout);
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG))) {
-                    String tracingConfigMode = exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG, String.class);
-                    request.tracingConfig(TracingConfig.builder().mode(tracingConfigMode).build());
-                }
-
-                Map<String, String> environmentVariables
-                        = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
-                if (environmentVariables != null) {
-                    request.environment(Environment.builder().variables(environmentVariables).build());
-                }
-
-                Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
-                if (tags != null) {
-                    request.tags(tags);
-                }
-
-                List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS,
-                        (Class<List<String>>) (Object) List.class));
-                List<String> subnetIds = CastUtils.cast(
-                        exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>) (Object) List.class));
-                if (securityGroupIds != null || subnetIds != null) {
-                    VpcConfig.Builder vpcConfig = VpcConfig.builder();
-                    if (securityGroupIds != null) {
-                        vpcConfig.securityGroupIds(securityGroupIds);
-                    }
-                    if (subnetIds != null) {
-                        vpcConfig.subnetIds(subnetIds);
-                    }
-                    request.vpcConfig(vpcConfig.build());
-                }
-                result = lambdaClient.createFunction(request.build());
-
-            } catch (AwsServiceException ase) {
-                LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            FunctionCode.Builder functionCode = FunctionCode.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
+                String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
+                functionCode.s3Bucket(s3Bucket);
             }
 
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
+                String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
+                functionCode.s3Key(s3Key);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
+                String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
+                functionCode.s3ObjectVersion(s3ObjectVersion);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
+                String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
+                File fileLocalPath = new File(zipFile);
+                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
+                    functionCode.zipFile(SdkBytes.fromInputStream(inputStream));
+                }
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                functionCode.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
+                    || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                builder.code(functionCode.build());
+            } else {
+                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ROLE))) {
+                builder.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
+            } else {
+                throw new IllegalArgumentException("Role must be specified");
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RUNTIME))) {
+                builder.runtime(exchange.getIn().getHeader(Lambda2Constants.RUNTIME, String.class));
+            } else {
+                throw new IllegalArgumentException("Runtime must be specified");
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.HANDLER))) {
+                builder.handler(exchange.getIn().getHeader(Lambda2Constants.HANDLER, String.class));
+            } else {
+                throw new IllegalArgumentException("Handler must be specified");
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION))) {
+                String description = exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION, String.class);
+                builder.description(description);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN))) {
+                String targetArn = exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN, String.class);
+                builder.deadLetterConfig(DeadLetterConfig.builder().targetArn(targetArn).build());
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE))) {
+                Integer memorySize = exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE, Integer.class);
+                builder.memorySize(memorySize);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN))) {
+                String kmsKeyARN = exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN, String.class);
+                builder.kmsKeyArn(kmsKeyARN);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
+                Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
+                builder.publish(publish);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(Lambda2Constants.TIMEOUT, Integer.class);
+                builder.timeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG))) {
+                String tracingConfigMode = exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG, String.class);
+                builder.tracingConfig(TracingConfig.builder().mode(tracingConfigMode).build());
+            }
+
+            Map<String, String> environmentVariables
+                    = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
+            if (environmentVariables != null) {
+                builder.environment(Environment.builder().variables(environmentVariables).build());
+            }
+
+            Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
+            if (tags != null) {
+                builder.tags(tags);
+            }
+
+            List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS,
+                    (Class<List<String>>) (Object) List.class));
+            List<String> subnetIds = CastUtils.cast(
+                    exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>) (Object) List.class));
+            if (securityGroupIds != null || subnetIds != null) {
+                VpcConfig.Builder vpcConfig = VpcConfig.builder();
+                if (securityGroupIds != null) {
+                    vpcConfig.securityGroupIds(securityGroupIds);
+                }
+                if (subnetIds != null) {
+                    vpcConfig.subnetIds(subnetIds);
+                }
+                builder.vpcConfig(vpcConfig.build());
+            }
+
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.createFunction(request);
+
+        } catch (AwsServiceException ase) {
+            LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+        UpdateFunctionCodeRequest request = null;
+        UpdateFunctionCodeResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UpdateFunctionCodeRequest) {
-                UpdateFunctionCodeResponse result;
-                try {
-                    result = lambdaClient.updateFunctionCode((UpdateFunctionCodeRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(UpdateFunctionCodeRequest.class);
         } else {
-            UpdateFunctionCodeResponse result;
+            UpdateFunctionCodeRequest.Builder builder = UpdateFunctionCodeRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
 
-            try {
-                UpdateFunctionCodeRequest.Builder request
-                        = UpdateFunctionCodeRequest.builder().functionName(getEndpoint().getFunction());
-
-                if (ObjectHelper.isEmpty(exchange.getIn().getBody())
-                        && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                                && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
-                    throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
-                }
-
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
-                    Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
-                    request.publish(publish);
-                }
-
-                result = lambdaClient.updateFunctionCode(request.build());
-
-            } catch (AwsServiceException ase) {
-                LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            if (ObjectHelper.isEmpty(exchange.getIn().getBody())
+                    && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                            && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
             }
 
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
+                Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
+                builder.publish(publish);
+            }
+
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.updateFunctionCode(request);
+
+        } catch (AwsServiceException ase) {
+            LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {

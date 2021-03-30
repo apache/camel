@@ -1432,7 +1432,19 @@ public abstract class AbstractCamelCatalog {
 
         if (clazz != null && instance != null) {
             Throwable cause = null;
+            Object obj;
             try {
+                try {
+                    // favour using the validate method if present as this is for tooling usage
+                    if (predicate) {
+                        instance.getClass().getMethod("validatePredicate", String.class).invoke(instance, text);
+                    } else {
+                        instance.getClass().getMethod("validateExpression", String.class).invoke(instance, text);
+                    }
+                } catch (NoSuchMethodException e) {
+                    // ignore
+                }
+                // optional validate
                 if (predicate) {
                     instance.getClass().getMethod("createPredicate", String.class).invoke(instance, text);
                 } else {
