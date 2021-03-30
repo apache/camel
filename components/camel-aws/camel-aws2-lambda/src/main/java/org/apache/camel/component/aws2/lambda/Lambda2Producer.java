@@ -213,24 +213,16 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof InvokeRequest) {
-                InvokeResponse result;
-                try {
-                    result = lambdaClient.invoke((InvokeRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result.payload().asUtf8String());
-            }
+        InvokeRequest request = null;
+        InvokeResponse result;
+    	if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(InvokeRequest.class);
         } else {
-            InvokeResponse result;
+            InvokeRequest.Builder builder = InvokeRequest.builder();
+            request = builder.functionName(getEndpoint().getFunction())
+            .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
+        }
             try {
-                InvokeRequest request = InvokeRequest.builder().functionName(getEndpoint().getFunction())
-                        .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
                 result = lambdaClient.invoke(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -238,7 +230,6 @@ public class Lambda2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result.payload().asUtf8String());
-        }
     }
 
     @SuppressWarnings("unchecked")
