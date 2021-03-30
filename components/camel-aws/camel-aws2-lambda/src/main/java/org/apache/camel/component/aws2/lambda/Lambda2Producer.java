@@ -152,8 +152,8 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void getFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-    	GetFunctionRequest request = null;
-    	GetFunctionResponse result;
+        GetFunctionRequest request = null;
+        GetFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
             request = exchange.getIn().getMandatoryBody(GetFunctionRequest.class);
         } else {
