@@ -78,8 +78,8 @@
                         
 	<bean id="myProcessor" class="org.apache.camel.component.cxf.wsrm.MyProcessor"/> 
 	
-	<bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
-	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />  
+	<bean id="loggingOutInterceptor" class="org.apache.cxf.ext.logging.LoggingOutInterceptor" />
+	<bean id="logInbound" class="org.apache.cxf.ext.logging.LoggingInInterceptor" />  
        
     <http:conduit name="{http://camel.apache.org/cxf/wsrm}HelloWorldPort.http-conduit">
         <http:client AllowChunking="false" DecoupledEndpoint="http://localhost:${CXFTestSupport.port3}/wsrm/decoupled_endpoint"/>

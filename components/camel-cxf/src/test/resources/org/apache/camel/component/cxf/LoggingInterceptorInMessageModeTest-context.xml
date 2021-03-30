@@ -34,7 +34,7 @@
 	</cxf:cxfEndpoint>
 		
     <!-- START SNIPPET: enableLoggingOutInterceptor -->
-    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
+    <bean id="loggingOutInterceptor" class="org.apache.cxf.ext.logging.LoggingOutInterceptor">
          <!--  it really should have been user-prestream but CXF does have such phase! -->
          <constructor-arg value="target/write"/> 
     </bean>

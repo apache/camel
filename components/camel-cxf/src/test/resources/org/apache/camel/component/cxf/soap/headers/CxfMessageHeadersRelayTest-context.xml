@@ -201,6 +201,6 @@
     
     <bean id="InsertRequestOutHeaderProcessor" class="org.apache.camel.component.cxf.soap.headers.CxfMessageHeadersRelayTest$InsertRequestOutHeaderProcessor" />
     <bean id="InsertResponseOutHeaderProcessor" class="org.apache.camel.component.cxf.soap.headers.CxfMessageHeadersRelayTest$InsertResponseOutHeaderProcessor" />
-    <bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />         
-    <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+    <bean id="logOutbound" class="org.apache.cxf.ext.logging.LoggingOutInterceptor" />         
+    <bean id="logInbound" class="org.apache.cxf.ext.logging.LoggingInInterceptor"/>
 </beans>

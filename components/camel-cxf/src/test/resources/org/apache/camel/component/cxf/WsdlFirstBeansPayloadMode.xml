@@ -34,10 +34,10 @@
           <ref bean="fromEndpointJaxwsHandler"/> 
         </cxf:handlers>
 		<cxf:inInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+      	<bean class="org.apache.cxf.ext.logging.LoggingInInterceptor"/>
       </cxf:inInterceptors>
 		<cxf:outInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+      	<bean class="org.apache.cxf.ext.logging.LoggingOutInterceptor"/>
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
 	
@@ -47,10 +47,10 @@
           <ref bean="toEndpointJaxwsHandler"/> 
         </cxf:handlers>
 		<cxf:inInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+      	<bean class="org.apache.cxf.ext.logging.LoggingInInterceptor"/>
       </cxf:inInterceptors>
 		<cxf:outInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+      	<bean class="org.apache.cxf.ext.logging.LoggingOutInterceptor"/>
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
 
