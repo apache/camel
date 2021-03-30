@@ -234,27 +234,13 @@ public class Lambda2Producer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+    	CreateFunctionRequest request = null;
+    	CreateFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateFunctionRequest) {
-                CreateFunctionResponse result;
-                try {
-                    result = lambdaClient.createFunction((CreateFunctionRequest) payload);
-
-                } catch (AwsServiceException ase) {
-                    LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(CreateFunctionRequest.class);
         } else {
-            CreateFunctionResponse result;
-
-            try {
-                CreateFunctionRequest.Builder request
-                        = CreateFunctionRequest.builder().functionName(getEndpoint().getFunction());
+                CreateFunctionRequest.Builder builder = CreateFunctionRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
 
                 FunctionCode.Builder functionCode = FunctionCode.builder();
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
@@ -286,72 +272,72 @@ public class Lambda2Producer extends DefaultProducer {
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
                         || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
                                 && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
-                    request.code(functionCode.build());
+                    builder.code(functionCode.build());
                 } else {
                     throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ROLE))) {
-                    request.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
+                    builder.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
                 } else {
                     throw new IllegalArgumentException("Role must be specified");
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RUNTIME))) {
-                    request.runtime(exchange.getIn().getHeader(Lambda2Constants.RUNTIME, String.class));
+                    builder.runtime(exchange.getIn().getHeader(Lambda2Constants.RUNTIME, String.class));
                 } else {
                     throw new IllegalArgumentException("Runtime must be specified");
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.HANDLER))) {
-                    request.handler(exchange.getIn().getHeader(Lambda2Constants.HANDLER, String.class));
+                    builder.handler(exchange.getIn().getHeader(Lambda2Constants.HANDLER, String.class));
                 } else {
                     throw new IllegalArgumentException("Handler must be specified");
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION))) {
                     String description = exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION, String.class);
-                    request.description(description);
+                    builder.description(description);
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN))) {
                     String targetArn = exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN, String.class);
-                    request.deadLetterConfig(DeadLetterConfig.builder().targetArn(targetArn).build());
+                    builder.deadLetterConfig(DeadLetterConfig.builder().targetArn(targetArn).build());
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE))) {
                     Integer memorySize = exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE, Integer.class);
-                    request.memorySize(memorySize);
+                    builder.memorySize(memorySize);
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN))) {
                     String kmsKeyARN = exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN, String.class);
-                    request.kmsKeyArn(kmsKeyARN);
+                    builder.kmsKeyArn(kmsKeyARN);
                 }
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
                     Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
-                    request.publish(publish);
+                    builder.publish(publish);
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TIMEOUT))) {
                     Integer timeout = exchange.getIn().getHeader(Lambda2Constants.TIMEOUT, Integer.class);
-                    request.timeout(timeout);
+                    builder.timeout(timeout);
                 }
 
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG))) {
                     String tracingConfigMode = exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG, String.class);
-                    request.tracingConfig(TracingConfig.builder().mode(tracingConfigMode).build());
+                    builder.tracingConfig(TracingConfig.builder().mode(tracingConfigMode).build());
                 }
 
                 Map<String, String> environmentVariables
                         = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
                 if (environmentVariables != null) {
-                    request.environment(Environment.builder().variables(environmentVariables).build());
+                	builder.environment(Environment.builder().variables(environmentVariables).build());
                 }
 
                 Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
                 if (tags != null) {
-                    request.tags(tags);
+                	builder.tags(tags);
                 }
 
                 List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS,
@@ -366,9 +352,13 @@ public class Lambda2Producer extends DefaultProducer {
                     if (subnetIds != null) {
                         vpcConfig.subnetIds(subnetIds);
                     }
-                    request.vpcConfig(vpcConfig.build());
+                    builder.vpcConfig(vpcConfig.build());
                 }
-                result = lambdaClient.createFunction(request.build());
+                
+                request = builder.build();
+        }
+                try {
+                result = lambdaClient.createFunction(request);
 
             } catch (AwsServiceException ase) {
                 LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -377,7 +367,6 @@ public class Lambda2Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
