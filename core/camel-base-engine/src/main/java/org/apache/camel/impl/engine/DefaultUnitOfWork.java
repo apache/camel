@@ -37,6 +37,7 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.MessageSupport;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
  */
+@EagerClassloaded
 public class DefaultUnitOfWork implements UnitOfWork {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
 
@@ -84,8 +86,8 @@ public class DefaultUnitOfWork implements UnitOfWork {
         doOnPrepare(exchange);
     }
 
-    static void warmup(Logger log) {
-        log.trace("Warming up DefaultUnitOfWork");
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded DefaultUnitOfWork");
     }
 
     UnitOfWork newInstance(Exchange exchange) {

@@ -56,6 +56,7 @@ import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -95,6 +96,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
+@EagerClassloaded
 public class CamelInternalProcessor extends DelegateAsyncProcessor implements InternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
@@ -122,18 +124,26 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
+    private CamelInternalProcessor(Logger log) {
+        // used for eager loading
+        camelContext = null;
+        reactiveExecutor = null;
+        shutdownStrategy = null;
+        AsyncAfterTask task = new AsyncAfterTask(null);
+        log.trace("Loaded {}", task.getClass().getSimpleName());
+    }
+
+    public static void onClassloaded(Logger log) {
+        CamelInternalProcessor dummy = new CamelInternalProcessor(log);
+        log.trace("Loaded {}", dummy.getClass().getSimpleName());
+    }
+
     @Override
     protected void doBuild() throws Exception {
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
 
         // only create pooled task factory
         if (pooled) {
-
-            // force to create and load the class during build time so the JVM does not
-            // load the class on first exchange to be created
-            AsyncAfterTask dummy = new AsyncAfterTask(null);
-            LOG.trace("Warming up CamelInternalPooledTaskFactory loaded class: {}", dummy.getClass().getName());
-
             taskFactory = new CamelInternalPooledTaskFactory();
             int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);

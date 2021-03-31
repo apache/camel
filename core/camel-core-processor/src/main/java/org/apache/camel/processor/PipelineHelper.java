@@ -18,19 +18,21 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.slf4j.Logger;
 
 /**
  * Helper for processing {@link org.apache.camel.Exchange} in a
  * <a href="http://camel.apache.org/pipes-and-filters.html">pipeline</a>.
  */
+@EagerClassloaded
 public final class PipelineHelper {
 
     private PipelineHelper() {
     }
 
-    public static void warmup(Logger log) {
-        log.trace("Warming up PipelineHelper");
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded PipelineHelper");
     }
 
     /**

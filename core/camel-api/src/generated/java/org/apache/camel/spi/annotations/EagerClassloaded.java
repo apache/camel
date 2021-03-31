@@ -14,28 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.spi.annotations;
 
-import org.apache.camel.AfterPropertiesConfigured;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Factory to create {@link org.apache.camel.spi.UnitOfWork}.
+ * Marks this class to be eager loaded by the JDK classloader so the class is already loaded when Camel is started.
+ *
+ * This is intended to assist required classes that Camel always uses.
  */
-public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
-
-    /**
-     * Creates a new {@link UnitOfWork}
-     *
-     * @param  exchange the exchange
-     * @return          the created {@link UnitOfWork}
-     */
-    UnitOfWork createUnitOfWork(Exchange exchange);
-
-    @Override
-    default void afterPropertiesConfigured(CamelContext camelContext) {
-        // noop
-    }
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EagerClassloaded {
 }

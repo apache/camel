@@ -32,6 +32,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
@@ -45,6 +46,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
  * message exchanges
  */
+@EagerClassloaded
 public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
@@ -130,6 +132,21 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         this.size = processors.size();
     }
 
+    private Pipeline(Logger log) {
+        // used for eager loading
+        camelContext = null;
+        reactiveExecutor = null;
+        processors = null;
+        size = 0;
+        PipelineTask task = new PipelineTask();
+        log.trace("Loaded {}", task.getClass().getSimpleName());
+    }
+
+    public static void onClassloaded(Logger log) {
+        Pipeline dummy = new Pipeline(log);
+        log.trace("Loaded {}", dummy.getClass().getSimpleName());
+    }
+
     public static Processor newInstance(CamelContext camelContext, List<Processor> processors) {
         if (processors.isEmpty()) {
             return null;
@@ -171,12 +188,6 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     protected void doBuild() throws Exception {
-        // force to create and load the class during build time so the JVM does not
-        // load the class on first exchange to be created
-        PipelineHelper.warmup(LOG);
-        PipelineTask dummy = new PipelineTask();
-        LOG.trace("Warming up Pipeline loaded class: {}", dummy.getClass().getName());
-
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {
             taskFactory = new PooledTaskFactory(getId()) {

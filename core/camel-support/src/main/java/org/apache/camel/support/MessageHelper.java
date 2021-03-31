@@ -35,14 +35,17 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
  */
+@EagerClassloaded
 public final class MessageHelper {
 
     private static final String MESSAGE_HISTORY_HEADER = "%-20s %-20s %-80s %-12s";
@@ -52,6 +55,10 @@ public final class MessageHelper {
      * Utility classes should not have a public constructor.
      */
     private MessageHelper() {
+    }
+
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded MessageHelper");
     }
 
     /**
