@@ -20,14 +20,22 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(11);
+        props.add("container");
+        props.add("createContainerIfNotExists");
+        props.add("database");
+        props.add("createDatabaseIfNotExists");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("test");
         props.add("exchangePattern");
+        props.add("databaseEndpoint");
+        props.add("cosmosAsyncClient");
         props.add("exceptionHandler");
+        props.add("accountKey");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("accountKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -42,7 +50,8 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "test", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "database", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "container", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

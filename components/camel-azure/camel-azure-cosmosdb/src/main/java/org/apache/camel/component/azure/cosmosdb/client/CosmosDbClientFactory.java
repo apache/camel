@@ -16,8 +16,16 @@
  */
 package org.apache.camel.component.azure.cosmosdb.client;
 
+import com.azure.cosmos.CosmosAsyncClient;
+import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
+
 public final class CosmosDbClientFactory {
 
     private CosmosDbClientFactory() {
+    }
+
+    public static CosmosAsyncClient createCosmosAsyncClient(final CosmosDbConfiguration configuration) {
+
+        return null;
     }
 }

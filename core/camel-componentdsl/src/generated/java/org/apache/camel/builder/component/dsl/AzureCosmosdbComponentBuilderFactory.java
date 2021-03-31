@@ -74,6 +74,38 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder cosmosAsyncClient(
+                com.azure.cosmos.CosmosAsyncClient cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Sets the Azure Cosmos database endpoint the component will connect
+         * to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param databaseEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder databaseEndpoint(
+                java.lang.String databaseEndpoint) {
+            doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -93,6 +125,40 @@ public interface AzureCosmosdbComponentBuilderFactory {
         default AzureCosmosdbComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder createContainerIfNotExists(
+                boolean createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder createDatabaseIfNotExists(
+                boolean createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
             return this;
         }
         /**
@@ -140,6 +206,22 @@ public interface AzureCosmosdbComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * Sets either a master or readonly key used to perform authentication
+         * for accessing resource.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder accountKey(
+                java.lang.String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
+        }
     }
 
     class AzureCosmosdbComponentBuilderImpl
@@ -151,6 +233,13 @@ public interface AzureCosmosdbComponentBuilderFactory {
         protected CosmosDbComponent buildConcreteComponent() {
             return new CosmosDbComponent();
         }
+        private org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.azure.cosmosdb.CosmosDbComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -158,9 +247,14 @@ public interface AzureCosmosdbComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((CosmosDbComponent) component).setConfiguration((org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration) value); return true;
+            case "cosmosAsyncClient": getOrCreateConfiguration((CosmosDbComponent) component).setCosmosAsyncClient((com.azure.cosmos.CosmosAsyncClient) value); return true;
+            case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((CosmosDbComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
+            case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;
             case "lazyStartProducer": ((CosmosDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
             default: return false;
             }
         }

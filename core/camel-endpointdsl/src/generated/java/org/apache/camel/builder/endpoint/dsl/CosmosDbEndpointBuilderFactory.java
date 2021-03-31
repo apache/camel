@@ -45,6 +45,55 @@ public interface CosmosDbEndpointBuilderFactory {
             return (AdvancedCosmosDbEndpointConsumerBuilder) this;
         }
         /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder cosmosAsyncClient(
+                Object cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder cosmosAsyncClient(
+                String cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Sets the Azure Cosmos database endpoint the component will connect
+         * to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param databaseEndpoint the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder databaseEndpoint(
+                String databaseEndpoint) {
+            doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -87,6 +136,22 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Sets either a master or readonly key used to perform authentication
+         * for accessing resource.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder accountKey(String accountKey) {
+            doSetProperty("accountKey", accountKey);
             return this;
         }
     }
@@ -182,6 +247,125 @@ public interface CosmosDbEndpointBuilderFactory {
             return (AdvancedCosmosDbEndpointProducerBuilder) this;
         }
         /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder cosmosAsyncClient(
+                Object cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder cosmosAsyncClient(
+                String cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Sets the Azure Cosmos database endpoint the component will connect
+         * to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param databaseEndpoint the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder databaseEndpoint(
+                String databaseEndpoint) {
+            doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createContainerIfNotExists(
+                boolean createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createContainerIfNotExists(
+                String createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createDatabaseIfNotExists(
+                boolean createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createDatabaseIfNotExists(
+                String createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -230,6 +414,22 @@ public interface CosmosDbEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Sets either a master or readonly key used to perform authentication
+         * for accessing resource.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder accountKey(String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
+        }
     }
 
     /**
@@ -252,6 +452,70 @@ public interface CosmosDbEndpointBuilderFactory {
                 CosmosDbEndpointProducerBuilder {
         default AdvancedCosmosDbEndpointBuilder advanced() {
             return (AdvancedCosmosDbEndpointBuilder) this;
+        }
+        /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder cosmosAsyncClient(
+                Object cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Inject an external CosmosAsyncClient into the component.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param cosmosAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder cosmosAsyncClient(
+                String cosmosAsyncClient) {
+            doSetProperty("cosmosAsyncClient", cosmosAsyncClient);
+            return this;
+        }
+        /**
+         * Sets the Azure Cosmos database endpoint the component will connect
+         * to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param databaseEndpoint the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder databaseEndpoint(String databaseEndpoint) {
+            doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets either a master or readonly key used to perform authentication
+         * for accessing resource.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder accountKey(String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
         }
     }
 
@@ -282,8 +546,15 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
          * 
-         * Path parameter: test
-         * ddd
+         * Path parameter: database (required)
+         * The name of the Cosmos database that component should connect to. In
+         * case you are producing data and have createDatabaseIfNotExists=true,
+         * the component will automatically auto create a Cosmos database.
+         * 
+         * Path parameter: container
+         * The name of the Cosmos container that component should connect to. In
+         * case you are producing data and have createContainerIfNotExists=true,
+         * the component will automatically auto create a Cosmos container.
          * 
          * @param path namespace/eventHubName
          * @return the dsl builder
@@ -305,8 +576,15 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
          * 
-         * Path parameter: test
-         * ddd
+         * Path parameter: database (required)
+         * The name of the Cosmos database that component should connect to. In
+         * case you are producing data and have createDatabaseIfNotExists=true,
+         * the component will automatically auto create a Cosmos database.
+         * 
+         * Path parameter: container
+         * The name of the Cosmos container that component should connect to. In
+         * case you are producing data and have createContainerIfNotExists=true,
+         * the component will automatically auto create a Cosmos container.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

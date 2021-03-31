@@ -21,8 +21,18 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CosmosDbEndpoint target = (CosmosDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accountkey":
+        case "accountKey": target.getConfiguration().setAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cosmosasyncclient":
+        case "cosmosAsyncClient": target.getConfiguration().setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
+        case "createcontainerifnotexists":
+        case "createContainerIfNotExists": target.getConfiguration().setCreateContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "createdatabaseifnotexists":
+        case "createDatabaseIfNotExists": target.getConfiguration().setCreateDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "databaseendpoint":
+        case "databaseEndpoint": target.getConfiguration().setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -34,10 +44,25 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"cosmosAsyncClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accountkey":
+        case "accountKey": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "cosmosasyncclient":
+        case "cosmosAsyncClient": return com.azure.cosmos.CosmosAsyncClient.class;
+        case "createcontainerifnotexists":
+        case "createContainerIfNotExists": return boolean.class;
+        case "createdatabaseifnotexists":
+        case "createDatabaseIfNotExists": return boolean.class;
+        case "databaseendpoint":
+        case "databaseEndpoint": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -52,8 +77,18 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CosmosDbEndpoint target = (CosmosDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accountkey":
+        case "accountKey": return target.getConfiguration().getAccountKey();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "cosmosasyncclient":
+        case "cosmosAsyncClient": return target.getConfiguration().getCosmosAsyncClient();
+        case "createcontainerifnotexists":
+        case "createContainerIfNotExists": return target.getConfiguration().isCreateContainerIfNotExists();
+        case "createdatabaseifnotexists":
+        case "createDatabaseIfNotExists": return target.getConfiguration().isCreateDatabaseIfNotExists();
+        case "databaseendpoint":
+        case "databaseEndpoint": return target.getConfiguration().getDatabaseEndpoint();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

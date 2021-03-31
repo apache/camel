@@ -1890,8 +1890,15 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
      * 
-     * Path parameter: test
-     * ddd
+     * Path parameter: database (required)
+     * The name of the Cosmos database that component should connect to. In case
+     * you are producing data and have createDatabaseIfNotExists=true, the
+     * component will automatically auto create a Cosmos database.
+     * 
+     * Path parameter: container
+     * The name of the Cosmos container that component should connect to. In
+     * case you are producing data and have createContainerIfNotExists=true, the
+     * component will automatically auto create a Cosmos container.
      * 
      * @param path namespace/eventHubName
      * @return the dsl builder
@@ -1914,8 +1921,15 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
      * 
-     * Path parameter: test
-     * ddd
+     * Path parameter: database (required)
+     * The name of the Cosmos database that component should connect to. In case
+     * you are producing data and have createDatabaseIfNotExists=true, the
+     * component will automatically auto create a Cosmos database.
+     * 
+     * Path parameter: container
+     * The name of the Cosmos container that component should connect to. In
+     * case you are producing data and have createContainerIfNotExists=true, the
+     * component will automatically auto create a Cosmos container.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
