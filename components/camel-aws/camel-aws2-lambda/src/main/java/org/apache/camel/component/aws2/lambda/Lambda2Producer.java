@@ -647,36 +647,28 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void deleteAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	DeleteAliasRequest request = null;
+    	DeleteAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteAliasRequest) {
-                DeleteAliasResponse result;
-                try {
-                    result = lambdaClient.deleteAlias((DeleteAliasRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteAliasRequest.class);
         } else {
-            DeleteAliasResponse result;
-            try {
-                DeleteAliasRequest.Builder request = DeleteAliasRequest.builder().functionName(getEndpoint().getFunction());
+                DeleteAliasRequest.Builder builder = DeleteAliasRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
                 String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
                 if (ObjectHelper.isEmpty(aliasName)) {
                     throw new IllegalArgumentException("Function alias must be specified to delete an alias");
                 }
-                request.name(aliasName);
-                result = lambdaClient.deleteAlias(request.build());
+                builder.name(aliasName);
+                request = builder.build();
+        }
+        try  {
+                result = lambdaClient.deleteAlias(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void getAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
