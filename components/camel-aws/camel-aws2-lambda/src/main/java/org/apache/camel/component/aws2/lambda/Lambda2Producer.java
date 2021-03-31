@@ -615,108 +615,108 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void createAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-    	CreateAliasRequest request = null;
-    	CreateAliasResponse result;
+        CreateAliasRequest request = null;
+        CreateAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
             request = exchange.getIn().getMandatoryBody(CreateAliasRequest.class);
         } else {
-                CreateAliasRequest.Builder builder = CreateAliasRequest.builder();
-                builder.functionName(getEndpoint().getFunction());
-                String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-                if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
-                    throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
-                }
-                builder.functionVersion(version);
-                builder.name(aliasName);
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION))) {
-                    String aliasDescription
-                            = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, String.class);
-                    builder.description(aliasDescription);
-                }
-                request = builder.build();
+            CreateAliasRequest.Builder builder = CreateAliasRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
+            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
+            }
+            builder.functionVersion(version);
+            builder.name(aliasName);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION))) {
+                String aliasDescription
+                        = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, String.class);
+                builder.description(aliasDescription);
+            }
+            request = builder.build();
         }
         try {
-                result = lambdaClient.createAlias(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            result = lambdaClient.createAlias(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void deleteAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-    	DeleteAliasRequest request = null;
-    	DeleteAliasResponse result;
+        DeleteAliasRequest request = null;
+        DeleteAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
             request = exchange.getIn().getMandatoryBody(DeleteAliasRequest.class);
         } else {
-                DeleteAliasRequest.Builder builder = DeleteAliasRequest.builder();
-                builder.functionName(getEndpoint().getFunction());
-                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-                if (ObjectHelper.isEmpty(aliasName)) {
-                    throw new IllegalArgumentException("Function alias must be specified to delete an alias");
-                }
-                builder.name(aliasName);
-                request = builder.build();
-        }
-        try  {
-                result = lambdaClient.deleteAlias(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            DeleteAliasRequest.Builder builder = DeleteAliasRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function alias must be specified to delete an alias");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            builder.name(aliasName);
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.deleteAlias(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void getAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-    	GetAliasRequest request = null;
-    	GetAliasResponse result;
+        GetAliasRequest request = null;
+        GetAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
             request = exchange.getIn().getMandatoryBody(GetAliasRequest.class);
         } else {
-                GetAliasRequest.Builder builder = GetAliasRequest.builder();
-                builder.functionName(getEndpoint().getFunction());
-                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-                if (ObjectHelper.isEmpty(aliasName)) {
-                    throw new IllegalArgumentException("Function alias must be specified to get an alias");
-                }
-                builder.name(aliasName);
-        }
-                try {
-                result = lambdaClient.getAlias(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            GetAliasRequest.Builder builder = GetAliasRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function alias must be specified to get an alias");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            builder.name(aliasName);
+        }
+        try {
+            result = lambdaClient.getAlias(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listAliases(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-    	ListAliasesRequest request = null;
-    	ListAliasesResponse result;
+        ListAliasesRequest request = null;
+        ListAliasesResponse result;
         if (getConfiguration().isPojoRequest()) {
             request = exchange.getIn().getMandatoryBody(ListAliasesRequest.class);
         } else {
-                ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
-                builder.functionName(getEndpoint().getFunction());
-                String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-                if (ObjectHelper.isEmpty(version)) {
-                    throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
-                }
-                builder.functionVersion(version);
+            ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
+            if (ObjectHelper.isEmpty(version)) {
+                throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
+            }
+            builder.functionVersion(version);
         }
         try {
-                result = lambdaClient.listAliases(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            result = lambdaClient.listAliases(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private Lambda2Operations determineOperation(Exchange exchange) {
