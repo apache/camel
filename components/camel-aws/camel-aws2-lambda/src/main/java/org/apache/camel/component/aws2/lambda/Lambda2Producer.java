@@ -536,43 +536,34 @@ public class Lambda2Producer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void untagResource(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	UntagResourceRequest request = null;
+    	UntagResourceResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UntagResourceRequest) {
-                UntagResourceResponse result;
-                try {
-                    result = lambdaClient.untagResource((UntagResourceRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(UntagResourceRequest.class);
         } else {
-            UntagResourceResponse result;
-            try {
-                UntagResourceRequest.Builder request = UntagResourceRequest.builder();
+                UntagResourceRequest.Builder builder = UntagResourceRequest.builder();
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
                     String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                    request.resource(resource);
+                    builder.resource(resource);
                 } else {
                     throw new IllegalArgumentException("The resource ARN must be specified");
                 }
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS))) {
                     List<String> tagKeys = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS, List.class);
-                    request.tagKeys(tagKeys);
+                    builder.tagKeys(tagKeys);
                 } else {
                     throw new IllegalArgumentException("The tag keys must be specified");
                 }
-                result = lambdaClient.untagResource(request.build());
+                request = builder.build();
+        }
+        try {
+                result = lambdaClient.untagResource(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void publishVersion(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
