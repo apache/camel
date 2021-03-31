@@ -696,36 +696,27 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void listAliases(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	ListAliasesRequest request = null;
+    	ListAliasesResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListAliasesRequest) {
-                ListAliasesResponse result;
-                try {
-                    result = lambdaClient.listAliases((ListAliasesRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListAliasesRequest.class);
         } else {
-            ListAliasesResponse result;
-            try {
-                ListAliasesRequest.Builder request = ListAliasesRequest.builder().functionName(getEndpoint().getFunction());
+                ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
                 String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
                 if (ObjectHelper.isEmpty(version)) {
                     throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
                 }
-                request.functionVersion(version);
-                result = lambdaClient.listAliases(request.build());
+                builder.functionVersion(version);
+        }
+        try {
+                result = lambdaClient.listAliases(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private Lambda2Operations determineOperation(Exchange exchange) {
