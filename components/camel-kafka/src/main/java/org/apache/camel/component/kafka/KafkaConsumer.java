@@ -601,7 +601,7 @@ public class KafkaConsumer extends DefaultConsumer {
         public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
             LOG.debug("onPartitionsRevoked: {} from topic {}", threadId, topicName);
 
-            boolean stopping = !isRunAllowed();
+            boolean stopping = isStoppingOrStopped();
             StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
             for (TopicPartition partition : partitions) {
                 String offsetKey = serializeOffsetKey(partition);
