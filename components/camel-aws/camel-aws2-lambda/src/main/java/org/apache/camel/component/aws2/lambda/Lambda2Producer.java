@@ -447,14 +447,14 @@ public class Lambda2Producer extends DefaultProducer {
             request = builder.build();
         }
 
-            try {
-                result = lambdaClient.deleteEventSourceMapping(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+        try {
+            result = lambdaClient.deleteEventSourceMapping(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
