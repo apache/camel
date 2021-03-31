@@ -587,7 +587,7 @@ on the `KafkaComponent` that creates instances of your custom implementation.
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
 Producing flow backed by same behaviour - camel headers of particular exchange will be propagated to kafka message headers.
 
-Since kafka headers allows only `byte[]` values, in order camel exchnage header to be propagated its value should be serialized to `bytes[]`,
+Since kafka headers allows only `byte[]` values, in order camel exchange header to be propagated its value should be serialized to `bytes[]`,
 otherwise header will be skipped.
 Following header value types are supported: `String`, `Integer`, `Long`, `Double`, `Boolean`, `byte[]`.
 Note: all headers propagated *from* kafka *to* camel exchange will contain `byte[]` value by default.
