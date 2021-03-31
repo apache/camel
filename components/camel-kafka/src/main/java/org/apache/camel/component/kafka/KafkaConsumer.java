@@ -601,7 +601,9 @@ public class KafkaConsumer extends DefaultConsumer {
         public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
             LOG.debug("onPartitionsRevoked: {} from topic {}", threadId, topicName);
 
-            boolean stopping = isStoppingOrStopped();
+            // if camel is stopping or we are stopping then the commit offset needs to be handled specially
+            boolean stopping = getEndpoint().getCamelContext().isStopping() || isStoppingOrStopped();
+
             StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
             for (TopicPartition partition : partitions) {
                 String offsetKey = serializeOffsetKey(partition);
