@@ -433,29 +433,21 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void deleteEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	DeleteEventSourceMappingRequest request = null;
+    	DeleteEventSourceMappingResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteEventSourceMappingRequest) {
-                DeleteEventSourceMappingResponse result;
-                try {
-                    result = lambdaClient.deleteEventSourceMapping((DeleteEventSourceMappingRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteEventSourceMappingRequest.class);
         } else {
-            DeleteEventSourceMappingResponse result;
-            try {
-                DeleteEventSourceMappingRequest.Builder request = DeleteEventSourceMappingRequest.builder();
+                DeleteEventSourceMappingRequest.Builder builder = DeleteEventSourceMappingRequest.builder();
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID))) {
-                    request.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
+                	builder.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
                 } else {
                     throw new IllegalArgumentException("Event Source Arn must be specified");
                 }
-                result = lambdaClient.deleteEventSourceMapping(request.build());
+            request = builder.build();
+                
+            try {    
+                result = lambdaClient.deleteEventSourceMapping(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
