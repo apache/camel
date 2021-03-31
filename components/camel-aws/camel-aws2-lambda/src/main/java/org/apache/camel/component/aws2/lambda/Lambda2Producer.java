@@ -478,37 +478,28 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void listTags(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	ListTagsRequest request = null;
+    	ListTagsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListTagsRequest) {
-                ListTagsResponse result;
-                try {
-                    result = lambdaClient.listTags((ListTagsRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListTagsRequest.class);
         } else {
-            ListTagsResponse result;
-            try {
-                ListTagsRequest.Builder request = ListTagsRequest.builder();
+                ListTagsRequest.Builder builder = ListTagsRequest.builder();
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
                     String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                    request.resource(resource);
+                    builder.resource(resource);
                 } else {
                     throw new IllegalArgumentException("The resource ARN must be specified");
                 }
-                result = lambdaClient.listTags(request.build());
+                request = builder.build();
+        }
+        try {
+                result = lambdaClient.listTags(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     @SuppressWarnings("unchecked")
