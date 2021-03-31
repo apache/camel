@@ -25,6 +25,15 @@ import java.lang.annotation.Target;
  * Marks this class to be eager loaded by the JDK classloader so the class is already loaded when Camel is started.
  *
  * This is intended to assist required classes that Camel always uses.
+ *
+ * <b>Important:</b> The class must have the following static method which will be invoked to force loading the class.
+ * 
+ * <pre>
+ * public static void onClassloaded(org.slf4j.Logger log) {
+ *     .. do warmup here such as logging the class name or create inner classes to force loading them
+ *     log.trace("Loaded {}", this.getClass().getName());
+ * }
+ * </pre>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
