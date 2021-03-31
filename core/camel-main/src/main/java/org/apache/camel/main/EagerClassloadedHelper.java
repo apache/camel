@@ -39,8 +39,9 @@ public final class EagerClassloadedHelper {
 
         int count = 0;
         // EAGER-CLASSLOADED: START
-        count = 8;
+        count = 9;
         org.apache.camel.impl.engine.CamelInternalProcessor.onClassloaded(LOG);
+        org.apache.camel.impl.engine.DefaultReactiveExecutor.onClassloaded(LOG);
         org.apache.camel.impl.engine.DefaultUnitOfWork.onClassloaded(LOG);
         org.apache.camel.processor.Pipeline.onClassloaded(LOG);
         org.apache.camel.processor.PipelineHelper.onClassloaded(LOG);

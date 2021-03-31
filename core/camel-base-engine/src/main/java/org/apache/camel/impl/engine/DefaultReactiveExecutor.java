@@ -26,6 +26,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ReactiveExecutor;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * Default {@link ReactiveExecutor}.
  */
 @ManagedResource(description = "Managed ReactiveExecutor")
+@EagerClassloaded
 public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveExecutor, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultReactiveExecutor.class);
@@ -98,14 +100,10 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         return pendingTasks.intValue();
     }
 
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-
-        // force to create and load the class during build time so the JVM does not
-        // load the class on first exchange to be created
-        Worker dummy = new Worker(0, this);
-        LOG.trace("Warming up DefaultReactiveExecutor loaded class: {}", dummy.getClass().getName());
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded DefaultReactiveExecutor");
+        Worker dummy = new Worker(-1, null);
+        log.trace("Loaded {}", dummy.getClass().getName());
     }
 
     @Override
@@ -128,7 +126,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         public Worker(int number, DefaultReactiveExecutor executor) {
             this.number = number;
             this.executor = executor;
-            this.stats = executor.isStatisticsEnabled();
+            this.stats = executor != null && executor.isStatisticsEnabled();
         }
 
         void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
