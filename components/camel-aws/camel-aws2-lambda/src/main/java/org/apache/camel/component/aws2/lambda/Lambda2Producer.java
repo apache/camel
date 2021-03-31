@@ -567,40 +567,31 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void publishVersion(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	PublishVersionRequest request = null;
+    	PublishVersionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PublishVersionRequest) {
-                PublishVersionResponse result;
-                try {
-                    result = lambdaClient.publishVersion((PublishVersionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(PublishVersionRequest.class);
         } else {
-            PublishVersionResponse result;
-            try {
-                PublishVersionRequest.Builder request
-                        = PublishVersionRequest.builder().functionName(getEndpoint().getFunction());
+                PublishVersionRequest.Builder builder = PublishVersionRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION))) {
                     String description = exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION, String.class);
-                    request.description(description);
+                    builder.description(description);
                 }
                 if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID))) {
                     String revisionId = exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID, String.class);
-                    request.revisionId(revisionId);
+                    builder.revisionId(revisionId);
                 }
-                result = lambdaClient.publishVersion(request.build());
+                request = builder.build();
+        }
+        try {
+                result = lambdaClient.publishVersion(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void listVersions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
