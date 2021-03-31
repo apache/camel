@@ -445,6 +445,7 @@ public class Lambda2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Event Source Arn must be specified");
             }
             request = builder.build();
+        }
 
             try {
                 result = lambdaClient.deleteEventSourceMapping(request);
@@ -454,7 +455,6 @@ public class Lambda2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void listEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
