@@ -25,16 +25,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.MessageContext.Scope;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
@@ -112,6 +117,8 @@ public class CxfProducer extends DefaultAsyncProducer {
             invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
             invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
 
+            addAttachmentFileCloseUoW(camelExchange);
+
             CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
             // send the CXF async request
             client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange),
@@ -150,6 +157,8 @@ public class CxfProducer extends DefaultAsyncProducer {
         invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
 
         try {
+            addAttachmentFileCloseUoW(camelExchange);
+
             // send the CXF request
             client.invoke(boi, getParams(endpoint, camelExchange),
                     invocationContext, cxfExchange);
@@ -168,15 +177,42 @@ public class CxfProducer extends DefaultAsyncProducer {
                                 cxfHeaders);
                     }
                 } catch (IOException e) {
-                    LOG.error("Cannot store cookies", e);
+                    LOG.warn("Cannot store cookies. This exception is ignored.", e);
                 }
             }
+
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         responseContext);
             }
         }
+    }
+
+    private void addAttachmentFileCloseUoW(Exchange camelExchange) {
+        // add UoW done to avoid CXF file leaks
+        camelExchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(org.apache.camel.Exchange exchange) {
+                // CXF may leak temporary cached attachments to temp folder that has not been in use
+                AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
+                if (am != null) {
+                    Map<String, DataHandler> atts = am.getAttachments();
+                    if (atts != null) {
+                        for (DataHandler dh : atts.values()) {
+                            if (dh != null) {
+                                try {
+                                    InputStream is = dh.getInputStream();
+                                    IOHelper.close(is);
+                                } catch (Exception e) {
+                                    // ignore
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     protected Map<String, Object> prepareRequest(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange)
