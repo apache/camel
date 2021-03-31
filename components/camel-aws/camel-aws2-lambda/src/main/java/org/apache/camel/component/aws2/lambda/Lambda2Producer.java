@@ -672,36 +672,27 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void getAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+    	GetAliasRequest request = null;
+    	GetAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetAliasRequest) {
-                GetAliasResponse result;
-                try {
-                    result = lambdaClient.getAlias((GetAliasRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(GetAliasRequest.class);
         } else {
-            GetAliasResponse result;
-            try {
-                GetAliasRequest.Builder request = GetAliasRequest.builder().functionName(getEndpoint().getFunction());
+                GetAliasRequest.Builder builder = GetAliasRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
                 String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
                 if (ObjectHelper.isEmpty(aliasName)) {
                     throw new IllegalArgumentException("Function alias must be specified to get an alias");
                 }
-                request.name(aliasName);
-                result = lambdaClient.getAlias(request.build());
+                builder.name(aliasName);
+        }
+                try {
+                result = lambdaClient.getAlias(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void listAliases(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
