@@ -401,7 +401,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                                 "Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.",
                                                 exchange, topicName, partitionLastOffset, exchange.getException());
                                         // force commit so we resume on next poll where we failed
-                                        commitOffset(offsetRepository, partition, partitionLastOffset, true);
+                                        commitOffset(offsetRepository, partition, partitionLastOffset, false, true);
                                         // continue to next partition
                                         breakOnErrorHit = true;
                                     } else {
@@ -424,9 +424,8 @@ public class KafkaConsumer extends DefaultConsumer {
                             }
 
                             if (!breakOnErrorHit) {
-                                // all records processed from partition so
-                                // commit them
-                                commitOffset(offsetRepository, partition, partitionLastOffset, false);
+                                // all records processed from partition so commit them
+                                commitOffset(offsetRepository, partition, partitionLastOffset, false, false);
                             }
                         }
                     }
@@ -445,6 +444,8 @@ public class KafkaConsumer extends DefaultConsumer {
                         } else if ("sync".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
                             LOG.info("Auto commitSync on stop {} from topic {}", threadId, topicName);
                             consumer.commitSync();
+                        } else if ("none".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                            LOG.info("Auto commit on stop {} from topic {} is disabled (none)", threadId, topicName);
                         }
                     }
                 }
@@ -556,13 +557,26 @@ public class KafkaConsumer extends DefaultConsumer {
 
         private void commitOffset(
                 StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset,
-                boolean forceCommit) {
+                boolean stopping, boolean forceCommit) {
             if (partitionLastOffset != -1) {
                 if (!endpoint.getConfiguration().isAllowManualCommit() && offsetRepository != null) {
                     LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, topicName,
                             partition.partition(),
                             partitionLastOffset);
                     offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+                } else if (stopping) {
+                    // if we are stopping then react according to the configured option
+                    if ("async".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                        LOG.debug("Auto commitAsync on stop {} from topic {}", threadId, topicName);
+                        consumer.commitAsync(
+                                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)), null);
+                    } else if ("sync".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                        LOG.debug("Auto commitSync on stop {} from topic {}", threadId, topicName);
+                        consumer.commitSync(
+                                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
+                    } else if ("none".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                        LOG.debug("Auto commit on stop {} from topic {} is disabled (none)", threadId, topicName);
+                    }
                 } else if (forceCommit) {
                     LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, topicName,
                             partition.partition(), partitionLastOffset);
@@ -587,6 +601,9 @@ public class KafkaConsumer extends DefaultConsumer {
         public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
             LOG.debug("onPartitionsRevoked: {} from topic {}", threadId, topicName);
 
+            // if camel is stopping, or we are not running
+            boolean stopping = getEndpoint().getCamelContext().isStopping() && !isRunAllowed();
+
             StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
             for (TopicPartition partition : partitions) {
                 String offsetKey = serializeOffsetKey(partition);
@@ -594,20 +611,18 @@ public class KafkaConsumer extends DefaultConsumer {
                 if (offset == null) {
                     offset = -1L;
                 }
-                LOG.debug("Saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey, offset);
                 try {
                     // only commit offsets if the component has control
                     if (endpoint.getConfiguration().getAutoCommitEnable()) {
-                        commitOffset(offsetRepository, partition, offset, true);
+                        commitOffset(offsetRepository, partition, offset, stopping, false);
                     }
-                } catch (java.lang.Exception e) {
+                } catch (Exception e) {
                     LOG.error("Error saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey,
                             offset);
                     throw e;
                 } finally {
                     lastProcessedOffset.remove(offsetKey);
                 }
-
             }
         }
 

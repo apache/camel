@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
-import org.slf4j.Logger;
 
 /**
  * Default {@link org.apache.camel.spi.UnitOfWorkFactory}
@@ -33,11 +32,6 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
     private String mdcLoggingKeysPattern;
     private boolean allowUseOriginalMessage;
     private boolean useBreadcrumb;
-
-    @Override
-    public void warmup(Logger log) {
-        DefaultUnitOfWork.warmup(log);
-    }
 
     @Override
     public UnitOfWork createUnitOfWork(Exchange exchange) {

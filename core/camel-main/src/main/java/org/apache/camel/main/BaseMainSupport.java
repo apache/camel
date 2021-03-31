@@ -521,7 +521,7 @@ public abstract class BaseMainSupport extends BaseService {
         // setup startup recorder before building context
         configureStartupRecorder(camelContext);
 
-        // ensure camel is initialized
+        // ensure camel context is build
         camelContext.build();
 
         for (MainListener listener : listeners) {
@@ -539,6 +539,12 @@ public abstract class BaseMainSupport extends BaseService {
         StartupStep step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
         autoconfigure(camelContext);
         recorder.endStep(step);
+
+        if (mainConfigurationProperties.isEagerClassloading()) {
+            step = recorder.beginStep(BaseMainSupport.class, "classloading", "Eager Classloading");
+            EagerClassloadedHelper.eagerLoadClasses();
+            recorder.endStep(step);
+        }
 
         configureLifecycle(camelContext);
 

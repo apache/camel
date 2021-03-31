@@ -28,8 +28,8 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
 http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 http://cxf.apache.org/transports/jms http://cxf.apache.org/schemas/configuration/jms.xsd">
 
-<bean id="logginOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
-<bean id="logginInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+<bean id="logginOutInterceptor" class="org.apache.cxf.ext.logging.LoggingOutInterceptor"/>
+<bean id="logginInInterceptor" class="org.apache.cxf.ext.logging.LoggingInInterceptor"/>
 
 <cxf:cxfEndpoint id="jmsEndpoint"
 address="jms:jndi:dynamicQueues/test.cxf.jmstransport.queue?jndiInitialContextFactory=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;jndiConnectionFactoryName=ConnectionFactory&amp;jndiURL=vm://localhost"

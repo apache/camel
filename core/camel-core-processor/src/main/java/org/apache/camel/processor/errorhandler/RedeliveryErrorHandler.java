@@ -162,6 +162,30 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
     }
 
+    RedeliveryErrorHandler(Logger log) {
+        // used for eager loading
+        camelContext = null;
+        reactiveExecutor = null;
+        awaitManager = null;
+        shutdownStrategy = null;
+        deadLetter = null;
+        deadLetterUri = null;
+        deadLetterHandleNewException = false;
+        redeliveryProcessor = null;
+        redeliveryPolicy = null;
+        retryWhilePolicy = null;
+        logger = null;
+        useOriginalMessagePolicy = false;
+        useOriginalBodyPolicy = false;
+        redeliveryEnabled = false;
+        simpleTask = false;
+        exchangeFormatter = null;
+        customExchangeFormatter = false;
+        onPrepareProcessor = null;
+        onExceptionProcessor = null;
+        log.trace("Loaded {}", RedeliveryErrorHandler.class.getName());
+    }
+
     @Override
     public void process(Exchange exchange) {
         if (output == null) {
@@ -1589,11 +1613,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         // however if we dont then its less memory overhead (and a bit less cpu) of using the simple task
         simpleTask = deadLetter == null && !redeliveryEnabled && (exceptionPolicies == null || exceptionPolicies.isEmpty())
                 && onPrepareProcessor == null;
-
-        // force to create and load the class during build time so the JVM does not
-        // load the class on first exchange to be created
-        Object dummy = simpleTask ? new SimpleTask() : new RedeliveryTask();
-        LOG.trace("Warming up RedeliveryErrorHandler loaded class: {}", dummy.getClass().getName());
 
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {

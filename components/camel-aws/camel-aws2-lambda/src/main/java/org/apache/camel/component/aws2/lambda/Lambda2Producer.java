@@ -404,424 +404,319 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        CreateEventSourceMappingRequest request = null;
+        CreateEventSourceMappingResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateEventSourceMappingRequest) {
-                CreateEventSourceMappingResponse result;
-                try {
-                    result = lambdaClient.createEventSourceMapping((CreateEventSourceMappingRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(CreateEventSourceMappingRequest.class);
         } else {
-            CreateEventSourceMappingResponse result;
-            try {
-                CreateEventSourceMappingRequest.Builder request
-                        = CreateEventSourceMappingRequest.builder().functionName(getEndpoint().getFunction());
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN))) {
-                    request.eventSourceArn(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN, String.class));
-                } else {
-                    throw new IllegalArgumentException("Event Source Arn must be specified");
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE))) {
-                    Integer batchSize = exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
-                    request.batchSize(batchSize);
-                }
-                result = lambdaClient.createEventSourceMapping(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            CreateEventSourceMappingRequest.Builder builder = CreateEventSourceMappingRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN))) {
+                builder.eventSourceArn(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN, String.class));
+            } else {
+                throw new IllegalArgumentException("Event Source Arn must be specified");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE))) {
+                Integer batchSize = exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
+                builder.batchSize(batchSize);
+            }
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.createEventSourceMapping(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void deleteEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        DeleteEventSourceMappingRequest request = null;
+        DeleteEventSourceMappingResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteEventSourceMappingRequest) {
-                DeleteEventSourceMappingResponse result;
-                try {
-                    result = lambdaClient.deleteEventSourceMapping((DeleteEventSourceMappingRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteEventSourceMappingRequest.class);
         } else {
-            DeleteEventSourceMappingResponse result;
-            try {
-                DeleteEventSourceMappingRequest.Builder request = DeleteEventSourceMappingRequest.builder();
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID))) {
-                    request.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
-                } else {
-                    throw new IllegalArgumentException("Event Source Arn must be specified");
-                }
-                result = lambdaClient.deleteEventSourceMapping(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            DeleteEventSourceMappingRequest.Builder builder = DeleteEventSourceMappingRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID))) {
+                builder.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
+            } else {
+                throw new IllegalArgumentException("Event Source Arn must be specified");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            request = builder.build();
         }
+
+        try {
+            result = lambdaClient.deleteEventSourceMapping(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        ListEventSourceMappingsRequest request = null;
+        ListEventSourceMappingsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListEventSourceMappingsRequest) {
-                ListEventSourceMappingsResponse result;
-                try {
-                    result = lambdaClient.listEventSourceMappings((ListEventSourceMappingsRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListEventSourceMappingsRequest.class);
         } else {
-            ListEventSourceMappingsResponse result;
-            try {
-                ListEventSourceMappingsRequest.Builder request
-                        = ListEventSourceMappingsRequest.builder().functionName(getEndpoint().getFunction());
-                result = lambdaClient.listEventSourceMappings(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            ListEventSourceMappingsRequest.Builder builder = ListEventSourceMappingsRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.listEventSourceMappings(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listTags(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        ListTagsRequest request = null;
+        ListTagsResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListTagsRequest) {
-                ListTagsResponse result;
-                try {
-                    result = lambdaClient.listTags((ListTagsRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListTagsRequest.class);
         } else {
-            ListTagsResponse result;
-            try {
-                ListTagsRequest.Builder request = ListTagsRequest.builder();
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
-                    String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                    request.resource(resource);
-                } else {
-                    throw new IllegalArgumentException("The resource ARN must be specified");
-                }
-                result = lambdaClient.listTags(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            ListTagsRequest.Builder builder = ListTagsRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
+                builder.resource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.listTags(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
     private void tagResource(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        TagResourceRequest request = null;
+        TagResourceResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof TagResourceRequest) {
-                TagResourceResponse result;
-                try {
-                    result = lambdaClient.tagResource((TagResourceRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(TagResourceRequest.class);
         } else {
-            TagResourceResponse result;
-            try {
-                TagResourceRequest.Builder request = TagResourceRequest.builder();
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
-                    String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                    request.resource(resource);
-                } else {
-                    throw new IllegalArgumentException("The resource ARN must be specified");
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS))) {
-                    Map<String, String> tags = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS, Map.class);
-                    request.tags(tags);
-                } else {
-                    throw new IllegalArgumentException("The tags must be specified");
-                }
-                result = lambdaClient.tagResource(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            TagResourceRequest.Builder builder = TagResourceRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
+                builder.resource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS))) {
+                Map<String, String> tags = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS, Map.class);
+                builder.tags(tags);
+            } else {
+                throw new IllegalArgumentException("The tags must be specified");
+            }
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.tagResource(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
     private void untagResource(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        UntagResourceRequest request = null;
+        UntagResourceResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UntagResourceRequest) {
-                UntagResourceResponse result;
-                try {
-                    result = lambdaClient.untagResource((UntagResourceRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(UntagResourceRequest.class);
         } else {
-            UntagResourceResponse result;
-            try {
-                UntagResourceRequest.Builder request = UntagResourceRequest.builder();
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
-                    String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                    request.resource(resource);
-                } else {
-                    throw new IllegalArgumentException("The resource ARN must be specified");
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS))) {
-                    List<String> tagKeys = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS, List.class);
-                    request.tagKeys(tagKeys);
-                } else {
-                    throw new IllegalArgumentException("The tag keys must be specified");
-                }
-                result = lambdaClient.untagResource(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            UntagResourceRequest.Builder builder = UntagResourceRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
+                builder.resource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS))) {
+                List<String> tagKeys = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS, List.class);
+                builder.tagKeys(tagKeys);
+            } else {
+                throw new IllegalArgumentException("The tag keys must be specified");
+            }
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.untagResource(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void publishVersion(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        PublishVersionRequest request = null;
+        PublishVersionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PublishVersionRequest) {
-                PublishVersionResponse result;
-                try {
-                    result = lambdaClient.publishVersion((PublishVersionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(PublishVersionRequest.class);
         } else {
-            PublishVersionResponse result;
-            try {
-                PublishVersionRequest.Builder request
-                        = PublishVersionRequest.builder().functionName(getEndpoint().getFunction());
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION))) {
-                    String description = exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION, String.class);
-                    request.description(description);
-                }
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID))) {
-                    String revisionId = exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID, String.class);
-                    request.revisionId(revisionId);
-                }
-                result = lambdaClient.publishVersion(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            PublishVersionRequest.Builder builder = PublishVersionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION))) {
+                String description = exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION, String.class);
+                builder.description(description);
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID))) {
+                String revisionId = exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID, String.class);
+                builder.revisionId(revisionId);
+            }
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.publishVersion(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listVersions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        ListVersionsByFunctionRequest request = null;
+        ListVersionsByFunctionResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListVersionsByFunctionRequest) {
-                ListVersionsByFunctionResponse result;
-                try {
-                    result = lambdaClient.listVersionsByFunction((ListVersionsByFunctionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListVersionsByFunctionRequest.class);
         } else {
-            ListVersionsByFunctionResponse result;
-            try {
-                ListVersionsByFunctionRequest request
-                        = ListVersionsByFunctionRequest.builder().functionName(getEndpoint().getFunction()).build();
-                result = lambdaClient.listVersionsByFunction(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            ListVersionsByFunctionRequest.Builder builder = ListVersionsByFunctionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.listVersionsByFunction(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void createAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        CreateAliasRequest request = null;
+        CreateAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateAliasRequest) {
-                CreateAliasResponse result;
-                try {
-                    result = lambdaClient.createAlias((CreateAliasRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(CreateAliasRequest.class);
         } else {
-            CreateAliasResponse result;
-            try {
-                CreateAliasRequest.Builder request = CreateAliasRequest.builder().functionName(getEndpoint().getFunction());
-                String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-                if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
-                    throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
-                }
-                request.functionVersion(version);
-                request.name(aliasName);
-                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION))) {
-                    String aliasDescription
-                            = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, String.class);
-                    request.description(aliasDescription);
-                }
-                result = lambdaClient.createAlias(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            CreateAliasRequest.Builder builder = CreateAliasRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
+            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            builder.functionVersion(version);
+            builder.name(aliasName);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION))) {
+                String aliasDescription
+                        = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, String.class);
+                builder.description(aliasDescription);
+            }
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.createAlias(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void deleteAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        DeleteAliasRequest request = null;
+        DeleteAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteAliasRequest) {
-                DeleteAliasResponse result;
-                try {
-                    result = lambdaClient.deleteAlias((DeleteAliasRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(DeleteAliasRequest.class);
         } else {
-            DeleteAliasResponse result;
-            try {
-                DeleteAliasRequest.Builder request = DeleteAliasRequest.builder().functionName(getEndpoint().getFunction());
-                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-                if (ObjectHelper.isEmpty(aliasName)) {
-                    throw new IllegalArgumentException("Function alias must be specified to delete an alias");
-                }
-                request.name(aliasName);
-                result = lambdaClient.deleteAlias(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            DeleteAliasRequest.Builder builder = DeleteAliasRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function alias must be specified to delete an alias");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            builder.name(aliasName);
+            request = builder.build();
         }
+        try {
+            result = lambdaClient.deleteAlias(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void getAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        GetAliasRequest request = null;
+        GetAliasResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetAliasRequest) {
-                GetAliasResponse result;
-                try {
-                    result = lambdaClient.getAlias((GetAliasRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(GetAliasRequest.class);
         } else {
-            GetAliasResponse result;
-            try {
-                GetAliasRequest.Builder request = GetAliasRequest.builder().functionName(getEndpoint().getFunction());
-                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-                if (ObjectHelper.isEmpty(aliasName)) {
-                    throw new IllegalArgumentException("Function alias must be specified to get an alias");
-                }
-                request.name(aliasName);
-                result = lambdaClient.getAlias(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            GetAliasRequest.Builder builder = GetAliasRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function alias must be specified to get an alias");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            builder.name(aliasName);
         }
+        try {
+            result = lambdaClient.getAlias(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void listAliases(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        ListAliasesRequest request = null;
+        ListAliasesResponse result;
         if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListAliasesRequest) {
-                ListAliasesResponse result;
-                try {
-                    result = lambdaClient.listAliases((ListAliasesRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+            request = exchange.getIn().getMandatoryBody(ListAliasesRequest.class);
         } else {
-            ListAliasesResponse result;
-            try {
-                ListAliasesRequest.Builder request = ListAliasesRequest.builder().functionName(getEndpoint().getFunction());
-                String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-                if (ObjectHelper.isEmpty(version)) {
-                    throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
-                }
-                request.functionVersion(version);
-                result = lambdaClient.listAliases(request.build());
-            } catch (AwsServiceException ase) {
-                LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
+            ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
+            if (ObjectHelper.isEmpty(version)) {
+                throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
             }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            builder.functionVersion(version);
         }
+        try {
+            result = lambdaClient.listAliases(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private Lambda2Operations determineOperation(Exchange exchange) {

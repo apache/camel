@@ -52,6 +52,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
@@ -61,6 +62,7 @@ import org.slf4j.Logger;
 /**
  * Some helper methods for working with {@link Exchange} objects
  */
+@EagerClassloaded
 public final class ExchangeHelper {
 
     /**
@@ -69,8 +71,8 @@ public final class ExchangeHelper {
     private ExchangeHelper() {
     }
 
-    public static void warmup(Logger log) {
-        log.trace("Warming up ExchangeHelper");
+    public static void onClassloaded(Logger log) {
+        log.trace("Loaded ExchangeHelper");
     }
 
     /**

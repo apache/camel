@@ -222,40 +222,7 @@ async queue to be able to send a fire-and-forget message for further
 processing in another thread, and return a constant reply in this thread
 to the original caller.
 
-[source,java]
-----
-    @Test
-    public void testSendAsync() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-
-        // START SNIPPET: e2
-        Object out = template.requestBody("direct:start", "Hello World");
-        assertEquals("OK", out);
-        // END SNIPPET: e2
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            // START SNIPPET: e1
-            public void configure() throws Exception {
-                from("direct:start")
-                    // send it to the seda queue that is async
-                    .to("seda:next")
-                    // return a constant response
-                    .transform(constant("OK"));
-
-                from("seda:next").to("mock:result");
-            }
-            // END SNIPPET: e1
-        };
-    }
-----
-
-Here we send a Hello World message and expects the reply to be OK.
+We send a Hello World message and expects the reply to be OK.
 
 [source,java]
 ----
@@ -300,16 +267,39 @@ unit test.
 
 *Since Camel 2.2*
 
-In this example we have defined two consumers and registered them as
-spring beans.
+In this example we have defined two consumers.
+
+[source,java]
+----
+    @Test
+    public void testSameOptionsProducerStillOkay() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
+
+        template.sendBody("seda:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:foo?multipleConsumers=true").routeId("foo").to("mock:foo");
+                from("seda:foo?multipleConsumers=true").routeId("bar").to("mock:bar");
+            }
+        };
+    }
+----
+
 
 Since we have specified *multipleConsumers=true* on the seda foo
 endpoint we can have those two consumers receive their own copy of the
 message as a kind of pub-sub style messaging.
 
 As the beans are part of an unit test they simply send the message to a
-mock endpoint, but notice how we can use @Consume to consume from the
-seda queue.
+mock endpoint.
 
 == Extracting queue information.
 

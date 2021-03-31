@@ -24,18 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
-import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultExchangeFactoryManager extends ServiceSupport implements ExchangeFactoryManager, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultExchangeFactoryManager.class);
 
     private final Map<Consumer, ExchangeFactory> factories = new ConcurrentHashMap<>();
     private final UtilizationStatistics statistics = new UtilizationStatistics();
@@ -170,16 +163,6 @@ public class DefaultExchangeFactoryManager extends ServiceSupport implements Exc
             return answer;
         }
 
-    }
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        // force to create and load the class during build time so the JVM does not
-        // load the class on first exchange to be created
-        ExchangeHelper.warmup(LOG);
-        UnitOfWorkHelper.warmup(LOG);
-        camelContext.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().warmup(LOG);
     }
 
     @Override

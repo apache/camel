@@ -61,6 +61,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": target.setDurationMaxMessages(property(camelContext, int.class, value)); return true;
         case "durationmaxseconds":
         case "DurationMaxSeconds": target.setDurationMaxSeconds(property(camelContext, int.class, value)); return true;
+        case "eagerclassloading":
+        case "EagerClassloading": target.setEagerClassloading(property(camelContext, boolean.class, value)); return true;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": target.setEndpointBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointlazystartproducer":
@@ -250,6 +252,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return int.class;
         case "durationmaxseconds":
         case "DurationMaxSeconds": return int.class;
+        case "eagerclassloading":
+        case "EagerClassloading": return boolean.class;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return boolean.class;
         case "endpointlazystartproducer":
@@ -440,6 +444,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return target.getDurationMaxMessages();
         case "durationmaxseconds":
         case "DurationMaxSeconds": return target.getDurationMaxSeconds();
+        case "eagerclassloading":
+        case "EagerClassloading": return target.isEagerClassloading();
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return target.isEndpointBridgeErrorHandler();
         case "endpointlazystartproducer":

@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
+import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

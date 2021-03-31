@@ -19,8 +19,8 @@ package org.apache.camel.component.cxf.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
