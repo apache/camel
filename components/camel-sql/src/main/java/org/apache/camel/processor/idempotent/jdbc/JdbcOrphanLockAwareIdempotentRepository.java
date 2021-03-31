@@ -45,8 +45,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * A lock is granted to an instance if either the entry for the lock attributes do not exists in the
  * CAMEL_MESSAGEPROCESSED table or if in case the instance holding the lock has crashed. This is determined if the
  * timestamp on the createdAt column is more than the lockMaxAge.
- *
- * *
  */
 public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository implements ShutdownableService {
 
@@ -144,13 +142,19 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             updateTimestampQuery = updateTimestampQuery.replaceFirst(DEFAULT_TABLENAME, getTableName());
         }
         executorServiceManager = context.getExecutorServiceManager();
-        executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getName());
-        /**
-         * Schedule a task which will keep updating the timestamp on the acquired locks at lockKeepAliveInterval so that
-         * the timestamp does not reaches lockMaxAge
-         */
+        executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getSimpleName());
+
+        // Schedule a task which will keep updating the timestamp on the acquired locks at lockKeepAliveInterval so that
+        // the timestamp does not reaches lockMaxAge
         executorService.scheduleWithFixedDelay(new LockKeepAliveTask(), lockKeepAliveIntervalMillis,
                 lockKeepAliveIntervalMillis, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (executorServiceManager != null && executorService != null) {
+            executorServiceManager.shutdownGraceful(executorService);
+        }
     }
 
     @Override
@@ -180,11 +184,6 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         } finally {
             sl.unlockRead(stamp);
         }
-    }
-
-    @Override
-    public void shutdown() {
-        executorServiceManager.shutdownGraceful(executorService);
     }
 
     public Set<ProcessorNameAndMessageId> getProcessorNameMessageIdSet() {
