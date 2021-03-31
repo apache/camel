@@ -595,24 +595,16 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void listVersions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListVersionsByFunctionRequest) {
-                ListVersionsByFunctionResponse result;
-                try {
-                    result = lambdaClient.listVersionsByFunction((ListVersionsByFunctionRequest) payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
+        ListVersionsByFunctionRequest request = null;
+        ListVersionsByFunctionResponse result;
+    	if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(ListVersionsByFunctionRequest.class);
         } else {
-            ListVersionsByFunctionResponse result;
-            try {
-                ListVersionsByFunctionRequest request
-                        = ListVersionsByFunctionRequest.builder().functionName(getEndpoint().getFunction()).build();
+                ListVersionsByFunctionRequest.Builder builder = ListVersionsByFunctionRequest.builder();
+                builder.functionName(getEndpoint().getFunction());
+                request = builder.build();
+        }
+    	try {
                 result = lambdaClient.listVersionsByFunction(request);
             } catch (AwsServiceException ase) {
                 LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -620,7 +612,6 @@ public class Lambda2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-        }
     }
 
     private void createAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
