@@ -67,6 +67,8 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
         V answer = staticMap.get(o);
         if (answer == null) {
             answer = dynamicMap.get(o);
+            // TODO: avoid this expensive lookup, since its a get lookup which we want to be fast
+            // TODO: instead use some kind of event notifier to transfer from dynamic to static
             if (answer != null && (context.isSetupRoutes() || routeController.isStartingRoutes())) {
                 dynamicMap.remove(o);
                 staticMap.put((K) o, answer);
