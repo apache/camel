@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistry {
 
-    private static final String META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER
+    public static final String META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER
             = "META-INF/services/org/apache/camel/UberTypeConverterLoader";
     public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER
             = "META-INF/services/org/apache/camel/TypeConverterLoader";
