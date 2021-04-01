@@ -50,9 +50,6 @@ public class S3StreamUploadOperationIntegrationTest extends CamelTestSupport {
         for (int i = 0; i < 1000; i++) {
             template.sendBody("direct:stream1", "Andrea\n");
         }
-        for (int i = 0; i < 1000; i++) {
-            template.sendBody("direct:stream2", "Luca\n");
-        }
 
         Thread.sleep(30000);
     }
@@ -63,12 +60,9 @@ public class S3StreamUploadOperationIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint1
-                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamMode=true&keyName=fileTest";
-                String awsEndpoint2
-                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamMode=true&keyName=fileTestParallel";
+                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamMode=true&keyName=fileTest&batchMessageNumber=25&namingStrategy=progressive";
 
                 from("direct:stream1").toD(awsEndpoint1).to("mock:result");
-                from("direct:stream2").toD(awsEndpoint2).to("mock:result");
             }
         };
     }

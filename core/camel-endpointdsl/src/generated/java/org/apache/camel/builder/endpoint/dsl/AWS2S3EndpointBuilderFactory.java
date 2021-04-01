@@ -328,37 +328,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If StreaMode is true a different way of uploading will be provided.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streamMode the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder streamMode(boolean streamMode) {
-            doSetProperty("streamMode", streamMode);
-            return this;
-        }
-        /**
-         * If StreaMode is true a different way of uploading will be provided.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streamMode the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder streamMode(String streamMode) {
-            doSetProperty("streamMode", streamMode);
-            return this;
-        }
-        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -1880,37 +1849,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If StreaMode is true a different way of uploading will be provided.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streamMode the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder streamMode(boolean streamMode) {
-            doSetProperty("streamMode", streamMode);
-            return this;
-        }
-        /**
-         * If StreaMode is true a different way of uploading will be provided.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streamMode the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder streamMode(String streamMode) {
-            doSetProperty("streamMode", streamMode);
-            return this;
-        }
-        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -1996,6 +1934,68 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
                 String useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * The number of messages composing a batch in stream mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param batchMessageNumber the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchMessageNumber(
+                int batchMessageNumber) {
+            doSetProperty("batchMessageNumber", batchMessageNumber);
+            return this;
+        }
+        /**
+         * The number of messages composing a batch in stream mode.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param batchMessageNumber the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchMessageNumber(
+                String batchMessageNumber) {
+            doSetProperty("batchMessageNumber", batchMessageNumber);
+            return this;
+        }
+        /**
+         * The batch size in stream mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * The batch size in stream mode.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
             return this;
         }
         /**
@@ -2131,6 +2131,40 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The naming strategy to use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * 
+         * Default: progressive
+         * Group: producer
+         * 
+         * @param namingStrategy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder namingStrategy(
+                AWSS3NamingStrategyEnum namingStrategy) {
+            doSetProperty("namingStrategy", namingStrategy);
+            return this;
+        }
+        /**
+         * The naming strategy to use.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * 
+         * Default: progressive
+         * Group: producer
+         * 
+         * @param namingStrategy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder namingStrategy(
+                String namingStrategy) {
+            doSetProperty("namingStrategy", namingStrategy);
+            return this;
+        }
+        /**
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
@@ -2206,6 +2240,37 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointProducerBuilder storageClass(String storageClass) {
             doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamMode(boolean streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamMode(String streamMode) {
+            doSetProperty("streamMode", streamMode);
             return this;
         }
         /**
@@ -2656,37 +2721,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If StreaMode is true a different way of uploading will be provided.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streamMode the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder streamMode(boolean streamMode) {
-            doSetProperty("streamMode", streamMode);
-            return this;
-        }
-        /**
-         * If StreaMode is true a different way of uploading will be provided.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param streamMode the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder streamMode(String streamMode) {
-            doSetProperty("streamMode", streamMode);
-            return this;
-        }
-        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -2866,6 +2900,15 @@ public interface AWS2S3EndpointBuilderFactory {
     enum Protocol {
         HTTP,
         HTTPS;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum</code> enum.
+     */
+    enum AWSS3NamingStrategyEnum {
+        progressive,
+        random;
     }
 
     /**

@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
+import org.apache.camel.component.aws2.s3.stream.AWS2S3StreamUploadProducer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

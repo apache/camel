@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.s3;
+package org.apache.camel.component.aws2.s3.stream;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
+import org.apache.camel.component.aws2.s3.AWS2S3Endpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -50,7 +51,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     CreateMultipartUploadResponse initResponse;
     int index = 1;
-    List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
+    List<CompletedPart> completedParts = new ArrayList<>();
     int part = 0;
 
     public AWS2S3StreamUploadProducer(final Endpoint endpoint) {
@@ -59,21 +60,14 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-        streamUpload(exchange);
-    }
-
-    public void streamUpload(final Exchange exchange) throws Exception {
-        File filePayload = null;
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
 
         buffer.write(IoUtils.toByteArray(is));
-        final String keyName = determineKey(exchange);
-        String dynamicKeyName;
-        if (part > 0) {
-            dynamicKeyName = keyName + "-" + part;
-        } else {
-            dynamicKeyName = keyName;
-        }
+
+        final String keyName = getConfiguration().getKeyName();
+        final String fileName = determineFileName(keyName);
+        final String extension = determineFileExtension(keyName);
+        String dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension, part);
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                 = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(dynamicKeyName);
 
@@ -123,10 +117,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             long partSize = getConfiguration().getPartSize();
         }
 
-        long filePosition = 0;
-
         try {
-            if (buffer.size() >= 5000000 || index == 100) {
+            if (buffer.size() >= getConfiguration().getBatchSize() || index == getConfiguration().getBatchMessageNumber()) {
 
                 UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
                         .key(dynamicKeyName).uploadId(initResponse.uploadId())
@@ -142,7 +134,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 part++;
             }
 
-            if (index == 100) {
+            if (index == getConfiguration().getBatchMessageNumber()) {
                 CompletedMultipartUpload completeMultipartUpload
                         = CompletedMultipartUpload.builder().parts(completedParts).build();
                 CompleteMultipartUploadRequest compRequest
@@ -151,7 +143,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                                 .uploadId(initResponse.uploadId())
                                 .build();
 
-                uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+                getEndpoint().getS3Client().completeMultipartUpload(compRequest);
                 index = 0;
             }
 
@@ -165,51 +157,46 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         index++;
 
         Message message = getMessageForResponse(exchange);
-
     }
 
-    private AWS2S3Operations determineOperation(Exchange exchange) {
-        AWS2S3Operations operation = exchange.getIn().getHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.class);
-        if (operation == null) {
-            operation = getConfiguration().getOperation();
+    private String fileNameToUpload(String fileName, AWSS3NamingStrategyEnum strategy, String ext, int part) {
+        String dynamicKeyName;
+        switch (strategy) {
+            case progressive:
+                if (part > 0) {
+                    if (ObjectHelper.isNotEmpty(ext)) {
+                        dynamicKeyName = fileName + "-" + part + ext;
+                    } else {
+                        dynamicKeyName = fileName + "-" + part;
+                    }
+                } else {
+                    if (ObjectHelper.isNotEmpty(ext)) {
+                        dynamicKeyName = fileName + ext;
+                    } else {
+                        dynamicKeyName = fileName;
+                    }
+                }
+                break;
+            case random:
+                if (part > 0) {
+                    UUID id = UUID.randomUUID();
+                    if (ObjectHelper.isNotEmpty(ext)) {
+                        dynamicKeyName = fileName + "-" + id.toString() + ext;
+                    } else {
+                        dynamicKeyName = fileName + "-" + id.toString();
+                    }
+                } else {
+                    if (ObjectHelper.isNotEmpty(ext)) {
+                        dynamicKeyName = fileName + ext;
+                    } else {
+                        dynamicKeyName = fileName;
+                    }
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
-        return operation;
-    }
-
-    private Map<String, String> determineMetadata(final Exchange exchange) {
-        Map<String, String> objectMetadata = new HashMap<String, String>();
-
-        Long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, Long.class);
-        if (contentLength != null) {
-            objectMetadata.put("Content-Length", String.valueOf(contentLength));
-        }
-
-        String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
-        if (contentType != null) {
-            objectMetadata.put("Content-Type", String.valueOf(contentType));
-        }
-
-        String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
-        if (cacheControl != null) {
-            objectMetadata.put("Cache-Control", String.valueOf(cacheControl));
-        }
-
-        String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
-        if (contentDisposition != null) {
-            objectMetadata.put("Content-Disposition", String.valueOf(contentDisposition));
-        }
-
-        String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
-        if (contentEncoding != null) {
-            objectMetadata.put("Content-Encoding", String.valueOf(contentEncoding));
-        }
-
-        String contentMD5 = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_MD5, String.class);
-        if (contentMD5 != null) {
-            objectMetadata.put("Content-Md5", String.valueOf(contentMD5));
-        }
-
-        return objectMetadata;
+        return dynamicKeyName;
     }
 
     /**
@@ -235,17 +222,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         return bucketName;
     }
 
-    private String determineKey(final Exchange exchange) {
-        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-        if (ObjectHelper.isEmpty(key)) {
-            key = getConfiguration().getKeyName();
-        }
-        if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key header missing.");
-        }
-        return key;
-    }
-
     private String determineStorageClass(final Exchange exchange) {
         String storageClass = exchange.getIn().getHeader(AWS2S3Constants.STORAGE_CLASS, String.class);
         if (storageClass == null) {
@@ -253,6 +229,26 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         }
 
         return storageClass;
+    }
+
+    private String determineFileExtension(String keyName) {
+        int extPosition = keyName.lastIndexOf(".");
+        if (extPosition == -1) {
+            return "";
+        } else {
+            String ext = keyName.substring(extPosition);
+            return ext;
+        }
+    }
+
+    private String determineFileName(String keyName) {
+        int extPosition = keyName.lastIndexOf(".");
+        if (extPosition == -1) {
+            return keyName;
+        } else {
+            String prefix = keyName.substring(0, extPosition);
+            return prefix;
+        }
     }
 
     private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {

@@ -42,6 +42,10 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "awskmskeyid":
         case "awsKMSKeyId": getOrCreateConfiguration(target).setAwsKMSKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "batchmessagenumber":
+        case "batchMessageNumber": getOrCreateConfiguration(target).setBatchMessageNumber(property(camelContext, int.class, value)); return true;
+        case "batchsize":
+        case "batchSize": getOrCreateConfiguration(target).setBatchSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Configuration.class, value)); return true;
@@ -78,6 +82,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "moveAfterRead": getOrCreateConfiguration(target).setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "multipartupload":
         case "multiPartUpload": getOrCreateConfiguration(target).setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
+        case "namingstrategy":
+        case "namingStrategy": getOrCreateConfiguration(target).setNamingStrategy(property(camelContext, org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -136,6 +142,10 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return boolean.class;
         case "awskmskeyid":
         case "awsKMSKeyId": return java.lang.String.class;
+        case "batchmessagenumber":
+        case "batchMessageNumber": return int.class;
+        case "batchsize":
+        case "batchSize": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.s3.AWS2S3Configuration.class;
@@ -172,6 +182,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "moveAfterRead": return boolean.class;
         case "multipartupload":
         case "multiPartUpload": return boolean.class;
+        case "namingstrategy":
+        case "namingStrategy": return org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum.class;
         case "operation": return org.apache.camel.component.aws2.s3.AWS2S3Operations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -226,6 +238,10 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "awskmskeyid":
         case "awsKMSKeyId": return getOrCreateConfiguration(target).getAwsKMSKeyId();
+        case "batchmessagenumber":
+        case "batchMessageNumber": return getOrCreateConfiguration(target).getBatchMessageNumber();
+        case "batchsize":
+        case "batchSize": return getOrCreateConfiguration(target).getBatchSize();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
@@ -262,6 +278,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "moveAfterRead": return getOrCreateConfiguration(target).isMoveAfterRead();
         case "multipartupload":
         case "multiPartUpload": return getOrCreateConfiguration(target).isMultiPartUpload();
+        case "namingstrategy":
+        case "namingStrategy": return getOrCreateConfiguration(target).getNamingStrategy();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();

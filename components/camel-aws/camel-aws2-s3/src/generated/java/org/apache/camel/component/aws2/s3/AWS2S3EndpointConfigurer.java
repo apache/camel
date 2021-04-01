@@ -39,6 +39,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "batchmessagenumber":
+        case "batchMessageNumber": target.getConfiguration().setBatchMessageNumber(property(camelContext, int.class, value)); return true;
+        case "batchsize":
+        case "batchSize": target.getConfiguration().setBatchSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "customeralgorithm":
@@ -86,6 +90,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "moveAfterRead": target.getConfiguration().setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "multipartupload":
         case "multiPartUpload": target.getConfiguration().setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
+        case "namingstrategy":
+        case "namingStrategy": target.getConfiguration().setNamingStrategy(property(camelContext, org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -167,6 +173,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
+        case "batchmessagenumber":
+        case "batchMessageNumber": return int.class;
+        case "batchsize":
+        case "batchSize": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "customeralgorithm":
@@ -214,6 +224,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "moveAfterRead": return boolean.class;
         case "multipartupload":
         case "multiPartUpload": return boolean.class;
+        case "namingstrategy":
+        case "namingStrategy": return org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum.class;
         case "operation": return org.apache.camel.component.aws2.s3.AWS2S3Operations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -291,6 +303,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
+        case "batchmessagenumber":
+        case "batchMessageNumber": return target.getConfiguration().getBatchMessageNumber();
+        case "batchsize":
+        case "batchSize": return target.getConfiguration().getBatchSize();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "customeralgorithm":
@@ -338,6 +354,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "moveAfterRead": return target.getConfiguration().isMoveAfterRead();
         case "multipartupload":
         case "multiPartUpload": return target.getConfiguration().isMultiPartUpload();
+        case "namingstrategy":
+        case "namingStrategy": return target.getConfiguration().getNamingStrategy();
         case "operation": return target.getConfiguration().getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
