@@ -59,7 +59,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     CreateMultipartUploadResponse initResponse;
-    AtomicInteger index = new AtomicInteger();
+    AtomicInteger index = new AtomicInteger(1);
     List<CompletedPart> completedParts;
     AtomicInteger part = new AtomicInteger();
     UUID id;
