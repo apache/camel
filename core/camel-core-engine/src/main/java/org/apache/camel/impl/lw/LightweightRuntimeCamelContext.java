@@ -64,7 +64,6 @@ import org.apache.camel.impl.converter.CoreTypeConverterRegistry;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
-import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -786,7 +785,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public Endpoint hasEndpoint(String uri) {
-        return endpoints.get(new EndpointKey(uri));
+        return endpoints.get(NormalizedUri.newNormalizedUri(uri, false));
     }
 
     @Override
@@ -1252,13 +1251,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
-        EndpointKey key;
-        if (uri instanceof EndpointKey) {
-            key = (EndpointKey) uri;
-        } else {
-            key = getEndpointKeyPreNormalized(uri.getUri());
-        }
-        return endpoints.get(key);
+        return endpoints.get(uri);
     }
 
     @Override
@@ -1288,11 +1281,10 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         if (!normalized) {
             uri = normalizeEndpointUri(uri);
         }
-        String scheme;
         Endpoint answer = null;
         if (!prototype) {
             // use optimized method to get the endpoint uri
-            EndpointKey key = getEndpointKeyPreNormalized(uri);
+            NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
             // only lookup and reuse existing endpoints if not prototype scoped
             answer = endpoints.get(key);
         }
@@ -1323,7 +1315,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         Endpoint answer;
         String scheme = null;
         // use optimized method to get the endpoint uri
-        EndpointKey key = getEndpointKeyPreNormalized(uri);
+        NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
         answer = endpoints.get(key);
         // unknown scheme
         if (answer == null) {
@@ -1332,16 +1324,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         return answer;
     }
 
-    protected EndpointKey getEndpointKeyPreNormalized(String uri) {
-        return new EndpointKey(uri, true);
-    }
-
     @Override
     public NormalizedEndpointUri normalizeUri(String uri) {
         try {
             uri = resolvePropertyPlaceholders(uri);
-            uri = normalizeEndpointUri(uri);
-            return new NormalizedUri(uri);
+            return NormalizedUri.newNormalizedUri(uri, false);
         } catch (Exception e) {
             throw new ResolveEndpointFailedException(uri, e);
         }

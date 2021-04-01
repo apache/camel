@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -110,6 +111,14 @@ public class AWS2S3Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
+    @UriParam(defaultValue = "false", label = "producer")
+    private boolean streamMode;
+    @UriParam(defaultValue = "10", label = "producer")
+    private int batchMessageNumber = 10;
+    @UriParam(defaultValue = "1000000", label = "producer")
+    private int batchSize = 1000000;
+    @UriParam(defaultValue = "progressive", label = "producer")
+    private AWSS3NamingStrategyEnum namingStrategy = AWSS3NamingStrategyEnum.progressive;
 
     public long getPartSize() {
         return partSize;
@@ -573,6 +582,50 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setAmazonS3Presigner(S3Presigner amazonS3Presigner) {
         this.amazonS3Presigner = amazonS3Presigner;
+    }
+
+    public boolean isStreamMode() {
+        return streamMode;
+    }
+
+    /**
+     * If StreaMode is true a different way of uploading will be provided
+     */
+    public void setStreamMode(boolean streamMode) {
+        this.streamMode = streamMode;
+    }
+
+    public int getBatchMessageNumber() {
+        return batchMessageNumber;
+    }
+
+    /**
+     * The number of messages composing a batch in stream mode
+     */
+    public void setBatchMessageNumber(int batchMessageNumber) {
+        this.batchMessageNumber = batchMessageNumber;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    /**
+     * The batch size in stream mode
+     */
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public AWSS3NamingStrategyEnum getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    /**
+     * The naming strategy to use
+     */
+    public void setNamingStrategy(AWSS3NamingStrategyEnum namingStrategy) {
+        this.namingStrategy = namingStrategy;
     }
 
     public AWS2S3Configuration copy() {

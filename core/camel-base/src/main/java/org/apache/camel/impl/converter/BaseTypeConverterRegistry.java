@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistry {
 
+    public static final String META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER
+            = "META-INF/services/org/apache/camel/UberTypeConverterLoader";
     public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER
             = "META-INF/services/org/apache/camel/TypeConverterLoader";
     public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER
@@ -171,14 +173,21 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     /**
      * Finds the type converter loader classes from the classpath looking for text files on the classpath at the
-     * {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER} location.
+     * {@link #META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER} and {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER}
+     * locations.
      */
     protected Collection<String> findTypeConverterLoaderClasses() throws IOException {
-        Set<String> loaders = new LinkedHashSet<>();
-        Collection<URL> loaderResources = getLoaderUrls();
+        Collection<String> loaders = new LinkedHashSet<>();
+        findTypeConverterLoaderClasses(loaders, META_INF_SERVICES_UBER_TYPE_CONVERTER_LOADER);
+        findTypeConverterLoaderClasses(loaders, META_INF_SERVICES_TYPE_CONVERTER_LOADER);
+        return loaders;
+    }
+
+    protected void findTypeConverterLoaderClasses(Collection<String> loaders, String basePath) throws IOException {
+        Collection<URL> loaderResources = getLoaderUrls(basePath);
         for (URL url : loaderResources) {
             LOG.debug("Loading file {} to retrieve list of type converters, from url: {}",
-                    META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
+                    basePath, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             String line;
             do {
@@ -189,13 +198,12 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             } while (line != null);
             IOHelper.close(reader);
         }
-        return loaders;
     }
 
-    protected Collection<URL> getLoaderUrls() throws IOException {
+    protected Collection<URL> getLoaderUrls(String basePath) throws IOException {
         List<URL> loaderResources = new ArrayList<>();
         for (ClassLoader classLoader : resolver.getClassLoaders()) {
-            Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES_TYPE_CONVERTER_LOADER);
+            Enumeration<URL> resources = classLoader.getResources(basePath);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 loaderResources.add(url);

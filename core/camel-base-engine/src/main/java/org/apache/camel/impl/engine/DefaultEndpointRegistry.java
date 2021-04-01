@@ -22,30 +22,31 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.NormalizedUri;
 
 /**
  * Default implementation of {@link org.apache.camel.spi.EndpointRegistry}
  */
-public class DefaultEndpointRegistry extends AbstractDynamicRegistry<EndpointKey, Endpoint>
-        implements EndpointRegistry<EndpointKey> {
+public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedUri, Endpoint>
+        implements EndpointRegistry<NormalizedUri> {
 
     public DefaultEndpointRegistry(CamelContext context) {
         super(context, CamelContextHelper.getMaximumEndpointCacheSize(context));
     }
 
-    public DefaultEndpointRegistry(CamelContext context, Map<EndpointKey, Endpoint> endpoints) {
+    public DefaultEndpointRegistry(CamelContext context, Map<NormalizedUri, Endpoint> endpoints) {
         this(context);
         putAll(endpoints);
     }
 
     @Override
     public boolean isStatic(String key) {
-        return isStatic(new EndpointKey(key));
+        return isStatic(NormalizedUri.newNormalizedUri(key, false));
     }
 
     @Override
     public boolean isDynamic(String key) {
-        return isDynamic(new EndpointKey(key));
+        return isDynamic(NormalizedUri.newNormalizedUri(key, false));
     }
 
     @Override

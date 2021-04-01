@@ -551,4 +551,14 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
         return cluster.bucket(bucket);
     }
+
+    /**
+     * Compares retry strategy with query timeout and gets the higher value : for write operations with retry
+     *
+     * @return
+     */
+    public long getWriteQueryTimeout() {
+        long retryTimeout = producerRetryAttempts * (long) producerRetryPause;
+        return retryTimeout > queryTimeout ? retryTimeout : queryTimeout;
+    }
 }

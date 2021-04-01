@@ -157,6 +157,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 return Integer.parseInt(defaultValue);
             }
         }
+        if (defaultValue == null && "boolean".equals(type)) {
+            return "false";
+        }
         return defaultValue;
     }
 

@@ -126,15 +126,15 @@ public class AbstractEndpointBuilder {
         }
 
         if (params.isEmpty()) {
-            answer = new NormalizedUri(targetScheme + "://" + targetPath);
+            answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath, true);
         } else {
             try {
                 // build query string from parameters
                 String query = URISupport.createQueryString(params, encode);
                 if (targetPath.contains("?")) {
-                    answer = new NormalizedUri(targetScheme + "://" + targetPath + "&" + query);
+                    answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath + "&" + query, true);
                 } else {
-                    answer = new NormalizedUri(targetScheme + "://" + targetPath + "?" + query);
+                    answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath + "?" + query, true);
                 }
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);

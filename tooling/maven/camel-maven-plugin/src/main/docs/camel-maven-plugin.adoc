@@ -3,6 +3,7 @@
 The Camel Maven Plugin supports the following goals
 
  - camel:run - To run your Camel application
+ - camel:prepare-fatjar - To prepare your Camel application for being packaged as a fat-jar (such as by maven-assembly-plugin)
 
 == camel:run
 
@@ -138,3 +139,76 @@ Then the plugin watches this directory. This allows you to edit the source code 
 Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
 You cannot change Spring or OSGi Blueprint `<bean>` elements.
 
+
+== camel:prepare-fatjar
+
+The `camel:prepare-fatjar` goal of the Camel Maven Plugin is used to prepare your Camel application
+for being packaged as a _fat jar_. The goal scans the Maven dependencies to discover Camel JARs and
+extract if they have type converters, which gets merged together into a single _uber_ file stored
+in `target/classes/META-INF/services/org/apache/camel/UberTypeConverterLoader`.
+
+This _uber_ loader file contains all the combined type converters the Camel application uses at runtime.
+They are merged together into this single file.
+
+This is needed as otherwise the _fat jar_ maven plugins (such as maven-assembly-plugin, or maven-shade-plugin)
+causes the `TypeConverterLoader` files to be overwritten in the assembled JAR which causes not all type converters
+to be loaded by Camel.
+
+The `UberTypeConverterLoader` ensures they all type converters gets loaded as this file contains all the known
+type converter files.
+
+To use this goal, you can add the following to your Camel application `pom.xml` file:
+
+[source,xml]
+----
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-fatjar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+----
+
+For example to use this with the `maven-assembly-plugin` you can do as below.
+Remember to specify the class name of *your* main class where it says `com.foo.NameOfMainClass`:
+
+[source,xml]
+----
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-fatjar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.foo.NameOfMainClass</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+----

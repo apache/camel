@@ -557,6 +557,36 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The number of messages composing a batch in stream mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @param batchMessageNumber the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder batchMessageNumber(int batchMessageNumber) {
+            doSetProperty("batchMessageNumber", batchMessageNumber);
+            return this;
+        }
+        /**
+         * The batch size in stream mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
          * Delete file object after the S3 file has been uploaded.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -627,6 +657,23 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The naming strategy to use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
+         * 
+         * Default: progressive
+         * Group: producer
+         * 
+         * @param namingStrategy the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder namingStrategy(
+                org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum namingStrategy) {
+            doSetProperty("namingStrategy", namingStrategy);
+            return this;
+        }
+        /**
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
@@ -672,6 +719,21 @@ public interface Aws2S3ComponentBuilderFactory {
         default Aws2S3ComponentBuilder storageClass(
                 java.lang.String storageClass) {
             doSetProperty("storageClass", storageClass);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder streamMode(boolean streamMode) {
+            doSetProperty("streamMode", streamMode);
             return this;
         }
         /**
@@ -820,13 +882,17 @@ public interface Aws2S3ComponentBuilderFactory {
             case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((AWS2S3Component) component).setPrefix((java.lang.String) value); return true;
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
+            case "batchMessageNumber": getOrCreateConfiguration((AWS2S3Component) component).setBatchMessageNumber((int) value); return true;
+            case "batchSize": getOrCreateConfiguration((AWS2S3Component) component).setBatchSize((int) value); return true;
             case "deleteAfterWrite": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterWrite((boolean) value); return true;
             case "keyName": getOrCreateConfiguration((AWS2S3Component) component).setKeyName((java.lang.String) value); return true;
             case "lazyStartProducer": ((AWS2S3Component) component).setLazyStartProducer((boolean) value); return true;
             case "multiPartUpload": getOrCreateConfiguration((AWS2S3Component) component).setMultiPartUpload((boolean) value); return true;
+            case "namingStrategy": getOrCreateConfiguration((AWS2S3Component) component).setNamingStrategy((org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum) value); return true;
             case "operation": getOrCreateConfiguration((AWS2S3Component) component).setOperation((org.apache.camel.component.aws2.s3.AWS2S3Operations) value); return true;
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
+            case "streamMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamMode((boolean) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
