@@ -42,7 +42,8 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase6.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/createAndPopulateDatabase6.sql").build();
 
         super.setUp();
     }

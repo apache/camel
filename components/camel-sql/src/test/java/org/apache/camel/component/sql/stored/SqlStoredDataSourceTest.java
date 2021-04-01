@@ -42,7 +42,8 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/storedProcedureTest.sql").build();
         // END SNIPPET: e2
 
         reg.bind("jdbc/myDataSource", db);

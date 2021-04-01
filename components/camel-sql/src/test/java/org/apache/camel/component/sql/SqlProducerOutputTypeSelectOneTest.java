@@ -43,7 +43,8 @@ public class SqlProducerOutputTypeSelectOneTest {
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         camel1 = new DefaultCamelContext();
         camel1.setName("camel-1");
