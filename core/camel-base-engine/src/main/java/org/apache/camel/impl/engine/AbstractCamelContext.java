@@ -323,7 +323,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile TransformerRegistry<TransformerKey> transformerRegistry;
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
-    private EndpointRegistry<EndpointKey> endpoints;
+    private EndpointRegistry<NormalizedUri> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
@@ -725,7 +725,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public EndpointRegistry<EndpointKey> getEndpointRegistry() {
+    public EndpointRegistry<NormalizedUri> getEndpointRegistry() {
         return endpoints;
     }
 
@@ -737,7 +737,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public Map<String, Endpoint> getEndpointMap() {
         Map<String, Endpoint> answer = new TreeMap<>();
-        for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
             answer.put(entry.getKey().get(), entry.getValue());
         }
         return answer;
@@ -756,13 +756,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (endpoints.isEmpty()) {
             return null;
         }
-        EndpointKey key;
-        if (uri instanceof EndpointKey) {
-            key = (EndpointKey) uri;
-        } else {
-            key = new EndpointKey(uri.getUri(), true);
-        }
-        return endpoints.get(key);
+        return endpoints.get(uri);
     }
 
     @Override
@@ -795,8 +789,8 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            List<EndpointKey> toRemove = new ArrayList<>();
-            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+            List<NormalizedUri> toRemove = new ArrayList<>();
+            for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
                 oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
                     try {
@@ -808,7 +802,7 @@ public abstract class AbstractCamelContext extends BaseService
                     toRemove.add(entry.getKey());
                 }
             }
-            for (EndpointKey key : toRemove) {
+            for (NormalizedUri key : toRemove) {
                 endpoints.remove(key);
             }
         }
@@ -827,9 +821,11 @@ public abstract class AbstractCamelContext extends BaseService
     public NormalizedEndpointUri normalizeUri(String uri) {
         try {
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
-            uri = URISupport.normalizeUri(uri);
-            return new NormalizedUri(uri);
+            return NormalizedUri.newNormalizedUri(uri, false);
         } catch (Exception e) {
+            if (e instanceof ResolveEndpointFailedException) {
+                throw e;
+            }
             throw new ResolveEndpointFailedException(uri, e);
         }
     }
@@ -901,7 +897,7 @@ public abstract class AbstractCamelContext extends BaseService
         Endpoint answer = null;
         if (!prototype) {
             // use optimized method to get the endpoint uri
-            EndpointKey key = getEndpointKeyPreNormalized(uri);
+            NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
             // only lookup and reuse existing endpoints if not prototype scoped
             answer = endpoints.get(key);
         }
@@ -1031,18 +1027,8 @@ public abstract class AbstractCamelContext extends BaseService
      * @param  uri the endpoint uri
      * @return     the key
      */
-    protected EndpointKey getEndpointKey(String uri) {
-        return new EndpointKey(uri);
-    }
-
-    /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
-     *
-     * @param  uri the endpoint uri which is pre normalized
-     * @return     the key
-     */
-    protected EndpointKey getEndpointKeyPreNormalized(String uri) {
-        return new EndpointKey(uri, true);
+    protected NormalizedUri getEndpointKey(String uri) {
+        return NormalizedUri.newNormalizedUri(uri, false);
     }
 
     /**
@@ -1052,12 +1038,12 @@ public abstract class AbstractCamelContext extends BaseService
      * @param  endpoint the endpoint
      * @return          the key
      */
-    protected EndpointKey getEndpointKey(String uri, Endpoint endpoint) {
+    protected NormalizedUri getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint != null && !endpoint.isSingleton()) {
             int counter = endpointKeyCounter.incrementAndGet();
-            return new EndpointKey(uri + ":" + counter);
+            return NormalizedUri.newNormalizedUri(uri + ":" + counter, false);
         } else {
-            return new EndpointKey(uri);
+            return NormalizedUri.newNormalizedUri(uri, false);
         }
     }
 
@@ -4922,7 +4908,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract RestRegistryFactory createRestRegistryFactory();
 
-    protected abstract EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints);
+    protected abstract EndpointRegistry<NormalizedUri> createEndpointRegistry(Map<NormalizedUri, Endpoint> endpoints);
 
     protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();
 
