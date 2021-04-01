@@ -25,6 +25,12 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accountKey": target.getConfiguration().setAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clienttelemetryenabled":
+        case "clientTelemetryEnabled": target.getConfiguration().setClientTelemetryEnabled(property(camelContext, boolean.class, value)); return true;
+        case "connectionsharingacrossclientsenabled":
+        case "connectionSharingAcrossClientsEnabled": target.getConfiguration().setConnectionSharingAcrossClientsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "consistencylevel":
+        case "consistencyLevel": target.getConfiguration().setConsistencyLevel(property(camelContext, com.azure.cosmos.ConsistencyLevel.class, value)); return true;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": target.getConfiguration().setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
@@ -39,6 +45,12 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "multiplewriteregionsenabled":
+        case "multipleWriteRegionsEnabled": target.getConfiguration().setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "preferredregions":
+        case "preferredRegions": target.getConfiguration().setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
+        case "readrequestsfallbackenabled":
+        case "readRequestsFallbackEnabled": target.getConfiguration().setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -55,6 +67,12 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accountKey": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "clienttelemetryenabled":
+        case "clientTelemetryEnabled": return boolean.class;
+        case "connectionsharingacrossclientsenabled":
+        case "connectionSharingAcrossClientsEnabled": return boolean.class;
+        case "consistencylevel":
+        case "consistencyLevel": return com.azure.cosmos.ConsistencyLevel.class;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return com.azure.cosmos.CosmosAsyncClient.class;
         case "createcontainerifnotexists":
@@ -69,6 +87,12 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "multiplewriteregionsenabled":
+        case "multipleWriteRegionsEnabled": return boolean.class;
+        case "preferredregions":
+        case "preferredRegions": return java.util.List.class;
+        case "readrequestsfallbackenabled":
+        case "readRequestsFallbackEnabled": return boolean.class;
         default: return null;
         }
     }
@@ -81,6 +105,12 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accountKey": return target.getConfiguration().getAccountKey();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "clienttelemetryenabled":
+        case "clientTelemetryEnabled": return target.getConfiguration().isClientTelemetryEnabled();
+        case "connectionsharingacrossclientsenabled":
+        case "connectionSharingAcrossClientsEnabled": return target.getConfiguration().isConnectionSharingAcrossClientsEnabled();
+        case "consistencylevel":
+        case "consistencyLevel": return target.getConfiguration().getConsistencyLevel();
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return target.getConfiguration().getCosmosAsyncClient();
         case "createcontainerifnotexists":
@@ -95,6 +125,21 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "multiplewriteregionsenabled":
+        case "multipleWriteRegionsEnabled": return target.getConfiguration().isMultipleWriteRegionsEnabled();
+        case "preferredregions":
+        case "preferredRegions": return target.getConfiguration().getPreferredRegions();
+        case "readrequestsfallbackenabled":
+        case "readRequestsFallbackEnabled": return target.getConfiguration().isReadRequestsFallbackEnabled();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "preferredregions":
+        case "preferredRegions": return java.lang.String.class;
         default: return null;
         }
     }

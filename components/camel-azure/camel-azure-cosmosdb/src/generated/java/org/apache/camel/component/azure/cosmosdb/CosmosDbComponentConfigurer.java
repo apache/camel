@@ -34,7 +34,13 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clienttelemetryenabled":
+        case "clientTelemetryEnabled": getOrCreateConfiguration(target).setClientTelemetryEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration.class, value)); return true;
+        case "connectionsharingacrossclientsenabled":
+        case "connectionSharingAcrossClientsEnabled": getOrCreateConfiguration(target).setConnectionSharingAcrossClientsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "consistencylevel":
+        case "consistencyLevel": getOrCreateConfiguration(target).setConsistencyLevel(property(camelContext, com.azure.cosmos.ConsistencyLevel.class, value)); return true;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": getOrCreateConfiguration(target).setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
@@ -45,6 +51,12 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "databaseEndpoint": getOrCreateConfiguration(target).setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "multiplewriteregionsenabled":
+        case "multipleWriteRegionsEnabled": getOrCreateConfiguration(target).setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "preferredregions":
+        case "preferredRegions": getOrCreateConfiguration(target).setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
+        case "readrequestsfallbackenabled":
+        case "readRequestsFallbackEnabled": getOrCreateConfiguration(target).setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -63,7 +75,13 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "clienttelemetryenabled":
+        case "clientTelemetryEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration.class;
+        case "connectionsharingacrossclientsenabled":
+        case "connectionSharingAcrossClientsEnabled": return boolean.class;
+        case "consistencylevel":
+        case "consistencyLevel": return com.azure.cosmos.ConsistencyLevel.class;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return com.azure.cosmos.CosmosAsyncClient.class;
         case "createcontainerifnotexists":
@@ -74,6 +92,12 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "databaseEndpoint": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "multiplewriteregionsenabled":
+        case "multipleWriteRegionsEnabled": return boolean.class;
+        case "preferredregions":
+        case "preferredRegions": return java.util.List.class;
+        case "readrequestsfallbackenabled":
+        case "readRequestsFallbackEnabled": return boolean.class;
         default: return null;
         }
     }
@@ -88,7 +112,13 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "clienttelemetryenabled":
+        case "clientTelemetryEnabled": return getOrCreateConfiguration(target).isClientTelemetryEnabled();
         case "configuration": return target.getConfiguration();
+        case "connectionsharingacrossclientsenabled":
+        case "connectionSharingAcrossClientsEnabled": return getOrCreateConfiguration(target).isConnectionSharingAcrossClientsEnabled();
+        case "consistencylevel":
+        case "consistencyLevel": return getOrCreateConfiguration(target).getConsistencyLevel();
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return getOrCreateConfiguration(target).getCosmosAsyncClient();
         case "createcontainerifnotexists":
@@ -99,6 +129,21 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "databaseEndpoint": return getOrCreateConfiguration(target).getDatabaseEndpoint();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "multiplewriteregionsenabled":
+        case "multipleWriteRegionsEnabled": return getOrCreateConfiguration(target).isMultipleWriteRegionsEnabled();
+        case "preferredregions":
+        case "preferredRegions": return getOrCreateConfiguration(target).getPreferredRegions();
+        case "readrequestsfallbackenabled":
+        case "readRequestsFallbackEnabled": return getOrCreateConfiguration(target).isReadRequestsFallbackEnabled();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "preferredregions":
+        case "preferredRegions": return java.lang.String.class;
         default: return null;
         }
     }
