@@ -63,6 +63,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     List<CompletedPart> completedParts;
     AtomicInteger part = new AtomicInteger();
     UUID id;
+    String dynamicKeyName;
     private transient String s3ProducerToString;
 
     public AWS2S3StreamUploadProducer(final Endpoint endpoint) {
@@ -78,7 +79,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         final String keyName = getConfiguration().getKeyName();
         final String fileName = determineFileName(keyName);
         final String extension = determineFileExtension(keyName);
-        String dynamicKeyName;
         if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
             id = UUID.randomUUID();
         }
