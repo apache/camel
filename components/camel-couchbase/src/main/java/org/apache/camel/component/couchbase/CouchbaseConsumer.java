@@ -104,9 +104,6 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     protected synchronized int poll() throws Exception {
         ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
-        LOG.info("Received result set from Couchbase");
-        Collection collection = bucket.defaultCollection();
-
         if (LOG.isTraceEnabled()) {
             LOG.trace("ViewResponse =  {}", result);
         }
@@ -116,7 +113,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
             Object doc;
             String id = row.id().get();
             if (endpoint.isFullDocument()) {
-                doc = collection.get(id);
+                doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout());
             } else {
                 doc = row.valueAs(Object.class);
             }
@@ -137,8 +134,8 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Deleting doc with ID {}", id);
                     }
-
-                    collection.remove(id);
+                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                            endpoint.getProducerRetryPause());
                 } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Filtering out ID {}", id);
