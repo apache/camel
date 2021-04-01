@@ -38,7 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
 
     @BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
+            .setName(getClass().getSimpleName())
+            .setType(EmbeddedDatabaseType.DERBY)
             .addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test

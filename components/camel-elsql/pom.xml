@@ -31,6 +31,10 @@
     <name>Camel :: ElSql</name>
     <description>Camel ElSql support</description>
 
+    <properties>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
