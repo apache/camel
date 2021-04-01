@@ -82,7 +82,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
-        <aws-java-sdk2-version>2.16.31</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.16.32</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -428,7 +428,7 @@
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
-        <netty-version>4.1.60.Final</netty-version>
+        <netty-version>4.1.62.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.50</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
@@ -572,7 +572,7 @@
         <xpp3-version>1.1.4c</xpp3-version>
         <xstream-version>1.4.16</xstream-version>
         <yetus-audience-annotations-version>0.11.0</yetus-audience-annotations-version>
-        <zendesk-client-version>0.14.0</zendesk-client-version>
+        <zendesk-client-version>0.14.1</zendesk-client-version>
         <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
         <zipkin-version>2.23.2</zipkin-version>
         <zookeeper-version>3.5.9</zookeeper-version>
