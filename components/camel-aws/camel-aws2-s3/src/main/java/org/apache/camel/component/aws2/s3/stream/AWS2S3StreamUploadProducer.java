@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -50,9 +51,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     CreateMultipartUploadResponse initResponse;
-    int index = 1;
-    List<CompletedPart> completedParts = new ArrayList<>();
-    int part = 0;
+    AtomicInteger index = new AtomicInteger();
+    List<CompletedPart> completedParts;
+    AtomicInteger part = new AtomicInteger();
+    UUID id = null;
 
     public AWS2S3StreamUploadProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -67,7 +69,11 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         final String keyName = getConfiguration().getKeyName();
         final String fileName = determineFileName(keyName);
         final String extension = determineFileExtension(keyName);
-        String dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension, part);
+        String dynamicKeyName;
+        if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
+            id = UUID.randomUUID();
+        }
+        dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension, part, id);
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                 = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(dynamicKeyName);
 
@@ -108,33 +114,32 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         }
 
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
-        CompleteMultipartUploadResponse uploadResult = null;
-        if (index == 1) {
+        if (index.get() == 1) {
             initResponse
                     = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
             //final long contentLength = Long.valueOf(objectMetadata.get("Content-Length"));
-            completedParts = new ArrayList<CompletedPart>();
-            long partSize = getConfiguration().getPartSize();
+            completedParts = new ArrayList<>();
         }
 
         try {
-            if (buffer.size() >= getConfiguration().getBatchSize() || index == getConfiguration().getBatchMessageNumber()) {
+            if (buffer.size() >= getConfiguration().getBatchSize()
+                    || index.get() == getConfiguration().getBatchMessageNumber()) {
 
                 UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
                         .key(dynamicKeyName).uploadId(initResponse.uploadId())
-                        .partNumber(index).build();
+                        .partNumber(index.get()).build();
 
                 LOG.trace("Uploading part [{}] for {}", index, keyName);
 
                 String etag = getEndpoint().getS3Client()
                         .uploadPart(uploadRequest, RequestBody.fromBytes(buffer.toByteArray())).eTag();
-                CompletedPart partUpload = CompletedPart.builder().partNumber(index).eTag(etag).build();
+                CompletedPart partUpload = CompletedPart.builder().partNumber(index.get()).eTag(etag).build();
                 completedParts.add(partUpload);
                 buffer.reset();
-                part++;
+                part.getAndIncrement();
             }
 
-            if (index == getConfiguration().getBatchMessageNumber()) {
+            if (index.get() == getConfiguration().getBatchMessageNumber()) {
                 CompletedMultipartUpload completeMultipartUpload
                         = CompletedMultipartUpload.builder().parts(completedParts).build();
                 CompleteMultipartUploadRequest compRequest
@@ -143,8 +148,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                                 .uploadId(initResponse.uploadId())
                                 .build();
 
-                getEndpoint().getS3Client().completeMultipartUpload(compRequest);
-                index = 0;
+                CompleteMultipartUploadResponse uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+                Message message = getMessageForResponse(exchange);
+                message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
+                if (uploadResult.versionId() != null) {
+                    message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
+                }
+                index.getAndSet(0);
             }
 
         } catch (Exception e) {
@@ -154,16 +164,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             throw e;
         }
 
-        index++;
-
-        Message message = getMessageForResponse(exchange);
+        index.getAndIncrement();
     }
 
-    private String fileNameToUpload(String fileName, AWSS3NamingStrategyEnum strategy, String ext, int part) {
+    private String fileNameToUpload(
+            String fileName, AWSS3NamingStrategyEnum strategy, String ext, AtomicInteger part, UUID id) {
         String dynamicKeyName;
         switch (strategy) {
             case progressive:
-                if (part > 0) {
+                if (part.get() > 0) {
                     if (ObjectHelper.isNotEmpty(ext)) {
                         dynamicKeyName = fileName + "-" + part + ext;
                     } else {
@@ -178,8 +187,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 }
                 break;
             case random:
-                if (part > 0) {
-                    UUID id = UUID.randomUUID();
+                if (part.get() > 0) {
                     if (ObjectHelper.isNotEmpty(ext)) {
                         dynamicKeyName = fileName + "-" + id.toString() + ext;
                     } else {
@@ -236,8 +244,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (extPosition == -1) {
             return "";
         } else {
-            String ext = keyName.substring(extPosition);
-            return ext;
+            return keyName.substring(extPosition);
         }
     }
 
@@ -246,8 +253,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (extPosition == -1) {
             return keyName;
         } else {
-            String prefix = keyName.substring(0, extPosition);
-            return prefix;
+            return keyName.substring(0, extPosition);
         }
     }
 
