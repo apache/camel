@@ -238,6 +238,23 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder throughputProperties(
+                com.azure.cosmos.models.ThroughputProperties throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -387,6 +404,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.util.List) value); return true;
             case "readRequestsFallbackEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setReadRequestsFallbackEnabled((boolean) value); return true;
+            case "throughputProperties": getOrCreateConfiguration((CosmosDbComponent) component).setThroughputProperties((com.azure.cosmos.models.ThroughputProperties) value); return true;
             case "bridgeErrorHandler": ((CosmosDbComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
             case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;

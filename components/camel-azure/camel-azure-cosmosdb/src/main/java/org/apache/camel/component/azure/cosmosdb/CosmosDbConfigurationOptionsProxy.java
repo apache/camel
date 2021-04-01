@@ -18,6 +18,8 @@ package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.function.Supplier;
 
+import com.azure.cosmos.models.CosmosDatabaseRequestOptions;
+import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,12 +35,26 @@ public class CosmosDbConfigurationOptionsProxy {
         this.configuration = configuration;
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
-        return exchange.getIn().getHeader(headerName, classType);
+    public String getDatabaseName(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.DATABASE_NAME, configuration::getDatabase, String.class);
+    }
+
+    public ThroughputProperties getThroughputProperties(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.THROUGHPUT_PROPERTIES, configuration::getThroughputProperties,
+                ThroughputProperties.class);
+    }
+
+    public CosmosDatabaseRequestOptions getCosmosDatabaseRequestOptions(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.DATABASE_REQUEST_OPTIONS, nullFallback(),
+                CosmosDatabaseRequestOptions.class);
     }
 
     public CosmosDbConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public <R> Supplier<R> nullFallback() {
+        return () -> null;
     }
 
     private <R> R getOption(
@@ -49,4 +65,7 @@ public class CosmosDbConfigurationOptionsProxy {
                 : getObjectFromHeaders(exchange, headerName, type);
     }
 
+    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+        return exchange.getIn().getHeader(headerName, classType);
+    }
 }

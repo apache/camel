@@ -19,6 +19,9 @@ package org.apache.camel.component.azure.cosmosdb;
 public final class CosmosDbConstants {
     private static final String HEADER_PREFIX = "CamelAzureCosmosDb";
     // common headers, set by consumer and evaluated by producer
+    public static final String DATABASE_NAME = HEADER_PREFIX + "DatabaseName";
+    public static final String THROUGHPUT_PROPERTIES = HEADER_PREFIX + "ThroughputProperties";
+    public static final String DATABASE_REQUEST_OPTIONS = HEADER_PREFIX + "DatabaseRequestOptions";
 
     // headers set by the consumer only
 

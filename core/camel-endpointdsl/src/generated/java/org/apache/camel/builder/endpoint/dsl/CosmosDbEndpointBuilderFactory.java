@@ -363,6 +363,40 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder throughputProperties(
+                Object throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
+            return this;
+        }
+        /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder throughputProperties(
+                String throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -830,6 +864,40 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointProducerBuilder readRequestsFallbackEnabled(
                 String readRequestsFallbackEnabled) {
             doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
+            return this;
+        }
+        /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder throughputProperties(
+                Object throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
+            return this;
+        }
+        /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder throughputProperties(
+                String throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
             return this;
         }
         /**
@@ -1302,6 +1370,40 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointBuilder readRequestsFallbackEnabled(
                 String readRequestsFallbackEnabled) {
             doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
+            return this;
+        }
+        /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder throughputProperties(
+                Object throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
+            return this;
+        }
+        /**
+         * Sets throughput of the resources in the Azure Cosmos DB service.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.ThroughputProperties&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param throughputProperties the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder throughputProperties(
+                String throughputProperties) {
+            doSetProperty("throughputProperties", throughputProperties);
             return this;
         }
         /**

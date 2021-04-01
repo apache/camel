@@ -19,12 +19,12 @@ package org.apache.camel.component.azure.cosmosdb;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbProducerOperations;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbDatabaseOperations;
 import org.apache.camel.support.DefaultAsyncProducer;
 
 public class CosmosDbProducer extends DefaultAsyncProducer {
 
-    private CosmosDbProducerOperations producerOperations;
+    private CosmosDbDatabaseOperations producerOperations;
 
     public CosmosDbProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -38,7 +38,7 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
         //producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(getEndpoint().getConfiguration());
 
         // create our operations
-        producerOperations = new CosmosDbProducerOperations(getConfiguration());
+        //producerOperations = new CosmosDbDatabaseOperations(getConfiguration());
     }
 
     @Override

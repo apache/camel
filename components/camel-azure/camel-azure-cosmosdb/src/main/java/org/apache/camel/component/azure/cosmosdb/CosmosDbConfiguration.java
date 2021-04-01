@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -49,18 +50,20 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common")
     private List<String> preferredRegions;
     @UriParam(label = "common", defaultValue = "false")
-    private boolean clientTelemetryEnabled = false;
+    private boolean clientTelemetryEnabled;
     @UriParam(label = "common", defaultValue = "false")
-    private boolean connectionSharingAcrossClientsEnabled = false;
+    private boolean connectionSharingAcrossClientsEnabled;
     @UriParam(label = "common", defaultValue = "true")
     private boolean multipleWriteRegionsEnabled = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean readRequestsFallbackEnabled = true;
+    @UriParam(label = "common")
+    private ThroughputProperties throughputProperties;
 
     @UriParam(label = "producer", defaultValue = "false")
-    private boolean createDatabaseIfNotExists = false;
+    private boolean createDatabaseIfNotExists;
     @UriParam(label = "producer", defaultValue = "false")
-    private boolean createContainerIfNotExists = false;
+    private boolean createContainerIfNotExists;
 
     public CosmosDbConfiguration() {
     }
@@ -240,6 +243,17 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setReadRequestsFallbackEnabled(boolean readRequestsFallbackEnabled) {
         this.readRequestsFallbackEnabled = readRequestsFallbackEnabled;
+    }
+
+    /**
+     * Sets throughput of the resources in the Azure Cosmos DB service.
+     */
+    public ThroughputProperties getThroughputProperties() {
+        return throughputProperties;
+    }
+
+    public void setThroughputProperties(ThroughputProperties throughputProperties) {
+        this.throughputProperties = throughputProperties;
     }
 
     // *************************************************
