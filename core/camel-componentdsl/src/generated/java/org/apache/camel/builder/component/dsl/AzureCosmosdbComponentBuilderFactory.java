@@ -58,6 +58,27 @@ public interface AzureCosmosdbComponentBuilderFactory {
             extends
                 ComponentBuilder<CosmosDbComponent> {
         /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder clientTelemetryEnabled(
+                boolean clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
          * The component configurations.
          * 
          * The option is a:
@@ -71,6 +92,52 @@ public interface AzureCosmosdbComponentBuilderFactory {
         default AzureCosmosdbComponentBuilder configuration(
                 org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder connectionSharingAcrossClientsEnabled(
+                boolean connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder consistencyLevel(
+                com.azure.cosmos.ConsistencyLevel consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -103,6 +170,71 @@ public interface AzureCosmosdbComponentBuilderFactory {
         default AzureCosmosdbComponentBuilder databaseEndpoint(
                 java.lang.String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder multipleWriteRegionsEnabled(
+                boolean multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder preferredRegions(
+                java.util.List<java.lang.String> preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder readRequestsFallbackEnabled(
+                boolean readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
             return this;
         }
         /**
@@ -246,9 +378,15 @@ public interface AzureCosmosdbComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "clientTelemetryEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setClientTelemetryEnabled((boolean) value); return true;
             case "configuration": ((CosmosDbComponent) component).setConfiguration((org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration) value); return true;
+            case "connectionSharingAcrossClientsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setConnectionSharingAcrossClientsEnabled((boolean) value); return true;
+            case "consistencyLevel": getOrCreateConfiguration((CosmosDbComponent) component).setConsistencyLevel((com.azure.cosmos.ConsistencyLevel) value); return true;
             case "cosmosAsyncClient": getOrCreateConfiguration((CosmosDbComponent) component).setCosmosAsyncClient((com.azure.cosmos.CosmosAsyncClient) value); return true;
             case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
+            case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
+            case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.util.List) value); return true;
+            case "readRequestsFallbackEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setReadRequestsFallbackEnabled((boolean) value); return true;
             case "bridgeErrorHandler": ((CosmosDbComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
             case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -43,6 +44,142 @@ public interface CosmosDbEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedCosmosDbEndpointConsumerBuilder advanced() {
             return (AdvancedCosmosDbEndpointConsumerBuilder) this;
+        }
+        /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder clientTelemetryEnabled(
+                boolean clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder clientTelemetryEnabled(
+                String clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder connectionSharingAcrossClientsEnabled(
+                boolean connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder connectionSharingAcrossClientsEnabled(
+                String connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder consistencyLevel(
+                ConsistencyLevel consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder consistencyLevel(
+                String consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
+            return this;
         }
         /**
          * Inject an external CosmosAsyncClient into the component.
@@ -91,6 +228,138 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder multipleWriteRegionsEnabled(
+                boolean multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder multipleWriteRegionsEnabled(
+                String multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder preferredRegions(
+                List<String> preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder preferredRegions(
+                String preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder readRequestsFallbackEnabled(
+                boolean readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder readRequestsFallbackEnabled(
+                String readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
             return this;
         }
         /**
@@ -247,6 +516,142 @@ public interface CosmosDbEndpointBuilderFactory {
             return (AdvancedCosmosDbEndpointProducerBuilder) this;
         }
         /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder clientTelemetryEnabled(
+                boolean clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder clientTelemetryEnabled(
+                String clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder connectionSharingAcrossClientsEnabled(
+                boolean connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder connectionSharingAcrossClientsEnabled(
+                String connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder consistencyLevel(
+                ConsistencyLevel consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder consistencyLevel(
+                String consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component.
          * 
          * The option is a:
@@ -293,6 +698,138 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointProducerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder multipleWriteRegionsEnabled(
+                boolean multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder multipleWriteRegionsEnabled(
+                String multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder preferredRegions(
+                List<String> preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder preferredRegions(
+                String preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder readRequestsFallbackEnabled(
+                boolean readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder readRequestsFallbackEnabled(
+                String readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
             return this;
         }
         /**
@@ -454,6 +991,141 @@ public interface CosmosDbEndpointBuilderFactory {
             return (AdvancedCosmosDbEndpointBuilder) this;
         }
         /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder clientTelemetryEnabled(
+                boolean clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
+         * Sets the flag to enable client telemetry which will periodically
+         * collect database operations aggregation statistics, system
+         * information like cpu/memory and send it to cosmos monitoring service,
+         * which will be helpful during debugging. DEFAULT value is false
+         * indicating this is opt in feature, by default no telemetry
+         * collection.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param clientTelemetryEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder clientTelemetryEnabled(
+                String clientTelemetryEnabled) {
+            doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder connectionSharingAcrossClientsEnabled(
+                boolean connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Enables connections sharing across multiple Cosmos Clients. The
+         * default is false. When you have multiple instances of Cosmos Client
+         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * this allows connection sharing in Direct mode if possible between
+         * instances of Cosmos Client. Please note, when setting this option,
+         * the connection configuration (e.g., socket timeout config, idle
+         * timeout config) of the first instantiated client will be used for all
+         * other client instances.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param connectionSharingAcrossClientsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder connectionSharingAcrossClientsEnabled(
+                String connectionSharingAcrossClientsEnabled) {
+            doSetProperty("connectionSharingAcrossClientsEnabled", connectionSharingAcrossClientsEnabled);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder consistencyLevel(
+                ConsistencyLevel consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
+            return this;
+        }
+        /**
+         * Sets the consistency levels supported for Azure Cosmos DB client
+         * operations in the Azure Cosmos DB service. The requested
+         * ConsistencyLevel must match or be weaker than that provisioned for
+         * the database account. Consistency levels by order of strength are
+         * STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL. Refer to consistency
+         * level documentation for additional details:
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
+         * 
+         * Default: ConsistencyLevel.SESSION
+         * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder consistencyLevel(String consistencyLevel) {
+            doSetProperty("consistencyLevel", consistencyLevel);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component.
          * 
          * The option is a:
@@ -502,6 +1174,137 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder multipleWriteRegionsEnabled(
+                boolean multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the flag to enable writes on any regions for geo-replicated
+         * database accounts in the Azure Cosmos DB service. When the value of
+         * this property is true, the SDK will direct write operations to
+         * available writable regions of geo-replicated database account.
+         * Writable regions are ordered by PreferredRegions property. Setting
+         * the property value to true has no effect until
+         * EnableMultipleWriteRegions in DatabaseAccount is also set to true.
+         * DEFAULT value is true indicating that writes are directed to
+         * available writable regions of geo-replicated database account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param multipleWriteRegionsEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder multipleWriteRegionsEnabled(
+                String multipleWriteRegionsEnabled) {
+            doSetProperty("multipleWriteRegionsEnabled", multipleWriteRegionsEnabled);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder preferredRegions(
+                List<String> preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets the preferred regions for geo-replicated database accounts. For
+         * example, East US as the preferred region. When
+         * EnableEndpointDiscovery is true and PreferredRegions is non-empty,
+         * the SDK will prefer to use the regions in the container in the order
+         * they are specified to perform operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param preferredRegions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder preferredRegions(String preferredRegions) {
+            doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder readRequestsFallbackEnabled(
+                boolean readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to allow for reads to go to multiple regions configured
+         * on an account of Azure Cosmos DB service. DEFAULT value is true. If
+         * this property is not set, the default is true for all Consistency
+         * Levels other than Bounded Staleness, The default is false for Bounded
+         * Staleness. 1. endpointDiscoveryEnabled is true 2. the Azure Cosmos DB
+         * account has more than one region.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param readRequestsFallbackEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder readRequestsFallbackEnabled(
+                String readRequestsFallbackEnabled) {
+            doSetProperty("readRequestsFallbackEnabled", readRequestsFallbackEnabled);
+            return this;
+        }
+        /**
          * Sets either a master or readonly key used to perform authentication
          * for accessing resource.
          * 
@@ -529,6 +1332,17 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointBuilder basic() {
             return (CosmosDbEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.azure.cosmos.ConsistencyLevel</code> enum.
+     */
+    enum ConsistencyLevel {
+        STRONG,
+        BOUNDED_STALENESS,
+        SESSION,
+        EVENTUAL,
+        CONSISTENT_PREFIX;
     }
 
     public interface CosmosDbBuilders {
