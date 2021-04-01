@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
-import org.apache.camel.*;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
