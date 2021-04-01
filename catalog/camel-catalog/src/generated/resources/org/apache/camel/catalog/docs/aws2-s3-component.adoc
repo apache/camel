@@ -47,7 +47,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS 2 S3 Storage Service component supports 43 options, which are listed below.
+The AWS 2 S3 Storage Service component supports 44 options, which are listed below.
 
 
 
@@ -65,6 +65,7 @@ The AWS 2 S3 Storage Service component supports 43 options, which are listed bel
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *streamMode* (common) | If StreaMode is true a different way of uploading will be provided | false | boolean
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *useDefaultCredentialsProvider* (common) | Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
@@ -129,7 +130,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (61 parameters):
+=== Query Parameters (62 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -145,6 +146,7 @@ with the following path and query parameters:
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *streamMode* (common) | If StreaMode is true a different way of uploading will be provided | false | boolean
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *useDefaultCredentialsProvider* (common) | Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean

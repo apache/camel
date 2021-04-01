@@ -98,6 +98,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
         case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "streammode":
+        case "streamMode": getOrCreateConfiguration(target).setStreamMode(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -190,6 +192,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": return java.lang.String.class;
         case "storageclass":
         case "storageClass": return java.lang.String.class;
+        case "streammode":
+        case "streamMode": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -278,6 +282,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "storageclass":
         case "storageClass": return getOrCreateConfiguration(target).getStorageClass();
+        case "streammode":
+        case "streamMode": return getOrCreateConfiguration(target).isStreamMode();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":

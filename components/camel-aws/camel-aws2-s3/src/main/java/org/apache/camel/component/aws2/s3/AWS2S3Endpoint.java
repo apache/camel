@@ -72,7 +72,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new AWS2S3Producer(this);
+        if (!configuration.isStreamMode()) {
+            return new AWS2S3Producer(this);
+        } else {
+            return new AWS2S3StreamUploadProducer(this);
+        }
     }
 
     @Override

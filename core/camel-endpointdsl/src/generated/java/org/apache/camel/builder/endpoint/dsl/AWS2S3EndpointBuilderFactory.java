@@ -328,6 +328,37 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder streamMode(boolean streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder streamMode(String streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -1849,6 +1880,37 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamMode(boolean streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamMode(String streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -2591,6 +2653,37 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder streamMode(boolean streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder streamMode(String streamMode) {
+            doSetProperty("streamMode", streamMode);
             return this;
         }
         /**

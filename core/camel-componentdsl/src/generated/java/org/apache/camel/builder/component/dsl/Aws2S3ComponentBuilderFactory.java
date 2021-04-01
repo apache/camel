@@ -228,6 +228,21 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * If StreaMode is true a different way of uploading will be provided.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamMode the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder streamMode(boolean streamMode) {
+            doSetProperty("streamMode", streamMode);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
@@ -801,6 +816,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((AWS2S3Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((AWS2S3Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((AWS2S3Component) component).setRegion((java.lang.String) value); return true;
+            case "streamMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamMode((boolean) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWS2S3Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((AWS2S3Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWS2S3Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;

@@ -110,6 +110,8 @@ public class AWS2S3Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
+    @UriParam(defaultValue = "false")
+    private boolean streamMode;
 
     public long getPartSize() {
         return partSize;
@@ -573,6 +575,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setAmazonS3Presigner(S3Presigner amazonS3Presigner) {
         this.amazonS3Presigner = amazonS3Presigner;
+    }
+
+    public boolean isStreamMode() {
+        return streamMode;
+    }
+
+    /**
+     * If StreaMode is true a different way of uploading will be provided
+     */
+    public void setStreamMode(boolean streamMode) {
+        this.streamMode = streamMode;
     }
 
     public AWS2S3Configuration copy() {

@@ -121,6 +121,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "storageclass":
         case "storageClass": target.getConfiguration().setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "streammode":
+        case "streamMode": target.getConfiguration().setStreamMode(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "trustallcertificates":
@@ -247,6 +249,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startScheduler": return boolean.class;
         case "storageclass":
         case "storageClass": return java.lang.String.class;
+        case "streammode":
+        case "streamMode": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "trustallcertificates":
@@ -369,6 +373,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startScheduler": return target.isStartScheduler();
         case "storageclass":
         case "storageClass": return target.getConfiguration().getStorageClass();
+        case "streammode":
+        case "streamMode": return target.getConfiguration().isStreamMode();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "trustallcertificates":

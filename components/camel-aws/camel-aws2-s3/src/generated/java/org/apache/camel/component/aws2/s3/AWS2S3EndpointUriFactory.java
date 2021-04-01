@@ -20,10 +20,11 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(62);
+        Set<String> props = new HashSet<>(63);
         props.add("customerAlgorithm");
         props.add("fileName");
         props.add("useCustomerKey");
+        props.add("streamMode");
         props.add("bucketNameOrArn");
         props.add("customerKeyId");
         props.add("prefix");
