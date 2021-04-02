@@ -72,7 +72,7 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("EndpointRegistry"));
-        assertTrue(source.endsWith("capacity: 1000"));
+        assertTrue(source.endsWith("capacity: 1000]"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEndpoints", null, null);
         assertEquals(3, data.size());

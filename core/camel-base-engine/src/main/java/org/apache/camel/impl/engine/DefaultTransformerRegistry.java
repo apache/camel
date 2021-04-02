@@ -83,10 +83,10 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
     }
 
     @Override
-    public Transformer put(TransformerKey key, Transformer transformer) {
+    public Transformer put(TransformerKey key, Transformer obj) {
         // ensure transformer is started before its being used
-        ServiceHelper.startService(transformer);
-        return super.put(key, transformer);
+        ServiceHelper.startService(obj);
+        return super.put(key, obj);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
 
     @Override
     public String toString() {
-        return "TransformerRegistry for " + context.getName() + ", capacity: " + maxCacheSize;
+        return "TransformerRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
 
 }

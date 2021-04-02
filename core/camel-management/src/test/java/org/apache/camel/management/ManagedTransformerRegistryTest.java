@@ -70,14 +70,14 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         assertEquals(2, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
-        assertEquals(0, current.intValue());
+        assertEquals(2, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
-        assertEquals(2, current.intValue());
+        assertEquals(0, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("TransformerRegistry"));
-        assertTrue(source.endsWith("capacity: 1000"));
+        assertTrue(source.endsWith("capacity: 1000]"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
         for (Object row : data.values()) {

@@ -76,7 +76,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
                 statistics.acquired.increment();
             }
             // reset exchange for reuse
-            PooledExchange ee = exchange.adapt(PooledExchange.class);
+            PooledExchange ee = (PooledExchange) exchange;
             ee.reset(System.currentTimeMillis());
         }
         return exchange;
@@ -96,7 +96,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
                 statistics.acquired.increment();
             }
             // reset exchange for reuse
-            PooledExchange ee = exchange.adapt(PooledExchange.class);
+            PooledExchange ee = (PooledExchange) exchange;
             ee.reset(System.currentTimeMillis());
         }
         return exchange;
@@ -106,7 +106,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     public boolean release(Exchange exchange) {
         try {
             // done exchange before returning back to pool
-            PooledExchange ee = exchange.adapt(PooledExchange.class);
+            PooledExchange ee = (PooledExchange) exchange;
             boolean force = !ee.isAutoRelease();
             ee.done(force);
             ee.onDone(null);

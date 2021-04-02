@@ -36,7 +36,12 @@ public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedU
 
     public DefaultEndpointRegistry(CamelContext context, Map<NormalizedUri, Endpoint> endpoints) {
         this(context);
-        putAll(endpoints);
+        if (!context.isStarted()) {
+            // optimize to put all into the static map as we are not started
+            staticMap.putAll(endpoints);
+        } else {
+            putAll(endpoints);
+        }
     }
 
     @Override
@@ -51,6 +56,6 @@ public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedU
 
     @Override
     public String toString() {
-        return "EndpointRegistry for " + context.getName() + ", capacity: " + maxCacheSize;
+        return "EndpointRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
 }

@@ -66,14 +66,14 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
         assertEquals(3, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
-        assertEquals(0, current.intValue());
+        assertEquals(3, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
-        assertEquals(3, current.intValue());
+        assertEquals(0, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("ValidatorRegistry"));
-        assertTrue(source.endsWith("capacity: 1000"));
+        assertTrue(source.endsWith("capacity: 1000]"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listValidators", null, null);
         assertEquals(3, data.size());
