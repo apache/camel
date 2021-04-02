@@ -57,6 +57,7 @@ public class S3StreamUploadOperationLocalstackTest extends Aws2S3BaseTest {
             }
         });
 
+        Thread.sleep(30000);
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(40, resp.size());
     }
