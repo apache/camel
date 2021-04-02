@@ -137,7 +137,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         .key(dynamicKeyName).uploadId(initResponse.uploadId())
                         .partNumber(index.get()).build();
 
-                LOG.trace("Uploading part [{}] for {}", index, keyName);
+                LOG.trace("Uploading part {} at index {} for {}", part, index, keyName);
 
                 String etag = getEndpoint().getS3Client()
                         .uploadPart(uploadRequest, RequestBody.fromBytes(buffer.toByteArray())).eTag();
@@ -157,6 +157,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                                 .build();
 
                 CompleteMultipartUploadResponse uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+                LOG.trace("Completed upload for the part {} with etag {} at index {}", part, uploadResult.eTag(),
+                        index);
                 Message message = getMessageForResponse(exchange);
                 message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
                 if (uploadResult.versionId() != null) {
