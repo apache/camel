@@ -55,6 +55,12 @@
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bouncycastle-version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.i2p.crypto</groupId>
+            <artifactId>eddsa</artifactId>
+            <version>${eddsa-version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
