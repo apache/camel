@@ -30,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Endpoint;
+import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -77,8 +78,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         buffer.write(IoUtils.toByteArray(is));
 
         final String keyName = getConfiguration().getKeyName();
-        final String fileName = determineFileName(keyName);
-        final String extension = determineFileExtension(keyName);
+        final String fileName = AWS2S3Utils.determineFileName(keyName);
+        final String extension = AWS2S3Utils.determineFileExtension(keyName);
         if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
             id = UUID.randomUUID();
         }
@@ -86,7 +87,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                 = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(dynamicKeyName);
 
-        String storageClass = determineStorageClass(exchange);
+        String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (storageClass != null) {
             createMultipartUploadRequest.storageClass(storageClass);
         }
@@ -214,66 +215,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Unsupported operation");
         }
         return dynamicKeyName;
-    }
-
-    /**
-     * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint
-     * configuration.
-     *
-     * @param  exchange                 The exchange to read the header from.
-     * @return                          The bucket name.
-     * @throws IllegalArgumentException if the header could not be determined.
-     */
-    private String determineBucketName(final Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
-
-        if (ObjectHelper.isEmpty(bucketName)) {
-            bucketName = getConfiguration().getBucketName();
-            LOG.trace("AWS S3 Bucket name header is missing, using default one [{}]", bucketName);
-        }
-
-        if (bucketName == null) {
-            throw new IllegalArgumentException("AWS S3 Bucket name header is missing or not configured.");
-        }
-
-        return bucketName;
-    }
-
-    private String determineStorageClass(final Exchange exchange) {
-        String storageClass = exchange.getIn().getHeader(AWS2S3Constants.STORAGE_CLASS, String.class);
-        if (storageClass == null) {
-            storageClass = getConfiguration().getStorageClass();
-        }
-
-        return storageClass;
-    }
-
-    private String determineFileExtension(String keyName) {
-        int extPosition = keyName.lastIndexOf(".");
-        if (extPosition == -1) {
-            return "";
-        } else {
-            return keyName.substring(extPosition);
-        }
-    }
-
-    private String determineFileName(String keyName) {
-        int extPosition = keyName.lastIndexOf(".");
-        if (extPosition == -1) {
-            return keyName;
-        } else {
-            return keyName.substring(0, extPosition);
-        }
-    }
-
-    private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
-        int count;
-        while ((count = is.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
-        }
-        return out;
     }
 
     protected AWS2S3Configuration getConfiguration() {

@@ -33,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -153,11 +154,11 @@ public class AWS2S3Producer extends DefaultProducer {
             objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
         }
 
-        final String keyName = determineKey(exchange);
+        final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                 = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
 
-        String storageClass = determineStorageClass(exchange);
+        String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (storageClass != null) {
             createMultipartUploadRequest.storageClass(storageClass);
         }
@@ -270,7 +271,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 if (objectMetadata.get("Content-Length").equals("0")
                         && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
                     LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
-                    baos = determineLengthInputStream(is);
+                    baos = AWS2S3Utils.determineLengthInputStream(is);
                     objectMetadata.put("Content-Length", String.valueOf(baos.size()));
                     is = new ByteArrayInputStream(baos.toByteArray());
                 } else {
@@ -281,11 +282,11 @@ public class AWS2S3Producer extends DefaultProducer {
             }
         }
 
-        final String bucketName = determineBucketName(exchange);
-        final String key = determineKey(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String key = AWS2S3Utils.determineKey(exchange, getConfiguration());
         putObjectRequest.bucket(bucketName).key(key).metadata(objectMetadata);
 
-        String storageClass = determineStorageClass(exchange);
+        String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (storageClass != null) {
             putObjectRequest.storageClass(storageClass);
         }
@@ -344,8 +345,8 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void copyObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
-        final String sourceKey = determineKey(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String sourceKey = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String destinationKey = exchange.getIn().getHeader(AWS2S3Constants.DESTINATION_KEY, String.class);
         final String bucketNameDestination = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, String.class);
         if (getConfiguration().isPojoRequest()) {
@@ -396,8 +397,8 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void deleteObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
-        final String sourceKey = determineKey(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String sourceKey = AWS2S3Utils.determineKey(exchange, getConfiguration());
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteObjectRequest) {
@@ -423,7 +424,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void deleteBucket(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -453,8 +454,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(res);
             }
         } else {
-            final String bucketName = determineBucketName(exchange);
-            final String sourceKey = determineKey(exchange);
+            final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+            final String sourceKey = AWS2S3Utils.determineKey(exchange,getConfiguration());
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
@@ -464,8 +465,8 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void getObjectRange(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
-        final String sourceKey = determineKey(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String sourceKey = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String rangeStart = exchange.getIn().getHeader(AWS2S3Constants.RANGE_START, String.class);
         final String rangeEnd = exchange.getIn().getHeader(AWS2S3Constants.RANGE_END, String.class);
 
@@ -494,7 +495,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void listObjects(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -513,8 +514,8 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void createDownloadLink(S3Client s3Client, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
-        final String key = determineKey(exchange);
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
+        final String key = AWS2S3Utils.determineKey(exchange, getConfiguration());
 
         long milliSeconds = 0;
 
@@ -599,58 +600,6 @@ public class AWS2S3Producer extends DefaultProducer {
         return objectMetadata;
     }
 
-    /**
-     * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint
-     * configuration.
-     *
-     * @param  exchange                 The exchange to read the header from.
-     * @return                          The bucket name.
-     * @throws IllegalArgumentException if the header could not be determined.
-     */
-    private String determineBucketName(final Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
-
-        if (ObjectHelper.isEmpty(bucketName)) {
-            bucketName = getConfiguration().getBucketName();
-            LOG.trace("AWS S3 Bucket name header is missing, using default one [{}]", bucketName);
-        }
-
-        if (bucketName == null) {
-            throw new IllegalArgumentException("AWS S3 Bucket name header is missing or not configured.");
-        }
-
-        return bucketName;
-    }
-
-    private String determineKey(final Exchange exchange) {
-        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
-        if (ObjectHelper.isEmpty(key)) {
-            key = getConfiguration().getKeyName();
-        }
-        if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key header missing.");
-        }
-        return key;
-    }
-
-    private String determineStorageClass(final Exchange exchange) {
-        String storageClass = exchange.getIn().getHeader(AWS2S3Constants.STORAGE_CLASS, String.class);
-        if (storageClass == null) {
-            storageClass = getConfiguration().getStorageClass();
-        }
-
-        return storageClass;
-    }
-
-    private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
-        int count;
-        while ((count = is.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
-        }
-        return out;
-    }
 
     protected AWS2S3Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
