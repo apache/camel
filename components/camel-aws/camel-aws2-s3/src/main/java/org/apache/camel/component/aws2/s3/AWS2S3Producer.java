@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -455,7 +454,7 @@ public class AWS2S3Producer extends DefaultProducer {
             }
         } else {
             final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
-            final String sourceKey = AWS2S3Utils.determineKey(exchange,getConfiguration());
+            final String sourceKey = AWS2S3Utils.determineKey(exchange, getConfiguration());
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
@@ -599,7 +598,6 @@ public class AWS2S3Producer extends DefaultProducer {
 
         return objectMetadata;
     }
-
 
     protected AWS2S3Configuration getConfiguration() {
         return getEndpoint().getConfiguration();

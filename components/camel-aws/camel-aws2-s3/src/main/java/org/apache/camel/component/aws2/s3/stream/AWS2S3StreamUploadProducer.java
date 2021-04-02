@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.s3.stream;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
