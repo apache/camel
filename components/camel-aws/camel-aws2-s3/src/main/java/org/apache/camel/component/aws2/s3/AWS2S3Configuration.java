@@ -589,7 +589,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If StreaMode is true a different way of uploading will be provided
+     * When stream mode is true the upload to bucket will be done in streaming
      */
     public void setStreamMode(boolean streamMode) {
         this.streamMode = streamMode;
@@ -611,7 +611,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The batch size in stream mode
+     * The batch size (in bytes) in stream mode
      */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
@@ -622,7 +622,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The naming strategy to use
+     * The naming strategy to use in stream mode
      */
     public void setNamingStrategy(AWSS3NamingStrategyEnum namingStrategy) {
         this.namingStrategy = namingStrategy;
