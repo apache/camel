@@ -1,0 +1,18 @@
+{
+  "id" : "69b9a27f-0346-4230-b2c2-45cfd4d17139",
+  "name" : "container_metadata_get.json",
+  "request" : {
+    "url" : "/12345321ae80457abc3728fa1e6feb78/myContainer",
+    "method" : "HEAD"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+        "X-Container-Meta-Year": "2000",
+        "X-Container-Meta-Book": "TestBook"
+    }
+  },
+  "uuid" : "69b9a27f-0346-4230-b2c2-45cfd4d17139",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

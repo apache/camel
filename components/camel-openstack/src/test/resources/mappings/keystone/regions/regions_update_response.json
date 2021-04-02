@@ -1,0 +1,18 @@
+{
+  "id" : "c966b263-358f-4ec3-aa05-3f39a370de80",
+  "name" : "regions_update_response.json",
+  "request" : {
+    "url" : "/v3/regions/Region_CRUD",
+    "method" : "PATCH"
+  },
+  "response" : {
+    "body": "{\"region\":{\"parent_region_id\":\"RegionOne\",\"id\":\"Region_CRUD\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/regions\/Region_CRUD\"},\"description\":\"A updated region used for CRUD tests.\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "c966b263-358f-4ec3-aa05-3f39a370de80",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

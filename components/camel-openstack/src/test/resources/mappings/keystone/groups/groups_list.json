@@ -1,0 +1,22 @@
+{
+  "id" : "123de0b3-ea3f-4eb9-a7f0-aaaaaced130e",
+  "name" : "groups_list.json",
+  "request" : {
+    "url" : "/v3/groups",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/groups\",\"previous\":null,\"next\":null},\"groups\":[{\"domain_id\":\"default\",\"description\":\"openstack admin group\",\"id\":\"7261c982051c4080a69a52117a861d64\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/groups\/7261c982051c4080a69a52117a861d64\"},\"name\":\"admins\"},{\"domain_id\":\"default\",\"description\":\"non-admin group\",\"id\":\"8030dabf0cb843509602f0b3fa49adc2\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/groups\/8030dabf0cb843509602f0b3fa49adc2\"},\"name\":\"nonadmins\"},{\"domain_id\":\"default\",\"description\":\"Group for CRUD tests\",\"id\":\"851398fccda34f208e1839ebbc1251d1\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/groups\/851398fccda34f208e1839ebbc1251d1\"},\"name\":\"GROUP_GRUD\"},{\"domain_id\":\"default\",\"description\":\"group used in KeystoneRoleServiceSpec\",\"id\":\"8ffc0b29008b436b92e114ab27df0288\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/groups\/8ffc0b29008b436b92e114ab27df0288\"},\"name\":\"role_crud_group\"},{\"domain_id\":\"default\",\"description\":\"for integrationtest\",\"id\":\"d26804e7813b4dcd9712781832f1fac1\",\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/groups\/d26804e7813b4dcd9712781832f1fac1\"},\"name\":\"anotherGroups\"}]}",
+    "headers" : {
+        "Content-Type": "application/json",
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-afc2a71a-c0da-4d4b-8be9-93669eac9ece"
+    },
+    "status" : 200
+  },
+  "uuid" : "123de0b3-ea3f-4eb9-a7f0-aaaaaced130e",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

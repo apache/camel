@@ -1,0 +1,19 @@
+{
+  "id" : "2cddaa4b-0547-446b-ba0a-e03a1aaa47c5",
+  "name" : "domains_get_byId.json",
+  "request" : {
+    "url" : "/v3/domains/98c110ae41c249189c9d5c25d8377b65",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"domain\":{\"links\":{\"self\":\"http:\/\/devstack.openstack.stack:5000\/v3\/domains\/98c110ae41c249189c9d5c25d8377b65\"},\"enabled\":false,\"description\":\"Domain used for CRUD tests\",\"name\":\"Domain_CRUD\",\"id\":\"98c110ae41c249189c9d5c25d8377b65\"}}",
+    "headers" : {
+      "Content-Type" : "application/json",
+       "x-openstack-request-id": "req-3fd97a17-e56c-49b0-9246-c721afce0055"
+    },
+    "status" : 200
+  },
+  "uuid" : "2cddaa4b-0547-446b-ba0a-e03a1aaa47c5",
+  "persistent" : true,
+  "insertionIndex" : 1
+}
