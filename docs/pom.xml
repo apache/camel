@@ -53,26 +53,19 @@
                             <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v10.14.2</nodeVersion>
-                            <yarnVersion>v1.12.3</yarnVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>yarn-install</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>install --no-progress --force --non-interactive --frozen-lockfile</arguments>
+                            <nodeVersion>v14.16.0</nodeVersion>
+                            <yarnVersion>v1.22.5</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>
                         <id>yarn-gulp</id>
                         <goals>
-                            <goal>gulp</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>gulp</arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

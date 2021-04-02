@@ -6,8 +6,8 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@antora/cli": "~2.0",
-    "@antora/xref-validator": "gitlab:antora/xref-validator",
+    "@antora/cli": "^3.0.0-alpha.1",
+    "@antora/xref-validator": "https://gitlab.com/antora/xref-validator.git#commit=19bfaf88fc7dd39552cfd8b3ac41c55d6d8f9edd",
     "del": "^3.0.0",
     "eslint": "^7.2.0",
     "eslint-config-standard": "^14.1.1",
@@ -15,8 +15,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "gulp": "^4.0.0",
-    "gulp-cli": "^2.0.1",
+    "gulp": "~4.0",
+    "gulp-cli": "~2.3",
     "gulp-filter": "^6.0.0",
     "gulp-inject": "^5.0.2",
     "gulp-rename": "^1.4.0",
@@ -24,6 +24,7 @@
     "gulp-sort": "^2.0.0",
     "map-stream": "^0.0.7",
     "prettier-eslint-cli": "^5.0.0",
-    "through2": "^3.0.1"
+    "through2": "^3.0.1",
+    "vinyl": "^2.2.1"
   }
 }
