@@ -149,7 +149,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
      * https://tools.ietf.org/html/rfc4253#section-6.6
      * 
      */
-    private PublicKey loadKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    PublicKey loadKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SSHPublicKeyHolder sshPublicKeyHolder = new SSHPublicKeyHolder();
 
         byte[] keyByteArray = Base64.getDecoder().decode(key);
