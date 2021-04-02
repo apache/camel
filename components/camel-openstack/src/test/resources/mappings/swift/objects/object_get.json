@@ -1,0 +1,19 @@
+{
+  "id" : "cc8dbfce-477c-4119-a388-5ecfcd642336",
+  "name" : "object_get.json",
+  "request" : {
+    "url" : "/12345321ae80457abc3728fa1e6feb78/test-container/test-file",
+    "method" : "HEAD"
+  },
+  "response" : {
+    "headers" : {
+      "Content-Length" : "15",
+      "Content-Type" : "application/json",
+      "ETag" : "12345678901234567890"
+    },
+    "status" : 200
+  },
+  "uuid" : "cc8dbfce-477c-4119-a388-5ecfcd642336",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

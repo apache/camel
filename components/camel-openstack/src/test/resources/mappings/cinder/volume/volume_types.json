@@ -1,0 +1,18 @@
+{
+  "id" : "c209385d-c0d3-4e22-80ee-36f5b6ae5cb2",
+  "name" : "volume_types.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/types",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"volume_types\":[{\"id\":\"6a65bc1b-197b-45bf-8056-9695dc82191f\",\"name\":\"testVolume1\",\"extra_specs\":{\"capabilities\":\"gpu\"}},{\"id\":\"10f00bb7-46d8-4f3f-b89b-702693a3dcdc\",\"name\":\"testVolume2\",\"extra_specs\":{\"capabilities\":\"gpu\"}}]}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "c209385d-c0d3-4e22-80ee-36f5b6ae5cb2",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

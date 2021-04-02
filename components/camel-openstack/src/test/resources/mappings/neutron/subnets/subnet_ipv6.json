@@ -1,0 +1,18 @@
+{
+  "id" : "b6ace88f-27a9-4459-8add-5b67a6f5939f",
+  "name" : "subnet_ipv6.json",
+  "request" : {
+    "url" : "/v2.0/subnets/3b80198d-4f7b-4f77-9ef5-774d54e17126",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"subnet\":{\"name\":\"sub1\",\"enable_dhcp\":true,\"network_id\":\"d32019d3-bc6e-4319-9c1d-6722fc136a22\",\"segment_id\":null,\"project_id\":\"4fd44f30292945e481c7b8a0c8908869\",\"tenant_id\":\"4fd44f30292945e481c7b8a0c8908869\",\"dns_nameservers\":[],\"allocation_pools\":[{\"start\":\"2620:0:2d0:200::2\",\"end\":\"2620:0:2d0:200:ffff:ffff:ffff:fffe\"}],\"host_routes\":[],\"ip_version\":6,\"gateway_ip\":\"2620:0:2d0:200::1\",\"cidr\":\"2620:0:2d0:200::\/64\",\"id\":\"3b80198d-4f7b-4f77-9ef5-774d54e17126\",\"description\":\"\",\"ipv6_address_mode\":\"dhcpv6-stateful\",\"ipv6_ra_mode\":\"dhcpv6-stateful\",\"revision_number\":2,\"service_types\":[],\"subnetpool_id\":null,\"created_at\":\"2020-10-30T22:16:01Z\",\"updated_at\":\"2020-10-30T22:16:01Z\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "b6ace88f-27a9-4459-8add-5b67a6f5939f",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

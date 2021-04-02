@@ -1,0 +1,18 @@
+{
+  "id" : "f0fd049a-9325-4a60-a0fe-9987f7e791d1",
+  "name" : "images.json",
+  "request" : {
+    "url" : "/v1/images",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"image\":{\"status\":\"active\",\"name\":\"amphora-x64-haproxy\",\"tags\":[],\"container_format\":\"bare\",\"created_at\":\"2016-08-09T21:36:25Z\",\"size\":566600704,\"disk_format\":\"qcow2\",\"updated_at\":\"2016-08-09T21:36:29Z\",\"self\":\"\/v2\/images\/8a2ea42d-06b5-42c2-a54d-97105420f2bb\",\"min_disk\":0,\"protected\":false,\"id\":\"8a2ea42d-06b5-42c2-a54d-97105420f2bb\",\"file\":\"\/v1\/images\/8a2ea42d-06b5-42c2-a54d-97105420f2bb\/file\",\"checksum\":\"896e5473caaafac8899c21c912a46c98\",\"owner\":\"48e3c436235547a68324c2891bea41ac\",\"virtual_size\":null,\"min_ram\":0,\"schema\":\"\/v1\/schemas\/image\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "f0fd049a-9325-4a60-a0fe-9987f7e791d1",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

@@ -1,0 +1,18 @@
+{
+  "id" : "e39b2a5b-cf73-424b-a3d9-064c38b70388",
+  "name" : "volumes.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/volumes/detail",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"volumes\":[{\"status\":\"in-use\",\"display_name\":\"vol-snap-vol-test1\",\"attachments\":[{\"host_name\":null,\"device\":\"\/dev\/vdd\",\"server_id\":\"108b91cd-1adc-4799-b467-a7ec6fcd8ee7\",\"id\":\"725ee1cc-7599-42f2-a8fb-eca5ba10dadc\",\"volume_id\":\"725ee1cc-7599-42f2-a8fb-eca5ba10dadc\"}],\"availability_zone\":\"nova\",\"bootable\":\"false\",\"encrypted\":false,\"created_at\":\"2015-04-23T12:39:31.323376\",\"os-vol-tenant-attr:tenant_id\":\"b0b5ed7ae06049688349fe43737796d4\",\"os-volume-replication:driver_data\":null,\"display_description\":\"test\",\"os-volume-replication:extended_status\":null,\"volume_type\":\"None\",\"snapshot_id\":\"a06b0531-c14b-4a7b-8749-de1378dd1007\",\"source_volid\":null,\"metadata\":{\"readonly\":\"False\",\"attached_mode\":\"rw\"},\"id\":\"725ee1cc-7599-42f2-a8fb-eca5ba10dadc\",\"size\":1},{\"status\":\"available\",\"display_name\":\"vol-test-2\",\"attachments\":[],\"availability_zone\":\"nova\",\"bootable\":\"false\",\"encrypted\":false,\"created_at\":\"2015-04-23T11:32:01.252783\",\"os-vol-tenant-attr:tenant_id\":\"b0b5ed7ae06049688349fe43737796d4\",\"os-volume-replication:driver_data\":null,\"display_description\":\"\",\"os-volume-replication:extended_status\":null,\"volume_type\":\"None\",\"snapshot_id\":null,\"source_volid\":null,\"metadata\":{},\"id\":\"7f47ab73-303c-4a19-b311-6123bb115775\",\"size\":1},{\"status\":\"available\",\"display_name\":\"vol-test-1\",\"attachments\":[],\"availability_zone\":\"nova\",\"bootable\":\"false\",\"encrypted\":false,\"created_at\":\"2015-04-23T11:31:54.832436\",\"os-vol-tenant-attr:tenant_id\":\"b0b5ed7ae06049688349fe43737796d4\",\"os-volume-replication:driver_data\":null,\"display_description\":\"\",\"os-volume-replication:extended_status\":null,\"volume_type\":\"None\",\"snapshot_id\":null,\"source_volid\":null,\"metadata\":{},\"id\":\"b0e394e6-bb10-4bfe-960d-edf72100c810\",\"size\":1}]}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "e39b2a5b-cf73-424b-a3d9-064c38b70388",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

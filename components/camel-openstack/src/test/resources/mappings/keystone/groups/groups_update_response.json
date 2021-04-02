@@ -1,0 +1,18 @@
+{
+  "id" : "7943ac36-c063-4849-a621-7fd7ddd6b072",
+  "name" : "groups_update_response.json",
+  "request" : {
+    "url" : "/v3/groups/c0d675eac29945ad9dfd08aa1bb75751",
+    "method" : "PATCH"
+  },
+  "response" : {
+    "body": "{\"group\":{\"domain_id\":\"default\",\"description\":\"An updated group used for CRUD tests\",\"id\":\"c0d675eac29945ad9dfd08aa1bb75751\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/groups\/c0d675eac29945ad9dfd08aa1bb75751\"},\"name\":\"GROUP_CRUD\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "7943ac36-c063-4849-a621-7fd7ddd6b072",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

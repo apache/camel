@@ -1,0 +1,18 @@
+{
+  "id" : "22265785-c287-4a4c-9d90-8481ad57c1eb",
+  "name" : "regions_create_response.json",
+  "request" : {
+    "url" : "/v3/regions",
+    "method" : "POST"
+  },
+  "response" : {
+    "body" : "{\"region\":{\"id\":\"Region_CRUD\",\"description\":\"No description provided.\",\"parent_region_id\":\"RegionOne\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 201
+  },
+  "uuid" : "22265785-c287-4a4c-9d90-8481ad57c1eb",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

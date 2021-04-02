@@ -1,0 +1,20 @@
+{
+  "id" : "36204957-321b-4a69-8a14-fb8efa016de3",
+  "name" : "user_delete.json",
+  "request" : {
+    "url" : "/v3/users/29d5aaaa6d3b471e9c101ae470e649a6",
+    "method" : "DELETE"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-d428e41d-104e-4d70-ba47-0878e914b200"
+    }
+  },
+  "uuid" : "36204957-321b-4a69-8a14-fb8efa016de3",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

@@ -1,0 +1,18 @@
+{
+  "id" : "8cf6f5d4-0dcf-46e4-b40b-b076c8b8ca6d",
+  "name" : "server_create.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/servers",
+    "method" : "POST"
+  },
+  "response" : {
+    "body" : "{\"server\":{\"name\":\"server-test-1\",\"imageRef\":\"b5660a6e-4b46-4be3-9707-6b47221b454f\",\"flavorRef\":\"2\",\"max_count\":1,\"min_count\":1,\"networks\":[{\"uuid\":\"d32019d3-bc6e-4319-9c1d-6722fc136a22\"}],\"security_groups\":[{\"name\":\"default\"},{\"name\":\"another-secgroup-name\"}]}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 201
+  },
+  "uuid" : "8cf6f5d4-0dcf-46e4-b40b-b076c8b8ca6d",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

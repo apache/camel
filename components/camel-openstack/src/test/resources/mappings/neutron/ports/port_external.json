@@ -1,0 +1,18 @@
+{
+  "id" : "a0f01c14-436c-423c-bb68-8f4314a5cf77",
+  "name" : "port_external.json",
+  "request" : {
+    "url" : "/v2.0/ports",
+    "method" : "POST"
+  },
+  "response" : {
+    "body" : "{\"port\":{\"network_id\":\"a87cc70a-3e15-4acf-8205-9b711a3531b7\",\"binding:host_id\":\"4df8d9ff-6f6f-438f-90a1-ef660d4586ad\",\"binding:profile\":{\"local_link_information\":[{\"port_id\":\"Ethernet3\/1\",\"switch_id\":\"0a:1b:2c:3d:4e:5f\",\"switch_info\":\"switch1\"}]},\"binding:vnic_type\":\"baremetal\",\"device_id\":\"d90a13da-be41-461f-9f99-1dbcf438fdf2\",\"device_owner\":\"baremetal:none\",\"allowed_address_pairs\":[{\"ip_address\":\"192.168.0.100\",\"mac_address\":\"00:60:2f:38:62:8d\"}],\"created_at\":\"2020-10-30T22:16:01Z\",\"updated_at\":\"2020-10-30T22:16:01Z\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 201
+  },
+  "uuid" : "a0f01c14-436c-423c-bb68-8f4314a5cf77",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

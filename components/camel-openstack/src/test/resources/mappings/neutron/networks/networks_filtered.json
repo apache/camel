@@ -1,0 +1,22 @@
+{
+  "id" : "4385766e-5070-403d-9e7f-cf43ccb8f26e",
+  "name" : "networks_filtered.json",
+  "request" : {
+    "url" : "/v2.0/networks",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"networks\":[{\"status\":\"ACTIVE\",\"subnets\":[\"0c4faf33-8c23-4dc9-8bf5-30dd1ab452f9\"],\"name\":\"net1\",\"provider:physical_network\":null,\"admin_state_up\":true,\"tenant_id\":\"9712d107d5f9445a9fc5b4108502e312\",\"mtu\":0,\"router:external\":true,\"shared\":true,\"provider:network_type\":\"vxlan\",\"id\":\"73f6f1ac-5e58-4801-88c3-7e12c6ddfb39\",\"provider:segmentation_id\":101101,\"created_at\":\"2020-10-30T22:16:01Z\",\"updated_at\":\"2020-10-30T22:16:01Z\"}]}",
+    "headers" : {
+        "Content-Type": "application/json",
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-6e244e09-3016-4a19-8b6d-f9872f5ac66e"
+    },
+    "status" : 200
+  },
+  "uuid" : "4385766e-5070-403d-9e7f-cf43ccb8f26e",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

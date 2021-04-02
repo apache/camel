@@ -1,0 +1,22 @@
+{
+  "id" : "f8df5e9e-d4bc-480c-8ee3-0227fa41daee",
+  "name" : "regions_get_nonExistent.json",
+  "request" : {
+    "url" : "/v3/regions/nonExistentRegionId",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"error\":{\"message\":\"Could not find region: nonExistentRegionIda\",\"code\":404,\"title\":\"Not Found\"}}",
+    "headers" : {
+        "Content-Type": "application/json",
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-9699ed7f-05d3-4e0c-86e9-09f2744f7362"
+    },
+    "status" : 404
+  },
+  "uuid" : "f8df5e9e-d4bc-480c-8ee3-0227fa41daee",
+  "persistent" : true,
+  "insertionIndex" : 1
+}
