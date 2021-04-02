@@ -179,6 +179,7 @@
     <docker-java-version>3.2.7</docker-java-version>
     <dozer-version>6.5.0</dozer-version>
     <dropbox-version>3.2.0</dropbox-version>
+    <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <ehcache3-version>3.9.0</ehcache3-version>
     <elasticsearch-rest-cluster-runner-version>7.8.0.0</elasticsearch-rest-cluster-runner-version>
