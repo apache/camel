@@ -572,7 +572,7 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The batch size in stream mode.
+         * The batch size (in bytes) in stream mode.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -657,7 +657,7 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The naming strategy to use.
+         * The naming strategy to use in stream mode.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
@@ -722,7 +722,8 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * If StreaMode is true a different way of uploading will be provided.
+         * When stream mode is true the upload to bucket will be done in
+         * streaming.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

@@ -87,16 +87,16 @@ The AWS 2 S3 Storage Service component supports 47 options, which are listed bel
 | *prefix* (consumer) | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *autocloseBody* (consumer) | If this option is true and includeBody is false, then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to false and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
 | *batchMessageNumber* (producer) | The number of messages composing a batch in stream mode | 10 | int
-| *batchSize* (producer) | The batch size in stream mode | 1000000 | int
+| *batchSize* (producer) | The batch size (in bytes) in stream mode | 1000000 | int
 | *deleteAfterWrite* (producer) | Delete file object after the S3 file has been uploaded | false | boolean
 | *keyName* (producer) | Setting the key name for an element in the bucket through endpoint parameter |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *multiPartUpload* (producer) | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | boolean
-| *namingStrategy* (producer) | The naming strategy to use. There are 2 enums and the value can be one of: progressive, random | progressive | AWSS3NamingStrategyEnum
+| *namingStrategy* (producer) | The naming strategy to use in stream mode. There are 2 enums and the value can be one of: progressive, random | progressive | AWSS3NamingStrategyEnum
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange |  | AWS2S3Operations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
-| *streamMode* (producer) | If StreaMode is true a different way of uploading will be provided | false | boolean
+| *streamMode* (producer) | When stream mode is true the upload to bucket will be done in streaming | false | boolean
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
@@ -177,16 +177,16 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *batchMessageNumber* (producer) | The number of messages composing a batch in stream mode | 10 | int
-| *batchSize* (producer) | The batch size in stream mode | 1000000 | int
+| *batchSize* (producer) | The batch size (in bytes) in stream mode | 1000000 | int
 | *deleteAfterWrite* (producer) | Delete file object after the S3 file has been uploaded | false | boolean
 | *keyName* (producer) | Setting the key name for an element in the bucket through endpoint parameter |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *multiPartUpload* (producer) | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | boolean
-| *namingStrategy* (producer) | The naming strategy to use. There are 2 enums and the value can be one of: progressive, random | progressive | AWSS3NamingStrategyEnum
+| *namingStrategy* (producer) | The naming strategy to use in stream mode. There are 2 enums and the value can be one of: progressive, random | progressive | AWSS3NamingStrategyEnum
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange |  | AWS2S3Operations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
-| *streamMode* (producer) | If StreaMode is true a different way of uploading will be provided | false | boolean
+| *streamMode* (producer) | When stream mode is true the upload to bucket will be done in streaming | false | boolean
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
