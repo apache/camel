@@ -126,7 +126,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (index.get() == 1) {
             initResponse
                     = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
-            //final long contentLength = Long.valueOf(objectMetadata.get("Content-Length"));
             completedParts = new ArrayList<>();
         }
 
