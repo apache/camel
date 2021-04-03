@@ -6,8 +6,6 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@antora/cli": "^3.0.0-alpha.1",
-    "@antora/xref-validator": "https://gitlab.com/antora/xref-validator.git#commit=19bfaf88fc7dd39552cfd8b3ac41c55d6d8f9edd",
     "del": "^3.0.0",
     "eslint": "^7.2.0",
     "eslint-config-standard": "^14.1.1",
