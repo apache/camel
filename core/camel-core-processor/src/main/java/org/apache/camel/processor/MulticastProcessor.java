@@ -52,6 +52,8 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
+import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
@@ -150,6 +152,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     }
 
+    private final class Scheduler implements Executor {
+
+        @Override
+        public void execute(Runnable command) {
+            schedule(command);
+        }
+    }
+
     protected final Processor onPrepare;
     private final CamelContext camelContext;
     private final InternalProcessorFactory internalProcessorFactory;
@@ -167,6 +177,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
+    private final Scheduler scheduler = new Scheduler();
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
@@ -263,6 +274,23 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        // eager load classes
+        Object dummy = new MulticastReactiveTask();
+        LOG.trace("Loaded {}", dummy.getClass().getName());
+        Object dummy2 = new MulticastTransactedTask();
+        LOG.trace("Loaded {}", dummy2.getClass().getName());
+        Object dummy3 = new UseOriginalAggregationStrategy();
+        LOG.trace("Loaded {}", dummy3.getClass().getName());
+        if (isShareUnitOfWork()) {
+            Object dummy4 = new ShareUnitOfWorkAggregationStrategy(null);
+            LOG.trace("Loaded {}", dummy4.getClass().getName());
+        }
+        Object dummy5 = new DefaultProcessorExchangePair(0, null, null, null);
+        LOG.trace("Loaded {}", dummy5.getClass().getName());
+    }
+
+    @Override
     protected void doInit() throws Exception {
         if (route != null) {
             Exchange exchange = new DefaultExchange(getCamelContext());
@@ -356,23 +384,30 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final Iterable<ProcessorExchangePair> pairs;
         final AsyncCallback callback;
         final Iterator<ProcessorExchangePair> iterator;
-        final ReentrantLock lock;
-        final AsyncCompletionService<Exchange> completion;
-        final AtomicReference<Exchange> result;
+        final ReentrantLock lock = new ReentrantLock();
+        final AsyncCompletionService<Exchange> completion
+                = new AsyncCompletionService<>(scheduler, !isStreaming(), lock);
+        final AtomicReference<Exchange> result = new AtomicReference<>();
         final AtomicInteger nbExchangeSent = new AtomicInteger();
         final AtomicInteger nbAggregated = new AtomicInteger();
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
         final Map<String, String> mdc;
 
+        private MulticastTask() {
+            // used for eager classloading
+            this.original = null;
+            this.pairs = null;
+            this.callback = null;
+            this.iterator = null;
+            this.mdc = null;
+        }
+
         MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
             this.iterator = pairs.iterator();
-            this.lock = new ReentrantLock();
-            this.completion = new AsyncCompletionService<>(MulticastProcessor.this::schedule, !isStreaming(), lock);
-            this.result = new AtomicReference<>();
             if (timeout > 0) {
                 schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             }
@@ -458,6 +493,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * Sub task processed reactive via the {@link ReactiveExecutor}.
      */
     protected class MulticastReactiveTask extends MulticastTask {
+
+        private MulticastReactiveTask() {
+        }
 
         public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             super(original, pairs, callback);
@@ -554,6 +592,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * while loop control flow.
      */
     protected class MulticastTransactedTask extends MulticastTask {
+
+        private MulticastTransactedTask() {
+        }
 
         public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             super(original, pairs, callback);

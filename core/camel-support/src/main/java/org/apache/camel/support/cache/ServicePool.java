@@ -127,15 +127,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> getOrCreatePool(Endpoint endpoint) {
-        return pool.computeIfAbsent(endpoint, this::createPool);
-    }
-
-    private Pool<S> createPool(Endpoint endpoint) {
         boolean singleton = endpoint.isSingletonProducer();
         if (singleton) {
-            return new SinglePool(endpoint);
+            return pool.computeIfAbsent(endpoint, SinglePool::new);
         } else {
-            return new MultiplePool(endpoint);
+            return pool.computeIfAbsent(endpoint, MultiplePool::new);
         }
     }
 
@@ -154,6 +150,15 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             ((LRUCache) cache).cleanUp();
         }
         pool.values().forEach(Pool::cleanUp);
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        // eager load classes
+        SinglePool dummy = new SinglePool();
+        LOG.trace("Loaded {}", dummy.getClass().getName());
+        MultiplePool dummy2 = new MultiplePool();
+        LOG.trace("Loaded {}", dummy2.getClass().getName());
     }
 
     @Override
@@ -193,6 +198,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private class SinglePool implements Pool<S> {
         private final Endpoint endpoint;
         private volatile S s;
+
+        private SinglePool() {
+            // only used for eager classloading
+            this.endpoint = null;
+        }
 
         SinglePool(Endpoint endpoint) {
             this.endpoint = endpoint;
@@ -251,11 +261,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
 
         private void cleanupEvicts() {
-            singlePoolEvicted.forEach((e, p) -> {
+            for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
+                Endpoint e = entry.getKey();
+                Pool<S> p = entry.getValue();
                 doStop(e);
                 p.stop();
                 singlePoolEvicted.remove(e);
-            });
+            }
         }
 
         void doStop(Service s) {
@@ -279,6 +291,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final BlockingQueue<S> queue;
         private final List<S> evicts;
 
+        private MultiplePool() {
+            // only used for eager classloading
+            this.endpoint = null;
+            this.queue = null;
+            this.evicts = null;
+        }
+
         MultiplePool(Endpoint endpoint) {
             this.endpoint = endpoint;
             this.queue = new ArrayBlockingQueue<>(capacity);
@@ -289,8 +308,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             if (!evicts.isEmpty()) {
                 synchronized (this) {
                     if (!evicts.isEmpty()) {
-                        evicts.forEach(this::doStop);
-                        evicts.forEach(queue::remove);
+                        for (S evict : evicts) {
+                            doStop(evict);
+                            queue.remove(evict);
+                        }
                         evicts.clear();
                         if (queue.isEmpty()) {
                             pool.remove(endpoint);

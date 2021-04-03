@@ -44,6 +44,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -52,6 +54,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final Expression expression;
@@ -109,6 +113,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     public String getTraceLabel() {
         return "split[" + expression + "]";
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        // eager load classes
+        Object dummy = new SplitterIterable();
+        LOG.trace("Loaded {}", dummy.getClass().getName());
     }
 
     @Override
@@ -179,6 +191,18 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         private final Exchange copy;
         private final Route route;
         private final Exchange original;
+
+        private SplitterIterable() {
+            // used for eager classloading
+            value = null;
+            iterator = null;
+            copy = null;
+            route = null;
+            original = null;
+            // for loading classes from iterator
+            Object dummy = iterator();
+            LOG.trace("Loaded {}", dummy.getClass().getName());
+        }
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
