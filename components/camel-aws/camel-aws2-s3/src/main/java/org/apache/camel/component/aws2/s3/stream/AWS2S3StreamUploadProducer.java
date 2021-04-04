@@ -66,9 +66,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     AtomicInteger part = new AtomicInteger();
     UUID id;
     String dynamicKeyName;
+    CompleteMultipartUploadResponse uploadResult;
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
-    private boolean timeout;
 
     @Override
     protected void doStart() throws Exception {
@@ -76,7 +76,21 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         timeoutCheckerExecutorService
                 = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                         "timeout_checker");
-        timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(), 1, 1, TimeUnit.SECONDS);
+        timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(), 10, 10, TimeUnit.SECONDS);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (ObjectHelper.isNotEmpty(initResponse)) {
+            if (ObjectHelper.isNotEmpty(initResponse.uploadId())) {
+                if (index.get() > 0) {
+                    uploadPart();
+                    completeUpload();
+                }
+            }
+        }
+        super.doStop();
+
     }
 
     /**
@@ -86,8 +100,14 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         @Override
         public void run() {
-            timeout = true;
-            LOG.info("timeout triggered");
+            if (ObjectHelper.isNotEmpty(initResponse)) {
+                if (ObjectHelper.isNotEmpty(initResponse.uploadId())) {
+                    if (index.get() > 0) {
+                        uploadPart();
+                        completeUpload();
+                    }
+                }
+            }
         }
     }
 
@@ -157,41 +177,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         try {
             if (buffer.size() >= getConfiguration().getBatchSize()
                     || index.get() == getConfiguration().getBatchMessageNumber()) {
-                LOG.info("Timeout " + timeout);
 
-                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
-                        .key(dynamicKeyName).uploadId(initResponse.uploadId())
-                        .partNumber(index.get()).build();
+                uploadPart();
+                completeUpload();
 
-                LOG.trace("Uploading part {} at index {} for {}", part, index, keyName);
-
-                String etag = getEndpoint().getS3Client()
-                        .uploadPart(uploadRequest, RequestBody.fromBytes(buffer.toByteArray())).eTag();
-                CompletedPart partUpload = CompletedPart.builder().partNumber(index.get()).eTag(etag).build();
-                completedParts.add(partUpload);
-                buffer.reset();
-                part.getAndIncrement();
-            }
-
-            if (index.get() == getConfiguration().getBatchMessageNumber() || timeout) {
-                CompletedMultipartUpload completeMultipartUpload
-                        = CompletedMultipartUpload.builder().parts(completedParts).build();
-                CompleteMultipartUploadRequest compRequest
-                        = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
-                                .bucket(getConfiguration().getBucketName()).key(dynamicKeyName)
-                                .uploadId(initResponse.uploadId())
-                                .build();
-
-                CompleteMultipartUploadResponse uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
-                LOG.info("Completed upload for the part {} with etag {} at index {}", part, uploadResult.eTag(),
-                        index);
                 Message message = getMessageForResponse(exchange);
                 message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
                 if (uploadResult.versionId() != null) {
                     message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
                 }
-                timeout = false;
-                index.getAndSet(0);
             }
 
         } catch (Exception e) {
@@ -202,6 +196,37 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         }
 
         index.getAndIncrement();
+    }
+
+    private void completeUpload() {
+        CompletedMultipartUpload completeMultipartUpload
+                = CompletedMultipartUpload.builder().parts(completedParts).build();
+        CompleteMultipartUploadRequest compRequest
+                = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
+                        .bucket(getConfiguration().getBucketName()).key(dynamicKeyName)
+                        .uploadId(initResponse.uploadId())
+                        .build();
+
+        uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+        LOG.info("Completed upload for the part {} with etag {} at index {}", part, uploadResult.eTag(),
+                index);
+
+        index.getAndSet(0);
+    }
+
+    private void uploadPart() {
+        UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
+                .key(dynamicKeyName).uploadId(initResponse.uploadId())
+                .partNumber(index.get()).build();
+
+        LOG.trace("Uploading part {} at index {} for {}", part, index, getConfiguration().getKeyName());
+
+        String etag = getEndpoint().getS3Client()
+                .uploadPart(uploadRequest, RequestBody.fromBytes(buffer.toByteArray())).eTag();
+        CompletedPart partUpload = CompletedPart.builder().partNumber(index.get()).eTag(etag).build();
+        completedParts.add(partUpload);
+        buffer.reset();
+        part.getAndIncrement();
     }
 
     private String fileNameToUpload(
