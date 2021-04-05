@@ -120,7 +120,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private static final String ZIPKIN_COLLECTOR_THRIFT_SERVICE = "zipkin-collector-thrift";
     private static final Getter<CamelRequest, String> GETTER = (cr, key) -> cr.getHeader(key);
     private static final Setter<CamelRequest, String> SETTER = (cr, key, value) -> cr.setHeader(key, value);
-    private static final Extractor<CamelRequest> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
+    static final Extractor<CamelRequest> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
     private static final Injector<CamelRequest> INJECTOR = B3Propagation.B3_STRING.injector(SETTER);
 
     private final ZipkinEventNotifier eventNotifier = new ZipkinEventNotifier();
@@ -593,7 +593,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
         // if we started from a server span then lets reuse that when we call a
         // downstream service
-        Span last = state.peekServerSpan();
+        Span last = state.findMatchingServerSpan(event.getExchange());
         Span span;
         if (last != null) {
             span = brave.tracer().newChild(last.context());
@@ -685,14 +685,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         TraceContextOrSamplingFlags sampleFlag = EXTRACTOR.extract(cr);
         if (ObjectHelper.isEmpty(sampleFlag)) {
             span = brave.tracer().nextSpan();
-            INJECTOR.inject(span.context(), cr);
         } else {
             span = brave.tracer().nextSpan(sampleFlag);
         }
         span.kind(spanKind).start();
         ZipkinServerRequestAdapter parser = new ZipkinServerRequestAdapter(this, exchange);
         parser.onRequest(exchange, span.customizer());
-
+        INJECTOR.inject(span.context(), cr);
         // store span after request
         state.pushServerSpan(span);
         TraceContext context = span.context();

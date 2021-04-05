@@ -16,9 +16,12 @@
  */
 package org.apache.camel.zipkin;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 import brave.Span;
+import brave.propagation.TraceContextOrSamplingFlags;
 import org.apache.camel.Exchange;
 
 /**
@@ -31,39 +34,61 @@ public final class ZipkinState {
 
     public static final String KEY = "CamelZipkinState";
 
-    private final Stack<Span> clientSpans = new Stack<>();
-    private final Stack<Span> serverSpans = new Stack<>();
+    private final Deque<Span> clientSpans = new ArrayDeque<>();
+    private final Deque<Span> serverSpans = new ArrayDeque<>();
 
-    public void pushClientSpan(Span span) {
+    public synchronized void pushClientSpan(Span span) {
         clientSpans.push(span);
     }
 
-    public Span popClientSpan() {
-        if (!clientSpans.empty()) {
+    public synchronized Span popClientSpan() {
+        if (!clientSpans.isEmpty()) {
             return clientSpans.pop();
         } else {
             return null;
         }
     }
 
-    public void pushServerSpan(Span span) {
+    public synchronized void pushServerSpan(Span span) {
         serverSpans.push(span);
     }
 
-    public Span popServerSpan() {
-        if (!serverSpans.empty()) {
+    public synchronized Span popServerSpan() {
+        if (!serverSpans.isEmpty()) {
             return serverSpans.pop();
         } else {
             return null;
         }
     }
 
-    public Span peekServerSpan() {
-        if (!serverSpans.empty()) {
+    private Span peekServerSpan() {
+        if (!serverSpans.isEmpty()) {
             return serverSpans.peek();
         } else {
             return null;
         }
+    }
+
+    public synchronized Span findMatchingServerSpan(Exchange exchange) {
+        String spanId = (String) exchange.getIn().getHeader(ZipkinConstants.SPAN_ID);
+        Span lastSpan = peekServerSpan();
+        if (spanId == null) {
+            return lastSpan;
+        }
+        TraceContextOrSamplingFlags traceContext
+                = ZipkinTracer.EXTRACTOR.extract(new CamelRequest(exchange.getIn(), Span.Kind.SERVER));
+        if (traceContext.context().spanId() == lastSpan.context().spanId()) {
+            return lastSpan;
+        }
+
+        Iterator<Span> spanItr = serverSpans.iterator();
+        while (spanItr.hasNext()) {
+            Span span = spanItr.next();
+            if (span.context().spanId() == traceContext.context().spanId()) {
+                return span;
+            }
+        }
+        return lastSpan;
     }
 
 }
