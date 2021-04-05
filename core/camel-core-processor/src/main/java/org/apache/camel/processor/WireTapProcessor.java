@@ -61,7 +61,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
     private String id;
     private String routeId;
     private CamelContext camelContext;
-    private final SendDynamicProcessor dynamicProcessor;
+    private final SendDynamicProcessor dynamicSendProcessor; // is only used for reporting statistics
     private final String uri;
     private final boolean dynamicUri;
     private final Processor processor;
@@ -78,10 +78,11 @@ public class WireTapProcessor extends AsyncProcessorSupport
     private boolean copy;
     private Processor onPrepare;
 
-    public WireTapProcessor(SendDynamicProcessor dynamicProcessor, Processor processor, ExchangePattern exchangePattern,
+    public WireTapProcessor(SendDynamicProcessor dynamicSendProcessor, Processor processor, String uri,
+                            ExchangePattern exchangePattern,
                             ExecutorService executorService, boolean shutdownExecutorService, boolean dynamicUri) {
-        this.dynamicProcessor = dynamicProcessor;
-        this.uri = dynamicProcessor.getUri();
+        this.dynamicSendProcessor = dynamicSendProcessor;
+        this.uri = uri;
         this.processor = processor;
         this.asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         this.exchangePattern = exchangePattern;
@@ -148,7 +149,11 @@ public class WireTapProcessor extends AsyncProcessorSupport
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
-        return dynamicProcessor.getEndpointUtilizationStatistics();
+        if (dynamicSendProcessor != null) {
+            return dynamicSendProcessor.getEndpointUtilizationStatistics();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -305,11 +310,19 @@ public class WireTapProcessor extends AsyncProcessorSupport
     }
 
     public int getCacheSize() {
-        return dynamicProcessor.getCacheSize();
+        if (dynamicSendProcessor != null) {
+            return dynamicSendProcessor.getCacheSize();
+        } else {
+            return 0;
+        }
     }
 
     public boolean isIgnoreInvalidEndpoint() {
-        return dynamicProcessor.isIgnoreInvalidEndpoint();
+        if (dynamicSendProcessor != null) {
+            return dynamicSendProcessor.isIgnoreInvalidEndpoint();
+        } else {
+            return false;
+        }
     }
 
     public boolean isDynamicUri() {
