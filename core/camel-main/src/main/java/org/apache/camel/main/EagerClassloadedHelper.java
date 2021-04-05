@@ -52,6 +52,6 @@ public final class EagerClassloadedHelper {
         // EAGER-CLASSLOADED: END
 
         String time = TimeUtils.printDuration(watch.taken());
-        LOG.info("Eager loaded {} classes in {}", count, time);
+        LOG.debug("Eager loaded {} classes in {}", count, time);
     }
 }
