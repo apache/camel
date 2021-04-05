@@ -102,10 +102,10 @@ public class WireTapProcessor extends AsyncProcessorSupport
             @Override
             public void done(boolean doneSync) {
                 taskCount.decrement();
-                taskFactory.release(WireTapTask.this);
                 if (processorExchangeFactory != null) {
                     processorExchangeFactory.release(exchange);
                 }
+                taskFactory.release(WireTapTask.this);
             }
         };
 
