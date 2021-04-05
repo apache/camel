@@ -184,7 +184,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         message.setHeader(ServiceCallConstants.SERVICE_NAME, serviceName);
 
         try {
-            return loadBalancer.process(serviceName, server -> execute(server, exchange, callback));
+            return loadBalancer.process(exchange, serviceName, server -> execute(server, exchange, callback));
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);

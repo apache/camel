@@ -10,6 +10,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 The method `concurrentTasks` on `org.apache.camel.support.DefaultScheduledPollConsumerScheduler ` has been renamed to `concurrentConsumers`.
 
+The `org.apache.camel.cloud.ServiceFilter` and `org.apache.camel.cloud.ServiceLoadBalancer` 
+functional interface methods take the current `Exchange` as additional parameter 
+to allow for content-based filtering of service candidates. `RibbonServiceLoadBalancer` 
+has no notion of a current exchange, service filters therefore receive a dummy exchange when used with Ribbon.
+
 === camel-scheduler
 
 The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.

@@ -481,6 +481,7 @@
         <rhino-version>1.7.7.1</rhino-version>
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
+        <servo-version>0.10.1</servo-version>
         <roaster-version>2.22.0.Final</roaster-version>
         <robotframework-version>3.2.2</robotframework-version>
         <rome-version>1.15.0</rome-version>

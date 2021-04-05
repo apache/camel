@@ -18,13 +18,14 @@ package org.apache.camel.impl.cloud;
 
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
 public class DefaultServiceFilter implements ServiceFilter {
 
     @Override
-    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
+    public List<ServiceDefinition> apply(Exchange exchange, List<ServiceDefinition> services) {
         return services;
     }
 }
