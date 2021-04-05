@@ -47,7 +47,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,12 +99,6 @@ public class WireTapProcessor extends AsyncProcessorSupport
         private final AsyncCallback callback = new AsyncCallback() {
             @Override
             public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    String u = URISupport.sanitizeUri(uri);
-                    LOG.warn("Error occurred during processing " + exchange + " wiretap to " + u
-                             + ". This exception will be ignored.",
-                            exchange.getException());
-                }
                 taskCount.decrement();
                 taskFactory.release(WireTapTask.this);
             }
