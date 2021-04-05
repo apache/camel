@@ -33,6 +33,9 @@ import org.apache.camel.NonManagedService;
  * <p/>
  * The factory is pluggable which allows to use different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
+ *
+ * @see ProcessorExchangeFactory
+ * @see org.apache.camel.PooledExchange
  */
 public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware {
 

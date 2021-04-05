@@ -84,9 +84,8 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
         WireTapProcessor answer = new WireTapProcessor(
                 dynamicSendProcessor, target, uri,
-                parse(ExchangePattern.class, definition.getPattern()),
+                parse(ExchangePattern.class, definition.getPattern()), isCopy,
                 threadPool, shutdownThreadPool, dynamic);
-        answer.setCopy(isCopy);
         Processor newExchangeProcessor = definition.getNewExchangeProcessor();
         String ref = parseString(definition.getNewExchangeProcessorRef());
         if (ref != null) {

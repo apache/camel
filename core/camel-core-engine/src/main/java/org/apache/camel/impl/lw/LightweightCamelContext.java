@@ -114,6 +114,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -1466,6 +1467,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
         getExtendedCamelContext().setExchangeFactoryManager(exchangeFactoryManager);
+    }
+
+    @Override
+    public ProcessorExchangeFactory getProcessorExchangeFactory() {
+        return getExtendedCamelContext().getProcessorExchangeFactory();
+    }
+
+    @Override
+    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
+        getExtendedCamelContext().setProcessorExchangeFactory(processorExchangeFactory);
     }
 
     @Override

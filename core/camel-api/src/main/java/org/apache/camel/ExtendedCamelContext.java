@@ -54,6 +54,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
@@ -235,6 +236,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets a custom exchange factory manager to use.
      */
     void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager);
+
+    /**
+     * Gets the processor exchange factory to use.
+     */
+    ProcessorExchangeFactory getProcessorExchangeFactory();
+
+    /**
+     * Sets a custom processor exchange factory to use.
+     */
+    void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory);
 
     /**
      * Returns the bean post processor used to do any bean customization.

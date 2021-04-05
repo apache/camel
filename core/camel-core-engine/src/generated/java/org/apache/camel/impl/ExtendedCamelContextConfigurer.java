@@ -121,6 +121,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": target.setPackageScanClassResolver(property(camelContext, org.apache.camel.spi.PackageScanClassResolver.class, value)); return true;
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": target.setPackageScanResourceResolver(property(camelContext, org.apache.camel.spi.PackageScanResourceResolver.class, value)); return true;
+        case "processorexchangefactory":
+        case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
         case "processorfactory":
         case "ProcessorFactory": target.setProcessorFactory(property(camelContext, org.apache.camel.spi.ProcessorFactory.class, value)); return true;
         case "propertiescomponent":
@@ -294,6 +296,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": return org.apache.camel.spi.PackageScanClassResolver.class;
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": return org.apache.camel.spi.PackageScanResourceResolver.class;
+        case "processorexchangefactory":
+        case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
         case "processorfactory":
         case "ProcessorFactory": return org.apache.camel.spi.ProcessorFactory.class;
         case "propertiescomponent":
@@ -468,6 +472,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": return target.getPackageScanClassResolver();
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": return target.getPackageScanResourceResolver();
+        case "processorexchangefactory":
+        case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
         case "processorfactory":
         case "ProcessorFactory": return target.getProcessorFactory();
         case "propertiescomponent":

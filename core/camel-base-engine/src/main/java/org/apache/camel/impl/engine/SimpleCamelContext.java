@@ -59,6 +59,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -571,6 +572,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ExchangeFactoryManager createExchangeFactoryManager() {
         return new DefaultExchangeFactoryManager();
+    }
+
+    @Override
+    protected ProcessorExchangeFactory createProcessorExchangeFactory() {
+        Optional<ProcessorExchangeFactory> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                ProcessorExchangeFactory.FACTORY,
+                ProcessorExchangeFactory.class);
+
+        return result.orElseGet(PrototypeProcessorExchangeFactory::new);
     }
 
     @Override

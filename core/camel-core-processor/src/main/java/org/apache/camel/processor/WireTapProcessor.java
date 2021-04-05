@@ -39,12 +39,12 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -67,26 +67,28 @@ public class WireTapProcessor extends AsyncProcessorSupport
     private final Processor processor;
     private final AsyncProcessor asyncProcessor;
     private final ExchangePattern exchangePattern;
+    private final boolean copy;
     private final ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
     private final LongAdder taskCount = new LongAdder();
+    private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
 
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
     private Expression newExchangeExpression;
     private List<Processor> newExchangeProcessors;
-    private boolean copy;
     private Processor onPrepare;
 
     public WireTapProcessor(SendDynamicProcessor dynamicSendProcessor, Processor processor, String uri,
-                            ExchangePattern exchangePattern,
+                            ExchangePattern exchangePattern, boolean copy,
                             ExecutorService executorService, boolean shutdownExecutorService, boolean dynamicUri) {
         this.dynamicSendProcessor = dynamicSendProcessor;
         this.uri = uri;
         this.processor = processor;
         this.asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         this.exchangePattern = exchangePattern;
+        this.copy = copy;
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
@@ -101,6 +103,9 @@ public class WireTapProcessor extends AsyncProcessorSupport
             public void done(boolean doneSync) {
                 taskCount.decrement();
                 taskFactory.release(WireTapTask.this);
+                if (processorExchangeFactory != null) {
+                    processorExchangeFactory.release(exchange);
+                }
             }
         };
 
@@ -272,7 +277,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     private Exchange configureCopyExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
@@ -282,6 +287,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
     }
 
     private Exchange configureNewExchange(Exchange exchange) {
+        // no copy so lets just create a new exchange always
         return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
     }
 
@@ -310,10 +316,6 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     public boolean isCopy() {
         return copy;
-    }
-
-    public void setCopy(boolean copy) {
-        this.copy = copy;
     }
 
     public Processor getOnPrepare() {
@@ -350,6 +352,12 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doBuild() throws Exception {
+        if (copy) {
+            // create a per processor exchange factory
+            this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+                    .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        }
+
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {
             taskFactory = new PooledTaskFactory(getId()) {
@@ -370,27 +378,27 @@ public class WireTapProcessor extends AsyncProcessorSupport
         }
         LOG.trace("Using TaskFactory: {}", taskFactory);
 
-        ServiceHelper.buildService(taskFactory, processor);
+        ServiceHelper.buildService(processorExchangeFactory, taskFactory, processor);
     }
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(taskFactory, processor);
+        ServiceHelper.initService(processorExchangeFactory, taskFactory, processor);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(taskFactory, processor);
+        ServiceHelper.startService(processorExchangeFactory, taskFactory, processor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(taskFactory, processor);
+        ServiceHelper.stopService(processorExchangeFactory, taskFactory, processor);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(taskFactory, processor);
+        ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, processor);
         if (shutdownExecutorService) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
         }

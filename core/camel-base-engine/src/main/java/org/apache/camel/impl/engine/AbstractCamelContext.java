@@ -130,6 +130,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -271,6 +272,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ExchangeFactory exchangeFactory;
+    private volatile ProcessorExchangeFactory processorExchangeFactory;
     private volatile ReactiveExecutor reactiveExecutor;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile Registry registry;
@@ -3701,6 +3703,7 @@ public abstract class AbstractCamelContext extends BaseService
         asyncProcessorAwaitManager = null;
         exchangeFactory = null;
         exchangeFactoryManager = null;
+        processorExchangeFactory = null;
         registry = null;
     }
 
@@ -4715,6 +4718,25 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public ProcessorExchangeFactory getProcessorExchangeFactory() {
+        if (processorExchangeFactory == null) {
+            synchronized (lock) {
+                if (processorExchangeFactory == null) {
+                    setProcessorExchangeFactory(createProcessorExchangeFactory());
+                }
+            }
+        }
+        return processorExchangeFactory;
+    }
+
+    @Override
+    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
+        // automatic inject camel context
+        processorExchangeFactory.setCamelContext(this);
+        this.processorExchangeFactory = processorExchangeFactory;
+    }
+
+    @Override
     public ReactiveExecutor getReactiveExecutor() {
         if (reactiveExecutor == null) {
             synchronized (lock) {
@@ -4809,6 +4831,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ExchangeFactory createExchangeFactory();
 
     protected abstract ExchangeFactoryManager createExchangeFactoryManager();
+
+    protected abstract ProcessorExchangeFactory createProcessorExchangeFactory();
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
 

@@ -110,6 +110,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -171,6 +172,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final HeadersMapFactory headersMapFactory;
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
+    private final ProcessorExchangeFactory processorExchangeFactory;
     private final ReactiveExecutor reactiveExecutor;
     private final AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     private final ExecutorServiceManager executorServiceManager;
@@ -217,6 +219,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
+        processorExchangeFactory = context.adapt(ExtendedCamelContext.class).getProcessorExchangeFactory();
         reactiveExecutor = context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         asyncProcessorAwaitManager = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         executorServiceManager = context.getExecutorServiceManager();
@@ -1574,6 +1577,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setExchangeFactory(ExchangeFactory exchangeFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ProcessorExchangeFactory getProcessorExchangeFactory() {
+        return processorExchangeFactory;
+    }
+
+    @Override
+    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
         throw new UnsupportedOperationException();
     }
 
