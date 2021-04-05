@@ -16,9 +16,12 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ProcessorExchangeFactory;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PooledObjectFactorySupport;
 import org.slf4j.Logger;
@@ -80,6 +83,11 @@ public class PrototypeProcessorExchangeFactory extends PooledObjectFactorySuppor
     @Override
     public Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {
         return ExchangeHelper.createCorrelatedCopy(exchange, handover);
+    }
+
+    @Override
+    public Exchange create(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
+        return new DefaultExchange(fromEndpoint, exchangePattern);
     }
 
     @Override

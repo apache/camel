@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 
@@ -53,12 +55,17 @@ public interface ProcessorExchangeFactory extends PooledObjectFactory<Exchange>,
     ProcessorExchangeFactory newProcessorExchangeFactory(Processor processor);
 
     /**
-     * Creates a copy of the given {@link Exchange}
+     * Gets a copy of the given {@link Exchange}
      *
      * @param exchange original copy of the exchange
      * @param handover whether the on completion callbacks should be handed over to the new copy.
      */
     Exchange createCorrelatedCopy(Exchange exchange, boolean handover);
+
+    /**
+     * Gets a new {@link Exchange}
+     */
+    Exchange create(Endpoint fromEndpoint, ExchangePattern exchangePattern);
 
     /**
      * Releases the exchange back into the pool

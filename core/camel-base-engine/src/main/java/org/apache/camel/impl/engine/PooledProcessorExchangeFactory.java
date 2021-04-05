@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.PooledExchange;
@@ -78,6 +80,26 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
                 statistics.created.increment();
             }
             answer = pe;
+        } else {
+            if (statisticsEnabled) {
+                statistics.acquired.increment();
+            }
+            // reset exchange for reuse
+            PooledExchange ee = (PooledExchange) answer;
+            ee.reset(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
+    public Exchange create(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
+        Exchange answer = pool.poll();
+        if (answer == null) {
+            // create a new exchange as there was no free from the pool
+            answer = super.create(fromEndpoint, exchangePattern);
+            if (statisticsEnabled) {
+                statistics.created.increment();
+            }
         } else {
             if (statisticsEnabled) {
                 statistics.acquired.increment();

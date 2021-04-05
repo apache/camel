@@ -287,8 +287,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
     }
 
     private Exchange configureNewExchange(Exchange exchange) {
-        // no copy so lets just create a new exchange always
-        return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
+        return processorExchangeFactory.create(exchange.getFromEndpoint(), ExchangePattern.InOnly);
     }
 
     public List<Processor> getNewExchangeProcessors() {
@@ -352,11 +351,11 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doBuild() throws Exception {
-        if (copy) {
-            // create a per processor exchange factory
-            this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
-                    .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
-        }
+        // create a per processor exchange factory
+        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory.setRouteId(getRouteId());
+        this.processorExchangeFactory.setId(getId());
 
         boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
         if (pooled) {
