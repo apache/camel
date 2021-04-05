@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 
@@ -43,7 +44,7 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     }
 
     @Override
-    public void onHit(String uri) {
+    public synchronized void onHit(String uri) {
         map.compute(uri, (key, current) -> {
             if (current == null) {
                 return 1L;
