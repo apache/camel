@@ -49,10 +49,13 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProcessorExchangeFactory;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +65,14 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Resilience Processor")
 public class ResilienceProcessor extends AsyncProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
     private volatile CircuitBreaker circuitBreaker;
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private final CircuitBreakerConfig circuitBreakerConfig;
     private final BulkheadConfig bulkheadConfig;
     private Bulkhead bulkhead;
@@ -78,6 +82,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     private final Processor fallback;
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
+    private ProcessorExchangeFactory processorExchangeFactory;
 
     public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
                                TimeLimiterConfig timeLimiterConfig, Processor processor,
@@ -91,13 +96,45 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doBuild() throws Exception {
-        super.doBuild();
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
         if (timeLimiterConfig != null) {
             timeLimiter = TimeLimiter.of(id, timeLimiterConfig);
         }
         if (bulkheadConfig != null) {
             bulkhead = Bulkhead.of(id, bulkheadConfig);
         }
+
+        // create a per processor exchange factory
+        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory.setRouteId(getRouteId());
+        this.processorExchangeFactory.setId(getId());
+
+        ServiceHelper.buildService(processorExchangeFactory, processor);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (circuitBreaker == null) {
+            circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
+        }
+
+        ServiceHelper.startService(processorExchangeFactory, processor);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+
+        ServiceHelper.stopService(processorExchangeFactory, processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processorExchangeFactory, processor);
     }
 
     @Override
@@ -118,6 +155,16 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public CircuitBreaker getCircuitBreaker() {
@@ -413,15 +460,20 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     private Exchange processTask(Exchange exchange) {
         Exchange copy = null;
         UnitOfWork uow = null;
+        Throwable cause = null;
         try {
             LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
             // prepare a copy of exchange so downstream processors don't
             // cause side-effects if they mutate the exchange
             // in case timeout processing and continue with the fallback etc
-            copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
-            // prepare uow on copy
-            uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
-            copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+            copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+            if (copy.getUnitOfWork() != null) {
+                uow = copy.getUnitOfWork();
+            } else {
+                // prepare uow on copy
+                uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
+                copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+            }
 
             // process the processor until its fully done
             processor.process(copy);
@@ -440,28 +492,18 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         } finally {
             // must done uow
             UnitOfWorkHelper.doneUow(uow, copy);
+            // remember any thrown exception
+            cause = exchange.getException();
         }
 
-        if (exchange.getException() != null) {
+        // and release exchange back in pool
+        processorExchangeFactory.release(exchange);
+
+        if (cause != null) {
             // throw exception so resilient4j know it was a failure
-            throw RuntimeExchangeException.wrapRuntimeException(exchange.getException());
+            throw RuntimeExchangeException.wrapRuntimeException(cause);
         }
         return exchange;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-        if (circuitBreaker == null) {
-            circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-        }
     }
 
     private static final class CircuitBreakerTask implements Callable<Exchange> {
