@@ -45,6 +45,7 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
             id = id.substring(1);
         }
         SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
+        seda.setPollTimeout(10);
         return seda.createConsumer(processor);
     }
 
