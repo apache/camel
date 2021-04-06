@@ -46,10 +46,13 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProcessorExchangeFactory;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.microprofile.faulttolerance.exceptions.CircuitBreakerOpenException;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
@@ -63,13 +66,14 @@ import static io.smallrye.faulttolerance.core.Invocation.invocation;
  */
 @ManagedResource(description = "Managed FaultTolerance Processor")
 public class FaultToleranceProcessor extends AsyncProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 
     private volatile CircuitBreaker circuitBreaker;
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private final FaultToleranceConfiguration config;
     private final Processor processor;
     private final Processor fallbackProcessor;
@@ -77,6 +81,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
     private boolean shutdownScheduledExecutorService;
     private ExecutorService executorService;
     private boolean shutdownExecutorService;
+    private ProcessorExchangeFactory processorExchangeFactory;
 
     public FaultToleranceProcessor(FaultToleranceConfiguration config, Processor processor,
                                    Processor fallbackProcessor) {
@@ -103,6 +108,16 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public CircuitBreaker getCircuitBreaker() {
@@ -209,7 +224,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         // Camel error handler
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
-        Callable<Exchange> task = new CircuitBreakerTask(processor, exchange);
+        Callable<Exchange> task = new CircuitBreakerTask(processorExchangeFactory, processor, exchange);
 
         // circuit breaker
         FaultToleranceStrategy target = circuitBreaker;
@@ -253,6 +268,19 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        // create a per processor exchange factory
+        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory.setRouteId(getRouteId());
+        this.processorExchangeFactory.setId(getId());
+
+        ServiceHelper.buildService(processorExchangeFactory, processor);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
@@ -262,6 +290,8 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     SetOfThrowables.EMPTY, config.getDelay(), config.getRequestVolumeThreshold(), config.getFailureRatio(),
                     config.getSuccessThreshold(), new SystemStopwatch(), null);
         }
+
+        ServiceHelper.initService(processorExchangeFactory, processor);
     }
 
     @Override
@@ -276,6 +306,8 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     config.getBulkheadMaxConcurrentCalls(), config.getBulkheadMaxConcurrentCalls());
             shutdownExecutorService = true;
         }
+
+        ServiceHelper.startService(processorExchangeFactory, processor);
     }
 
     @Override
@@ -288,14 +320,23 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
         }
+
+        ServiceHelper.stopService(processorExchangeFactory, processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processorExchangeFactory, processor);
     }
 
     private static final class CircuitBreakerTask implements Callable<Exchange> {
 
+        private final ProcessorExchangeFactory processorExchangeFactory;
         private final Processor processor;
         private final Exchange exchange;
 
-        private CircuitBreakerTask(Processor processor, Exchange exchange) {
+        private CircuitBreakerTask(ProcessorExchangeFactory processorExchangeFactory, Processor processor, Exchange exchange) {
+            this.processorExchangeFactory = processorExchangeFactory;
             this.processor = processor;
             this.exchange = exchange;
         }
@@ -304,6 +345,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         public Exchange call() throws Exception {
             Exchange copy = null;
             UnitOfWork uow = null;
+            Throwable cause;
 
             // turn of interruption to allow fault tolerance to process the exchange under its handling
             exchange.adapt(ExtendedExchange.class).setInterruptable(false);
@@ -314,10 +356,14 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 // prepare a copy of exchange so downstream processors don't
                 // cause side-effects if they mutate the exchange
                 // in case timeout processing and continue with the fallback etc
-                copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
-                // prepare uow on copy
-                uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
-                copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+                copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+                if (copy.getUnitOfWork() != null) {
+                    uow = copy.getUnitOfWork();
+                } else {
+                    // prepare uow on copy
+                    uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
+                    copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+                }
 
                 // process the processor until its fully done
                 processor.process(copy);
@@ -336,11 +382,16 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             } finally {
                 // must done uow
                 UnitOfWorkHelper.doneUow(uow, copy);
+                // remember any thrown exception
+                cause = exchange.getException();
             }
 
-            if (exchange.getException() != null) {
-                // force exception so the circuit breaker can react
-                throw exchange.getException();
+            // and release exchange back in pool
+            processorExchangeFactory.release(exchange);
+
+            if (cause != null) {
+                // throw exception so resilient4j know it was a failure
+                throw RuntimeExchangeException.wrapRuntimeException(cause);
             }
             return exchange;
         }

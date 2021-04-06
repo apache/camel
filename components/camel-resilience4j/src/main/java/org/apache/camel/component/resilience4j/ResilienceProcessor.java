@@ -460,7 +460,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     private Exchange processTask(Exchange exchange) {
         Exchange copy = null;
         UnitOfWork uow = null;
-        Throwable cause = null;
+        Throwable cause;
         try {
             LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
             // prepare a copy of exchange so downstream processors don't
