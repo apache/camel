@@ -44,7 +44,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
@@ -253,10 +252,10 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             target.apply(new InvocationContext(task));
         } catch (CircuitBreakerOpenException e) {
             // the circuit breaker triggered a call rejected
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
         } catch (Exception e) {
             // some other kind of exception
             exchange.setException(e);
@@ -374,8 +373,8 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 } else {
                     // copy the result as its regarded as success
                     ExchangeHelper.copyResults(exchange, copy);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
                 }
             } catch (Exception e) {
                 exchange.setException(e);
@@ -414,18 +413,18 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 if (throwable instanceof TimeoutException) {
                     // the circuit breaker triggered a timeout (and there is no
                     // fallback) so lets mark the exchange as failed
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_TIMED_OUT, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
                     exchange.setException(throwable);
                     return exchange;
                 } else if (throwable instanceof CircuitBreakerOpenException) {
                     // the circuit breaker triggered a call rejected
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
                     return exchange;
                 } else {
                     // throw exception so fault tolerance know it was a failure
@@ -434,9 +433,9 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             }
 
             // fallback route is handling the exception so its short-circuited
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {

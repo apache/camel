@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.CircuitBreakerConstants;
+
 /**
  * An enum of common and known keys for exchange properties used by camel-core.
  */
@@ -32,6 +34,11 @@ public enum ExchangePropertyKey {
     BATCH_INDEX(Exchange.BATCH_INDEX),
     BATCH_SIZE(Exchange.BATCH_SIZE),
     CHARSET_NAME(Exchange.CHARSET_NAME),
+    CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION),
+    CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK),
+    CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED),
+    CIRCUIT_BREAKER_RESPONSE_TIMED_OUT(CircuitBreakerConstants.RESPONSE_TIMED_OUT),
+    CIRCUIT_BREAKER_RESPONSE_REJECTED(CircuitBreakerConstants.RESPONSE_REJECTED),
     CLAIM_CHECK_REPOSITORY(Exchange.CLAIM_CHECK_REPOSITORY),
     CORRELATION_ID(Exchange.CORRELATION_ID),
     DUPLICATE_MESSAGE(Exchange.DUPLICATE_MESSAGE),
@@ -100,6 +107,16 @@ public enum ExchangePropertyKey {
                 return BATCH_SIZE;
             case Exchange.CHARSET_NAME:
                 return CHARSET_NAME;
+            case CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION:
+                return CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION;
+            case CircuitBreakerConstants.RESPONSE_FROM_FALLBACK:
+                return CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK;
+            case CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED:
+                return CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED;
+            case CircuitBreakerConstants.RESPONSE_TIMED_OUT:
+                return CIRCUIT_BREAKER_RESPONSE_TIMED_OUT;
+            case CircuitBreakerConstants.RESPONSE_REJECTED:
+                return CIRCUIT_BREAKER_RESPONSE_REJECTED;
             case Exchange.CLAIM_CHECK_REPOSITORY:
                 return CLAIM_CHECK_REPOSITORY;
             case Exchange.CORRELATION_ID:
