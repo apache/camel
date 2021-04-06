@@ -421,6 +421,8 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         // create a per processor exchange factory
         this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory.setRouteId(getRouteId());
+        this.processorExchangeFactory.setId(getId());
 
         if (aggregationStrategy == null) {
             aggregationStrategy = defaultAggregationStrategy();
