@@ -557,7 +557,7 @@ This operation will return an S3Object instance related to the camelKey object i
 
 This operation will return a download link url for the file camel-key in the bucket mycamelbucket and region region
 
-== Stream mode
+== Streaming Upload mode
 
 With the stream mode enabled users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
 The upload will be completed when: the batchSize has been completed or the batchMessageNumber has been reached.
@@ -569,11 +569,11 @@ As an example:
 --------------------------------------------------------------------------------
 from(kafka("topic1").brokers("localhost:9092"))
         .log("Kafka Message is: ${body}")
-        .to(aws2S3("camel-bucket").streamMode(true).batchMessageNumber(25).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic1}}/{{kafkaTopic1}}.txt"));
+        .to(aws2S3("camel-bucket").streamingUploadMode(true).batchMessageNumber(25).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic1}}/{{kafkaTopic1}}.txt"));
 
 from(kafka("topic2").brokers("localhost:9092"))
          .log("Kafka Message is: ${body}")
-         .to(aws2S3("camel-bucket").streamMode(true).batchMessageNumber(25).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic2}}/{{kafkaTopic2}}.txt"));
+         .to(aws2S3("camel-bucket").streamingUploadMode(true).batchMessageNumber(25).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic2}}/{{kafkaTopic2}}.txt"));
 --------------------------------------------------------------------------------
 
 The default size for a batch is 1 Mb, but you can adjust it according to your requirements.
