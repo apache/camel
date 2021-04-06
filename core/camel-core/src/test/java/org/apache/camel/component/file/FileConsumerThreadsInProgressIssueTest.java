@@ -101,14 +101,14 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            Integer integer = duplicate.get(exchange.toString());
+            Integer integer = duplicate.get(exchange.getExchangeId());
             if (integer == null) {
-                duplicate.put(exchange.toString(), 1);
+                duplicate.put(exchange.getExchangeId(), 1);
             } else {
                 integer++;
-                duplicate.put(exchange.toString(), integer);
+                duplicate.put(exchange.getExchangeId(), integer);
             }
-            log.info("Process called for-" + exchange);
+            log.info("Process called for-" + exchange.getExchangeId());
             Thread.sleep(20);
         }
 
