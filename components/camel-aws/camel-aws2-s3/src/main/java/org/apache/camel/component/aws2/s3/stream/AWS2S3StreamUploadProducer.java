@@ -66,6 +66,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     AtomicInteger part = new AtomicInteger();
     UUID id;
     String dynamicKeyName;
+    String keyName;
     CompleteMultipartUploadResponse uploadResult;
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
@@ -129,7 +130,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         buffer.write(IoUtils.toByteArray(is));
 
-        final String keyName = getConfiguration().getKeyName();
+        keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String fileName = AWS2S3Utils.determineFileName(keyName);
         final String extension = AWS2S3Utils.determineFileExtension(keyName);
         if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
@@ -174,7 +175,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 createMultipartUploadRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
             }
         }
-
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
         if (index.get() == 1) {
             initResponse
@@ -228,7 +228,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 .key(dynamicKeyName).uploadId(initResponse.uploadId())
                 .partNumber(index.get()).build();
 
-        LOG.trace("Uploading part {} at index {} for {}", part, index, getConfiguration().getKeyName());
+        LOG.trace("Uploading part {} at index {} for {}", part, index, keyName);
 
         String etag = getEndpoint().getS3Client()
                 .uploadPart(uploadRequest, RequestBody.fromBytes(buffer.toByteArray())).eTag();

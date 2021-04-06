@@ -96,7 +96,7 @@ public final class AWS2S3Utils {
             key = configuration.getKeyName();
         }
         if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key header missing.");
+            throw new IllegalArgumentException("AWS S3 Key missing.");
         }
         return key;
     }
