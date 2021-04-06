@@ -64,6 +64,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
     private HeaderFilterStrategy headerFilterStrategy;
 
+    private String contentLanguage;
+
     public DefaultCxfRsBinding() {
     }
 
@@ -264,13 +266,13 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             contentType = MediaType.WILDCARD;
         }
         String contentEncoding = camelMessage.getHeader(Exchange.CONTENT_ENCODING, String.class);
-        if (webClient != null) {
+        if (webClient != null && contentLanguage == null) {
             try {
                 Method getStateMethod = AbstractClient.class.getDeclaredMethod("getState");
                 getStateMethod.setAccessible(true);
                 ClientState clientState = (ClientState) getStateMethod.invoke(webClient);
                 if (clientState.getRequestHeaders().containsKey(HttpHeaders.CONTENT_LANGUAGE)) {
-                    String contentLanguage = clientState.getRequestHeaders()
+                    contentLanguage = clientState.getRequestHeaders()
                             .getFirst(HttpHeaders.CONTENT_LANGUAGE);
                     if (contentLanguage != null) {
                         return Entity.entity(body, new Variant(
@@ -279,9 +281,12 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                     }
                 }
             } catch (Exception ex) {
-                LOG.warn("Cannot retrieve CONTENT_LANGUAGE from WebClient", ex);
+                LOG.warn(
+                        "Cannot retrieve CONTENT_LANGUAGE from WebClient. This exception is ignored, and US Locale will be used",
+                        ex);
             }
         }
+        contentLanguage = Locale.US.getLanguage();
         return Entity.entity(body, new Variant(MediaType.valueOf(contentType), Locale.US, contentEncoding));
     }
 
