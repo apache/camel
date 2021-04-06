@@ -59,7 +59,7 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
 
     @Override
     public boolean hasMessageId() {
-        return messageId != null;
+        return delegate.getMessageId() != null;
     }
 
     @Override
