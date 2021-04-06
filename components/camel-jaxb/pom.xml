@@ -38,6 +38,7 @@
             javax.xml.bind*;version="[2.2,3.0)",
             *
         </camel.osgi.import>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>
