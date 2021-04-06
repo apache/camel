@@ -34,6 +34,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -75,6 +76,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     private boolean shareUnitOfWork;
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
+    private ProcessorExchangeFactory processorExchangeFactory;
 
     public Enricher(Expression expression) {
         this.expression = expression;
@@ -246,9 +248,6 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                     } catch (Throwable e) {
                         // if the aggregationStrategy threw an exception, set it on the original exchange
                         exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
-                        callback.done(false);
-                        // we failed so break out now
-                        return;
                     }
                 }
 
@@ -265,6 +264,9 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                 if (prototypeEndpoint) {
                     ServiceHelper.stopAndShutdownService(endpoint);
                 }
+
+                // and release resource exchange back in pool
+                processorExchangeFactory.release(resourceExchange);
 
                 callback.done(false);
             }
@@ -308,9 +310,6 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             } catch (Throwable e) {
                 // if the aggregationStrategy threw an exception, set it on the original exchange
                 exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
-                callback.done(true);
-                // we failed so break out now
-                return true;
             }
         }
 
@@ -327,6 +326,9 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         if (prototypeEndpoint) {
             ServiceHelper.stopAndShutdownService(endpoint);
         }
+
+        // and release resource exchange back in pool
+        processorExchangeFactory.release(resourceExchange);
 
         callback.done(true);
         return true;
@@ -387,7 +389,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
      */
     protected Exchange createResourceExchange(Exchange source, ExchangePattern pattern) {
         // copy exchange, and do not share the unit of work
-        Exchange target = ExchangeHelper.createCorrelatedCopy(source, false);
+        Exchange target = processorExchangeFactory.createCorrelatedCopy(source, false);
         target.setPattern(pattern);
 
         // if we share unit of work, we need to prepare the resource exchange
@@ -415,14 +417,22 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doBuild() throws Exception {
+        // create a per processor exchange factory
+        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+
         if (aggregationStrategy == null) {
             aggregationStrategy = defaultAggregationStrategy();
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
+        ServiceHelper.buildService(processorExchangeFactory);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         if (producerCache == null) {
             if (cacheSize < 0) {
                 producerCache = new EmptyProducerCache(this, camelContext);
@@ -433,12 +443,12 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             }
         }
 
-        ServiceHelper.startService(producerCache, aggregationStrategy);
+        ServiceHelper.startService(processorExchangeFactory, producerCache, aggregationStrategy);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(aggregationStrategy, producerCache);
+        ServiceHelper.stopService(aggregationStrategy, producerCache, processorExchangeFactory);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
