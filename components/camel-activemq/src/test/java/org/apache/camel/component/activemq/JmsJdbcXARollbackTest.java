@@ -30,17 +30,18 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.SharedDeadLetterStrategy;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsMessage;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +56,12 @@ public class JmsJdbcXARollbackTest extends ActiveMQSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXARollbackTest.class);
 
-    BrokerService broker;
+    @RegisterExtension
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withTcpTransport()
+            .build();
+
     int messageCount;
 
     public java.sql.Connection initDb() throws Exception {
@@ -145,28 +151,10 @@ public class JmsJdbcXARollbackTest extends ActiveMQSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker() throws Exception {
-        return createBroker(true, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        // make broker available to recovery processing on app context start
-        try {
-            broker = createBroker();
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
-
-        return super.createApplicationContext();
-    }
-
     @Override
     protected Map<String, String> getTranslationProperties() {
         Map<String, String> map = super.getTranslationProperties();
-        map.put("brokerUri", getBrokerUri(broker));
+        map.put("brokerUri", service.serviceAddress());
         return map;
     }
 

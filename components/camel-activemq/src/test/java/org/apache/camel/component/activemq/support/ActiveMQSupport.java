@@ -18,19 +18,9 @@ package org.apache.camel.component.activemq.support;
 
 import java.nio.file.Path;
 
-import org.apache.activemq.broker.BrokerService;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
 public interface ActiveMQSupport {
-
-    default String getBrokerUri(BrokerService broker) {
-        try {
-            return broker.getTransportConnectors().get(0).getPublishableConnectString();
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
-    }
 
     default String vmUri() {
         return "vm://" + getClass().getSimpleName();
@@ -42,22 +32,5 @@ public interface ActiveMQSupport {
 
     default Path testDirectory() {
         return CamelTestSupport.testDirectory(getClass(), false);
-    }
-
-    default BrokerService createBroker(boolean deleteAllMessages, boolean tcpTransport) throws Exception {
-        return createBroker(null, deleteAllMessages, tcpTransport);
-    }
-
-    default BrokerService createBroker(String name, boolean deleteAllMessages, boolean tcpTransport) throws Exception {
-        BrokerService brokerService = new BrokerService();
-        brokerService.setDeleteAllMessagesOnStartup(deleteAllMessages);
-        brokerService.setBrokerName(getClass().getSimpleName() + (name != null ? "-" + name : ""));
-        brokerService.setAdvisorySupport(false);
-        brokerService.setUseJmx(false);
-        brokerService.setDataDirectory(testDirectory().toString());
-        if (tcpTransport) {
-            brokerService.addConnector("tcp://0.0.0.0:0");
-        }
-        return brokerService;
     }
 }

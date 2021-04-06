@@ -36,6 +36,8 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.TransactionId;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +104,16 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
 
         LOG.info("Broker stopped, restarting...");
         BrokerService oldBroker = broker;
-        broker = createBroker(false, false);
-        broker.addConnector(getBrokerUri(oldBroker));
+
+        broker = ActiveMQEmbeddedServiceBuilder
+                .defaultBroker()
+                .withDeleteAllMessagesOnStartup(false)
+                .withBrokerName(JmsJdbcXATest.class)
+                .withDataDirectory(testDirectory().toString())
+                .build()
+                .getBrokerService();
+
+        broker.addConnector(ActiveMQEmbeddedService.getBrokerUri(oldBroker, 0));
         broker.start();
         broker.waitUntilStarted();
         assertEquals(1, broker.getBroker().getPreparedTransactions(null).length, "pending transactions");
@@ -157,12 +167,8 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
     @Override
     protected Map<String, String> getTranslationProperties() {
         Map<String, String> map = super.getTranslationProperties();
-        map.put("brokerUri", getBrokerUri(broker));
+        map.put("brokerUri", ActiveMQEmbeddedService.getBrokerUri(broker, 0));
         return map;
-    }
-
-    private BrokerService createBroker(boolean deleteAllMessages) throws Exception {
-        return createBroker(deleteAllMessages, true);
     }
 
     @SuppressWarnings("unchecked")
@@ -170,7 +176,14 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         // make broker available to recovery processing on app context start
         try {
-            broker = createBroker(true);
+            broker = ActiveMQEmbeddedServiceBuilder
+                    .defaultBroker()
+                    .withBrokerName(JmsJdbcXATest.class)
+                    .withTcpTransport()
+                    .withDataDirectory(testDirectory().toString())
+                    .build()
+                    .getBrokerService();
+
             broker.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
                 public void commitTransaction(ConnectionContext context, TransactionId xid, boolean onePhase)
