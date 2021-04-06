@@ -73,10 +73,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        timeoutCheckerExecutorService
-                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                        "timeout_checker");
-        timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(), 10, 10, TimeUnit.SECONDS);
+        if (ObjectHelper.isNotEmpty(getConfiguration().getStreamingUploadTimeout())) {
+            timeoutCheckerExecutorService
+                    = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "timeout_checker");
+            timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(), getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(), TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
@@ -88,6 +90,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     completeUpload();
                 }
             }
+        }
+        if (timeoutCheckerExecutorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(timeoutCheckerExecutorService);
+            timeoutCheckerExecutorService = null;
         }
         super.doStop();
 
@@ -276,7 +282,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (s3ProducerToString == null) {
-            s3ProducerToString = "S3Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            s3ProducerToString = "AWS2S3StreamUploadProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return s3ProducerToString;
     }

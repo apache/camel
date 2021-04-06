@@ -112,13 +112,15 @@ public class AWS2S3Configuration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
     @UriParam(defaultValue = "false", label = "producer")
-    private boolean streamMode;
+    private boolean streamingUploadMode;
     @UriParam(defaultValue = "10", label = "producer")
     private int batchMessageNumber = 10;
     @UriParam(defaultValue = "1000000", label = "producer")
     private int batchSize = 1000000;
     @UriParam(defaultValue = "progressive", label = "producer")
     private AWSS3NamingStrategyEnum namingStrategy = AWSS3NamingStrategyEnum.progressive;
+    @UriParam(label = "producer")
+    private long streamingUploadTimeout;
 
     public long getPartSize() {
         return partSize;
@@ -584,15 +586,15 @@ public class AWS2S3Configuration implements Cloneable {
         this.amazonS3Presigner = amazonS3Presigner;
     }
 
-    public boolean isStreamMode() {
-        return streamMode;
+    public boolean isStreamingUploadMode() {
+        return streamingUploadMode;
     }
 
     /**
      * When stream mode is true the upload to bucket will be done in streaming
      */
-    public void setStreamMode(boolean streamMode) {
-        this.streamMode = streamMode;
+    public void setStreamingUploadMode(boolean streamingUploadMode) {
+        this.streamingUploadMode = streamingUploadMode;
     }
 
     public int getBatchMessageNumber() {
@@ -626,6 +628,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setNamingStrategy(AWSS3NamingStrategyEnum namingStrategy) {
         this.namingStrategy = namingStrategy;
+    }
+
+    public long getStreamingUploadTimeout() {
+        return streamingUploadTimeout;
+    }
+
+    /**
+     * While streaming upload mode is true, this option set the timeout to complete upload
+     */
+    public void setStreamingUploadTimeout(long streamingUploadTimeout) {
+        this.streamingUploadTimeout = streamingUploadTimeout;
     }
 
     public AWS2S3Configuration copy() {
