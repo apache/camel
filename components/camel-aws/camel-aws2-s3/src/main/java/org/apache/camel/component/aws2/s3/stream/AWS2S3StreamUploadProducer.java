@@ -70,6 +70,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
 
+    public AWS2S3StreamUploadProducer(final Endpoint endpoint) {
+        super(endpoint);
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -77,7 +81,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             timeoutCheckerExecutorService
                     = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                             "timeout_checker");
-            timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(),
+            timeoutCheckerExecutorService.scheduleAtFixedRate(new StreamingUploadTimeoutTask(),
                     getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(),
                     TimeUnit.MILLISECONDS);
         }
@@ -104,7 +108,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     /**
      * Background task that triggers completion based on interval.
      */
-    private final class AggregationIntervalTask implements Runnable {
+    private final class StreamingUploadTimeoutTask implements Runnable {
 
         @Override
         public void run() {
@@ -117,10 +121,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 }
             }
         }
-    }
-
-    public AWS2S3StreamUploadProducer(final Endpoint endpoint) {
-        super(endpoint);
     }
 
     @Override
