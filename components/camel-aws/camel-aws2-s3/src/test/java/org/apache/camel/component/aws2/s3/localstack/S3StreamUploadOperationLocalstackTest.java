@@ -56,7 +56,7 @@ public class S3StreamUploadOperationLocalstackTest extends Aws2S3BaseTest {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
         });
-        
+
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(40, resp.size());
     }
