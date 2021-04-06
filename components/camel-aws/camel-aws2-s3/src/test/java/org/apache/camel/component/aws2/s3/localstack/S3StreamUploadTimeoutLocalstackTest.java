@@ -44,9 +44,6 @@ public class S3StreamUploadTimeoutLocalstackTest extends Aws2S3BaseTest {
 
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(1, resp.size());
-        for (S3Object s3Object : resp) {
-            System.err.println(s3Object.key());
-        }
     }
 
     @Override
