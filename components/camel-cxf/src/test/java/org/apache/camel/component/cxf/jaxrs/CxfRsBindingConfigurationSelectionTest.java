@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,6 +132,14 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
         @Override
         public MultivaluedMap<String, String> bindCamelHeadersToRequestHeaders(
                 Map<String, Object> camelHeaders, Exchange camelExchange)
+                throws Exception {
+            return null;
+        }
+
+        @Override
+        public Entity<Object> bindCamelMessageToRequestEntity(
+                Object body, Message camelMessage,
+                Exchange camelExchange, WebClient webClient)
                 throws Exception {
             return null;
         }

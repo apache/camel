@@ -27,6 +27,7 @@ import java.util.TreeMap;
 
 import javax.security.auth.Subject;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -43,6 +44,9 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
+import org.apache.cxf.jaxrs.client.AbstractClient;
+import org.apache.cxf.jaxrs.client.ClientState;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
@@ -244,6 +248,14 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     @Override
     public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange)
             throws Exception {
+        return bindCamelMessageToRequestEntity(body, camelMessage, camelExchange, null);
+    }
+
+    @Override
+    public Entity<Object> bindCamelMessageToRequestEntity(
+            Object body, Message camelMessage, Exchange camelExchange,
+            WebClient webClient)
+            throws Exception {
         if (body == null) {
             return null;
         }
@@ -252,6 +264,24 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             contentType = MediaType.WILDCARD;
         }
         String contentEncoding = camelMessage.getHeader(Exchange.CONTENT_ENCODING, String.class);
+        if (webClient != null) {
+            try {
+                Method getStateMethod = AbstractClient.class.getDeclaredMethod("getState");
+                getStateMethod.setAccessible(true);
+                ClientState clientState = (ClientState) getStateMethod.invoke(webClient);
+                if (clientState.getRequestHeaders().containsKey(HttpHeaders.CONTENT_LANGUAGE)) {
+                    String contentLanguage = clientState.getRequestHeaders()
+                            .getFirst(HttpHeaders.CONTENT_LANGUAGE);
+                    if (contentLanguage != null) {
+                        return Entity.entity(body, new Variant(
+                                MediaType.valueOf(contentType),
+                                new Locale(contentLanguage), contentEncoding));
+                    }
+                }
+            } catch (Exception ex) {
+                LOG.warn("Cannot retrieve CONTENT_LANGUAGE from WebClient", ex);
+            }
+        }
         return Entity.entity(body, new Variant(MediaType.valueOf(contentType), Locale.US, contentEncoding));
     }
 
