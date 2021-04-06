@@ -2251,11 +2251,12 @@ public interface AWS2S3EndpointBuilderFactory {
          * Default: false
          * Group: producer
          * 
-         * @param streamMode the value to set
+         * @param streamingUploadMode the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointProducerBuilder streamMode(boolean streamMode) {
-            doSetProperty("streamMode", streamMode);
+        default AWS2S3EndpointProducerBuilder streamingUploadMode(
+                boolean streamingUploadMode) {
+            doSetProperty("streamingUploadMode", streamingUploadMode);
             return this;
         }
         /**
@@ -2268,11 +2269,44 @@ public interface AWS2S3EndpointBuilderFactory {
          * Default: false
          * Group: producer
          * 
-         * @param streamMode the value to set
+         * @param streamingUploadMode the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointProducerBuilder streamMode(String streamMode) {
-            doSetProperty("streamMode", streamMode);
+        default AWS2S3EndpointProducerBuilder streamingUploadMode(
+                String streamingUploadMode) {
+            doSetProperty("streamingUploadMode", streamingUploadMode);
+            return this;
+        }
+        /**
+         * While streaming upload mode is true, this option set the timeout to
+         * complete upload.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamingUploadTimeout the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamingUploadTimeout(
+                long streamingUploadTimeout) {
+            doSetProperty("streamingUploadTimeout", streamingUploadTimeout);
+            return this;
+        }
+        /**
+         * While streaming upload mode is true, this option set the timeout to
+         * complete upload.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamingUploadTimeout the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder streamingUploadTimeout(
+                String streamingUploadTimeout) {
+            doSetProperty("streamingUploadTimeout", streamingUploadTimeout);
             return this;
         }
         /**

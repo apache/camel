@@ -55,7 +55,7 @@ public class S3StreamUploadTimeoutLocalstackTest extends Aws2S3BaseTest {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint1
-                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random";
+                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random&streamingUploadTimeout=10000";
 
                 from("direct:stream1").to(awsEndpoint1).to("mock:result");
 

@@ -73,11 +73,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (ObjectHelper.isNotEmpty(getConfiguration().getStreamingUploadTimeout())) {
+        if (getConfiguration().getStreamingUploadTimeout() > 0) {
             timeoutCheckerExecutorService
                     = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "timeout_checker");
-            timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(), getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(), TimeUnit.MILLISECONDS);
+                            "timeout_checker");
+            timeoutCheckerExecutorService.scheduleAtFixedRate(new AggregationIntervalTask(),
+                    getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(),
+                    TimeUnit.MILLISECONDS);
         }
     }
 

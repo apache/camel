@@ -47,7 +47,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS 2 S3 Storage Service component supports 47 options, which are listed below.
+The AWS 2 S3 Storage Service component supports 48 options, which are listed below.
 
 
 
@@ -94,7 +94,8 @@ The AWS 2 S3 Storage Service component supports 47 options, which are listed bel
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange |  | AWS2S3Operations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
-| *streamMode* (producer) | When stream mode is true the upload to bucket will be done in streaming | false | boolean
+| *streamingUploadMode* (producer) | When stream mode is true the upload to bucket will be done in streaming | false | boolean
+| *streamingUploadTimeout* (producer) | While streaming upload mode is true, this option set the timeout to complete upload |  | long
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
@@ -133,7 +134,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (65 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -184,7 +185,8 @@ with the following path and query parameters:
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 7 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteBucket, listBuckets, getObject, getObjectRange |  | AWS2S3Operations
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
-| *streamMode* (producer) | When stream mode is true the upload to bucket will be done in streaming | false | boolean
+| *streamingUploadMode* (producer) | When stream mode is true the upload to bucket will be done in streaming | false | boolean
+| *streamingUploadTimeout* (producer) | While streaming upload mode is true, this option set the timeout to complete upload |  | long
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean

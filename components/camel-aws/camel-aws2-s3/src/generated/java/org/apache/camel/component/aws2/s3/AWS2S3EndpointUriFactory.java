@@ -20,12 +20,11 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(66);
+        Set<String> props = new HashSet<>(67);
         props.add("customerAlgorithm");
         props.add("fileName");
         props.add("batchMessageNumber");
         props.add("useCustomerKey");
-        props.add("streamMode");
         props.add("bucketNameOrArn");
         props.add("customerKeyId");
         props.add("prefix");
@@ -37,6 +36,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("bridgeErrorHandler");
         props.add("awsKMSKeyId");
         props.add("delimiter");
+        props.add("streamingUploadMode");
         props.add("amazonS3Client");
         props.add("greedy");
         props.add("maxMessagesPerPoll");
@@ -45,6 +45,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("moveAfterRead");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
+        props.add("streamingUploadTimeout");
         props.add("proxyHost");
         props.add("backoffIdleThreshold");
         props.add("trustAllCertificates");

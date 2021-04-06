@@ -730,11 +730,28 @@ public interface Aws2S3ComponentBuilderFactory {
          * Default: false
          * Group: producer
          * 
-         * @param streamMode the value to set
+         * @param streamingUploadMode the value to set
          * @return the dsl builder
          */
-        default Aws2S3ComponentBuilder streamMode(boolean streamMode) {
-            doSetProperty("streamMode", streamMode);
+        default Aws2S3ComponentBuilder streamingUploadMode(
+                boolean streamingUploadMode) {
+            doSetProperty("streamingUploadMode", streamingUploadMode);
+            return this;
+        }
+        /**
+         * While streaming upload mode is true, this option set the timeout to
+         * complete upload.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamingUploadTimeout the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder streamingUploadTimeout(
+                long streamingUploadTimeout) {
+            doSetProperty("streamingUploadTimeout", streamingUploadTimeout);
             return this;
         }
         /**
@@ -893,7 +910,8 @@ public interface Aws2S3ComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((AWS2S3Component) component).setOperation((org.apache.camel.component.aws2.s3.AWS2S3Operations) value); return true;
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
-            case "streamMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamMode((boolean) value); return true;
+            case "streamingUploadMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadMode((boolean) value); return true;
+            case "streamingUploadTimeout": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadTimeout((long) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
