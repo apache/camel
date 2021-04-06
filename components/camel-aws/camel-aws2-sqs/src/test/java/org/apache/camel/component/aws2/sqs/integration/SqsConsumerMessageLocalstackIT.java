@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
+package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class SqsProducerDeleteMessageLocalstackTest extends Aws2SQSBaseTest {
+public class SqsConsumerMessageLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -39,7 +39,13 @@ public class SqsProducerDeleteMessageLocalstackTest extends Aws2SQSBaseTest {
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Test sqs");
+                exchange.getIn().setBody("ignore");
+            }
+        });
+
+        exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("test1");
             }
         });
 
@@ -54,11 +60,11 @@ public class SqsProducerDeleteMessageLocalstackTest extends Aws2SQSBaseTest {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
-                fromF("aws2-sqs://%s?deleteAfterRead=false&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}")
-                        .toF("aws2-sqs://%s?operation=deleteMessage", sharedNameGenerator.getName())
-                        .log("${body}")
-                        .log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
+                fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true",
+                        sharedNameGenerator.getName())
+                                .startupOrder(1)
+                                .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                                .to("mock:result");
             }
         };
     }

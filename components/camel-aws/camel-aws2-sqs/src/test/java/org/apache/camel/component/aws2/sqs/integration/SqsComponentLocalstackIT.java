@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
+package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SqsComponentLocalstackTest extends Aws2SQSBaseTest {
+public class SqsComponentLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;

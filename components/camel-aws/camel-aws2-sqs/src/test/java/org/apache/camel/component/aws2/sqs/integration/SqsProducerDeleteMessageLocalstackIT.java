@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
+package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -22,11 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class SqsProducerBatchSendWithSeparatorLocalstackTest extends Aws2SQSBaseTest {
+public class SqsProducerDeleteMessageLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -36,11 +35,11 @@ public class SqsProducerBatchSendWithSeparatorLocalstackTest extends Aws2SQSBase
 
     @Test
     public void sendInOnly() throws Exception {
-        result.expectedMessageCount(5);
+        result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("1,2,3,4,5");
+                exchange.getIn().setBody("Test sqs");
             }
         });
 
@@ -53,11 +52,13 @@ public class SqsProducerBatchSendWithSeparatorLocalstackTest extends Aws2SQSBase
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
-                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
+                from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
-                fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}").to("mock:result");
+                fromF("aws2-sqs://%s?deleteAfterRead=false&autoCreateQueue=true", sharedNameGenerator.getName())
+                        .startupOrder(1).log("${body}")
+                        .toF("aws2-sqs://%s?operation=deleteMessage", sharedNameGenerator.getName())
+                        .log("${body}")
+                        .log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
             }
         };
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
+package org.apache.camel.component.aws2.sqs.integration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,7 @@ import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class SqsProducerBatchSendFifoLocalstackTest extends Aws2SQSBaseTest {
+public class SqsProducerBatchSendFifoLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;

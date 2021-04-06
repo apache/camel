@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
+package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.sqs.Sqs2Component;
