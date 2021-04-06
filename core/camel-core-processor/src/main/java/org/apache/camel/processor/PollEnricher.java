@@ -279,7 +279,9 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 LOG.debug("Consumer receiveNoWait: {}", consumer);
                 resourceExchange = consumer.receiveNoWait();
             } else {
-                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                }
                 resourceExchange = consumer.receive(timeout);
             }
 
