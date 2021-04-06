@@ -58,6 +58,7 @@ import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InternalProcessorFactory;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
@@ -165,6 +166,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private final InternalProcessorFactory internalProcessorFactory;
     private final Route route;
     private final ReactiveExecutor reactiveExecutor;
+    private ProcessorExchangeFactory processorExchangeFactory;
     private Processor errorHandler;
     private String id;
     private String routeId;
@@ -264,6 +266,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return errorHandler;
     }
 
+    public ProcessorExchangeFactory getProcessorExchangeFactory() {
+        return processorExchangeFactory;
+    }
+
+    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
+        this.processorExchangeFactory = processorExchangeFactory;
+    }
+
     @Override
     public String getTraceLabel() {
         return "multicast";
@@ -275,6 +285,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doBuild() throws Exception {
+        if (processorExchangeFactory != null) {
+            processorExchangeFactory.setId(id);
+            processorExchangeFactory.setRouteId(routeId);
+        }
+
         // eager load classes
         Object dummy = new MulticastReactiveTask();
         LOG.trace("Loaded {}", dummy.getClass().getName());
@@ -288,6 +303,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
         Object dummy5 = new DefaultProcessorExchangePair(0, null, null, null);
         LOG.trace("Loaded {}", dummy5.getClass().getName());
+
+        ServiceHelper.buildService(processorExchangeFactory);
     }
 
     @Override
@@ -298,6 +315,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 wrapInErrorHandler(route, exchange, processor);
             }
         }
+
+        ServiceHelper.initService(processorExchangeFactory);
     }
 
     @Override
@@ -772,6 +791,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
             Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
             AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
+        if (processorExchangeFactory != null) {
+            // the exchanges on the pairs was created with a factory, so they should be released
+            Iterator<ProcessorExchangePair> it = pairs.iterator();
+            while (it.hasNext()) {
+                ProcessorExchangePair pair = it.next();
+                processorExchangeFactory.release(pair.getExchange());
+            }
+        }
         // we are done so close the pairs iterator
         if (pairs instanceof Closeable) {
             IOHelper.close((Closeable) pairs, "pairs", LOG);
@@ -897,7 +924,12 @@ public class MulticastProcessor extends AsyncProcessorSupport
         int index = 0;
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
-            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+            Exchange copy;
+            if (processorExchangeFactory != null) {
+                copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+            } else {
+                copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+            }
 
             if (streamCache != null) {
                 if (index > 0) {
@@ -1082,7 +1114,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
 
-        ServiceHelper.startService(aggregationStrategy, processors);
+        ServiceHelper.startService(aggregationStrategy, processors, processorExchangeFactory);
     }
 
     /**
@@ -1099,12 +1131,12 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy);
+        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy);
+        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
         errorHandlers.clear();
 

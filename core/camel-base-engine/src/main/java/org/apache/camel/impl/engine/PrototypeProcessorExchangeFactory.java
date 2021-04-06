@@ -130,7 +130,7 @@ public class PrototypeProcessorExchangeFactory extends PooledObjectFactorySuppor
                 boolean leak = created + acquired > released + discarded;
                 if (leak) {
                     long leaks = (created + acquired) - (released + discarded);
-                    log.info(
+                    log.warn(
                             "{} {} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
                             name, rid, pid, leaks, pooled, created, acquired, released, discarded);
                 } else {

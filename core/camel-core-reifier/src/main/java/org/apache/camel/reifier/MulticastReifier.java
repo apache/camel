@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.MulticastDefinition;
@@ -30,6 +31,7 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 
 public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
@@ -77,6 +79,12 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
                 camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
                 isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                 isStopOnAggregateException);
+
+        // multicast EIP supports exchange pooling so lets inject the factory for this
+        ProcessorExchangeFactory pef = camelContext.adapt(ExtendedCamelContext.class)
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(answer);
+        answer.setProcessorExchangeFactory(pef);
+
         return answer;
     }
 

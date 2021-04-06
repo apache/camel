@@ -67,9 +67,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             // do not reuse message id on copy
             pe.getIn().setMessageId(null);
             // do not share the unit of work
-            if (pe.getUnitOfWork() != null) {
-                pe.getUnitOfWork().reset();
-            }
+            pe.setUnitOfWork(null);
             if (handover) {
                 // Need to hand over the completion for async invocation
                 pe.adapt(ExtendedExchange.class).handoverCompletions(exchange);

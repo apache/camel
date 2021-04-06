@@ -152,7 +152,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
                 boolean leak = created + acquired > released + discarded;
                 if (leak) {
                     long leaks = (created + acquired) - (released + discarded);
-                    log.info(
+                    log.warn(
                             "{} {} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
                             name, id, uri, leaks, pooled, created, acquired, released, discarded);
                 } else {
