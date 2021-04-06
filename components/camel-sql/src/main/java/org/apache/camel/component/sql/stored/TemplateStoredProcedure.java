@@ -48,6 +48,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
         setFunction(function);
         setDataSource(jdbcTemplate.getDataSource());
 
+        setQueryTimeout(jdbcTemplate.getQueryTimeout());
         setSql(template.getProcedureName());
 
         for (Object parameter : template.getParameterList()) {
