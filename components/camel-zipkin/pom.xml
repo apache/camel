@@ -33,6 +33,7 @@
     <description>Distributed message tracing using Zipkin</description>
 
     <properties>
+    	<camel.surefire.parallel>true</camel.surefire.parallel>
         <firstVersion>2.18.0</firstVersion>
         <label>monitoring,microservice</label>
     </properties>
