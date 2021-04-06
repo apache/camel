@@ -94,7 +94,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 if (index.get() > 0) {
                     uploadPart();
                     completeUpload();
-                    index.getAndSet(0);
                 }
             }
         }
@@ -118,7 +117,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     if (index.get() > 0) {
                         uploadPart();
                         completeUpload();
-                        index.getAndSet(0);
                     }
                 }
             }
@@ -222,6 +220,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 index);
 
         index.getAndSet(0);
+        initResponse = null;
     }
 
     private void uploadPart() {
