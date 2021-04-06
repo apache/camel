@@ -550,8 +550,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
-                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange,
-                                "Multicast processing failed for number " + index, LOG);
+                        String msg = null;
+                        if (LOG.isDebugEnabled()) {
+                            msg = "Multicast processing failed for number " + index;
+                        }
+                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, msg, LOG);
                         if (stopOnException && !continueProcessing) {
                             if (exchange.getException() != null) {
                                 // wrap in exception to explain where it failed
@@ -664,8 +667,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
             // remember to test for stop on exception and aggregate before copying back results
-            boolean continueProcessing = PipelineHelper.continueProcessing(exchange,
-                    "Multicast processing failed for number " + index, LOG);
+            String msg = null;
+            if (LOG.isDebugEnabled()) {
+                msg = "Multicast processing failed for number " + index;
+            }
+            boolean continueProcessing = PipelineHelper.continueProcessing(exchange, msg, LOG);
             if (stopOnException && !continueProcessing) {
                 if (exchange.getException() != null) {
                     // wrap in exception to explain where it failed
