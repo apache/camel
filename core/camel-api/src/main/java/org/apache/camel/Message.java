@@ -60,6 +60,11 @@ public interface Message {
     void setMessageId(String messageId);
 
     /**
+     * Whether the message has any message ID assigned.
+     */
+    boolean hasMessageId();
+
+    /**
      * Returns the exchange this message is related to
      *
      * @return the exchange

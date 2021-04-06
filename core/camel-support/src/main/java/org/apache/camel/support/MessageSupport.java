@@ -218,9 +218,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             setExchange(that.getExchange());
         }
 
+        if (that.hasMessageId()) {
+            setMessageId(that.getMessageId());
+        }
         // should likely not set DataType as the new body may be a different type than the original body
-
-        setMessageId(that.getMessageId());
         setBody(newBody);
 
         // the headers may be the same instance if the end user has made some mistake
@@ -286,6 +287,11 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    @Override
+    public boolean hasMessageId() {
+        return messageId != null;
     }
 
     /**
