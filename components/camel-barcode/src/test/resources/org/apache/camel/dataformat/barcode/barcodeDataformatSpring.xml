@@ -40,35 +40,35 @@
     <route>
       <from uri="direct:code1"/>
       <marshal><custom ref="code1"/></marshal>
-      <to uri="file:target/out"/>
+      <to uri="file:{{testDirectory}}"/>
     </route>
     
     <route>
       <from uri="direct:code2"/>
       <marshal><custom ref="code2"/></marshal>
-      <to uri="file:target/out"/>
+      <to uri="file:{{testDirectory}}"/>
     </route>
     
      <route>
       <from uri="direct:code3"/>
       <marshal><custom ref="code3"/></marshal>
-      <to uri="file:target/out"/>
+      <to uri="file:{{testDirectory}}"/>
     </route>
     
      <route>
       <from uri="direct:code4"/>
       <marshal><custom ref="code4"/></marshal>
-      <to uri="file:target/out"/>
+      <to uri="file:{{testDirectory}}"/>
     </route>
 
      <route>
       <from uri="direct:code5"/>
       <marshal><custom ref="code5"/></marshal>
-      <to uri="file:target/out"/>
+      <to uri="file:{{testDirectory}}"/>
     </route>
 
     <route>
-      <from uri="file:target/out?noop=true"/>
+      <from uri="file:{{testDirectory}}?noop=true&amp;initialDelay=0&amp;delay=10"/>
       <multicast>
          <to uri="direct:unmarshal"/>
          <to uri="mock:image" />

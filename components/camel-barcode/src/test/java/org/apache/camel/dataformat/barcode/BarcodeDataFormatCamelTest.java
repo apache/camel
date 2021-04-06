@@ -16,43 +16,17 @@
  */
 package org.apache.camel.dataformat.barcode;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.google.zxing.BarcodeFormat;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class tests all Camel dependend cases for {@link BarcodeDataFormat}.
  */
 public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormatCamelTest.class);
-
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // clean directory
-        File directory = new File(PATH);
-        if (!directory.isDirectory() || !directory.exists()) {
-            LOG.error(String.format(
-                    "cannot delete files from directory '%s', because path is not a directory, or it doesn't exist.", PATH));
-        } else {
-            LOG.info("deleting files from " + PATH + "...");
-            File[] files = directory.listFiles();
-            for (File file : files) {
-                LOG.info(String.format("deleting %s", file.getName()));
-                file.delete();
-            }
-        }
-    }
 
     /**
      * tests barcode (QR-Code) generation and reading.
@@ -151,40 +125,40 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
                 from("direct:code1")
                         .marshal(code1)
-                        .to(FILE_ENDPOINT);
+                        .to(fileUri());
 
                 // QR-Code with modified size
                 DataFormat code2 = new BarcodeDataFormat(200, 200);
 
                 from("direct:code2")
                         .marshal(code2)
-                        .to(FILE_ENDPOINT);
+                        .to(fileUri());
 
                 // QR-Code with JPEG type
                 DataFormat code3 = new BarcodeDataFormat(BarcodeImageType.JPG);
 
                 from("direct:code3")
                         .marshal(code3)
-                        .to(FILE_ENDPOINT);
+                        .to(fileUri());
 
                 // PDF-417 code with modified size and image type
                 DataFormat code4 = new BarcodeDataFormat(200, 200, BarcodeImageType.JPG, BarcodeFormat.PDF_417);
 
                 from("direct:code4")
                         .marshal(code4)
-                        .to(FILE_ENDPOINT);
+                        .to(fileUri());
 
                 // AZTEC with modified size and PNG type
                 DataFormat code5 = new BarcodeDataFormat(200, 200, BarcodeImageType.PNG, BarcodeFormat.AZTEC);
 
                 from("direct:code5")
                         .marshal(code5)
-                        .to(FILE_ENDPOINT);
+                        .to(fileUri());
 
                 // generic file read --->
                 // 
                 // read file and route it
-                from(FILE_ENDPOINT + "?noop=true")
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
                         .multicast().to("direct:unmarshall", "mock:image");
 
                 // get the message from code
