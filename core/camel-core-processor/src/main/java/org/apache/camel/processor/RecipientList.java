@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -191,6 +192,13 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
+        // optimize to calculate number of recipients if possible
+        int size = 0;
+        if (recipientList instanceof Collection) {
+            size = ((Collection<?>) recipientList).size();
+        } else if (recipientList.getClass().isArray()) {
+            size = Array.getLength(recipientList);
+        }
         Iterator<?> iter;
 
         if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
@@ -200,7 +208,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         }
 
         // now let the multicast process the exchange
-        return recipientListProcessor.process(exchange, callback, iter);
+        return recipientListProcessor.process(exchange, callback, iter, size);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {

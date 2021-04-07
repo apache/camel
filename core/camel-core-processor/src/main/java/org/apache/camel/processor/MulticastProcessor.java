@@ -320,10 +320,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        return process(exchange, callback, null);
+        return process(exchange, callback, null, 0);
     }
 
-    protected boolean process(Exchange exchange, AsyncCallback callback, Iterator iter) {
+    protected boolean process(Exchange exchange, AsyncCallback callback, Iterator iter, int size) {
         Iterable<ProcessorExchangePair> pairs;
         try {
             pairs = createProcessorExchangePairs(exchange, iter);
@@ -343,7 +343,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // which is how the routing engine normally operates
         // if we have parallel processing enabled then we cannot run in transacted mode (requires synchronous processing via same thread)
         MulticastTask state = !isParallelProcessing() && exchange.isTransacted()
-                ? new MulticastTransactedTask(exchange, pairs, callback) : new MulticastReactiveTask(exchange, pairs, callback);
+                ? new MulticastTransactedTask(exchange, pairs, callback, size)
+                : new MulticastReactiveTask(exchange, pairs, callback, size);
         if (isParallelProcessing()) {
             executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
@@ -407,8 +408,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final AsyncCallback callback;
         final Iterator<ProcessorExchangePair> iterator;
         final ReentrantLock lock = new ReentrantLock();
-        final AsyncCompletionService<Exchange> completion
-                = new AsyncCompletionService<>(scheduler, !isStreaming(), lock);
+        final AsyncCompletionService<Exchange> completion;
         final AtomicReference<Exchange> result = new AtomicReference<>();
         final AtomicInteger nbExchangeSent = new AtomicInteger();
         final AtomicInteger nbAggregated = new AtomicInteger();
@@ -423,9 +423,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
             this.callback = null;
             this.iterator = null;
             this.mdc = null;
+            this.completion = null;
         }
 
-        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -440,6 +441,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 this.mdc = MDC.getCopyOfContextMap();
             } else {
                 this.mdc = null;
+            }
+            if (capacity > 0) {
+                this.completion = new AsyncCompletionService<>(scheduler, !isStreaming(), lock, capacity);
+            } else {
+                this.completion = new AsyncCompletionService<>(scheduler, !isStreaming(), lock);
             }
         }
 
@@ -519,8 +525,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
         private MulticastReactiveTask() {
         }
 
-        public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
-            super(original, pairs, callback);
+        public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
+                                     int size) {
+            super(original, pairs, callback, size);
         }
 
         @Override
@@ -621,8 +628,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
         private MulticastTransactedTask() {
         }
 
-        public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
-            super(original, pairs, callback);
+        public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
+                                       int size) {
+            super(original, pairs, callback, size);
         }
 
         @Override
