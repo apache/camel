@@ -59,9 +59,6 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     @UriParam(description = "Whether this call is for a function.")
     private boolean function;
 
-    @UriParam(label = "template")
-    private int queryTimeout = -1;
-
     public SqlStoredEndpoint(String uri, SqlStoredComponent component, JdbcTemplate jdbcTemplate) {
         super(uri, component);
         setJdbcTemplate(jdbcTemplate);
@@ -165,17 +162,4 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     public void setFunction(boolean function) {
         this.function = function;
     }
-
-    public int getQueryTimeout() {
-        return queryTimeout;
-    }
-
-    /**
-     * Sets the query timeout property on statements used for query processing. This will be overridden by the remaining
-     * transaction timeout when executing within a transaction that has a timeout specified at the transaction level.
-     */
-    public void setQueryTimeout(int queryTimeout) {
-        this.queryTimeout = queryTimeout;
-    }
-
 }

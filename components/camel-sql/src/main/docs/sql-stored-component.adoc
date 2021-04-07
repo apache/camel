@@ -228,6 +228,10 @@ parameter's "name" defines both the SQL parameter name, as well as the result he
 
 Actual call will be done using org.springframework.jdbc.core.SqlInOutParameter.
 
+=== Query Timeout
+Sets the query timeout property on statements used for query processing. This will be overridden by the remaining transaction timeout when executing within a transaction that has a timeout specified at the transaction level.
+
+
 == Camel SQL Starter
 
 A starter module is available to spring-boot users. When using the starter,
