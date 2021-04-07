@@ -16,16 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -36,7 +33,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -54,13 +50,12 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
 
-    private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private String id;
     private String routeId;
     private Processor errorHandler;
     private ProducerCache producerCache;
-    private Expression expression;
+    private final Expression expression;
     private final String delimiter;
     private boolean parallelProcessing;
     private boolean parallelAggregate;
@@ -88,6 +83,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.delimiter = delimiter;
+        this.expression = null;
     }
 
     public RecipientList(CamelContext camelContext, Expression expression) {
@@ -177,38 +173,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         if (!isStarted()) {
             throw new IllegalStateException("RecipientList has not been started: " + this);
         }
-
-        // use the evaluate expression result if exists
-        Object recipientList = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
-        if (recipientList == null && expression != null) {
-            // fallback and evaluate the expression
-            recipientList = expression.evaluate(exchange, Object.class);
-        }
-
-        return sendToRecipientList(exchange, recipientList, callback);
-    }
-
-    /**
-     * Sends the given exchange to the recipient list
-     */
-    public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        // optimize to calculate number of recipients if possible
-        int size = 0;
-        if (recipientList instanceof Collection) {
-            size = ((Collection<?>) recipientList).size();
-        } else if (recipientList.getClass().isArray()) {
-            size = Array.getLength(recipientList);
-        }
-        Iterator<?> iter;
-
-        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
-            iter = ObjectHelper.createIterator(recipientList, null);
-        } else {
-            iter = ObjectHelper.createIterator(recipientList, delimiter);
-        }
-
-        // now let the multicast process the exchange
-        return recipientListProcessor.process(exchange, callback, iter, size);
+        return recipientListProcessor.process(exchange, callback);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
@@ -238,7 +203,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         }
 
         recipientListProcessor = new RecipientListProcessor(
-                camelContext, null, producerCache, getAggregationStrategy(),
+                camelContext, null, expression, delimiter, producerCache, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
                 isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
                 isStopOnAggregateException());
