@@ -36,6 +36,7 @@ public final class KinesisFirehoseClientFactory {
      */
     public static KinesisFirehoseInternalClient getKinesisFirehoseClient(KinesisFirehose2Configuration configuration) {
         return configuration.isUseDefaultCredentialsProvider()
-                ? new KinesisFirehoseClientIAMOptimizedImpl(configuration) : new KinesisFirehoseClientStandardImpl(configuration);
+                ? new KinesisFirehoseClientIAMOptimizedImpl(configuration)
+                : new KinesisFirehoseClientStandardImpl(configuration);
     }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.firehose.client;
 
 import software.amazon.awssdk.services.firehose.FirehoseClient;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
 
 /**
  * Manage the required actions of a Kinesis Firehose client for either local or remote.

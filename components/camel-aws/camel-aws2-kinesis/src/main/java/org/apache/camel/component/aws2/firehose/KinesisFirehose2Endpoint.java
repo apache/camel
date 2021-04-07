@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.firehose;
 
-import java.net.URI;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,16 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
-import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
-import software.amazon.awssdk.utils.AttributeMap;
 
 import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 
@@ -77,7 +66,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
             System.setProperty(CBOR_ENABLED.property(), "false");
         }
         kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
-                ? configuration.getAmazonKinesisFirehoseClient() : KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration).getKinesisFirehoseClient();
+                ? configuration.getAmazonKinesisFirehoseClient()
+                : KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration).getKinesisFirehoseClient();
 
     }
 

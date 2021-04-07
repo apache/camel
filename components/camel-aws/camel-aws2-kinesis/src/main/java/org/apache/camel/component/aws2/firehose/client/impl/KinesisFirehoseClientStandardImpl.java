@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.aws2.firehose.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseInternalClient;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +32,11 @@ import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Kinesis Firehose client for all users to use. This implementation is for local instances to use a static and
- * solid credential set.
+ * Manage an AWS Kinesis Firehose client for all users to use. This implementation is for local instances to use a
+ * static and solid credential set.
  */
 public class KinesisFirehoseClientStandardImpl implements KinesisFirehoseInternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisFirehoseClientStandardImpl.class);
@@ -68,7 +65,7 @@ public class KinesisFirehoseClientStandardImpl implements KinesisFirehoseInterna
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;

@@ -55,6 +55,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
         case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -94,6 +96,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
         case "uriEndpointOverride": return java.lang.String.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -129,6 +133,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":
         case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         default: return null;
         }
     }
