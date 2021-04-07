@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.aws2.kinesis.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
 import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -33,11 +33,9 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Kinesis client for all users to use (enabling temporary creds). This implementation is for remote instances
- * to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS Kinesis client for all users to use (enabling temporary creds). This implementation is for remote
+ * instances to manage the credentials on their own (eliminating credential rotations)
  */
 public class KinesisClientIAMOptimizedImpl implements KinesisInternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisClientIAMOptimizedImpl.class);
@@ -66,7 +64,7 @@ public class KinesisClientIAMOptimizedImpl implements KinesisInternalClient {
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;

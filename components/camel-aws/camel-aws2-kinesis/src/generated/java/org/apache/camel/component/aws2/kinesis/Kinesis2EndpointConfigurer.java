@@ -87,6 +87,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -167,6 +169,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
         case "uriEndpointOverride": return java.lang.String.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         default: return null;
@@ -243,6 +247,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;

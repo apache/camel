@@ -65,8 +65,9 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
             System.setProperty(CBOR_ENABLED.property(), "false");
         }
         kinesisClient = configuration.getAmazonKinesisClient() != null
-                ? configuration.getAmazonKinesisClient() : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
-        
+                ? configuration.getAmazonKinesisClient()
+                : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
+
         if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
                 || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
                 && configuration.getSequenceNumber().isEmpty()) {

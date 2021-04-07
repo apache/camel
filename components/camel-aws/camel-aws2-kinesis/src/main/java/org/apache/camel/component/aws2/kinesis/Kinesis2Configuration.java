@@ -77,8 +77,10 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "common",
               description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(label = "common", defaultValue = "false", description = "Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect " +
-            "static credentials to be passed in.")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect "
+                            +
+                            "static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
 
     public KinesisClient getAmazonKinesisClient() {

@@ -43,7 +43,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 Kinesis component supports 20 options, which are listed below.
+The AWS 2 Kinesis component supports 21 options, which are listed below.
 
 
 
@@ -60,6 +60,7 @@ The AWS 2 Kinesis component supports 20 options, which are listed below.
 | *region* (common) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (common) | Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the Kinesis stream to start getting records. There are 6 enums and the value can be one of: AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP, null | TRIM_HORIZON | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
@@ -98,7 +99,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (36 parameters):
+=== Query Parameters (37 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,6 +114,7 @@ with the following path and query parameters:
 | *region* (common) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (common) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (common) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (common) | Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the Kinesis stream to start getting records. There are 6 enums and the value can be one of: AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP, null | TRIM_HORIZON | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
