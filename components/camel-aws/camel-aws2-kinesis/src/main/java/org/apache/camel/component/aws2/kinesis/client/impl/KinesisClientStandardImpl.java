@@ -14,19 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.kinesis;
+package org.apache.camel.component.aws2.kinesis.client.impl;
 
-import java.net.URI;
-
-import org.apache.camel.Category;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
+import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
@@ -36,80 +30,33 @@ import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
-import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
+import java.net.URI;
 
 /**
- * Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
+ * Manage an AWS Kinesis client for all users to use. This implementation is for local instances to use a static and solid
+ * credential set.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS 2 Kinesis", syntax = "aws2-kinesis:streamName",
-             category = { Category.CLOUD, Category.MESSAGING })
-public class Kinesis2Endpoint extends ScheduledPollEndpoint {
-
-    @UriParam
+public class KinesisClientStandardImpl implements KinesisInternalClient {
+    private static final Logger LOG = LoggerFactory.getLogger(KinesisClientStandardImpl.class);
     private Kinesis2Configuration configuration;
 
-    private KinesisClient kinesisClient;
-
-    public Kinesis2Endpoint(String uri, Kinesis2Configuration configuration, Kinesis2Component component) {
-        super(uri, component);
+    /**
+     * Constructor that uses the config file.
+     */
+    public KinesisClientStandardImpl(Kinesis2Configuration configuration) {
+        LOG.trace("Creating an AWS Kinesis manager using static credentials.");
         this.configuration = configuration;
     }
 
+    /**
+     * Getting the Kinesis client that is used.
+     * 
+     * @return Amazon Kinesis Client.
+     */
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (!configuration.isCborEnabled()) {
-            System.setProperty(CBOR_ENABLED.property(), "false");
-        }
-        kinesisClient = configuration.getAmazonKinesisClient() != null
-                ? configuration.getAmazonKinesisClient() : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
-        
-        if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
-                && configuration.getSequenceNumber().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
-        }
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
-            if (kinesisClient != null) {
-                kinesisClient.close();
-            }
-        }
-        if (!configuration.isCborEnabled()) {
-            System.clearProperty(CBOR_ENABLED.property());
-        }
-        super.doStop();
-    }
-
-    @Override
-    public Producer createProducer() throws Exception {
-        return new Kinesis2Producer(this);
-    }
-
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
-        consumer.setSchedulerProperties(getSchedulerProperties());
-        configureConsumer(consumer);
-        return consumer;
-    }
-
-    public KinesisClient getClient() {
-        return kinesisClient;
-    }
-
-    public Kinesis2Configuration getConfiguration() {
-        return configuration;
-    }
-
-    KinesisClient createKinesisClient() {
+    public KinesisClient getKinesisClient() {
         KinesisClient client = null;
         KinesisClientBuilder clientBuilder = KinesisClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
@@ -118,7 +65,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
