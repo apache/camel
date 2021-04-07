@@ -75,6 +75,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     private boolean shutdownExecutorService;
     private volatile ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
+    private RecipientListProcessor recipientListProcessor;
 
     public RecipientList(CamelContext camelContext) {
         // use comma by default as delimiter
@@ -198,31 +199,8 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
             iter = ObjectHelper.createIterator(recipientList, delimiter);
         }
 
-        // TODO: Do not create a new processor per exchange
-        // TODO: Store iter on exchange property to be used when creating the pairs
-        RecipientListProcessor rlp = new RecipientListProcessor(
-                exchange.getContext(), null, producerCache, iter, getAggregationStrategy(),
-                isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
-                isStopOnAggregateException());
-        rlp.setErrorHandler(errorHandler);
-        rlp.setAggregateExecutorService(aggregateExecutorService);
-        rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
-        rlp.setCacheSize(getCacheSize());
-        rlp.setId(getId());
-        rlp.setRouteId(getRouteId());
-
-        // start ourselves
-        try {
-            ServiceHelper.startService(rlp);
-        } catch (Exception e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
-        }
-
         // now let the multicast process the exchange
-        return rlp.process(exchange, callback);
+        return recipientListProcessor.process(exchange, callback, iter);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
@@ -230,15 +208,12 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doStart() throws Exception {
         if (errorHandler == null) {
             // NoErrorHandler is the default base error handler if none has been configured
             errorHandler = new NoErrorHandler(null);
         }
-    }
 
-    @Override
-    protected void doStart() throws Exception {
         if (producerCache == null) {
             if (cacheSize < 0) {
                 producerCache = new EmptyProducerCache(this, camelContext);
@@ -253,17 +228,30 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
             aggregateExecutorService
                     = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
         }
-        ServiceHelper.startService(aggregationStrategy, producerCache);
+
+        recipientListProcessor = new RecipientListProcessor(
+                camelContext, null, producerCache, getAggregationStrategy(),
+                isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
+                isStopOnAggregateException());
+        recipientListProcessor.setErrorHandler(errorHandler);
+        recipientListProcessor.setAggregateExecutorService(aggregateExecutorService);
+        recipientListProcessor.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
+        recipientListProcessor.setCacheSize(getCacheSize());
+        recipientListProcessor.setId(getId());
+        recipientListProcessor.setRouteId(getRouteId());
+
+        ServiceHelper.startService(aggregationStrategy, producerCache, recipientListProcessor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producerCache, aggregationStrategy);
+        ServiceHelper.stopService(producerCache, aggregationStrategy, recipientListProcessor);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy);
+        ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy, recipientListProcessor);
 
         if (aggregateExecutorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(aggregateExecutorService);

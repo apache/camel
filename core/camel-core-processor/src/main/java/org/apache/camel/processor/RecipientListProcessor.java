@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 public class RecipientListProcessor extends MulticastProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
-    private final Iterator<?> iter;
     private boolean ignoreInvalidEndpoints;
     private final ProducerCache producerCache;
     private int cacheSize;
@@ -149,20 +148,18 @@ public class RecipientListProcessor extends MulticastProcessor {
 
     // TODO: camel-bean @RecipientList cacheSize
 
-    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter) {
+    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache) {
         super(camelContext, route, null);
         this.producerCache = producerCache;
-        this.iter = iter;
     }
 
-    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter,
+    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache,
                                   AggregationStrategy aggregationStrategy) {
         super(camelContext, route, null, aggregationStrategy);
         this.producerCache = producerCache;
-        this.iter = iter;
     }
 
-    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter,
+    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache,
                                   AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                                   boolean streaming, boolean stopOnException,
@@ -172,7 +169,6 @@ public class RecipientListProcessor extends MulticastProcessor {
               streaming, stopOnException, timeout, onPrepare,
               shareUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.producerCache = producerCache;
-        this.iter = iter;
     }
 
     public int getCacheSize() {
@@ -192,7 +188,8 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange, Iterator<?> iter)
+            throws Exception {
         // here we iterate the recipient lists and create the exchange pair for each of those
         List<ProcessorExchangePair> result = new ArrayList<>();
 

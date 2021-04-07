@@ -320,9 +320,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        return process(exchange, callback, null);
+    }
+
+    protected boolean process(Exchange exchange, AsyncCallback callback, Iterator iter) {
         Iterable<ProcessorExchangePair> pairs;
         try {
-            pairs = createProcessorExchangePairs(exchange);
+            pairs = createProcessorExchangePairs(exchange, iter);
         } catch (Throwable e) {
             exchange.setException(e);
             // unexpected exception was thrown, maybe from iterator etc. so do not regard as exhausted
@@ -913,7 +917,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return exchange.getProperty(ExchangePropertyKey.MULTICAST_INDEX, Integer.class);
     }
 
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange, Iterator<?> iter)
+            throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<>(processors.size());
 
         StreamCache streamCache = null;
