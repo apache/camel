@@ -62,14 +62,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
-    private static final String TOPIC_STRINGS = "test";
-    private static final String TOPIC_INTERCEPTED = "test";
-    private static final String TOPIC_STRINGS_IN_HEADER = "testHeader";
-    private static final String TOPIC_BYTES = "testBytes";
-    private static final String TOPIC_BYTES_IN_HEADER = "testBytesHeader";
-    private static final String GROUP_BYTES = "groupStrings";
-    private static final String TOPIC_PROPAGATED_HEADERS = "testPropagatedHeaders";
-    private static final String TOPIC_NO_RECORD_SPECIFIC_HEADERS = "noRecordSpecificHeaders";
+    private static final String TOPIC_STRINGS = "KafkaProducerFullTest.test";
+    private static final String TOPIC_INTERCEPTED = "KafkaProducerFullTest.test";
+    private static final String TOPIC_STRINGS_IN_HEADER = "KafkaProducerFullTest.testHeader";
+    private static final String TOPIC_BYTES = "KafkaProducerFullTest.testBytes";
+    private static final String TOPIC_BYTES_IN_HEADER = "KafkaProducerFullTest.testBytesHeader";
+    private static final String GROUP_BYTES = "KafkaProducerFullTest.groupStrings";
+    private static final String TOPIC_PROPAGATED_HEADERS = "KafkaProducerFullTest.testPropagatedHeaders";
+    private static final String TOPIC_NO_RECORD_SPECIFIC_HEADERS = "KafkaProducerFullTest.noRecordSpecificHeaders";
 
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
@@ -187,7 +187,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                     = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
-            assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");
+            assertTrue(recordMetaData1.get(0).topic().startsWith("KafkaProducerFullTest.test"), "Topic Name start with 'test'");
         }
     }
 
@@ -218,7 +218,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                     = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
-            assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");
+            assertTrue(recordMetaData1.get(0).topic().startsWith("KafkaProducerFullTest.test"), "Topic Name start with 'test'");
         }
     }
 
@@ -277,7 +277,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertEquals(10, recordMetaData1.size(), "Ten RecordMetadata is expected.");
         for (RecordMetadata recordMeta : recordMetaData1) {
             assertTrue(recordMeta.offset() >= 0, "Offset is positive");
-            assertTrue(recordMeta.topic().startsWith("test"), "Topic Name start with 'test'");
+            assertTrue(recordMeta.topic().startsWith("KafkaProducerFullTest.test"), "Topic Name start with 'test'");
         }
         Exchange e2 = exchangeList.get(1);
         @SuppressWarnings("unchecked")
@@ -285,7 +285,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertEquals(5, recordMetaData2.size(), "Five RecordMetadata is expected.");
         for (RecordMetadata recordMeta : recordMetaData2) {
             assertTrue(recordMeta.offset() >= 0, "Offset is positive");
-            assertTrue(recordMeta.topic().startsWith("test"), "Topic Name start with 'test'");
+            assertTrue(recordMeta.topic().startsWith("KafkaProducerFullTest.test"), "Topic Name start with 'test'");
         }
     }
 
@@ -320,7 +320,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                     = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
-            assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");
+            assertTrue(recordMetaData1.get(0).topic().startsWith("KafkaProducerFullTest.test"), "Topic Name start with 'test'");
         }
     }
 

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
-    private static final String TOPIC = "offset-rebalance";
+    private static final String TOPIC = "KafkaConsumerRebalanceTest";
 
     @EndpointInject("mock:result")
     private MockEndpoint result;

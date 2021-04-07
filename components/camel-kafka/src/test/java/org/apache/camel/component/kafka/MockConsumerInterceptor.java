@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerInterceptor;
@@ -26,11 +25,8 @@ import org.apache.kafka.common.TopicPartition;
 
 public class MockConsumerInterceptor implements ConsumerInterceptor<String, String> {
 
-    public static ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
-
     @Override
     public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> consumerRecords) {
-        recordsCaptured.add(consumerRecords);
         return consumerRecords;
     }
 

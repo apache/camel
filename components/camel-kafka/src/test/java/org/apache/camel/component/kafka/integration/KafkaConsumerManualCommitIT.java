@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
 
-    public static final String TOPIC = "testManualCommitTest";
+    public static final String TOPIC = "KafkaConsumerManualCommitTest";
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
+                    + "?groupId=" + TOPIC + "_GROUP&sessionTimeoutMs=30000&autoCommitEnable=false"
                     + "&allowManualCommit=true&autoOffsetReset=earliest")
     private Endpoint from;
 
