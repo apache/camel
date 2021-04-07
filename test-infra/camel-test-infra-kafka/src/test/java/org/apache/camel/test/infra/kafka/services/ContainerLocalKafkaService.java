@@ -17,13 +17,16 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import java.util.function.BiConsumer;
+
+import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
 
-public class ContainerLocalKafkaService implements KafkaService, ContainerService<KafkaContainer> {
+public class ContainerLocalKafkaService extends AbstractTestService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
     private final KafkaContainer kafka;
 
@@ -44,20 +47,18 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     }
 
     @Override
-    public void registerProperties() {
-        System.setProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
+    protected void registerProperties(BiConsumer<String, String> store) {
+        store.accept(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
     }
 
     @Override
-    public void initialize() {
+    protected void setUp() throws Exception {
         kafka.start();
-        registerProperties();
-
         LOG.info("Kafka bootstrap server running at address {}", kafka.getBootstrapServers());
     }
 
     @Override
-    public void shutdown() {
+    protected void tearDown() throws Exception {
         kafka.stop();
     }
 

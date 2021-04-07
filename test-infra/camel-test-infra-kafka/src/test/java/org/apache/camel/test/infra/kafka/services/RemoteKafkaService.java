@@ -17,11 +17,12 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteKafkaService implements KafkaService {
+public class RemoteKafkaService extends AbstractTestService implements KafkaService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteKafkaService.class);
 
     @Override
@@ -30,18 +31,8 @@ public class RemoteKafkaService implements KafkaService {
     }
 
     @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
+    protected void setUp() throws Exception {
         LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
     }
 
-    @Override
-    public void shutdown() {
-        // NO-OP
-    }
 }

@@ -17,14 +17,17 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import java.util.function.BiConsumer;
+
 import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
-public class StrimziService implements KafkaService, ContainerService<StrimziContainer> {
+public class StrimziService extends AbstractTestService implements KafkaService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziService.class);
 
     private final ZookeeperContainer zookeeperContainer;
@@ -63,20 +66,17 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     }
 
     @Override
-    public void registerProperties() {
-        System.setProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
+    protected void registerProperties(BiConsumer<String, String> store) {
+        store.accept(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
     }
 
     @Override
-    public void initialize() {
+    protected void setUp() throws Exception {
         zookeeperContainer.start();
-
         String zookeeperConnect = zookeeperContainer.getContainerIpAddress() + ":" + zookeeperContainer.getZookeeperPort();
         LOG.info("Apache Zookeeper running at address {}", zookeeperConnect);
 
         strimziContainer.start();
-
-        registerProperties();
         LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
     }
 
@@ -85,7 +85,7 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     }
 
     @Override
-    public void shutdown() {
+    protected void tearDown() throws Exception {
         try {
             LOG.info("Stopping Kafka container");
             strimziContainer.stop();
