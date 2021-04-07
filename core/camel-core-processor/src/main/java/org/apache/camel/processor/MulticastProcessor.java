@@ -215,8 +215,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
         this.stopOnAggregateException = stopOnAggregateException;
-        if (this instanceof Splitter || this instanceof RecipientListProcessor) {
-            // not supported for splitter/recipient-list
+        if (this instanceof Splitter) {
+            // not supported for splitter
             this.processorExchangeFactory = null;
         } else {
             this.processorExchangeFactory = camelContext.adapt(ExtendedCamelContext.class)
@@ -788,21 +788,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
             Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
             AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
-        if (processorExchangeFactory != null && pairs != null) {
-            // the exchanges on the pairs was created with a factory, so they should be released
-            try {
-                for (ProcessorExchangePair pair : pairs) {
-                    processorExchangeFactory.release(pair.getExchange());
-                }
-            } catch (Throwable e) {
-                LOG.warn("Error releasing exchange due to " + e.getMessage() + ". This exception is ignored.", e);
-            }
-        }
-        // we are done so close the pairs iterator
-        if (pairs instanceof Closeable) {
-            IOHelper.close((Closeable) pairs, "pairs", LOG);
-        }
-
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
         // invoke the on completion callback
         if (strategy != null) {
@@ -833,6 +818,21 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // copy the current result to original so it will contain this result of this eip
                 ExchangeHelper.copyResults(original, subExchange);
             }
+        }
+
+        if (processorExchangeFactory != null && pairs != null) {
+            // the exchanges on the pairs was created with a factory, so they should be released
+            try {
+                for (ProcessorExchangePair pair : pairs) {
+                    processorExchangeFactory.release(pair.getExchange());
+                }
+            } catch (Throwable e) {
+                LOG.warn("Error releasing exchange due to " + e.getMessage() + ". This exception is ignored.", e);
+            }
+        }
+        // we are done so close the pairs iterator
+        if (pairs instanceof Closeable) {
+            IOHelper.close((Closeable) pairs, "pairs", LOG);
         }
 
         // .. and then if there was an exception we need to configure the redelivery exhaust

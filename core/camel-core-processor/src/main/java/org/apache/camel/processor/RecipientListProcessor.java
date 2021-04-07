@@ -288,7 +288,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             int index, Endpoint endpoint, Producer producer,
             Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
         // copy exchange, and do not share the unit of work
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
 
         // if we share unit of work, we need to prepare the child exchange
         if (isShareUnitOfWork()) {
