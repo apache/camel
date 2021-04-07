@@ -49,7 +49,8 @@ public class KinesisFirehose2Component extends DefaultComponent {
         setProperties(endpoint, parameters);
         if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonKinesisFirehoseClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException(
+                    "useDefaultCredentialsProvider is set to false, AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
         }
         return endpoint;
     }
