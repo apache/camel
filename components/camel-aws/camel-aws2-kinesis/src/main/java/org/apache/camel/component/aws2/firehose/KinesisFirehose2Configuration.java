@@ -61,6 +61,11 @@ public class KinesisFirehose2Configuration implements Cloneable {
     @UriParam(label = "common",
               description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
+    @UriParam(label = "common", defaultValue = "false",
+            description = "Set whether the Kinesis Firehose client should expect to load credentials through a default credentials provider or to expect "
+                    +
+                    "static credentials to be passed in.")
+    private boolean useDefaultCredentialsProvider;
 
     public void setAmazonKinesisFirehoseClient(FirehoseClient client) {
         this.amazonKinesisFirehoseClient = client;
@@ -166,6 +171,13 @@ public class KinesisFirehose2Configuration implements Cloneable {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
+    public boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
+    }
+
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
     // *************************************************
     //
     // *************************************************
