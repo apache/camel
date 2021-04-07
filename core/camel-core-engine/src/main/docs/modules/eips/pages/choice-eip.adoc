@@ -40,10 +40,14 @@ RouteBuilder builder = new RouteBuilder() {
             .choice()
                 .when(simple("${header.foo} == 'bar'"))
                     .to("direct:b")
+                .endChoice()
                 .when(simple("${header.foo} == 'cheese'"))
                     .to("direct:c")
+                .endChoice()
                 .otherwise()
-                    .to("direct:d");
+                    .to("direct:d")
+                .endChoice()
+            .end();
     }
 };
 ----
