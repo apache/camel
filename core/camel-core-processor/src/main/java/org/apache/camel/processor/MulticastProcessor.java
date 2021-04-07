@@ -307,10 +307,12 @@ public class MulticastProcessor extends AsyncProcessorSupport
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Iterable<ProcessorExchangePair> pairs;
-        // TODO: optimize size
         int size = 0;
         try {
             pairs = createProcessorExchangePairs(exchange);
+            if (pairs instanceof Collection) {
+                size = ((Collection<ProcessorExchangePair>) pairs).size();
+            }
         } catch (Throwable e) {
             exchange.setException(e);
             // unexpected exception was thrown, maybe from iterator etc. so do not regard as exhausted
