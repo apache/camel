@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka.integration;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
@@ -26,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,11 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport {
 
-    public static final String TOPIC = "test";
-    public static final String TOPIC_PATTERN = "t\\w\\wt";
+    public static final String TOPIC = "KafkaConsumerTopicIsPatternTest";
+    public static final String TOPIC_PATTERN = "Kafka\\w*Test";
 
-    @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
-                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+    @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=" + TOPIC + "_GROUP&autoOffsetReset=earliest"
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true"
+                    + "&interceptorClasses=org.apache.camel.component.kafka.KafkaConsumerTopicIsPatternTest$MyMockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -78,7 +81,7 @@ public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport 
     public void kafkaTopicIsPattern() throws Exception {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
-        to.allMessages().header(KafkaConstants.TOPIC).isEqualTo("test");
+        to.allMessages().header(KafkaConstants.TOPIC).isEqualTo("KafkaConsumerTopicIsPatternTest");
         // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
         // exchange because autoCommitEnable=true
         to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
@@ -91,8 +94,18 @@ public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport 
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        assertEquals(5,
+                StreamSupport.stream(MyMockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                        .count());
     }
 
+    public static class MyMockConsumerInterceptor extends MockConsumerInterceptor {
+        public static ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
+
+        @Override
+        public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> consumerRecords) {
+            recordsCaptured.add(consumerRecords);
+            return consumerRecords;
+        }
+    }
 }
