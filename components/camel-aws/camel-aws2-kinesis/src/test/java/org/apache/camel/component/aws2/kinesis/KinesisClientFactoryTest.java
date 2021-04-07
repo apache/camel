@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class KinesisClientFactoryTest {
 
     @Test
-    public void getStandardS3ClientDefault() {
+    public void getStandardKinesisClientDefault() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
         assertTrue(kinesisClient instanceof KinesisClientStandardImpl);
     }
 
     @Test
-    public void getStandardS3Client() {
+    public void getStandardKinesisClient() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(false);
         KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
@@ -42,7 +42,7 @@ public class KinesisClientFactoryTest {
     }
 
     @Test
-    public void getIAMOptimizedS3Client() {
+    public void getIAMOptimizedKinesisClient() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(true);
         KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
