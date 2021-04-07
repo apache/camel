@@ -72,7 +72,7 @@ public class Sns2Component extends DefaultComponent {
             LOG.debug("Created the endpoint with topic {}", configuration.getTopicName());
         }
 
-        if (configuration.getAmazonSNSClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonSNSClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
