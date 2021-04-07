@@ -127,12 +127,17 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> getOrCreatePool(Endpoint endpoint) {
-        boolean singleton = endpoint.isSingletonProducer();
-        if (singleton) {
-            return pool.computeIfAbsent(endpoint, SinglePool::new);
-        } else {
-            return pool.computeIfAbsent(endpoint, MultiplePool::new);
+        // its a pool so we have a lot more hits, so use regular get, and then fallback to computeIfAbsent
+        Pool<S> answer = pool.get(endpoint);
+        if (answer == null) {
+            boolean singleton = endpoint.isSingletonProducer();
+            if (singleton) {
+                answer = pool.computeIfAbsent(endpoint, SinglePool::new);
+            } else {
+                answer = pool.computeIfAbsent(endpoint, MultiplePool::new);
+            }
         }
+        return answer;
     }
 
     /**
@@ -261,12 +266,14 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
 
         private void cleanupEvicts() {
-            for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
-                Endpoint e = entry.getKey();
-                Pool<S> p = entry.getValue();
-                doStop(e);
-                p.stop();
-                singlePoolEvicted.remove(e);
+            if (!singlePoolEvicted.isEmpty()) {
+                for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
+                    Endpoint e = entry.getKey();
+                    Pool<S> p = entry.getValue();
+                    doStop(e);
+                    p.stop();
+                    singlePoolEvicted.remove(e);
+                }
             }
         }
 

@@ -246,7 +246,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // set property which endpoint we send to
-        setToEndpoint(copy, producer);
+        setToEndpoint(copy, endpoint);
 
         // rework error handling to support fine grained error handling
         Route route = ExchangeHelper.getRoute(exchange);
@@ -325,6 +325,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         return null;
+    }
+
+    protected static void setToEndpoint(Exchange exchange, Endpoint endpoint) {
+        exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
     }
 
     @Override
