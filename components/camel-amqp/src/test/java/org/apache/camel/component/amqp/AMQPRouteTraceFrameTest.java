@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.amqp;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
@@ -35,7 +36,11 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
 
     static int amqpPort = AvailablePortFinder.getNextAvailable();
 
-    static BrokerService broker;
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withAmqpTransport(amqpPort)
+            .build();
 
     @EndpointInject("mock:result")
     MockEndpoint resultEndpoint;
@@ -44,17 +49,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeClass() throws Exception {
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("amqp://0.0.0.0:" + amqpPort);
-        broker.start();
-
         System.setProperty(AMQP_PORT, amqpPort + "");
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        broker.stop();
     }
 
     @Test
@@ -70,9 +65,9 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         JmsConnectionFactory connectionFactory
-                = new JmsConnectionFactory("amqp://localhost:" + amqpPort + "?amqp.traceFrames=true");
+                = new JmsConnectionFactory(service.serviceAddress() + "?amqp.traceFrames=true");
 
-        AMQPComponent amqp = amqpComponent("amqp://localhost:" + amqpPort);
+        AMQPComponent amqp = amqpComponent(service.serviceAddress());
         amqp.getConfiguration().setConnectionFactory(connectionFactory);
 
         camelContext.addComponent("amqp-customized", amqp);
