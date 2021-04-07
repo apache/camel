@@ -33,6 +33,7 @@
 
     <properties>
         <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Duser.language=en -Duser.region=GB</camel.surefire.fork.vmargs>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>
