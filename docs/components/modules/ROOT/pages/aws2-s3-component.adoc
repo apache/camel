@@ -578,6 +578,13 @@ from(kafka("topic2").brokers("localhost:9092"))
 
 The default size for a batch is 1 Mb, but you can adjust it according to your requirements.
 
+[NOTE]
+====
+In Streaming upload mode the only keyName option that will be taken into account is the endpoint option. Using the header will throw an NPE and this is done by design.
+Setting the header means potentially change the file name on each exchange and this is against the aim of the streaming upload producer. The keyName needs to be fixed and static. 
+The selected naming strategy will do the rest of the of the work.
+====
+
 == Bucket Autocreation
 
 With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `true`.
