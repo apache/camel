@@ -559,7 +559,7 @@
         <xalan-version>2.7.2</xalan-version>
         <xbean-spring-version>4.17</xbean-spring-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-        <xchange-version>5.0.6</xchange-version>
+        <xchange-version>5.0.7</xchange-version>
         <xchange-guava-version>29.0-jre</xchange-guava-version>
         <xerces-version>2.12.0</xerces-version>
         <!-- needed to manage the xml-apis version in camel-xmljson -->
