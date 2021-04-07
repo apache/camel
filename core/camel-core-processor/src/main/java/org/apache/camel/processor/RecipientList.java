@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -190,12 +191,23 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<?> iter;
+        Iterator<?> iter = null;
 
-        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
-            iter = ObjectHelper.createIterator(recipientList, null);
-        } else {
-            iter = ObjectHelper.createIterator(recipientList, delimiter);
+        if (recipientList instanceof String && delimiter != null && !delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+            // optimize for fast iterator
+            String str = (String) recipientList;
+            if (delimiter.length() == 1) {
+                int count = StringHelper.countChar(str, delimiter.charAt(0)) + 1;
+                String[] parts = StringHelper.splitOnCharacter(str, delimiter, count);
+                iter = Arrays.asList((Object[]) parts).iterator();
+            }
+        }
+        if (iter == null) {
+            if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+                iter = ObjectHelper.createIterator(recipientList, null);
+            } else {
+                iter = ObjectHelper.createIterator(recipientList, delimiter);
+            }
         }
 
         RecipientListProcessor rlp = new RecipientListProcessor(

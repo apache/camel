@@ -229,8 +229,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
         this.stopOnAggregateException = stopOnAggregateException;
-        if (this instanceof Splitter) {
-            // not supported for splitter
+        if (this instanceof Splitter || this instanceof RecipientListProcessor) {
+            // not supported for splitter/recipient-list
             this.processorExchangeFactory = null;
         } else {
             this.processorExchangeFactory = camelContext.adapt(ExtendedCamelContext.class)
