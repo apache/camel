@@ -162,4 +162,5 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     public void setFunction(boolean function) {
         this.function = function;
     }
+    
 }
