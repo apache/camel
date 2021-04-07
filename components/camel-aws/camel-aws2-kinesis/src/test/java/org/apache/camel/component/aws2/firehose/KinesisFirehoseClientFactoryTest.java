@@ -20,11 +20,6 @@ import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseClientFact
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseInternalClient;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientStandardImpl;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
-import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
-import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,7 +29,8 @@ public class KinesisFirehoseClientFactoryTest {
     @Test
     public void getStandardFirehoseClientDefault() {
         KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
-        KinesisFirehoseInternalClient kinesisFirehoseClient = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
+        KinesisFirehoseInternalClient kinesisFirehoseClient
+                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
         assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientStandardImpl);
     }
 
@@ -42,7 +38,8 @@ public class KinesisFirehoseClientFactoryTest {
     public void getStandardFirehoseClient() {
         KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(false);
-        KinesisFirehoseInternalClient kinesisFirehoseClient = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
+        KinesisFirehoseInternalClient kinesisFirehoseClient
+                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
         assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientStandardImpl);
     }
 
@@ -50,7 +47,8 @@ public class KinesisFirehoseClientFactoryTest {
     public void getIAMOptimizedFirehoseClient() {
         KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(true);
-        KinesisFirehoseInternalClient kinesisFirehoseClient = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
+        KinesisFirehoseInternalClient kinesisFirehoseClient
+                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
         assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientIAMOptimizedImpl);
     }
 }
