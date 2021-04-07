@@ -162,11 +162,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     protected final Processor onPrepare;
+    protected final ProcessorExchangeFactory processorExchangeFactory;
     private final CamelContext camelContext;
     private final InternalProcessorFactory internalProcessorFactory;
     private final Route route;
     private final ReactiveExecutor reactiveExecutor;
-    private ProcessorExchangeFactory processorExchangeFactory;
     private Processor errorHandler;
     private String id;
     private String routeId;
@@ -229,6 +229,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
         this.stopOnAggregateException = stopOnAggregateException;
+        if (this instanceof Splitter) {
+            // not supported for splitter
+            this.processorExchangeFactory = null;
+        } else {
+            this.processorExchangeFactory = camelContext.adapt(ExtendedCamelContext.class)
+                    .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        }
     }
 
     @Override
@@ -264,14 +271,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
     @Override
     public Processor getErrorHandler() {
         return errorHandler;
-    }
-
-    public ProcessorExchangeFactory getProcessorExchangeFactory() {
-        return processorExchangeFactory;
-    }
-
-    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
-        this.processorExchangeFactory = processorExchangeFactory;
     }
 
     @Override
@@ -791,12 +790,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
             Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
             AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
-        if (processorExchangeFactory != null) {
+        if (processorExchangeFactory != null && pairs != null) {
             // the exchanges on the pairs was created with a factory, so they should be released
-            Iterator<ProcessorExchangePair> it = pairs.iterator();
-            while (it.hasNext()) {
-                ProcessorExchangePair pair = it.next();
-                processorExchangeFactory.release(pair.getExchange());
+            try {
+                for (ProcessorExchangePair pair : pairs) {
+                    processorExchangeFactory.release(pair.getExchange());
+                }
+            } catch (Throwable e) {
+                LOG.warn("Error releasing exchange due to " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         // we are done so close the pairs iterator
@@ -924,12 +925,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         int index = 0;
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
-            Exchange copy;
-            if (processorExchangeFactory != null) {
-                copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
-            } else {
-                copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-            }
+            Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
 
             if (streamCache != null) {
                 if (index > 0) {
