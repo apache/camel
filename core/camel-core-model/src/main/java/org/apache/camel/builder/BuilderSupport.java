@@ -102,6 +102,13 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns a constant expression value builder
+     */
+    public ValueBuilder constant(Object... value) {
+        return Builder.constant(value);
+    }
+
+    /**
      * Returns a JOOR expression value builder
      */
     public ValueBuilder joor(String value) {

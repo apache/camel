@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -191,25 +190,16 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<?> iter = null;
+        Iterator<?> iter;
 
-        if (recipientList instanceof String && delimiter != null && !delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
-            // optimize for fast iterator
-            String str = (String) recipientList;
-            if (delimiter.length() == 1) {
-                int count = StringHelper.countChar(str, delimiter.charAt(0)) + 1;
-                String[] parts = StringHelper.splitOnCharacter(str, delimiter, count);
-                iter = Arrays.asList((Object[]) parts).iterator();
-            }
-        }
-        if (iter == null) {
-            if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
-                iter = ObjectHelper.createIterator(recipientList, null);
-            } else {
-                iter = ObjectHelper.createIterator(recipientList, delimiter);
-            }
+        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+            iter = ObjectHelper.createIterator(recipientList, null);
+        } else {
+            iter = ObjectHelper.createIterator(recipientList, delimiter);
         }
 
+        // TODO: Do not create a new processor per exchange
+        // TODO: Store iter on exchange property to be used when creating the pairs
         RecipientListProcessor rlp = new RecipientListProcessor(
                 exchange.getContext(), null, producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
