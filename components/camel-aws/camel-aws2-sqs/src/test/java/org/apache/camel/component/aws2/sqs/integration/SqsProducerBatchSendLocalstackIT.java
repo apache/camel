@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
+package org.apache.camel.component.aws2.sqs.integration;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -22,10 +25,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class SqsConsumerMessageLocalstackTest extends Aws2SQSBaseTest {
+public class SqsProducerBatchSendLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -35,17 +39,17 @@ public class SqsConsumerMessageLocalstackTest extends Aws2SQSBaseTest {
 
     @Test
     public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(5);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("ignore");
-            }
-        });
-
-        exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("test1");
+                Collection c = new ArrayList<Integer>();
+                c.add("1");
+                c.add("2");
+                c.add("3");
+                c.add("4");
+                c.add("5");
+                exchange.getIn().setBody(c);
             }
         });
 
@@ -58,13 +62,11 @@ public class SqsConsumerMessageLocalstackTest extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
+                from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
+                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
-                fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true",
-                        sharedNameGenerator.getName())
-                                .startupOrder(1)
-                                .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
-                                .to("mock:result");
+                fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName())
+                        .startupOrder(1).log("${body}").to("mock:result");
             }
         };
     }

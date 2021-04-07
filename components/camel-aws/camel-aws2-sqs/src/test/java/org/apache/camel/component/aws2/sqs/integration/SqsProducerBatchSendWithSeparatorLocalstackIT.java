@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs.localstack;
-
-import java.util.ArrayList;
-import java.util.Collection;
+package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -29,7 +26,7 @@ import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class SqsProducerBatchSendLocalstackTest extends Aws2SQSBaseTest {
+public class SqsProducerBatchSendWithSeparatorLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -43,13 +40,7 @@ public class SqsProducerBatchSendLocalstackTest extends Aws2SQSBaseTest {
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Collection c = new ArrayList<Integer>();
-                c.add("1");
-                c.add("2");
-                c.add("3");
-                c.add("4");
-                c.add("5");
-                exchange.getIn().setBody(c);
+                exchange.getIn().setBody("1,2,3,4,5");
             }
         });
 

@@ -16,16 +16,6 @@ It is possible to run the tests on a remote docker server by overwriting the val
 DOCKER_HOST=tcp://myhost:2375 mvn clean verify
 ```
 
-# Force running the integration tests
-
-Should you need to force the execution of the integration tests, despite the value of the DOCKER_HOST variable, you can
-do so by enabling the `aws2-sqs-tests-docker-env` profile:
-
-
-```
-mvn -Paws2-sqs-tests-docker-env clean test verify
-```
-
 # Running the tests against AWS
 
 You can define the `aws-service.instance.type`, `aws.access.key` and `aws.secret.key` to switch the test execution from
