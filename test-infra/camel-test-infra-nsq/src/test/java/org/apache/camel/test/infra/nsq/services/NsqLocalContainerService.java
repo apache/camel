@@ -70,7 +70,6 @@ public class NsqLocalContainerService implements NsqService, ContainerService<Ge
                 .waitingFor(Wait.forLogMessage(".*TCP: listening on.*", 1));
     }
 
-    @Override
     public void registerProperties() {
         System.getProperty(NsqProperties.PRODUCER_URL, getNsqProducerUrl());
         System.getProperty(NsqProperties.CONSUMER_URL, getNsqConsumerUrl());

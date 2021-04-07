@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 
 public class PostgresRemoteService implements PostgresService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

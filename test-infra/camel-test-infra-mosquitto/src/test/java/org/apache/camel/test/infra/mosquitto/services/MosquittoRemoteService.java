@@ -27,7 +27,6 @@ public class MosquittoRemoteService implements MosquittoService {
         System.setProperty(MosquittoProperties.PORT, String.valueOf(port));
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

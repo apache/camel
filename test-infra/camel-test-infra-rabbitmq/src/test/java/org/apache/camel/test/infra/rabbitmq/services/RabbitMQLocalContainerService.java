@@ -84,7 +84,6 @@ public class RabbitMQLocalContainerService implements RabbitMQService, Container
         return container.getHttpPort();
     }
 
-    @Override
     public void registerProperties() {
         ConnectionProperties properties = connectionProperties();
 

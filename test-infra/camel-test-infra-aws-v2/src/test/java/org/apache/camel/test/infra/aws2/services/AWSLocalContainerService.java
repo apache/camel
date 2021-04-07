@@ -79,7 +79,6 @@ public abstract class AWSLocalContainerService implements AWSService, ContainerS
         return container.getServiceEndpoint();
     }
 
-    @Override
     public void registerProperties() {
         AwsCredentials credentials = container.getCredentialsProvider().resolveCredentials();
 

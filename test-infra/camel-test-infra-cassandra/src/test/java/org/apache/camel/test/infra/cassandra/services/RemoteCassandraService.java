@@ -44,7 +44,6 @@ public class RemoteCassandraService implements CassandraService {
         return System.getProperty(CassandraProperties.CASSANDRA_HOST);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

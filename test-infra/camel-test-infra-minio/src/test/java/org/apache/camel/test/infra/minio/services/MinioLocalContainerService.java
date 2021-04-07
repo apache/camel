@@ -66,7 +66,6 @@ public class MinioLocalContainerService implements MinioService, ContainerServic
                         .withStartupTimeout(Duration.ofSeconds(10)));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(MinioProperties.ACCESS_KEY, accessKey());
         System.setProperty(MinioProperties.SECRET_KEY, secretKey());

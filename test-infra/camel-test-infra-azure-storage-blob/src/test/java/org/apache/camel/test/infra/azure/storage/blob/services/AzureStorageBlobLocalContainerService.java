@@ -24,7 +24,6 @@ import org.apache.camel.test.infra.azure.common.services.AzureStorageService;
 
 public class AzureStorageBlobLocalContainerService extends AzureStorageService {
 
-    @Override
     public void registerProperties() {
         super.registerProperties();
 

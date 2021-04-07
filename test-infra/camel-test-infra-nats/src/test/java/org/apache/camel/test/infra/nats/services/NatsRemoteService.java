@@ -20,7 +20,6 @@ import org.apache.camel.test.infra.nats.common.NatsProperties;
 
 public class NatsRemoteService implements NatsService {
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

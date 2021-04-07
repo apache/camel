@@ -55,7 +55,6 @@ public class RabbitMQRemoteService implements RabbitMQService {
         return Integer.parseInt(httpPort);
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }

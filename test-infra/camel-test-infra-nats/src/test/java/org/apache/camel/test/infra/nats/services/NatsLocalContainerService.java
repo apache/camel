@@ -46,7 +46,6 @@ public class NatsLocalContainerService implements NatsService, ContainerService<
                 .waitingFor(Wait.forLogMessage(".*Listening.*for.*route.*connections.*", 1));
     }
 
-    @Override
     public void registerProperties() {
         System.setProperty(NatsProperties.SERVICE_ADDRESS, getServiceAddress());
     }

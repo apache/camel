@@ -27,7 +27,6 @@ public abstract class AbstractTestService implements TestService, BeforeAllCallb
 
     protected ExtensionContext context;
 
-    @Override
     public void registerProperties() {
         ExtensionContext.Store store = context.getStore(ExtensionContext.Namespace.GLOBAL);
         registerProperties(store::put);

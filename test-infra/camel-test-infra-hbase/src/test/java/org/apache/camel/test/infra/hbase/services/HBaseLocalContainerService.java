@@ -38,7 +38,6 @@ public class HBaseLocalContainerService implements HBaseService, ContainerServic
         return new HBaseContainer();
     }
 
-    @Override
     public void registerProperties() {
         // NO-OP
     }
