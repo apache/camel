@@ -161,7 +161,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
             throws Exception {
-        // iter is only currently used by Recipient List EIP so its null
 
         Object value = expression.evaluate(exchange, Object.class);
         if (exchange.getException() != null) {
@@ -211,7 +210,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             this.original = exchange;
             this.value = value;
 
-            if (delimiter != null && IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
+            if (IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
                 this.iterator = ObjectHelper.createIterator(value, null);
             } else {
                 this.iterator = ObjectHelper.createIterator(value, delimiter);
@@ -224,6 +223,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
             return new Iterator<ProcessorExchangePair>() {
+                private final Processor processor = getProcessors().iterator().next();
                 private int index;
                 private boolean closed;
 
@@ -270,7 +270,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                             Message in = newExchange.getIn();
                             in.setBody(part);
                         }
-                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, route);
+                        return createProcessorExchangePair(index++, processor, newExchange, route);
                     } else {
                         return null;
                     }
