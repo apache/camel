@@ -36,7 +36,7 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public String getDatabaseName(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.DATABASE_NAME, configuration::getDatabase, String.class);
+        return getOption(exchange, CosmosDbConstants.DATABASE_NAME, configuration::getDatabaseName, String.class);
     }
 
     public ThroughputProperties getThroughputProperties(final Exchange exchange) {

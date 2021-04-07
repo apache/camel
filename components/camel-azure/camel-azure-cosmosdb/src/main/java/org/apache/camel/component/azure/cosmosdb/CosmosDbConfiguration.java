@@ -32,9 +32,9 @@ public class CosmosDbConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = true)
-    private String database;
+    private String databaseName;
     @UriPath
-    private String container;
+    private String containerName;
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String accountKey;
@@ -72,24 +72,24 @@ public class CosmosDbConfiguration implements Cloneable {
      * The name of the Cosmos database that component should connect to. In case you are producing data and have
      * createDatabaseIfNotExists=true, the component will automatically auto create a Cosmos database.
      */
-    public String getDatabase() {
-        return database;
+    public String getDatabaseName() {
+        return databaseName;
     }
 
-    public void setDatabase(String database) {
-        this.database = database;
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
     }
 
     /**
      * The name of the Cosmos container that component should connect to. In case you are producing data and have
      * createContainerIfNotExists=true, the component will automatically auto create a Cosmos container.
      */
-    public String getContainer() {
-        return container;
+    public String getContainerName() {
+        return containerName;
     }
 
-    public void setContainer(String container) {
-        this.container = container;
+    public void setContainerName(String containerName) {
+        this.containerName = containerName;
     }
 
     /**

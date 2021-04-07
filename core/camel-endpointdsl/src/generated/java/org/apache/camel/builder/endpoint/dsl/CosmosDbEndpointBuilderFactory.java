@@ -1462,12 +1462,12 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
          * 
-         * Path parameter: database (required)
+         * Path parameter: databaseName (required)
          * The name of the Cosmos database that component should connect to. In
          * case you are producing data and have createDatabaseIfNotExists=true,
          * the component will automatically auto create a Cosmos database.
          * 
-         * Path parameter: container
+         * Path parameter: containerName
          * The name of the Cosmos container that component should connect to. In
          * case you are producing data and have createContainerIfNotExists=true,
          * the component will automatically auto create a Cosmos container.
@@ -1492,12 +1492,12 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
          * 
-         * Path parameter: database (required)
+         * Path parameter: databaseName (required)
          * The name of the Cosmos database that component should connect to. In
          * case you are producing data and have createDatabaseIfNotExists=true,
          * the component will automatically auto create a Cosmos database.
          * 
-         * Path parameter: container
+         * Path parameter: containerName
          * The name of the Cosmos container that component should connect to. In
          * case you are producing data and have createContainerIfNotExists=true,
          * the component will automatically auto create a Cosmos container.

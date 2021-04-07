@@ -37,8 +37,8 @@ public class CosmosDbDatabaseOperations {
     private final CosmosAsyncClientWrapper client;
     private final CosmosDbConfigurationOptionsProxy configurationOptionsProxy;
 
-    public CosmosDbDatabaseOperations(CosmosAsyncClientWrapper client,
-                                      CosmosDbConfigurationOptionsProxy configurationOptionsProxy) {
+    public CosmosDbDatabaseOperations(CosmosDbConfigurationOptionsProxy configurationOptionsProxy,
+                                      CosmosAsyncClientWrapper client) {
         this.client = client;
         this.configurationOptionsProxy = configurationOptionsProxy;
     }
@@ -46,13 +46,29 @@ public class CosmosDbDatabaseOperations {
     public boolean createDatabase(
             final Exchange exchange, final Consumer<CosmosDatabaseResponse> resultCallback,
             final Consumer<Throwable> errorCallback, final AsyncCallback callback) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
         ObjectHelper.notNull(resultCallback, "resultCallback cannot be null");
         ObjectHelper.notNull(errorCallback, "errorCallback cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
         createDatabaseAsync(configurationOptionsProxy.getDatabaseName(exchange),
                 configurationOptionsProxy.getThroughputProperties(exchange),
+                configurationOptionsProxy.getCosmosDatabaseRequestOptions(exchange),
+                resultCallback,
+                errorCallback,
+                completionHandler(callback));
+
+        return false;
+    }
+
+    public boolean deleteDatabase(
+            final Exchange exchange, final Consumer<CosmosDatabaseResponse> resultCallback,
+            final Consumer<Throwable> errorCallback,
+            final AsyncCallback callback) {
+        ObjectHelper.notNull(resultCallback, "resultCallback cannot be null");
+        ObjectHelper.notNull(errorCallback, "errorCallback cannot be null");
+        ObjectHelper.notNull(callback, "callback cannot be null");
+
+        deleteDatabaseAsync(configurationOptionsProxy.getDatabaseName(exchange),
                 configurationOptionsProxy.getCosmosDatabaseRequestOptions(exchange),
                 resultCallback,
                 errorCallback,
@@ -69,6 +85,16 @@ public class CosmosDbDatabaseOperations {
             final Consumer<Throwable> errorCallback,
             final Runnable completedConsumer) {
         client.createDatabase(new CosmosDatabaseProperties(databaseName), throughputProperties, options)
+                .subscribe(resultCallback, errorCallback, completedConsumer);
+    }
+
+    private void deleteDatabaseAsync(
+            final String databaseName,
+            final CosmosDatabaseRequestOptions options,
+            final Consumer<CosmosDatabaseResponse> resultCallback,
+            final Consumer<Throwable> errorCallback,
+            final Runnable completedConsumer) {
+        client.getDatabase(databaseName).delete(options)
                 .subscribe(resultCallback, errorCallback, completedConsumer);
     }
 

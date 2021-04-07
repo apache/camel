@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.cosmosdb.client;
 
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
 
@@ -26,6 +27,16 @@ public final class CosmosDbClientFactory {
     }
 
     public static CosmosAsyncClient createCosmosAsyncClient(final CosmosDbConfiguration configuration) {
+        return createBasicClient(configuration)
+                .buildAsyncClient();
+    }
+
+    public static CosmosClient createCosmosSyncClient(final CosmosDbConfiguration configuration) {
+        return createBasicClient(configuration)
+                .buildClient();
+    }
+
+    private static CosmosClientBuilder createBasicClient(final CosmosDbConfiguration configuration) {
         return new CosmosClientBuilder()
                 .key(configuration.getAccountKey())
                 .endpoint(configuration.getDatabaseEndpoint())
@@ -34,7 +45,6 @@ public final class CosmosDbClientFactory {
                 .connectionSharingAcrossClientsEnabled(configuration.isConnectionSharingAcrossClientsEnabled())
                 .clientTelemetryEnabled(configuration.isClientTelemetryEnabled())
                 .multipleWriteRegionsEnabled(configuration.isMultipleWriteRegionsEnabled())
-                .readRequestsFallbackEnabled(configuration.isReadRequestsFallbackEnabled())
-                .buildAsyncClient();
+                .readRequestsFallbackEnabled(configuration.isReadRequestsFallbackEnabled());
     }
 }
