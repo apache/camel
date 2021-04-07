@@ -891,6 +891,9 @@ public final class ObjectHelper {
         return false;
     }
 
+    /**
+     * Used by camel-bean
+     */
     public static int arrayLength(Object[] pojo) {
         return pojo.length;
     }
