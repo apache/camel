@@ -578,6 +578,27 @@ from(kafka("topic2").brokers("localhost:9092"))
 
 The default size for a batch is 1 Mb, but you can adjust it according to your requirements.
 
+When you'll stop your producer route, the producer will take care of flushing the remaining buffered messaged and complete the upload.
+
+In Streaming upload you'll be able restart the producer from the point where it left. It's important to note that this feature is critical only when using the progressive naming strategy.
+
+By setting the restartingPolicy to lastPart, you will restart uploading files and contents from the last part number the producer left.
+
+As example: 
+- Start the route with progressive naming strategy and keyname equals to camel.txt, with batchMessageNumber equals to 20, and restartingPolicy equals to lastPart
+- Send 70 messages.
+- Stop the route
+- On your S3 bucket you should now see 4 files: camel.txt, camel-1.txt, camel-2.txt and camel-3.txt, the first three will have 20 messages, while the last one only 10.
+- Restart the route
+- Send 25 messages
+- Stop the route
+- You'll now have 2 other files in your bucket: camel-5.txt and camel-6.txt, the first with 20 messages and second with 5 messages.
+- Go ahead
+
+This won't be needed when using the random naming strategy.
+
+On the opposite you can specify the override restartingPolicy. In that case you'll be able to override whatever you written before (for that particular keyName) on your bucket.
+
 [NOTE]
 ====
 In Streaming upload mode the only keyName option that will be taken into account is the endpoint option. Using the header will throw an NPE and this is done by design.
