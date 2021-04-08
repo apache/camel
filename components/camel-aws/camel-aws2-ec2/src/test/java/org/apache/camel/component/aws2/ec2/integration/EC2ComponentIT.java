@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ec2.localstack;
+package org.apache.camel.component.aws2.ec2.integration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +27,7 @@ import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
-public class EC2ComponentLocalstackTest extends Aws2EC2BaseTest {
+public class EC2ComponentIT extends Aws2EC2Base {
 
     @Test
     public void createAndRunInstancesTest() {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ec2.localstack;
+package org.apache.camel.component.aws2.ec2.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Component;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2EC2BaseTest extends CamelTestSupport {
+public class Aws2EC2Base extends CamelTestSupport {
     @SuppressWarnings("unused")
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createEC2Service();
