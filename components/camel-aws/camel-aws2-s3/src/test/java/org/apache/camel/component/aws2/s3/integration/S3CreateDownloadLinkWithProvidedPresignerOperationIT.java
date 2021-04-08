@@ -26,23 +26,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import static org.junit.Assert.assertNotNull;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class S3CreateDownloadLinkOperationIntegrationTest extends CamelTestSupport {
+public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3Base {
 
-    @BindToRegistry("amazonS3Client")
-    S3Client client
-            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
-                    .region(Region.EU_WEST_1).build();
+    @BindToRegistry("amazonS3Presigner")
+    S3Presigner presigner
+            = S3Presigner.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+                    .region(Region.of(Region.EU_WEST_1.toString())).build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -94,7 +92,7 @@ public class S3CreateDownloadLinkOperationIntegrationTest extends CamelTestSuppo
 
                 from("direct:addObject").to(awsEndpoint);
 
-                from("direct:createDownloadLink").to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1")
+                from("direct:createDownloadLink").to(awsEndpoint)
                         .to("mock:result");
 
             }

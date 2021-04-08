@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.s3.localstack;
+package org.apache.camel.component.aws2.s3.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.s3.AWS2S3Component;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2S3BaseTest extends CamelTestSupport {
+public class Aws2S3Base extends CamelTestSupport {
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
 

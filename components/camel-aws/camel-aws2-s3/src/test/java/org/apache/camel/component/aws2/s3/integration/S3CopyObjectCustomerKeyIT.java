@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.s3.localstack;
+package org.apache.camel.component.aws2.s3.integration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static software.amazon.awssdk.services.s3.model.ServerSideEncryption.AES256;
 
-public class S3CopyObjectCustomerKeyLocalstackTest extends Aws2S3BaseTest {
+public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
 
     String key = UUID.randomUUID().toString();
     byte[] secretKey = generateSecretKey();

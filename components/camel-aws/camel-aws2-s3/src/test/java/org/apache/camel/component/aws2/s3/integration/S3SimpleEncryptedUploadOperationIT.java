@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.s3.localstack;
+package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class S3StreamUploadOperationLocalstackTest extends Aws2S3BaseTest {
+public class S3SimpleEncryptedUploadOperationIT extends Aws2S3Base {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -39,41 +39,64 @@ public class S3StreamUploadOperationLocalstackTest extends Aws2S3BaseTest {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @EndpointInject("mock:resultGet")
+    private MockEndpoint resultGet;
+
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(1000);
+        result.expectedMessageCount(1);
+        resultGet.expectedMessageCount(1);
 
-        for (int i = 0; i < 1000; i++) {
-            template.sendBody("direct:stream1", "Andrea\n");
-        }
-
-        assertMockEndpointsSatisfied();
-
-        Exchange ex = template.request("direct:listObjects", new Processor() {
+        template.send("direct:putObject", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
+                exchange.getIn().setBody("Camel rocks!");
+            }
+        });
+
+        template.request("direct:listObjects", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
         });
 
-        List<S3Object> resp = ex.getMessage().getBody(List.class);
-        assertEquals(40, resp.size());
+        Exchange c = template.request("direct:getObject", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
+            }
+        });
+
+        List<S3Object> resp = result.getExchanges().get(0).getMessage().getBody(List.class);
+        assertEquals(1, resp.size());
+        assertEquals("camel.txt", resp.get(0).key());
+
+        assertEquals("Camel rocks!", c.getIn().getBody(String.class));
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        String key = createKmsKey();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint1
-                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random";
+                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true&useAwsKMS=true&awsKMSKeyId=" + key;
 
-                from("direct:stream1").to(awsEndpoint1).to("mock:result");
+                from("direct:putObject").to(awsEndpoint);
 
-                String awsEndpoint = "aws2-s3://mycamel-1?autoCreateBucket=true";
+                from("direct:listObjects").to(awsEndpoint).to("mock:result");
 
-                from("direct:listObjects").to(awsEndpoint);
+                from("direct:getObject").to("aws2-s3://mycamel?autoCreateBucket=true").to("mock:resultGet");
+
             }
         };
     }

@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.s3.localstack;
+package org.apache.camel.component.aws2.s3.integration;
+
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,8 +27,11 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
-public class S3DeleteBucketOperationLocalstackTest extends Aws2S3BaseTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -36,26 +41,25 @@ public class S3DeleteBucketOperationLocalstackTest extends Aws2S3BaseTest {
 
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(23);
 
-        template.send("direct:listBucket", new Processor() {
+        for (int i = 0; i < 23; i++) {
+            template.sendBody("direct:stream1", "Andrea\n");
+        }
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listBuckets);
-            }
-        });
-
-        template.send("direct:deleteBucket", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel2");
-                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteBucket);
-            }
-        });
-
+        Thread.sleep(11000);
         assertMockEndpointsSatisfied();
+
+        Exchange ex = template.request("direct:listObjects", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
+            }
+        });
+
+        List<S3Object> resp = ex.getMessage().getBody(List.class);
+        assertEquals(1, resp.size());
     }
 
     @Override
@@ -63,12 +67,14 @@ public class S3DeleteBucketOperationLocalstackTest extends Aws2S3BaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-s3://mycamel2?autoCreateBucket=true";
+                String awsEndpoint1
+                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random&streamingUploadTimeout=10000";
 
-                from("direct:listBucket").to(awsEndpoint);
+                from("direct:stream1").to(awsEndpoint1).to("mock:result");
 
-                from("direct:deleteBucket").to(awsEndpoint).to("mock:result");
+                String awsEndpoint = "aws2-s3://mycamel-1?autoCreateBucket=true";
 
+                from("direct:listObjects").to(awsEndpoint);
             }
         };
     }

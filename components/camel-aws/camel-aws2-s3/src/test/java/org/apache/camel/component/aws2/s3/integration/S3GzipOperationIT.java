@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.s3.localstack;
+package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.UUID;
 
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class S3GzipOperationLocalstackTest extends Aws2S3BaseTest {
+public class S3GzipOperationIT extends Aws2S3Base {
     @Test
     public void sendAndGet() throws Exception {
         final String content = UUID.randomUUID().toString();
