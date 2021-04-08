@@ -21,3 +21,12 @@ The option configures the pool size of the scheduled thread pool used by the sch
 If the scheduler thread is being blocked by anywhere in the downstream routing, and you want the scheduler
 to schedule with a fixed interval, you can use the Threads EIP as queue for pending tasks.
 
+=== camel-jsonpath
+
+Usage of `JacksonJsonAdapter` has been slightly changed.
+
+Component was trying to use `JacksonJsonAdapter` ahead of automatic conversion of the payload to the `InputStream`
+in the previous version. New version tries to convert the payload into `InpuStream` first. `JacksonJsonAdapter` is used
+only if conversion to `InputStream` is not possible.
+
+Order of the basic payload types (like `String`, `Map`, `File`) has not been changed.

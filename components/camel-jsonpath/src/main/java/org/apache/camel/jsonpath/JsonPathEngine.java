@@ -181,11 +181,11 @@ public class JsonPathEngine {
             List list = (List) json;
             return JsonPath.using(configuration).parse(list).read(path);
         } else {
-            // can we find an adapter which can read the message body/header
-            Object answer = readWithAdapter(path, exchange);
+            //try to auto convert into inputStream
+            Object answer = readWithInputStream(path, exchange);
             if (answer == null) {
-                // fallback and attempt input stream for any other types
-                answer = readWithInputStream(path, exchange);
+                // fallback and attempt an adapter which can read the message body/header
+                answer = readWithAdapter(path, exchange);
             }
             if (answer != null) {
                 return answer;
