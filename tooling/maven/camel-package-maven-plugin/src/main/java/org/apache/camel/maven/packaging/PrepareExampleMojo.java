@@ -63,7 +63,7 @@ public class PrepareExampleMojo extends AbstractMojo {
     protected String filter = "camel-example";
 
     @Parameter(property = "filterMiddleFolder", required = false, readonly = true)
-    protected List<String> filterMiddleFolder = Arrays.asList(new String[] { "aws" });
+    protected String filterMiddleFolder = "aws";
 
     /**
      * Maven ProjectHelper.
@@ -84,7 +84,7 @@ public class PrepareExampleMojo extends AbstractMojo {
 
     protected void executeExamplesReadme() throws MojoExecutionException, MojoFailureException {
         Set<File> examples = new TreeSet<>();
-
+        List<String> middleFolders = Arrays.asList(filterMiddleFolder.split(","));
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
         if (startingFolder != null && !startingFolder.isEmpty()) {
             // only run in examples directory where the main readme.adoc file is located
@@ -104,7 +104,8 @@ public class PrepareExampleMojo extends AbstractMojo {
 
             for (File file : examples) {
                 if (file.isDirectory()) {
-                    if (!filterMiddleFolder.contains(file.getName())) {
+                    getLog().info(middleFolders.toString());
+                    if (!middleFolders.contains(file.getName())) {
                         File pom = new File(file, "pom.xml");
                         if (pom.exists()) {
                             processExamples(models, file, pom);
