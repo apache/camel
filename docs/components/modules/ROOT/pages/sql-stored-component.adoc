@@ -111,7 +111,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -124,6 +124,7 @@ with the following path and query parameters:
 | *noop* (producer) | If set, will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing | false | boolean
 | *outputHeader* (producer) | Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the template result and the original message body is preserved. |  | String
 | *useMessageBodyForTemplate* (producer) | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used. | false | boolean
+| *templateOptions* (advanced) | Configures the Spring JdbcTemplate with the key/values from the Map |  | Map
 |===
 // endpoint options: END
 
@@ -228,6 +229,18 @@ parameter's "name" defines both the SQL parameter name, as well as the result he
 ----
 
 Actual call will be done using org.springframework.jdbc.core.SqlInOutParameter.
+
+=== Query Timeout
+
+You can configure query timeout (via `template.queryTimeout`) on statements used for query processing as shown:
+
+[source,xml]
+----
+<to uri="sql-stored:MYFUNC(INOUT DECIMAL(10) ${headers.inheader} outheader)?template.queryTimeout=5000"/>
+----
+
+This will be overridden by the remaining transaction timeout when executing within a transaction that has a timeout specified at the transaction level.
+
 
 == Camel SQL Starter
 

@@ -69,6 +69,7 @@ public class SqlStoredComponent extends DefaultComponent {
 
         SqlStoredEndpoint endpoint = new SqlStoredEndpoint(uri, this, jdbcTemplate);
         endpoint.setTemplate(template);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 

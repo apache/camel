@@ -44,11 +44,9 @@ public class TemplateStoredProcedure extends StoredProcedure {
     private List<InOutParameter> inOutParameterList = new ArrayList<>();
 
     public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template, boolean function) {
+        setJdbcTemplate(jdbcTemplate);
         this.template = template;
         setFunction(function);
-        setDataSource(jdbcTemplate.getDataSource());
-
-        setQueryTimeout(jdbcTemplate.getQueryTimeout());
         setSql(template.getProcedureName());
 
         for (Object parameter : template.getParameterList()) {

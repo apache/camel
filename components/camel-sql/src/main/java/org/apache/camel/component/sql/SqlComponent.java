@@ -135,6 +135,7 @@ public class SqlComponent extends DefaultComponent {
         endpoint.setDataSource(ds);
         endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setTemplateOptions(templateOptions);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 

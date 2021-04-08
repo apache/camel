@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.Consumer;
@@ -58,6 +60,9 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     private String outputHeader;
     @UriParam(description = "Whether this call is for a function.")
     private boolean function;
+    @UriParam(label = "advanced", prefix = "template.", multiValue = true,
+              description = "Configures the Spring JdbcTemplate with the key/values from the Map")
+    private Map<String, Object> templateOptions;
 
     public SqlStoredEndpoint(String uri, SqlStoredComponent component, JdbcTemplate jdbcTemplate) {
         super(uri, component);
@@ -162,5 +167,12 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     public void setFunction(boolean function) {
         this.function = function;
     }
-    
+
+    public Map<String, Object> getTemplateOptions() {
+        return templateOptions;
+    }
+
+    public void setTemplateOptions(Map<String, Object> templateOptions) {
+        this.templateOptions = templateOptions;
+    }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -34,6 +35,9 @@ public interface SqlStoredEndpointBuilderFactory {
      * Builder for endpoint for the SQL Stored Procedure component.
      */
     public interface SqlStoredEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedSqlStoredEndpointBuilder advanced() {
+            return (AdvancedSqlStoredEndpointBuilder) this;
+        }
         /**
          * Enables or disables batch mode.
          * 
@@ -265,6 +269,56 @@ public interface SqlStoredEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the SQL Stored Procedure component.
+     */
+    public interface AdvancedSqlStoredEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default SqlStoredEndpointBuilder basic() {
+            return (SqlStoredEndpointBuilder) this;
+        }
+        /**
+         * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedSqlStoredEndpointBuilder templateOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("templateOptions", "template." + key, value);
+            return this;
+        }
+        /**
+         * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedSqlStoredEndpointBuilder templateOptions(Map values) {
+            doSetMultiValueProperties("templateOptions", "template.", values);
+            return this;
+        }
+    }
+
     public interface SqlStoredBuilders {
         /**
          * SQL Stored Procedure (camel-sql)
@@ -312,7 +366,7 @@ public interface SqlStoredEndpointBuilderFactory {
     static SqlStoredEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder {
+        class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder, AdvancedSqlStoredEndpointBuilder {
             public SqlStoredEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }
