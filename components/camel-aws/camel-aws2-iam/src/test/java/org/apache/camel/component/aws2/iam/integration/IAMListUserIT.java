@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.iam.localstack;
+package org.apache.camel.component.aws2.iam.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,32 +24,39 @@ import org.apache.camel.component.aws2.iam.IAM2Constants;
 import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.iam.model.CreateUserRequest;
-import software.amazon.awssdk.services.iam.model.CreateUserResponse;
+import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IAMCreateUserPojoLocalstackTest extends Aws2IAMBaseTest {
+public class IAMListUserIT extends Aws2IAMBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
-    public void iamCreateUserPojoTest() throws Exception {
+    public void iamCreateUserTest() throws Exception {
 
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:createUserPojo", new Processor() {
+        Exchange exchange = template.request("direct:createUser", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
-                exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
+                exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
+            }
+        });
+        exchange = template.request("direct:listUsers", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listUsers);
             }
         });
 
         assertMockEndpointsSatisfied();
 
-        CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
-        assertEquals("test", resultGet.user().userName());
+        ListUsersResponse resultGet = (ListUsersResponse) exchange.getIn().getBody();
+        assertEquals(1, resultGet.users().size());
+        assertEquals("test", resultGet.users().get(0).userName());
+
     }
 
     @Override
@@ -57,9 +64,8 @@ public class IAMCreateUserPojoLocalstackTest extends Aws2IAMBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:createUserPojo")
-                        .to("aws2-iam://test?operation=createUser&pojoRequest=true")
-                        .to("mock:result");
+                from("direct:createUser").to("aws2-iam://test?operation=createUser");
+                from("direct:listUsers").to("aws2-iam://test?operation=listUsers").to("mock:result");
 
             }
         };

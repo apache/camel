@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.iam.localstack;
+package org.apache.camel.component.aws2.iam.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,11 +24,9 @@ import org.apache.camel.component.aws2.iam.IAM2Constants;
 import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.iam.model.ListUsersResponse;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class IAMListUserLocalstackTest extends Aws2IAMBaseTest {
+public class IAMListAccessKeyIT extends Aws2IAMBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -44,19 +42,22 @@ public class IAMListUserLocalstackTest extends Aws2IAMBaseTest {
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
         });
-        exchange = template.request("direct:listUsers", new Processor() {
+        exchange = template.request("direct:createAccessKey", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listUsers);
+                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createAccessKey);
+                exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
+            }
+        });
+        exchange = template.request("direct:listKeys", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listAccessKeys);
+                exchange.getIn().setBody(ListAccessKeysRequest.builder().userName("test").build());
             }
         });
 
         assertMockEndpointsSatisfied();
-
-        ListUsersResponse resultGet = (ListUsersResponse) exchange.getIn().getBody();
-        assertEquals(1, resultGet.users().size());
-        assertEquals("test", resultGet.users().get(0).userName());
-
     }
 
     @Override
@@ -65,7 +66,9 @@ public class IAMListUserLocalstackTest extends Aws2IAMBaseTest {
             @Override
             public void configure() throws Exception {
                 from("direct:createUser").to("aws2-iam://test?operation=createUser");
-                from("direct:listUsers").to("aws2-iam://test?operation=listUsers").to("mock:result");
+                from("direct:createAccessKey").to("aws2-iam://test?operation=createAccessKey");
+                from("direct:listKeys").to("aws2-iam://test?operation=listAccessKeys&pojoRequest=true")
+                        .to("mock:result");
 
             }
         };

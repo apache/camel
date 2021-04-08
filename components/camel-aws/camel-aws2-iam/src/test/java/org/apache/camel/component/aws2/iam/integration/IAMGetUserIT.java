@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.iam.localstack;
+package org.apache.camel.component.aws2.iam.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,11 +24,11 @@ import org.apache.camel.component.aws2.iam.IAM2Constants;
 import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.iam.model.CreateUserResponse;
+import software.amazon.awssdk.services.iam.model.GetUserResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IAMCreateUserLocalstackTest extends Aws2IAMBaseTest {
+public class IAMGetUserIT extends Aws2IAMBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -44,10 +44,17 @@ public class IAMCreateUserLocalstackTest extends Aws2IAMBaseTest {
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
         });
+        exchange = template.request("direct:getUser", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.getUser);
+                exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
+            }
+        });
 
         assertMockEndpointsSatisfied();
 
-        CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
+        GetUserResponse resultGet = (GetUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
 
@@ -56,8 +63,8 @@ public class IAMCreateUserLocalstackTest extends Aws2IAMBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:createUser").to("aws2-iam://test?operation=createUser")
-                        .to("mock:result");
+                from("direct:createUser").to("aws2-iam://test?operation=createUser");
+                from("direct:getUser").to("aws2-iam://test?operation=getUser").to("mock:result");
 
             }
         };

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.iam.localstack;
+package org.apache.camel.component.aws2.iam.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.iam.model.DeleteUserResponse;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IAMDeleteUserLocalstackTest extends Aws2IAMBaseTest {
+public class IAMDeleteUserIT extends Aws2IAMBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
