@@ -52,7 +52,6 @@ public class CosmosDbDatabaseOperations {
 
         createDatabaseAsync(configurationOptionsProxy.getDatabaseName(exchange),
                 configurationOptionsProxy.getThroughputProperties(exchange),
-                configurationOptionsProxy.getCosmosDatabaseRequestOptions(exchange),
                 resultCallback,
                 errorCallback,
                 completionHandler(callback));
@@ -80,11 +79,10 @@ public class CosmosDbDatabaseOperations {
     private void createDatabaseAsync(
             final String databaseName,
             final ThroughputProperties throughputProperties,
-            final CosmosDatabaseRequestOptions options,
             final Consumer<CosmosDatabaseResponse> resultCallback,
             final Consumer<Throwable> errorCallback,
             final Runnable completedConsumer) {
-        client.createDatabase(new CosmosDatabaseProperties(databaseName), throughputProperties, options)
+        client.createDatabaseIfNotExists(databaseName, throughputProperties)
                 .subscribe(resultCallback, errorCallback, completedConsumer);
     }
 
