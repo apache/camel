@@ -27,12 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.eventbridge.model.ListRuleNamesByTargetResponse;
+import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
 import static org.junit.Assert.assertEquals;
 
-public class EventbridgeListRuleNamesByTargetLocalstackTest extends Aws2EventbridgeBaseTest {
+public class EventbridgeListTargetsByRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -65,20 +65,18 @@ public class EventbridgeListRuleNamesByTargetLocalstackTest extends Aws2Eventbri
             }
         });
 
-        template.send("direct:list-rule-name", new Processor() {
+        template.send("direct:evs-list-targets", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(EventbridgeConstants.TARGET_ARN,
-                        "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
             }
         });
-
         assertMockEndpointsSatisfied();
         assertEquals(1, result.getExchanges().size());
-        assertEquals(1, result.getExchanges().get(0).getIn().getBody(ListRuleNamesByTargetResponse.class).ruleNames().size());
-        assertEquals("firstrule",
-                result.getExchanges().get(0).getIn().getBody(ListRuleNamesByTargetResponse.class).ruleNames().get(0));
+        assertEquals(1, result.getExchanges().get(0).getIn().getBody(ListTargetsByRuleResponse.class).targets().size());
+        assertEquals("sqs-queue",
+                result.getExchanges().get(0).getIn().getBody(ListTargetsByRuleResponse.class).targets().get(0).id());
     }
 
     @Override
@@ -89,10 +87,10 @@ public class EventbridgeListRuleNamesByTargetLocalstackTest extends Aws2Eventbri
                 String awsEndpoint
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
-                String listRule = "aws2-eventbridge://default?operation=listRuleNamesByTarget";
+                String listTargets = "aws2-eventbridge://default?operation=listTargetsByRule";
                 from("direct:evs").to(awsEndpoint);
                 from("direct:evs-targets").to(target);
-                from("direct:list-rule-name").to(listRule).to("mock:result");
+                from("direct:evs-list-targets").to(listTargets).to("mock:result");
             }
         };
     }

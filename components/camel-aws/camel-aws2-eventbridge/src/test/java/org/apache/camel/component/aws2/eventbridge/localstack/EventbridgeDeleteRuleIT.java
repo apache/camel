@@ -27,12 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
+import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class EventbridgeListRulesLocalstackTest extends Aws2EventbridgeBaseTest {
+public class EventbridgeDeleteRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -65,18 +65,15 @@ public class EventbridgeListRulesLocalstackTest extends Aws2EventbridgeBaseTest 
             }
         });
 
-        Exchange ex = template.request("direct:evs-listRules", new Processor() {
+        Exchange ex = template.send("direct:evs-deleteRule", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
             }
         });
-
-        ListRulesResponse resp = ex.getIn().getBody(ListRulesResponse.class);
-        assertEquals(true, resp.hasRules());
-        assertEquals(1, resp.rules().size());
-        assertEquals("firstrule", resp.rules().get(0).name());
         assertMockEndpointsSatisfied();
+        assertNotNull(ex.getIn().getBody(DeleteRuleResponse.class));
 
     }
 
@@ -85,14 +82,13 @@ public class EventbridgeListRulesLocalstackTest extends Aws2EventbridgeBaseTest 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String putRule
+                String awsEndpoint
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
-                String putTargets = "aws2-eventbridge://default?operation=putTargets";
-                String listRule = "aws2-eventbridge://default?operation=listRules";
-
-                from("direct:evs").to(putRule).log("${body}");
-                from("direct:evs-targets").to(putTargets).log("${body}");
-                from("direct:evs-listRules").to(listRule).log("${body}").to("mock:result");
+                String target = "aws2-eventbridge://default?operation=putTargets";
+                String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
+                from("direct:evs").to(awsEndpoint);
+                from("direct:evs-targets").to(target);
+                from("direct:evs-deleteRule").to(deleteRule).to("mock:result");
             }
         };
     }

@@ -27,9 +27,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
+import software.amazon.awssdk.services.eventbridge.model.RuleState;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-public class EventbridgePutRuleLocalstackTest extends Aws2EventbridgeBaseTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class EventbridgeDisableRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -37,13 +41,9 @@ public class EventbridgePutRuleLocalstackTest extends Aws2EventbridgeBaseTest {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @EndpointInject("mock:result1")
-    private MockEndpoint result1;
-
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        result1.expectedMessageCount(1);
 
         template.send("direct:evs", new Processor() {
 
@@ -65,6 +65,27 @@ public class EventbridgePutRuleLocalstackTest extends Aws2EventbridgeBaseTest {
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
+
+        template.send("direct:evs-disableRule", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+            }
+        });
+
+        Exchange ex = template.request("direct:evs-listRules", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        ListRulesResponse resp = ex.getIn().getBody(ListRulesResponse.class);
+        assertEquals(true, resp.hasRules());
+        assertEquals(1, resp.rules().size());
+        assertEquals("firstrule", resp.rules().get(0).name());
+        assertEquals(RuleState.DISABLED, resp.rules().get(0).state());
         assertMockEndpointsSatisfied();
 
     }
@@ -74,11 +95,16 @@ public class EventbridgePutRuleLocalstackTest extends Aws2EventbridgeBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint
+                String putRule
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
-                String target = "aws2-eventbridge://default?operation=putTargets";
-                from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
-                from("direct:evs-targets").to(target).log("${body}").to("mock:result1");
+                String putTargets = "aws2-eventbridge://default?operation=putTargets";
+                String listRule = "aws2-eventbridge://default?operation=listRules";
+                String disableRule = "aws2-eventbridge://default?operation=disableRule";
+
+                from("direct:evs").to(putRule);
+                from("direct:evs-targets").to(putTargets);
+                from("direct:evs-listRules").to(listRule);
+                from("direct:evs-disableRule").to(disableRule).log("${body}").to("mock:result");
             }
         };
     }

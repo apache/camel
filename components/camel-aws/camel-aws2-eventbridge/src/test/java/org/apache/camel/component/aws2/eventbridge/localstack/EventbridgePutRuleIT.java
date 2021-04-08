@@ -27,13 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-public class EventbridgeDescribeRuleLocalstackTest extends Aws2EventbridgeBaseTest {
+public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -41,9 +37,13 @@ public class EventbridgeDescribeRuleLocalstackTest extends Aws2EventbridgeBaseTe
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @EndpointInject("mock:result1")
+    private MockEndpoint result1;
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
+        result1.expectedMessageCount(1);
 
         template.send("direct:evs", new Processor() {
 
@@ -65,17 +65,8 @@ public class EventbridgeDescribeRuleLocalstackTest extends Aws2EventbridgeBaseTe
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-
-        template.send("direct:describe-rule", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-            }
-        });
         assertMockEndpointsSatisfied();
-        assertNotNull(result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).eventPattern());
-        assertEquals("firstrule", result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).name());
+
     }
 
     @Override
@@ -86,10 +77,8 @@ public class EventbridgeDescribeRuleLocalstackTest extends Aws2EventbridgeBaseTe
                 String awsEndpoint
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
-                String describeRule = "aws2-eventbridge://default?operation=describeRule";
-                from("direct:evs").to(awsEndpoint);
-                from("direct:evs-targets").to(target);
-                from("direct:describe-rule").to(describeRule).to("mock:result");
+                from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
+                from("direct:evs-targets").to(target).log("${body}").to("mock:result1");
             }
         };
     }

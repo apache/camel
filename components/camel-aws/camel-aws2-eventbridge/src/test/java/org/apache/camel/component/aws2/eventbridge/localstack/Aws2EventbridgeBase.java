@@ -26,7 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2EventbridgeBaseTest extends CamelTestSupport {
+public class Aws2EventbridgeBase extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createEventBridgeService();

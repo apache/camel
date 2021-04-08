@@ -27,12 +27,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class EventbridgeDeleteRuleLocalstackTest extends Aws2EventbridgeBaseTest {
+public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -65,7 +66,7 @@ public class EventbridgeDeleteRuleLocalstackTest extends Aws2EventbridgeBaseTest
             }
         });
 
-        Exchange ex = template.send("direct:evs-deleteRule", new Processor() {
+        template.send("direct:describe-rule", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -73,8 +74,8 @@ public class EventbridgeDeleteRuleLocalstackTest extends Aws2EventbridgeBaseTest
             }
         });
         assertMockEndpointsSatisfied();
-        assertNotNull(ex.getIn().getBody(DeleteRuleResponse.class));
-
+        assertNotNull(result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).eventPattern());
+        assertEquals("firstrule", result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).name());
     }
 
     @Override
@@ -85,10 +86,10 @@ public class EventbridgeDeleteRuleLocalstackTest extends Aws2EventbridgeBaseTest
                 String awsEndpoint
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
-                String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
+                String describeRule = "aws2-eventbridge://default?operation=describeRule";
                 from("direct:evs").to(awsEndpoint);
                 from("direct:evs-targets").to(target);
-                from("direct:evs-deleteRule").to(deleteRule).to("mock:result");
+                from("direct:describe-rule").to(describeRule).to("mock:result");
             }
         };
     }
