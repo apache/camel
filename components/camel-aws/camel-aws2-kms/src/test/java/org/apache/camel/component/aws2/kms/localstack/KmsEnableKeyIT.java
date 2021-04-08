@@ -24,12 +24,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kms.KMS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class KmsListKeysLocalstackTest extends Aws2KmsBaseTest {
+public class KmsEnableKeyIT extends Aws2KmsBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -41,11 +42,31 @@ public class KmsListKeysLocalstackTest extends Aws2KmsBaseTest {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:createKey", new Processor() {
+        Exchange ex = template.send("direct:createKey", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "createKey");
+            }
+        });
+
+        String keyId = ex.getMessage().getBody(CreateKeyResponse.class).keyMetadata().keyId();
+
+        template.send("direct:disableKey", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMS2Constants.OPERATION, "disableKey");
+                exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
+            }
+        });
+
+        template.send("direct:enableKey", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMS2Constants.OPERATION, "enableKey");
+                exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
             }
         });
 
@@ -69,8 +90,12 @@ public class KmsListKeysLocalstackTest extends Aws2KmsBaseTest {
             public void configure() throws Exception {
                 String awsEndpoint
                         = "aws2-kms://default?operation=createKey";
+                String disableKey = "aws2-kms://default?operation=disableKey";
+                String enableKey = "aws2-kms://default?operation=enableKey";
                 String listKeys = "aws2-kms://default?operation=listKeys";
                 from("direct:createKey").to(awsEndpoint);
+                from("direct:disableKey").to(disableKey);
+                from("direct:enableKey").to(enableKey);
                 from("direct:listKeys").to(listKeys).to("mock:result");
             }
         };

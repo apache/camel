@@ -25,12 +25,12 @@ import org.apache.camel.component.aws2.kms.KMS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
-import software.amazon.awssdk.services.kms.model.ListKeysResponse;
+import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
+import software.amazon.awssdk.services.kms.model.KeyState;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class KmsDisableKeyLocalstackTest extends Aws2KmsBaseTest {
+public class KmsScheduleDeleteKeyIT extends Aws2KmsBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -52,26 +52,28 @@ public class KmsDisableKeyLocalstackTest extends Aws2KmsBaseTest {
 
         String keyId = ex.getMessage().getBody(CreateKeyResponse.class).keyMetadata().keyId();
 
-        template.send("direct:disableKey", new Processor() {
+        template.send("direct:scheduleDelete", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KMS2Constants.OPERATION, "disableKey");
+                exchange.getIn().setHeader(KMS2Constants.OPERATION, "scheduleKeyDeletion");
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
             }
         });
 
-        template.send("direct:listKeys", new Processor() {
+        template.send("direct:describeKey", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KMS2Constants.OPERATION, "listKeys");
+                exchange.getIn().setHeader(KMS2Constants.OPERATION, "describeKey");
+                exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
             }
         });
 
         assertMockEndpointsSatisfied();
         assertEquals(1, result.getExchanges().size());
-        assertTrue(result.getExchanges().get(0).getIn().getBody(ListKeysResponse.class).hasKeys());
+        assertEquals(KeyState.PENDING_DELETION,
+                result.getExchanges().get(0).getIn().getBody(DescribeKeyResponse.class).keyMetadata().keyState());
     }
 
     @Override
@@ -81,11 +83,13 @@ public class KmsDisableKeyLocalstackTest extends Aws2KmsBaseTest {
             public void configure() throws Exception {
                 String awsEndpoint
                         = "aws2-kms://default?operation=createKey";
-                String disableKey = "aws2-kms://default?operation=disableKey";
-                String listKeys = "aws2-kms://default?operation=listKeys";
+                String describeKey
+                        = "aws2-kms://default?operation=describeKey";
+                String scheduleDelete
+                        = "aws2-kms://default?operation=describeKey";
                 from("direct:createKey").to(awsEndpoint);
-                from("direct:disableKey").to(disableKey);
-                from("direct:listKeys").to(listKeys).to("mock:result");
+                from("direct:scheduleDelete").to(scheduleDelete);
+                from("direct:describeKey").to(describeKey).to("mock:result");
             }
         };
     }

@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class KmsCreateKeyLocalstackTest extends Aws2KmsBaseTest {
+public class KmsCreateKeyIT extends Aws2KmsBase {
 
     @EndpointInject
     private ProducerTemplate template;
