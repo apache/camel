@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.cw.localstack;
+package org.apache.camel.component.aws2.cw.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,7 +25,7 @@ import org.apache.camel.component.aws2.cw.Cw2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class CwComponentLocalstackTest extends Aws2CwBaseTest {
+public class CwComponentIT extends Aws2CwBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
