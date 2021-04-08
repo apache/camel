@@ -495,6 +495,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                     failed);
         }
 
+        exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         callback.done(true);
         return true;
     }
