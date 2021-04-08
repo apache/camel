@@ -146,6 +146,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Iterator<KeyValueHolder<Object, ProducerRecord>> createRecorder(Exchange exchange) throws Exception {
         String topic = endpoint.getConfiguration().getTopic();
+        Long timeStamp = null;
 
         // must remove header so its not propagated
         Object overrideTopic = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
@@ -158,6 +159,12 @@ public class KafkaProducer extends DefaultAsyncProducer {
             // if topic property was not received from configuration or header
             // parameters take it from the remaining URI
             topic = URISupport.extractRemainderPath(new URI(endpoint.getEndpointUri()), true);
+        }
+
+        Object overrideTimeStamp = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);
+        if ((overrideTimeStamp != null) && (overrideTimeStamp instanceof Long)) {
+            LOG.debug("Using override TimeStamp: {}", overrideTimeStamp);
+            timeStamp = ((Long) overrideTimeStamp).longValue();
         }
 
         // extracting headers which need to be propagated
@@ -189,6 +196,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     String innerTopic = msgTopic;
                     Object innerKey = null;
                     Integer innerPartitionKey = null;
+                    Long innerTimestamp = null;
 
                     Object value = next;
                     Exchange ex = null;
@@ -223,6 +231,12 @@ public class KafkaProducer extends DefaultAsyncProducer {
                             }
                         }
 
+                        if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) != null) {
+                            if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TIMESTAMP) instanceof Long) {
+                                innerTimestamp
+                                        = ((Long) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP)).longValue();
+                            }
+                        }
                         ex = innerExchange == null ? exchange : innerExchange;
                         value = tryConvertToSerializedType(ex, innerMmessage.getBody(),
                                 endpoint.getConfiguration().getValueSerializer());
@@ -231,7 +245,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
                     return new KeyValueHolder(
                             body,
-                            new ProducerRecord(innerTopic, innerPartitionKey, null, innerKey, value, propagatedHeaders));
+                            new ProducerRecord(
+                                    innerTopic, innerPartitionKey, innerTimestamp, innerKey, value, propagatedHeaders));
                 }
 
                 @Override
@@ -257,7 +272,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         // the serializer
         Object value = tryConvertToSerializedType(exchange, msg, endpoint.getConfiguration().getValueSerializer());
 
-        ProducerRecord record = new ProducerRecord(topic, partitionKey, null, key, value, propagatedHeaders);
+        ProducerRecord record = new ProducerRecord(topic, partitionKey, timeStamp, key, value, propagatedHeaders);
         return Collections.singletonList(new KeyValueHolder<Object, ProducerRecord>((Object) exchange, record)).iterator();
     }
 
