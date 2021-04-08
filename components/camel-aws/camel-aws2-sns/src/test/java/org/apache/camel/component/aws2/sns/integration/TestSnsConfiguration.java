@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.aws2.sns.localstack;
+package org.apache.camel.component.aws2.sns.integration;
 
 import org.apache.camel.component.aws2.sns.Sns2Configuration;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
