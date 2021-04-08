@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sts.localstack;
+package org.apache.camel.component.aws2.sts.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,12 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sts.STS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StsGetFederationTokenLocalstackTest extends Aws2StsBaseTest {
+public class StsGetSessionTokenIT extends Aws2StsBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -41,22 +41,17 @@ public class StsGetFederationTokenLocalstackTest extends Aws2StsBaseTest {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:getFederationToken", new Processor() {
+        template.send("direct:getSessonToken", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(STS2Constants.OPERATION, "getFederationToken");
-                exchange.getIn().setHeader(STS2Constants.FEDERATED_NAME, "test");
+                exchange.getIn().setHeader(STS2Constants.OPERATION, "getSessionToken");
             }
         });
 
         assertMockEndpointsSatisfied();
         assertEquals(1, result.getExchanges().size());
-        assertNotNull(
-                result.getExchanges().get(0).getIn().getBody(GetFederationTokenResponse.class).credentials().accessKeyId());
-        assertEquals("000000000000:test",
-                result.getExchanges().get(0).getIn().getBody(GetFederationTokenResponse.class).federatedUser()
-                        .federatedUserId());
+        assertNotNull(result.getExchanges().get(0).getIn().getBody(GetSessionTokenResponse.class).credentials().accessKeyId());
     }
 
     @Override
@@ -65,8 +60,8 @@ public class StsGetFederationTokenLocalstackTest extends Aws2StsBaseTest {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint
-                        = "aws2-sts://default?operation=getFederationToken";
-                from("direct:getFederationToken").to(awsEndpoint).to("mock:result");
+                        = "aws2-sts://default?operation=getSessionToken";
+                from("direct:getSessonToken").to(awsEndpoint).to("mock:result");
             }
         };
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sts.localstack;
+package org.apache.camel.component.aws2.sts.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StsAssumeRoleLocalstackTest extends Aws2StsBaseTest {
+public class StsAssumeRoleIT extends Aws2StsBase {
 
     @EndpointInject
     private ProducerTemplate template;
