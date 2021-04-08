@@ -76,7 +76,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(),
                     TimeUnit.MILLISECONDS);
         }
-        setStartingPart();
+        if (getConfiguration().getRestartingPolicy().equals(AWSS3RestartingPolicyEnum.lastPart)) {
+            setStartingPart();
+        }
     }
 
     @Override
@@ -291,6 +293,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     part.getAndSet(1);
                 }
             }
+        } else {
+            LOG.info("lastPart restarting policy can be used only with progressive naming strategy");
         }
     }
 

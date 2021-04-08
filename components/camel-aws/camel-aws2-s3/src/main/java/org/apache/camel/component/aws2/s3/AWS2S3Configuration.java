@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum;
+import org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -121,6 +122,8 @@ public class AWS2S3Configuration implements Cloneable {
     private AWSS3NamingStrategyEnum namingStrategy = AWSS3NamingStrategyEnum.progressive;
     @UriParam(label = "producer")
     private long streamingUploadTimeout;
+    @UriParam(defaultValue = "override", label = "producer")
+    private AWSS3RestartingPolicyEnum restartingPolicy = AWSS3RestartingPolicyEnum.override;
 
     public long getPartSize() {
         return partSize;
@@ -602,7 +605,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The number of messages composing a batch in stream mode
+     * The number of messages composing a batch in streaming upload mode
      */
     public void setBatchMessageNumber(int batchMessageNumber) {
         this.batchMessageNumber = batchMessageNumber;
@@ -613,7 +616,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The batch size (in bytes) in stream mode
+     * The batch size (in bytes) in streaming upload mode
      */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
@@ -624,7 +627,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The naming strategy to use in stream mode
+     * The naming strategy to use in streaming upload mode
      */
     public void setNamingStrategy(AWSS3NamingStrategyEnum namingStrategy) {
         this.namingStrategy = namingStrategy;
@@ -639,6 +642,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setStreamingUploadTimeout(long streamingUploadTimeout) {
         this.streamingUploadTimeout = streamingUploadTimeout;
+    }
+
+    public AWSS3RestartingPolicyEnum getRestartingPolicy() {
+        return restartingPolicy;
+    }
+
+    /**
+     * The restarting policy to use in streaming upload mode
+     */
+    public void setRestartingPolicy(AWSS3RestartingPolicyEnum restartingPolicy) {
+        this.restartingPolicy = restartingPolicy;
     }
 
     public AWS2S3Configuration copy() {
