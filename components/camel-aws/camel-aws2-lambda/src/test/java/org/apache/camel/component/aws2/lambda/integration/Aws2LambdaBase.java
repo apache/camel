@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.lambda.localstack;
+package org.apache.camel.component.aws2.lambda.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.lambda.Lambda2Component;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2LambdaBaseTest extends CamelTestSupport {
+public class Aws2LambdaBase extends CamelTestSupport {
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createLambdaService();
 

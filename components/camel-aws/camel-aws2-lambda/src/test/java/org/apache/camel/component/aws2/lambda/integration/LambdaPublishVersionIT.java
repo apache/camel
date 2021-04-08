@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.lambda.localstack;
+package org.apache.camel.component.aws2.lambda.integration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,12 +28,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.lambda.Lambda2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
+import software.amazon.awssdk.services.lambda.model.PublishVersionResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class LambdaListFunctionsLocalstackTest extends Aws2LambdaBaseTest {
+public class LambdaPublishVersionIT extends Aws2LambdaBase {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -64,20 +64,18 @@ public class LambdaListFunctionsLocalstackTest extends Aws2LambdaBaseTest {
             }
         });
 
-        template.send("direct:listFunction", ExchangePattern.InOut, new Processor() {
+        template.send("direct:publishVersion", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-
+                exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
-
         assertMockEndpointsSatisfied();
-        ListFunctionsResponse resp = result.getExchanges().get(0).getIn().getBody(ListFunctionsResponse.class);
-        assertEquals(1, resp.functions().size());
-        assertEquals("GetHelloWithName", resp.functions().get(0).functionName());
-        assertEquals("Hello with node.js on Lambda", resp.functions().get(0).description());
-        assertNotNull(resp.functions().get(0).functionArn());
-        assertNotNull(resp.functions().get(0).codeSha256());
+
+        PublishVersionResponse resp = result.getExchanges().get(0).getMessage().getBody(PublishVersionResponse.class);
+        assertNotNull(resp);
+        assertEquals("GetHelloWithName", resp.functionName());
+        assertEquals("1", resp.version());
     }
 
     @Override
@@ -86,9 +84,9 @@ public class LambdaListFunctionsLocalstackTest extends Aws2LambdaBaseTest {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-lambda://GetHelloWithName?operation=createFunction";
-                String listFunction = "aws2-lambda://GetHelloWithName?operation=listFunctions";
+                String publishVersion = "aws2-lambda://GetHelloWithName?operation=publishVersion";
                 from("direct:createFunction").to(awsEndpoint);
-                from("direct:listFunction").to(listFunction).to("mock:result");
+                from("direct:publishVersion").to(publishVersion).to("mock:result");
             }
         };
     }

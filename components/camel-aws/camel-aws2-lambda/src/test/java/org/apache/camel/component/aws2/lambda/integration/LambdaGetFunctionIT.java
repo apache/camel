@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.lambda.localstack;
+package org.apache.camel.component.aws2.lambda.integration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class LambdaGetFunctionLocalstackTest extends Aws2LambdaBaseTest {
+public class LambdaGetFunctionIT extends Aws2LambdaBase {
 
     @EndpointInject
     private ProducerTemplate template;
