@@ -1937,7 +1937,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of messages composing a batch in stream mode.
+         * The number of messages composing a batch in streaming upload mode.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1953,7 +1953,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of messages composing a batch in stream mode.
+         * The number of messages composing a batch in streaming upload mode.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1969,7 +1969,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * The batch size (in bytes) in stream mode.
+         * The batch size (in bytes) in streaming upload mode.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1984,7 +1984,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * The batch size (in bytes) in stream mode.
+         * The batch size (in bytes) in streaming upload mode.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -2131,7 +2131,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * The naming strategy to use in stream mode.
+         * The naming strategy to use in streaming upload mode.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
@@ -2148,7 +2148,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * The naming strategy to use in stream mode.
+         * The naming strategy to use in streaming upload mode.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
@@ -2225,6 +2225,40 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointProducerBuilder partSize(String partSize) {
             doSetProperty("partSize", partSize);
+            return this;
+        }
+        /**
+         * The restarting policy to use in streaming upload mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * 
+         * Default: override
+         * Group: producer
+         * 
+         * @param restartingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder restartingPolicy(
+                AWSS3RestartingPolicyEnum restartingPolicy) {
+            doSetProperty("restartingPolicy", restartingPolicy);
+            return this;
+        }
+        /**
+         * The restarting policy to use in streaming upload mode.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * 
+         * Default: override
+         * Group: producer
+         * 
+         * @param restartingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder restartingPolicy(
+                String restartingPolicy) {
+            doSetProperty("restartingPolicy", restartingPolicy);
             return this;
         }
         /**
@@ -2960,6 +2994,15 @@ public interface AWS2S3EndpointBuilderFactory {
         getObject,
         getObjectRange,
         createDownloadLink;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum</code> enum.
+     */
+    enum AWSS3RestartingPolicyEnum {
+        override,
+        lastPart;
     }
 
     public interface AWS2S3Builders {

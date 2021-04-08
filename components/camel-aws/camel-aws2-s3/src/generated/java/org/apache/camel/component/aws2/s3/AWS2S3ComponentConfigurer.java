@@ -100,6 +100,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "restartingpolicy":
+        case "restartingPolicy": getOrCreateConfiguration(target).setRestartingPolicy(property(camelContext, org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
@@ -202,6 +204,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
         case "region": return java.lang.String.class;
+        case "restartingpolicy":
+        case "restartingPolicy": return org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "storageclass":
@@ -300,6 +304,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "proxyprotocol":
         case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
         case "region": return getOrCreateConfiguration(target).getRegion();
+        case "restartingpolicy":
+        case "restartingPolicy": return getOrCreateConfiguration(target).getRestartingPolicy();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "storageclass":

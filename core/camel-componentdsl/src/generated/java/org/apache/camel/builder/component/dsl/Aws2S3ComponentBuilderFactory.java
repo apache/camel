@@ -557,7 +557,7 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The number of messages composing a batch in stream mode.
+         * The number of messages composing a batch in streaming upload mode.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -572,7 +572,7 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The batch size (in bytes) in stream mode.
+         * The batch size (in bytes) in streaming upload mode.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -657,7 +657,7 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The naming strategy to use in stream mode.
+         * The naming strategy to use in streaming upload mode.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum&lt;/code&gt; type.
@@ -703,6 +703,23 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder partSize(long partSize) {
             doSetProperty("partSize", partSize);
+            return this;
+        }
+        /**
+         * The restarting policy to use in streaming upload mode.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum&lt;/code&gt; type.
+         * 
+         * Default: override
+         * Group: producer
+         * 
+         * @param restartingPolicy the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder restartingPolicy(
+                org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum restartingPolicy) {
+            doSetProperty("restartingPolicy", restartingPolicy);
             return this;
         }
         /**
@@ -909,6 +926,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "namingStrategy": getOrCreateConfiguration((AWS2S3Component) component).setNamingStrategy((org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum) value); return true;
             case "operation": getOrCreateConfiguration((AWS2S3Component) component).setOperation((org.apache.camel.component.aws2.s3.AWS2S3Operations) value); return true;
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
+            case "restartingPolicy": getOrCreateConfiguration((AWS2S3Component) component).setRestartingPolicy((org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "streamingUploadMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadMode((boolean) value); return true;
             case "streamingUploadTimeout": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadTimeout((long) value); return true;

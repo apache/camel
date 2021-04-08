@@ -20,7 +20,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(68);
         props.add("customerAlgorithm");
         props.add("fileName");
         props.add("batchMessageNumber");
@@ -57,6 +57,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("deleteAfterWrite");
         props.add("region");
         props.add("exceptionHandler");
+        props.add("restartingPolicy");
         props.add("backoffMultiplier");
         props.add("destinationBucket");
         props.add("amazonS3Presigner");

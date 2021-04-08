@@ -112,6 +112,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "restartingpolicy":
+        case "restartingPolicy": target.getConfiguration().setRestartingPolicy(property(camelContext, org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -248,6 +250,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "region": return java.lang.String.class;
         case "repeatcount":
         case "repeatCount": return long.class;
+        case "restartingpolicy":
+        case "restartingPolicy": return org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "scheduledexecutorservice":
@@ -380,6 +384,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "region": return target.getConfiguration().getRegion();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
+        case "restartingpolicy":
+        case "restartingPolicy": return target.getConfiguration().getRestartingPolicy();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
