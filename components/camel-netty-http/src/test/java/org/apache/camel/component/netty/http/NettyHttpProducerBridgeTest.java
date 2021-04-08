@@ -20,23 +20,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
-    AvailablePortFinder.Port port1 = port;
-    @RegisterExtension
-    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-    @RegisterExtension
-    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @AvailablePort
+    int port2;
+    @AvailablePort
+    int port3;
 
     @Test
     public void testProxy() throws Exception {
-        String reply = template.requestBody("netty-http:http://localhost:" + port1 + "/foo", "World", String.class);
+        String reply = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
         assertEquals("Bye World", reply);
     }
 
@@ -46,7 +44,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isEqualTo("x=%3B");
         mock.message(0).header(Exchange.HTTP_QUERY).isEqualTo("x=;");
 
-        template.request("netty-http:http://localhost:" + port3 + "/query?bridgeEndpoint=true", new Processor() {
+        template.request("netty-http:http://localhost:{{port3}}/query?bridgeEndpoint=true", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
@@ -62,7 +60,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isEqualTo("x=%3B");
         mock.message(0).header(Exchange.HTTP_QUERY).isEqualTo("x=;");
 
-        template.request("netty-http:http://localhost:" + port3 + "/query?bridgeEndpoint=true", new Processor() {
+        template.request("netty-http:http://localhost:{{port3}}/query?bridgeEndpoint=true", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
@@ -78,13 +76,13 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:" + port1 + "/foo")
-                        .to("netty-http:http://localhost:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
+                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                        .to("netty-http:http://localhost:{{port2}}/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
-                from("netty-http:http://0.0.0.0:" + port2 + "/bar")
+                from("netty-http:http://0.0.0.0:{{port2}}/bar")
                         .transform().simple("Bye ${body}");
 
-                from("netty-http:http://0.0.0.0:" + port3 + "/query")
+                from("netty-http:http://0.0.0.0:{{port3}}/query")
                         .to("mock:query");
             }
         };

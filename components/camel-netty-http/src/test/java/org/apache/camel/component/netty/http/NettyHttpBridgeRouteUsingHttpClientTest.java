@@ -23,35 +23,33 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
 
-    AvailablePortFinder.Port port1 = port;
-    @RegisterExtension
-    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @AvailablePort
+    int port2;
 
     @Test
     public void testBridge() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
+        String response = template.requestBodyAndHeader("http://localhost:{{port2}}/test/hello",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
         assertEquals("/", response, "Get a wrong response");
 
-        response = template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
+        response = template.requestBody("http://localhost:{{port}}/hello/world", "hello", String.class);
         assertEquals("/hello/world", response, "Get a wrong response");
 
         assertThrows(RuntimeCamelException.class,
-                () -> template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class));
+                () -> template.requestBody("http://localhost:{{port2}}/hello/world", "hello", String.class));
     }
 
     @Test
     public void testSendFormRequestMessage() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:" + port2 + "/form", "username=abc&pass=password",
+        String out = template.requestBodyAndHeader("http://localhost:{{port2}}/form", "username=abc&pass=password",
                 Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded", String.class);
         assertEquals("username=abc&pass=password", out, "Get a wrong response message");
     }
@@ -67,13 +65,13 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
                     String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
                     exchange.getMessage().setBody(uri);
                 };
-                from("netty-http:http://localhost:" + port2 + "/test/hello")
-                        .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("netty-http:http://localhost:{{port2}}/test/hello")
+                        .to("http://localhost:{{port}}?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("netty-http:http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
+                from("netty-http:http://localhost:{{port}}?matchOnUriPrefix=true").process(serviceProc);
 
                 // check the from request
-                from("netty-http:http://localhost:" + port2 + "/form?bridgeEndpoint=true")
+                from("netty-http:http://localhost:{{port2}}/form?bridgeEndpoint=true")
                         .process(exchange -> {
                             // just take out the message body and send it back
                             Message in = exchange.getIn();

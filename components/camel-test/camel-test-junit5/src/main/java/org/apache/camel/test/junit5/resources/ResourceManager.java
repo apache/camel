@@ -14,25 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
+package org.apache.camel.test.junit5.resources;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.properties.PropertiesSource;
-import org.apache.camel.test.junit5.resources.AvailablePort;
-import org.junit.jupiter.api.extension.ExtendWith;
+import java.lang.reflect.Field;
 
-/**
- *
- */
-@PropertiesSource
-@ExtendWith(LeakDetection.class)
-public class BaseNettyTest extends CamelTestSupport {
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-    @AvailablePort
-    int port;
+public interface ResourceManager {
 
-    protected int getPort() {
-        return port;
-    }
+    void inject(ExtensionContext context, Object testInstance, Field field);
 
 }
