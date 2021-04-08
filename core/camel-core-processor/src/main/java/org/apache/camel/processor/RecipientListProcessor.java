@@ -155,7 +155,6 @@ public class RecipientListProcessor extends MulticastProcessor {
 
     }
 
-    // TODO: camel-bean @RecipientList cacheSize
     public RecipientListProcessor(CamelContext camelContext, Route route, Expression expression, String delimiter,
                                   ProducerCache producerCache,
                                   AggregationStrategy aggregationStrategy,
