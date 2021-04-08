@@ -104,7 +104,6 @@ public class PrepareExampleMojo extends AbstractMojo {
 
             for (File file : examples) {
                 if (file.isDirectory()) {
-                    getLog().info(middleFolders.toString());
                     if (!middleFolders.contains(file.getName())) {
                         File pom = new File(file, "pom.xml");
                         if (pom.exists()) {
