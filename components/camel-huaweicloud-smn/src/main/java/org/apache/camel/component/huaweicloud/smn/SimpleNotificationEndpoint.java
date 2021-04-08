@@ -83,6 +83,10 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String region;
 
+    @UriParam(description = "SMN service endpoint", displayName = "Service endpoint", secret = false)
+    @Metadata(required = false)
+    private String endpoint;
+
     @UriParam(description = "TTL for published message", displayName = "Message TTL", secret = false, defaultValue = "3600")
     @Metadata(required = false)
     private int messageTtl = 3600;
@@ -206,6 +210,14 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 
     public int getMessageTtl() {
