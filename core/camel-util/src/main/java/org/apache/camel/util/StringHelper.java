@@ -396,6 +396,23 @@ public final class StringHelper {
         return rc;
     }
 
+    public static List<String> splitOnCharacterAsList(String value, char needle, int count) {
+        List<String> rc = new ArrayList<>(count);
+        int pos = 0;
+        for (int i = 0; i < count; i++) {
+            int end = value.indexOf(needle, pos);
+            if (end != -1) {
+                String part = value.substring(pos, end);
+                pos = end + 1;
+                rc.add(part);
+            } else {
+                rc.add(value.substring(pos));
+                break;
+            }
+        }
+        return rc;
+    }
+
     /**
      * Removes any starting characters on the given text which match the given character
      *

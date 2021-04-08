@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -119,5 +121,17 @@ public class StringHelperTest {
         assertEquals("jms:queue:bar", replaceFirst("jms:queue:foo", "foo", "bar"));
         assertEquals("jms:queue:bar?blah=123", replaceFirst("jms:queue:foo?blah=123", "foo", "bar"));
         assertEquals("jms:queue:bar?blah=foo", replaceFirst("jms:queue:foo?blah=foo", "foo", "bar"));
+    }
+
+    @Test
+    public void testSplitOnCharacterAsList() throws Exception {
+        List<String> list = splitOnCharacterAsList("foo", ',', 1);
+        assertEquals(1, list.size());
+        assertEquals("foo", list.get(0));
+
+        list = splitOnCharacterAsList("foo,bar", ',', 2);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
     }
 }

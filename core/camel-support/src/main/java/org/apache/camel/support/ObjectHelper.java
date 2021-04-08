@@ -38,6 +38,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.Scanner;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A number of useful helper methods for working with Objects
@@ -45,11 +46,12 @@ import org.apache.camel.util.Scanner;
 public final class ObjectHelper {
 
     static {
-        DEFAULT_PATTERN = Pattern.compile(",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))");
+        PARENTHESIS_PATTERN = Pattern.compile(",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))");
     }
 
-    private static final Pattern DEFAULT_PATTERN;
+    private static final Pattern PARENTHESIS_PATTERN;
     private static final String DEFAULT_DELIMITER = ",";
+    private static final char DEFAULT_DELIMITER_CHAR = ',';
 
     /**
      * Utility classes should not have a public constructor.
@@ -522,18 +524,25 @@ public final class ObjectHelper {
         if (value == null) {
             return Collections.emptyList();
         } else if (delimiter != null && (pattern || value.contains(delimiter))) {
+            // if its the default delimiter and the value has parenthesis
             if (DEFAULT_DELIMITER.equals(delimiter)) {
-                // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
-                // which may have balanced parentheses pairs as well.
-                // if the value contains parentheses we need to balance those, to avoid iterating
-                // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
-                // the regexp will split by comma, but honor parentheses pair that may include commas
-                // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
-                // then the regexp will split that into two:
-                // -> bean=foo?method=killer(a,b)
-                // -> bean=bar?method=great(a,b)
-                // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
-                return () -> new Scanner(value, DEFAULT_PATTERN);
+                if (value.indexOf('(') != -1 && value.indexOf(')') != -1) {
+                    // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
+                    // which may have balanced parentheses pairs as well.
+                    // if the value contains parentheses we need to balance those, to avoid iterating
+                    // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
+                    // the regexp will split by comma, but honor parentheses pair that may include commas
+                    // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
+                    // then the regexp will split that into two:
+                    // -> bean=foo?method=killer(a,b)
+                    // -> bean=bar?method=great(a,b)
+                    // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
+                    return () -> new Scanner(value, PARENTHESIS_PATTERN);
+                } else {
+                    // optimized split string on default delimiter
+                    int count = StringHelper.countChar(value, DEFAULT_DELIMITER_CHAR) + 1;
+                    return StringHelper.splitOnCharacterAsList(value, DEFAULT_DELIMITER_CHAR, count);
+                }
             }
             return () -> new Scanner(value, delimiter);
         } else if (allowEmptyValues || org.apache.camel.util.ObjectHelper.isNotEmpty(value)) {
@@ -735,20 +744,28 @@ public final class ObjectHelper {
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
             if (delimiter != null && (pattern || s.contains(delimiter))) {
+                // if its the default delimiter and the value has parenthesis
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
-                    // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
-                    // which may have balanced parentheses pairs as well.
-                    // if the value contains parentheses we need to balance those, to avoid iterating
-                    // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
-                    // the regexp will split by comma, but honor parentheses pair that may include commas
-                    // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
-                    // then the regexp will split that into two:
-                    // -> bean=foo?method=killer(a,b)
-                    // -> bean=bar?method=great(a,b)
-                    // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
-                    return (Iterable<String>) () -> new Scanner(s, DEFAULT_PATTERN);
+                    if (s.indexOf('(') != -1 && s.indexOf(')') != -1) {
+                        // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
+                        // which may have balanced parentheses pairs as well.
+                        // if the value contains parentheses we need to balance those, to avoid iterating
+                        // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
+                        // the regexp will split by comma, but honor parentheses pair that may include commas
+                        // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
+                        // then the regexp will split that into two:
+                        // -> bean=foo?method=killer(a,b)
+                        // -> bean=bar?method=great(a,b)
+                        // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
+                        return (Iterable<String>) () -> new Scanner(s, PARENTHESIS_PATTERN);
+                    } else {
+                        // optimized split string on default delimiter
+                        int count = StringHelper.countChar(s, DEFAULT_DELIMITER_CHAR) + 1;
+                        return StringHelper.splitOnCharacterAsList(s, DEFAULT_DELIMITER_CHAR, count);
+                    }
+                } else {
+                    return (Iterable<String>) () -> new Scanner(s, delimiter);
                 }
-                return (Iterable<String>) () -> new Scanner(s, delimiter);
             } else {
                 return (Iterable<Object>) () -> {
                     // use a plain iterator that returns the value as is as there are only a single value
