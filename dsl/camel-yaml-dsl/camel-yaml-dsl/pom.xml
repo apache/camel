@@ -47,12 +47,14 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-yaml-dsl-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-yaml-dsl-deserializers</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-dsl-support</artifactId>
         </dependency>
 
         <dependency>

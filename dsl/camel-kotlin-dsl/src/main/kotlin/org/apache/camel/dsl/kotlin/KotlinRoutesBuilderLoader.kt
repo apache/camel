@@ -17,19 +17,13 @@
 package org.apache.camel.dsl.kotlin
 
 import org.apache.camel.Experimental
-import org.apache.camel.ExtendedCamelContext
-import org.apache.camel.RoutesBuilder
 import org.apache.camel.RuntimeCamelException
-import org.apache.camel.api.management.ManagedAttribute
 import org.apache.camel.api.management.ManagedResource
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder
-import org.apache.camel.spi.Resource
-import org.apache.camel.spi.StartupStepRecorder
+import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport
 import org.apache.camel.spi.annotations.RoutesLoader
-import org.apache.camel.support.RoutesBuilderLoaderSupport
 import org.slf4j.LoggerFactory
 import java.io.Reader
-import java.lang.Exception
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
@@ -38,37 +32,9 @@ import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromT
 @Experimental
 @ManagedResource(description = "Managed KotlinRoutesBuilderLoader")
 @RoutesLoader(EXTENSION)
-class KotlinRoutesBuilderLoader : RoutesBuilderLoaderSupport() {
-    var recorder: StartupStepRecorder? = null
-
+class KotlinRoutesBuilderLoader : EndpointRouteBuilderLoaderSupport(EXTENSION) {
     @Throws(Exception::class)
-    override fun doBuild() {
-        super.doBuild()
-
-        if (camelContext != null) {
-            this.recorder = camelContext.adapt(ExtendedCamelContext::class.java).startupStepRecorder
-        }
-    }
-
-    @ManagedAttribute(description = "Supported file extension")
-    override fun getSupportedExtension(): String {
-        return EXTENSION
-    }
-
-    @Throws(Exception::class)
-    override fun loadRoutesBuilder(resource: Resource): RoutesBuilder? {
-        val step = if (recorder != null) recorder!!.beginStep(KotlinRoutesBuilderLoader::class.java, resource.location, "Compiling RouteBuilder") else null
-
-        try {
-            return EndpointRouteBuilder.loadEndpointRoutesBuilder(resource) {
-                reader, builder -> load(reader, builder)
-            }
-        } finally {
-            recorder?.endStep(step)
-        }
-    }
-
-    private fun load(reader: Reader, builder: EndpointRouteBuilder) {
+    override fun doLoadEndpointRouteBuilder(reader: Reader, builder: EndpointRouteBuilder) {
         val host = BasicJvmScriptingHost()
         val config = createJvmCompilationConfigurationFromTemplate<KotlinDSL>()
 

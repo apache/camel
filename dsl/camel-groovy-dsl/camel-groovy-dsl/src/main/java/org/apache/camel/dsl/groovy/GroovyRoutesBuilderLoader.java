@@ -16,53 +16,49 @@
  */
 package org.apache.camel.dsl.groovy;
 
+import java.io.Reader;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.util.DelegatingScript;
 import org.apache.camel.Experimental;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.StartupStep;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.dsl.groovy.common.GroovyDSL;
+import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport;
 import org.apache.camel.spi.annotations.RoutesLoader;
-import org.apache.camel.support.RoutesBuilderLoaderSupport;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 @Experimental
 @ManagedResource(description = "Managed GroovyRoutesBuilderLoader")
 @RoutesLoader(GroovyRoutesBuilderLoader.EXTENSION)
-public class GroovyRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
+public class GroovyRoutesBuilderLoader extends EndpointRouteBuilderLoaderSupport {
     public static final String EXTENSION = "groovy";
 
-    private StartupStepRecorder recorder;
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-
-        if (getCamelContext() != null) {
-            this.recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-        }
-    }
-
-    @ManagedAttribute(description = "Supported file extension")
-    @Override
-    public String getSupportedExtension() {
-        return EXTENSION;
+    public GroovyRoutesBuilderLoader() {
+        super(EXTENSION);
     }
 
     @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
-        StartupStep step = recorder != null
-                ? recorder.beginStep(GroovyRoutesBuilderLoader.class, resource.getLocation(), "Compiling RouteBuilder")
-                : null;
+    protected void doLoadEndpointRouteBuilder(Reader reader, EndpointRouteBuilder builder) {
+        ImportCustomizer ic = new ImportCustomizer();
+        ic.addStarImports("org.apache.camel");
+        ic.addStarImports("org.apache.camel.spi");
 
-        try {
-            return EndpointRouteBuilder.loadEndpointRoutesBuilder(resource, GroovyRoutesBuilderSupport::load);
-        } finally {
-            if (recorder != null) {
-                recorder.endStep(step);
-            }
-        }
+        CompilerConfiguration cc = new CompilerConfiguration();
+        cc.addCompilationCustomizers(ic);
+        cc.setScriptBaseClass(DelegatingScript.class.getName());
+
+        ClassLoader cl = builder.getContext().getApplicationContextClassLoader() != null
+                ? builder.getContext().getApplicationContextClassLoader()
+                : Thread.currentThread().getContextClassLoader();
+
+        GroovyShell sh = new GroovyShell(cl, new Binding(), cc);
+        DelegatingScript script = (DelegatingScript) sh.parse(reader);
+
+        // set the delegate target
+        script.setDelegate(new GroovyDSL(builder));
+        script.run();
     }
 }

@@ -19,17 +19,11 @@ package org.apache.camel.dsl.js;
 import java.io.Reader;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.StartupStep;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.dsl.support.EndpointRouteBuilderLoaderSupport;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
@@ -37,43 +31,16 @@ import static org.graalvm.polyglot.Source.newBuilder;
 
 @ManagedResource(description = "Managed JavaScriptRoutesBuilderLoader")
 @RoutesLoader(JavaScriptRoutesBuilderLoader.EXTENSION)
-public class JavaScriptRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
+public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSupport {
     public static final String EXTENSION = "js";
     public static final String LANGUAGE_ID = "js";
 
-    private StartupStepRecorder recorder;
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-
-        if (getCamelContext() != null) {
-            this.recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-        }
-    }
-
-    @ManagedAttribute(description = "Supported file extension")
-    @Override
-    public String getSupportedExtension() {
-        return EXTENSION;
+    public JavaScriptRoutesBuilderLoader() {
+        super(EXTENSION);
     }
 
     @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
-        StartupStep step = recorder != null
-                ? recorder.beginStep(JavaScriptRoutesBuilderLoader.class, resource.getLocation(), "Compiling RouteBuilder")
-                : null;
-
-        try {
-            return EndpointRouteBuilder.loadEndpointRoutesBuilder(resource, this::load);
-        } finally {
-            if (recorder != null) {
-                recorder.endStep(step);
-            }
-        }
-    }
-
-    private void load(Reader reader, EndpointRouteBuilder builder) {
+    protected void doLoadEndpointRouteBuilder(Reader reader, EndpointRouteBuilder builder) {
         final Context context = Context.newBuilder(LANGUAGE_ID).allowAllAccess(true).build();
         final Value bindings = context.getBindings(LANGUAGE_ID);
 
