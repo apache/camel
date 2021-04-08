@@ -19,13 +19,10 @@ package org.apache.camel.dsl.yaml;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.StartupStep;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
 import org.apache.camel.dsl.yaml.deserializers.EndpointProducerDeserializersResolver;
@@ -37,9 +34,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.RoutesLoader;
-import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.Load;
@@ -47,27 +42,19 @@ import org.snakeyaml.engine.v2.api.LoadSettings;
 
 @ManagedResource(description = "Managed YAML RoutesBuilderLoader")
 @RoutesLoader(YamlRoutesBuilderLoader.EXTENSION)
-public class YamlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
+public class YamlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public static final String EXTENSION = "yaml";
 
     private LoadSettings settings;
     private YamlDeserializationContext constructor;
-    private StartupStepRecorder recorder;
 
     public YamlRoutesBuilderLoader() {
-    }
-
-    @ManagedAttribute(description = "Supported file extension")
-    @Override
-    public String getSupportedExtension() {
-        return EXTENSION;
+        super(EXTENSION);
     }
 
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-
-        this.recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
 
         this.settings = LoadSettings.builder().build();
         this.constructor = new YamlDeserializationContext(settings);
@@ -95,7 +82,7 @@ public class YamlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     }
 
     @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+    public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         ObjectHelper.notNull(constructor, "constructor");
         ObjectHelper.notNull(settings, "settings");
 
@@ -104,19 +91,10 @@ public class YamlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
             public void configure() throws Exception {
                 final Load load = new Load(settings, constructor);
 
-                StartupStep step = recorder != null
-                        ? recorder.beginStep(YamlRoutesBuilderLoader.class, resource.getLocation(),
-                                "Loading and Parsing YAML routes")
-                        : null;
-
                 try (InputStream is = resource.getInputStream()) {
                     for (Object item : (List<?>) load.loadFromInputStream(is)) {
 
                         configure(item);
-                    }
-                } finally {
-                    if (recorder != null) {
-                        recorder.endStep(step);
                     }
                 }
             }

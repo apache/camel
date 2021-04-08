@@ -52,6 +52,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-model</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-dsl-support</artifactId>
+        </dependency>
 
         <!-- requires Java 11 or 14 -->
         <dependency>

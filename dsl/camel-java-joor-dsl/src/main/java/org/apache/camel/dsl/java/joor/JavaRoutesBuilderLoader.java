@@ -20,58 +20,34 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.StartupStep;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
-public class JavaRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
+public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public static final String EXTENSION = "java";
     public static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
-    private StartupStepRecorder recorder;
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-    }
-
-    @ManagedAttribute(description = "Supported file extension")
-    @Override
-    public String getSupportedExtension() {
-        return EXTENSION;
+    public JavaRoutesBuilderLoader() {
+        super(EXTENSION);
     }
 
     @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+    public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         try (InputStream is = resource.getInputStream()) {
             final String content = IOHelper.loadText(is);
             final String name = determineName(resource, content);
 
-            StartupStep step = recorder != null
-                    ? recorder.beginStep(JavaRoutesBuilderLoader.class, name, "Compiling RouteBuilder")
-                    : null;
-
-            try {
-                return Reflect.compile(name, content).create().get();
-            } finally {
-                if (recorder != null) {
-                    recorder.endStep(step);
-                }
-            }
+            return Reflect.compile(name, content).create().get();
         }
     }
 

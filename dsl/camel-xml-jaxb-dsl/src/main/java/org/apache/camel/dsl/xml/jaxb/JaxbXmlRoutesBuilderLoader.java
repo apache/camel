@@ -18,19 +18,14 @@ package org.apache.camel.dsl.xml.jaxb;
 
 import java.io.InputStream;
 
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.StartupStep;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.RoutesLoader;
-import org.apache.camel.support.RoutesBuilderLoaderSupport;
 
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
@@ -38,59 +33,37 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
 
 @ManagedResource(description = "Managed JAXB XML RoutesBuilderLoader")
 @RoutesLoader(JaxbXmlRoutesBuilderLoader.EXTENSION)
-public class JaxbXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
-
+public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public static final String EXTENSION = "xml";
 
-    private StartupStepRecorder recorder;
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-    }
-
-    @ManagedAttribute(description = "Supported file extension")
-    @Override
-    public String getSupportedExtension() {
-        return EXTENSION;
+    public JaxbXmlRoutesBuilderLoader() {
+        super(EXTENSION);
     }
 
     @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+    public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes
-
-                StartupStep step = recorder != null
-                        ? recorder.beginStep(JaxbXmlRoutesBuilderLoader.class, resource.getLocation(),
-                                "Loading and Parsing XML routes")
-                        : null;
-                try {
-                    try (InputStream is = resource.getInputStream()) {
-                        RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
-                        if (templates != null) {
-                            setRouteTemplateCollection(templates);
-                        }
+                try (InputStream is = resource.getInputStream()) {
+                    RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
+                    if (templates != null) {
+                        setRouteTemplateCollection(templates);
                     }
+                }
 
-                    try (InputStream is = resource.getInputStream()) {
-                        RestsDefinition rests = loadRestsDefinition(getCamelContext(), is);
-                        if (rests != null) {
-                            setRestCollection(rests);
-                        }
+                try (InputStream is = resource.getInputStream()) {
+                    RestsDefinition rests = loadRestsDefinition(getCamelContext(), is);
+                    if (rests != null) {
+                        setRestCollection(rests);
                     }
+                }
 
-                    try (InputStream is = resource.getInputStream()) {
-                        RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
-                        if (routes != null) {
-                            setRouteCollection(routes);
-                        }
-                    }
-                } finally {
-                    if (recorder != null) {
-                        recorder.endStep(step);
+                try (InputStream is = resource.getInputStream()) {
+                    RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
+                    if (routes != null) {
+                        setRouteCollection(routes);
                     }
                 }
             }
