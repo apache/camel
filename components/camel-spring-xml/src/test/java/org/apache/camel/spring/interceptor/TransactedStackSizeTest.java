@@ -45,7 +45,7 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
             int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
                     int.class);
             sizes[i] = size;
-            Assertions.assertTrue(size < 100, "Stackframe should be < 100");
+            Assertions.assertTrue(size < 110, "Stackframe should be < 110");
             log.debug("#{} size {}", i, size);
         }
         int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
