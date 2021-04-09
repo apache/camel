@@ -144,6 +144,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "schemaRefreshMode": target.getConfiguration().setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemawhitelist":
         case "schemaWhitelist": target.getConfiguration().setSchemaWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "signaldatacollection":
+        case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "slotdroponstop":
@@ -324,6 +326,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "schemaRefreshMode": return java.lang.String.class;
         case "schemawhitelist":
         case "schemaWhitelist": return java.lang.String.class;
+        case "signaldatacollection":
+        case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "slotdroponstop":
@@ -505,6 +509,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "schemaRefreshMode": return target.getConfiguration().getSchemaRefreshMode();
         case "schemawhitelist":
         case "schemaWhitelist": return target.getConfiguration().getSchemaWhitelist();
+        case "signaldatacollection":
+        case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "slotdroponstop":

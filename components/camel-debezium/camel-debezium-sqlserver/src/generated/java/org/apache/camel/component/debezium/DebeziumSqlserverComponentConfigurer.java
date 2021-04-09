@@ -126,6 +126,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "signaldatacollection":
+        case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
@@ -267,6 +269,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "retriableRestartConnectorWaitMs": return long.class;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return boolean.class;
+        case "signaldatacollection":
+        case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
@@ -409,6 +413,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
+        case "signaldatacollection":
+        case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":

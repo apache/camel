@@ -28,6 +28,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
+    private String signalDataCollection;
+    @UriParam(label = LABEL_NAME)
     private String converters;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
@@ -162,7 +164,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The server selection timeout in milliseconds
+     * The server selection timeout, given in milliseconds. Defaults to 10
+     * seconds (10,000 ms).
      */
     public void setMongodbServerSelectionTimeoutMs(
             int mongodbServerSelectionTimeoutMs) {
@@ -174,8 +177,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Frequency in milliseconds to wait for new change events to appear after
-     * receiving no events. Defaults to 500ms.
+     * Time to wait for new change events to appear after receiving no events,
+     * given in milliseconds. Defaults to 500 ms.
      */
     public void setPollIntervalMs(long pollIntervalMs) {
         this.pollIntervalMs = pollIntervalMs;
@@ -183,6 +186,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public long getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    /**
+     * The name of the data collection that is used to send signals/commands to
+     * Debezium. Signaling is disabled when not set.
+     */
+    public void setSignalDataCollection(String signalDataCollection) {
+        this.signalDataCollection = signalDataCollection;
+    }
+
+    public String getSignalDataCollection() {
+        return signalDataCollection;
     }
 
     /**
@@ -211,7 +226,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The connection timeout in milliseconds
+     * The connection timeout, given in milliseconds. Defaults to 10 seconds
+     * (10,000 ms).
      */
     public void setMongodbConnectTimeoutMs(int mongodbConnectTimeoutMs) {
         this.mongodbConnectTimeoutMs = mongodbConnectTimeoutMs;
@@ -246,8 +262,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Frequency in milliseconds to look for new, removed, or changed replica
-     * sets.  Defaults to 30000 milliseconds.
+     * Interval for looking for new, removed, or changed replica sets, given in
+     * milliseconds.  Defaults to 30 seconds (30,000 ms).
      */
     public void setMongodbPollIntervalMs(long mongodbPollIntervalMs) {
         this.mongodbPollIntervalMs = mongodbPollIntervalMs;
@@ -421,7 +437,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The number of milliseconds to delay before a snapshot will begin.
+     * A delay period before a snapshot will begin, given in milliseconds.
+     * Defaults to 0 ms.
      */
     public void setSnapshotDelayMs(long snapshotDelayMs) {
         this.snapshotDelayMs = snapshotDelayMs;
@@ -470,8 +487,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The initial delay when trying to reconnect to a primary after a
-     * connection cannot be made or when no primary is available. Defaults to 1
-     * second (1000 ms).
+     * connection cannot be made or when no primary is available, given in
+     * milliseconds. Defaults to 1 second (1,000 ms).
      */
     public void setConnectBackoffInitialDelayMs(
             long connectBackoffInitialDelayMs) {
@@ -548,7 +565,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The socket timeout in milliseconds
+     * The socket timeout, given in milliseconds. Defaults to 0 ms.
      */
     public void setMongodbSocketTimeoutMs(int mongodbSocketTimeoutMs) {
         this.mongodbSocketTimeoutMs = mongodbSocketTimeoutMs;
@@ -603,8 +620,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum delay when trying to reconnect to a primary after a
-     * connection cannot be made or when no primary is available. Defaults to
-     * 120 second (120,000 ms).
+     * connection cannot be made or when no primary is available, given in
+     * milliseconds. Defaults to 120 second (120,000 ms).
      */
     public void setConnectBackoffMaxDelayMs(long connectBackoffMaxDelayMs) {
         this.connectBackoffMaxDelayMs = connectBackoffMaxDelayMs;
@@ -650,6 +667,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);
         addPropertyIfNotNull(configBuilder, "mongodb.server.selection.timeout.ms", mongodbServerSelectionTimeoutMs);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "mongodb.connect.timeout.ms", mongodbConnectTimeoutMs);

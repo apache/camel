@@ -39,6 +39,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
+    private String signalDataCollection;
+    @UriParam(label = LABEL_NAME)
     private String databaseInitialStatements;
     @UriParam(label = LABEL_NAME, defaultValue = "numeric")
     private String intervalHandlingMode = "numeric";
@@ -327,8 +329,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Frequency in milliseconds to wait for new change events to appear after
-     * receiving no events. Defaults to 500ms.
+     * Time to wait for new change events to appear after receiving no events,
+     * given in milliseconds. Defaults to 500 ms.
      */
     public void setPollIntervalMs(long pollIntervalMs) {
         this.pollIntervalMs = pollIntervalMs;
@@ -336,6 +338,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public long getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    /**
+     * The name of the data collection that is used to send signals/commands to
+     * Debezium. Signaling is disabled when not set.
+     */
+    public void setSignalDataCollection(String signalDataCollection) {
+        this.signalDataCollection = signalDataCollection;
+    }
+
+    public String getSignalDataCollection() {
+        return signalDataCollection;
     }
 
     /**
@@ -407,8 +421,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Frequency in milliseconds for sending replication connection status
-     * updates to the server. Defaults to 10 seconds (10000 ms).
+     * Frequency for sending replication connection status updates to the
+     * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
      */
     public void setStatusUpdateIntervalMs(int statusUpdateIntervalMs) {
         this.statusUpdateIntervalMs = statusUpdateIntervalMs;
@@ -444,8 +458,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Name of the Postgres database user to be used when connecting to the
-     * database.
+     * Name of the database user to be used when connecting to the database.
      */
     public void setDatabaseUser(String databaseUser) {
         this.databaseUser = databaseUser;
@@ -654,8 +667,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Password of the Postgres database user to be used when connecting to the
-     * database.
+     * Password of the database user to be used when connecting to the database.
      */
     public void setDatabasePassword(String databasePassword) {
         this.databasePassword = databasePassword;
@@ -791,7 +803,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The number of milliseconds to delay before a snapshot will begin.
+     * A delay period before a snapshot will begin, given in milliseconds.
+     * Defaults to 0 ms.
      */
     public void setSnapshotDelayMs(long snapshotDelayMs) {
         this.snapshotDelayMs = snapshotDelayMs;
@@ -840,8 +853,9 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The number of milli-seconds to wait between retry attempts when the
-     * connector fails to connect to a replication slot.
+     * Time to wait between retry attempts when the connector fails to connect
+     * to a replication slot, given in milliseconds. Defaults to 10 seconds
+     * (10,000 ms).
      */
     public void setSlotRetryDelayMs(long slotRetryDelayMs) {
         this.slotRetryDelayMs = slotRetryDelayMs;
@@ -1069,7 +1083,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Port of the Postgres database server.
+     * Port of the database server.
      */
     public void setDatabasePort(int databasePort) {
         this.databasePort = databasePort;
@@ -1104,7 +1118,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Resolvable hostname or IP address of the Postgres database server.
+     * Resolvable hostname or IP address of the database server.
      */
     public void setDatabaseHostname(String databaseHostname) {
         this.databaseHostname = databaseHostname;
@@ -1154,6 +1168,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "database.sslcert", databaseSslcert);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "database.initial.statements", databaseInitialStatements);
         addPropertyIfNotNull(configBuilder, "interval.handling.mode", intervalHandlingMode);
         addPropertyIfNotNull(configBuilder, "converters", converters);

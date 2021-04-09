@@ -29,6 +29,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "100ms", javaType = "java.time.Duration")
     private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
     @UriParam(label = LABEL_NAME)
+    private String signalDataCollection;
+    @UriParam(label = LABEL_NAME)
     private String converters;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
@@ -207,8 +209,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Frequency in milliseconds to wait for new change events to appear after
-     * receiving no events. Defaults to 500ms.
+     * Time to wait for new change events to appear after receiving no events,
+     * given in milliseconds. Defaults to 500 ms.
      */
     public void setPollIntervalMs(long pollIntervalMs) {
         this.pollIntervalMs = pollIntervalMs;
@@ -229,6 +231,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getDatabaseHistoryKafkaRecoveryPollIntervalMs() {
         return databaseHistoryKafkaRecoveryPollIntervalMs;
+    }
+
+    /**
+     * The name of the data collection that is used to send signals/commands to
+     * Debezium. Signaling is disabled when not set.
+     */
+    public void setSignalDataCollection(String signalDataCollection) {
+        this.signalDataCollection = signalDataCollection;
+    }
+
+    public String getSignalDataCollection() {
+        return signalDataCollection;
     }
 
     /**
@@ -297,8 +311,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the database the connector should be monitoring. When working
-     * with a multi-tenant set-up, must be set to the CDB name.
+     * The name of the database the connector should be monitoring
      */
     public void setDatabaseDbname(String databaseDbname) {
         this.databaseDbname = databaseDbname;
@@ -309,8 +322,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Name of the SQL Server database user to be used when connecting to the
-     * database.
+     * Name of the database user to be used when connecting to the database.
      */
     public void setDatabaseUser(String databaseUser) {
         this.databaseUser = databaseUser;
@@ -459,8 +471,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Password of the SQL Server database user to be used when connecting to
-     * the database.
+     * Password of the database user to be used when connecting to the database.
      */
     public void setDatabasePassword(String databasePassword) {
         this.databasePassword = databasePassword;
@@ -560,7 +571,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The number of milliseconds to delay before a snapshot will begin.
+     * A delay period before a snapshot will begin, given in milliseconds.
+     * Defaults to 0 ms.
      */
     public void setSnapshotDelayMs(long snapshotDelayMs) {
         this.snapshotDelayMs = snapshotDelayMs;
@@ -801,7 +813,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Port of the SQL Server database server.
+     * Port of the database server.
      */
     public void setDatabasePort(int databasePort) {
         this.databasePort = databasePort;
@@ -823,7 +835,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Resolvable hostname or IP address of the SQL Server database server.
+     * Resolvable hostname or IP address of the database server.
      */
     public void setDatabaseHostname(String databaseHostname) {
         this.databaseHostname = databaseHostname;
@@ -856,6 +868,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.poll.interval.ms", databaseHistoryKafkaRecoveryPollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);

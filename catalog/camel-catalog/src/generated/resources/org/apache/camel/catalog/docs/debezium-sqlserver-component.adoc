@@ -46,7 +46,7 @@ debezium-sqlserver:name[?options]
 
 
 // component options: START
-The Debezium SQL Server Connector component supports 68 options, which are listed below.
+The Debezium SQL Server Connector component supports 69 options, which are listed below.
 
 
 
@@ -74,20 +74,20 @@ The Debezium SQL Server Connector component supports 68 options, which are liste
 | *columnPropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching fully-qualified names of columns that adds the columns original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
 | *columnWhitelist* (sqlserver) | Regular expressions matching columns to include in change events (deprecated, use column.include.list instead) |  | String
 | *converters* (sqlserver) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
-| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
+| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring |  | String
 | *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
 | *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
 | *databaseHistoryKafkaBootstrap{zwsp}Servers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
 | *databaseHistoryKafkaRecovery{zwsp}Attempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
 | *databaseHistoryKafkaRecovery{zwsp}PollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100ms | int
 | *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
-| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the SQL Server database server. |  | String
+| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the database server. |  | String
 | *databaseInstance* (sqlserver) | The SQL Server instance name |  | String
-| *databasePassword* (sqlserver) | *Required* Password of the SQL Server database user to be used when connecting to the database. |  | String
-| *databasePort* (sqlserver) | Port of the SQL Server database server. | 1433 | int
+| *databasePassword* (sqlserver) | *Required* Password of the database user to be used when connecting to the database. |  | String
+| *databasePort* (sqlserver) | Port of the database server. | 1433 | int
 | *databaseServerName* (sqlserver) | *Required* Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
 | *databaseServerTimezone* (sqlserver) | The timezone of the server used to correctly shift the commit transaction timestamp on the client sideOptions include: Any valid Java ZoneId |  | String
-| *databaseUser* (sqlserver) | Name of the SQL Server database user to be used when connecting to the database. |  | String
+| *databaseUser* (sqlserver) | Name of the database user to be used when connecting to the database. |  | String
 | *datatypePropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching the database-specific data type names that adds the data type's original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
 | *decimalHandlingMode* (sqlserver) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
 | *eventProcessingFailureHandling{zwsp}Mode* (sqlserver) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
@@ -98,13 +98,14 @@ The Debezium SQL Server Connector component supports 68 options, which are liste
 | *maxQueueSize* (sqlserver) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
 | *maxQueueSizeInBytes* (sqlserver) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
 | *messageKeyColumns* (sqlserver) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
-| *pollIntervalMs* (sqlserver) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
+| *pollIntervalMs* (sqlserver) | Time to wait for new change events to appear after receiving no events, given in milliseconds. Defaults to 500 ms. | 500ms | long
 | *provideTransactionMetadata* (sqlserver) | Enables transaction metadata extraction together with event counting | false | boolean
 | *queryFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (sqlserver) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (sqlserver) | Whether field names will be sanitized to Avro naming conventions | false | boolean
+| *signalDataCollection* (sqlserver) | The name of the data collection that is used to send signals/commands to Debezium. Signaling is disabled when not set. |  | String
 | *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
-| *snapshotDelayMs* (sqlserver) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
+| *snapshotDelayMs* (sqlserver) | A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms. | 0ms | long
 | *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
 | *snapshotIncludeCollectionList* (sqlserver) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
 | *snapshotIsolationMode* (sqlserver) | Controls which transaction isolation level is used and how long the connector locks the monitored tables. The default is 'repeatable_read', which means that repeatable read isolation level is used. In addition, exclusive locks are taken only during schema snapshot. Using a value of 'exclusive' ensures that the connector holds the exclusive lock (and thus prevents any reads and updates) for all monitored tables during the entire snapshot duration. When 'snapshot' is specified, connector runs the initial snapshot in SNAPSHOT isolation level, which guarantees snapshot consistency. In addition, neither table nor row-level locks are held. When 'read_committed' is specified, connector runs the initial snapshot in READ COMMITTED isolation level. No long-running locks are taken, so that initial snapshot does not prevent other transactions from updating table rows. Snapshot consistency is not guaranteed.In 'read_uncommitted' mode neither table nor row-level locks are acquired, but connector does not guarantee snapshot consistency. | repeatable_read | String
@@ -144,7 +145,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (68 parameters):
+=== Query Parameters (69 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -171,20 +172,20 @@ with the following path and query parameters:
 | *columnPropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching fully-qualified names of columns that adds the columns original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
 | *columnWhitelist* (sqlserver) | Regular expressions matching columns to include in change events (deprecated, use column.include.list instead) |  | String
 | *converters* (sqlserver) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
-| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
+| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring |  | String
 | *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
 | *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
 | *databaseHistoryKafkaBootstrap{zwsp}Servers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
 | *databaseHistoryKafkaRecovery{zwsp}Attempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
 | *databaseHistoryKafkaRecovery{zwsp}PollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100ms | int
 | *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
-| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the SQL Server database server. |  | String
+| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the database server. |  | String
 | *databaseInstance* (sqlserver) | The SQL Server instance name |  | String
-| *databasePassword* (sqlserver) | *Required* Password of the SQL Server database user to be used when connecting to the database. |  | String
-| *databasePort* (sqlserver) | Port of the SQL Server database server. | 1433 | int
+| *databasePassword* (sqlserver) | *Required* Password of the database user to be used when connecting to the database. |  | String
+| *databasePort* (sqlserver) | Port of the database server. | 1433 | int
 | *databaseServerName* (sqlserver) | *Required* Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
 | *databaseServerTimezone* (sqlserver) | The timezone of the server used to correctly shift the commit transaction timestamp on the client sideOptions include: Any valid Java ZoneId |  | String
-| *databaseUser* (sqlserver) | Name of the SQL Server database user to be used when connecting to the database. |  | String
+| *databaseUser* (sqlserver) | Name of the database user to be used when connecting to the database. |  | String
 | *datatypePropagateSourceType* (sqlserver) | A comma-separated list of regular expressions matching the database-specific data type names that adds the data type's original type and original length as parameters to the corresponding field schemas in the emitted change records. |  | String
 | *decimalHandlingMode* (sqlserver) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
 | *eventProcessingFailureHandling{zwsp}Mode* (sqlserver) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
@@ -195,13 +196,14 @@ with the following path and query parameters:
 | *maxQueueSize* (sqlserver) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
 | *maxQueueSizeInBytes* (sqlserver) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
 | *messageKeyColumns* (sqlserver) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
-| *pollIntervalMs* (sqlserver) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
+| *pollIntervalMs* (sqlserver) | Time to wait for new change events to appear after receiving no events, given in milliseconds. Defaults to 500 ms. | 500ms | long
 | *provideTransactionMetadata* (sqlserver) | Enables transaction metadata extraction together with event counting | false | boolean
 | *queryFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (sqlserver) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (sqlserver) | Whether field names will be sanitized to Avro naming conventions | false | boolean
+| *signalDataCollection* (sqlserver) | The name of the data collection that is used to send signals/commands to Debezium. Signaling is disabled when not set. |  | String
 | *skippedOperations* (sqlserver) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
-| *snapshotDelayMs* (sqlserver) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
+| *snapshotDelayMs* (sqlserver) | A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms. | 0ms | long
 | *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
 | *snapshotIncludeCollectionList* (sqlserver) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
 | *snapshotIsolationMode* (sqlserver) | Controls which transaction isolation level is used and how long the connector locks the monitored tables. The default is 'repeatable_read', which means that repeatable read isolation level is used. In addition, exclusive locks are taken only during schema snapshot. Using a value of 'exclusive' ensures that the connector holds the exclusive lock (and thus prevents any reads and updates) for all monitored tables during the entire snapshot duration. When 'snapshot' is specified, connector runs the initial snapshot in SNAPSHOT isolation level, which guarantees snapshot consistency. In addition, neither table nor row-level locks are held. When 'read_committed' is specified, connector runs the initial snapshot in READ COMMITTED isolation level. No long-running locks are taken, so that initial snapshot does not prevent other transactions from updating table rows. Snapshot consistency is not guaranteed.In 'read_uncommitted' mode neither table nor row-level locks are acquired, but connector does not guarantee snapshot consistency. | repeatable_read | String

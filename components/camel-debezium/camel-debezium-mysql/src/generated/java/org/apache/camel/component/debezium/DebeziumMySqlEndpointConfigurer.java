@@ -25,8 +25,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": target.getConfiguration().setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": target.getConfiguration().setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": target.getConfiguration().setBinlogBufferSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
@@ -37,12 +35,17 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "columnExcludeList": target.getConfiguration().setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnincludelist":
         case "columnIncludeList": target.getConfiguration().setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": target.getConfiguration().setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnwhitelist":
+        case "columnWhitelist": target.getConfiguration().setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "connectkeepalive":
         case "connectKeepAlive": target.getConfiguration().setConnectKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "connectkeepaliveintervalms":
         case "connectKeepAliveIntervalMs": target.getConfiguration().setConnectKeepAliveIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connecttimeoutms":
         case "connectTimeoutMs": target.getConfiguration().setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseexcludelist":
         case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistory":
@@ -57,10 +60,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseHistoryKafkaRecoveryPollIntervalMs": target.getConfiguration().setDatabaseHistoryKafkaRecoveryPollIntervalMs(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": target.getConfiguration().setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": target.getConfiguration().setDatabaseHistorySkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": target.getConfiguration().setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseincludelist":
@@ -91,6 +90,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseSslTruststorePassword": target.getConfiguration().setDatabaseSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": target.getConfiguration().setDatatypePropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "enabletimeadjuster":
@@ -103,8 +104,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": target.getConfiguration().setGtidNewChannelPosition(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": target.getConfiguration().setGtidSourceExcludes(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourcefilterdmlevents":
@@ -129,6 +128,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
         case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": target.getConfiguration().setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -149,16 +150,30 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": target.getConfiguration().setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "signaldatacollection":
+        case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "snapshoteventsasinserts":
-        case "snapshotEventsAsInserts": target.getConfiguration().setSnapshotEventsAsInserts(property(camelContext, boolean.class, value)); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": target.getConfiguration().setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotlockingmode":
         case "snapshotLockingMode": target.getConfiguration().setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": target.getConfiguration().setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotnewtables":
@@ -192,8 +207,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": return java.util.Map.class;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": return java.lang.String.class;
         case "binlogbuffersize":
         case "binlogBufferSize": return int.class;
         case "bridgeerrorhandler":
@@ -204,12 +217,17 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "columnExcludeList": return java.lang.String.class;
         case "columnincludelist":
         case "columnIncludeList": return java.lang.String.class;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return java.lang.String.class;
+        case "columnwhitelist":
+        case "columnWhitelist": return java.lang.String.class;
         case "connectkeepalive":
         case "connectKeepAlive": return boolean.class;
         case "connectkeepaliveintervalms":
         case "connectKeepAliveIntervalMs": return long.class;
         case "connecttimeoutms":
         case "connectTimeoutMs": return int.class;
+        case "converters": return java.lang.String.class;
         case "databaseexcludelist":
         case "databaseExcludeList": return java.lang.String.class;
         case "databasehistory":
@@ -224,10 +242,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return java.lang.String.class;
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": return boolean.class;
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return boolean.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databaseincludelist":
@@ -258,6 +272,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseSslTruststorePassword": return java.lang.String.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return java.lang.String.class;
         case "decimalhandlingmode":
         case "decimalHandlingMode": return java.lang.String.class;
         case "enabletimeadjuster":
@@ -270,8 +286,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": return java.lang.String.class;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return java.lang.String.class;
         case "gtidsourcefilterdmlevents":
@@ -296,6 +310,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
         case "maxQueueSize": return int.class;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return long.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -316,16 +332,30 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "offsetStorageTopic": return java.lang.String.class;
         case "pollintervalms":
         case "pollIntervalMs": return long.class;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return boolean.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return long.class;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return boolean.class;
+        case "signaldatacollection":
+        case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
-        case "snapshoteventsasinserts":
-        case "snapshotEventsAsInserts": return boolean.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return long.class;
         case "snapshotlockingmode":
         case "snapshotLockingMode": return java.lang.String.class;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotnewtables":
@@ -360,8 +390,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return target.getConfiguration().getBigintUnsignedHandlingMode();
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": return target.getConfiguration().getBinaryHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return target.getConfiguration().getBinlogBufferSize();
         case "bridgeerrorhandler":
@@ -372,12 +400,17 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "columnExcludeList": return target.getConfiguration().getColumnExcludeList();
         case "columnincludelist":
         case "columnIncludeList": return target.getConfiguration().getColumnIncludeList();
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return target.getConfiguration().getColumnPropagateSourceType();
+        case "columnwhitelist":
+        case "columnWhitelist": return target.getConfiguration().getColumnWhitelist();
         case "connectkeepalive":
         case "connectKeepAlive": return target.getConfiguration().isConnectKeepAlive();
         case "connectkeepaliveintervalms":
         case "connectKeepAliveIntervalMs": return target.getConfiguration().getConnectKeepAliveIntervalMs();
         case "connecttimeoutms":
         case "connectTimeoutMs": return target.getConfiguration().getConnectTimeoutMs();
+        case "converters": return target.getConfiguration().getConverters();
         case "databaseexcludelist":
         case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databasehistory":
@@ -392,10 +425,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryPollIntervalMs();
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return target.getConfiguration().getDatabaseHistoryKafkaTopic();
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": return target.getConfiguration().isDatabaseHistorySkipUnparseableDdl();
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return target.getConfiguration().isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
         case "databaseincludelist":
@@ -426,6 +455,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databaseSslTruststorePassword": return target.getConfiguration().getDatabaseSslTruststorePassword();
         case "databaseuser":
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return target.getConfiguration().getDatatypePropagateSourceType();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "enabletimeadjuster":
@@ -438,8 +469,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": return target.getConfiguration().getGtidNewChannelPosition();
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return target.getConfiguration().getGtidSourceExcludes();
         case "gtidsourcefilterdmlevents":
@@ -464,6 +493,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":
         case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return target.getConfiguration().getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "offsetcommitpolicy":
@@ -484,16 +515,30 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return target.getConfiguration().getQueryFetchSize();
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
+        case "signaldatacollection":
+        case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
-        case "snapshoteventsasinserts":
-        case "snapshotEventsAsInserts": return target.getConfiguration().isSnapshotEventsAsInserts();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return target.getConfiguration().getSnapshotIncludeCollectionList();
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return target.getConfiguration().getSnapshotLockTimeoutMs();
         case "snapshotlockingmode":
         case "snapshotLockingMode": return target.getConfiguration().getSnapshotLockingMode();
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return target.getConfiguration().getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotnewtables":

@@ -51,7 +51,7 @@ debezium-mongodb:name[?options]
 
 
 // component options: START
-The Debezium MongoDB Connector component supports 57 options, which are listed below.
+The Debezium MongoDB Connector component supports 58 options, which are listed below.
 
 
 
@@ -74,8 +74,8 @@ The Debezium MongoDB Connector component supports 57 options, which are listed b
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *collectionExcludeList* (mongodb) | A comma-separated list of regular expressions that match the collection names for which changes are to be excluded |  | String
 | *collectionIncludeList* (mongodb) | A comma-separated list of regular expressions that match the collection names for which changes are to be captured |  | String
-| *connectBackoffInitialDelayMs* (mongodb) | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 1 second (1000 ms). | 1s | long
-| *connectBackoffMaxDelayMs* (mongodb) | The maximum delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 120 second (120,000 ms). | 2m | long
+| *connectBackoffInitialDelayMs* (mongodb) | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available, given in milliseconds. Defaults to 1 second (1,000 ms). | 1s | long
+| *connectBackoffMaxDelayMs* (mongodb) | The maximum delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available, given in milliseconds. Defaults to 120 second (120,000 ms). | 2m | long
 | *connectMaxAttempts* (mongodb) | Maximum number of failed connection attempts to a replica set primary before an exception occurs and task is aborted. Defaults to 16, which with the defaults for 'connect.backoff.initial.delay.ms' and 'connect.backoff.max.delay.ms' results in just over 20 minutes of attempts before failing. | 16 | int
 | *converters* (mongodb) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
 | *databaseExcludeList* (mongodb) | A comma-separated list of regular expressions that match the database names for which changes are to be excluded |  | String
@@ -90,25 +90,26 @@ The Debezium MongoDB Connector component supports 57 options, which are listed b
 | *maxQueueSize* (mongodb) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
 | *maxQueueSizeInBytes* (mongodb) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
 | *mongodbAuthsource* (mongodb) | Database containing user credentials. | admin | String
-| *mongodbConnectTimeoutMs* (mongodb) | The connection timeout in milliseconds | 10s | int
+| *mongodbConnectTimeoutMs* (mongodb) | The connection timeout, given in milliseconds. Defaults to 10 seconds (10,000 ms). | 10s | int
 | *mongodbHosts* (mongodb) | The hostname and port pairs (in the form 'host' or 'host:port') of the MongoDB server(s) in the replica set. |  | String
 | *mongodbMembersAutoDiscover* (mongodb) | Specifies whether the addresses in 'hosts' are seeds that should be used to discover all members of the cluster or replica set ('true'), or whether the address(es) in 'hosts' should be used as is ('false'). The default is 'true'. | true | boolean
 | *mongodbName* (mongodb) | *Required* Unique name that identifies the MongoDB replica set or cluster and all recorded offsets, andthat is used as a prefix for all schemas and topics. Each distinct MongoDB installation should have a separate namespace and monitored by at most one Debezium connector. |  | String
 | *mongodbPassword* (mongodb) | *Required* Password to be used when connecting to MongoDB, if necessary. |  | String
-| *mongodbPollIntervalMs* (mongodb) | Frequency in milliseconds to look for new, removed, or changed replica sets. Defaults to 30000 milliseconds. | 30s | long
-| *mongodbServerSelectionTimeout{zwsp}Ms* (mongodb) | The server selection timeout in milliseconds | 30s | int
-| *mongodbSocketTimeoutMs* (mongodb) | The socket timeout in milliseconds | 0ms | int
+| *mongodbPollIntervalMs* (mongodb) | Interval for looking for new, removed, or changed replica sets, given in milliseconds. Defaults to 30 seconds (30,000 ms). | 30s | long
+| *mongodbServerSelectionTimeout{zwsp}Ms* (mongodb) | The server selection timeout, given in milliseconds. Defaults to 10 seconds (10,000 ms). | 30s | int
+| *mongodbSocketTimeoutMs* (mongodb) | The socket timeout, given in milliseconds. Defaults to 0 ms. | 0ms | int
 | *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
 | *mongodbSslInvalidHostname{zwsp}Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
 | *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
-| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
+| *pollIntervalMs* (mongodb) | Time to wait for new change events to appear after receiving no events, given in milliseconds. Defaults to 500 ms. | 500ms | long
 | *provideTransactionMetadata* (mongodb) | Enables transaction metadata extraction together with event counting | false | boolean
 | *queryFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (mongodb) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (mongodb) | Whether field names will be sanitized to Avro naming conventions | false | boolean
+| *signalDataCollection* (mongodb) | The name of the data collection that is used to send signals/commands to Debezium. Signaling is disabled when not set. |  | String
 | *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotCollectionFilter{zwsp}Overrides* (mongodb) | This property contains a comma-separated list of ., for which the initial snapshot may be a subset of data present in the data source. The subset would be defined by mongodb filter query specified as value for property snapshot.collection.filter.override.. |  | String
-| *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
+| *snapshotDelayMs* (mongodb) | A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms. | 0ms | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
 | *snapshotIncludeCollectionList* (mongodb) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
 | *snapshotMaxThreads* (mongodb) | The maximum number of threads used to perform the snapshot. Defaults to 1. | 1 | int
@@ -138,7 +139,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (57 parameters):
+=== Query Parameters (58 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -160,8 +161,8 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *collectionExcludeList* (mongodb) | A comma-separated list of regular expressions that match the collection names for which changes are to be excluded |  | String
 | *collectionIncludeList* (mongodb) | A comma-separated list of regular expressions that match the collection names for which changes are to be captured |  | String
-| *connectBackoffInitialDelayMs* (mongodb) | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 1 second (1000 ms). | 1s | long
-| *connectBackoffMaxDelayMs* (mongodb) | The maximum delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 120 second (120,000 ms). | 2m | long
+| *connectBackoffInitialDelayMs* (mongodb) | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available, given in milliseconds. Defaults to 1 second (1,000 ms). | 1s | long
+| *connectBackoffMaxDelayMs* (mongodb) | The maximum delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available, given in milliseconds. Defaults to 120 second (120,000 ms). | 2m | long
 | *connectMaxAttempts* (mongodb) | Maximum number of failed connection attempts to a replica set primary before an exception occurs and task is aborted. Defaults to 16, which with the defaults for 'connect.backoff.initial.delay.ms' and 'connect.backoff.max.delay.ms' results in just over 20 minutes of attempts before failing. | 16 | int
 | *converters* (mongodb) | Optional list of custom converters that would be used instead of default ones. The converters are defined using '.type' config option and configured using options '.' |  | String
 | *databaseExcludeList* (mongodb) | A comma-separated list of regular expressions that match the database names for which changes are to be excluded |  | String
@@ -176,25 +177,26 @@ with the following path and query parameters:
 | *maxQueueSize* (mongodb) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
 | *maxQueueSizeInBytes* (mongodb) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
 | *mongodbAuthsource* (mongodb) | Database containing user credentials. | admin | String
-| *mongodbConnectTimeoutMs* (mongodb) | The connection timeout in milliseconds | 10s | int
+| *mongodbConnectTimeoutMs* (mongodb) | The connection timeout, given in milliseconds. Defaults to 10 seconds (10,000 ms). | 10s | int
 | *mongodbHosts* (mongodb) | The hostname and port pairs (in the form 'host' or 'host:port') of the MongoDB server(s) in the replica set. |  | String
 | *mongodbMembersAutoDiscover* (mongodb) | Specifies whether the addresses in 'hosts' are seeds that should be used to discover all members of the cluster or replica set ('true'), or whether the address(es) in 'hosts' should be used as is ('false'). The default is 'true'. | true | boolean
 | *mongodbName* (mongodb) | *Required* Unique name that identifies the MongoDB replica set or cluster and all recorded offsets, andthat is used as a prefix for all schemas and topics. Each distinct MongoDB installation should have a separate namespace and monitored by at most one Debezium connector. |  | String
 | *mongodbPassword* (mongodb) | *Required* Password to be used when connecting to MongoDB, if necessary. |  | String
-| *mongodbPollIntervalMs* (mongodb) | Frequency in milliseconds to look for new, removed, or changed replica sets. Defaults to 30000 milliseconds. | 30s | long
-| *mongodbServerSelectionTimeout{zwsp}Ms* (mongodb) | The server selection timeout in milliseconds | 30s | int
-| *mongodbSocketTimeoutMs* (mongodb) | The socket timeout in milliseconds | 0ms | int
+| *mongodbPollIntervalMs* (mongodb) | Interval for looking for new, removed, or changed replica sets, given in milliseconds. Defaults to 30 seconds (30,000 ms). | 30s | long
+| *mongodbServerSelectionTimeout{zwsp}Ms* (mongodb) | The server selection timeout, given in milliseconds. Defaults to 10 seconds (10,000 ms). | 30s | int
+| *mongodbSocketTimeoutMs* (mongodb) | The socket timeout, given in milliseconds. Defaults to 0 ms. | 0ms | int
 | *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
 | *mongodbSslInvalidHostname{zwsp}Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
 | *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
-| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
+| *pollIntervalMs* (mongodb) | Time to wait for new change events to appear after receiving no events, given in milliseconds. Defaults to 500 ms. | 500ms | long
 | *provideTransactionMetadata* (mongodb) | Enables transaction metadata extraction together with event counting | false | boolean
 | *queryFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while streaming. A value of 0 uses the default JDBC fetch size. | 0 | int
 | *retriableRestartConnectorWait{zwsp}Ms* (mongodb) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (mongodb) | Whether field names will be sanitized to Avro naming conventions | false | boolean
+| *signalDataCollection* (mongodb) | The name of the data collection that is used to send signals/commands to Debezium. Signaling is disabled when not set. |  | String
 | *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotCollectionFilter{zwsp}Overrides* (mongodb) | This property contains a comma-separated list of ., for which the initial snapshot may be a subset of data present in the data source. The subset would be defined by mongodb filter query specified as value for property snapshot.collection.filter.override.. |  | String
-| *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
+| *snapshotDelayMs* (mongodb) | A delay period before a snapshot will begin, given in milliseconds. Defaults to 0 ms. | 0ms | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
 | *snapshotIncludeCollectionList* (mongodb) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
 | *snapshotMaxThreads* (mongodb) | The maximum number of threads used to perform the snapshot. Defaults to 1. | 1 | int
