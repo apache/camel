@@ -32,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -316,9 +315,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
-        // do not share unit of work
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
-
         exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
             // non streaming mode, so we know the total size already

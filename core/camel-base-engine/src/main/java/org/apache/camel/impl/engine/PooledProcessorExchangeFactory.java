@@ -88,6 +88,9 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             }
             // create a new exchange as there was no free from the pool
             answer = new DefaultPooledExchange(exchange);
+            // if creating a copy via constructor (as above) then the unit of work is also
+            // copied over to answer, which we then must set to null as we do not want to share unit of work
+            answer.setUnitOfWork(null);
         } else {
             if (statisticsEnabled) {
                 statistics.acquired.increment();
@@ -100,8 +103,6 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
         ExchangeHelper.copyResults(answer, exchange);
         // do not reuse message id on copy
         answer.getIn().setMessageId(null);
-        // do not share the unit of work
-        answer.setUnitOfWork(null);
         if (handover) {
             // Need to hand over the completion for async invocation
             answer.handoverCompletions(exchange);
