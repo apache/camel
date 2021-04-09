@@ -453,6 +453,10 @@ public abstract class BuilderSupport {
         this.context = context;
     }
 
+    public boolean hasErrorHandlerBuilder() {
+        return this.errorHandlerBuilder != null;
+    }
+
     public ErrorHandlerBuilder getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
             errorHandlerBuilder = createErrorHandlerBuilder();
