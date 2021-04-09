@@ -39,11 +39,13 @@ import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.utils.AttributeMap;
@@ -122,7 +124,11 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
                 .keySchema(KeySchemaElement.builder().attributeName(configuration.getKeyAttributeName())
                         .keyType(configuration.getKeyAttributeType()).build())
                 .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity())
-                        .writeCapacityUnits(configuration.getWriteCapacity()).build());
+                        .writeCapacityUnits(configuration.getWriteCapacity()).build())
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName(configuration.getKeyAttributeName())
+                        .attributeType(ScalarAttributeType.S)
+                        .build());
         return getDdbClient().createTable(createTableRequest.build()).tableDescription();
     }
 
