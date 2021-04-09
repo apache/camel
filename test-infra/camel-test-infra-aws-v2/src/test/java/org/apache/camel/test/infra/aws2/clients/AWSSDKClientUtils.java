@@ -176,5 +176,7 @@ public final class AWSSDKClientUtils {
         return newClient("STS", StsClient::builder, StsClient.class);
     }
 
-    public static DynamoDbClient newDynamoDBClient() {return newClient("DynamoDB", DynamoDbClient::builder, DynamoDbClient.class); }
+    public static DynamoDbClient newDynamoDBClient() {
+        return newClient("DynamoDB", DynamoDbClient::builder, DynamoDbClient.class);
+    }
 }
