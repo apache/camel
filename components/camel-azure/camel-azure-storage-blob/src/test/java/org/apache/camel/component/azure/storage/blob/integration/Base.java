@@ -32,7 +32,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BaseIT extends CamelTestSupport {
+public class Base extends CamelTestSupport {
     @RegisterExtension
     public static AzureService service;
 

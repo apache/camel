@@ -27,10 +27,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataLakeProducerIT extends BaseIT {
+@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
+public class DataLakeProducerIT extends Base {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataLakeProducerIT.class);
 

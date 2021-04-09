@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.eventhubs;
+package org.apache.camel.component.azure.eventhubs.integration;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +33,8 @@ import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.messaging.eventhubs.models.EventPosition;
 import com.azure.messaging.eventhubs.models.SendOptions;
 import com.azure.storage.blob.BlobContainerAsyncClient;
+import org.apache.camel.component.azure.eventhubs.EventHubsConfiguration;
+import org.apache.camel.component.azure.eventhubs.TestUtils;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Awaitility;
@@ -40,9 +42,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
+                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EventProcessorIT {
 

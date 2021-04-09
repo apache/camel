@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 public final class QueueTestUtils {
 
     private QueueTestUtils() {
@@ -41,8 +43,7 @@ public final class QueueTestUtils {
     public static Properties loadAzureAccessFromJvmEnv() throws Exception {
         final Properties properties = new Properties();
         if (System.getProperty("accountName") == null || System.getProperty("accessKey") == null) {
-            throw new Exception(
-                    "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey");
+            fail("Make sure to supply azure accessKey or accountName, e.g:  mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey");
         }
         properties.setProperty("account_name", System.getProperty("accountName"));
         properties.setProperty("access_key", System.getProperty("accessKey"));

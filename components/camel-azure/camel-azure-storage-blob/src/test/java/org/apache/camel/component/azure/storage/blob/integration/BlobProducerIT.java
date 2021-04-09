@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BlobProducerITTest extends BaseIT {
+class BlobProducerIT extends Base {
 
     @EndpointInject
     private ProducerTemplate template;
