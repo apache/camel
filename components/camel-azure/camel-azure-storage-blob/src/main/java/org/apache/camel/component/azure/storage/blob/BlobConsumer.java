@@ -164,11 +164,10 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
      * @param exchange the exchange
      */
     protected void processRollback(Exchange exchange) {
-        Exception cause = exchange.getException();
+        final Exception cause = exchange.getException();
         if (cause != null) {
-            LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
-        } else {
-            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
+            getExceptionHandler().handleException(
+                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
     }
 }

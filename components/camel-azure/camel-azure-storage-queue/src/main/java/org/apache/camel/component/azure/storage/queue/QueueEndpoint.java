@@ -25,7 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
              syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING })
-public class QueueEndpoint extends DefaultEndpoint {
+public class QueueEndpoint extends ScheduledPollEndpoint {
 
     private QueueServiceClient queueServiceClient;
 
@@ -56,7 +56,9 @@ public class QueueEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isEmpty(configuration.getQueueName())) {
             throw new IllegalArgumentException("QueueName must be set.");
         }
-        return new QueueConsumer(this, processor);
+        QueueConsumer consumer = new QueueConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

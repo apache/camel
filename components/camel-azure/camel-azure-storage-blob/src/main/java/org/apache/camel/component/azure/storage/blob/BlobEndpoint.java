@@ -30,7 +30,7 @@ import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
              syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE })
-public class BlobEndpoint extends DefaultEndpoint {
+public class BlobEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private BlobServiceClient blobServiceClient;
@@ -57,12 +57,14 @@ public class BlobEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) {
+    public Consumer createConsumer(Processor processor) throws Exception {
         // we need blobname as well as blob container in order to create it
         if (ObjectHelper.isEmpty(configuration.getContainerName())) {
             throw new IllegalArgumentException("Container name must be set.");
         }
-        return new BlobConsumer(this, processor);
+        BlobConsumer consumer = new BlobConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

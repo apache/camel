@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DataLakeConsumer extends ScheduledBatchPollingConsumer {
+public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
 
     public static final int NOT_FOUND = 404;
     private static final Logger LOG = LoggerFactory.getLogger(DataLakeConsumer.class);
@@ -142,7 +142,6 @@ class DataLakeConsumer extends ScheduledBatchPollingConsumer {
                 @Override
                 public void onComplete(Exchange exchange) {
                     LOG.trace("Processing all exchanges completed");
-
                 }
 
                 @Override
@@ -159,11 +158,10 @@ class DataLakeConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected void processRollback(Exchange exchange) {
-        Exception exception = exchange.getException();
-        if (exception != null) {
-            LOG.warn("Exchange failed, rollback processed. Status: {}", exchange, exception);
-        } else {
-            LOG.warn("Exchange failed, rollback processed. Status: {}", exchange);
+        final Exception cause = exchange.getException();
+        if (cause != null) {
+            getExceptionHandler().handleException(
+                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
     }
 }

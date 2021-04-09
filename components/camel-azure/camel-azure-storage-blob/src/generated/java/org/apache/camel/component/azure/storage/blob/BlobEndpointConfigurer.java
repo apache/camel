@@ -25,6 +25,12 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "blobname":
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
@@ -52,6 +58,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": target.getConfiguration().setDownloadLinkExpiration(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":
@@ -60,6 +67,9 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filedir":
         case "fileDir": target.getConfiguration().setFileDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperpage":
@@ -69,11 +79,30 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
         case "pageblobsize":
         case "pageBlobSize": target.getConfiguration().setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "prefix": target.getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "regex": target.getConfiguration().setRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -85,6 +114,12 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
         case "blobname":
         case "blobName": return java.lang.String.class;
         case "bloboffset":
@@ -112,6 +147,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
+        case "delay": return long.class;
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": return java.lang.Long.class;
         case "exceptionhandler":
@@ -120,6 +156,9 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filedir":
         case "fileDir": return java.lang.String.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperpage":
@@ -129,11 +168,30 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
         case "pageblobsize":
         case "pageBlobSize": return java.lang.Long.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "prefix": return java.lang.String.class;
         case "regex": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "timeout": return java.time.Duration.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
         default: return null;
         }
     }
@@ -146,6 +204,12 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
+        case "backoffmultiplier":
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "blobname":
         case "blobName": return target.getConfiguration().getBlobName();
         case "bloboffset":
@@ -173,6 +237,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "credentials": return target.getConfiguration().getCredentials();
         case "datacount":
         case "dataCount": return target.getConfiguration().getDataCount();
+        case "delay": return target.getDelay();
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": return target.getConfiguration().getDownloadLinkExpiration();
         case "exceptionhandler":
@@ -181,6 +246,9 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangePattern": return target.getExchangePattern();
         case "filedir":
         case "fileDir": return target.getConfiguration().getFileDir();
+        case "greedy": return target.isGreedy();
+        case "initialdelay":
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperpage":
@@ -190,11 +258,39 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "operation": return target.getConfiguration().getOperation();
         case "pageblobsize":
         case "pageBlobSize": return target.getConfiguration().getPageBlobSize();
+        case "pollstrategy":
+        case "pollStrategy": return target.getPollStrategy();
         case "prefix": return target.getConfiguration().getPrefix();
         case "regex": return target.getConfiguration().getRegex();
+        case "repeatcount":
+        case "repeatCount": return target.getRepeatCount();
+        case "runlogginglevel":
+        case "runLoggingLevel": return target.getRunLoggingLevel();
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
+        case "schedulerproperties":
+        case "schedulerProperties": return target.getSchedulerProperties();
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
+        case "startscheduler":
+        case "startScheduler": return target.isStartScheduler();
+        case "timeunit":
+        case "timeUnit": return target.getTimeUnit();
         case "timeout": return target.getConfiguration().getTimeout();
+        case "usefixeddelay":
+        case "useFixedDelay": return target.isUseFixedDelay();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

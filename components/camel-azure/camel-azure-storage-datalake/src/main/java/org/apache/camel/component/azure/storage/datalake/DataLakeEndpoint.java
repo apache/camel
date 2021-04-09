@@ -28,14 +28,11 @@ import org.apache.camel.component.azure.storage.datalake.client.DataLakeClientFa
 import org.apache.camel.component.azure.storage.datalake.operations.DataLakeOperationResponse;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 @UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure storage datalake service",
              syntax = "azure-storage-datalake:accountName/fileSystemName", category = { Category.CLOUD, Category.FILE })
-public class DataLakeEndpoint extends DefaultEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeEndpoint.class);
+public class DataLakeEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(description = "service client of datalake")
     private DataLakeServiceClient dataLakeServiceClient;
@@ -58,7 +55,9 @@ public class DataLakeEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DataLakeConsumer(this, processor);
+        DataLakeConsumer consumer = new DataLakeConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public DataLakeConfiguration getConfiguration() {

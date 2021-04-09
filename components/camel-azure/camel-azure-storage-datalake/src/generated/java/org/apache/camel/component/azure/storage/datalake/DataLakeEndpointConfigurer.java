@@ -23,6 +23,12 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accountkey":
         case "accountKey": target.getConfiguration().setAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientid":
@@ -38,6 +44,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "datalakeserviceclient":
         case "dataLakeServiceClient": target.setDataLakeServiceClient(property(camelContext, com.azure.storage.file.datalake.DataLakeServiceClient.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "directoryname":
         case "directoryName": target.getConfiguration().setDirectoryName(property(camelContext, java.lang.String.class, value)); return true;
         case "downloadlinkexpiration":
@@ -53,6 +60,9 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "fileName": target.getConfiguration().setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "fileoffset":
         case "fileOffset": target.getConfiguration().setFileOffset(property(camelContext, java.lang.Long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
@@ -64,19 +74,38 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition.class, value)); return true;
         case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "permission": target.getConfiguration().setPermission(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "position": target.getConfiguration().setPosition(property(camelContext, java.lang.Long.class, value)); return true;
         case "recursive": target.getConfiguration().setRecursive(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "regex": target.getConfiguration().setRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "retainuncommiteddata":
         case "retainUncommitedData": target.getConfiguration().setRetainUncommitedData(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.file.datalake.DataLakeServiceClient.class, value)); return true;
         case "sharedkeycredential":
         case "sharedKeyCredential": target.getConfiguration().setSharedKeyCredential(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "tenantid":
         case "tenantId": target.getConfiguration().setTenantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "umask": target.getConfiguration().setUmask(property(camelContext, java.lang.String.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": target.getConfiguration().setUserPrincipalNameReturned(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
@@ -93,6 +122,12 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accountkey":
         case "accountKey": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientid":
@@ -108,6 +143,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "dataCount": return java.lang.Long.class;
         case "datalakeserviceclient":
         case "dataLakeServiceClient": return com.azure.storage.file.datalake.DataLakeServiceClient.class;
+        case "delay": return long.class;
         case "directoryname":
         case "directoryName": return java.lang.String.class;
         case "downloadlinkexpiration":
@@ -123,6 +159,9 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "fileName": return java.lang.String.class;
         case "fileoffset":
         case "fileOffset": return java.lang.Long.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresults":
@@ -134,19 +173,38 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": return org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition.class;
         case "path": return java.lang.String.class;
         case "permission": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "position": return java.lang.Long.class;
         case "recursive": return java.lang.Boolean.class;
         case "regex": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
         case "retainuncommiteddata":
         case "retainUncommitedData": return java.lang.Boolean.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.file.datalake.DataLakeServiceClient.class;
         case "sharedkeycredential":
         case "sharedKeyCredential": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "timeout": return java.time.Duration.class;
         case "umask": return java.lang.String.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": return java.lang.Boolean.class;
         default: return null;
@@ -159,6 +217,12 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accountkey":
         case "accountKey": return target.getConfiguration().getAccountKey();
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
+        case "backoffmultiplier":
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":
@@ -174,6 +238,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "dataCount": return target.getConfiguration().getDataCount();
         case "datalakeserviceclient":
         case "dataLakeServiceClient": return target.getDataLakeServiceClient();
+        case "delay": return target.getDelay();
         case "directoryname":
         case "directoryName": return target.getConfiguration().getDirectoryName();
         case "downloadlinkexpiration":
@@ -189,6 +254,9 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "fileName": return target.getConfiguration().getFileName();
         case "fileoffset":
         case "fileOffset": return target.getConfiguration().getFileOffset();
+        case "greedy": return target.isGreedy();
+        case "initialdelay":
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresults":
@@ -200,19 +268,38 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": return target.getConfiguration().getOperation();
         case "path": return target.getConfiguration().getPath();
         case "permission": return target.getConfiguration().getPermission();
+        case "pollstrategy":
+        case "pollStrategy": return target.getPollStrategy();
         case "position": return target.getConfiguration().getPosition();
         case "recursive": return target.getConfiguration().getRecursive();
         case "regex": return target.getConfiguration().getRegex();
+        case "repeatcount":
+        case "repeatCount": return target.getRepeatCount();
         case "retainuncommiteddata":
         case "retainUncommitedData": return target.getConfiguration().getRetainUncommitedData();
+        case "runlogginglevel":
+        case "runLoggingLevel": return target.getRunLoggingLevel();
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
+        case "schedulerproperties":
+        case "schedulerProperties": return target.getSchedulerProperties();
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
         case "sharedkeycredential":
         case "sharedKeyCredential": return target.getConfiguration().getSharedKeyCredential();
+        case "startscheduler":
+        case "startScheduler": return target.isStartScheduler();
         case "tenantid":
         case "tenantId": return target.getConfiguration().getTenantId();
+        case "timeunit":
+        case "timeUnit": return target.getTimeUnit();
         case "timeout": return target.getConfiguration().getTimeout();
         case "umask": return target.getConfiguration().getUmask();
+        case "usefixeddelay":
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": return target.getConfiguration().getUserPrincipalNameReturned();
         default: return null;
@@ -224,6 +311,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "openoptions":
         case "openOptions": return java.nio.file.OpenOption.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

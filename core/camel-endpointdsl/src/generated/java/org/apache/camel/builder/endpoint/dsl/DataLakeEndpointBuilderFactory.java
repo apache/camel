@@ -18,13 +18,18 @@ package org.apache.camel.builder.endpoint.dsl;
 
 import java.nio.file.OpenOption;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Camel Azure Datalake Gen2 Component
@@ -783,6 +788,518 @@ public interface DataLakeEndpointBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder schedulerProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder schedulerProperties(Map values) {
+            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder startScheduler(
+                boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder startScheduler(
+                String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder useFixedDelay(
+                boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder useFixedDelay(
+                String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
     }
 
     /**
@@ -863,6 +1380,44 @@ public interface DataLakeEndpointBuilderFactory {
         default AdvancedDataLakeEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDataLakeEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDataLakeEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
     }
