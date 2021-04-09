@@ -86,4 +86,8 @@ public final class AWSServiceFactory {
     public static AWSService createSTSService() {
         return createService(AWSSTSLocalContainerService::new);
     }
+
+    public static AWSService createDynamodbService() {
+        return createService(AWSDynamodbLocalContainerService::new);
+    }
 }
