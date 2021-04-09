@@ -79,13 +79,11 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "SMN service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region", secret = false)
+    @UriParam(description = "SMN service region", displayName = "Service region", secret = false)
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Fully qualified smn service url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+    @UriParam(description = "SMN service endpoint", displayName = "Service endpoint", secret = false)
     @Metadata(required = false)
     private String endpoint;
 

@@ -52,21 +52,6 @@ public interface SimpleNotificationEndpointBuilderFactory {
             return this;
         }
         /**
-         * Fully qualified smn service url. Carries higher precedence than
-         * region parameter based client initialization.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param endpoint the value to set
-         * @return the dsl builder
-         */
-        default SimpleNotificationEndpointBuilder endpoint(String endpoint) {
-            doSetProperty("endpoint", endpoint);
-            return this;
-        }
-        /**
          * Ignore SSL verification.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -280,8 +265,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
             return this;
         }
         /**
-         * SMN service region. This is lower precedence than endpoint based
-         * configuration.
+         * SMN service region.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
