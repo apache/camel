@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.eventhubs.operations;
+package org.apache.camel.component.azure.eventhubs.integration.operations;
 
 import java.time.Duration;
 import java.util.LinkedList;
@@ -31,6 +31,7 @@ import org.apache.camel.component.azure.eventhubs.EventHubsConfiguration;
 import org.apache.camel.component.azure.eventhubs.EventHubsConstants;
 import org.apache.camel.component.azure.eventhubs.TestUtils;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
+import org.apache.camel.component.azure.eventhubs.operations.EventHubsProducerOperations;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
@@ -38,7 +39,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
+                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerOperationsIT extends CamelTestSupport {
 

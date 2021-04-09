@@ -25,15 +25,15 @@ import org.apache.camel.component.azure.storage.datalake.client.DataLakeServiceC
 import org.apache.camel.component.azure.storage.datalake.operations.DataLakeFileSystemOperations;
 import org.apache.camel.component.azure.storage.datalake.operations.DataLakeOperationResponse;
 import org.awaitility.Awaitility;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Ignore
-public class DataLakeFileSystemOperationIT extends BaseIT {
+@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
+public class DataLakeFileSystemOperationIT extends Base {
 
     private DataLakeServiceClientWrapper serviceClientWrapper;
 

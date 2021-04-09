@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.queue.operations;
+package org.apache.camel.component.azure.storage.queue.operations.integration;
 
 import java.time.Duration;
 import java.util.List;
@@ -32,6 +32,8 @@ import org.apache.camel.component.azure.storage.queue.QueueTestUtils;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
 import org.apache.camel.component.azure.storage.queue.client.QueueServiceClientWrapper;
+import org.apache.camel.component.azure.storage.queue.operations.QueueOperationResponse;
+import org.apache.camel.component.azure.storage.queue.operations.QueueOperations;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -46,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = "accountName", matches = ".*",
+                         disabledReason = "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueueOperationsIT extends CamelTestSupport {
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.queue;
+package org.apache.camel.component.azure.storage.queue.integration;
 
 import java.util.List;
 import java.util.Properties;
@@ -25,6 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
+import org.apache.camel.component.azure.storage.queue.QueueTestUtils;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
 import org.apache.camel.component.azure.storage.queue.client.QueueServiceClientWrapper;
@@ -35,9 +37,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@EnabledIfSystemProperty(named = "accountName", matches = ".*",
+                         disabledReason = "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueueConsumerIT extends CamelTestSupport {
 

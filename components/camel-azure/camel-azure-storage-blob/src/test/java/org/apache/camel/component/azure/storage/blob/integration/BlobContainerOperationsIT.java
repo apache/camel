@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BlobContainerOperationsITTest extends BaseIT {
+class BlobContainerOperationsIT extends Base {
 
     private BlobServiceClientWrapper blobServiceClientWrapper;
 
