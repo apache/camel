@@ -156,7 +156,7 @@
         <djl-pytorch-native-version>1.7.1</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.3.1</djl-tensorflow-native-version>
         <docker-java-version>3.2.7</docker-java-version>
-        <dozer-version>6.5.0</dozer-version>
+        <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
         <debezium-version>1.4.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.22</debezium-mysql-connector-version>
