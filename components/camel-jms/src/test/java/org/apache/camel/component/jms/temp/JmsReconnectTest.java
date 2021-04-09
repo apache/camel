@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.xml.CamelBeanPostProcessor;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -59,20 +61,21 @@ public class JmsReconnectTest {
     @Disabled
     @Test
     public void testRequestReply() throws Exception {
-        BrokerService broker = new BrokerService();
-        broker.addConnector("tcp://localhost:61616");
-        broker.setPersistent(false);
-        broker.setTimeBeforePurgeTempDestinations(1000);
-        broker.start();
+        BrokerService broker = ActiveMQEmbeddedServiceBuilder
+                .bare()
+                .withPersistent(false)
+                .withTimeBeforePurgeTempDestinations(1000)
+                .withTcpTransport()
+                .build().getBrokerService();
 
         DefaultCamelContext context = new DefaultCamelContext();
         JmsComponent jmsComponent = new JmsComponent();
 
-        /**
-         * 
-         */
+        String brokerUrl = String.format("failover://(%s)?maxReconnectAttempts=1",
+                ActiveMQEmbeddedService.getBrokerUri(broker, 0));
+
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-        connectionFactory.setBrokerURL("failover://(tcp://localhost:61616)?maxReconnectAttempts=1");
+        connectionFactory.setBrokerURL(brokerUrl);
 
         /**
          * When using Tibco EMS the problem can be recreated. As the broker is external it has to be stopped and started

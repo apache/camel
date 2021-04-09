@@ -29,9 +29,10 @@ public class StompSslConsumerTest extends StompConsumerTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters", getPort())
-                        .transform(body().convertToString())
-                        .to("mock:result");
+                fromF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
+                        service.getPort())
+                                .transform(body().convertToString())
+                                .to("mock:result");
             }
         };
     }

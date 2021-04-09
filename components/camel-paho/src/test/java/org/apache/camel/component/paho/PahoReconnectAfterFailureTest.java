@@ -30,6 +30,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,8 +58,12 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
     @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
-        broker = new BrokerService();
-        broker.setPersistent(false);
+
+        broker = ActiveMQEmbeddedServiceBuilder
+                .bare()
+                .withPersistent(false)
+                .build().getBrokerService();
+
         // Broker will be started later, after camel context is started,
         // to ensure first consumer connection fails
     }

@@ -27,35 +27,34 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.fusesource.stomp.client.Stomp;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 public abstract class StompBaseTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .bare()
+            .withPersistent(false)
+            .withUseJmx(true)
+            .withDeleteAllMessagesOnStartup(true)
+            .withAdvisorySupport(true)
+            .withCustomSetup(this::configureBroker)
+            .buildWithRecycle();
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected BrokerService brokerService;
     protected int numberOfMessages = 100;
-    protected int port;
-    private boolean canTest;
     private SSLContextParameters serverSslContextParameters;
     private SSLContext serverSslContext;
     private SSLContextParameters clientSslContextParameters;
     private SSLContext clientSslContext;
-
-    protected int getPort() {
-        return port;
-    }
-
-    /**
-     * Whether we can test on this box, as not all boxes can be used for reliable CI testing.
-     */
-    protected boolean canTest() {
-        return canTest;
-    }
 
     protected boolean isUseSsl() {
         return false;
@@ -76,54 +75,40 @@ public abstract class StompBaseTest extends CamelTestSupport {
         return registry;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
+    private void configureBroker(BrokerService brokerService) {
+        int port = AvailablePortFinder.getNextAvailable();
 
-        try {
-            brokerService = new BrokerService();
-            brokerService.setPersistent(false);
-            brokerService.setAdvisorySupport(false);
-
-            if (isUseSsl()) {
-                SslContext sslContext = new SslContext();
+        if (isUseSsl()) {
+            SslContext sslContext = new SslContext();
+            try {
                 sslContext.setSSLContext(getServerSSLContext());
-
-                brokerService.setSslContext(sslContext);
-                brokerService.addConnector("stomp+ssl://localhost:" + getPort() + "?trace=true");
-            } else {
-                brokerService.addConnector("stomp://localhost:" + getPort() + "?trace=true");
+            } catch (Exception e) {
+                fail(e.getMessage());
             }
 
-            brokerService.start();
-            brokerService.waitUntilStarted();
-            super.setUp();
-            canTest = true;
-        } catch (Exception e) {
-            System.err.println("Cannot test due " + e.getMessage() + " more details in the log");
-            log.warn("Cannot test due " + e.getMessage(), e);
-            canTest = false;
-        }
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (brokerService != null) {
-            brokerService.stop();
-            brokerService.waitUntilStopped();
+            brokerService.setSslContext(sslContext);
+            try {
+                brokerService.addConnector("stomp+ssl://localhost:" + port + "?trace=true");
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
+        } else {
+            try {
+                brokerService.addConnector("stomp://localhost:" + port + "?trace=true");
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
         }
     }
 
     protected Stomp createStompClient() throws Exception {
         Stomp stomp;
+
         if (isUseSsl()) {
-            stomp = new Stomp("ssl://localhost:" + getPort());
+            stomp = new Stomp("ssl://localhost:" + service.getPort());
             stomp.setSslContext(getClientSSLContext());
         } else {
-            stomp = new Stomp("tcp://localhost:" + getPort());
+            stomp = new Stomp("tcp://localhost:" + service.getPort());
         }
 
         return stomp;

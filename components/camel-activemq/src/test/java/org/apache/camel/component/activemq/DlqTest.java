@@ -22,11 +22,13 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -34,18 +36,22 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DlqTest extends ActiveMQSpringTestSupport {
-
     private static final Logger LOG = LoggerFactory.getLogger(DlqTest.class);
-    BrokerService broker;
-    int messageCount;
+
+    @RegisterExtension
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder.defaultBroker()
+            .withBrokerName(DlqTest.class.getSimpleName())
+            .withUseJmx(true)
+            .build();
+
+    private int messageCount;
 
     @Test
     public void testSendToDlq() throws Exception {
         sendJMSMessageToKickOffRoute();
 
         LOG.info("Wait for dlq message...");
-
-        assertTrue(Wait.waitFor(() -> broker.getAdminView().getTotalEnqueueCount() == 2));
+        assertTrue(Wait.waitFor(() -> service.getBrokerService().getAdminView().getTotalEnqueueCount() == 2));
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
@@ -63,15 +69,7 @@ public class DlqTest extends ActiveMQSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        // make broker available to recovery processing on app context start
-        try {
-            broker = createBroker(true, false);
-            broker.setUseJmx(true);
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
-
+        service.initialize();
         return super.createApplicationContext();
     }
 

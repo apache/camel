@@ -26,35 +26,26 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsConsumeSendTransacted extends ActiveMQSpringTestSupport {
 
-    BrokerService broker;
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withBrokerName(JmsConsumeSendTransacted.class.getSimpleName())
+            .withTcpTransport()
+            .build();
+
     final int messagesSent = 1;
     int messagesToConsume;
-
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        broker = createBroker();
-        broker.start();
-        super.setUp();
-    }
-
-    @AfterEach
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        broker.stop();
-    }
 
     @Test
     public void testTransactedRoute() throws Exception {
@@ -95,14 +86,10 @@ public class JmsConsumeSendTransacted extends ActiveMQSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker() throws Exception {
-        return createBroker(true, true);
-    }
-
     @Override
     protected Map<String, String> getTranslationProperties() {
         Map<String, String> props = super.getTranslationProperties();
-        props.put("brokerUri", broker.getTransportConnectors().get(0).getUri().toString());
+        props.put("brokerUri", service.serviceAddress());
         return props;
     }
 

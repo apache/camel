@@ -24,15 +24,17 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.util.ThreadTracker;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.activemq.support.ActiveMQSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +43,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // see: https://issues.apache.org/activemq/browse/AMQ-2966
 public class CamelVMTransportRoutingTest implements ActiveMQSupport {
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker(CamelVMTransportRoutingTest.class.getSimpleName())
+            .withDeleteAllMessagesOnStartup(false)
+            .withTcpTransport()
+            .build();
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelVMTransportRoutingTest.class);
 
-    private BrokerService broker;
     private CamelContext camelContext;
 
     private Connection senderConnection;
@@ -86,22 +93,11 @@ public class CamelVMTransportRoutingTest implements ActiveMQSupport {
         }
     }
 
-    protected BrokerService createBroker() throws Exception {
-        return createBroker(false, true);
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
-
-        broker = createBroker();
-        broker.start();
-        broker.waitUntilStarted();
-
-        Thread.sleep(1000);
-
         createCamelContext();
 
-        ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory(getBrokerUri(broker));
+        ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         senderConnection = connFactory.createConnection();
         receiverConnection1 = connFactory.createConnection();
         receiverConnection2 = connFactory.createConnection();
@@ -125,8 +121,9 @@ public class CamelVMTransportRoutingTest implements ActiveMQSupport {
             receiverConnection2.close();
         }
 
-        camelContext.stop();
-        broker.stop();
+        if (camelContext != null) {
+            camelContext.stop();
+        }
 
         ThreadTracker.result();
     }

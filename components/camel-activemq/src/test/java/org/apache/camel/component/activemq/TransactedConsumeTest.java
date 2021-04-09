@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -37,21 +38,34 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.component.jms.JmsMessage;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
+
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .defaultBroker()
+            .withTcpTransport()
+            .withUseJmx(true)
+            .withBrokerName(TransactedConsumeTest.class)
+            .withTcpTransport()
+            .withCustomSetup(TransactedConsumeTest::setupBroker)
+            .build();
 
     static AtomicLong firstConsumed = new AtomicLong();
     static AtomicLong consumed = new AtomicLong();
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactedConsumeTest.class);
 
-    BrokerService broker;
     int messageCount = 10000;
 
     @Test
@@ -61,7 +75,7 @@ public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
         assertTrue(Wait.waitFor(new Wait.Condition() {
             @Override
             public boolean isSatisified() throws Exception {
-                return broker.getAdminView().getTotalDequeueCount() >= messageCount;
+                return service.getBrokerService().getAdminView().getTotalDequeueCount() >= messageCount;
             }
         }, 20 * 60 * 1000));
         long duration = System.currentTimeMillis() - firstConsumed.get();
@@ -86,35 +100,27 @@ public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
         connection.close();
     }
 
-    private BrokerService createBroker() throws Exception {
-        BrokerService brokerService = createBroker(true, true);
-        brokerService.setUseJmx(true);
-        brokerService.getManagementContext().setUseMBeanServer(false);
+    private static void setupBroker(BrokerService brokerService) {
         PolicyMap policyMap = new PolicyMap();
         PolicyEntry defaultPolicy = new PolicyEntry();
         policyMap.setDefaultEntry(defaultPolicy);
-        brokerService.setDestinationPolicy(policyMap);
 
-        brokerService.setAdvisorySupport(false);
-        brokerService.setDataDirectory(testDirectory().toString());
-        // AMQPersistenceAdapter amq = new AMQPersistenceAdapter();
-        // amq.setDirectory(new File("target/data"));
-        // brokerService.setPersistenceAdapter(amq);
-        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService
-                .getPersistenceAdapter();
-        kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
-        return brokerService;
+        brokerService.getManagementContext().setUseMBeanServer(false);
+
+        KahaDBPersistenceAdapter kahaDBPersistenceAdapter = null;
+        try {
+            kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService
+                    .getPersistenceAdapter();
+            kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
+        } catch (IOException e) {
+            LOG.error("Unable to setup the persistence adapter: {}", e.getMessage(), e);
+            fail("Unable to setup the persistence adapter");
+        }
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         // make broker available to recovery processing on app context start
-        try {
-            broker = createBroker();
-            broker.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to start broker", e);
-        }
 
         try {
             sendJMSMessageToKickOffRoute();
@@ -128,7 +134,7 @@ public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
     @Override
     protected Map<String, String> getTranslationProperties() {
         Map<String, String> map = super.getTranslationProperties();
-        map.put("brokerUri", getBrokerUri(broker));
+        map.put("brokerUri", service.serviceAddress());
         return map;
     }
 
