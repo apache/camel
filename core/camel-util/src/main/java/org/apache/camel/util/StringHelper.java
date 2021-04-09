@@ -418,8 +418,8 @@ public final class StringHelper {
         final String text = value;
 
         return new Iterator<String>() {
-            int i = 0;
-            int pos = 0;
+            int i;
+            int pos;
 
             @Override
             public boolean hasNext() {
