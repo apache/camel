@@ -19,14 +19,13 @@ package org.apache.camel.test.infra.kafka.services;
 
 import java.util.function.BiConsumer;
 
-import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
 
-public class ContainerLocalKafkaService extends AbstractTestService implements KafkaService, ContainerService<KafkaContainer> {
+public class ContainerLocalKafkaService extends AbstractKafkaService implements ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
     private final KafkaContainer kafka;
 

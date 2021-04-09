@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.junit5.resources;
 
-package org.apache.camel.test.infra.kafka.services;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.junit5.resources.impl.TestServiceManager;
 
-public final class KafkaServiceFactory {
-    private KafkaServiceFactory() {
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Resource(TestServiceManager.class)
+public @interface TestService {
 
-    }
-
-    public static SimpleTestServiceBuilder<AbstractKafkaService> builder() {
-        return new SimpleTestServiceBuilder<>("kafka");
-    }
-
-    public static KafkaService createService() {
-        return builder()
-                .addLocalMapping(ContainerLocalKafkaService::new)
-                .addMapping("local-strimzi-container", StrimziService::new)
-                .addRemoteMapping(RemoteKafkaService::new)
-                .build();
-    }
 }

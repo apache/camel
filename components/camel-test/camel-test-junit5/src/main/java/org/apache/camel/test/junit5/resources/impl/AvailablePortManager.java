@@ -23,8 +23,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.resources.AvailablePort;
 import org.apache.camel.test.junit5.resources.BaseResourceManager;
 import org.junit.jupiter.api.extension.ExtensionConfigurationException;
-
-import static org.junit.platform.commons.util.ReflectionUtils.isPrivate;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class AvailablePortManager extends BaseResourceManager<AvailablePort> {
 
@@ -33,7 +32,7 @@ public class AvailablePortManager extends BaseResourceManager<AvailablePort> {
     }
 
     @Override
-    protected Holder createHolder(Field field) {
+    protected Holder createHolder(ExtensionContext context, Field field) {
         return new Holder() {
             AvailablePortFinder.Port[] ports;
 
@@ -66,6 +65,7 @@ public class AvailablePortManager extends BaseResourceManager<AvailablePort> {
         };
     }
 
+    @Override
     protected void verifyType(Field field, AvailablePort ap) {
         Class<?> type = field.getType();
         if (type == int.class) {
@@ -73,22 +73,17 @@ public class AvailablePortManager extends BaseResourceManager<AvailablePort> {
                 throw new ExtensionConfigurationException(
                         "The size on @AvailablePort field [" + field + "] must be 1 but was: " + ap.size());
             }
-            if (isPrivate(field)) {
-                throw new ExtensionConfigurationException("@AvailablePort field [" + field + "] must not be private.");
-            }
         } else if (type == int[].class) {
             if (ap.size() < 1) {
                 throw new ExtensionConfigurationException(
                         "The size on @AvailablePort field [" + field + "] must be greater or equals to 1 but was: "
                                                           + ap.size());
             }
-            if (isPrivate(field)) {
-                throw new ExtensionConfigurationException("@AvailablePort field [" + field + "] must not be private.");
-            }
         } else {
             throw new ExtensionConfigurationException(
                     "Can only resolve @AvailablePort field [" + field + "] of type int or int[] but was: " + type.getName());
         }
+        super.verifyType(field, ap);
     }
 
 }

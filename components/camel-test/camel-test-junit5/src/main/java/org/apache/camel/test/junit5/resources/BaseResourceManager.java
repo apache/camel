@@ -18,12 +18,12 @@ package org.apache.camel.test.junit5.resources;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.function.Supplier;
 
 import org.junit.jupiter.api.extension.ExtensionConfigurationException;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.ExceptionUtils;
 
+import static org.junit.platform.commons.util.ReflectionUtils.isPrivate;
 import static org.junit.platform.commons.util.ReflectionUtils.makeAccessible;
 
 public abstract class BaseResourceManager<T extends Annotation> implements ResourceManager {
@@ -40,7 +40,7 @@ public abstract class BaseResourceManager<T extends Annotation> implements Resou
         verifyType(field, ap);
         try {
             ExtensionContext.Store store = getStore(context, testInstance, field, ap);
-            Holder holder = store.getOrComputeIfAbsent(field, this::createHolder, Holder.class);
+            Holder holder = store.getOrComputeIfAbsent(field, f -> createHolder(context, field), Holder.class);
             makeAccessible(field).set(testInstance, holder.get());
         } catch (Throwable t) {
             ExceptionUtils.throwAsUncheckedException(t);
@@ -48,9 +48,13 @@ public abstract class BaseResourceManager<T extends Annotation> implements Resou
     }
 
     protected void verifyType(Field field, T ann) {
+        if (isPrivate(field)) {
+            throw new ExtensionConfigurationException(
+                    "@" + ann.annotationType().getSimpleName() + " field [" + field + "] must not be private.");
+        }
     }
 
-    protected abstract Holder createHolder(Field field);
+    protected abstract Holder createHolder(ExtensionContext context, Field field);
 
     protected Scope.ScopeValue getScope(Field field) {
         Scope sa = null;
@@ -112,8 +116,8 @@ public abstract class BaseResourceManager<T extends Annotation> implements Resou
         return store;
     }
 
-    protected static abstract class Holder implements ExtensionContext.Store.CloseableResource, Supplier<Object> {
-
+    protected static abstract class Holder implements ExtensionContext.Store.CloseableResource {
+        public abstract Object get() throws Exception;
     }
 
 }

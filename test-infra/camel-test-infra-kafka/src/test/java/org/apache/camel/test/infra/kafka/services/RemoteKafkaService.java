@@ -17,12 +17,11 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
-import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteKafkaService extends AbstractTestService implements KafkaService {
+public class RemoteKafkaService extends AbstractKafkaService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteKafkaService.class);
 
     @Override
