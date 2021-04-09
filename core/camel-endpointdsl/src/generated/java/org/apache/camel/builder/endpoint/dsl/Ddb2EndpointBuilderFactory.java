@@ -126,6 +126,20 @@ public interface Ddb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The key scalar type, it can be S (String), N (Number) and B (Bytes).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param keyScalarType the value to set
+         * @return the dsl builder
+         */
+        default Ddb2EndpointBuilder keyScalarType(String keyScalarType) {
+            doSetProperty("keyScalarType", keyScalarType);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

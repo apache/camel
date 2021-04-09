@@ -41,6 +41,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "keyAttributeName": getOrCreateConfiguration(target).setKeyAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "keyattributetype":
         case "keyAttributeType": getOrCreateConfiguration(target).setKeyAttributeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyscalartype":
+        case "keyScalarType": getOrCreateConfiguration(target).setKeyScalarType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.ddb.Ddb2Operations.class, value)); return true;
@@ -88,6 +90,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "keyAttributeName": return java.lang.String.class;
         case "keyattributetype":
         case "keyAttributeType": return java.lang.String.class;
+        case "keyscalartype":
+        case "keyScalarType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.ddb.Ddb2Operations.class;
@@ -131,6 +135,8 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "keyAttributeName": return getOrCreateConfiguration(target).getKeyAttributeName();
         case "keyattributetype":
         case "keyAttributeType": return getOrCreateConfiguration(target).getKeyAttributeType();
+        case "keyscalartype":
+        case "keyScalarType": return getOrCreateConfiguration(target).getKeyScalarType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();

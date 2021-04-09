@@ -128,6 +128,21 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * The key scalar type, it can be S (String), N (Number) and B (Bytes).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param keyScalarType the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder keyScalarType(
+                java.lang.String keyScalarType) {
+            doSetProperty("keyScalarType", keyScalarType);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -389,6 +404,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "consistentRead": getOrCreateConfiguration((Ddb2Component) component).setConsistentRead((boolean) value); return true;
             case "keyAttributeName": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeName((java.lang.String) value); return true;
             case "keyAttributeType": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeType((java.lang.String) value); return true;
+            case "keyScalarType": getOrCreateConfiguration((Ddb2Component) component).setKeyScalarType((java.lang.String) value); return true;
             case "lazyStartProducer": ((Ddb2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Ddb2Component) component).setOperation((org.apache.camel.component.aws2.ddb.Ddb2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Ddb2Component) component).setOverrideEndpoint((boolean) value); return true;

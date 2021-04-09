@@ -31,6 +31,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "keyAttributeName": target.getConfiguration().setKeyAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "keyattributetype":
         case "keyAttributeType": target.getConfiguration().setKeyAttributeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyscalartype":
+        case "keyScalarType": target.getConfiguration().setKeyScalarType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.ddb.Ddb2Operations.class, value)); return true;
@@ -75,6 +77,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "keyAttributeName": return java.lang.String.class;
         case "keyattributetype":
         case "keyAttributeType": return java.lang.String.class;
+        case "keyscalartype":
+        case "keyScalarType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.ddb.Ddb2Operations.class;
@@ -115,6 +119,8 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "keyAttributeName": return target.getConfiguration().getKeyAttributeName();
         case "keyattributetype":
         case "keyAttributeType": return target.getConfiguration().getKeyAttributeType();
+        case "keyscalartype":
+        case "keyScalarType": return target.getConfiguration().getKeyScalarType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

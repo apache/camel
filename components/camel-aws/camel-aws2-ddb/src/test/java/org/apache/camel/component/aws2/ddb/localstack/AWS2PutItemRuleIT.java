@@ -69,7 +69,8 @@ public class AWS2PutItemRuleIT extends Aws2DDBBase {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to(
-                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH + "&keyScalarType=" + ScalarAttributeType.S
+                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
+                                        + "&keyScalarType=" + ScalarAttributeType.S
                                         + "&readCapacity=1&writeCapacity=1");
             }
         };

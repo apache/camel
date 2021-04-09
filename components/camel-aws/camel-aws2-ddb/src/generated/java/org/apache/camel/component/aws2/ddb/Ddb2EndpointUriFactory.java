@@ -20,11 +20,12 @@ public class Ddb2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(19);
         props.add("amazonDDBClient");
         props.add("proxyProtocol");
         props.add("readCapacity");
         props.add("secretKey");
+        props.add("keyScalarType");
         props.add("uriEndpointOverride");
         props.add("keyAttributeType");
         props.add("proxyHost");
