@@ -81,6 +81,11 @@ public class PrototypeProcessorExchangeFactory extends PooledObjectFactorySuppor
     }
 
     @Override
+    public Exchange createCopy(Exchange exchange) {
+        return exchange.copy();
+    }
+
+    @Override
     public Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {
         return ExchangeHelper.createCorrelatedCopy(exchange, handover);
     }

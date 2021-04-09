@@ -190,7 +190,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         // this avoids any side effect reflected upon the incoming exchange
         final Object value;
         final Iterator<?> iterator;
-        private final Exchange copy;
+        private Exchange copy;
         private final Route route;
         private final Exchange original;
 
@@ -251,7 +251,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     if (part != null) {
                         // create a correlated copy as the new exchange to be routed in the splitter from the copy
                         // and do not share the unit of work
-                        Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
+                        Exchange newExchange = processorExchangeFactory.createCorrelatedCopy(copy, false);
                         // If the splitter has an aggregation strategy
                         // then the StreamCache created by the child routes must not be
                         // closed by the unit of work of the child route, but by the unit of
@@ -284,7 +284,12 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public void close() throws IOException {
-            IOHelper.closeIterator(value);
+            if (copy != null) {
+                processorExchangeFactory.release(copy);
+                // null copy to avoid releasing it back again as close may be called multiple times
+                copy = null;
+                IOHelper.closeIterator(value);
+            }
         }
 
     }
@@ -337,8 +342,12 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         return expression;
     }
 
-    private static Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
-        Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
+    private Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
+        Exchange answer = processorExchangeFactory.createCopy(exchange);
+        if (preserveExchangeId) {
+            // must preserve exchange id
+            answer.setExchangeId(exchange.getExchangeId());
+        }
         if (exchange.getContext().isMessageHistory()) {
             // we do not want to copy the message history for splitted sub-messages
             answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);

@@ -58,26 +58,14 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
     }
 
     @Override
-    public Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {
-        Exchange answer = pool.poll();
+    public Exchange createCopy(Exchange exchange) {
+        ExtendedExchange answer = (ExtendedExchange) pool.poll();
         if (answer == null) {
-            // create a new exchange as there was no free from the pool
-            PooledExchange pe = new DefaultPooledExchange(exchange);
-            ExchangeHelper.copyResults(pe, exchange);
-            // do not reuse message id on copy
-            pe.getIn().setMessageId(null);
-            // do not share the unit of work
-            pe.setUnitOfWork(null);
-            if (handover) {
-                // Need to hand over the completion for async invocation
-                pe.adapt(ExtendedExchange.class).handoverCompletions(exchange);
-            }
-            // set a correlation id so we can track back the original exchange
-            pe.setProperty(ExchangePropertyKey.CORRELATION_ID, exchange.getExchangeId());
             if (statisticsEnabled) {
                 statistics.created.increment();
             }
-            answer = pe;
+            // create a new exchange as there was no free from the pool
+            answer = new DefaultPooledExchange(exchange);
         } else {
             if (statisticsEnabled) {
                 statistics.acquired.increment();
@@ -86,6 +74,40 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             PooledExchange ee = (PooledExchange) answer;
             ee.reset(System.currentTimeMillis());
         }
+
+        ExchangeHelper.copyResults(answer, exchange);
+        return answer;
+    }
+
+    @Override
+    public Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {
+        ExtendedExchange answer = (ExtendedExchange) pool.poll();
+        if (answer == null) {
+            if (statisticsEnabled) {
+                statistics.created.increment();
+            }
+            // create a new exchange as there was no free from the pool
+            answer = new DefaultPooledExchange(exchange);
+        } else {
+            if (statisticsEnabled) {
+                statistics.acquired.increment();
+            }
+            // reset exchange for reuse
+            PooledExchange ee = (PooledExchange) answer;
+            ee.reset(System.currentTimeMillis());
+        }
+
+        ExchangeHelper.copyResults(answer, exchange);
+        // do not reuse message id on copy
+        answer.getIn().setMessageId(null);
+        // do not share the unit of work
+        answer.setUnitOfWork(null);
+        if (handover) {
+            // Need to hand over the completion for async invocation
+            answer.handoverCompletions(exchange);
+        }
+        // set a correlation id so we can track back the original exchange
+        answer.setProperty(ExchangePropertyKey.CORRELATION_ID, exchange.getExchangeId());
         return answer;
     }
 

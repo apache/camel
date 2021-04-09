@@ -57,7 +57,14 @@ public interface ProcessorExchangeFactory extends PooledObjectFactory<Exchange>,
     /**
      * Gets a copy of the given {@link Exchange}
      *
-     * @param exchange original copy of the exchange
+     * @param exchange original exchange
+     */
+    Exchange createCopy(Exchange exchange);
+
+    /**
+     * Gets a copy of the given {@link Exchange} the the copy is correlated to the source
+     *
+     * @param exchange original exchange
      * @param handover whether the on completion callbacks should be handed over to the new copy.
      */
     Exchange createCorrelatedCopy(Exchange exchange, boolean handover);
