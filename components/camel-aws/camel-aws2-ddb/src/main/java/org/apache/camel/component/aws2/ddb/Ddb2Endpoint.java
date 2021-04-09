@@ -127,7 +127,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
                         .writeCapacityUnits(configuration.getWriteCapacity()).build())
                 .attributeDefinitions(AttributeDefinition.builder()
                         .attributeName(configuration.getKeyAttributeName())
-                        .attributeType(ScalarAttributeType.S)
+                        .attributeType(configuration.getKeyScalarType())
                         .build());
         return getDdbClient().createTable(createTableRequest.build()).tableDescription();
     }

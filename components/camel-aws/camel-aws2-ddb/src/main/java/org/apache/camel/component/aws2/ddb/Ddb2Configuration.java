@@ -49,6 +49,8 @@ public class Ddb2Configuration implements Cloneable {
     private String keyAttributeName;
     @UriParam
     private String keyAttributeType;
+    @UriParam
+    private String keyScalarType;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
@@ -251,6 +253,17 @@ public class Ddb2Configuration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    public String getKeyScalarType() {
+        return keyScalarType;
+    }
+
+    /**
+     * The key scalar type, it can be S (String), N (Number) and B (Bytes)
+     */
+    public void setKeyScalarType(String keyScalarType) {
+        this.keyScalarType = keyScalarType;
     }
 
     // *************************************************

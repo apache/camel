@@ -29,6 +29,7 @@ import org.apache.camel.component.aws2.ddb.Ddb2Operations;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -68,7 +69,7 @@ public class AWS2PutItemRuleIT extends Aws2DDBBase {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to(
-                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
+                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH + "&keyScalarType=" + ScalarAttributeType.S
                                         + "&readCapacity=1&writeCapacity=1");
             }
         };
