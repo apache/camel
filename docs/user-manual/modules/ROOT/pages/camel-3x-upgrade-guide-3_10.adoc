@@ -30,3 +30,11 @@ in the previous version. New version tries to convert the payload into `InpuStre
 only if conversion to `InputStream` is not possible.
 
 Order of the basic payload types (like `String`, `Map`, `File`) has not been changed.
+
+=== camel-huaweicloud-smn
+
+Initialization options for SMN client has slightly changed. 
+
+Earlier, the library configured the smn server url based on the region parameter provided in endpoint configurations. Now, it provides more flexibility by allowing camel users by providing fully qualified http url for more customizability.
+
+When URL is provided, it carries the higher precedence than region based configuration. Any region configuration entered along with endpoint url will be ingnored.
