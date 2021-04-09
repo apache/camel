@@ -541,7 +541,7 @@ public final class ObjectHelper {
                 } else {
                     // optimized split string on default delimiter
                     int count = StringHelper.countChar(value, DEFAULT_DELIMITER_CHAR) + 1;
-                    return StringHelper.splitOnCharacterAsList(value, DEFAULT_DELIMITER_CHAR, count);
+                    return () -> StringHelper.splitOnCharacterAsIterator(value, DEFAULT_DELIMITER_CHAR, count);
                 }
             }
             return () -> new Scanner(value, delimiter);
@@ -761,7 +761,8 @@ public final class ObjectHelper {
                     } else {
                         // optimized split string on default delimiter
                         int count = StringHelper.countChar(s, DEFAULT_DELIMITER_CHAR) + 1;
-                        return StringHelper.splitOnCharacterAsList(s, DEFAULT_DELIMITER_CHAR, count);
+                        return (Iterable<String>) () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
+                                count);
                     }
                 } else {
                     return (Iterable<String>) () -> new Scanner(s, delimiter);

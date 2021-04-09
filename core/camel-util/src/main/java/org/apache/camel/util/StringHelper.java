@@ -18,8 +18,10 @@ package org.apache.camel.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -394,6 +396,54 @@ public final class StringHelper {
             rc[i] = v.substring(p + 1);
         }
         return rc;
+    }
+
+    public static Iterator<String> splitOnCharacterAsIterator(String value, char needle, int count) {
+        // skip leading and trailing needles
+        int end = value.length() - 1;
+        boolean skipStart = value.charAt(0) == needle;
+        boolean skipEnd = value.charAt(end) == needle;
+        if (skipStart && skipEnd) {
+            value = value.substring(1, end);
+            count = count - 2;
+        } else if (skipStart) {
+            value = value.substring(1);
+            count = count - 1;
+        } else if (skipEnd) {
+            value = value.substring(0, end);
+            count = count - 1;
+        }
+
+        final int size = count;
+        final String text = value;
+
+        return new Iterator<String>() {
+            int i = 0;
+            int pos = 0;
+
+            @Override
+            public boolean hasNext() {
+                return i < size;
+            }
+
+            @Override
+            public String next() {
+                if (i == size) {
+                    throw new NoSuchElementException();
+                }
+                String answer;
+                int end = text.indexOf(needle, pos);
+                if (end != -1) {
+                    answer = text.substring(pos, end);
+                    pos = end + 1;
+                } else {
+                    answer = text.substring(pos);
+                    // no more data
+                    i = size;
+                }
+                return answer;
+            }
+        };
     }
 
     public static List<String> splitOnCharacterAsList(String value, char needle, int count) {
