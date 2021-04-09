@@ -124,9 +124,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
                 .keySchema(KeySchemaElement.builder().attributeName(configuration.getKeyAttributeName())
                         .keyType(configuration.getKeyAttributeType()).build())
                 .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity())
-                        .writeCapacityUnits(configuration.getWriteCapacity()).build())
-                .attributeDefinitions(AttributeDefinition.builder().attributeName(configuration.getKeyAttributeName())
-                        .attributeType(ScalarAttributeType.S).build());
+                        .writeCapacityUnits(configuration.getWriteCapacity()).build());
         return getDdbClient().createTable(createTableRequest.build()).tableDescription();
     }
 
