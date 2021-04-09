@@ -34,8 +34,8 @@ public class Aws2DDBBase extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        Ddb2Component eventbridgeComponent = context.getComponent("aws2-ddb", Ddb2Component.class);
-        eventbridgeComponent.getConfiguration().setAmazonDDBClient(AWSSDKClientUtils.newDynamoDBClient());
+        Ddb2Component ddb2Component = context.getComponent("aws2-ddb", Ddb2Component.class);
+        ddb2Component.getConfiguration().setAmazonDDBClient(AWSSDKClientUtils.newDynamoDBClient());
         return context;
     }
 }
