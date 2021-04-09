@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.component.arangodb.integration;
 
 import java.util.Collections;
 
@@ -32,7 +32,7 @@ import com.arangodb.model.CollectionCreateOptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-public class BaseGraphTest extends BaseArangoDbTest {
+public class BaseGraph extends BaseArangoDb {
 
     protected static ArangoCollection edgesCollection;
     protected static ArangoCollection verticesCollection;

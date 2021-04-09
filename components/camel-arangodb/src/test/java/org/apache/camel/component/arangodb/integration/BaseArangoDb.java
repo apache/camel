@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.component.arangodb.integration;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class BaseArangoDbTest extends CamelTestSupport {
+public class BaseArangoDb extends CamelTestSupport {
     @RegisterExtension
     public static ArangoDBService service = ArangoDBServiceFactory.createService();
 

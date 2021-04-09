@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.component.arangodb.integration;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.VertexEntity;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArangoGraphVertexTest extends BaseGraphTest {
+public class ArangoGraphVertexIT extends BaseGraph {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
