@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.extension.ExtensionConfigurationException;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.ExceptionUtils;
 
 import static org.junit.platform.commons.util.ReflectionUtils.isPrivate;
@@ -57,22 +58,9 @@ public abstract class BaseResourceManager<T extends Annotation> implements Resou
     protected abstract Holder createHolder(ExtensionContext context, Field field);
 
     protected Scope.ScopeValue getScope(Field field) {
-        Scope sa = null;
-        for (Annotation a : field.getDeclaredAnnotations()) {
-            Scope s = a.annotationType().getAnnotation(Scope.class);
-            if (s != null) {
-                if (sa == null) {
-                    sa = s;
-                } else {
-                    throw new ExtensionConfigurationException(
-                            "Multiple Scope defined on field ["
-                                                              + field
-                                                              + "] is set to Test but no test instance is available");
-                }
-            }
-        }
-        Scope.ScopeValue scope = sa != null ? sa.value() : Scope.ScopeValue.Default;
-        return scope;
+        return AnnotationUtils.findAnnotation(field, Scope.class)
+                .map(Scope::value)
+                .orElse(Scope.ScopeValue.Default);
     }
 
     protected <T extends Annotation> ExtensionContext.Store getStore(
@@ -116,8 +104,8 @@ public abstract class BaseResourceManager<T extends Annotation> implements Resou
         return store;
     }
 
-    protected static abstract class Holder implements ExtensionContext.Store.CloseableResource {
-        public abstract Object get() throws Exception;
+    protected interface Holder extends ExtensionContext.Store.CloseableResource {
+        Object get() throws Exception;
     }
 
 }
