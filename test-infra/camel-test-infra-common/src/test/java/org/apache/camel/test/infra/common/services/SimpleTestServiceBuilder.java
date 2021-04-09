@@ -71,7 +71,7 @@ public class SimpleTestServiceBuilder<T extends TestService> implements TestServ
             String valid = mappings.keySet().stream().collect(Collectors.joining(", "));
 
             LOG.error("Invalid instance type: {}. Must one of: {}", instanceType, valid);
-            throw new UnsupportedOperationException("Invalid instance type: " + valid);
+            throw new UnsupportedOperationException("Invalid instance type: " + instanceType);
         }
 
         return supplier.get();
