@@ -16,44 +16,42 @@
  */
 package org.apache.camel.component.consul;
 
-import java.util.Optional;
+import java.util.List;
 
+import com.orbitz.consul.EventClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+public class ConsulEventWatchIT extends ConsulTestSupport {
+    private String key;
+    private EventClient client;
 
-public class ConsulKeyValueTest extends ConsulTestSupport {
+    @Override
+    public void doPreSetup() {
+        key = generateRandomString();
+        client = getConsul().eventClient();
+    }
 
     @Test
-    public void testKeyPut() throws Exception {
-        String key = generateKey();
-        String val = generateRandomString();
+    public void testWatchEvent() throws Exception {
+        List<String> values = generateRandomListOfStrings(3);
 
-        MockEndpoint mock = getMockEndpoint("mock:kv");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(val);
+        MockEndpoint mock = getMockEndpoint("mock:event-watch");
+        mock.expectedBodiesReceived(values);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulKeyValueActions.PUT)
-                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:kv").send();
+        values.forEach(v -> client.fireEvent(key, v));
 
         mock.assertIsSatisfied();
-
-        Optional<String> keyVal = getConsul().keyValueClient().getValueAsString(key);
-
-        assertTrue(keyVal.isPresent());
-        assertEquals(val, keyVal.get());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:kv").to("consul:kv").to("mock:kv");
+                fromF("consul:event?key=%s&blockSeconds=1", key)
+                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:event-watch");
             }
         };
     }

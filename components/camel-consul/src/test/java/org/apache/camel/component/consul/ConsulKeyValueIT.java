@@ -18,8 +18,6 @@ package org.apache.camel.component.consul;
 
 import java.util.Optional;
 
-import com.orbitz.consul.Consul;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConsulClientKeyValueTest extends ConsulTestSupport {
+public class ConsulKeyValueIT extends ConsulTestSupport {
 
     @Test
     public void testKeyPut() throws Exception {
@@ -51,17 +49,11 @@ public class ConsulClientKeyValueTest extends ConsulTestSupport {
         assertEquals(val, keyVal.get());
     }
 
-    @BindToRegistry("consulClient")
-    public Consul getConsulClient() {
-        return getConsul();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
             public void configure() {
-                from("direct:kv").to("consul:kv?consulClient=#consulClient").to("mock:kv");
+                from("direct:kv").to("consul:kv").to("mock:kv");
             }
         };
     }

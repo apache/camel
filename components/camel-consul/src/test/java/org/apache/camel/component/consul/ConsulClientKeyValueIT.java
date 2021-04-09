@@ -16,49 +16,52 @@
  */
 package org.apache.camel.component.consul;
 
-import java.security.SecureRandom;
-import java.util.List;
+import java.util.Optional;
 
-import com.orbitz.consul.KeyValueClient;
+import com.orbitz.consul.Consul;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class ConsulKeyValueWatchTest extends ConsulTestSupport {
-    private String key;
-    private KeyValueClient client;
-    private SecureRandom random;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @Override
-    public void doPreSetup() {
-        key = generateKey();
-        client = getConsul().keyValueClient();
-        random = new SecureRandom();
-    }
+public class ConsulClientKeyValueIT extends ConsulTestSupport {
 
     @Test
-    public void testWatchKey() throws Exception {
-        List<String> values = generateRandomListOfStrings(3);
+    public void testKeyPut() throws Exception {
+        String key = generateKey();
+        String val = generateRandomString();
 
-        MockEndpoint mock = getMockEndpoint("mock:kv-watch");
-        mock.expectedMessageCount(values.size());
-        mock.expectedBodiesReceived(values);
+        MockEndpoint mock = getMockEndpoint("mock:kv");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(val);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        for (String val : values) {
-            client.putValue(key, val);
-            Thread.sleep(250 + random.nextInt(250));
-        }
+        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulKeyValueActions.PUT)
+                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:kv").send();
 
         mock.assertIsSatisfied();
+
+        Optional<String> keyVal = getConsul().keyValueClient().getValueAsString(key);
+
+        assertTrue(keyVal.isPresent());
+        assertEquals(val, keyVal.get());
+    }
+
+    @BindToRegistry("consulClient")
+    public Consul getConsulClient() {
+        return getConsul();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+
         return new RouteBuilder() {
             public void configure() {
-                fromF("consul:kv?key=%s&valueAsString=true", key)
-                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:kv-watch");
+                from("direct:kv").to("consul:kv?consulClient=#consulClient").to("mock:kv");
             }
         };
     }

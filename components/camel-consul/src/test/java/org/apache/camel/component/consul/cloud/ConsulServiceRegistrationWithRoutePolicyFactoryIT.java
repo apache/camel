@@ -16,27 +16,18 @@
  */
 package org.apache.camel.component.consul.cloud;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.service.ServiceComponent;
+import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicyFactory;
 
-public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulServiceRegistrationTestBase {
-
-    @BindToRegistry("service")
-    ServiceComponent comp = new ServiceComponent();
-
+public class ConsulServiceRegistrationWithRoutePolicyFactoryIT extends ConsulServiceRegistrationTestBase {
     @Override
-    protected Map<String, String> getMetadata() {
-        return new HashMap<String, String>() {
-            {
-                put("service.type", "consul");
-                put("service.zone", "US");
-            }
-        };
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.addRoutePolicyFactory(new ServiceRegistrationRoutePolicyFactory());
+
+        return context;
     }
 
     @Override
@@ -44,9 +35,8 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME,
-                        SERVICE_PORT).routeId(SERVICE_ID)
-                                .routeGroup(SERVICE_NAME).noAutoStartup().to("log:service-registry?level=INFO");
+                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT).routeId(SERVICE_ID).routeGroup(SERVICE_NAME)
+                        .noAutoStartup().to("log:service-registry?level=INFO");
             }
         };
     }

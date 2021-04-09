@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringConsulRibbonServiceCallRouteTest extends SpringConsulServiceCallRouteTest {
+public class SpringConsulRibbonServiceCallRouteIT extends SpringConsulServiceCallRouteTest {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(

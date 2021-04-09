@@ -16,48 +16,49 @@
  */
 package org.apache.camel.component.consul;
 
+import java.security.SecureRandom;
 import java.util.List;
 
-import com.orbitz.consul.model.EventResponse;
-import com.orbitz.consul.model.event.Event;
+import com.orbitz.consul.KeyValueClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.endpoint.ConsulEventActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+public class ConsulKeyValueWatchIT extends ConsulTestSupport {
+    private String key;
+    private KeyValueClient client;
+    private SecureRandom random;
 
-public class ConsulEventTest extends ConsulTestSupport {
+    @Override
+    public void doPreSetup() {
+        key = generateKey();
+        client = getConsul().keyValueClient();
+        random = new SecureRandom();
+    }
 
     @Test
-    public void testFireEvent() throws Exception {
-        String key = generateRandomString();
-        String val = generateRandomString();
+    public void testWatchKey() throws Exception {
+        List<String> values = generateRandomListOfStrings(3);
 
-        MockEndpoint mock = getMockEndpoint("mock:event");
-        mock.expectedMinimumMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:kv-watch");
+        mock.expectedMessageCount(values.size());
+        mock.expectedBodiesReceived(values);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE)
-                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:event").send();
+        for (String val : values) {
+            client.putValue(key, val);
+            Thread.sleep(250 + random.nextInt(250));
+        }
 
         mock.assertIsSatisfied();
-
-        EventResponse response = getConsul().eventClient().listEvents(key);
-        List<Event> events = response.getEvents();
-
-        assertFalse(events.isEmpty());
-        assertTrue(events.get(0).getPayload().isPresent());
-        assertEquals(val, events.get(0).getPayload().get());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:event").to("consul:event").to("mock:event");
+                fromF("consul:kv?key=%s&valueAsString=true", key)
+                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:kv-watch");
             }
         };
     }

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Unit test for Camel Registry implementation for Consul
  */
-public class ConsulRegistryTest implements Serializable {
+public class ConsulRegistryIT implements Serializable {
     @RegisterExtension
     public static ConsulService consulService = ConsulServiceFactory.createService();
 

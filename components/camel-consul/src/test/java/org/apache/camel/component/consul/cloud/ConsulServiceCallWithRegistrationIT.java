@@ -29,7 +29,7 @@ import org.springframework.util.SocketUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
+public class ConsulServiceCallWithRegistrationIT extends ConsulTestSupport {
     private static final String SERVICE_HOST = "localhost";
 
     // ******************************

@@ -36,11 +36,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsulMasterTest {
+public class ConsulMasterIT {
     @RegisterExtension
     public static ConsulService service = ConsulServiceFactory.createService();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulMasterTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulMasterIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);

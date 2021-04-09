@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 
-public class ConsulServiceRegistrationWithRoutePolicyAndMetadataTest extends ConsulServiceRegistrationTestBase {
+public class ConsulServiceRegistrationWithRoutePolicyAndMetadataIT extends ConsulServiceRegistrationTestBase {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
