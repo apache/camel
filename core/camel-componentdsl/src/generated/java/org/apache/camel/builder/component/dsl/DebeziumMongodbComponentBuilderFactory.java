@@ -335,8 +335,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * The initial delay when trying to reconnect to a primary after a
-         * connection cannot be made or when no primary is available. Defaults
-         * to 1 second (1000 ms).
+         * connection cannot be made or when no primary is available, given in
+         * milliseconds. Defaults to 1 second (1,000 ms).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -353,8 +353,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * The maximum delay when trying to reconnect to a primary after a
-         * connection cannot be made or when no primary is available. Defaults
-         * to 120 second (120,000 ms).
+         * connection cannot be made or when no primary is available, given in
+         * milliseconds. Defaults to 120 second (120,000 ms).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -609,7 +609,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The connection timeout in milliseconds.
+         * The connection timeout, given in milliseconds. Defaults to 10 seconds
+         * (10,000 ms).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -693,8 +694,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to look for new, removed, or changed
-         * replica sets. Defaults to 30000 milliseconds.
+         * Interval for looking for new, removed, or changed replica sets, given
+         * in milliseconds. Defaults to 30 seconds (30,000 ms).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -710,7 +711,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The server selection timeout in milliseconds.
+         * The server selection timeout, given in milliseconds. Defaults to 10
+         * seconds (10,000 ms).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -726,7 +728,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The socket timeout in milliseconds.
+         * The socket timeout, given in milliseconds. Defaults to 0 ms.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -790,8 +792,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to wait for new change events to appear
-         * after receiving no events. Defaults to 500ms.
+         * Time to wait for new change events to appear after receiving no
+         * events, given in milliseconds. Defaults to 500 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -873,6 +875,22 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * The name of the data collection that is used to send signals/commands
+         * to Debezium. Signaling is disabled when not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param signalDataCollection the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder signalDataCollection(
+                java.lang.String signalDataCollection) {
+            doSetProperty("signalDataCollection", signalDataCollection);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
          * By default, no operations will be skipped.
@@ -908,7 +926,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to delay before a snapshot will begin.
+         * A delay period before a snapshot will begin, given in milliseconds.
+         * Defaults to 0 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1100,6 +1119,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "signalDataCollection": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotCollectionFilterOverrides": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotCollectionFilterOverrides((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotDelayMs((long) value); return true;

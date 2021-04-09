@@ -521,7 +521,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Resolvable hostname or IP address of the Postgres database server.
+         * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -556,8 +556,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password of the Postgres database user to be used when connecting to
-         * the database.
+         * Password of the database user to be used when connecting to the
+         * database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -573,7 +573,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Port of the Postgres database server.
+         * Port of the database server.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -588,7 +588,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Port of the Postgres database server.
+         * Port of the database server.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -762,8 +762,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the Postgres database user to be used when connecting to the
-         * database.
+         * Name of the database user to be used when connecting to the database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1124,8 +1123,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to wait for new change events to appear
-         * after receiving no events. Defaults to 500ms.
+         * Time to wait for new change events to appear after receiving no
+         * events, given in milliseconds. Defaults to 500 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1141,8 +1140,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to wait for new change events to appear
-         * after receiving no events. Defaults to 500ms.
+         * Time to wait for new change events to appear after receiving no
+         * events, given in milliseconds. Defaults to 500 ms.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1427,6 +1426,22 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the data collection that is used to send signals/commands
+         * to Debezium. Signaling is disabled when not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param signalDataCollection the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder signalDataCollection(
+                String signalDataCollection) {
+            doSetProperty("signalDataCollection", signalDataCollection);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
          * By default, no operations will be skipped.
@@ -1531,8 +1546,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milli-seconds to wait between retry attempts when the
-         * connector fails to connect to a replication slot.
+         * Time to wait between retry attempts when the connector fails to
+         * connect to a replication slot, given in milliseconds. Defaults to 10
+         * seconds (10,000 ms).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1548,8 +1564,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milli-seconds to wait between retry attempts when the
-         * connector fails to connect to a replication slot.
+         * Time to wait between retry attempts when the connector fails to
+         * connect to a replication slot, given in milliseconds. Defaults to 10
+         * seconds (10,000 ms).
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1601,7 +1618,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to delay before a snapshot will begin.
+         * A delay period before a snapshot will begin, given in milliseconds.
+         * Defaults to 0 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1617,7 +1635,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to delay before a snapshot will begin.
+         * A delay period before a snapshot will begin, given in milliseconds.
+         * Defaults to 0 ms.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1821,8 +1840,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds for sending replication connection status
-         * updates to the server. Defaults to 10 seconds (10000 ms).
+         * Frequency for sending replication connection status updates to the
+         * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1838,8 +1857,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds for sending replication connection status
-         * updates to the server. Defaults to 10 seconds (10000 ms).
+         * Frequency for sending replication connection status updates to the
+         * server, given in milliseconds. Defaults to 10 seconds (10,000 ms).
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 

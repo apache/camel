@@ -34,8 +34,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": getOrCreateConfiguration(target).setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": getOrCreateConfiguration(target).setBinlogBufferSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
@@ -46,6 +44,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "columnExcludeList": getOrCreateConfiguration(target).setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnincludelist":
         case "columnIncludeList": getOrCreateConfiguration(target).setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": getOrCreateConfiguration(target).setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnwhitelist":
+        case "columnWhitelist": getOrCreateConfiguration(target).setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
         case "connectkeepalive":
         case "connectKeepAlive": getOrCreateConfiguration(target).setConnectKeepAlive(property(camelContext, boolean.class, value)); return true;
@@ -53,6 +55,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).setConnectKeepAliveIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connecttimeoutms":
         case "connectTimeoutMs": getOrCreateConfiguration(target).setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseexcludelist":
         case "databaseExcludeList": getOrCreateConfiguration(target).setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistory":
@@ -67,10 +70,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration(target).setDatabaseHistoryKafkaRecoveryPollIntervalMs(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": getOrCreateConfiguration(target).setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration(target).setDatabaseHistorySkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration(target).setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseincludelist":
@@ -101,6 +100,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseSslTruststorePassword": getOrCreateConfiguration(target).setDatabaseSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": getOrCreateConfiguration(target).setDatatypePropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "enabletimeadjuster":
@@ -109,8 +110,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration(target).setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": getOrCreateConfiguration(target).setGtidNewChannelPosition(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": getOrCreateConfiguration(target).setGtidSourceExcludes(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourcefilterdmlevents":
@@ -135,6 +134,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
         case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": getOrCreateConfiguration(target).setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -155,16 +156,30 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": getOrCreateConfiguration(target).setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "signaldatacollection":
+        case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "snapshoteventsasinserts":
-        case "snapshotEventsAsInserts": getOrCreateConfiguration(target).setSnapshotEventsAsInserts(property(camelContext, boolean.class, value)); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": getOrCreateConfiguration(target).setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotlockingmode":
         case "snapshotLockingMode": getOrCreateConfiguration(target).setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotnewtables":
@@ -200,8 +215,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredEnabled": return boolean.class;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": return java.lang.String.class;
         case "binlogbuffersize":
         case "binlogBufferSize": return int.class;
         case "bridgeerrorhandler":
@@ -212,6 +225,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "columnExcludeList": return java.lang.String.class;
         case "columnincludelist":
         case "columnIncludeList": return java.lang.String.class;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return java.lang.String.class;
+        case "columnwhitelist":
+        case "columnWhitelist": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class;
         case "connectkeepalive":
         case "connectKeepAlive": return boolean.class;
@@ -219,6 +236,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAliveIntervalMs": return long.class;
         case "connecttimeoutms":
         case "connectTimeoutMs": return int.class;
+        case "converters": return java.lang.String.class;
         case "databaseexcludelist":
         case "databaseExcludeList": return java.lang.String.class;
         case "databasehistory":
@@ -233,10 +251,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return java.lang.String.class;
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": return boolean.class;
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return boolean.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databaseincludelist":
@@ -267,6 +281,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseSslTruststorePassword": return java.lang.String.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return java.lang.String.class;
         case "decimalhandlingmode":
         case "decimalHandlingMode": return java.lang.String.class;
         case "enabletimeadjuster":
@@ -275,8 +291,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "eventDeserializationFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
-        case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": return java.lang.String.class;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return java.lang.String.class;
         case "gtidsourcefilterdmlevents":
@@ -301,6 +315,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
         case "maxQueueSize": return int.class;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return long.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -321,16 +337,30 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return java.lang.String.class;
         case "pollintervalms":
         case "pollIntervalMs": return long.class;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return boolean.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return long.class;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return boolean.class;
+        case "signaldatacollection":
+        case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
-        case "snapshoteventsasinserts":
-        case "snapshotEventsAsInserts": return boolean.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return long.class;
         case "snapshotlockingmode":
         case "snapshotLockingMode": return java.lang.String.class;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotnewtables":
@@ -367,8 +397,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return getOrCreateConfiguration(target).getBigintUnsignedHandlingMode();
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": return getOrCreateConfiguration(target).getBinaryHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return getOrCreateConfiguration(target).getBinlogBufferSize();
         case "bridgeerrorhandler":
@@ -379,6 +407,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "columnExcludeList": return getOrCreateConfiguration(target).getColumnExcludeList();
         case "columnincludelist":
         case "columnIncludeList": return getOrCreateConfiguration(target).getColumnIncludeList();
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return getOrCreateConfiguration(target).getColumnPropagateSourceType();
+        case "columnwhitelist":
+        case "columnWhitelist": return getOrCreateConfiguration(target).getColumnWhitelist();
         case "configuration": return target.getConfiguration();
         case "connectkeepalive":
         case "connectKeepAlive": return getOrCreateConfiguration(target).isConnectKeepAlive();
@@ -386,6 +418,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAliveIntervalMs": return getOrCreateConfiguration(target).getConnectKeepAliveIntervalMs();
         case "connecttimeoutms":
         case "connectTimeoutMs": return getOrCreateConfiguration(target).getConnectTimeoutMs();
+        case "converters": return getOrCreateConfiguration(target).getConverters();
         case "databaseexcludelist":
         case "databaseExcludeList": return getOrCreateConfiguration(target).getDatabaseExcludeList();
         case "databasehistory":
@@ -400,10 +433,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryPollIntervalMs();
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaTopic();
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": return getOrCreateConfiguration(target).isDatabaseHistorySkipUnparseableDdl();
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return getOrCreateConfiguration(target).isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseincludelist":
@@ -434,6 +463,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseSslTruststorePassword": return getOrCreateConfiguration(target).getDatabaseSslTruststorePassword();
         case "databaseuser":
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return getOrCreateConfiguration(target).getDatatypePropagateSourceType();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "enabletimeadjuster":
@@ -442,8 +473,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "eventDeserializationFailureHandlingMode": return getOrCreateConfiguration(target).getEventDeserializationFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
-        case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": return getOrCreateConfiguration(target).getGtidNewChannelPosition();
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return getOrCreateConfiguration(target).getGtidSourceExcludes();
         case "gtidsourcefilterdmlevents":
@@ -468,6 +497,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxqueuesize":
         case "maxQueueSize": return getOrCreateConfiguration(target).getMaxQueueSize();
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return getOrCreateConfiguration(target).getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
         case "offsetcommitpolicy":
@@ -488,16 +519,30 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return getOrCreateConfiguration(target).getQueryFetchSize();
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
+        case "signaldatacollection":
+        case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
-        case "snapshoteventsasinserts":
-        case "snapshotEventsAsInserts": return getOrCreateConfiguration(target).isSnapshotEventsAsInserts();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return getOrCreateConfiguration(target).getSnapshotIncludeCollectionList();
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
         case "snapshotlockingmode":
         case "snapshotLockingMode": return getOrCreateConfiguration(target).getSnapshotLockingMode();
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotnewtables":

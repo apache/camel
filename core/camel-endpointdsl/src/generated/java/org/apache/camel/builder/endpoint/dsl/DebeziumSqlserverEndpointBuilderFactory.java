@@ -490,8 +490,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the database the connector should be monitoring. When
-         * working with a multi-tenant set-up, must be set to the CDB name.
+         * The name of the database the connector should be monitoring.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -646,7 +645,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Resolvable hostname or IP address of the SQL Server database server.
+         * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -676,8 +675,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password of the SQL Server database user to be used when connecting
-         * to the database.
+         * Password of the database user to be used when connecting to the
+         * database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -693,7 +692,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Port of the SQL Server database server.
+         * Port of the database server.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -708,7 +707,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Port of the SQL Server database server.
+         * Port of the database server.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -760,8 +759,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the SQL Server database user to be used when connecting to
-         * the database.
+         * Name of the database user to be used when connecting to the database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1059,8 +1057,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to wait for new change events to appear
-         * after receiving no events. Defaults to 500ms.
+         * Time to wait for new change events to appear after receiving no
+         * events, given in milliseconds. Defaults to 500 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1076,8 +1074,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in milliseconds to wait for new change events to appear
-         * after receiving no events. Defaults to 500ms.
+         * Time to wait for new change events to appear after receiving no
+         * events, given in milliseconds. Defaults to 500 ms.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1227,6 +1225,22 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the data collection that is used to send signals/commands
+         * to Debezium. Signaling is disabled when not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param signalDataCollection the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder signalDataCollection(
+                String signalDataCollection) {
+            doSetProperty("signalDataCollection", signalDataCollection);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
          * By default, no operations will be skipped.
@@ -1244,7 +1258,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to delay before a snapshot will begin.
+         * A delay period before a snapshot will begin, given in milliseconds.
+         * Defaults to 0 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1260,7 +1275,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to delay before a snapshot will begin.
+         * A delay period before a snapshot will begin, given in milliseconds.
+         * Defaults to 0 ms.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
