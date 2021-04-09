@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cassandra;
+package org.apache.camel.component.cassandra.integration;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
-public abstract class BaseCassandraTest extends CamelTestSupport {
+public abstract class BaseCassandra extends CamelTestSupport {
 
     @RegisterExtension
     public static CassandraLocalContainerService service;

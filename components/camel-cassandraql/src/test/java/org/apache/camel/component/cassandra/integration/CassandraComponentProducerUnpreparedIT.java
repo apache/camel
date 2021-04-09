@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cassandra;
+package org.apache.camel.component.cassandra.integration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +26,7 @@ import com.datastax.oss.driver.api.querybuilder.update.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cassandra.CassandraConstants;
 import org.junit.jupiter.api.Test;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
@@ -33,7 +34,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest {
+public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
 
     static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
     static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";

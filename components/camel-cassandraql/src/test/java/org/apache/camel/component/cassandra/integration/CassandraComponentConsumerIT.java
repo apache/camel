@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cassandra;
+package org.apache.camel.component.cassandra.integration;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CassandraComponentConsumerTest extends BaseCassandraTest {
+public class CassandraComponentConsumerIT extends BaseCassandra {
 
     static final String CQL = "select login, first_name, last_name from camel_user";
 
