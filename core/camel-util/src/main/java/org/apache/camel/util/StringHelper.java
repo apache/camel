@@ -397,10 +397,25 @@ public final class StringHelper {
     }
 
     public static List<String> splitOnCharacterAsList(String value, char needle, int count) {
+        // skip leading and trailing needles
+        int end = value.length() - 1;
+        boolean skipStart = value.charAt(0) == needle;
+        boolean skipEnd = value.charAt(end) == needle;
+        if (skipStart && skipEnd) {
+            value = value.substring(1, end);
+            count = count - 2;
+        } else if (skipStart) {
+            value = value.substring(1);
+            count = count - 1;
+        } else if (skipEnd) {
+            value = value.substring(0, end);
+            count = count - 1;
+        }
+
         List<String> rc = new ArrayList<>(count);
         int pos = 0;
         for (int i = 0; i < count; i++) {
-            int end = value.indexOf(needle, pos);
+            end = value.indexOf(needle, pos);
             if (end != -1) {
                 String part = value.substring(pos, end);
                 pos = end + 1;

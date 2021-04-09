@@ -125,13 +125,42 @@ public class StringHelperTest {
 
     @Test
     public void testSplitOnCharacterAsList() throws Exception {
-        List<String> list = splitOnCharacterAsList("foo", ',', 1);
-        assertEquals(1, list.size());
-        assertEquals("foo", list.get(0));
+        //        List<String> list = splitOnCharacterAsList("foo", ',', 1);
+        //        assertEquals(1, list.size());
+        //        assertEquals("foo", list.get(0));
 
-        list = splitOnCharacterAsList("foo,bar", ',', 2);
+        //        list = splitOnCharacterAsList("foo,bar", ',', 2);
+        //        assertEquals(2, list.size());
+        //        assertEquals("foo", list.get(0));
+        //        assertEquals("bar", list.get(1));
+
+        List<String> list = splitOnCharacterAsList("foo,bar,", ',', 3);
         assertEquals(2, list.size());
         assertEquals("foo", list.get(0));
         assertEquals("bar", list.get(1));
+
+        list = splitOnCharacterAsList(",foo,bar", ',', 3);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
+
+        list = splitOnCharacterAsList(",foo,bar,", ',', 4);
+        assertEquals(2, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("bar", list.get(1));
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            sb.append(i);
+            sb.append(",");
+        }
+        String value = sb.toString();
+
+        int count = StringHelper.countChar(value, ',') + 1;
+        list = splitOnCharacterAsList(value, ',', count);
+        assertEquals(100, list.size());
+        assertEquals("0", list.get(0));
+        assertEquals("50", list.get(50));
+        assertEquals("99", list.get(99));
     }
 }
