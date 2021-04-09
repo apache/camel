@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.component.arangodb.integration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
 import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_UPDATE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ArangoCollectionUpdateTest extends BaseCollectionTest {
+public class ArangoCollectionUpdateIT extends BaseCollection {
 
     @Override
     protected RouteBuilder createRouteBuilder() {

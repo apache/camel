@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.component.arangodb.integration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArangoCollectionSaveTest extends BaseCollectionTest {
+public class ArangoCollectionSaveIT extends BaseCollection {
 
     @Override
     protected RouteBuilder createRouteBuilder() {

@@ -14,13 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.component.arangodb.integration;
 
-public class TestEntity {
+import com.arangodb.entity.DocumentEntity;
+
+public class TestDocumentEntity extends DocumentEntity {
     private String foo;
+    private long number;
 
-    public TestEntity(final String foo) {
+    public TestDocumentEntity() {
+    }
+
+    public TestDocumentEntity(String foo) {
         this.foo = foo;
+    }
+
+    public TestDocumentEntity(String foo, long number) {
+        this.foo = foo;
+        this.number = number;
     }
 
     public String getFoo() {
@@ -29,5 +40,13 @@ public class TestEntity {
 
     public void setFoo(final String foo) {
         this.foo = foo;
+    }
+
+    public long getNumber() {
+        return number;
+    }
+
+    public void setNumber(long number) {
+        this.number = number;
     }
 }
