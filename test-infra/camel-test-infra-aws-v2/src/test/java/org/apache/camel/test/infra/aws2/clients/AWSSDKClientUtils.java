@@ -30,6 +30,7 @@ import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.SdkClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.iam.IamClient;
@@ -174,4 +175,6 @@ public final class AWSSDKClientUtils {
     public static StsClient newSTSClient() {
         return newClient("STS", StsClient::builder, StsClient.class);
     }
+
+    public static DynamoDbClient newDynamoDBClient() {return newClient("DynamoDB", DynamoDbClient::builder, DynamoDbClient.class); }
 }
