@@ -56,7 +56,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
@@ -185,15 +185,6 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     public ToDynamicDefinition ignoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         return this;
-    }
-
-    /**
-     * Whether to allow components to optimise toD if they are {@link org.apache.camel.spi.SendDynamicAware}.
-     *
-     * @return the builder
-     */
-    public ToDynamicDefinition allowOptimisedComponents() {
-        return allowOptimisedComponents(true);
     }
 
     /**

@@ -562,6 +562,9 @@
           "aggregate-on-exception" : {
             "type" : "boolean"
           },
+          "allow-optimised-components" : {
+            "type" : "boolean"
+          },
           "cache-size" : {
             "type" : "number"
           },

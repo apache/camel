@@ -64,6 +64,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     private boolean shareUnitOfWork;
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
+    protected boolean allowOptimisedComponents = true;
     private ProcessorExchangeFactory processorExchangeFactory;
     private SendDynamicProcessor sendDynamicProcessor;
 
@@ -149,6 +150,14 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
+    public boolean isAllowOptimisedComponents() {
+        return allowOptimisedComponents;
+    }
+
+    public void setAllowOptimisedComponents(boolean allowOptimisedComponents) {
+        this.allowOptimisedComponents = allowOptimisedComponents;
+    }
+
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
@@ -232,6 +241,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         this.sendDynamicProcessor.setCamelContext(camelContext);
         this.sendDynamicProcessor.setCacheSize(cacheSize);
         this.sendDynamicProcessor.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        this.sendDynamicProcessor.setAllowOptimisedComponents(allowOptimisedComponents);
 
         // create a per processor exchange factory
         this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)

@@ -3978,6 +3978,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "strategy-method-allow-null", type = "string"),
                     @YamlProperty(name = "strategy-method-name", type = "string"),
                     @YamlProperty(name = "strategy-ref", type = "string"),
+                    @YamlProperty(name = "allow-optimised-components", type = "boolean"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
@@ -4018,6 +4019,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "strategy-ref": {
                     String val = asText(node);
                     target.setAggregationStrategyRef(val);
+                    break;
+                }
+                case "allow-optimised-components": {
+                    String val = asText(node);
+                    target.setAllowOptimisedComponents(val);
                     break;
                 }
                 case "cache-size": {

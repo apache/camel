@@ -351,6 +351,7 @@ public class ModelParser extends BaseParser {
         return doParse(new EnrichDefinition(), (def, key, val) -> {
             switch (key) {
                 case "aggregateOnException": def.setAggregateOnException(val); break;
+                case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); break;
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;

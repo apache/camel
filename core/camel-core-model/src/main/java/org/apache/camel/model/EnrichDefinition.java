@@ -57,6 +57,9 @@ public class EnrichDefinition extends ExpressionNode {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String allowOptimisedComponents;
 
     public EnrichDefinition() {
         this(null);
@@ -208,6 +211,25 @@ public class EnrichDefinition extends ExpressionNode {
         return this;
     }
 
+    /**
+     * Whether to allow components to optimise enricher if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public EnrichDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
+        return allowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
+    }
+
+    /**
+     * Whether to allow components to optimise enricher if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public EnrichDefinition allowOptimisedComponents(String allowOptimisedComponents) {
+        setAllowOptimisedComponents(allowOptimisedComponents);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -283,4 +305,13 @@ public class EnrichDefinition extends ExpressionNode {
     public void setIgnoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
+
+    public String getAllowOptimisedComponents() {
+        return allowOptimisedComponents;
+    }
+
+    public void setAllowOptimisedComponents(String allowOptimisedComponents) {
+        this.allowOptimisedComponents = allowOptimisedComponents;
+    }
+
 }

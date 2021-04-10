@@ -52,6 +52,9 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         if (definition.getAggregateOnException() != null) {
             enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
+        if (definition.getAllowOptimisedComponents() != null) {
+            enricher.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
+        }
 
         return enricher;
     }
