@@ -1,7 +1,7 @@
 [[hwcloud-smn-component]]
 = SimpleNotification Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: componentscamel-huaweicloud-smnsrcmaindocshwcloud-smn-component.adoc
+:page-source: components/camel-huaweicloud-smn/src/main/docs/hwcloud-smn-component.adoc
 :docTitle: SimpleNotification
 :artifactId: camel-huaweicloud-smn
 :description: Huawei Cloud component to integrate with SimpleNotification services
