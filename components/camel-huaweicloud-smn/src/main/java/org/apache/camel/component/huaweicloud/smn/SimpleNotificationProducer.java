@@ -32,6 +32,7 @@ import org.apache.camel.component.huaweicloud.smn.constants.SmnServices;
 import org.apache.camel.component.huaweicloud.smn.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,15 +205,20 @@ public class SimpleNotificationProducer extends DefaultProducer {
             clientConfigurations.setProjectId(simpleNotificationEndpoint.getProjectId());
         }
 
-        //checking for region
-        String endpointUrl = SimpleNotificationUtils.resolveSmnServiceEndpoint(simpleNotificationEndpoint.getRegion());
-        if (endpointUrl == null) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Valid region not found");
-            }
-            throw new IllegalArgumentException("enter a valid region");
+        //checking for endpoint
+        if (StringUtils.isNotEmpty(simpleNotificationEndpoint.getEndpoint())) {
+            clientConfigurations.setServiceEndpoint(simpleNotificationEndpoint.getEndpoint());
         } else {
-            clientConfigurations.setServiceEndpoint(endpointUrl);
+            //checking for region
+            String endpointUrl = SimpleNotificationUtils.resolveSmnServiceEndpoint(simpleNotificationEndpoint.getRegion());
+            if (endpointUrl == null) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Valid region not found");
+                }
+                throw new IllegalArgumentException("enter a valid region");
+            } else {
+                clientConfigurations.setServiceEndpoint(endpointUrl);
+            }
         }
 
         //checking for ignore ssl verification

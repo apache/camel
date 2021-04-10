@@ -23,6 +23,7 @@ public class SimpleNotificationEndpointConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authkey":
         case "authKey": target.setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoresslverification":
         case "ignoreSslVerification": target.setIgnoreSslVerification(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -54,6 +55,7 @@ public class SimpleNotificationEndpointConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authkey":
         case "authKey": return java.lang.String.class;
+        case "endpoint": return java.lang.String.class;
         case "ignoresslverification":
         case "ignoreSslVerification": return boolean.class;
         case "lazystartproducer":
@@ -86,6 +88,7 @@ public class SimpleNotificationEndpointConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authkey":
         case "authKey": return target.getAuthKey();
+        case "endpoint": return target.getEndpoint();
         case "ignoresslverification":
         case "ignoreSslVerification": return target.isIgnoreSslVerification();
         case "lazystartproducer":

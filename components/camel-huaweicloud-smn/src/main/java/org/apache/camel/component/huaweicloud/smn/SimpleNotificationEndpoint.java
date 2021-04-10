@@ -79,9 +79,15 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "SMN service region", displayName = "Service region", secret = false)
+    @UriParam(description = "SMN service region. This is lower precedence than endpoint based configuration",
+              displayName = "Service region", secret = false)
     @Metadata(required = true)
     private String region;
+
+    @UriParam(description = "Fully qualified smn service url. Carries higher precedence than region parameter based client initialization",
+              displayName = "Service endpoint", secret = false)
+    @Metadata(required = false)
+    private String endpoint;
 
     @UriParam(description = "TTL for published message", displayName = "Message TTL", secret = false, defaultValue = "3600")
     @Metadata(required = false)
@@ -206,6 +212,14 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 
     public int getMessageTtl() {

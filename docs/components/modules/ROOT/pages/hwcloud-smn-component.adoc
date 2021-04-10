@@ -1,7 +1,7 @@
 [[hwcloud-smn-component]]
 = SimpleNotification Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-huaweicloud-smn/src/main/docs/hwcloud-smn-component.adoc
+:page-source: componentscamel-huaweicloud-smnsrcmaindocshwcloud-smn-component.adoc
 :docTitle: SimpleNotification
 :artifactId: camel-huaweicloud-smn
 :description: Huawei Cloud component to integrate with SimpleNotification services
@@ -73,13 +73,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *authKey* (producer) | *Required* Authentication key for the cloud user |  | String
+| *endpoint* (producer) | Fully qualified smn service url. Carries higher precedence than region parameter based client initialization |  | String
 | *ignoreSslVerification* (producer) | Ignore SSL verification | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *messageTtl* (producer) | TTL for published message | 3600 | int
@@ -89,7 +90,7 @@ with the following path and query parameters:
 | *proxyPassword* (producer) | Proxy authentication password |  | String
 | *proxyPort* (producer) | Proxy server port |  | int
 | *proxyUser* (producer) | Proxy authentication user |  | String
-| *region* (producer) | *Required* SMN service region |  | String
+| *region* (producer) | *Required* SMN service region. This is lower precedence than endpoint based configuration |  | String
 | *secretKey* (producer) | *Required* Secret key for the cloud user |  | String
 | *serviceKeys* (producer) | Configuration object for cloud service authentication |  | ServiceKeys
 |===
