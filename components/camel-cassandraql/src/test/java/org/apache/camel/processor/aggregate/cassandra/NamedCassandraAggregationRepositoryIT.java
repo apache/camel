@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregate.cassandra;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cassandra.BaseCassandraTest;
+import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -33,14 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
-public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
+public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
 
     private CassandraAggregationRepository aggregationRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        aggregationRepository = new CassandraAggregationRepository(getSession());
+        aggregationRepository = new NamedCassandraAggregationRepository(getSession(), "ID");
+        aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.start();
+
         super.doPreSetup();
     }
 
@@ -52,7 +54,9 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return getSession().execute(String.format("select KEY from CAMEL_AGGREGATION where KEY='%s'", key)).one() != null;
+        return getSession().execute(String.format("select KEY from NAMED_CAMEL_AGGREGATION where NAME='ID' and KEY='%s'", key))
+                .one()
+               != null;
     }
 
     @Test

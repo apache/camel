@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregate.cassandra;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cassandra.BaseCassandraTest;
+import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.util.HeaderDto;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
-public class CassandraAggregationSerializedHeadersTest extends BaseCassandraTest {
+public class CassandraAggregationSerializedHeadersIT extends BaseCassandra {
 
     private CassandraAggregationRepository aggregationRepository;
 

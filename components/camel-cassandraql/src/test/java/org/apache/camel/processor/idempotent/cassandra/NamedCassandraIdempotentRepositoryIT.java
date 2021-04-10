@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.idempotent.cassandra;
 
-import org.apache.camel.component.cassandra.BaseCassandraTest;
+import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -27,13 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for {@link CassandraIdempotentRepository}
  */
-public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
+public class NamedCassandraIdempotentRepositoryIT extends BaseCassandra {
 
     private CassandraIdempotentRepository idempotentRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        idempotentRepository = new CassandraIdempotentRepository(getSession());
+        idempotentRepository = new NamedCassandraIdempotentRepository(getSession(), "ID");
+        idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
 
         super.doPreSetup();
@@ -43,18 +44,20 @@ public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
     public void beforeEach(ExtensionContext context) throws Exception {
         super.beforeEach(context);
 
-        executeScript("IdempotentDataSet.cql");
+        executeScript("NamedIdempotentDataSet.cql");
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        super.tearDown();
         idempotentRepository.stop();
+        super.tearDown();
     }
 
     private boolean exists(String key) {
-        return getSession().execute(String.format("select KEY from CAMEL_IDEMPOTENT where KEY='%s'", key)).one() != null;
+        return getSession().execute(String.format("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME='ID' and KEY='%s'", key))
+                .one()
+               != null;
     }
 
     @Test
@@ -135,5 +138,4 @@ public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
         // Then
         assertFalse(idempotentRepository.contains(key));
     }
-
 }

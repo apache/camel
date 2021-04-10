@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cassandra;
+package org.apache.camel.component.cassandra.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cassandra.CassandraEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CassandraComponentBeanRefTest extends BaseCassandraTest {
+public class CassandraComponentBeanRefIT extends BaseCassandra {
 
     public static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
     public static final String SESSION_URI = "cql:bean:cassandraSession?cql=" + CQL;
