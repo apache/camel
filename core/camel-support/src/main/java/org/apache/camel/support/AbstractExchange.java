@@ -873,7 +873,7 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     protected String createExchangeId() {
-        return context.getUuidGenerator().generateUuid();
+        return context.getUuidGenerator().generateExchangeUuid();
     }
 
     @Override

@@ -73,6 +73,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.OffUuidGenerator;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
@@ -205,6 +206,8 @@ public final class DefaultConfigurationConfigurer {
             camelContext.setUuidGenerator(new ClassicUuidGenerator());
         } else if ("simple".equals(config.getUuidGenerator())) {
             camelContext.setUuidGenerator(new SimpleUuidGenerator());
+        } else if ("off".equals(config.getUuidGenerator())) {
+            camelContext.setUuidGenerator(new OffUuidGenerator());
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());

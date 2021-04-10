@@ -14,26 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.support;
+
+import org.apache.camel.spi.UuidGenerator;
 
 /**
- * Generator to generate UUID strings.
+ * {@link UuidGenerator} which is turned off for exchange ids, but generated UUIDs for everything else.
  */
-public interface UuidGenerator {
+public class OffUuidGenerator extends DefaultUuidGenerator {
 
-    /**
-     * Generates an UUID string representation.
-     * 
-     * @return the unique id.
-     */
-    String generateUuid();
-
-    /**
-     * Generates an UUID string representation to be used as exchange id.
-     *
-     * @return the unique exchange id
-     */
-    default String generateExchangeUuid() {
-        return generateUuid();
+    @Override
+    public String generateExchangeUuid() {
+        return "";
     }
 }

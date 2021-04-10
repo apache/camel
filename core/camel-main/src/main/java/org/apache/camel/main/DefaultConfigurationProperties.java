@@ -41,7 +41,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean inflightRepositoryBrowseEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
-    @Metadata(enums = "classic,default,short,simple", defaultValue = "default")
+    @Metadata(enums = "classic,default,short,simple,off", defaultValue = "default")
     private String uuidGenerator = "default";
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
@@ -291,7 +291,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * UUID generator to use.
      *
-     * default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter)
+     * default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off
+     * (turned off for exchanges - only intended for performance profiling)
      */
     public void setUuidGenerator(String uuidGenerator) {
         this.uuidGenerator = uuidGenerator;
