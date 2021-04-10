@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.DataHandler;
 import javax.xml.ws.WebFault;
 
 import org.w3c.dom.Element;
@@ -30,22 +27,18 @@ import org.w3c.dom.Element;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
@@ -309,28 +302,6 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             binding.extractJaxWsContext(cxfExchange, context);
             // put the context into camelExchange
             camelExchange.setProperty(CxfConstants.JAXWS_CONTEXT, context);
-
-            // add UoW done to avoid CXF file leaks
-            camelExchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onDone(org.apache.camel.Exchange exchange) {
-                    // CXF may leak temporary cached attachments to temp folder that has not been in use
-                    Collection<Attachment> atts = cxfExchange.getInMessage().getAttachments();
-                    if (atts != null) {
-                        for (Attachment att : atts) {
-                            DataHandler dh = att.getDataHandler();
-                            if (dh != null) {
-                                try {
-                                    InputStream is = dh.getInputStream();
-                                    IOHelper.close(is);
-                                } catch (Exception e) {
-                                    // ignore
-                                }
-                            }
-                        }
-                    }
-                }
-            });
 
             // we want to handle the UoW
             try {
