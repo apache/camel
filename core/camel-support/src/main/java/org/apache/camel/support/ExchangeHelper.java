@@ -577,27 +577,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Returns the first exchange in the given collection of exchanges which has the same exchange ID as the one given
-     * or null if none could be found
-     *
-     * @param      exchanges  the exchanges
-     * @param      exchangeId the exchangeId to find
-     * @return                matching exchange, or <tt>null</tt> if none found
-     *
-     * @deprecated            not in use, to be removed in a future Camel release
-     */
-    @Deprecated
-    public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
-        for (Exchange exchange : exchanges) {
-            String id = exchange.getExchangeId();
-            if (id != null && id.equals(exchangeId)) {
-                return exchange;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Prepares the exchanges for aggregation.
      * <p/>
      * This implementation will copy the OUT body to the IN body so when you do aggregation the body is <b>only</b> in
