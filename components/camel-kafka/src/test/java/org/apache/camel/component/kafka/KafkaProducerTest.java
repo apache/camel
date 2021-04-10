@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -215,6 +217,8 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);
         in.setHeader(KafkaConstants.OVERRIDE_TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
+        in.setHeader(KafkaConstants.OVERRIDE_TIMESTAMP,
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
         producer.process(exchange);
 
@@ -300,6 +304,21 @@ public class KafkaProducerTest {
 
         verifySendMessage("someTopic", "someKey");
         assertRecordMetadataExists();
+    }
+
+    @Test
+    public void processSendsMessageWithMessageTimestampHeader() throws Exception {
+        endpoint.getConfiguration().setTopic("someTopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(out);
+        in.setHeader(KafkaConstants.KEY, "someKey");
+        in.setHeader(KafkaConstants.OVERRIDE_TIMESTAMP,
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+
+        producer.process(exchange);
+
+        verifySendMessage("someTopic", "someKey");
+        assertRecordMetadataTimestampExists();
     }
 
     @Test
@@ -423,6 +442,13 @@ public class KafkaProducerTest {
                 = captor.getAllValues().stream().map(ProducerRecord::topic).collect(Collectors.toList());
 
         assertEquals(expectedTopics, actualTopics);
+    }
+
+    private void assertRecordMetadataTimestampExists() {
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+        assertNotNull(recordMetaData1);
+        assertEquals(recordMetaData1.size(), 1, "Expected one recordMetaData");
+        assertNotNull(recordMetaData1.get(0).timestamp());
     }
 
     private void assertRecordMetadataExists() {

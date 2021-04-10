@@ -28,6 +28,7 @@ public final class KafkaConstants {
     public static final String LAST_RECORD_BEFORE_COMMIT = "kafka.LAST_RECORD_BEFORE_COMMIT";
     public static final String LAST_POLL_RECORD = "kafka.LAST_POLL_RECORD";
     public static final String TIMESTAMP = "kafka.TIMESTAMP";
+    public static final String OVERRIDE_TIMESTAMP = "kafka.OVERRIDE_TIMESTAMP";
 
     @Deprecated
     public static final String KAFKA_DEFAULT_ENCODER = "kafka.serializer.DefaultEncoder";
