@@ -194,18 +194,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
-    @Override
-    protected void doInit() throws Exception {
-        if (destination != null) {
-            Endpoint endpoint = getExistingEndpoint(camelContext, destination);
-            if (endpoint == null) {
-                endpoint = resolveEndpoint(camelContext, destination, cacheSize < 0);
-            }
-        } else if (expression != null) {
-            expression.init(camelContext);
-        }
-    }
-
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining additional data from an endpoint represented
      * by an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of
@@ -449,6 +437,16 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
+        ServiceHelper.buildService(consumerCache, aggregationStrategy);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (expression != null) {
+            expression.init(camelContext);
+        }
+
+        ServiceHelper.initService(consumerCache, aggregationStrategy);
     }
 
     @Override
