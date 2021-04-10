@@ -46,14 +46,9 @@ RouteBuilder builder = new RouteBuilder() {
                     .to("direct:d");
     }
 };
+
 ----
 
-[TIP]
-====
-See xref:latest@manual:faq:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
-can I not use when or otherwise in a Java Camel route] if you have
-problems with the Java DSL, accepting using `when` or `otherwise`.
-====
 
 And the same example using XML:
 
@@ -78,3 +73,42 @@ And the same example using XML:
     </route>
 </camelContext>
 ----
+
+== Usage of endChoice and end
+Usage of `endChoice` is not mandatory. However, It should be used whenever you want to return back control to `choice()` dsl so that you can add subsequent `when` and `otherwise` to the choice dsl.
+If you want to end entire `choice()` block use `end()`.
+
+=== Example
+
+[source,java]
+----
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .choice()
+                        .when(body().contains("Camel"))
+                        .multicast()
+                            .to("mock:foo")
+                            .to("mock:bar")
+                        .endChoice() //we need to use endChoice to tell Java DSL to return scope back to the choice DSL.
+                        .otherwise() 
+                            .to("mock:result");
+            }
+        };
+    }
+    
+----
+
+Another example is explained in the TIP below.
+
+[TIP]
+====
+See xref:latest@manual:faq:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
+can I not use when or otherwise in a Java Camel route] if you have
+problems with the Java DSL, accepting using `when` or `otherwise`.
+====
+
