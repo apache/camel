@@ -40,23 +40,45 @@ RouteBuilder builder = new RouteBuilder() {
             .choice()
                 .when(simple("${header.foo} == 'bar'"))
                     .to("direct:b")
-                .endChoice()
                 .when(simple("${header.foo} == 'cheese'"))
                     .to("direct:c")
-                .endChoice()
                 .otherwise()
-                    .to("direct:d")
-                .endChoice()
-            .end();
+                    .to("direct:d");
     }
 };
 
 ----
 
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <choice>
+            <when>
+                <simple>${header.foo} == 'bar'</simple>
+                <to uri="direct:b"/>
+            </when>
+            <when>
+                <simple>${header.foo} == 'cheese'</simple>
+                <to uri="direct:c"/>
+            </when>
+            <otherwise>
+                <to uri="direct:d"/>
+            </otherwise>
+        </choice>
+    </route>
+</camelContext>
+----
+
+== Usage of endChoice and end
 Usage of `endChoice` is not mandatory. However, It should be used whenever you want to return back control to `choice()` dsl so that you can add subsequent `when` and `otherwise` to the choice dsl.
 If you want to end entire `choice()` block use `end()`.
 
-Example:
+=== Example
 
 [source,java]
 ----
@@ -90,26 +112,3 @@ can I not use when or otherwise in a Java Camel route] if you have
 problems with the Java DSL, accepting using `when` or `otherwise`.
 ====
 
-And the same example using XML:
-
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-        <choice>
-            <when>
-                <simple>${header.foo} == 'bar'</simple>
-                <to uri="direct:b"/>
-            </when>
-            <when>
-                <simple>${header.foo} == 'cheese'</simple>
-                <to uri="direct:c"/>
-            </when>
-            <otherwise>
-                <to uri="direct:d"/>
-            </otherwise>
-        </choice>
-    </route>
-</camelContext>
-----
