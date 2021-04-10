@@ -35,7 +35,7 @@ import org.springframework.util.SocketUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
+public class ConsulServiceDiscoveryIT extends ConsulTestSupport {
     private AgentClient client;
     private List<Registration> registrations;
 

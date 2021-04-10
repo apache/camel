@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
+import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.junit.jupiter.api.Assertions;
@@ -37,11 +37,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsulClusteredRoutePolicyTest {
+public class ConsulClusteredRoutePolicyFactoryIT {
     @RegisterExtension
     public static ConsulService service = ConsulServiceFactory.createService();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
@@ -83,11 +83,11 @@ public class ConsulClusteredRoutePolicyTest {
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(consulClusterService);
+            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
-                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id)
-                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
+                public void configure() {
+                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
             });
@@ -95,11 +95,13 @@ public class ConsulClusteredRoutePolicyTest {
             // Start the context after some random time so the startup order
             // changes for each test.
             Thread.sleep(ThreadLocalRandom.current().nextInt(500));
+            LOGGER.info("Starting CamelContext on node: {}", id);
             context.start();
+            LOGGER.info("Started CamelContext on node: {}", id);
 
             contextLatch.await();
 
-            LOGGER.debug("Shutting down node {}", id);
+            LOGGER.info("Shutting down node {}", id);
             RESULTS.add(id);
 
             context.stop();

@@ -27,7 +27,7 @@ import org.apache.camel.component.consul.endpoint.ConsulSessionActions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConsulSessionTest extends ConsulTestSupport {
+public class ConsulSessionIT extends ConsulTestSupport {
 
     @Test
     public void testServiceInstance() {

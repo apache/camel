@@ -24,7 +24,7 @@ import org.apache.camel.component.consul.endpoint.ConsulCatalogActions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ConsulCatalogTest extends ConsulTestSupport {
+public class ConsulCatalogIT extends ConsulTestSupport {
 
     @Test
     public void testListDatacenters() {

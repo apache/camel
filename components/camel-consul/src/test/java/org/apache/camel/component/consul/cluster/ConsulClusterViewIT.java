@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class ConsulClusterViewTest {
+public class ConsulClusterViewIT {
     @RegisterExtension
     public static ConsulService service = ConsulServiceFactory.createService();
 

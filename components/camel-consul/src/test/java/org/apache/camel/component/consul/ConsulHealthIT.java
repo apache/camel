@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConsulHealthTest extends CamelTestSupport {
+public class ConsulHealthIT extends CamelTestSupport {
     /*
      NOTE: this one is not registered as extension because it requires a different lifecycle. It
      needs to be started much earlier than usual, so in this test we take care of handling it.
@@ -48,7 +48,7 @@ public class ConsulHealthTest extends CamelTestSupport {
     private List<Registration> registrations;
     private String service;
 
-    public ConsulHealthTest() {
+    public ConsulHealthIT() {
         consulService.initialize();
     }
 

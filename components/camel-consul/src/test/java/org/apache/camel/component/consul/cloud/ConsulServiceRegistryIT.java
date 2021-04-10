@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConsulServiceRegistryTest extends ConsulTestSupport {
+public class ConsulServiceRegistryIT extends ConsulTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;

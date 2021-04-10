@@ -16,26 +16,18 @@
  */
 package org.apache.camel.component.consul.cloud;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicyFactory;
+import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 
-public class ConsulServiceRegistrationWithRoutePolicyFactoryTest extends ConsulServiceRegistrationTestBase {
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.addRoutePolicyFactory(new ServiceRegistrationRoutePolicyFactory());
-
-        return context;
-    }
-
+public class ConsulServiceRegistrationWithRoutePolicyIT extends ConsulServiceRegistrationTestBase {
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT).routeId(SERVICE_ID).routeGroup(SERVICE_NAME)
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
                         .noAutoStartup().to("log:service-registry?level=INFO");
             }
         };

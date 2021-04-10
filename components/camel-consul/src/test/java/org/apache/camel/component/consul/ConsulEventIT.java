@@ -18,40 +18,46 @@ package org.apache.camel.component.consul;
 
 import java.util.List;
 
-import com.orbitz.consul.EventClient;
+import com.orbitz.consul.model.EventResponse;
+import com.orbitz.consul.model.event.Event;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.consul.endpoint.ConsulEventActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class ConsulEventWatchTest extends ConsulTestSupport {
-    private String key;
-    private EventClient client;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @Override
-    public void doPreSetup() {
-        key = generateRandomString();
-        client = getConsul().eventClient();
-    }
+public class ConsulEventIT extends ConsulTestSupport {
 
     @Test
-    public void testWatchEvent() throws Exception {
-        List<String> values = generateRandomListOfStrings(3);
+    public void testFireEvent() throws Exception {
+        String key = generateRandomString();
+        String val = generateRandomString();
 
-        MockEndpoint mock = getMockEndpoint("mock:event-watch");
-        mock.expectedBodiesReceived(values);
+        MockEndpoint mock = getMockEndpoint("mock:event");
+        mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        values.forEach(v -> client.fireEvent(key, v));
+        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE)
+                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:event").send();
 
         mock.assertIsSatisfied();
+
+        EventResponse response = getConsul().eventClient().listEvents(key);
+        List<Event> events = response.getEvents();
+
+        assertFalse(events.isEmpty());
+        assertTrue(events.get(0).getPayload().isPresent());
+        assertEquals(val, events.get(0).getPayload().get());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("consul:event?key=%s&blockSeconds=1", key)
-                        .to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:event-watch");
+                from("direct:event").to("consul:event").to("mock:event");
             }
         };
     }
