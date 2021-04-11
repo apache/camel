@@ -14,30 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchbase;
+package org.apache.camel.component.couchbase.integration;
+
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
-
-public class RemoveMessagesTest extends CouchbaseIntegrationTestBase {
+public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
 
     @Test
-    public void testDelete() throws Exception {
+    public void testQueryForBeers() throws Exception {
         for (int i = 0; i < 15; i++) {
             cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
         }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(10);
 
-        template.sendBodyAndHeader("direct:start", "delete the document ", HEADER_ID, "DocumentID_1");
-        template.sendBodyAndHeader("direct:start", "delete the document", HEADER_ID, "DocumentID_2");
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
-        assertMockEndpointsSatisfied();
+    }
 
+    @After
+    public void cleanBucket() {
+        cluster.buckets().flushBucket(bucketName);
     }
 
     @Override
@@ -45,10 +47,11 @@ public class RemoveMessagesTest extends CouchbaseIntegrationTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to(getConnectionUri() + "&operation=" + COUCHBASE_DELETE)
+                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
+                        .log("message received")
                         .to("mock:result");
             }
         };
+
     }
 }

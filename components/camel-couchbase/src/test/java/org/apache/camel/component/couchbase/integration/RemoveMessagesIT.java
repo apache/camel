@@ -14,23 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchbase;
+package org.apache.camel.component.couchbase.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class ProduceMessagesWithAutoIDTest extends CouchbaseIntegrationTestBase {
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
+
+public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 
     @Test
-    public void testInsert() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+    public void testDelete() throws Exception {
+        for (int i = 0; i < 15; i++) {
+            cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
+        }
 
-        template.sendBody("direct:start", "ugol1");
-        template.sendBody("direct:start", "ugol2");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        template.sendBodyAndHeader("direct:start", "delete the document ", HEADER_ID, "DocumentID_1");
+        template.sendBodyAndHeader("direct:start", "delete the document", HEADER_ID, "DocumentID_2");
 
         assertMockEndpointsSatisfied();
+
     }
 
     @Override
@@ -38,8 +45,8 @@ public class ProduceMessagesWithAutoIDTest extends CouchbaseIntegrationTestBase 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to(
-                        getConnectionUri() + "&autoStartIdForInserts=true&startingIdForInsertsFrom=1000")
+                from("direct:start")
+                        .to(getConnectionUri() + "&operation=" + COUCHBASE_DELETE)
                         .to("mock:result");
             }
         };

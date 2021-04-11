@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchbase;
+package org.apache.camel.component.couchbase.integration;
 
 import java.util.Collections;
 
