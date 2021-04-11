@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd.cloud;
+package org.apache.camel.component.etcd.cloud.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import mousio.etcd4j.EtcdClient;
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringEtcdServiceCallRouteTest extends SpringEtcdTestSupport {
+public class SpringEtcdServiceCallRouteIT extends SpringEtcdTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/etcd/cloud/SpringEtcdServiceCallRouteTest.xml");

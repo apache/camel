@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd;
+package org.apache.camel.component.etcd.integration;
 
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.EtcdConstants;
 import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class EtcdWatchTest extends EtcdTestSupport {
+public class EtcdWatchIT extends EtcdTestSupport {
 
     @Test
     public void testWatchWithPath() throws Exception {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd;
+package org.apache.camel.component.etcd.integration;
 
 import mousio.etcd4j.responses.EtcdLeaderStatsResponse;
 import mousio.etcd4j.responses.EtcdSelfStatsResponse;
@@ -22,11 +22,12 @@ import mousio.etcd4j.responses.EtcdStoreStatsResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.EtcdConstants;
 import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class EtcdStatsTest extends EtcdTestSupport {
+public class EtcdStatsIT extends EtcdTestSupport {
 
     @Test
     public void testStats() throws Exception {

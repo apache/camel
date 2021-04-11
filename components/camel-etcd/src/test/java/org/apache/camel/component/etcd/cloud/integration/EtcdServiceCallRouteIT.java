@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd.cloud;
+package org.apache.camel.component.etcd.cloud.integration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +30,7 @@ import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class EtcdServiceCallRouteTest extends EtcdTestSupport {
+public class EtcdServiceCallRouteIT extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
