@@ -36,8 +36,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
@@ -53,8 +51,6 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  */
 public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
-
     private CamelContext camelContext;
     private String id;
     private String routeId;
@@ -64,7 +60,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     private boolean shareUnitOfWork;
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
-    protected boolean allowOptimisedComponents = true;
+    private boolean allowOptimisedComponents = true;
     private ProcessorExchangeFactory processorExchangeFactory;
     private SendDynamicProcessor sendDynamicProcessor;
 
