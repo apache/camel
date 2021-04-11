@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elasticsearch;
+package org.apache.camel.component.elasticsearch.integration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.elasticsearch.ElasticsearchScrollRequestIterator;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Request;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
+public class ElasticsearchScrollSearchIT extends ElasticsearchTestSupport {
 
     private static final String TWITTER_ES_INDEX_NAME = "twitter";
     private static final String SPLIT_TWITTER_ES_INDEX_NAME = "split-" + TWITTER_ES_INDEX_NAME;

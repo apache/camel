@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elasticsearch;
+package org.apache.camel.component.elasticsearch.integration;
 
 import java.net.HttpURLConnection;
 import java.time.Duration;
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.elasticsearch.ElasticsearchComponent;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerService;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchService;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchServiceFactory;
@@ -37,7 +38,7 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.utility.Base58;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ElasticsearchBaseTest extends CamelTestSupport {
+public class ElasticsearchTestSupport extends CamelTestSupport {
 
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
@@ -45,14 +46,14 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     @RegisterExtension
     public static ElasticSearchService service = ElasticSearchServiceFactory
             .builder()
-            .addLocalMapping(ElasticsearchBaseTest::createElasticSearchService)
+            .addLocalMapping(ElasticsearchTestSupport::createElasticSearchService)
             .build();
 
     protected static String clusterName = "docker-cluster";
     protected static RestClient restClient;
     protected static RestHighLevelClient client;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBaseTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchTestSupport.class);
 
     private static ElasticSearchLocalContainerService createElasticSearchService() {
         ElasticSearchLocalContainerService ret = new ElasticSearchLocalContainerService();

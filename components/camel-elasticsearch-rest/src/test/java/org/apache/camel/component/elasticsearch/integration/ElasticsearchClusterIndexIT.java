@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elasticsearch;
+package org.apache.camel.component.elasticsearch.integration;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
+import org.apache.camel.component.elasticsearch.ElasticsearchOperation;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.client.Request;
@@ -30,7 +32,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ElasticsearchClusterIndexTest extends ElasticsearchBaseTest {
+public class ElasticsearchClusterIndexIT extends ElasticsearchTestSupport {
     @Test
     public void indexWithIpAndPort() throws Exception {
         Map<String, String> map = createIndexedData();

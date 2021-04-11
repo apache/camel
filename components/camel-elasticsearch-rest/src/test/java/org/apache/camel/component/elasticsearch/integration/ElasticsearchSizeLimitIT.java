@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elasticsearch;
+package org.apache.camel.component.elasticsearch.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ import org.elasticsearch.search.SearchHits;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class ElasticsearchSizeLimitTest extends ElasticsearchBaseTest {
+public class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
 
     @Disabled("Looks like there were some assumption related to test executed before")
     @Test
