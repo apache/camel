@@ -119,4 +119,25 @@ public class CamelURIParserTest {
         assertEquals(null, out2[2]);
     }
 
+    @Test
+    public void testFastParse() throws Exception {
+        String[] out1 = CamelURIParser.fastParseUri("file:relative");
+        assertEquals("file", out1[0]);
+        assertEquals("relative", out1[1]);
+        assertEquals(null, out1[2]);
+
+        String[] out2 = CamelURIParser.fastParseUri("file://relative");
+        assertEquals(CamelURIParser.URI_ALREADY_NORMALIZED, out2);
+
+        String[] out3 = CamelURIParser.fastParseUri("file:relative?delete=true");
+        assertEquals("file", out3[0]);
+        assertEquals("relative", out3[1]);
+        assertEquals("delete=true", out3[2]);
+
+        String[] out4 = CamelURIParser.fastParseUri("file://relative?delete=true");
+        assertEquals("file", out4[0]);
+        assertEquals("relative", out4[1]);
+        assertEquals("delete=true", out4[2]);
+    }
+
 }

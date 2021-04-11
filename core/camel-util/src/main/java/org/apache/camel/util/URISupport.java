@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
+
 /**
  * URI utilities.
  */
@@ -568,8 +570,12 @@ public final class URISupport {
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
         // try to parse using the simpler and faster Camel URI parser
-        String[] parts = CamelURIParser.parseUri(uri);
+        String[] parts = CamelURIParser.fastParseUri(uri);
         if (parts != null) {
+            // we optimized specially if an empty array is returned
+            if (parts == URI_ALREADY_NORMALIZED) {
+                return uri;
+            }
             // use the faster and more simple normalizer
             return doFastNormalizeUri(parts);
         } else {
