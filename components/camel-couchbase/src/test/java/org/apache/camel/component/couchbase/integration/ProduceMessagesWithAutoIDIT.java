@@ -14,32 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchbase;
-
-import java.util.concurrent.TimeUnit;
+package org.apache.camel.component.couchbase.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
 import org.junit.jupiter.api.Test;
 
-public class ConsumeMessagesWithLimitTest extends CouchbaseIntegrationTestBase {
+public class ProduceMessagesWithAutoIDIT extends CouchbaseIntegrationTestBase {
 
     @Test
-    public void testQueryForBeers() throws Exception {
-        for (int i = 0; i < 15; i++) {
-            cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
-        }
+    public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(10);
+        mock.expectedMessageCount(2);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        template.sendBody("direct:start", "ugol1");
+        template.sendBody("direct:start", "ugol2");
 
-    }
-
-    @After
-    public void cleanBucket() {
-        cluster.buckets().flushBucket(bucketName);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -47,11 +38,10 @@ public class ConsumeMessagesWithLimitTest extends CouchbaseIntegrationTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
-                        .log("message received")
+                from("direct:start").to(
+                        getConnectionUri() + "&autoStartIdForInserts=true&startingIdForInsertsFrom=1000")
                         .to("mock:result");
             }
         };
-
     }
 }

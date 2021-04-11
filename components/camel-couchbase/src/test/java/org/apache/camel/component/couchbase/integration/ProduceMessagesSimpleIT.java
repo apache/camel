@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchbase;
+package org.apache.camel.component.couchbase.integration;
 
 import java.time.Duration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.couchbase.CouchbaseConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class ProduceMessagesSimpleTest extends CouchbaseIntegrationTestBase {
+public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
 
     @Test
     public void testInsert() throws Exception {
