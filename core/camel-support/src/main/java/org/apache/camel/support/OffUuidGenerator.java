@@ -16,11 +16,17 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.Experimental;
 import org.apache.camel.spi.UuidGenerator;
 
 /**
  * {@link UuidGenerator} which is turned off for exchange ids, but generated UUIDs for everything else.
+ *
+ * This is only intended for development for performance profiling - do not use in production.
+ * Some EIPs and functionalities of Camel requires exchange IDs to be unique and this generated
+ * will therefore not work in all situations.
  */
+@Experimental
 public class OffUuidGenerator extends DefaultUuidGenerator {
 
     @Override

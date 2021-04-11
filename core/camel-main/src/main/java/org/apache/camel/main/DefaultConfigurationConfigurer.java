@@ -208,6 +208,7 @@ public final class DefaultConfigurationConfigurer {
             camelContext.setUuidGenerator(new SimpleUuidGenerator());
         } else if ("off".equals(config.getUuidGenerator())) {
             camelContext.setUuidGenerator(new OffUuidGenerator());
+            LOG.warn("Using OffUuidGenerator (Only intended for development purposes)");
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());
