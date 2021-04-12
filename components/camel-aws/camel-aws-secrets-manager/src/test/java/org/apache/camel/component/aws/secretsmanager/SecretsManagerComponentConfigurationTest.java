@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.integration;
+package org.apache.camel.component.aws.secretsmanager;
 
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerComponent;
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerEndpoint;
