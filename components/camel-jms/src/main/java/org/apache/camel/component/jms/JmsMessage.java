@@ -50,9 +50,19 @@ public class JmsMessage extends DefaultMessage {
         setBinding(binding);
     }
 
+    public void init(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
+        setExchange(exchange);
+        setJmsMessage(jmsMessage);
+        setJmsSession(jmsSession);
+        setBinding(binding);
+        // need to populate initial headers when we use pooled exchanges
+        populateInitialHeaders(getHeaders());
+    }
+
     @Override
     public void reset() {
         super.reset();
+        setExchange(null);
         jmsMessage = null;
         jmsSession = null;
         binding = null;

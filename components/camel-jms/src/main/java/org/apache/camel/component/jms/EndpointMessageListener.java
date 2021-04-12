@@ -149,6 +149,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
 
+            // release back when synchronous mode
+            consumer.releaseExchange(exchange, false);
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
@@ -252,14 +254,27 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                     }
                 }
             }
+
+            if (!doneSync) {
+                // release back when in asynchronous mode
+                consumer.releaseExchange(exchange, false);
+            }
         }
     }
 
     public Exchange createExchange(Message message, Session session, Object replyDestination) {
-        // must be prototype scoped (not pooled) so we create the exchange via endpoint
-        Exchange exchange = endpoint.createExchange(message, session);
+        Exchange exchange = consumer.createExchange(false);
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
+
+        // reuse existing jms message if pooled
+        org.apache.camel.Message msg = exchange.getIn();
+        if (msg instanceof JmsMessage) {
+            JmsMessage jm = (JmsMessage) msg;
+            jm.init(exchange, message, session, getBinding());
+        } else {
+            exchange.setIn(new JmsMessage(exchange, message, session, getBinding()));
+        }
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
