@@ -39,6 +39,11 @@
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
         <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
         <camel.surefire.parallel>false</camel.surefire.parallel>
+
+        <!-- This one can run in parallel rather safely-->
+        <camel.failsafe.forkCount>${camel.surefire.forkCount}</camel.failsafe.forkCount>
+        <camel.failsafe.forkTimeout>${camel.surefire.forkTimeout}</camel.failsafe.forkTimeout>
+        <camel.failsafe.parallel>${camel.surefire.parallel}</camel.failsafe.parallel>
     </properties>
 
     <dependencies>
@@ -195,5 +200,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <!-- This one can run in parallel rather safely-->
+                    <forkCount>${camel.failsafe.forkCount}</forkCount>
+                    <parallel>${camel.failsafe.parallel}</parallel>
+                    <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
