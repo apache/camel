@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
 
-class MessageOrderingTest extends PubsubTestSupport {
+class MessageOrderingIT extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "camel.input-topic";
     private static final String SUBSCRIPTION_NAME = "camel.input-topic-subscription";
