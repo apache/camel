@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elasticsearch;
+package org.apache.camel.component.elasticsearch.integration;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
+import org.apache.camel.component.elasticsearch.ElasticsearchOperation;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -41,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchBaseTest {
+public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSupport {
 
     @Test
     public void testGet() throws Exception {

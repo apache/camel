@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.elasticsearch;
+package org.apache.camel.component.elasticsearch.integration;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
+import org.apache.camel.component.elasticsearch.ElasticsearchOperation;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
+public class ElasticsearchIndexIT extends ElasticsearchTestSupport {
 
     @Test
     public void testIndex() throws Exception {
