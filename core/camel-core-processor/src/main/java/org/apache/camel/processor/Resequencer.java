@@ -48,6 +48,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -540,7 +541,9 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                         completionPredicateMatched.add(exchange.getExchangeId());
                     }
                 }
-                queue.add(exchange);
+                // need to make defensive copy that are put on the sequencer queue
+                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
+                queue.add(copy);
                 exchangeEnqueued.set(true);
                 exchangeEnqueuedCondition.signal();
             } finally {

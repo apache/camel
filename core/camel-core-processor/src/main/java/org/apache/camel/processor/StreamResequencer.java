@@ -38,6 +38,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -250,7 +251,9 @@ public class StreamResequencer extends AsyncProcessorSupport
         }
 
         try {
-            engine.insert(exchange);
+            // need to make defensive copy that are put on the sequencer queue
+            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
+            engine.insert(copy);
             delivery.request();
         } catch (Exception e) {
             if (isIgnoreInvalidExchanges()) {
