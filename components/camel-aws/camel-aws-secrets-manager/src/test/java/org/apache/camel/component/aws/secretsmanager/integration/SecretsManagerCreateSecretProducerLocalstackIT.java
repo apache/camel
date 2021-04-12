@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.localstack;
+package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,12 +24,10 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecretsManagerDeleteSecretProducerLocalstackTest extends AwsSecretsManagerBaseTest {
+public class SecretsManagerCreateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -48,17 +46,6 @@ public class SecretsManagerDeleteSecretProducerLocalstackTest extends AwsSecrets
 
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
-
-        exchange = template.request("direct:deleteSecret", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
-            }
-        });
-
-        DeleteSecretResponse resultDelete = (DeleteSecretResponse) exchange.getIn().getBody();
-        assertTrue(resultDelete.sdkHttpResponse().isSuccessful());
-
     }
 
     @Override
@@ -67,10 +54,7 @@ public class SecretsManagerDeleteSecretProducerLocalstackTest extends AwsSecrets
             @Override
             public void configure() throws Exception {
                 from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
-
-                from("direct:deleteSecret")
-                        .to("aws-secrets-manager://test?operation=deleteSecret")
+                        .to("aws-secrets-manager://test?operation=createSecret")
                         .to("mock:result");
             }
         };

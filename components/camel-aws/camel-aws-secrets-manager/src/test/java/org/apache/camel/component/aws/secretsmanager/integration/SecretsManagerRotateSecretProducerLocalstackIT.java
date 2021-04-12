@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.localstack;
+package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,13 +24,13 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
+import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecretsManagerProducerListSecretsLocalstackTest extends AwsSecretsManagerBaseTest {
+public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -50,16 +50,17 @@ public class SecretsManagerProducerListSecretsLocalstackTest extends AwsSecretsM
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
 
-        exchange = template.request("direct:listSecrets", new Processor() {
+        exchange = template.request("direct:rotateSecret", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
             }
         });
 
-        ListSecretsResponse listSecretsResponse = exchange.getIn().getBody(ListSecretsResponse.class);
-        assertTrue(listSecretsResponse.hasSecretList());
-        assertEquals(1, listSecretsResponse.secretList().size());
+        RotateSecretResponse resultRotate = (RotateSecretResponse) exchange.getIn().getBody();
+        assertTrue(resultRotate.sdkHttpResponse().isSuccessful());
+        assertEquals("TestSecret4", resultRotate.name());
+
     }
 
     @Override
@@ -70,8 +71,8 @@ public class SecretsManagerProducerListSecretsLocalstackTest extends AwsSecretsM
                 from("direct:createSecret")
                         .to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:listSecrets")
-                        .to("aws-secrets-manager://test?operation=listSecrets")
+                from("direct:rotateSecret")
+                        .to("aws-secrets-manager://test?operation=rotateSecret")
                         .to("mock:result");
             }
         };

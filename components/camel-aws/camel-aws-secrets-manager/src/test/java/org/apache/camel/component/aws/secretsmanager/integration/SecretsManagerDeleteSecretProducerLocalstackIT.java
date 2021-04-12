@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.localstack;
+package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,13 +24,12 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecretsManagerDescribeSecretProducerLocalstackTest extends AwsSecretsManagerBaseTest {
+public class SecretsManagerDeleteSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -50,16 +49,15 @@ public class SecretsManagerDescribeSecretProducerLocalstackTest extends AwsSecre
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
 
-        exchange = template.request("direct:describeSecret", new Processor() {
+        exchange = template.request("direct:deleteSecret", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
             }
         });
 
-        DescribeSecretResponse resultDescribe = (DescribeSecretResponse) exchange.getIn().getBody();
-        assertTrue(resultDescribe.sdkHttpResponse().isSuccessful());
-        assertEquals("TestSecret4", resultDescribe.name());
+        DeleteSecretResponse resultDelete = (DeleteSecretResponse) exchange.getIn().getBody();
+        assertTrue(resultDelete.sdkHttpResponse().isSuccessful());
 
     }
 
@@ -71,8 +69,8 @@ public class SecretsManagerDescribeSecretProducerLocalstackTest extends AwsSecre
                 from("direct:createSecret")
                         .to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:describeSecret")
-                        .to("aws-secrets-manager://test?operation=describeSecret")
+                from("direct:deleteSecret")
+                        .to("aws-secrets-manager://test?operation=deleteSecret")
                         .to("mock:result");
             }
         };

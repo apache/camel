@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.localstack;
+package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,11 +24,13 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecretsManagerGetSecretProducerLocalstackTest extends AwsSecretsManagerBaseTest {
+public class SecretsManagerDescribeSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -48,15 +50,16 @@ public class SecretsManagerGetSecretProducerLocalstackTest extends AwsSecretsMan
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
 
-        exchange = template.request("direct:getSecret", new Processor() {
+        exchange = template.request("direct:describeSecret", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
             }
         });
 
-        String secret = exchange.getIn().getBody(String.class);
-        assertEquals("Body", secret);
+        DescribeSecretResponse resultDescribe = (DescribeSecretResponse) exchange.getIn().getBody();
+        assertTrue(resultDescribe.sdkHttpResponse().isSuccessful());
+        assertEquals("TestSecret4", resultDescribe.name());
 
     }
 
@@ -68,8 +71,8 @@ public class SecretsManagerGetSecretProducerLocalstackTest extends AwsSecretsMan
                 from("direct:createSecret")
                         .to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:getSecret")
-                        .to("aws-secrets-manager://test?operation=getSecret")
+                from("direct:describeSecret")
+                        .to("aws-secrets-manager://test?operation=describeSecret")
                         .to("mock:result");
             }
         };

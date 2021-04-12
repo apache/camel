@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.localstack;
+package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,13 +24,13 @@ import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecretsManagerRotateSecretProducerLocalstackTest extends AwsSecretsManagerBaseTest {
+public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -50,16 +50,27 @@ public class SecretsManagerRotateSecretProducerLocalstackTest extends AwsSecrets
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
 
-        exchange = template.request("direct:rotateSecret", new Processor() {
+        exchange = template.request("direct:updateSecret", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
+                exchange.getIn().setBody("Binary Body");
+            }
+        });
+
+        UpdateSecretResponse resultUpdate = (UpdateSecretResponse) exchange.getIn().getBody();
+        assertTrue(resultUpdate.sdkHttpResponse().isSuccessful());
+        assertEquals("TestSecret4", resultUpdate.name());
+
+        exchange = template.request("direct:getSecret", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
             }
         });
 
-        RotateSecretResponse resultRotate = (RotateSecretResponse) exchange.getIn().getBody();
-        assertTrue(resultRotate.sdkHttpResponse().isSuccessful());
-        assertEquals("TestSecret4", resultRotate.name());
+        String secret = exchange.getIn().getBody(String.class);
+        assertEquals("Binary Body", secret);
 
     }
 
@@ -71,8 +82,11 @@ public class SecretsManagerRotateSecretProducerLocalstackTest extends AwsSecrets
                 from("direct:createSecret")
                         .to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:rotateSecret")
-                        .to("aws-secrets-manager://test?operation=rotateSecret")
+                from("direct:updateSecret")
+                        .to("aws-secrets-manager://test?operation=updateSecret&binaryPayload=true");
+
+                from("direct:getSecret")
+                        .to("aws-secrets-manager://test?operation=getSecret&binaryPayload=true")
                         .to("mock:result");
             }
         };

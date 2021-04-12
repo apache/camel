@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.secretsmanager.localstack;
+package org.apache.camel.component.aws.secretsmanager.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,9 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SecretsManagerCreateSecretProducerLocalstackTest extends AwsSecretsManagerBaseTest {
+public class SecretsManagerGetSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -46,6 +47,17 @@ public class SecretsManagerCreateSecretProducerLocalstackTest extends AwsSecrets
 
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
+
+        exchange = template.request("direct:getSecret", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
+            }
+        });
+
+        String secret = exchange.getIn().getBody(String.class);
+        assertEquals("Body", secret);
+
     }
 
     @Override
@@ -54,7 +66,10 @@ public class SecretsManagerCreateSecretProducerLocalstackTest extends AwsSecrets
             @Override
             public void configure() throws Exception {
                 from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret")
+                        .to("aws-secrets-manager://test?operation=createSecret");
+
+                from("direct:getSecret")
+                        .to("aws-secrets-manager://test?operation=getSecret")
                         .to("mock:result");
             }
         };
