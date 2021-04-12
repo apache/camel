@@ -114,6 +114,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerSupport");
     public static final ClassName CN_DESERIALIZER_BASE
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerBase");
+    public static final ClassName CN_ENDPOINT_AWARE_DESERIALIZER_BASE
+        = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerEndpointAwareBase");
     public static final ClassName CN_DESERIALIZATION_CONTEXT
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializationContext");
     public static final ClassName CN_YAML_SUPPORT

@@ -81,6 +81,52 @@ class SagaTest extends YamlTestSupport {
                                    simple: "${body}"        
                           - to: "mock:result"
                     '''),
+                asResource('full-parameters', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - saga:  
+                             propagation: "MANDATORY"
+                             completion-mode: "MANUAL"
+                             compensation: 
+                                 uri: "direct"
+                                 parameters:
+                                   name: compensation
+                             completion:
+                                 uri: "direct:completion"
+                             steps:
+                               - to: "direct:something"
+                             option:
+                               - option-name: o1
+                                 simple: "${body}" 
+                               - option-name: o2
+                                 expression:
+                                   simple: "${body}"        
+                          - to: "mock:result"
+                    '''),
+                asResource('full-parameters-out-of-order)', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - saga:  
+                             propagation: "MANDATORY"
+                             completion-mode: "MANUAL"
+                             compensation: 
+                                 parameters:
+                                   name: compensation
+                                 uri: "direct"
+                             completion:
+                                 uri: "direct:completion"
+                             steps:
+                               - to: "direct:something"
+                             option:
+                               - option-name: o1
+                                 simple: "${body}" 
+                               - option-name: o2
+                                 expression:
+                                   simple: "${body}"        
+                          - to: "mock:result"
+                    '''),
                 asResource('short', '''
                     - from:
                         uri: "direct:start"
