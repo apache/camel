@@ -1,8 +1,12 @@
 package org.apache.camel.component.azure.cosmosdb.operations;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.models.CosmosContainerResponse;
+import com.azure.cosmos.models.CosmosItemResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbConfigurationOptionsProxy;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
@@ -55,7 +59,7 @@ class CosmosDbDatabaseOperationsIT {
         }, doneSync -> {
         });
 
-        createLatch.await(1000);
+        createLatch.await(5000);
 
         // delete database
         final CosmosDbTestUtils.Latch deleteLatch = new CosmosDbTestUtils.Latch();
@@ -68,6 +72,22 @@ class CosmosDbDatabaseOperationsIT {
         }, doneSync -> {
         });
 
-        deleteLatch.await(1000);
+        deleteLatch.await(5000);
+    }
+
+    @Test
+    void testPlay() {
+        configuration.setDatabaseName("cgizcgabpz");
+
+        final Map<String, String> data = new HashMap<>();
+        //data.put("id", "my-awesome-id");
+        data.put("name", "Omar");
+
+        CosmosItemResponse<Map<String, String>> response = clientWrapper.getDatabase(configuration.getDatabaseName())
+                .getContainer("test")
+                .createItem(data)
+                .block();
+
+        System.out.println(response);
     }
 }
