@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
+public class CamelHBaseFilterIT extends CamelHBaseTestSupport {
 
     @BindToRegistry("myFilters")
     public List<Filter> addFilters() {
