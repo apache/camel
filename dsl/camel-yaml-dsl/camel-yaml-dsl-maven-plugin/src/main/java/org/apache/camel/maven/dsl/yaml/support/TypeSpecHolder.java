@@ -19,18 +19,24 @@ package org.apache.camel.maven.dsl.yaml.support;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.squareup.javapoet.TypeSpec;
 
 public class TypeSpecHolder {
     public final TypeSpec type;
-    public final Map<String, String> attributes;
+    public final Map<String, Set<String>> attributes;
 
-    public TypeSpecHolder(TypeSpec type, Map<String, String> attributes) {
+    public TypeSpecHolder(TypeSpec type, Map<String, Set<String>> attributes) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(attributes, "attributes");
 
         this.type = type;
         this.attributes = new HashMap<>(attributes);
+    }
+
+    public static void put(Map<String, Set<String>> attributes, String key, String value) {
+        attributes.computeIfAbsent(key, k -> new TreeSet<>()).add(value);
     }
 }
