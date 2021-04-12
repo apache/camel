@@ -87,7 +87,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         Exchange exchange = pool.poll();
         if (exchange == null) {
             // create a new exchange as there was no free from the pool
-            exchange = new DefaultPooledExchange(fromEndpoint);
+            exchange = createPooledExchange(fromEndpoint, autoRelease);
             if (statisticsEnabled) {
                 statistics.created.increment();
             }
