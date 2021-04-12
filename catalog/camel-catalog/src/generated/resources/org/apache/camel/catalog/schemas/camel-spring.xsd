@@ -4667,14 +4667,6 @@ endpoint. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="allowOptimisedComponents" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to allow components to optimise enricher if they are
-org.apache.camel.spi.SendDynamicAware . Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
