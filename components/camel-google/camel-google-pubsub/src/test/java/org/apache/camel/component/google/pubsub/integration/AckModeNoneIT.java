@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class AckModeNoneTest extends PubsubTestSupport {
+public class AckModeNoneIT extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "ackNoneTopic";
     private static final String SUBSCRIPTION_NAME = "ackNoneSub";

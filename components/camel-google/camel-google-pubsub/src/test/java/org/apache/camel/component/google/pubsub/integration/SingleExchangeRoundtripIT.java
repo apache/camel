@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,23 +26,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BodyTypesTest extends PubsubTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BodyTypesTest.class);
+public class SingleExchangeRoundtripIT extends PubsubTestSupport {
 
-    private static final String TOPIC_NAME = "typesSend";
-    private static final String SUBSCRIPTION_NAME = "TypesReceive";
+    private static final String TOPIC_NAME = "singleSend";
+    private static final String SUBSCRIPTION_NAME = "singleReceive";
 
     @EndpointInject("direct:from")
     private Endpoint directIn;
@@ -68,16 +60,11 @@ public class BodyTypesTest extends PubsubTestSupport {
 
     @Override
     public void createTopicSubscription() {
-        try {
-            createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
-        } catch (Exception e) {
-            // May be ignored because it could have been created. 
-            LOG.warn("Failed to create the subscription pair {}", e.getMessage());
-        }
+        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(directIn).routeId("Single_Send").to(pubsubTopic).to(sendResult);
@@ -90,15 +77,21 @@ public class BodyTypesTest extends PubsubTestSupport {
     }
 
     @Test
-    public void byteArray() throws Exception {
+    public void testSingleMessageSend() throws Exception {
 
         Exchange exchange = new DefaultExchange(context);
 
-        byte[] body = { 1, 2, 3 };
+        String attributeKey = "ATTRIBUTE-TEST-KEY";
+        String attributeValue = "ATTRIBUTE-TEST-VALUE";
 
-        exchange.getIn().setBody(body);
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put(attributeKey, attributeValue);
+
+        exchange.getIn().setBody("Single  : " + exchange.getExchangeId());
+        exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, attributes);
 
         receiveResult.expectedMessageCount(1);
+        receiveResult.expectedBodiesReceivedInAnyOrder(exchange.getIn().getBody());
 
         producer.send(exchange);
 
@@ -107,9 +100,8 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertTrue(sentExchange.getIn().getBody() instanceof byte[], "Sent body type is byte[]");
-
-        assertSame(body, sentExchange.getIn().getBody(), "Sent body type is the one sent");
+        assertEquals(exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "Sent ID");
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -119,52 +111,14 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertTrue(receivedExchange.getIn().getBody() instanceof byte[], "Received body is of byte[] type");
+        assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "PUBSUB Message ID Property");
+        assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME), "PUBSUB Published Time");
 
-        assertTrue(Arrays.equals(body, (byte[]) receivedExchange.getIn().getBody()), "Received body equals sent");
+        assertEquals(attributeValue,
+                ((Map) receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey),
+                "PUBSUB Header Attribute");
 
-    }
-
-    @Test
-    public void objectSerialised() throws Exception {
-
-        Exchange exchange = new DefaultExchange(context);
-
-        Map<String, String> body = new HashMap<>();
-        body.put("KEY", "VALUE1212");
-
-        exchange.getIn().setBody(body);
-
-        receiveResult.expectedMessageCount(1);
-
-        producer.send(exchange);
-
-        List<Exchange> sentExchanges = sendResult.getExchanges();
-        assertEquals(1, sentExchanges.size(), "Sent exchanges");
-
-        Exchange sentExchange = sentExchanges.get(0);
-
-        assertTrue(sentExchange.getIn().getBody() instanceof Map, "Sent body type is byte[]");
-
-        receiveResult.assertIsSatisfied(5000);
-
-        List<Exchange> receivedExchanges = receiveResult.getExchanges();
-
-        assertNotNull(receivedExchanges, "Received exchanges");
-
-        Exchange receivedExchange = receivedExchanges.get(0);
-
-        assertTrue(receivedExchange.getIn().getBody() instanceof byte[], "Received body is of byte[] type");
-
-        Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
-
-        assertEquals("VALUE1212", ((Map) bodyReceived).get("KEY"), "Received body is a Map");
-
-    }
-
-    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        ObjectInputStream is = new ObjectInputStream(in);
-        return is.readObject();
+        assertEquals(sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+                receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
     }
 }

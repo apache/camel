@@ -30,7 +30,7 @@ import org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerialize
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class CustomSerializerTest extends PubsubTestSupport {
+public class CustomSerializerIT extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "typesSend";
     private static final String SUBSCRIPTION_NAME = "TypesReceive";
