@@ -46,6 +46,17 @@ public class VertxKafkaConfigurationOptionsProxy {
         return configuration.getValueSerializer();
     }
 
+    public Object getOverrideTimestamp(final Message message) {
+        Object timestamp = getOption(message, VertxKafkaConstants.OVERRIDE_TIMESTAMP, () -> null, Object.class);
+        if (ObjectHelper.isNotEmpty(timestamp)) {
+            // must remove header so its not propagated
+            message.removeHeader(VertxKafkaConstants.OVERRIDE_TIMESTAMP);
+        }
+
+        return timestamp;
+
+    }
+
     public String getTopic(final Message message) {
         return getOption(message, VertxKafkaConstants.TOPIC, configuration::getTopic, String.class);
     }

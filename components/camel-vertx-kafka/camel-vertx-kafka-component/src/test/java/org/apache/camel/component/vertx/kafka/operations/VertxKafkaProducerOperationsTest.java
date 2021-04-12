@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vertx.kafka.operations;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -271,6 +273,27 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
         assertNull(message.getHeader(VertxKafkaConstants.OVERRIDE_TOPIC));
 
         verifySendMessage("anotherTopic", "someKey", "test");
+    }
+
+    @Test
+    void testSendEventWithOverrideTopicHeaderAndTimestamp() {
+        configuration.setTopic("sometopic");
+        Long timestamp = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        final Message message = createMessage();
+
+        message.setHeader(VertxKafkaConstants.OVERRIDE_TOPIC, "anotherTopic");
+        message.setHeader(VertxKafkaConstants.MESSAGE_KEY, "someKey");
+        message.setHeader(VertxKafkaConstants.OVERRIDE_TIMESTAMP, timestamp);
+        message.setBody("test");
+
+        sendEvent(message);
+
+        // the header is now removed
+        assertNull(message.getHeader(VertxKafkaConstants.OVERRIDE_TOPIC));
+        assertNull(message.getHeader(VertxKafkaConstants.OVERRIDE_TIMESTAMP));
+
+        verifySendMessage("anotherTopic", "someKey", timestamp, "test");
     }
 
     @Test
@@ -536,6 +559,18 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
             assertEquals(topic, records.get(0).topic());
             assertEquals(messageKey, records.get(0).key());
             assertEquals(messageBody, records.get(0).value());
+        });
+    }
+
+    private void verifySendMessage(
+            final String topic, final Object messageKey, final Long timestamp, final Object messageBody) {
+        assertProducedMessages(records -> {
+            assertEquals(1, records.size());
+            assertEquals(topic, records.get(0).topic());
+            assertEquals(messageKey, records.get(0).key());
+            assertEquals(messageBody, records.get(0).value());
+            assertEquals(timestamp, records.get(0).timestamp());
+
         });
     }
 
