@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class HBaseConvertionsTest extends CamelHBaseTestSupport {
+public class HBaseConvertionsIT extends CamelHBaseTestSupport {
 
     protected Object[] key = { 1, "2", "3" };
     protected final Object[] body = { 1L, false, "3" };
