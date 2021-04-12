@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class HBaseConsumerTest extends CamelHBaseTestSupport {
+public class HBaseConsumerIT extends CamelHBaseTestSupport {
 
     @Test
     public void testPutMultiRowsAndConsume() throws Exception {

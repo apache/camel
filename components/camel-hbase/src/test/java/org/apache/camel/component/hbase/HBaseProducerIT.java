@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HBaseProducerTest extends CamelHBaseTestSupport {
+public class HBaseProducerIT extends CamelHBaseTestSupport {
 
     @Test
     public void testPut() throws Exception {

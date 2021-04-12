@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class HBaseComponentTest {
+public class HBaseComponentIT {
 
     @Test
     public void testHBaseConfigurationClassLoaderSetToAppContextClassLoader() throws Exception {
-        ClassLoader expectedClassLoader = HBaseComponentTest.class.getClassLoader();
+        ClassLoader expectedClassLoader = HBaseComponentIT.class.getClassLoader();
 
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.setApplicationContextClassLoader(expectedClassLoader);
@@ -45,7 +45,7 @@ public class HBaseComponentTest {
 
     @Test
     public void testHBaseConfigurationClassLoaderNotOverridden() throws Exception {
-        ClassLoader expectedClassLoader = HBaseComponentTest.class.getClassLoader().getParent();
+        ClassLoader expectedClassLoader = HBaseComponentIT.class.getClassLoader().getParent();
 
         Configuration configuration = HBaseConfiguration.create();
         configuration.setClassLoader(expectedClassLoader);
