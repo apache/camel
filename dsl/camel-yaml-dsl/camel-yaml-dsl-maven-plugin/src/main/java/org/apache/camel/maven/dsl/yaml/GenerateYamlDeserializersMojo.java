@@ -40,6 +40,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.maven.dsl.yaml.support.ToolingSupport;
@@ -299,12 +300,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     deserializers.addType(holder.type);
 
                     if (holder.attributes.containsKey("node")) {
-                        constructors.addStatement(
-                            "case $S: return new ModelDeserializers.$L()", holder.attributes.get("node"), holder.type.name);
+                        holder.attributes.get("node").forEach(node ->
+                            constructors.addStatement(
+                                "case $S: return new ModelDeserializers.$L()", node, holder.type.name));
                     }
                     if (holder.attributes.containsKey("type")) {
-                        constructors.addStatement(
-                            "case $S: return new ModelDeserializers.$L()", holder.attributes.get("type"), holder.type.name);
+                        holder.attributes.get("type").forEach(type ->
+                            constructors.addStatement(
+                                "case $S: return new ModelDeserializers.$L()", type, holder.type.name));
                     }
                 }
             );
@@ -412,13 +415,20 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     private TypeSpecHolder generateParser(ClassInfo info) {
         final ClassName targetType = ClassName.get(info.name().prefix().toString(), info.name().withoutPackagePrefix());
         final TypeSpec.Builder builder = TypeSpec.classBuilder(info.simpleName() + "Deserializer");
-        final Map<String, String> attributes = new HashMap<>();
+        final Map<String, Set<String>> attributes = new HashMap<>();
         final List<AnnotationSpec> properties = new ArrayList<>();
         final AnnotationSpec.Builder yamlTypeAnnotation = AnnotationSpec.builder(CN_YAML_TYPE);
 
         builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
-        builder.superclass(ParameterizedTypeName.get(CN_DESERIALIZER_BASE, targetType));
-        attributes.put("type", info.name().toString());
+
+
+        if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
+            builder.superclass(ParameterizedTypeName.get(CN_ENDPOINT_AWARE_DESERIALIZER_BASE, targetType));
+        } else {
+            builder.superclass(ParameterizedTypeName.get(CN_DESERIALIZER_BASE, targetType));
+        }
+
+        TypeSpecHolder.put(attributes, "type", info.name().toString());
 
         //TODO: add an option on Camel's definitions to distinguish between IN/OUT types
         if (info.name().toString().equals("org.apache.camel.model.OnExceptionDefinition")) {
@@ -501,17 +511,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         }
 
         if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
-            setProperty.beginControlFlow("case $S:", "parameters");
-            setProperty.beginControlFlow("if (target.getUri() == null)");
-            setProperty.addStatement("throw new IllegalStateException(\"url must be set before setting parameters\")");
-            setProperty.endControlFlow();
-            setProperty.addStatement("java.util.Map<String, Object> parameters = asScalarMap(asMappingNode(node))");
-            setProperty.addStatement("$T dc = getDeserializationContext(node)", CN_DESERIALIZATION_CONTEXT);
-            setProperty.addStatement("String uri = $T.createEndpointUri(dc.getCamelContext(), target.getUri(), parameters)", CN_YAML_SUPPORT);
-            setProperty.addStatement("target.setUri(uri)");
-            setProperty.addStatement("break");
-            setProperty.endControlFlow();
-
             setProperty.beginControlFlow("default:");
             setProperty.addStatement("String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node)");
             setProperty.beginControlFlow("if (uri == null)");
@@ -528,6 +527,23 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     "parameters",
                     "object")
             );
+
+            builder.addMethod(MethodSpec.methodBuilder("setEndpointUri")
+                .addAnnotation(AnnotationSpec.builder(Override.class).build())
+                .addModifiers(Modifier.PROTECTED)
+                .addParameter(CamelContext.class, "camelContext")
+                .addParameter(targetType, "target")
+                .addParameter(
+                    ParameterizedTypeName.get(
+                        ClassName.get(Map.class),
+                        ClassName.get(String.class),
+                        ClassName.get(Object.class)),
+                    "parameters")
+                .addCode(
+                    CodeBlock.builder()
+                        .addStatement("target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters))")
+                        .build())
+                .build());
         } else if (implementType(info, HAS_EXPRESSION_TYPE_CLASS)) {
             setProperty.beginControlFlow("default:");
             setProperty.addStatement("$T ed = target.getExpressionType()", CN_EXPRESSION_DEFINITION);
@@ -585,8 +601,17 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             .map(StringHelper::camelCaseToDash)
             .ifPresent(v -> {
                 yamlTypeAnnotation.addMember("nodes", "$S", v);
-                attributes.put("node", v);
+                TypeSpecHolder.put(attributes, "node", v);
             });
+
+        //
+        // Workaround for:
+        //     https://issues.apache.org/jira/browse/CAMEL-16490
+        //
+        if (info.name().equals(TO_DYNAMIC_DEFINITION_CLASS)) {
+            yamlTypeAnnotation.addMember("nodes", "$S", "tod");
+            TypeSpecHolder.put(attributes, "node", "tod");
+        }
 
         for (AnnotationSpec spec: properties) {
             yamlTypeAnnotation.addMember("properties", "$L", spec);

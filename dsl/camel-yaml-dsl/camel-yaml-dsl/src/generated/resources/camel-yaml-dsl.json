@@ -170,6 +170,9 @@
           "to-d" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
+          "tod" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
+          },
           "transacted" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TransactedDefinition"
           },
