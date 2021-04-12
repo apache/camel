@@ -60,7 +60,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HdfsConsumerIntegrationTest extends HdfsTestSupport {
+public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
     private static final int ITERATIONS = 200;
 
     @Override
