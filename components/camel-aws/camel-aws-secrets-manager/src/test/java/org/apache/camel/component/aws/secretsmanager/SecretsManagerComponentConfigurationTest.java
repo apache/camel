@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
-import org.apache.camel.component.aws.secretsmanager.SecretsManagerComponent;
-import org.apache.camel.component.aws.secretsmanager.SecretsManagerEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
