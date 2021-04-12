@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd;
+package org.apache.camel.component.etcd.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +26,7 @@ import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.EtcdConstants;
 import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EtcdKeysTest extends EtcdTestSupport {
+public class EtcdKeysIT extends EtcdTestSupport {
 
     @Test
     public void testKeys() throws Exception {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd.cloud;
+package org.apache.camel.component.etcd.cloud.integration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +27,8 @@ import mousio.etcd4j.responses.EtcdException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.apache.camel.component.etcd.EtcdHelper;
+import org.apache.camel.component.etcd.cloud.EtcdOnDemandServiceDiscovery;
+import org.apache.camel.component.etcd.cloud.EtcdWatchServiceDiscovery;
 import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
+public class EtcdServiceDiscoveryIT extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
     private static final AtomicInteger PORT = new AtomicInteger();
 
