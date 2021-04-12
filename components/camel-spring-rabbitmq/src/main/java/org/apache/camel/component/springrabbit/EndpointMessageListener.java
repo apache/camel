@@ -125,8 +125,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                 } catch (Exception e) {
                     exchange.setException(e);
                 } finally {
-                    // release back when synchronous mode
-                    consumer.releaseExchange(exchange, false);
                     callback.done(true);
                 }
             } else {
