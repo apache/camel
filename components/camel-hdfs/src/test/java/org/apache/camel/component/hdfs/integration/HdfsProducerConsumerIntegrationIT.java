@@ -40,7 +40,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @Disabled("Must run manual")
-public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
+public class HdfsProducerConsumerIntegrationIT extends CamelTestSupport {
     private static final int ITERATIONS = 400;
 
     @Override

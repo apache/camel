@@ -38,11 +38,11 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(value = OS.MAC, disabledReason = "Temporarily disabled due to CAMEL-16387")
-public class HdfsAppendTest extends CamelTestSupport {
+public class HdfsAppendIT extends CamelTestSupport {
     @RegisterExtension
     public static HDFSService service = HDFSServiceFactory.createService();
 
-    private static final Logger LOG = LoggerFactory.getLogger(HdfsAppendTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsAppendIT.class);
 
     private static final int ITERATIONS = 10;
 
