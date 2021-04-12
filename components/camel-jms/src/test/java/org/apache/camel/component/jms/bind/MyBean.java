@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.bind;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Consume;
@@ -31,7 +32,8 @@ public class MyBean {
 
     @Consume("activemq:Test.BindingQueue")
     public void myMethod(@Headers Map<?, ?> headers, String body) {
-        this.headers = headers;
+        // defensive copy of headers
+        this.headers = new HashMap<>(headers);
         this.body = body;
 
         // now lets notify we've completed
