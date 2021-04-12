@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-public class DeadLetterTest extends PubsubTestSupport {
+public class DeadLetterIT extends PubsubTestSupport {
 
     private static final String INPUT_TOPIC_NAME = "camel.input-topic";
     private static final String INPUT_SUBSCRIPTION_NAME = "camel.input-topic-subscription";

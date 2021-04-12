@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(GroupedExchangeRoundtripTest.class);
+public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(GroupedExchangeRoundtripIT.class);
 
     private static final String TOPIC_NAME = "groupTopic";
     private static final String SUBSCRIPTION_NAME = "groupSubscription";

@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-public class AcknowledgementTest extends PubsubTestSupport {
+public class AcknowledgementIT extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "failureSingle";
     private static final String SUBSCRIPTION_NAME = "failureSub";
@@ -63,7 +63,7 @@ public class AcknowledgementTest extends PubsubTestSupport {
                 from(pubsubSubscription).routeId("Fail_Receive").autoStartup(true).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        if (AcknowledgementTest.fail) {
+                        if (AcknowledgementIT.fail) {
                             Thread.sleep(750);
                             throw new Exception("fail");
                         }
