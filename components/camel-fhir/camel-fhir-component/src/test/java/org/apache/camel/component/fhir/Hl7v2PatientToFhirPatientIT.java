@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * This test demonstrates how to convert a HL7V2 patient to a FHIR dtsu3 Patient and then insert it into a FHIR server.
  */
-public class Hl7v2PatientToFhirPatientIntegrationTest extends AbstractFhirTestSupport {
+public class Hl7v2PatientToFhirPatientIT extends AbstractFhirTestSupport {
 
     /*
     Segment Purpose                 FHIR Resource
