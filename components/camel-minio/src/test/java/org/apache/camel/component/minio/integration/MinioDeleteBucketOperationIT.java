@@ -26,7 +26,7 @@ import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-class MinioDeleteBucketOperationTest extends MinioTestContainerSupport {
+class MinioDeleteBucketOperationIT extends MinioIntegrationTestSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()

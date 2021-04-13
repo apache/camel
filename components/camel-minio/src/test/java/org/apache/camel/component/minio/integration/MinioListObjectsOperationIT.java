@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MinioListObjectsOperationTest extends MinioTestContainerSupport {
+class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -50,7 +50,7 @@ class MinioListObjectsOperationTest extends MinioTestContainerSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioListObjectsOperationTest() throws IOException {
+    MinioListObjectsOperationIT() throws IOException {
     }
 
     @SuppressWarnings("unchecked")

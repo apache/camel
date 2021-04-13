@@ -21,7 +21,7 @@ import org.apache.camel.test.infra.minio.services.MinioServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-class MinioTestContainerSupport extends CamelTestSupport {
+class MinioIntegrationTestSupport extends CamelTestSupport {
     @RegisterExtension
     static MinioService service = MinioServiceFactory.createService();
 
