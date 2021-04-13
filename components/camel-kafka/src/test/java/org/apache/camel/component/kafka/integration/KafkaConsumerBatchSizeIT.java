@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -29,14 +28,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
 
-public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
-    private static final String TOPIC = "last-record";
+    public static final String TOPIC = "test";
+
+    @EndpointInject("kafka:" + TOPIC + "?autoOffsetReset=earliest" + "&autoCommitEnable=false" + "&consumerStreams=10")
+    private Endpoint from;
 
     @EndpointInject("mock:result")
-    private MockEndpoint result;
+    private MockEndpoint to;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
@@ -55,40 +55,44 @@ public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
         kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
-    /**
-     * When consuming data with autoCommitEnable=false Then the LAST_RECORD_BEFORE_COMMIT header must be always defined
-     * And it should be true only for the last one
-     */
-    @Test
-    public void shouldStartFromBeginningWithEmptyOffsetRepository() throws InterruptedException {
-        result.expectedMessageCount(5);
-        result.expectedBodiesReceived("message-0", "message-1", "message-2", "message-3", "message-4");
-
-        for (int i = 0; i < 5; i++) {
-            producer.send(new ProducerRecord<>(TOPIC, "1", "message-" + i));
-        }
-
-        result.assertIsSatisfied(3000);
-
-        List<Exchange> exchanges = result.getExchanges();
-        for (int i = 0; i < exchanges.size(); i++) {
-            Boolean header = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class);
-            assertNotNull(header, "Header not set for #" + i);
-            assertEquals(header, i == exchanges.size() - 1, "Header invalid for #" + i);
-            // as long as the partitions count is 1 on topic:
-            header = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_POLL_RECORD, Boolean.class);
-            assertNotNull(header, "Last record header not set for #" + i);
-            assertEquals(header, i == exchanges.size() - 1, "Last record header invalid for #" + i);
-        }
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:" + TOPIC + "?groupId=A&autoOffsetReset=earliest&autoCommitEnable=false").to("mock:result");
+                from(from).routeId("foo").to(to).setId("First");
             }
         };
+    }
+
+    @Test
+    public void kafkaMessagesIsConsumedByCamel() throws Exception {
+
+        // First 2 must not be committed since batch size is 3
+        to.expectedBodiesReceivedInAnyOrder("m1", "m2");
+        for (int k = 1; k <= 2; k++) {
+            String msg = "m" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+        to.assertIsSatisfied();
+
+        to.reset();
+
+        to.expectedBodiesReceivedInAnyOrder("m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
+
+        // Restart endpoint,
+        context.getRouteController().stopRoute("foo");
+        context.getRouteController().startRoute("foo");
+
+        // Second route must wake up and consume all from scratch and commit 9
+        // consumed
+        for (int k = 3; k <= 10; k++) {
+            String msg = "m" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+
+        to.assertIsSatisfied();
     }
 }

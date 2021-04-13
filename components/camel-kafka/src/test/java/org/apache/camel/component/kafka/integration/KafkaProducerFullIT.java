@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -37,6 +37,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.KafkaEndpoint;
+import org.apache.camel.component.kafka.MockProducerInterceptor;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -47,6 +50,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
+public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     private static final String TOPIC_STRINGS = "test";
     private static final String TOPIC_INTERCEPTED = "test";
@@ -236,7 +240,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         assertTrue(allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
-        assertEquals(messageInTopic + messageInOtherTopic, MockProducerInterceptor.recordsCaptured.size());
+        Assertions.assertEquals(messageInTopic + messageInOtherTopic, MockProducerInterceptor.recordsCaptured.size());
     }
 
     @Test

@@ -16,33 +16,28 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
+import java.util.UUID;
+
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.BaseEmbeddedKafkaTest;
+import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test whether the KafkaIdempotentRepository successfully recreates its cache from pre-existing topics. This guarantees
- * that the de-duplication state survives application instance restarts.
- *
- * This test requires running in a certain order (which isn't great for unit testing), hence the ordering-related
- * annotations.
+ * Test for eager idempotentRepository usage.
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KafkaIdempotentRepositoryPersistenceTest extends BaseEmbeddedKafkaTest {
+public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSupport {
 
     // Every instance of the repository must use a different topic to guarantee isolation between tests
     @BindToRegistry("kafkaIdempotentRepository")
     private KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
+            = new KafkaIdempotentRepository("TEST_EAGER_" + UUID.randomUUID().toString(), getBootstrapServers());
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;
@@ -61,37 +56,44 @@ public class KafkaIdempotentRepositoryPersistenceTest extends BaseEmbeddedKafkaT
         };
     }
 
-    @Order(1)
     @Test
-    public void testFirstPassFiltersAsExpected() throws InterruptedException {
+    public void testRemovesDuplicates() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
 
-        // all records sent initially
-        assertEquals(10, mockBefore.getReceivedCounter());
-
-        // filters second attempt with same value
         assertEquals(5, kafkaIdempotentRepository.getDuplicateCount());
 
-        // only first 1-4 records are received, the rest are filtered
         assertEquals(5, mockOut.getReceivedCounter());
+        assertEquals(10, mockBefore.getReceivedCounter());
     }
 
-    @Order(2)
     @Test
-    public void testSecondPassFiltersEverything() throws InterruptedException {
+    public void testRollsBackOnException() throws InterruptedException {
+        mockOut.whenAnyExchangeReceived(exchange -> {
+            int id = exchange.getIn().getHeader("id", Integer.class);
+            if (id == 0) {
+                throw new IllegalArgumentException("Boom!");
+            }
+        });
+
         for (int i = 0; i < 10; i++) {
-            template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
+            try {
+                template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
+            } catch (CamelExecutionException cex) {
+                // no-op; expected
+            }
         }
 
-        // all records sent initially
+        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0}
+                                                                       // is
+                                                                       // not a
+                                                                       // duplicate
+
+        assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the
+                                                      // idempotency check
+                                                      // twice
         assertEquals(10, mockBefore.getReceivedCounter());
-
-        // the state from the previous test guarantees that all attempts now are blocked
-        assertEquals(10, kafkaIdempotentRepository.getDuplicateCount());
-
-        // nothing gets passed the idempotent consumer this time
-        assertEquals(0, mockOut.getReceivedCounter());
     }
+
 }

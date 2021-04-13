@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class KafkaToDTest extends BaseEmbeddedKafkaTest {
+public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
 
     @Test
     public void testToD() throws Exception {

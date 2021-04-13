@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -22,6 +22,8 @@ import java.util.Properties;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.KafkaManualCommit;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
+public class KafkaConsumerManualCommitIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "testManualCommitTest";
 

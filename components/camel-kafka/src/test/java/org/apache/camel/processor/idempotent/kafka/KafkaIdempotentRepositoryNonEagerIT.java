@@ -23,21 +23,23 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.BaseEmbeddedKafkaTest;
+import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test for eager idempotentRepository usage.
+ * Test for non-eager idempotentRepository usage.
  */
-public class KafkaIdempotentRepositoryEagerTest extends BaseEmbeddedKafkaTest {
+public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSupport {
 
     // Every instance of the repository must use a different topic to guarantee isolation between tests
     @BindToRegistry("kafkaIdempotentRepository")
     private KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_EAGER_" + UUID.randomUUID().toString(), getBootstrapServers());
+            = new KafkaIdempotentRepository(
+                    "TEST_NON_EAGER_" + UUID.randomUUID().toString(),
+                    getBootstrapServers());
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;
@@ -51,7 +53,7 @@ public class KafkaIdempotentRepositoryEagerTest extends BaseEmbeddedKafkaTest {
             @Override
             public void configure() throws Exception {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .messageIdRepositoryRef("kafkaIdempotentRepository").to("mock:out").end();
+                        .messageIdRepositoryRef("kafkaIdempotentRepository").eager(false).to("mock:out").end();
             }
         };
     }

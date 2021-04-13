@@ -14,25 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
 import java.util.Properties;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test";
+    public static final String TOPIC_PATTERN = "t\\w\\wt";
 
-    @EndpointInject("kafka:" + TOPIC + "?autoOffsetReset=earliest" + "&autoCommitEnable=false" + "&consumerStreams=10")
+    @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -44,6 +51,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
     public void before() {
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+
     }
 
     @AfterEach
@@ -58,41 +66,33 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+
             @Override
             public void configure() throws Exception {
-                from(from).routeId("foo").to(to).setId("First");
+                from(from).to(to);
             }
         };
     }
 
     @Test
-    public void kafkaMessagesIsConsumedByCamel() throws Exception {
+    public void kafkaTopicIsPattern() throws Exception {
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        to.allMessages().header(KafkaConstants.TOPIC).isEqualTo("test");
+        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
+        // exchange because autoCommitEnable=true
+        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
 
-        // First 2 must not be committed since batch size is 3
-        to.expectedBodiesReceivedInAnyOrder("m1", "m2");
-        for (int k = 1; k <= 2; k++) {
-            String msg = "m" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
-            producer.send(data);
-        }
-        to.assertIsSatisfied();
-
-        to.reset();
-
-        to.expectedBodiesReceivedInAnyOrder("m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
-
-        // Restart endpoint,
-        context.getRouteController().stopRoute("foo");
-        context.getRouteController().startRoute("foo");
-
-        // Second route must wake up and consume all from scratch and commit 9
-        // consumed
-        for (int k = 3; k <= 10; k++) {
-            String msg = "m" + k;
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
 
-        to.assertIsSatisfied();
+        to.assertIsSatisfied(3000);
+
+        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                .count());
     }
+
 }
