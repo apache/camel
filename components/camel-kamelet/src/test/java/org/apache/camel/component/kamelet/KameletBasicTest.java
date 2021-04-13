@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KameletBasicTest extends CamelTestSupport {
+
     @Test
     public void canProduceToKamelet() {
         String body = UUID.randomUUID().toString();

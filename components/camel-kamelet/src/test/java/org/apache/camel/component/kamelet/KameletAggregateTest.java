@@ -54,12 +54,12 @@ public class KameletAggregateTest extends CamelTestSupport {
                 routeTemplate("my-aggregate")
                         .templateParameter("count")
                         .from("kamelet:source")
-                        .aggregate(constant(true))
+                    .aggregate(constant(true))
                         .completionSize("{{count}}")
                         .aggregationStrategy(AggregationStrategies.string(","))
                         .to("log:aggregate")
                         .to("kamelet:sink")
-                        .end();
+                    .end();
 
                 from("direct:start")
                         .to("kamelet:my-aggregate?count=5")

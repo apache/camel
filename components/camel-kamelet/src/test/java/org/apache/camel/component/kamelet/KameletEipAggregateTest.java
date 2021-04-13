@@ -53,7 +53,6 @@ public class KameletEipAggregateTest extends CamelTestSupport {
                         .templateParameter("count")
                         .from("kamelet:source")
                         .aggregate(constant(true))
-                            .parallelProcessing()
                             .completionSize("{{count}}")
                             .aggregationStrategy(AggregationStrategies.string(","))
                             .to("log:aggregate")
