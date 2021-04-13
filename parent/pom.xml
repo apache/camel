@@ -255,7 +255,7 @@
         <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>68.2</icu4j-version>
-        <ignite-version>2.9.1</ignite-version>
+        <ignite-version>2.10.0</ignite-version>
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
         <infinispan-version>12.1.0.Final</infinispan-version>
         <influx-java-driver-version>2.21</influx-java-driver-version>
