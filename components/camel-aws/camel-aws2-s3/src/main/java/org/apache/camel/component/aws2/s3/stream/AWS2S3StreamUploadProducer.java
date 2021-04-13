@@ -47,8 +47,8 @@ import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
@@ -287,12 +287,25 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     private void setStartingPart() {
         if (getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.progressive)) {
-            ListObjectsRequest.Builder builder = ListObjectsRequest.builder().bucket(getConfiguration().getBucketName())
-                    .prefix(AWS2S3Utils.determineFileName(getConfiguration().getKeyName()));
-            ListObjectsResponse o = getEndpoint().getS3Client().listObjects(builder.build());
-            if (o.contents().size() > 0) {
-                ArrayList<S3Object> list = new ArrayList<>();
-                list.addAll(o.contents());
+            ArrayList<S3Object> list = new ArrayList<>();
+            ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(getConfiguration().getBucketName())
+                    .prefix(AWS2S3Utils.determineFileName(getConfiguration().getKeyName())).build();
+            boolean done = false;
+            while (!done) {
+                ListObjectsV2Response listObjResponse = getEndpoint().getS3Client().listObjectsV2(request);
+                for (S3Object content : listObjResponse.contents()) {
+                    list.add(content);
+                }
+
+                if (listObjResponse.nextContinuationToken() == null) {
+                    done = true;
+                }
+
+                request = request.toBuilder()
+                        .continuationToken(listObjResponse.nextContinuationToken())
+                        .build();
+            }
+            if (list.size() > 0) {
                 list.sort(Comparator.comparing(S3Object::lastModified));
                 int listSize = list.size();
                 String fileName = AWS2S3Utils.determineFileName(list.get(listSize - 1).key());
