@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteAggregationRepositoryOperationsTest extends InfinispanRemoteTestSupport {
+public class InfinispanRemoteAggregationRepositoryOperationsIT extends InfinispanRemoteTestSupport {
     private InfinispanRemoteAggregationRepository aggregationRepository;
 
     @Override

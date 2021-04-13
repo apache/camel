@@ -33,7 +33,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteProducerTest extends InfinispanRemoteTestSupport implements InfinispanProducerTestSupport {
+public class InfinispanRemoteProducerIT extends InfinispanRemoteTestSupport implements InfinispanProducerTestSupport {
 
     @BindToRegistry("mappingFunction")
     public static BiFunction<String, String, String> mappingFunction() {

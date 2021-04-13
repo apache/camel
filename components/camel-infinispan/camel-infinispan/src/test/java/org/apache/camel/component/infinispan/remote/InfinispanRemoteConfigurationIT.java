@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteConfigurationTest {
+public class InfinispanRemoteConfigurationIT {
     @RegisterExtension
     static InfinispanService service = InfinispanServiceFactory.createService();
 

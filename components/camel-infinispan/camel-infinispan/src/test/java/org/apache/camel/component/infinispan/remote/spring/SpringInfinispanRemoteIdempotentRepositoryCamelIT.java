@@ -21,12 +21,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
-public class SpringInfinispanRemoteIdempotentRepositorySpringTest
+public class SpringInfinispanRemoteIdempotentRepositoryCamelIT
         extends SpringInfinispanRemoteIdempotentRepositoryTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/infinispan/spring/SpringInfinispanRemoteIdempotentRepositorySpringTest.xml");
+                "org/apache/camel/component/infinispan/spring/SpringInfinispanRemoteIdempotentRepositoryCamelTest.xml");
     }
 }

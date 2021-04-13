@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
-import java.util.List;
-
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.infinispan.InfinispanOperation;
+import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.marshall.MarshallerUtil;
 import org.infinispan.commons.api.BasicCache;
@@ -41,66 +38,68 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
-import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteQueryProducerTest extends InfinispanRemoteQueryTestSupport {
+public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSupport {
+    @BindToRegistry("continuousQueryBuilder")
+    public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER
+            = qf -> qf.from(User.class).having("name").like("CQ%").build();
 
-    @BindToRegistry("noResultQueryBuilder")
-    public static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER
-            = qf -> qf.from(User.class).having("name").like("%abc%").build();
+    @BindToRegistry("continuousQueryBuilderNoMatch")
+    public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_NO_MATCH
+            = qf -> qf.from(User.class).having("name").like("%TEST%").build();
 
-    @BindToRegistry("withResultQueryBuilder")
-    public static final InfinispanQueryBuilder WITH_RESULT_QUERY_BUILDER
-            = qf -> qf.from(User.class).having("name").like("%A").build();
+    @BindToRegistry("continuousQueryBuilderAll")
+    public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_ALL
+            = qf -> qf.from(User.class).having("name").like("%Q0%").build();
 
     // *****************************
     //
     // *****************************
 
     @Test
-    public void producerQueryOperationWithoutQueryBuilder() {
-        Exchange request = template.request("direct:start",
-                exchange -> exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY));
-        assertNull(request.getException());
+    public void continuousQuery() throws Exception {
+        MockEndpoint continuousQueryBuilderNoMatch = getMockEndpoint("mock:continuousQueryNoMatch");
+        continuousQueryBuilderNoMatch.expectedMessageCount(0);
 
-        List<User> queryResult = request.getIn().getBody(List.class);
-        assertNull(queryResult);
-    }
+        MockEndpoint continuousQueryBuilderAll = getMockEndpoint("mock:continuousQueryAll");
+        continuousQueryBuilderAll.expectedMessageCount(CQ_USERS.length * 2);
 
-    @Test
-    public void producerQueryWithoutResult() {
-        producerQueryWithoutResult("direct:start", NO_RESULT_QUERY_BUILDER);
-    }
+        MockEndpoint continuousQuery = getMockEndpoint("mock:continuousQuery");
+        continuousQuery.expectedMessageCount(4);
 
-    @Test
-    public void producerQueryWithoutResultAndQueryBuilderFromConfig() {
-        producerQueryWithoutResult("direct:noQueryResults", null);
-    }
+        for (int i = 0; i < 4; i++) {
+            continuousQuery.message(i).header(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
+            continuousQuery.message(i).header(InfinispanConstants.CACHE_NAME).isEqualTo(getCache().getName());
+            if (i >= 2) {
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE)
+                        .isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNull();
+            } else {
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE)
+                        .isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNotNull();
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isInstanceOf(User.class);
+            }
+        }
 
-    private void producerQueryWithoutResult(String endpoint, final InfinispanQueryBuilder builder) {
-        Exchange request = template.request(endpoint, createQueryProcessor(builder));
+        for (final User user : CQ_USERS) {
+            getCache().put(createKey(user), user);
+        }
 
-        assertNull(request.getException());
+        assertEquals(CQ_USERS.length, getCache().size());
 
-        List<User> queryResult = request.getIn().getBody(List.class);
-        assertNotNull(queryResult);
-        assertEquals(0, queryResult.size());
-    }
+        for (final User user : CQ_USERS) {
+            getCache().remove(createKey(user));
+        }
 
-    @Test
-    public void producerQueryWithResult() {
-        producerQueryWithResult("direct:start", WITH_RESULT_QUERY_BUILDER);
-    }
+        assertTrue(getCache().isEmpty());
 
-    @Test
-    public void producerQueryWithResultAndQueryBuilderFromConfig() {
-        producerQueryWithResult("direct:queryWithResults", null);
+        continuousQuery.assertIsSatisfied();
+        continuousQueryBuilderNoMatch.assertIsSatisfied();
+        continuousQueryBuilderAll.assertIsSatisfied();
     }
 
     // *****************************
@@ -135,10 +134,6 @@ public class InfinispanRemoteQueryProducerTest extends InfinispanRemoteQueryTest
     protected void beforeEach() {
         // cleanup the default test cache before each run
         getCache().clear();
-
-        for (final User user : USERS) {
-            getCache().put(createKey(user), user);
-        }
     }
 
     @Override
@@ -146,32 +141,12 @@ public class InfinispanRemoteQueryProducerTest extends InfinispanRemoteQueryTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .toF("infinispan:%s", getCacheName());
-                from("direct:noQueryResults")
-                        .toF("infinispan:%s?queryBuilder=#noResultQueryBuilder", getCacheName());
-                from("direct:queryWithResults")
-                        .toF("infinispan:%s?queryBuilder=#withResultQueryBuilder", getCacheName());
-            }
-        };
-    }
-
-    private void producerQueryWithResult(String endpoint, final InfinispanQueryBuilder builder) {
-        Exchange request = template.request(endpoint, createQueryProcessor(builder));
-        assertNull(request.getException());
-
-        List<User> queryResult = request.getIn().getBody(List.class);
-        assertNotNull(queryResult);
-        assertEquals(2, queryResult.size());
-        assertTrue(hasUser(queryResult, "nameA", "surnameA"));
-        assertTrue(hasUser(queryResult, "nameA", "surnameB"));
-    }
-
-    private Processor createQueryProcessor(final InfinispanQueryBuilder builder) {
-        return exchange -> {
-            exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY);
-            if (builder != null) {
-                exchange.getIn().setHeader(QUERY_BUILDER, builder);
+                fromF("infinispan:%s?queryBuilder=#continuousQueryBuilder", getCacheName())
+                        .to("mock:continuousQuery");
+                fromF("infinispan:%s?queryBuilder=#continuousQueryBuilderNoMatch", getCacheName())
+                        .to("mock:continuousQueryNoMatch");
+                fromF("infinispan:%s?queryBuilder=#continuousQueryBuilderAll", getCacheName())
+                        .to("mock:continuousQueryAll");
             }
         };
     }
