@@ -48,11 +48,11 @@ import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
+import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import software.amazon.awssdk.utils.IoUtils;
 
 /**
@@ -290,21 +290,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             ArrayList<S3Object> list = new ArrayList<>();
             ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(getConfiguration().getBucketName())
                     .prefix(AWS2S3Utils.determineFileName(getConfiguration().getKeyName())).build();
-            boolean done = false;
-            while (!done) {
-                ListObjectsV2Response listObjResponse = getEndpoint().getS3Client().listObjectsV2(request);
-                for (S3Object content : listObjResponse.contents()) {
-                    list.add(content);
-                }
-
-                if (listObjResponse.nextContinuationToken() == null) {
-                    done = true;
-                }
-
-                request = request.toBuilder()
-                        .continuationToken(listObjResponse.nextContinuationToken())
-                        .build();
-            }
+            ListObjectsV2Iterable listRes = getEndpoint().getS3Client().listObjectsV2Paginator(request);
+            listRes.stream()
+                    .flatMap(r -> r.contents().stream())
+                    .forEach(content -> list.add(content));
             if (list.size() > 0) {
                 list.sort(Comparator.comparing(S3Object::lastModified));
                 int listSize = list.size();
