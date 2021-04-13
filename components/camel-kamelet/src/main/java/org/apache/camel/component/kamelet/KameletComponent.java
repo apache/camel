@@ -51,12 +51,12 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 public class KameletComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(KameletComponent.class);
 
-    // active consumers
-    private final Map<String, KameletConsumer> consumers = new HashMap<>();
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
 
-    // TODO:
-    private final Map<String, Processor> callbacks = new ConcurrentHashMap<>();
+    // active consumers
+    private final Map<String, KameletConsumer> consumers = new HashMap<>();
+    // active kamelet EIPs
+    private final Map<String, Processor> kameletEips = new ConcurrentHashMap<>();
 
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
@@ -77,16 +77,16 @@ public class KameletComponent extends DefaultComponent {
     public KameletComponent() {
     }
 
-    public void pushCallback(String key, Processor callback) {
-        callbacks.put(key, callback);
+    public void addKameletEip(String key, Processor callback) {
+        kameletEips.put(key, callback);
     }
 
-    public Processor popCallback(String key) {
-        return callbacks.remove(key);
+    public Processor removeKameletEip(String key) {
+        return kameletEips.remove(key);
     }
 
-    public Processor getCallback(String key) {
-        return callbacks.get(key);
+    public Processor getKameletEip(String key) {
+        return kameletEips.get(key);
     }
 
     @Override
@@ -327,7 +327,7 @@ public class KameletComponent extends DefaultComponent {
 
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
-        callbacks.clear();
+        kameletEips.clear();
         super.doShutdown();
     }
 

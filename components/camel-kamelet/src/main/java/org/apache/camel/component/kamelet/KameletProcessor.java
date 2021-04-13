@@ -124,7 +124,7 @@ public class KameletProcessor extends AsyncProcessorSupport
         }
         ServiceHelper.buildService(processor, producer);
 
-        component.pushCallback(producer.getKey(), processor);
+        component.addKameletEip(producer.getKey(), processor);
     }
 
     @Override
@@ -146,6 +146,6 @@ public class KameletProcessor extends AsyncProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processor, producer);
 
-        component.popCallback(producer.getKey());
+        component.removeKameletEip(producer.getKey());
     }
 }

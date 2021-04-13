@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +37,6 @@ public class KameletBasicTest extends CamelTestSupport {
     }
 
     @Test
-    @Disabled
     public void canConsumeFromKamelet() {
         assertThat(
                 consumer.receiveBody("kamelet:tick", Integer.class)).isEqualTo(1);

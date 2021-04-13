@@ -24,7 +24,7 @@ import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("Should use Kamelet EIP")
+@Disabled
 public class KameletAggregateTest extends CamelTestSupport {
 
     @Test
@@ -62,6 +62,7 @@ public class KameletAggregateTest extends CamelTestSupport {
                     .end();
 
                 from("direct:start")
+                        // this is not possible, you must use kamelet EIP instead
                         .to("kamelet:my-aggregate?count=5")
                         .to("log:info")
                         .to("mock:result");
