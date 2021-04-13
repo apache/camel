@@ -145,6 +145,11 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
             boolean shouldLog = pooled > 0 || created > 0 || acquired > 0 || released > 0 || discarded > 0;
             if (shouldLog) {
                 String id = getRouteId();
+                if (id == null) {
+                    id = "";
+                } else {
+                    id = " " + id;
+                }
                 String uri = consumer.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
 
@@ -153,10 +158,10 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
                 if (leak) {
                     long leaks = (created + acquired) - (released + discarded);
                     log.warn(
-                            "{} {} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
+                            "{}{} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
                             name, id, uri, leaks, pooled, created, acquired, released, discarded);
                 } else {
-                    log.info("{} {} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
+                    log.info("{}{} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
                             name, id, uri, pooled, created, acquired, released, discarded);
                 }
             }
