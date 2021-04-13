@@ -83,7 +83,6 @@ final class KameletProducer extends DefaultAsyncProducer {
             } else {
                 if (sink) {
                     // need to execute the callback from the waiting
-                    // TODO: non EIP must also park!!!
                     AsyncProcessor parked = (AsyncProcessor) component.getCallback(key);
                     if (parked != null) {
                         return parked.process(exchange, callback);
