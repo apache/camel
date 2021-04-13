@@ -93,8 +93,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @see    #suspendOrStopConsumer(Consumer)
      */
     public void stopConsumer(Consumer consumer) throws Exception {
-        // stop and shutdown
-        ServiceHelper.stopAndShutdownServices(consumer);
+        ServiceHelper.stopService(consumer);
     }
 
     /**
