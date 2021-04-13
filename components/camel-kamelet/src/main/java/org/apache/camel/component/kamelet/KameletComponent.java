@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.model.ModelCamelContext;
@@ -53,6 +55,9 @@ public class KameletComponent extends DefaultComponent {
     private final Map<String, KameletConsumer> consumers = new HashMap<>();
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
 
+    // TODO:
+    private final Map<String, Processor> callbacks = new ConcurrentHashMap<>();
+
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
     // (locking via synchronized, and then lookup in the map as the cost)
@@ -70,6 +75,18 @@ public class KameletComponent extends DefaultComponent {
     private Map<String, Properties> routeProperties;
 
     public KameletComponent() {
+    }
+
+    public void pushCallback(String key, Processor callback) {
+        callbacks.put(key, callback);
+    }
+
+    public Processor popCallback(String key) {
+        return callbacks.remove(key);
+    }
+
+    public Processor getCallback(String key) {
+        return callbacks.get(key);
     }
 
     @Override
@@ -310,6 +327,7 @@ public class KameletComponent extends DefaultComponent {
 
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
+        callbacks.clear();
         super.doShutdown();
     }
 

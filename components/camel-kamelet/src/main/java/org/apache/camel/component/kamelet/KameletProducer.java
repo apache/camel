@@ -17,6 +17,7 @@
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ final class KameletProducer extends DefaultAsyncProducer {
     private final String key;
     private final boolean block;
     private final long timeout;
+    private final boolean sink;
 
     public KameletProducer(KameletEndpoint endpoint, String key) {
         super(endpoint);
@@ -42,6 +44,7 @@ final class KameletProducer extends DefaultAsyncProducer {
         this.key = key;
         this.block = endpoint.isBlock();
         this.timeout = endpoint.getTimeout();
+        this.sink = getEndpoint().getEndpointKey().startsWith("kamelet://sink");
     }
 
     @Override
@@ -73,11 +76,22 @@ final class KameletProducer extends DefaultAsyncProducer {
                     exchange.setException(new KameletConsumerNotAvailableException(
                             "No consumers available on endpoint: " + endpoint, exchange));
                 } else {
-                    LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                    LOG.debug("Exchange ignored, no consumers available on endpoint: {}", endpoint);
                 }
                 callback.done(true);
                 return true;
             } else {
+                if (sink) {
+                    // need to execute the callback from the waiting
+                    // TODO: non EIP must also park!!!
+                    AsyncProcessor parked = (AsyncProcessor) component.getCallback(key);
+                    if (parked != null) {
+                        return parked.process(exchange, callback);
+                    } else {
+                        callback.done(true);
+                        return true;
+                    }
+                }
                 return consumer.getAsyncProcessor().process(exchange, callback);
             }
         } catch (Exception e) {
@@ -85,6 +99,10 @@ final class KameletProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
+    }
+
+    public String getKey() {
+        return key;
     }
 
 }

@@ -124,15 +124,22 @@ public final class Kamelet {
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
             def.setInput(null);
-            def.setInput(new FromDefinition("kamelet:source?" + PARAM_ROUTE_ID + "=" + rid));
+            def.setInput(new FromDefinition("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid));
         }
 
+        // there must be at least one sink
+        boolean sink = false;
         Iterator<ToDefinition> it = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
         while (it.hasNext()) {
             ToDefinition to = it.next();
             if (to.getEndpointUri().startsWith("kamelet:sink") || to.getEndpointUri().startsWith("kamelet://sink")) {
-                to.setUri("kamelet:sink?" + PARAM_ROUTE_ID + "=" + rid);
+                to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+                sink = true;
             }
+        }
+        if (!sink) {
+            ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+            def.getOutputs().add(to);
         }
 
         return def;

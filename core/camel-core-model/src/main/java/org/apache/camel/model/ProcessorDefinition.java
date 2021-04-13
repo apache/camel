@@ -1282,6 +1282,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Creates a Kamelet EIP.
+     * <p/>
+     * This requires having camel-kamelet on the classpath.
+     *
+     * @return the builder
+     */
+    public KameletDefinition kamelet(String name) {
+        KameletDefinition answer = new KameletDefinition();
+        answer.setName(name);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a> Creates a loadbalance
      *
      * @return the builder
