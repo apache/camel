@@ -142,11 +142,12 @@ public class VertxKafkaProducerOperations {
         final Object messageKey = getMessageKey(message);
         final Object messageValue = getMessageValue(message, inputData);
         final Integer partitionId = getPartitionId(message);
+        final Long overrideTimestamp = getOverrideTimestamp(message);
         final List<KafkaHeader> propagatedHeaders
                 = new VertxKafkaHeadersPropagation(configurationOptionsProxy.getConfiguration().getHeaderFilterStrategy())
                         .getPropagatedHeaders(message);
 
-        return KafkaProducerRecord.create(topic, messageKey, messageValue, partitionId)
+        return KafkaProducerRecord.create(topic, messageKey, messageValue, overrideTimestamp, partitionId)
                 .addHeaders(propagatedHeaders);
     }
 
@@ -189,4 +190,17 @@ public class VertxKafkaProducerOperations {
         return VertxKafkaTypeSerializer.tryConvertToSerializedType(message, inputData,
                 configurationOptionsProxy.getValueSerializer(message));
     }
+
+    private Long getOverrideTimestamp(final Message message) {
+
+        Object timeStamp = configurationOptionsProxy.getOverrideTimestamp(message);
+        Long overrideTimestamp = null;
+        if (ObjectHelper.isNotEmpty(timeStamp)) {
+            overrideTimestamp = ((Long) timeStamp).longValue();
+        }
+
+        return overrideTimestamp;
+
+    }
+
 }
