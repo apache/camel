@@ -16,33 +16,28 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.util.function.Supplier;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.infinispan.InfinispanConstants;
-import org.apache.camel.component.infinispan.InfinispanConsumerTestSupport;
+import org.apache.camel.component.infinispan.InfinispanIdempotentRepositoryTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.util.function.Suppliers;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteConsumerTest extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
-    @Test
-    public void consumerReceivedEventNotifications() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(InfinispanConstants.EVENT_TYPE, "CLIENT_CACHE_ENTRY_CREATED");
+public class InfinispanRemoteIdempotentRepositoryIT extends InfinispanRemoteTestSupport
+        implements InfinispanIdempotentRepositoryTestSupport {
 
-        getCache().put(InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.VALUE_ONE);
-        getCache().put(InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.VALUE_TWO);
+    private Supplier<IdempotentRepository> repo = Suppliers.memorize(() -> {
+        InfinispanRemoteIdempotentRepository repo = new InfinispanRemoteIdempotentRepository(getCacheName());
+        repo.setCacheContainer(cacheContainer);
 
-        mock.assertIsSatisfied();
-    }
-
-    // *****************************
-    //
-    // *****************************
+        return repo;
+    });
 
     @BeforeEach
     protected void beforeEach() {
@@ -51,13 +46,13 @@ public class InfinispanRemoteConsumerTest extends InfinispanRemoteTestSupport im
     }
 
     @Override
-    public BasicCache<Object, Object> getCache() {
-        return super.getCache();
+    public IdempotentRepository getIdempotentRepository() {
+        return repo.get();
     }
 
     @Override
-    public BasicCache<Object, Object> getCache(String name) {
-        return super.getCache(name);
+    public BasicCache<Object, Object> getCache() {
+        return super.getCache();
     }
 
     @Override
@@ -66,11 +61,20 @@ public class InfinispanRemoteConsumerTest extends InfinispanRemoteTestSupport im
     }
 
     @Override
+    public BasicCache<Object, Object> getCache(String name) {
+        return super.getCache(name);
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("infinispan:%s?eventTypes=CLIENT_CACHE_ENTRY_CREATED", getCacheName())
+                from("direct:start")
+                        .idempotentConsumer(
+                                header("MessageID"),
+                                getIdempotentRepository())
+                        .skipDuplicate(true)
                         .to("mock:result");
             }
         };

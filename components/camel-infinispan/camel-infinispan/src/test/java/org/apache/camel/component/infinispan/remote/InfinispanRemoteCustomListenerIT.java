@@ -31,7 +31,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteCustomListenerTest extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
+public class InfinispanRemoteCustomListenerIT extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
     @Test
     public void consumerReceivedEventNotifications() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -82,7 +82,7 @@ public class InfinispanRemoteCustomListenerTest extends InfinispanRemoteTestSupp
 
     @BindToRegistry
     public InfinispanRemoteCustomListener myCustomListener() {
-        return new InfinispanRemoteCustomListenerTest.MyRemoteCustomListener();
+        return new InfinispanRemoteCustomListenerIT.MyRemoteCustomListener();
     }
 
     @ClientListener

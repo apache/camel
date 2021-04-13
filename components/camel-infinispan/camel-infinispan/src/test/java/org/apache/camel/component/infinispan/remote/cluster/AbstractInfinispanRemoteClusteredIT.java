@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisabledOnOs(OS.MAC)
-public class AbstractInfinispanRemoteClusteredTest {
+public class AbstractInfinispanRemoteClusteredIT {
     @RegisterExtension
     public static InfinispanService service = InfinispanServiceFactory.createService();
 

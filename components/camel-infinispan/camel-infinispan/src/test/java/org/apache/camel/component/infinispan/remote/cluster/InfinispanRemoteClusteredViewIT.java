@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteClusteredViewTest {
+public class InfinispanRemoteClusteredViewIT {
     @RegisterExtension
     public static InfinispanService service = InfinispanServiceFactory.createService();
 

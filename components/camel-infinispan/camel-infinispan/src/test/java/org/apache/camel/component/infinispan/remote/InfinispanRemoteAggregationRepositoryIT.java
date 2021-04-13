@@ -23,7 +23,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 @DisabledOnOs(OS.MAC)
-public class InfinispanRemoteAggregationRepositoryTest extends InfinispanRemoteTestSupport {
+public class InfinispanRemoteAggregationRepositoryIT extends InfinispanRemoteTestSupport {
     public static final int COMPLETION_SIZE = 4;
     public static final String CORRELATOR_HEADER = "CORRELATOR_HEADER";
 
