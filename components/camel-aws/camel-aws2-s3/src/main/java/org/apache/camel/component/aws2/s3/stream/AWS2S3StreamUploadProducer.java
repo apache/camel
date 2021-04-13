@@ -306,9 +306,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         .build();
             }
             if (list.size() > 0) {
-                list.sort(Comparator.comparing(S3Object::lastModified));
-                int listSize = list.size();
-                String fileName = AWS2S3Utils.determineFileName(list.get(listSize - 1).key());
+                list.sort(Comparator.comparing(S3Object::key));
+                String fileName = AWS2S3Utils.determineFileName(list.get(0).key());
                 int position = fileName.lastIndexOf("-");
                 if (position != -1) {
                     String partString = fileName.substring(position + 1);
