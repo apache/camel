@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.kafka.KafkaComponent;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -31,13 +33,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
+public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
     @RegisterExtension
     public static KafkaService service = KafkaServiceFactory.createService();
 
     protected static AdminClient kafkaAdminClient;
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTestSupport.class);
 
     @BeforeAll
     public static void beforeClass() {

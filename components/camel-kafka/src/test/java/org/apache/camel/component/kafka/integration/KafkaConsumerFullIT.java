@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.component.kafka.integration;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -26,6 +26,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.KafkaEndpoint;
+import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -40,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
+public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test";
 
