@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.jpa;
 
-import javax.persistence.EntityManager;
+import java.util.HashMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
@@ -39,8 +39,8 @@ public class JpaRouteTest extends AbstractJpaTest {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header(JpaConstants.ENTITY_MANAGER).isNotNull();
-        mock.message(0).header(JpaConstants.ENTITY_MANAGER).isInstanceOf(EntityManager.class);
+        mock.message(0).exchangeProperty(JpaConstants.ENTITY_MANAGER).isNotNull();
+        mock.message(0).exchangeProperty(JpaConstants.ENTITY_MANAGER).isInstanceOf(HashMap.class);
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 
