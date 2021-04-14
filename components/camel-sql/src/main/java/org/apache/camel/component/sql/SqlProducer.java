@@ -43,6 +43,8 @@ public class SqlProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlProducer.class);
 
+    private static final Object EMPTY_RESULT = new Object();
+
     private final String query;
     private String resolvedQuery;
     private final JdbcTemplate jdbcTemplate;
@@ -134,8 +136,8 @@ public class SqlProducer extends DefaultProducer {
             exchange.getOut().setBody(exchange.getIn().getBody());
         }
         if (getEndpoint().getOutputHeader() != null) {
-            exchange.getOut().setHeader(getEndpoint().getOutputHeader(), data);
-        } else if (data != null && !getEndpoint().isNoop()) {
+            exchange.getOut().setHeader(getEndpoint().getOutputHeader(), data == EMPTY_RESULT ? null : data);
+        } else if (data != null && data != EMPTY_RESULT && !getEndpoint().isNoop()) {
             exchange.getOut().setBody(data);
         }
     }
@@ -175,6 +177,9 @@ public class SqlProducer extends DefaultProducer {
                                 data = getEndpoint().queryForObject(rs);
                                 if (data != null) {
                                     rowCount = 1;
+                                } else {
+                                    // need to mark special when no data
+                                    data = EMPTY_RESULT;
                                 }
                             } else {
                                 throw new IllegalArgumentException("Invalid outputType=" + outputType);
