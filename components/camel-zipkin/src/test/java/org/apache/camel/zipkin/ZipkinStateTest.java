@@ -53,15 +53,41 @@ public class ZipkinStateTest {
         exchange2.getIn().setHeader(ZipkinConstants.PARENT_SPAN_ID, context.spanIdString());
         exchange2.getIn().setHeader(ZipkinConstants.SPAN_ID, span2.context().spanIdString());
 
-        Span retrived = state.findMatchingServerSpan(exchange2);
+        Span retrived = state.peekServerSpan();
         assertThat(retrived.context().spanId()).isEqualTo(span2.context().spanId());
         assertThat(retrived.context().parentId()).isEqualTo(span2.context().parentId());
         assertThat(retrived.context().traceId()).isEqualTo(span2.context().traceId());
 
-        retrived = state.findMatchingServerSpan(exchange1);
+        state.popServerSpan();
+
+        retrived = state.peekServerSpan();
         assertThat(retrived.context().spanId()).isEqualTo(span1.context().spanId());
         assertThat(retrived.context().parentId()).isEqualTo(span1.context().parentId());
         assertThat(retrived.context().traceId()).isEqualTo(span1.context().traceId());
+
+    }
+
+    @Test
+    public void testZipkinStateSafeCopy() {
+        TraceContext context = TraceContext.newBuilder().traceId(1L).spanId(2L).parentId(3L).build();
+        TraceContextOrSamplingFlags sampling = TraceContextOrSamplingFlags.newBuilder(context).build();
+        Tracing tracing = Tracing.newBuilder().build();
+
+        Span span1 = tracing.tracer().nextSpan(sampling);
+        state.pushServerSpan(span1);
+
+        Span span2 = tracing.tracer().nextSpan(sampling);
+        state.pushServerSpan(span2);
+
+        Span span3 = tracing.tracer().nextSpan(sampling);
+        ZipkinState state2 = state.safeCopy();
+        state2.pushServerSpan(span3);
+
+        //original object intact
+        assertThat(state.peekServerSpan().context()).isNotEqualTo(span3.context()).usingRecursiveComparison();
+
+        //new object has the new span
+        assertThat(state2.peekServerSpan().context()).isEqualTo(span3.context()).usingRecursiveComparison();
 
     }
 

@@ -189,7 +189,15 @@ class AbstractExchange implements ExtendedExchange {
 
     @SuppressWarnings("unchecked")
     private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
-        target.putAll(source);
+        source.entrySet().stream().forEach(entry -> {
+            if (entry.getValue() != null && entry.getValue() instanceof CamelCopySafeProperty) {
+                //create deep copy of the object to avoid mutations by different threads/routes
+                Object copy = ((CamelCopySafeProperty<?>) entry.getValue()).safeCopy();
+                target.put(entry.getKey(), copy);
+            } else {
+                target.put(entry.getKey(), entry.getValue());
+            }
+        });
     }
 
     @Override
@@ -250,6 +258,7 @@ class AbstractExchange implements ExtendedExchange {
         internalProperties[key.ordinal()] = value;
     }
 
+    @Override
     public Object removeProperty(ExchangePropertyKey key) {
         Object old = internalProperties[key.ordinal()];
         internalProperties[key.ordinal()] = null;
@@ -809,6 +818,7 @@ class AbstractExchange implements ExtendedExchange {
         this.redeliveryExhausted = redeliveryExhausted;
     }
 
+    @Override
     public Boolean getErrorHandlerHandled() {
         return errorHandlerHandled;
     }
