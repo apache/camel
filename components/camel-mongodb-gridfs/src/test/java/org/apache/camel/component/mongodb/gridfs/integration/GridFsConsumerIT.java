@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb.gridfs;
+package org.apache.camel.component.mongodb.gridfs.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.mongodb.gridfs.GridFsEndpoint;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GridFsConsumerTest extends AbstractMongoDbTest {
+public class GridFsConsumerIT extends AbstractMongoDbITSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
