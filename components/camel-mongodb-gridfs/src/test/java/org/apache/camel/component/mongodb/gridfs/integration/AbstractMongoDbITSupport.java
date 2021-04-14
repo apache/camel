@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb.gridfs;
+package org.apache.camel.component.mongodb.gridfs.integration;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -27,7 +27,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class AbstractMongoDbTest extends CamelTestSupport {
+public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
     @RegisterExtension
     public static MongoDBService service = MongoDBServiceFactory.createService();
 
