@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nsq;
+package org.apache.camel.component.nsq.integration;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -24,11 +24,12 @@ import com.github.brainlag.nsq.NSQConsumer;
 import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
 import com.github.brainlag.nsq.lookup.NSQLookup;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.nsq.NsqComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NsqProducerTest extends NsqTestSupport {
+public class NsqProducerIT extends NsqITSupport {
 
     private static final int NUMBER_OF_MESSAGES = 10000;
     private static final String TEST_MESSAGE = "Hello NSQProducer!";
