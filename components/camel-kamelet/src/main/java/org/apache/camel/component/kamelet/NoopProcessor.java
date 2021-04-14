@@ -16,24 +16,16 @@
  */
 package org.apache.camel.component.kamelet;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.model.KameletDefinition;
-import org.apache.camel.reifier.ProcessorReifier;
 
-public class KameletReifier extends ProcessorReifier<KameletDefinition> {
-
-    public KameletReifier(Route route, KameletDefinition definition) {
-        super(route, definition);
-    }
+/**
+ * A noop processor that does nothing.
+ */
+public class NoopProcessor implements Processor {
 
     @Override
-    public Processor createProcessor() throws Exception {
-        Processor processor = createChildProcessor(false);
-        if (processor == null) {
-            // use an empty noop processor, as there should be a single processor
-            processor = new NoopProcessor();
-        }
-        return new KameletProcessor(camelContext, parseString(definition.getName()), processor);
+    public void process(Exchange exchange) throws Exception {
+        // noop
     }
 }
