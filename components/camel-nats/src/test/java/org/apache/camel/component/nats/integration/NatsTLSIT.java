@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -26,7 +26,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 
-public class NatsTLSTest extends NatsTLSAuthTestSupport {
+public class NatsTLSIT extends NatsTLSAuthITSupport {
 
     @BindToRegistry("ssl")
     SSLContextParameters ssl = createSSLContextParameters();

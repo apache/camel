@@ -14,16 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
+import java.io.IOException;
+
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsAuthProducerTest extends NatsAuthTestSupport {
+public class NatsConsumerMaxMessagesQueueIT extends NatsITSupport {
+
+    @EndpointInject("mock:result")
+    protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void sendTest() throws Exception {
-        template.sendBody("direct:send", "pippo");
+    public void testMaxConsumer() throws InterruptedException, IOException {
+        mockResultEndpoint.setExpectedMessageCount(2);
+
+        template.sendBody("direct:send", "test");
+        template.sendBody("direct:send", "test1");
+
+        mockResultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -32,6 +44,10 @@ public class NatsAuthProducerTest extends NatsAuthTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:send").to("nats:test");
+
+                from("nats:test?maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);
+
+                from("nats:test?maxMessages=6&queueName=test").routeId("cons2").to(mockResultEndpoint);
             }
         };
     }

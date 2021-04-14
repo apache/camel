@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
 import io.nats.client.Connection;
 import io.nats.client.Nats;
@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
+public class NatsConsumerWithConnectionLoadIT extends NatsITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;

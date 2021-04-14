@@ -14,36 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
-import java.io.IOException;
-
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsConsumerMaxMessagesTest extends NatsTestSupport {
-
-    @EndpointInject("mock:result")
-    protected MockEndpoint mockResultEndpoint;
+public class NatsProducerIT extends NatsITSupport {
 
     @Test
-    public void testMaxConsumer() throws InterruptedException, IOException {
-        mockResultEndpoint.setExpectedMessageCount(5);
-        template.sendBody("direct:send", "test");
-        template.sendBody("direct:send", "test1");
-        template.sendBody("direct:send", "test2");
-        template.sendBody("direct:send", "test3");
-        template.sendBody("direct:send", "test4");
-        template.sendBody("direct:send", "test5");
-        template.sendBody("direct:send", "test6");
-        template.sendBody("direct:send", "test7");
-        template.sendBody("direct:send", "test8");
-        template.sendBody("direct:send", "test9");
-        template.sendBody("direct:send", "test10");
-
-        mockResultEndpoint.assertIsSatisfied();
+    public void sendTest() throws Exception {
+        template.sendBody("direct:send", "pippo");
     }
 
     @Override
@@ -52,8 +32,6 @@ public class NatsConsumerMaxMessagesTest extends NatsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:send").to("nats:test");
-
-                from("nats:test?maxMessages=5").to(mockResultEndpoint);
             }
         };
     }

@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
-
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
+package org.apache.camel.component.nats.integration;
 
 import io.nats.client.Connection;
 import io.nats.client.Nats;
@@ -27,18 +24,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsAuthTokenConsumerLoadTest extends NatsAuthTokenTestSupport {
+public class NatsConsumerLoadIT extends NatsITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
-        mockResultEndpoint.setExpectedMessageCount(100);
+    public void testLoadConsumer() throws Exception {
+        mockResultEndpoint.setExpectedMessageCount(10000);
         Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         Connection connection = Nats.connect(options);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             connection.publish("test", ("test" + i).getBytes());
         }
 

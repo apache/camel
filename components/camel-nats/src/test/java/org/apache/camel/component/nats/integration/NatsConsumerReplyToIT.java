@@ -14,32 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
-import io.nats.client.Connection;
-import io.nats.client.Nats;
-import io.nats.client.Options;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.nats.NatsConstants;
 import org.junit.jupiter.api.Test;
 
-public class NatsConsumerLoadTest extends NatsTestSupport {
+public class NatsConsumerReplyToIT extends NatsITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
-    @Test
-    public void testLoadConsumer() throws Exception {
-        mockResultEndpoint.setExpectedMessageCount(10000);
-        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
-        Connection connection = Nats.connect(options);
+    @EndpointInject("mock:reply")
+    protected MockEndpoint mockReplyEndpoint;
 
-        for (int i = 0; i < 10000; i++) {
-            connection.publish("test", ("test" + i).getBytes());
-        }
+    @Test
+    public void testReplyTo() throws Exception {
+        mockResultEndpoint.expectedBodiesReceived("World");
+        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
+        mockReplyEndpoint.expectedBodiesReceived("Bye World");
+        mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "myReplyQueue");
+
+        template.sendBody("direct:send", "World");
 
         mockResultEndpoint.assertIsSatisfied();
+        mockReplyEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -47,9 +48,17 @@ public class NatsConsumerLoadTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("nats:test").to(mockResultEndpoint);
+                from("direct:send")
+                        .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
+
+                from("nats:test?flushConnection=true")
+                        .to(mockResultEndpoint)
+                        .convertBodyTo(String.class)
+                        .setBody().simple("Bye ${body}");
+
+                from("nats:myReplyQueue")
+                        .to("mock:reply");
             }
         };
     }
-
 }

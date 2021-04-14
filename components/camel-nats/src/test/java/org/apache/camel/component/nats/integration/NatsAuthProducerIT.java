@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.nats.services.NatsLocalContainerAuthTokenService;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
-public class NatsAuthTokenTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NatsLocalContainerAuthTokenService service = new NatsLocalContainerAuthTokenService();
+public class NatsAuthProducerIT extends NatsAuthITSupport {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(service.getServiceAddress());
-        return context;
+    @Test
+    public void sendTest() throws Exception {
+        template.sendBody("direct:send", "pippo");
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:send").to("nats:test");
+            }
+        };
+    }
 }

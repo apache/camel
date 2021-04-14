@@ -14,16 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.nats.NatsConstants;
 import org.junit.jupiter.api.Test;
 
-public class NatsProducerTest extends NatsTestSupport {
+public class NatsConsumerIT extends NatsITSupport {
+
+    @EndpointInject("mock:result")
+    protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void sendTest() throws Exception {
-        template.sendBody("direct:send", "pippo");
+    public void testConsumer() throws Exception {
+        mockResultEndpoint.expectedBodiesReceived("Hello World");
+        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
+
+        template.sendBody("direct:send", "Hello World");
+
+        mockResultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -31,7 +42,9 @@ public class NatsProducerTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats:test");
+                from("direct:send").to("nats:test?flushConnection=true");
+
+                from("nats:test?flushConnection=true").to(mockResultEndpoint);
             }
         };
     }
