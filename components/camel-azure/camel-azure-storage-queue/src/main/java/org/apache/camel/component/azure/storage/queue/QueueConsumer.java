@@ -44,11 +44,17 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueueConsumer.class);
 
-    private final QueueClientWrapper clientWrapper;
-    private final QueueOperations queueOperations;
+    private QueueClientWrapper clientWrapper;
+    private QueueOperations queueOperations;
 
     public QueueConsumer(final QueueEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
+
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         clientWrapper = new QueueClientWrapper(getServiceClient().getQueueClient(getConfiguration().getQueueName()));
         queueOperations = new QueueOperations(getConfiguration(), clientWrapper);
