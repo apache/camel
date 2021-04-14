@@ -84,6 +84,7 @@ class AbstractExchange implements ExtendedExchange {
     boolean redeliveryExhausted;
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
+    boolean safeCopyProperties;
 
     public AbstractExchange(CamelContext context) {
         this.context = context;
@@ -189,15 +190,19 @@ class AbstractExchange implements ExtendedExchange {
 
     @SuppressWarnings("unchecked")
     private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
-        source.entrySet().stream().forEach(entry -> {
-            if (entry.getValue() != null && entry.getValue() instanceof CamelCopySafeProperty) {
-                //create deep copy of the object to avoid mutations by different threads/routes
-                Object copy = ((CamelCopySafeProperty<?>) entry.getValue()).safeCopy();
-                target.put(entry.getKey(), copy);
-            } else {
-                target.put(entry.getKey(), entry.getValue());
-            }
-        });
+        if (!safeCopyProperties) {
+            target.putAll(source);
+        } else {
+            source.entrySet().stream().forEach(entry -> {
+                if (entry.getValue() != null && entry.getValue() instanceof CamelCopySafeProperty) {
+                    //create deep copy of the object to avoid mutations by different threads/routes
+                    Object copy = ((CamelCopySafeProperty<?>) entry.getValue()).safeCopy();
+                    target.put(entry.getKey(), copy);
+                } else {
+                    target.put(entry.getKey(), entry.getValue());
+                }
+            });
+        }
     }
 
     @Override
@@ -894,6 +899,11 @@ class AbstractExchange implements ExtendedExchange {
         } else {
             return "Exchange[]";
         }
+    }
+
+    @Override
+    public void setSafeCopyProperties(boolean safeCopyProperties) {
+        this.safeCopyProperties = safeCopyProperties;
     }
 
 }

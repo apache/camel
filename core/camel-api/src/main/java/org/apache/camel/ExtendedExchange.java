@@ -204,4 +204,10 @@ public interface ExtendedExchange extends Exchange {
      */
     void setDefaultConsumerCallback(AsyncCallback callback);
 
+    /**
+     * Used to signal that this exchange will try to create a copy of the property value object
+     *
+     * @param safeCopyProperties
+     */
+    void setSafeCopyProperties(boolean safeCopyProperties);
 }

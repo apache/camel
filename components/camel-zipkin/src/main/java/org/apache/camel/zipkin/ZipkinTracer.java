@@ -40,6 +40,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -47,6 +48,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.RoutePolicy;
@@ -787,6 +789,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 if (brave != null) {
                     clientResponse(brave, serviceName, ese);
                 }
+            } else if (event instanceof ExchangeCreatedEvent) {
+                ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
+                ExtendedExchange exchange = ece.getExchange().adapt(ExtendedExchange.class);
+                exchange.setSafeCopyProperties(true);
             }
         }
 
