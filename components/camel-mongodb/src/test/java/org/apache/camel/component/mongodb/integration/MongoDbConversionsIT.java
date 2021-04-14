@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MongoDbConversionsTest extends AbstractMongoDbTest {
+public class MongoDbConversionsIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testInsertMap() throws InterruptedException {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.Formatter;
 import java.util.HashMap;
@@ -29,6 +29,8 @@ import com.mongodb.client.model.Projections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbComponent;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerService;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -49,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbFindOperationTest extends CamelTestSupport {
+public class MongoDbFindOperationIT extends CamelTestSupport {
 
     @RegisterExtension
     public static MongoDBLocalContainerService service;

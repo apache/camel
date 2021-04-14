@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.Map;
 import com.mongodb.client.MongoIterable;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
+public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testFindAllDBCursor() {

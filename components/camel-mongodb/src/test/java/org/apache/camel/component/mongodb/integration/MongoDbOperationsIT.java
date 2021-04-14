@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -28,6 +28,8 @@ import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.component.mongodb.MongoDbOperation;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -48,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbOperationsTest extends AbstractMongoDbTest {
+public class MongoDbOperationsIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testCountOperation() throws Exception {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.Calendar;
 
@@ -23,6 +23,7 @@ import com.mongodb.client.model.CreateCollectionOptions;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.mongodb.MongoDbTailTrackingConfig;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
+public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport {
 
     private MongoCollection<Document> cappedTestCollection;
     private String cappedTestCollectionName;
@@ -138,7 +139,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
                     // messages and otherwise the test would be sluggish
                     if (i % 1000 == 0) {
                         try {
-                            MongoDbTailableCursorConsumerTest.this.assertAndResetMockEndpoint(mock);
+                            MongoDbTailableCursorConsumerIT.this.assertAndResetMockEndpoint(mock);
                         } catch (Exception e) {
                             return;
                         }

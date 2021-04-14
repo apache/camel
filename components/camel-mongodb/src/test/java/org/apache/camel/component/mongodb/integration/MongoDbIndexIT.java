@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Disabled;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbIndexTest extends AbstractMongoDbTest {
+public class MongoDbIndexIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testInsertDynamicityEnabledDBAndCollectionAndIndex() {

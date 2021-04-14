@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +23,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
-public class MongoDbSpringDslOperationsTest extends MongoDbOperationsTest {
+public class MongoDbSpringDslOperationsIT extends MongoDbOperationsIT {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

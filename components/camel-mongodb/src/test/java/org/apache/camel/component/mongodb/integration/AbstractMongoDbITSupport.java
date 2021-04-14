@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.Formatter;
 
@@ -24,6 +24,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.component.mongodb.CamelMongoDbException;
+import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.mongodb.services.MongoDBService;
 import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
@@ -37,7 +39,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class AbstractMongoDbTest extends CamelTestSupport {
+public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
 
     @RegisterExtension
     public static MongoDBService service = MongoDBServiceFactory.createService();

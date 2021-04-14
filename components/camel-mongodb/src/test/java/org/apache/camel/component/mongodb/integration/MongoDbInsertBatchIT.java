@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +22,13 @@ import java.util.List;
 import com.mongodb.BasicDBObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MongoDbInsertBatchTest extends AbstractMongoDbTest {
+public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testInsertBatch() {

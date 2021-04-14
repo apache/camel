@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.math.BigDecimal;
 
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbBigDecimalConverterTest extends AbstractMongoDbTest {
+public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport {
 
     private class NumberClass {
         // CHECKSTYLE:OFF
