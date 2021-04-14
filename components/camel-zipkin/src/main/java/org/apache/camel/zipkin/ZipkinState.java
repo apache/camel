@@ -18,6 +18,7 @@ package org.apache.camel.zipkin;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import brave.Span;
 import org.apache.camel.Exchange;
@@ -33,8 +34,8 @@ public final class ZipkinState implements CamelCopySafeProperty<ZipkinState> {
 
     public static final String KEY = "CamelZipkinState";
 
-    private final Deque<Span> clientSpans = new ArrayDeque<>();
-    private final Deque<Span> serverSpans = new ArrayDeque<>();
+    private final Deque<Span> clientSpans = new ConcurrentLinkedDeque<>();
+    private final Deque<Span> serverSpans = new ConcurrentLinkedDeque<>();
 
     public ZipkinState() {
 
@@ -45,11 +46,11 @@ public final class ZipkinState implements CamelCopySafeProperty<ZipkinState> {
         this.serverSpans.addAll(state.serverSpans);
     }
 
-    public synchronized void pushClientSpan(Span span) {
+    public void pushClientSpan(Span span) {
         clientSpans.push(span);
     }
 
-    public synchronized Span popClientSpan() {
+    public Span popClientSpan() {
         if (!clientSpans.isEmpty()) {
             return clientSpans.pop();
         } else {
@@ -57,11 +58,11 @@ public final class ZipkinState implements CamelCopySafeProperty<ZipkinState> {
         }
     }
 
-    public synchronized void pushServerSpan(Span span) {
+    public void pushServerSpan(Span span) {
         serverSpans.push(span);
     }
 
-    public synchronized Span popServerSpan() {
+    public Span popServerSpan() {
         if (!serverSpans.isEmpty()) {
             return serverSpans.pop();
         } else {
@@ -69,7 +70,7 @@ public final class ZipkinState implements CamelCopySafeProperty<ZipkinState> {
         }
     }
 
-    public synchronized Span peekServerSpan() {
+    public Span peekServerSpan() {
         if (!serverSpans.isEmpty()) {
             return serverSpans.peek();
         } else {
