@@ -171,7 +171,15 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @SuppressWarnings("unchecked")
     private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
-        target.putAll(source);
+        source.entrySet().stream().forEach(entry -> {
+            if (entry.getValue() != null && entry.getValue() instanceof CamelCopySafeProperty) {
+                //create deep copy of the object to avoid mutations by different threads/routes
+                Object copy = ((CamelCopySafeProperty<?>) entry.getValue()).safeCopy();
+                target.put(entry.getKey(), copy);
+            } else {
+                target.put(entry.getKey(), entry.getValue());
+            }
+        });
         if (getContext().isMessageHistory()) {
             // safe copy message history using a defensive copy
             List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
@@ -681,6 +689,7 @@ public final class DefaultExchange implements ExtendedExchange {
         this.redeliveryExhausted = redeliveryExhausted;
     }
 
+    @Override
     public Boolean getErrorHandlerHandled() {
         return errorHandlerHandled;
     }

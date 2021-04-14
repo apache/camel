@@ -593,7 +593,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
         // if we started from a server span then lets reuse that when we call a
         // downstream service
-        Span last = state.findMatchingServerSpan(event.getExchange());
+        Span last = state.peekServerSpan();
         Span span;
         if (last != null) {
             span = brave.tracer().newChild(last.context());

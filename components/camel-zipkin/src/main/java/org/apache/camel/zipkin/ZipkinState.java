@@ -18,11 +18,10 @@ package org.apache.camel.zipkin;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 
 import brave.Span;
-import brave.propagation.TraceContextOrSamplingFlags;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.CamelCopySafeProperty;
 
 /**
  * The state of the zipkin trace which we store on the {@link Exchange}
@@ -30,12 +29,21 @@ import org.apache.camel.Exchange;
  * This is needed to keep track of of correlating when an existing span is calling downstream service(s) and therefore
  * must be able to correlate those service calls with the parent span.
  */
-public final class ZipkinState {
+public final class ZipkinState implements CamelCopySafeProperty<ZipkinState> {
 
     public static final String KEY = "CamelZipkinState";
 
     private final Deque<Span> clientSpans = new ArrayDeque<>();
     private final Deque<Span> serverSpans = new ArrayDeque<>();
+
+    public ZipkinState() {
+
+    }
+
+    private ZipkinState(ZipkinState state) {
+        this.clientSpans.addAll(state.clientSpans);
+        this.serverSpans.addAll(state.serverSpans);
+    }
 
     public synchronized void pushClientSpan(Span span) {
         clientSpans.push(span);
@@ -61,7 +69,7 @@ public final class ZipkinState {
         }
     }
 
-    private Span peekServerSpan() {
+    public synchronized Span peekServerSpan() {
         if (!serverSpans.isEmpty()) {
             return serverSpans.peek();
         } else {
@@ -69,26 +77,9 @@ public final class ZipkinState {
         }
     }
 
-    public synchronized Span findMatchingServerSpan(Exchange exchange) {
-        String spanId = (String) exchange.getIn().getHeader(ZipkinConstants.SPAN_ID);
-        Span lastSpan = peekServerSpan();
-        if (spanId == null) {
-            return lastSpan;
-        }
-        TraceContextOrSamplingFlags traceContext
-                = ZipkinTracer.EXTRACTOR.extract(new CamelRequest(exchange.getIn(), Span.Kind.SERVER));
-        if (traceContext.context().spanId() == lastSpan.context().spanId()) {
-            return lastSpan;
-        }
-
-        Iterator<Span> spanItr = serverSpans.iterator();
-        while (spanItr.hasNext()) {
-            Span span = spanItr.next();
-            if (span.context().spanId() == traceContext.context().spanId()) {
-                return span;
-            }
-        }
-        return lastSpan;
+    @Override
+    public ZipkinState safeCopy() {
+        return new ZipkinState(this);
     }
 
 }
