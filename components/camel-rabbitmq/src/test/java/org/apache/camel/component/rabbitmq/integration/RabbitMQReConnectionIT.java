@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.AlreadyClosedException;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
@@ -43,7 +42,7 @@ import org.junit.jupiter.api.Test;
  * <li>Kill all connections from the broker: the producer sends messages, and the consumer receives messages</li>
  * </ul>
  */
-public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQReConnectionIT extends AbstractRabbitMQIT {
     private static final String EXCHANGE = "ex3";
 
     @Produce("direct:rabbitMQ")

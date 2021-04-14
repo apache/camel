@@ -14,25 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
+package org.apache.camel.component.rabbitmq.integration.qpid;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQRequeueUnhandledExceptionIT;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQProducerIntTest;
-import org.junit.jupiter.api.Disabled;
+@EnabledIfSystemProperty(named = "rabbitmq.instance.type", matches = "qpid")
+public class RabbitMQRequeueUnhandledExceptionQpidIT extends RabbitMQRequeueUnhandledExceptionIT {
 
-public class RabbitMQProducerQpidTest extends RabbitMQProducerIntTest {
-
-    @Disabled
-    @Override
-    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed()
-            throws InterruptedException, IOException, TimeoutException {
-    }
-
-    @Disabled
-    @Override
-    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory()
-            throws InterruptedException, IOException, TimeoutException {
-    }
 }

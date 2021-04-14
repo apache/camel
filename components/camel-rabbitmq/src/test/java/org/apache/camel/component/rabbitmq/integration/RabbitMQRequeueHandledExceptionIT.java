@@ -27,9 +27,9 @@ import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 /**
- * Integration test to confirm REQUEUE header causes message to be re-queued when an unhandled exception occurs.
+ * Integration test to confirm REQUEUE header causes message not to be re-queued when an handled exception occurs.
  */
-public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQRequeueHandledExceptionIT extends AbstractRabbitMQIT {
     public static final String ROUTING_KEY = "rk4";
 
     @Produce("direct:rabbitMQ")
@@ -44,6 +44,7 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         ConnectionProperties connectionProperties = service.connectionProperties();
+
         String rabbitMQEndpoint
                 = String.format("rabbitmq:localhost:%d/ex4?username=%s&password=%s&autoAck=false&queue=q4&routingKey=%s",
                         connectionProperties.port(), connectionProperties.username(), connectionProperties.password(),
@@ -53,21 +54,20 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
 
             @Override
             public void configure() throws Exception {
-                from("direct:rabbitMQ").id("producingRoute").log("Sending message")
-                        .to(ExchangePattern.InOnly, rabbitMQEndpoint)
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message").to(ExchangePattern.InOnly, rabbitMQEndpoint)
                         .to(producingMockEndpoint);
 
-                from(rabbitMQEndpoint).onException(Exception.class).handled(false).end().id("consumingRoute")
+                from(rabbitMQEndpoint).onException(Exception.class).handled(true).end().id("consumingRoute")
                         .log("Receiving message").to(ExchangePattern.InOnly, consumingMockEndpoint)
-                        .throwException(new Exception("Simulated unhandled exception"));
+                        .throwException(new Exception("Simulated handled exception"));
             }
         };
     }
 
     @Test
-    public void testTrueRequeueHeaderWithUnandleExceptionCausesRequeue() throws Exception {
+    public void testTrueRequeueHeaderWithHandleExceptionNotCausesRequeue() throws Exception {
         producingMockEndpoint.expectedMessageCount(1);
-        consumingMockEndpoint.setMinimumExpectedMessageCount(2);
+        consumingMockEndpoint.setMinimumExpectedMessageCount(1);
 
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
 

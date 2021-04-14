@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
-public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
     private static final String EXCHANGE = "ex6";
 
     @EndpointInject("mock:result")

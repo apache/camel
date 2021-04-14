@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQDeadLetterArgsIT extends AbstractRabbitMQIT {
     private static final String QUEUE = "queue";
     private static final String DLQ = QUEUE + "_dlq";
     private static final String QUEUE_SKIP_DECLARE = "queue_skip_declare";

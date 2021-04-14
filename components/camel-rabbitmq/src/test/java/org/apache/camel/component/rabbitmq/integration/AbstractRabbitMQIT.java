@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
+public abstract class AbstractRabbitMQIT extends CamelTestSupport {
     // Note: this is using the RabbitMQService from this module so that we can also run
     // tests using the embedded QPid broker.
     @RegisterExtension

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * Integration test to check if temporary queue's name change is properly handled after auto recovering caused by
  * connection failure. This test takes advantage of RabbitMQ Management HTTP API provided by RabbitMQ Management Plugin.
  */
-public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQTemporaryQueueAutoRecoveryIT extends AbstractRabbitMQIT {
 
     private static final String EXCHANGE = "ex_temp-queue-test";
     private static final String QUEUE = "q_temp-queue-test";

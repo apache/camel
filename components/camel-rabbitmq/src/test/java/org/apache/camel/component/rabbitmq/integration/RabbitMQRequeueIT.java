@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Integration test to confirm REQUEUE header causes message to be re-queued instead of sent to DLQ.
  */
-public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQRequeueIT extends AbstractRabbitMQIT {
     public static final String ROUTING_KEY = "rk4";
     public static final String DEAD_LETTER_QUEUE_NAME = "dlq";
 
