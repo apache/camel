@@ -62,6 +62,9 @@
           "intercept-send-to-endpoint" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
           },
+          "kamelet" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.KameletDefinition"
+          },
           "load-balance" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.LoadBalanceDefinition"
           },
@@ -1031,6 +1034,24 @@
           }
         } ],
         "required" : [ "uri" ]
+      },
+      "org.apache.camel.model.KameletDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "inherit-error-handler" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          }
+        },
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.LoadBalanceDefinition" : {
         "type" : "object",

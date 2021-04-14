@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.model.ModelCamelContext;
@@ -49,9 +51,12 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 public class KameletComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(KameletComponent.class);
 
+    private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
+
     // active consumers
     private final Map<String, KameletConsumer> consumers = new HashMap<>();
-    private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
+    // active kamelet EIPs
+    private final Map<String, Processor> kameletEips = new ConcurrentHashMap<>();
 
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
@@ -70,6 +75,18 @@ public class KameletComponent extends DefaultComponent {
     private Map<String, Properties> routeProperties;
 
     public KameletComponent() {
+    }
+
+    public void addKameletEip(String key, Processor callback) {
+        kameletEips.put(key, callback);
+    }
+
+    public Processor removeKameletEip(String key) {
+        return kameletEips.remove(key);
+    }
+
+    public Processor getKameletEip(String key) {
+        return kameletEips.get(key);
     }
 
     @Override
@@ -310,6 +327,7 @@ public class KameletComponent extends DefaultComponent {
 
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
+        kameletEips.clear();
         super.doShutdown();
     }
 

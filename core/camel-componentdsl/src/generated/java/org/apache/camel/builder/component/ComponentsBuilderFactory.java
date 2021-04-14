@@ -2525,8 +2525,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Kamelet (camel-kamelet)
-     * The Kamelet Component provides support for interacting with the Camel
-     * Route Template engine
+     * To call Kamelets
      * 
      * Category: core
      * Since: 3.8

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.util.UUID;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,39 +24,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KameletBasicTest extends CamelTestSupport {
-
-    @Test
-    public void canProduceToKamelet() {
-        String body = UUID.randomUUID().toString();
-
-        assertThat(
-                fluentTemplate.toF("kamelet:setBody/test?bodyValue=%s", body).request(String.class)).isEqualTo(body);
-    }
+public class KameletConsumeOnlyTest extends CamelTestSupport {
 
     @Test
     public void canConsumeFromKamelet() {
         assertThat(
                 consumer.receiveBody("kamelet:tick", Integer.class)).isEqualTo(1);
-    }
-
-    @Test
-    public void kameletCanBeCreatedWhileContextIsStarting() {
-        assertThat(
-                fluentTemplate.to("direct:templateEmbedded").request(String.class)).isEqualTo("embedded");
-    }
-
-    @Test
-    public void kameletCanBeCreatedAfterContextIsStarted() throws Exception {
-        String body = UUID.randomUUID().toString();
-
-        RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:templateAfter")
-                    .toF("kamelet:setBody/test?bodyValue=%s", body);
-        });
-
-        assertThat(
-                fluentTemplate.to("direct:templateAfter").request(String.class)).isEqualTo(body);
     }
 
     // **********************************************
@@ -72,18 +43,10 @@ public class KameletBasicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                routeTemplate("setBody")
-                        .templateParameter("bodyValue")
-                        .from("kamelet:source")
-                        .setBody().constant("{{bodyValue}}");
-
                 routeTemplate("tick")
                         .from("timer:{{routeId}}?repeatCount=1&delay=-1")
                         .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
                         .to("kamelet:sink");
-
-                from("direct:templateEmbedded")
-                        .toF("kamelet:setBody/embedded?bodyValue=embedded");
             }
         };
     }

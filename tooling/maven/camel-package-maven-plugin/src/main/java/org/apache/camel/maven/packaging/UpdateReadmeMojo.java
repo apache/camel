@@ -118,7 +118,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         dataformatDocDir = new File(project.getBasedir(), "src/main/docs");
         languageDocDir = new File(project.getBasedir(), "/src/main/docs");
         languageDocDir2 = new File(project.getBasedir(), "/src/main/docs/modules/languages/pages");
-        eipDocDir = new File(project.getBasedir(), "src/main/docs/modules/eips/pages");
+        File engine = findCamelDirectory(project.getBasedir(), "camel-core-engine");
+        eipDocDir = new File(engine, "/src/main/docs/modules/eips/pages");
         super.execute(project, projectHelper, buildContext);
     }
 
@@ -655,9 +656,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 }
             }
 
-            newLines.add(
-                    "include::{cq-version}@camel-quarkus:ROOT:partial$reference/" + kind + "s/" + name
-                         + ".adoc[opts=optional]");
+            // quarkus include pages should not be for EIP models
+            if (!"model".equals(model.getKind())) {
+                newLines.add(
+                        "include::{cq-version}@camel-quarkus:ROOT:partial$reference/" + kind + "s/" + name
+                             + ".adoc[opts=optional]");
+            }
 
             if (!manualAttributes.isEmpty()) {
                 newLines.add("//Manually maintained attributes");

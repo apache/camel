@@ -4153,7 +4153,7 @@
     "kind": "component",
     "name": "kamelet",
     "title": "Kamelet",
-    "description": "The Kamelet Component provides support for interacting with the Camel Route Template engine",
+    "description": "To call Kamelets",
     "deprecated": false,
     "firstVersion": "3.8.0",
     "label": "core",

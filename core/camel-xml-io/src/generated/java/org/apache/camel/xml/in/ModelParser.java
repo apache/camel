@@ -540,6 +540,15 @@ public class ModelParser extends BaseParser {
             return true;
         }, outputDefinitionElementHandler(), noValueHandler());
     }
+    protected KameletDefinition doParseKameletDefinition() throws IOException, XmlPullParserException {
+        return doParse(new KameletDefinition(), (def, key, val) -> {
+            if ("name".equals(key)) {
+                def.setName(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, outputDefinitionElementHandler(), noValueHandler());
+    }
     protected LoadBalanceDefinition doParseLoadBalanceDefinition() throws IOException, XmlPullParserException {
         return doParse(new LoadBalanceDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
@@ -2937,6 +2946,7 @@ public class ModelParser extends BaseParser {
             case "intercept": return doParseInterceptDefinition();
             case "interceptFrom": return doParseInterceptFromDefinition();
             case "interceptSendToEndpoint": return doParseInterceptSendToEndpointDefinition();
+            case "kamelet": return doParseKameletDefinition();
             case "loadBalance": return doParseLoadBalanceDefinition();
             case "log": return doParseLogDefinition();
             case "loop": return doParseLoopDefinition();

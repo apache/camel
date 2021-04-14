@@ -29,6 +29,7 @@ InputTypeDefinition
 InterceptDefinition
 InterceptFromDefinition
 InterceptSendToEndpointDefinition
+KameletDefinition
 LoadBalanceDefinition
 LoadBalancerDefinition
 LogDefinition

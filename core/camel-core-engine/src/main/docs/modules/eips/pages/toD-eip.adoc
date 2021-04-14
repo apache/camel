@@ -1,7 +1,7 @@
 [[toD-eip]]
 = To D EIP
 :docTitle: To D
-:description: Sends the message to a single dynamic endpoint. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.
+:description: Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:/order/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.
 :since: 
 :supportLevel: Stable
 

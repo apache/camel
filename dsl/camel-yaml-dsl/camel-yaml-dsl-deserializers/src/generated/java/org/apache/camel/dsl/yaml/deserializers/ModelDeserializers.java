@@ -35,6 +35,7 @@ import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.LogDefinition;
@@ -6849,6 +6850,54 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.KameletDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "kamelet",
+            properties = {
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
+            }
+    )
+    public static class KameletDefinitionDeserializer extends YamlDeserializerBase<KameletDefinition> {
+        public KameletDefinitionDeserializer() {
+            super(KameletDefinition.class);
+        }
+
+        @Override
+        protected KameletDefinition newInstance() {
+            return new KameletDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(KameletDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "steps": {
+                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
+                        target.addOutput(definition);
+                    }
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;

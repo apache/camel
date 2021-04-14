@@ -96,7 +96,7 @@ from("direct:start")
 
 == Options
 // eip options: START
-The Service Call EIP supports 14 options which are listed below:
+The Service Call EIP supports 13 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -104,7 +104,7 @@ The Service Call EIP supports 14 options which are listed below:
 | *name* | *Required* Sets the name of the service to use |  | String
 | *uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
 | *component* | The component to use. | http | String
-| *pattern* | *Required* Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
+| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
 | *configurationRef* | Refers to a ServiceCall configuration to use |  | String
 | *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use. |  | String
 | *serviceFilterRef* | Sets a reference to a custom ServiceFilter to use. |  | String
@@ -114,7 +114,6 @@ The Service Call EIP supports 14 options which are listed below:
 | *serviceDiscoveryConfiguration* | *Required* Configures the ServiceDiscovery using the given configuration. |  | ServiceCallServiceDiscoveryConfiguration
 | *serviceFilterConfiguration* | *Required* Configures the ServiceFilter using the given configuration. |  | ServiceCallServiceFilterConfiguration
 | *loadBalancerConfiguration* | *Required* Configures the LoadBalancer using the given configuration. |  | ServiceCallServiceLoadBalancerConfiguration
-| *expressionConfiguration* | *Required* Configures the Expression using the given configuration. |  | ServiceCallExpressionConfiguration
 |===
 // eip options: END
 
