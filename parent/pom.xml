@@ -239,7 +239,7 @@
         <hapi-fhir-version>4.1.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
-        <hazelcast-version>4.1.1</hazelcast-version>
+        <hazelcast-version>4.2</hazelcast-version>
         <hbase-version>2.3.1</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.0.Final</hibernate-validator-version>
