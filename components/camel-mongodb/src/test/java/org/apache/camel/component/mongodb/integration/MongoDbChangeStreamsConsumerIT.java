@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbChangeStreamsConsumerTest extends AbstractMongoDbTest {
+public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
 
     private MongoCollection<Document> mongoCollection;
     private String collectionName;

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import com.mongodb.ReadPreference;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
+public class MongoDbReadPreferenceOptionIT extends AbstractMongoDbITSupport {
 
     private MongoDbEndpoint endpoint;
 

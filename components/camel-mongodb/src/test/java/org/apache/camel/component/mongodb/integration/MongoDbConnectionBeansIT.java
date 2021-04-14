@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.mongodb.MongoDbComponent;
+import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
+public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
     @Test
     public void checkConnectionFromProperties() {
         MongoClient client = MongoClients.create(service.getReplicaSetUrl());

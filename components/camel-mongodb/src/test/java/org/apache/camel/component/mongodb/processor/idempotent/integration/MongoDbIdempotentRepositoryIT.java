@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb.processor.idempotent;
+package org.apache.camel.component.mongodb.processor.idempotent.integration;
 
 import java.util.UUID;
 
-import org.apache.camel.component.mongodb.AbstractMongoDbTest;
+import org.apache.camel.component.mongodb.integration.AbstractMongoDbITSupport;
+import org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
+public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
 
     MongoDbIdempotentRepository repo;
 

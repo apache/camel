@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb.verifier;
+package org.apache.camel.component.mongodb.verifier.integration;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.component.mongodb.AbstractMongoDbTest;
+import org.apache.camel.component.mongodb.integration.AbstractMongoDbITSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
+public class MongoDbVerifierExtensionIT extends AbstractMongoDbITSupport {
     // We simulate the presence of an authenticated user
     @BeforeEach
     public void createAuthorizationUser() {

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MongoDbStopEndpointTest extends AbstractMongoDbTest {
+public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport {
 
     private static final String MY_ID = "myId";
 

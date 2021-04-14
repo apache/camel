@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb.meta;
+package org.apache.camel.component.mongodb.meta.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +24,8 @@ import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ValidationOptions;
 import org.apache.camel.component.extension.MetaDataExtension;
-import org.apache.camel.component.mongodb.AbstractMongoDbTest;
 import org.apache.camel.component.mongodb.MongoDbComponent;
+import org.apache.camel.component.mongodb.integration.AbstractMongoDbITSupport;
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
+public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
     // We simulate the presence of an authenticated user
     @BeforeEach
     public void createAuthorizationUser() {
@@ -81,7 +81,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
                                              + "            description: \"can be only M or F\" } \n"
                                              + "      }}");
         ValidationOptions collOptions = new ValidationOptions().validator(Filters.jsonSchema(jsonSchema));
-        AbstractMongoDbTest.mongo.getDatabase(database).createCollection(collection,
+        AbstractMongoDbITSupport.mongo.getDatabase(database).createCollection(collection,
                 new CreateCollectionOptions().validationOptions(collOptions));
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
@@ -142,7 +142,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         final String database = "test";
         final String collection = "notValidatedCollection";
         MongoDbComponent component = this.getComponent();
-        AbstractMongoDbTest.mongo.getDatabase(database).createCollection(collection);
+        AbstractMongoDbITSupport.mongo.getDatabase(database).createCollection(collection);
         // Given
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);

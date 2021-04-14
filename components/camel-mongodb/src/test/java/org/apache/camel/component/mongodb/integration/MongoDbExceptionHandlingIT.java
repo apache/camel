@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import com.mongodb.DBObject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
+public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testInduceParseException() throws Exception {

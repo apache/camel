@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mongodb;
+package org.apache.camel.component.mongodb.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +22,7 @@ import java.util.stream.StreamSupport;
 
 import com.mongodb.client.MongoCollection;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbDynamicityTest extends AbstractMongoDbTest {
+public class MongoDbDynamicityIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testInsertDynamicityDisabled() {
