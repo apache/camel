@@ -76,6 +76,7 @@ public class CosmosDbDatabaseOperations {
         return false;
     }
 
+    // Database operations
     private Mono<CosmosDatabaseResponse> createDatabaseAsync(
             final String databaseName,
             final ThroughputProperties throughputProperties) {
@@ -88,6 +89,21 @@ public class CosmosDbDatabaseOperations {
         return client.getDatabase(databaseName).delete(options);
     }
 
+    private CosmosAsyncDatabase getDatabaseAsync(
+            final String databaseName,
+            final ThroughputProperties throughputProperties,
+            final boolean createDatabaseIfNotExist) {
+        if (createDatabaseIfNotExist) {
+            return createDatabaseAsync(databaseName, throughputProperties)
+                    .map(response -> client.getDatabase(databaseName))
+                    // since client.getDatabase doesn't do any service call, we just return the async instance directly
+                    .block();
+        }
+
+        return client.getDatabase(databaseName);
+    }
+
+    // Container operations
     private Mono<CosmosContainerResponse> createContainerAsync(
             final String databaseName,
             final String id,
@@ -107,20 +123,6 @@ public class CosmosDbDatabaseOperations {
                 .delete(options);
     }
 
-    private CosmosAsyncDatabase getDatabaseAsync(
-            final String databaseName,
-            final ThroughputProperties throughputProperties,
-            final boolean createDatabaseIfNotExist) {
-        if (createDatabaseIfNotExist) {
-            return createDatabaseAsync(databaseName, throughputProperties)
-                    .map(response -> client.getDatabase(databaseName))
-                    // since client.getDatabase doesn't do any service call, we just return the async instance directly
-                    .block();
-        }
-
-        return client.getDatabase(databaseName);
-    }
-
     private CosmosAsyncContainer getContainerAsync(
             final String databaseName,
             final String id,
@@ -137,6 +139,8 @@ public class CosmosDbDatabaseOperations {
 
         return client.getDatabase(databaseName).getContainer(id);
     }
+
+
 
     private <T> void convertMonoToCallback(final Mono<T> inputMono, final Consumer<T> resultCallback, final Consumer<Throwable> errorCallback,
                                            final AsyncCallback callback) {
