@@ -2,7 +2,7 @@
 = Kamelet EIP
 :docTitle: Kamelet
 :description: To call Kamelets
-:since: 3.10
+:since: 
 :supportLevel: Stable
 
 Kamelets (Kamel route snippets) allow users to connect to external systems via a simplified interface,
@@ -41,7 +41,7 @@ The Kamelet EIP supports 1 options which are listed below:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *name* | *Required* Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg myname?count=4&type=gold. |  | String
+| *name* | *Required* Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg mynamecount=4&type=gold. |  | String
 |===
 // eip options: END
 

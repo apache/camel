@@ -2,7 +2,7 @@
 = Log EIP
 :docTitle: Log
 :description: Logs the defined message to the logger
-:since:
+:since: 
 :supportLevel: Stable
 
 How can I log the processing of a xref:message.adoc[Message]?

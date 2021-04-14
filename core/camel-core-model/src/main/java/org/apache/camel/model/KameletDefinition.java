@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
+/**
+ * To call Kamelets
+ */
 @Metadata(label = "eip,routing,kamelet")
 @XmlRootElement(name = "kamelet")
 @XmlAccessorType(XmlAccessType.FIELD)

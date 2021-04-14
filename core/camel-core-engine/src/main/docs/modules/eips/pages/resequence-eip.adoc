@@ -2,7 +2,7 @@
 = Resequence EIP
 :docTitle: Resequence
 :description: Resequences (re-order) messages based on an expression
-:since:
+:since: 
 :supportLevel: Stable
 
 The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the xref:components:eips:enterprise-integration-patterns.adoc[EIP patterns] allows you to reorganise messages based on some comparator. +

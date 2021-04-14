@@ -118,7 +118,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         dataformatDocDir = new File(project.getBasedir(), "src/main/docs");
         languageDocDir = new File(project.getBasedir(), "/src/main/docs");
         languageDocDir2 = new File(project.getBasedir(), "/src/main/docs/modules/languages/pages");
-        eipDocDir = new File(project.getBasedir(), "../camel-core-engine/src/main/docs/modules/eips/pages");
+        File engine = findCamelDirectory(project.getBasedir(), "camel-core-engine");
+        eipDocDir = new File(engine, "/src/main/docs/modules/eips/pages");
         super.execute(project, projectHelper, buildContext);
     }
 
