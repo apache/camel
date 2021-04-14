@@ -1036,21 +1036,28 @@
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.KameletDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "inherit-error-handler" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "inherit-error-handler" : {
+              "type" : "boolean"
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "parameters" : {
+              "type" : "object"
+            },
+            "steps" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+              }
             }
           }
-        },
+        } ],
         "required" : [ "name" ]
       },
       "org.apache.camel.model.LoadBalanceDefinition" : {

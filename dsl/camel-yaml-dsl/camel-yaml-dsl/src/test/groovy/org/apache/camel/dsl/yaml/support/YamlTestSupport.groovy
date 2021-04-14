@@ -23,15 +23,19 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory
 import groovy.util.logging.Slf4j
 import org.apache.camel.CamelContext
 import org.apache.camel.FluentProducerTemplate
+import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader
 import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.impl.DefaultCamelContext
+import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.spi.HasCamelContext
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.ResourceHelper
 import spock.lang.AutoCleanup
 import spock.lang.Specification
+
+import java.nio.charset.StandardCharsets
 
 @Slf4j
 class YamlTestSupport extends Specification implements HasCamelContext {
@@ -54,6 +58,17 @@ class YamlTestSupport extends Specification implements HasCamelContext {
         }
 
         context.routesLoader.loadRoutes(resources)
+    }
+
+    def addTemplate(String name, @DelegatesTo(RouteTemplateDefinition) Closure<?> closure) {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            void configure() throws Exception {
+                closure.resolveStrategy = Closure.DELEGATE_FIRST
+                closure.delegate = routeTemplate(name)
+                closure.call()
+            }
+        });
     }
 
     def loadRoutes(Resource... resources) {
@@ -92,10 +107,27 @@ class YamlTestSupport extends Specification implements HasCamelContext {
     }
 
     static Resource asResource(String location, String content) {
-        return ResourceHelper.fromString(
-                location.endsWith('.yaml') ? location : location + '.yaml',
-                content.stripIndent()
-        )
+        return new Resource() {
+            @Override
+            String getLocation() {
+                return location.endsWith('.yaml') ? location : location + '.yaml'
+            }
+
+            @Override
+            boolean exists() {
+                return false
+            }
+
+            @Override
+            InputStream getInputStream() throws IOException {
+                return new ByteArrayInputStream(content.stripIndent().getBytes(StandardCharsets.UTF_8))
+            }
+
+            @Override
+            String toString() {
+                return location
+            }
+        }
     }
 
     def setFlowMode(YamlDeserializationMode mode) {
