@@ -14,29 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.xmpp.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class XmppMultiUserChatTest extends XmppBaseTest {
+public class XmppRouteChatIT extends XmppBaseIT {
 
     protected MockEndpoint consumerEndpoint;
+    protected MockEndpoint producerEndpoint;
     protected String body1 = "the first message";
     protected String body2 = "the second message";
 
     @Test
     public void testXmppChat() throws Exception {
-        consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
-        consumerEndpoint.expectedBodiesReceived(body1, body2);
+        consumerEndpoint = context.getEndpoint("mock:out1", MockEndpoint.class);
+        producerEndpoint = context.getEndpoint("mock:out2", MockEndpoint.class);
 
-        //will send chat messages to the room
+        consumerEndpoint.expectedBodiesReceived(body1, body2);
+        producerEndpoint.expectedBodiesReceived(body1, body2);
+
+        //will send chat messages to the consumer
+        template.sendBody("direct:toConsumer", body1);
+        Thread.sleep(50);
+        template.sendBody("direct:toConsumer", body2);
+
         template.sendBody("direct:toProducer", body1);
         Thread.sleep(50);
         template.sendBody("direct:toProducer", body2);
-
+        //    Th
         consumerEndpoint.assertIsSatisfied();
+        producerEndpoint.assertIsSatisfied();
+
     }
 
     @Override
@@ -44,29 +54,29 @@ public class XmppMultiUserChatTest extends XmppBaseTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
+                from("direct:toConsumer")
+                        .to(getConsumerUri());
+
                 from("direct:toProducer")
                         .to(getProducerUri());
 
                 from(getConsumerUri())
-                        .to("mock:out");
+                        .to("mock:out1");
+
+                from(getProducerUri())
+                        .to("mock:out2");
             }
         };
     }
 
     protected String getProducerUri() {
-        // the nickname parameter is necessary in these URLs because the '@' in the user name can not be parsed by
-        // vysper during chat room message routing.
-
-        // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
-        // will resolve it properly to 'camel-test@conference.apache.camel'
-        return "xmpp://localhost:" + getUrl()
-               + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+        return "xmpp://" + getUrl()
+               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-producer@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
-        // however here we provide the room query parameter as fully qualified, including the domain name as
-        // 'camel-test@conference.apache.camel'
-        return "xmpp://localhost:" + getUrl()
-               + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
+        return "xmpp://" + getUrl()
+               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-consumer@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
+
 }

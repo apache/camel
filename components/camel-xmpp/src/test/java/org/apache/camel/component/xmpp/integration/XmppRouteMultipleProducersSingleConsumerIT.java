@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.xmpp.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.xmpp.XmppConstants;
 import org.junit.jupiter.api.Test;
 
-public class XmppRouteMultipleProducersSingleConsumerTest extends XmppBaseTest {
+public class XmppRouteMultipleProducersSingleConsumerIT extends XmppBaseIT {
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
 

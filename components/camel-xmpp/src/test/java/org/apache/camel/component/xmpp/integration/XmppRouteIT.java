@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.xmpp.integration;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.xmpp.XmppMessage;
 import org.jivesoftware.smack.packet.Message;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -31,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmppRouteTest extends XmppBaseTest {
+public class XmppRouteIT extends XmppBaseIT {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppRouteIT.class);
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint endpoint;
     protected Exchange receivedExchange;
@@ -64,11 +65,11 @@ public class XmppRouteTest extends XmppBaseTest {
 
         assertEquals(123, receivedMessage.getHeader("cheese"), "cheese header");
         Object body = receivedMessage.getBody();
-        XmppRouteTest.LOG.debug("Received body: " + body);
+        XmppRouteIT.LOG.debug("Received body: " + body);
         Message xmppMessage = receivedMessage.getXmppMessage();
         assertNotNull(xmppMessage);
 
-        XmppRouteTest.LOG.debug("Received XMPP message: " + xmppMessage.getBody());
+        XmppRouteIT.LOG.debug("Received XMPP message: " + xmppMessage.getBody());
         return body;
     }
 
