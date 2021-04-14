@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
+public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
 
     private static final int REDELIVERY_COUNT = 2;
 

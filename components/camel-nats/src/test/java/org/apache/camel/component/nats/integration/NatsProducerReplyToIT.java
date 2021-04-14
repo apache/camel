@@ -14,34 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
-import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
-public class NatsProducerReplyToTimeoutTest extends NatsTestSupport {
+public class NatsProducerReplyToIT extends NatsITSupport {
 
     protected String startUri = "direct:start";
-    protected String middleUri = "nats:foo.middle?requestTimeout=50";
+    protected String middleUri = "nats:foo.middle";
     protected String resultUri = "mock:result";
 
+    protected MockEndpoint resultEndpoint;
     protected String body1 = "Camel";
+    protected String body2 = "World";
 
     @Test
-    public void testReplyToTimeout() {
-        try {
-            template.requestBody(startUri, body1, String.class);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-            assertEquals(50, cause.getTimeout());
-        }
+    public void testReplyTo() throws Exception {
+        resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceivedInAnyOrder("Bye Camel", "Bye World");
+
+        String out = template.requestBody(startUri, body1, String.class);
+        String out2 = template.requestBody(startUri, body2, String.class);
+
+        resultEndpoint.assertIsSatisfied();
+
+        assertEquals("Bye Camel", out);
+        assertEquals("Bye World", out2);
     }
 
     @Override
@@ -51,7 +53,6 @@ public class NatsProducerReplyToTimeoutTest extends NatsTestSupport {
                 from(startUri).to(middleUri).to(resultUri);
 
                 from(middleUri)
-                        .delayer(5000)
                         .transform(simple("Bye ${body}"));
             }
         };

@@ -14,16 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+import io.nats.client.Connection;
+import io.nats.client.Nats;
+import io.nats.client.Options;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsAuthTokenProducerTest extends NatsAuthTestSupport {
+public class NatsAuthTokenConsumerLoadIT extends NatsAuthTokenITSupport {
+
+    @EndpointInject("mock:result")
+    protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void sendTest() throws Exception {
-        template.sendBody("direct:send", "pippo");
+    public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
+        mockResultEndpoint.setExpectedMessageCount(100);
+        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
+        Connection connection = Nats.connect(options);
+
+        for (int i = 0; i < 100; i++) {
+            connection.publish("test", ("test" + i).getBytes());
+        }
+
+        mockResultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -31,8 +50,9 @@ public class NatsAuthTokenProducerTest extends NatsAuthTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats:test");
+                from("nats:test").to(mockResultEndpoint);
             }
         };
     }
+
 }

@@ -14,32 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.nats.integration;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+import io.nats.client.Connection;
+import io.nats.client.Nats;
+import io.nats.client.Options;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NatsConsumerReplyToTest extends NatsTestSupport {
+public class NatsAuthConsumerLoadIT extends NatsAuthITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
-    @EndpointInject("mock:reply")
-    protected MockEndpoint mockReplyEndpoint;
-
     @Test
-    public void testReplyTo() throws Exception {
-        mockResultEndpoint.expectedBodiesReceived("World");
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
-        mockReplyEndpoint.expectedBodiesReceived("Bye World");
-        mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "myReplyQueue");
+    public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
+        mockResultEndpoint.setExpectedMessageCount(100);
+        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
+        Connection connection = Nats.connect(options);
 
-        template.sendBody("direct:send", "World");
+        for (int i = 0; i < 100; i++) {
+            connection.publish("test", ("test" + i).getBytes());
+        }
 
         mockResultEndpoint.assertIsSatisfied();
-        mockReplyEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -47,17 +50,9 @@ public class NatsConsumerReplyToTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send")
-                        .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
-
-                from("nats:test?flushConnection=true")
-                        .to(mockResultEndpoint)
-                        .convertBodyTo(String.class)
-                        .setBody().simple("Bye ${body}");
-
-                from("nats:myReplyQueue")
-                        .to("mock:reply");
+                from("nats:test").to(mockResultEndpoint);
             }
         };
     }
+
 }
