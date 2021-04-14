@@ -62,6 +62,17 @@
             <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb</artifactId>
             <version>${leveldb-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${leveldb-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.hawtbuf</groupId>

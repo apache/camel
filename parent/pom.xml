@@ -362,8 +362,8 @@
         <kubernetes-model-version>5.3.0</kubernetes-model-version>
         <kudu-version>1.14.0</kudu-version>
         <leveldbjni-version>1.8</leveldbjni-version>
-        <leveldb-api-version>0.10</leveldb-api-version>
-        <leveldb-version>0.10</leveldb-version>
+        <leveldb-api-version>0.12</leveldb-api-version>
+        <leveldb-version>0.12</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
         <libphonenumber-version>8.12.20</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
