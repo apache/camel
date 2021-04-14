@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.xmpp.integration;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
-public class XmppProducerConcurrentTest extends XmppBaseTest {
+public class XmppProducerConcurrentIT extends XmppBaseIT {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {

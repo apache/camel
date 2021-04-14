@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.xmpp.integration;
 
+import org.apache.camel.component.xmpp.XmppTestUtil;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.xmpp.services.XmppService;
 import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class XmppBaseTest extends CamelTestSupport {
+// This was originally disabled on the pom file with the reason given below.
+@DisabledOnOs(value = OS.AIX, disabledReason = "has problem with all the new reconnection stuff and whatnot")
+public class XmppBaseIT extends CamelTestSupport {
     @RegisterExtension
     static XmppService service = XmppServiceFactory.createService();
 
