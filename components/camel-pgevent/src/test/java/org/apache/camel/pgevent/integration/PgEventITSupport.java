@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pgevent;
+package org.apache.camel.pgevent.integration;
 
 import org.apache.camel.test.infra.jdbc.services.JDBCLocalContainerService;
 import org.apache.camel.test.infra.jdbc.services.JDBCService;
@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 
-public class PgEventTestSupport extends CamelTestSupport {
+public class PgEventITSupport extends CamelTestSupport {
     @RegisterExtension
     public static JDBCService service = JDBCServiceFactory
             .builder()
-            .addLocalMapping(PgEventTestSupport::createLocalService)
+            .addLocalMapping(PgEventITSupport::createLocalService)
             .build();
 
     protected static final String TEST_MESSAGE_BODY = "Test Camel PGEvent";
@@ -38,7 +38,7 @@ public class PgEventTestSupport extends CamelTestSupport {
     protected static final String POSTGRES_PASSWORD = "mysecretpassword";
     protected static final String POSTGRES_DB = "postgres";
 
-    private static final Logger LOG = LoggerFactory.getLogger(PgEventTestSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventITSupport.class);
 
     private static PostgreSQLContainer container;
 
