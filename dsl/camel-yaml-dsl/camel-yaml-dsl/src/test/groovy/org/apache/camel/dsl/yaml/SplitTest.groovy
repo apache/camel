@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.FailedToCreateRouteException
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 
 class SplitTest extends YamlTestSupport {
@@ -55,5 +57,47 @@ class SplitTest extends YamlTestSupport {
 
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "split (flow)"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.FLOW)
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - split:
+                          tokenize: ","
+                      - to: "mock:split"
+            '''
+
+            withMock('mock:split') {
+                expectedMessageCount 3
+                expectedBodiesReceived 'a', 'b', 'c'
+            }
+
+        when:
+            withTemplate {
+                to('direct:route').withBody('a,b,c').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "split (flow disabled)"() {
+        when:
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - split:
+                          tokenize: ","
+                      - to: "mock:split"
+            '''
+        then:
+            def ex = thrown(FailedToCreateRouteException)
+            ex.message.contains('Failed to create route')
     }
 }

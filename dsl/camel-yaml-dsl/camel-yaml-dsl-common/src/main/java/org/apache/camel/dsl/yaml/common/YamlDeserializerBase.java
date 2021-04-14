@@ -91,7 +91,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
      * @param target the target object
      */
     protected void setProperties(T target, MappingNode node) {
-        org.apache.camel.dsl.yaml.common.YamlDeserializationContext dc = getDeserializationContext(node);
+        YamlDeserializationContext dc = getDeserializationContext(node);
 
         for (NodeTuple tuple : node.getValue()) {
             final ScalarNode key = (ScalarNode) tuple.getKeyNode();
