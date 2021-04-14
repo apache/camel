@@ -7,6 +7,6 @@ The integration tests requires docker, so that a RabbitMQ instance can be brough
 of such tests is done automatically by checking either the docker socket or the DOCKER_HOST variable.
 
 It is also possible to run the tests using an embedded Qpid broker, for interoperability test. To run such tests,
-execute maven with the -Pqpid-itest profile:
+execute maven with the `-Drabbitmq.instance.type=qpid`
 
-```mvn -Pqpid-itest verify```
+```mvn Drabbitmq.instance.type=qpid verify```

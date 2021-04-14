@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
@@ -37,7 +36,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and consumers
  */
-public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQLoadIT extends AbstractRabbitMQIT {
     public static final String ROUTING_KEY = "rk4";
     private static final int PRODUCER_COUNT = 10;
     private static final int CONSUMER_COUNT = 10;

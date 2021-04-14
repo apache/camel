@@ -18,21 +18,19 @@ package org.apache.camel.component.rabbitmq.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rabbitmq.RabbitMQComponent;
-import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class RabbitMQToDSendDynamicTest extends AbstractRabbitMQIntTest {
+public class RabbitMQToDIT extends AbstractRabbitMQIT {
 
     @Test
     public void testToD() throws Exception {
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
+        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
-        // there should only be one rabbitmq endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("rabbitmq:")).count();
-        assertEquals(1, count, "There should only be 1 rabbitmq endpoint");
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -47,9 +45,10 @@ public class RabbitMQToDSendDynamicTest extends AbstractRabbitMQIntTest {
                 mq.setPassword(service.connectionProperties().password());
 
                 // route message dynamic using toD
-                from("direct:start")
-                        .setHeader(RabbitMQConstants.DELIVERY_MODE, constant("2"))
-                        .toD("rabbitmq:${header.where}");
+                from("direct:start").toD("rabbitmq:${header.where}");
+
+                from("rabbitmq:bar").to("mock:bar");
+                from("rabbitmq:beer").to("mock:beer");
             }
         };
     }

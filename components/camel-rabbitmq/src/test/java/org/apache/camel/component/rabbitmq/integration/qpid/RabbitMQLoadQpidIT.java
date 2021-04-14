@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
+package org.apache.camel.component.rabbitmq.integration.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQLoadIntTest;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQLoadIT;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class RabbitMQLoadQpidTest extends RabbitMQLoadIntTest {
+@EnabledIfSystemProperty(named = "rabbitmq.instance.type", matches = "qpid")
+public class RabbitMQLoadQpidIT extends RabbitMQLoadIT {
 
 }

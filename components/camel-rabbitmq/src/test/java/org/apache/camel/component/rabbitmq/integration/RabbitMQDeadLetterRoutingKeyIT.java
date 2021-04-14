@@ -41,9 +41,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQDeadLetterRoutingKeyIT extends AbstractRabbitMQIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIntTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIT.class);
 
     private Connection connection;
     private Channel channel;
@@ -145,7 +145,7 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
         private final List<String> received;
 
         DeadLetterRoutingKeyConsumer(final List<String> received, final StringBuilder routingKey) {
-            super(RabbitMQDeadLetterRoutingKeyIntTest.this.deadLetterChannel);
+            super(RabbitMQDeadLetterRoutingKeyIT.this.deadLetterChannel);
             this.received = received;
             this.routingKey = routingKey;
         }

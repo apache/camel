@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQInOutIT extends AbstractRabbitMQIT {
 
     public static final String ROUTING_KEY = "rk5";
     public static final long TIMEOUT_MS = 2000;

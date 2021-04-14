@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
+package org.apache.camel.component.rabbitmq.integration.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQRequeueUnhandledExceptionIntTest;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQSupendResumeIT;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class RabbitMQRequeueUnhandledExceptionQpidTest extends RabbitMQRequeueUnhandledExceptionIntTest {
+@EnabledIfSystemProperty(named = "rabbitmq.instance.type", matches = "qpid")
+public class RabbitMQSuspendResumeQpidIT extends RabbitMQSupendResumeIT {
 
 }

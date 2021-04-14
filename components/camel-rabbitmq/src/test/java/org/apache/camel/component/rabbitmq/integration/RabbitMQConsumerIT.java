@@ -36,7 +36,7 @@ import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQConsumerIT extends AbstractRabbitMQIT {
 
     private static final String EXCHANGE = "ex1";
     private static final String HEADERS_EXCHANGE = "ex8";

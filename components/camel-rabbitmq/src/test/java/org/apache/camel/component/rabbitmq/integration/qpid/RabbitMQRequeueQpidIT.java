@@ -14,10 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
+package org.apache.camel.component.rabbitmq.integration.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQInOutIntTest;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQRequeueIT;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class RabbitMQInOutQpidTest extends RabbitMQInOutIntTest {
+@EnabledIfSystemProperty(named = "rabbitmq.instance.type", matches = "qpid")
+public class RabbitMQRequeueQpidIT extends RabbitMQRequeueIT {
 
+    @Override
+    @Test
+    public void testNoRequeueHeaderCausesReject() throws Exception {
+    }
+
+    @Override
+    @Test
+    public void testNonBooleanRequeueHeaderCausesReject() throws Exception {
+    }
+
+    @Override
+    @Test
+    public void testFalseRequeueHeaderCausesReject() throws Exception {
+    }
 }

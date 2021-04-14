@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RabbitMQBasicIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQBasicIT extends AbstractRabbitMQIT {
 
     String foo;
     String bar;

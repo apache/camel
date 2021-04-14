@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Integration test to check if requested direct reply messages are received
  */
-public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
+public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
     protected static final String QUEUE = "amq.rabbitmq.reply-to";
 
     private static final String EXCHANGE = "ex_reply";
@@ -99,7 +99,7 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
         private final List<String> received;
 
         ArrayPopulatingConsumer(final List<String> received) {
-            super(RabbitMQConsumerIntTestReplyTo.this.channel);
+            super(RabbitMQConsumerReplyToIT.this.channel);
             this.received = received;
         }
 

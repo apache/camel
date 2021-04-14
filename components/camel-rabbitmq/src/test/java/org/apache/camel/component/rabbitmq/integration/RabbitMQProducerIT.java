@@ -47,8 +47,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducerIntTest.class);
+public class RabbitMQProducerIT extends AbstractRabbitMQIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducerIT.class);
 
     private static final String EXCHANGE = "ex1";
     private static final String ROUTE = "route1";
@@ -301,13 +301,13 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         private final Map<String, Object> receivedHeaders;
 
         ArrayPopulatingConsumer(final List<String> received) {
-            super(RabbitMQProducerIntTest.this.channel);
+            super(RabbitMQProducerIT.this.channel);
             this.received = received;
             receivedHeaders = new HashMap<>();
         }
 
         ArrayPopulatingConsumer(final List<String> received, Map<String, Object> receivedHeaders) {
-            super(RabbitMQProducerIntTest.this.channel);
+            super(RabbitMQProducerIT.this.channel);
             this.received = received;
             this.receivedHeaders = receivedHeaders;
         }

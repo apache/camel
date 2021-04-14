@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.qpid;
+package org.apache.camel.component.rabbitmq.integration.qpid;
 
-import org.apache.camel.component.rabbitmq.integration.RabbitMQConsumerIntTestReplyTo;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQConsumerReplyToIT;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class RabbitMQConsumerQpidTestReplyTo extends RabbitMQConsumerIntTestReplyTo {
+@EnabledIfSystemProperty(named = "rabbitmq.instance.type", matches = "qpid")
+public class RabbitMQConsumerQpidTestReplyToIT extends RabbitMQConsumerReplyToIT {
 
     @Override
     @BeforeEach
