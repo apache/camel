@@ -47,11 +47,13 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
+import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
+import software.amazon.awssdk.services.sqs.paginators.ListQueuesIterable;
 
 /**
  * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
@@ -172,13 +174,24 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 queueUrl = getQueueUrlResult.queueUrl();
             } else {
                 // check whether the queue already exists
-                ListQueuesResponse listQueuesResult = client.listQueues();
-                for (String url : listQueuesResult.queueUrls()) {
-                    if (url.endsWith("/" + configuration.getQueueName())) {
-                        queueUrl = url;
-                        LOG.trace("Queue available at '{}'.", queueUrl);
-                        break;
+                boolean done = false;
+                while (!done) {
+                    ListQueuesResponse listQueuesResult = client.listQueues();
+
+                    for (String url : listQueuesResult.queueUrls()) {
+                        if (url.endsWith("/" + configuration.getQueueName())) {
+                            queueUrl = url;
+                            LOG.trace("Queue available at '{}'.", queueUrl);
+                            break;
+                        }
                     }
+
+                    if (listQueuesResult.nextToken() == null) {
+                        done = true;
+                    }
+
+                    String token = listQueuesResult.nextToken();
+                    listQueuesResult = client.listQueues(ListQueuesRequest.builder().nextToken(token).build());
                 }
             }
         }
