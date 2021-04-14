@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class MinioObjectRangeOperationTest extends MinioTestContainerSupport {
+class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIT.class);
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -51,7 +51,7 @@ class MinioObjectRangeOperationTest extends MinioTestContainerSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioObjectRangeOperationTest() throws IOException {
+    MinioObjectRangeOperationIT() throws IOException {
     }
 
     @Test

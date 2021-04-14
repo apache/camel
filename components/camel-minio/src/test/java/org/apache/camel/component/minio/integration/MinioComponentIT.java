@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MinioComponentTest extends MinioTestContainerSupport {
+class MinioComponentIT extends MinioIntegrationTestSupport {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;

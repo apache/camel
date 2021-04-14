@@ -25,7 +25,7 @@ import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-class MinioConsumerTest extends MinioTestContainerSupport {
+class MinioConsumerIT extends MinioIntegrationTestSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()

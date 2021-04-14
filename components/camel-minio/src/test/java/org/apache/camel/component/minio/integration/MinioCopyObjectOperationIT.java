@@ -28,7 +28,7 @@ import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-class MinioCopyObjectOperationTest extends MinioTestContainerSupport {
+class MinioCopyObjectOperationIT extends MinioIntegrationTestSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -42,7 +42,7 @@ class MinioCopyObjectOperationTest extends MinioTestContainerSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioCopyObjectOperationTest() throws IOException {
+    MinioCopyObjectOperationIT() throws IOException {
     }
 
     @Test
