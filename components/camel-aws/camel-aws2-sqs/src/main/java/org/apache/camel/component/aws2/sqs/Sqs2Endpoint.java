@@ -53,7 +53,6 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
-import software.amazon.awssdk.services.sqs.paginators.ListQueuesIterable;
 
 /**
  * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.

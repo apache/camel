@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.sqs.integration;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class SqsProducerAutoCreateQueueLocalstackIT extends Aws2SQSBaseTest {
 
