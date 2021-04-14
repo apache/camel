@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.redis.processor.aggregate;
+package org.apache.camel.component.redis.processor.aggregate.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.redis.processor.aggregate.RedisAggregationRepository;
 import org.apache.camel.test.infra.redis.services.RedisService;
 import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * of message 1,2 and 4 as they use the same correlation key.
  * <p/>
  */
-public class AggregateRedisTest extends CamelTestSupport {
+public class AggregateRedisIT extends CamelTestSupport {
 
     @RegisterExtension
     static RedisService service = RedisServiceFactory.createService();
