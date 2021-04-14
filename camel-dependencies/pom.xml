@@ -287,7 +287,7 @@
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.6</jackrabbit-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.11.4</jackson2-version>
+    <jackson2-version>2.12.3</jackson2-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
