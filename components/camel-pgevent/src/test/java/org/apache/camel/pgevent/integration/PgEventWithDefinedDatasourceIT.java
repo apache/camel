@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pgevent;
+package org.apache.camel.pgevent.integration;
 
+import com.impossibl.postgres.jdbc.PGDataSource;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -23,7 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class PgEventPubSubTest extends PgEventTestSupport {
+public class PgEventWithDefinedDatasourceIT extends PgEventITSupport {
+
+    @EndpointInject("pgevent:///postgres/testchannel?datasource=#pgDataSource")
+    private Endpoint subscribeEndpoint;
+
+    @EndpointInject("pgevent:///postgres/testchannel?datasource=#pgDataSource")
+    private Endpoint notifyEndpoint;
 
     @EndpointInject("timer://test?repeatCount=1&period=1")
     private Endpoint timerEndpoint;
@@ -31,8 +39,20 @@ public class PgEventPubSubTest extends PgEventTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
 
+    @BindToRegistry("pgDataSource")
+    public PGDataSource loadDataSource() throws Exception {
+        PGDataSource dataSource = new PGDataSource();
+        dataSource.setHost(getHost());
+        dataSource.setPort(getMappedPort());
+        dataSource.setDatabaseName(POSTGRES_DB);
+        dataSource.setUser(POSTGRES_USER);
+        dataSource.setPassword(POSTGRES_PASSWORD);
+
+        return dataSource;
+    }
+
     @Test
-    public void testPgEventPublishSubscribe() throws Exception {
+    public void testPgEventPublishSubscribeWithDefinedDatasource() throws Exception {
         mockEndpoint.expectedBodiesReceived(TEST_MESSAGE_BODY);
         mockEndpoint.assertIsSatisfied(5000);
     }
@@ -44,13 +64,10 @@ public class PgEventPubSubTest extends PgEventTestSupport {
             public void configure() throws Exception {
                 from(timerEndpoint)
                         .setBody(constant(TEST_MESSAGE_BODY))
-                        .to(String.format(
-                                "pgevent://%s:%s/%s/testchannel?user=%s&pass=%s", getHost(), getMappedPort(), POSTGRES_DB,
-                                POSTGRES_USER, POSTGRES_PASSWORD));
+                        .to(notifyEndpoint);
 
-                from(String.format("pgevent://%s:%s/%s/testchannel?user=%s&pass=%s",
-                        getHost(), getMappedPort(), POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD))
-                                .to(mockEndpoint);
+                from(subscribeEndpoint)
+                        .to(mockEndpoint);
             }
         };
     }
