@@ -4,7 +4,7 @@
 :page-source: components/camel-kamelet/src/main/docs/kamelet-component.adoc
 :docTitle: Kamelet
 :artifactId: camel-kamelet
-:description: The Kamelet Component provides support for interacting with the Camel Route Template engine
+:description: To call Kamelets
 :since: 3.8
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

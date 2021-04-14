@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Kamelet</name>
-    <description>The Kamelet Component provides support for interacting with the Camel Route Template engine</description>
+    <description>To call Kamelets</description>
 
     <dependencies>
 

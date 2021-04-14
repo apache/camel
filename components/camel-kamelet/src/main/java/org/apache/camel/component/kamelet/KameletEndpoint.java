@@ -31,13 +31,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(
-             firstVersion = "3.8.0",
-             scheme = "kamelet",
-             syntax = "kamelet:templateId/routeId",
-             title = "Kamelet",
-             lenientProperties = true,
-             category = Category.CORE)
+@UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
+             lenientProperties = true, category = Category.CORE)
 public class KameletEndpoint extends DefaultEndpoint {
     private final String key;
     private final Map<String, Object> kameletProperties;
