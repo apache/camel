@@ -112,7 +112,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             configure.addCode(";\n\n");
         }
 
-        final String basePath = RestDslGenerator.determineBasePathFrom(document);
+        final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
 
         final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
         document.paths.getItems().forEach(restDslStatement::visit);

@@ -28,7 +28,7 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
 
     public RestsDefinition generate(final CamelContext context) {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
-        final String basePath = RestDslGenerator.determineBasePathFrom(document);
+        final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
         final PathVisitor<RestsDefinition> restDslStatement
                 = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
 
@@ -36,5 +36,4 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
 
         return emitter.result();
     }
-
 }

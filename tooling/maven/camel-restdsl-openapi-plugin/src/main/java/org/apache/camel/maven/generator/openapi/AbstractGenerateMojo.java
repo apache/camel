@@ -114,6 +114,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(name = "auth")
     String auth;
 
+    @Parameter
+    String basePath;
+
     @Parameter(defaultValue = "3.0.19")
     String swaggerCodegenMavenPluginVersion;
 
