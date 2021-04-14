@@ -715,6 +715,14 @@ Evaluate a JsonPath expression against a JSON message body.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="kamelet" type="tns:kameletDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+null
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="keyStoreParameters" type="tns:keyStoreParametersFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -2986,6 +2994,7 @@ Language, such as en for english.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -3436,6 +3445,7 @@ implementation. Default value: Singleton
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -3535,6 +3545,7 @@ implementation. Default value: Singleton
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -3625,6 +3636,7 @@ implementation. Default value: Singleton
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -3704,6 +3716,7 @@ implementation. Default value: Singleton
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -4727,6 +4740,7 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -4803,6 +4817,7 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -4941,6 +4956,7 @@ Global option value.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -5119,6 +5135,7 @@ Set if validation is required for this input type. Default value: false
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -5211,6 +5228,7 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -5285,6 +5303,22 @@ process its result.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="kameletDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:output">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Name of the Kamelet (route template id) to call Options for the kamelet can be
+specified using uri syntax, eg mynamecount=4&type=gold.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="loadBalanceDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -5319,6 +5353,7 @@ process its result.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -5599,6 +5634,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -8249,6 +8285,7 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -8452,6 +8489,7 @@ backward compatibility. Default value: false
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -8585,6 +8623,7 @@ this on completion. By default this feature is off. Default value: false
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -8946,6 +8985,7 @@ generate the log message from exchange.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -9064,6 +9104,7 @@ Set if validation is required for this output type. Default value: false
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -9140,6 +9181,7 @@ Set if validation is required for this output type. Default value: false
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -9657,6 +9699,7 @@ Name of property to remove.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -9905,6 +9948,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -10213,6 +10257,7 @@ producers.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -10607,6 +10652,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -10826,6 +10872,7 @@ backward compatibility. Default value: false
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -11242,6 +11289,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
@@ -11355,6 +11403,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:intercept"/>
             <xs:element ref="tns:interceptFrom"/>
             <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
             <xs:element ref="tns:loadBalance"/>
             <xs:element ref="tns:log"/>
             <xs:element ref="tns:loop"/>
