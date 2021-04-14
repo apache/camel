@@ -55,6 +55,8 @@ public abstract class RestDslGenerator<G> {
 
     boolean springComponent;
 
+    String basePath;
+
     RestDslGenerator(final OasDocument document) {
         this.document = notNull(document, "document");
     }
@@ -79,6 +81,15 @@ public abstract class RestDslGenerator<G> {
 
     public G withApiContextPath(final String contextPath) {
         this.apiContextPath = contextPath;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G withBasePath(final String basePath) {
+        this.basePath = basePath;
 
         @SuppressWarnings("unchecked")
         final G that = (G) this;
@@ -136,6 +147,17 @@ public abstract class RestDslGenerator<G> {
         return destinationGenerator;
     }
 
+    public static String determineBasePathFrom(final String parameter, final OasDocument document) {
+        return parameter != null
+                ? determineBasePathFrom(parameter) : determineBasePathFrom(document);
+    }
+
+    public static String determineBasePathFrom(final String parameter) {
+        Objects.requireNonNull(parameter, "parameter");
+
+        return prepareBasePath(parameter.trim());
+    }
+
     public static String determineBasePathFrom(final OasDocument document) {
         Objects.requireNonNull(document, "document");
 
@@ -151,28 +173,31 @@ public abstract class RestDslGenerator<G> {
 
             final Oas30Server firstServer = (Oas30Server) servers.get(0);
             final URI serverUrl = URI.create(resolveVariablesIn(firstServer.url, firstServer));
-            String basePath = serverUrl.getPath();
-            if (basePath == null || basePath.length() == 0) {
-                return "";
-            }
-
-            if (basePath.charAt(0) != '/') {
-                basePath = "/" + basePath;
-            }
-
-            if (basePath.indexOf("//") == 0) {
-                // strip off the first "/" if double "/" exists
-                basePath = basePath.substring(1);
-            }
-
-            if ("/".equals(basePath)) {
-                basePath = "";
-            }
-
-            return basePath;
+            return prepareBasePath(serverUrl.getPath());
         }
 
         throw new IllegalArgumentException("Unsupported document type: " + document.getClass().getName());
+    }
+
+    private static String prepareBasePath(String basePath) {
+        if (basePath == null || basePath.length() == 0) {
+            return "";
+        }
+
+        if (basePath.charAt(0) != '/') {
+            basePath = "/" + basePath;
+        }
+
+        if (basePath.indexOf("//") == 0) {
+            // strip off the first "/" if double "/" exists
+            basePath = basePath.substring(1);
+        }
+
+        if ("/".equals(basePath)) {
+            basePath = "";
+        }
+
+        return basePath;
     }
 
     public static String determineHostFrom(final OasDocument document) {

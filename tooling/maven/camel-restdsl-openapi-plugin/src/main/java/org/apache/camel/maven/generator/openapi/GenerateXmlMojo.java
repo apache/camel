@@ -71,6 +71,10 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
             generator.withBlueprint();
         }
 
+        if (ObjectHelper.isNotEmpty(basePath)) {
+            generator.withBasePath(basePath);
+        }
+
         if (ObjectHelper.isNotEmpty(filterOperation)) {
             generator.withOperationFilter(filterOperation);
         }

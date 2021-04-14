@@ -70,6 +70,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(openapi);
 
+        if (ObjectHelper.isNotEmpty(basePath)) {
+            generator.withBasePath(basePath);
+        }
+
         if (ObjectHelper.isNotEmpty(filterOperation)) {
             generator.withOperationFilter(filterOperation);
         }
