@@ -37,6 +37,10 @@ public class KameletDefinition extends OutputDefinition<KameletDefinition> {
     public KameletDefinition() {
     }
 
+    public KameletDefinition(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Kamelet[" + getOutputs() + "]";

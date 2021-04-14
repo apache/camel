@@ -54,10 +54,11 @@ public class CustomResolver implements YamlDeserializerResolver {
                 return new BeansDeserializer();
             case "error-handler":
                 return new ErrorHandlerBuilderDeserializer();
-            //case "do-try":
-            //    return new TryDefinitionDeserializer();
             case "org.apache.camel.model.ProcessorDefinition":
                 return new ProcessorDefinitionDeserializer();
+            case "kamelet":
+            case "org.apache.camel.model.KameletDefinition":
+                return new KameletDeserializer();
             default:
                 return null;
         }

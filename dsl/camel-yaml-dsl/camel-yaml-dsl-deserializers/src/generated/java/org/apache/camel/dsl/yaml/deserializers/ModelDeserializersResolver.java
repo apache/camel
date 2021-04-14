@@ -167,8 +167,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.JsonDataFormat": return new ModelDeserializers.JsonDataFormatDeserializer();
             case "jsonpath": return new ModelDeserializers.JsonPathExpressionDeserializer();
             case "org.apache.camel.model.language.JsonPathExpression": return new ModelDeserializers.JsonPathExpressionDeserializer();
-            case "kamelet": return new ModelDeserializers.KameletDefinitionDeserializer();
-            case "org.apache.camel.model.KameletDefinition": return new ModelDeserializers.KameletDefinitionDeserializer();
             case "kubernetes-service-discovery": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
             case "lzf": return new ModelDeserializers.LZFDataFormatDeserializer();
