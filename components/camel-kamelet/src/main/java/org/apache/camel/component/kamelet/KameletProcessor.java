@@ -24,26 +24,23 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * Kamelet EIP implementation.
+ */
 @ManagedResource(description = "Managed Kamelet Processor")
 public class KameletProcessor extends AsyncProcessorSupport
         implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KameletProcessor.class);
-
-    private final ReactiveExecutor reactiveExecutor;
     private final String name;
     private final AsyncProcessor processor;
     private KameletProducer producer;
@@ -56,7 +53,11 @@ public class KameletProcessor extends AsyncProcessorSupport
         this.camelContext = camelContext;
         this.name = name;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+    }
+
+    @ManagedAttribute(description = "Kamelet name (templateId/routeId?options)")
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -124,6 +125,9 @@ public class KameletProcessor extends AsyncProcessorSupport
         }
         ServiceHelper.buildService(processor, producer);
 
+        // we use the kamelet component (producer) to call the kamelet
+        // and to receive the reply we register ourselves to the kamelet component
+        // with our child processor it should call
         component.addKameletEip(producer.getKey(), processor);
     }
 
@@ -145,7 +149,6 @@ public class KameletProcessor extends AsyncProcessorSupport
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processor, producer);
-
         component.removeKameletEip(producer.getKey());
     }
 }
