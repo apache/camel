@@ -16,7 +16,6 @@
  */
 package org.apache.camel.zipkin;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
