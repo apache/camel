@@ -267,7 +267,7 @@
         <ivy-version>2.5.0</ivy-version>
         <jackson-version>1.9.12</jackson-version>
         <jackson2-version>2.11.4</jackson2-version>
-        <jackrabbit-version>2.21.5</jackrabbit-version>
+        <jackrabbit-version>2.21.6</jackrabbit-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
         <jandex-version>2.2.3.Final</jandex-version>
