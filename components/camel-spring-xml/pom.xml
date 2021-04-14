@@ -518,8 +518,9 @@
                                 <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
                                     <fileset dir="${project.basedir}/src/main/resources" />
                                 </copy>
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="$${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="$${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="$${camel.version}" value="${project.version}" preservelastmodified="true" />
                                 <copy todir="${project.build.directory}/classes" preservelastmodified="true">
                                     <fileset dir="${project.build.directory}/spring-meta" />
                                 </copy>
