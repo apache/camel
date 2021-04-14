@@ -22,7 +22,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public class PgReplicationTestSupport extends CamelTestSupport {
+public class PgReplicationITSupport extends CamelTestSupport {
 
     @RegisterExtension
     static PostgresLocalContainerService service;
