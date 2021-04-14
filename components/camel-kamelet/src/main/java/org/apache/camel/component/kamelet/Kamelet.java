@@ -27,7 +27,9 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -40,6 +42,9 @@ public final class Kamelet {
     public static final String SINK_ID = "sink";
     public static final String PARAM_ROUTE_ID = "routeId";
     public static final String PARAM_TEMPLATE_ID = "templateId";
+
+    // use a running counter as uuid
+    private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
     private Kamelet() {
     }
@@ -84,7 +89,7 @@ public final class Kamelet {
             answer = StringHelper.after(remaining, "/");
         }
         if (answer == null) {
-            answer = extractTemplateId(context, remaining, parameters) + "-" + context.getUuidGenerator().generateUuid();
+            answer = extractTemplateId(context, remaining, parameters) + "-" + UUID.generateUuid();
         }
 
         return answer;
