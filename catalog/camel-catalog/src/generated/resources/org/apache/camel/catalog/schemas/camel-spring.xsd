@@ -718,7 +718,7 @@ Evaluate a JsonPath expression against a JSON message body.
   <xs:element name="kamelet" type="tns:kameletDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-null
+To call Kamelets
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5310,7 +5310,7 @@ process its result.
         <xs:attribute name="name" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of the Kamelet (route template id) to call Options for the kamelet can be
+Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be
 specified using uri syntax, eg mynamecount=4&type=gold.
             ]]></xs:documentation>
           </xs:annotation>

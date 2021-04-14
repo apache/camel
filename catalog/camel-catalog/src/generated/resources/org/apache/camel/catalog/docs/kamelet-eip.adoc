@@ -58,11 +58,3 @@ The implementation of the Kamelet EIP is located in the `camel-kamelet` JAR, so 
     <version>x.y.z</version>
 </dependency>
 ----
-
-== More details
-
-- xref:components::kamelet-component.adoc[Kamelet component]
-- xref:manual:route-tepmplate.adoc[Route Template]
-- xref:latest@camel-k:ROOT::kamelets-user.adoc[Kamelets user guide]
-
-We also provided a small https://github.com/apache/camel-examples/tree/master/examples/kamelet[Kamelet example].
