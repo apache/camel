@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nsq;
+package org.apache.camel.component.nsq.integration;
 
 import java.util.concurrent.TimeoutException;
 
@@ -25,11 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.nsq.NsqConstants;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NsqConsumerTest extends NsqTestSupport {
+public class NsqConsumerIT extends NsqITSupport {
 
     private static final int NUMBER_OF_MESSAGES = 10000;
     private static final String TOPIC = "test";
