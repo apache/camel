@@ -30,7 +30,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.model.Block;
+import org.apache.camel.model.OutputNode;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -330,5 +334,22 @@ public class YamlDeserializerSupport {
     public static Node setDeserializationContext(Node node, YamlDeserializationContext context) {
         node.setProperty(YamlDeserializationContext.class.getName(), context);
         return node;
+    }
+
+    public static void setSteps(Block target, Node node) {
+        final YamlDeserializationContext dc = getDeserializationContext(node);
+
+        Block block = target;
+        for (ProcessorDefinition<?> definition : asFlatList(node, ProcessorDefinition.class)) {
+            block.addOutput(definition);
+
+            if (dc.getDeserializationMode() == YamlDeserializationMode.FLOW) {
+                if (definition instanceof OutputNode) {
+                    if (ObjectHelper.isEmpty(definition.getOutputs())) {
+                        block = definition;
+                    }
+                }
+            }
+        }
     }
 }

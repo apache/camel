@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LoopDefinition
 import org.apache.camel.model.language.ExpressionDefinition
@@ -55,5 +57,32 @@ class LoopTest extends YamlTestSupport {
                           - to: "mock:result"
                     ''')
             ]
+    }
+
+    def "loop (flow)"() {
+        setup:
+            setFlowMode(YamlDeserializationMode.FLOW)
+
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:    
+                      - loop:
+                         copy: true 
+                         constant: "3"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 3
+            }
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('a').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
     }
 }

@@ -24,7 +24,6 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
 import org.apache.camel.dsl.yaml.deserializers.model.OutputAwareFromDefinition;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
@@ -73,9 +72,7 @@ public class RouteFromDefinitionDeserializer extends YamlDeserializerBase<Output
 
             switch (key) {
                 case "steps":
-                    for (ProcessorDefinition<?> definition : asFlatList(val, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, val);
                     break;
                 case "uri":
                     uri = asText(val);

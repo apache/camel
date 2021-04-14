@@ -18,12 +18,15 @@ package org.apache.camel.dsl.yaml;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
+import org.apache.camel.dsl.yaml.common.YamlDeserializationMode;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
 import org.apache.camel.dsl.yaml.deserializers.EndpointProducerDeserializersResolver;
 import org.apache.camel.dsl.yaml.deserializers.ModelDeserializersResolver;
@@ -43,10 +46,11 @@ import org.snakeyaml.engine.v2.api.LoadSettings;
 @ManagedResource(description = "Managed YAML RoutesBuilderLoader")
 @RoutesLoader(YamlRoutesBuilderLoader.EXTENSION)
 public class YamlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
+    public static final String DESERIALIZATION_MODE = "CamelYamlDslDeserializationMode";
     public static final String EXTENSION = "yaml";
 
     private LoadSettings settings;
-    private YamlDeserializationContext constructor;
+    private YamlDeserializationContext deserializationContext;
 
     public YamlRoutesBuilderLoader() {
         super(EXTENSION);
@@ -57,39 +61,46 @@ public class YamlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         super.doBuild();
 
         this.settings = LoadSettings.builder().build();
-        this.constructor = new YamlDeserializationContext(settings);
-        this.constructor.setCamelContext(getCamelContext());
-        this.constructor.addResolvers(new CustomResolver());
-        this.constructor.addResolvers(new ModelDeserializersResolver());
-        this.constructor.addResolvers(new EndpointProducerDeserializersResolver());
+        this.deserializationContext = new YamlDeserializationContext(settings);
+        this.deserializationContext.setCamelContext(getCamelContext());
+        this.deserializationContext.addResolvers(new CustomResolver());
+        this.deserializationContext.addResolvers(new ModelDeserializersResolver());
+        this.deserializationContext.addResolvers(new EndpointProducerDeserializersResolver());
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        ServiceHelper.startService(this.constructor);
+        final Map<String, String> options = getCamelContext().getGlobalOptions();
+        final String mode = options.getOrDefault(DESERIALIZATION_MODE, YamlDeserializationMode.CLASSIC.name());
+        if (mode != null) {
+            this.deserializationContext.setDeserializationMode(
+                    YamlDeserializationMode.valueOf(mode.toUpperCase(Locale.US)));
+        }
+
+        ServiceHelper.startService(this.deserializationContext);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        ServiceHelper.stopService(this.constructor);
+        ServiceHelper.stopService(this.deserializationContext);
 
-        this.constructor = null;
+        this.deserializationContext = null;
         this.settings = null;
     }
 
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
-        ObjectHelper.notNull(constructor, "constructor");
+        ObjectHelper.notNull(deserializationContext, "constructor");
         ObjectHelper.notNull(settings, "settings");
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final Load load = new Load(settings, constructor);
+                final Load load = new Load(settings, deserializationContext);
 
                 try (InputStream is = resource.getInputStream()) {
                     for (Object item : (List<?>) load.loadFromInputStream(is)) {

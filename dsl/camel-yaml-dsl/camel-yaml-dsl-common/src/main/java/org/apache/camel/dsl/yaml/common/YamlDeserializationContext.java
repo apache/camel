@@ -46,6 +46,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     private final Set<YamlDeserializerResolver> resolvers;
     private final Map<String, ConstructNode> constructors;
 
+    private YamlDeserializationMode deserializationMode;
     private ExtendedCamelContext camelContext;
 
     public YamlDeserializationContext(LoadSettings settings) {
@@ -53,6 +54,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
         this.resolvers = new TreeSet<>(Comparator.comparing(Ordered::getOrder));
         this.constructors = new HashMap<>();
+        this.deserializationMode = YamlDeserializationMode.CLASSIC;
     }
 
     public void addResolver(YamlDeserializerResolver resolver) {
@@ -65,6 +67,14 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public void addResolvers(Collection<YamlDeserializerResolver> resolvers) {
         this.resolvers.addAll(resolvers);
+    }
+
+    public void setDeserializationMode(YamlDeserializationMode deserializationMode) {
+        this.deserializationMode = deserializationMode;
+    }
+
+    public YamlDeserializationMode getDeserializationMode() {
+        return deserializationMode;
     }
 
     @Override

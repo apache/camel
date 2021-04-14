@@ -54,7 +54,6 @@ import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
@@ -480,9 +479,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -1340,9 +1337,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -1394,9 +1389,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -1466,9 +1459,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -3692,9 +3683,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -4644,9 +4633,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -4695,9 +4682,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -4927,9 +4912,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -5345,9 +5328,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -5851,9 +5832,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -6065,9 +6044,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -6119,9 +6096,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -6185,9 +6160,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -6891,9 +6864,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -7238,9 +7209,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -7408,9 +7377,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -7968,9 +7935,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8176,9 +8141,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8285,9 +8248,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8333,9 +8294,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8434,9 +8393,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8475,9 +8432,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8872,9 +8827,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8914,9 +8867,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -8962,9 +8913,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -9204,9 +9153,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -9534,9 +9481,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -10209,9 +10154,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -11551,9 +11494,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -11996,9 +11937,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -13423,9 +13362,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -13521,9 +13458,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -14534,9 +14469,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -14706,9 +14639,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -15705,9 +15636,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -15807,9 +15736,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {
@@ -15865,9 +15792,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "steps": {
-                    for (ProcessorDefinition<?> definition: asFlatList(node, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, node);;
                     break;
                 }
                 default: {

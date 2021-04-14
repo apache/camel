@@ -24,6 +24,8 @@ import groovy.util.logging.Slf4j
 import org.apache.camel.CamelContext
 import org.apache.camel.FluentProducerTemplate
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader
+import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.spi.HasCamelContext
 import org.apache.camel.spi.Resource
@@ -96,6 +98,9 @@ class YamlTestSupport extends Specification implements HasCamelContext {
         )
     }
 
+    def setFlowMode(YamlDeserializationMode mode) {
+        context.globalOptions[YamlRoutesBuilderLoader.DESERIALIZATION_MODE] = mode.name()
+    }
 
     // ***********************************
     //

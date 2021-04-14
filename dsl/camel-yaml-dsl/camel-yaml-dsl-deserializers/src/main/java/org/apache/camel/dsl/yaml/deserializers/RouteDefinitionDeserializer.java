@@ -21,7 +21,6 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -63,9 +62,7 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
 
             switch (key) {
                 case "steps":
-                    for (ProcessorDefinition<?> definition : asFlatList(val, ProcessorDefinition.class)) {
-                        target.addOutput(definition);
-                    }
+                    setSteps(target, val);
                     break;
                 case "id":
                     target.setId(asText(val));

@@ -497,9 +497,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         if (implementType(info, OUTPUT_NODE_CLASS)) {
             setProperty.beginControlFlow("case \"steps\":");
-            setProperty.beginControlFlow("for ($T<?> definition: asFlatList(node, $T.class))", CN_PROCESSOR_DEFINITION, CN_PROCESSOR_DEFINITION);
-            setProperty.addStatement("target.addOutput(definition)");
-            setProperty.endControlFlow();
+            setProperty.addStatement("setSteps(target, node);");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
 
