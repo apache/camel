@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.operations;
+package org.apache.camel.component.zookeeper.operations.integration;
 
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
+import org.apache.camel.component.zookeeper.integration.ZooKeeperITSupport;
+import org.apache.camel.component.zookeeper.operations.DataChangedOperation;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DataChangedOperationTest extends ZooKeeperTestSupport {
+public class DataChangedOperationIT extends ZooKeeperITSupport {
 
     @Test
     public void getsDataWhenNodeChanges() throws Exception {

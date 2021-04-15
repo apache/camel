@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.component.zookeeper.integration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ZooKeeperTestSupport extends CamelTestSupport {
+public class ZooKeeperITSupport extends CamelTestSupport {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 

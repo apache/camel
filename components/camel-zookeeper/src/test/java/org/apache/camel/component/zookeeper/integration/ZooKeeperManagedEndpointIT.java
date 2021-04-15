@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.component.zookeeper.integration;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -23,13 +23,14 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.zookeeper.ZooKeeperEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jmx.support.JmxUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
-public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
+public class ZooKeeperManagedEndpointIT extends ZooKeeperITSupport {
     @Override
     protected boolean useJmx() {
         return true;

@@ -14,13 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.component.zookeeper.cloud.integration;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
+import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicyFactory;
 
-public class ZooKeeperServiceRegistrationWithRoutePolicyTest extends ZooKeeperServiceRegistrationTestBase {
+public class ZooKeeperServiceRegistrationWithRoutePolicyFactoryIT extends ZooKeeperServiceRegistrationITBase {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.addRoutePolicyFactory(new ServiceRegistrationRoutePolicyFactory());
+
+        return context;
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -29,7 +38,6 @@ public class ZooKeeperServiceRegistrationWithRoutePolicyTest extends ZooKeeperSe
                 fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
                         .routeId(SERVICE_ID)
                         .routeGroup(SERVICE_NAME)
-                        .routePolicy(new ServiceRegistrationRoutePolicy())
                         .noAutoStartup()
                         .to("log:service-registry?level=INFO");
             }

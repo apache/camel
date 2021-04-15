@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.component.zookeeper.cloud.integration;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceDiscovery;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -35,7 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport {
+public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 

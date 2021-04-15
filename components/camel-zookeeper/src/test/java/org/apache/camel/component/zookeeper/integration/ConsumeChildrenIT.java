@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.component.zookeeper.integration;
 
 import java.util.List;
 
@@ -24,7 +24,9 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeeper.NaturalSortComparator;
 import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
+import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
@@ -33,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class ConsumeChildrenTest extends ZooKeeperTestSupport {
+public class ConsumeChildrenIT extends ZooKeeperITSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {

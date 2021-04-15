@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.component.zookeeper.cloud.integration;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -40,7 +41,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupport {
+public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
     protected static final String SERVICE_NAME = "my-service";
     protected static final String SERVICE_HOST = "localhost";

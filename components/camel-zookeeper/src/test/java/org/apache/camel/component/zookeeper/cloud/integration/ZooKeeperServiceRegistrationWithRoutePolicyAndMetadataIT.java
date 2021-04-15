@@ -14,34 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.component.zookeeper.cloud.integration;
 
-import java.util.Collections;
-import java.util.Map;
-
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.service.ServiceComponent;
+import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 
-public class ZooKeeperServiceRegistrationWithServiceComponentTest extends ZooKeeperServiceRegistrationTestBase {
-
-    @BindToRegistry("service")
-    private ServiceComponent service = new ServiceComponent();
-
-    @Override
-    protected Map<String, String> getMetadata() {
-        return Collections.singletonMap("service.type", "zookeeper");
-    }
-
+public class ZooKeeperServiceRegistrationWithRoutePolicyAndMetadataIT extends ZooKeeperServiceRegistrationITBase {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper", SERVICE_NAME, SERVICE_PORT)
+                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
                         .routeId(SERVICE_ID)
-                        .routeGroup(SERVICE_NAME)
+                        .routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)
+                        .routeProperty(ServiceDefinition.SERVICE_META_NAME, SERVICE_NAME)
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
                         .noAutoStartup()
                         .to("log:service-registry?level=INFO");
             }

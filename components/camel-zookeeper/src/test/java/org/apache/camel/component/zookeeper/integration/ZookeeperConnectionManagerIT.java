@@ -14,15 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.component.zookeeper.integration;
 
+import org.apache.camel.component.zookeeper.ZooKeeperComponent;
+import org.apache.camel.component.zookeeper.ZooKeeperConfiguration;
+import org.apache.camel.component.zookeeper.ZooKeeperConnectionManager;
+import org.apache.camel.component.zookeeper.ZooKeeperEndpoint;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooKeeper.States;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ZookeeperConnectionManagerTest extends ZooKeeperTestSupport {
+public class ZookeeperConnectionManagerIT extends ZooKeeperITSupport {
 
     @Test
     public void shouldWaitForConnection() {

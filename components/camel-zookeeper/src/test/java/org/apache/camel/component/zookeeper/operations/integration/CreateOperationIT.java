@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.operations;
+package org.apache.camel.component.zookeeper.operations.integration;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
+import org.apache.camel.component.zookeeper.integration.ZooKeeperITSupport;
+import org.apache.camel.component.zookeeper.operations.CreateOperation;
+import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooDefs.Perms;
@@ -31,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateOperationTest extends ZooKeeperTestSupport {
+public class CreateOperationIT extends ZooKeeperITSupport {
 
     private ZooKeeper connection;
 
