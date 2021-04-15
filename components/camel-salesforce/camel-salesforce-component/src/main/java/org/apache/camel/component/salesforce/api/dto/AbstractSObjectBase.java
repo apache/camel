@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +44,7 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     private ZonedDateTime LastModifiedDate;
     private String LastModifiedById;
     private ZonedDateTime SystemModstamp;
-    private ZonedDateTime LastActivityDate;
+    private LocalDate LastActivityDate;
     private ZonedDateTime LastViewedDate;
     private ZonedDateTime LastReferencedDate;
 
@@ -178,12 +179,12 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("LastActivityDate")
-    public ZonedDateTime getLastActivityDate() {
+    public LocalDate getLastActivityDate() {
         return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
-    public void setLastActivityDate(ZonedDateTime lastActivityDate) {
+    public void setLastActivityDate(LocalDate lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
     }
 
