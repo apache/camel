@@ -14,15 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.operations;
+package org.apache.camel.component.zookeeper.operations.integration;
 
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
+import org.apache.camel.component.zookeeper.integration.ZooKeeperITSupport;
+import org.apache.camel.component.zookeeper.operations.AnyOfOperations;
+import org.apache.camel.component.zookeeper.operations.ExistenceChangedOperation;
+import org.apache.camel.component.zookeeper.operations.ExistsOperation;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AnyOfOperationTest extends ZooKeeperTestSupport {
+public class AnyOfOperationIT extends ZooKeeperITSupport {
 
     @Test
     public void testExistsOrWaitsWhenNodeExists() throws Exception {

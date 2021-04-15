@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.component.zookeeper.cloud.integration;
 
-import org.apache.camel.CamelContext;
+import java.util.Collections;
+import java.util.Map;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicyFactory;
+import org.apache.camel.component.service.ServiceComponent;
 
-public class ZooKeeperServiceRegistrationWithRoutePolicyFactoryTest extends ZooKeeperServiceRegistrationTestBase {
+public class ZooKeeperServiceRegistrationWithServiceComponentIT extends ZooKeeperServiceRegistrationITBase {
+
+    @BindToRegistry("service")
+    private ServiceComponent service = new ServiceComponent();
+
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.addRoutePolicyFactory(new ServiceRegistrationRoutePolicyFactory());
-
-        return context;
+    protected Map<String, String> getMetadata() {
+        return Collections.singletonMap("service.type", "zookeeper");
     }
 
     @Override
@@ -35,7 +39,7 @@ public class ZooKeeperServiceRegistrationWithRoutePolicyFactoryTest extends ZooK
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
+                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper", SERVICE_NAME, SERVICE_PORT)
                         .routeId(SERVICE_ID)
                         .routeGroup(SERVICE_NAME)
                         .noAutoStartup()

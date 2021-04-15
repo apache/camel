@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.component.zookeeper.integration;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConsumeDataTest extends ZooKeeperTestSupport {
+public class ConsumeDataIT extends ZooKeeperITSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {

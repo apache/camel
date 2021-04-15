@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cluster;
+package org.apache.camel.component.zookeeper.cluster.integration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -39,11 +40,11 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class ZooKeeperClusteredRoutePolicyFactoryTest {
+public final class ZooKeeperClusteredRoutePolicyFactoryIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusteredRoutePolicyFactoryTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusteredRoutePolicyFactoryIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);

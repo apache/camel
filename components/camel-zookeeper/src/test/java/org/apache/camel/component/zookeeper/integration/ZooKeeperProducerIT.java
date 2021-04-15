@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.component.zookeeper.integration;
 
 import java.util.List;
 
@@ -23,6 +23,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
+public class ZooKeeperProducerIT extends ZooKeeperITSupport {
 
     private String zookeeperUri;
     private String testPayload = "TestPayload";
