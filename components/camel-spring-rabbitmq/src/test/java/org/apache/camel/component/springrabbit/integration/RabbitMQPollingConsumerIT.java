@@ -31,7 +31,7 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class RabbitMQPollingConsumerTest extends AbstractRabbitMQIntTest {
+public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

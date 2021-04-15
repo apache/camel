@@ -21,12 +21,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.core.MessagePropertiesBuilder;
 
-public class RabbitMQConsumerRoutingKeyIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQConsumerIT extends RabbitMQITSupport {
 
     @Test
     public void testConsumer() throws Exception {
@@ -37,44 +33,15 @@ public class RabbitMQConsumerRoutingKeyIntTest extends AbstractRabbitMQIntTest {
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
-    @Test
-    public void testConsumerWithHeader() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedHeaderReceived("cheese", "gouda");
-
-        template.sendBodyAndHeader("direct:start", "Hello World", "cheese", "gouda");
-
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testConsumerWithMessage() throws Exception {
-        MessageProperties props = MessagePropertiesBuilder.newInstance()
-                .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
-                .setMessageId("123")
-                .setHeader("bar", "baz")
-                .build();
-        Message body = MessageBuilder.withBody("foo".getBytes())
-                .andProperties(props)
-                .build();
-
-        getMockEndpoint("mock:result").expectedBodiesReceived("foo");
-        getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-
-        template.sendBody("direct:start", body);
-
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
-    }
-
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
+                        .to("spring-rabbitmq:foo");
 
-                from("spring-rabbitmq:foo?queues=myqueue&routingKey=foo.bar")
+                from("spring-rabbitmq:foo")
                         .to("log:result")
                         .to("mock:result");
             }

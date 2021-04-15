@@ -36,7 +36,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQProducerIT extends RabbitMQITSupport {
 
     @Test
     public void testProducer() throws Exception {

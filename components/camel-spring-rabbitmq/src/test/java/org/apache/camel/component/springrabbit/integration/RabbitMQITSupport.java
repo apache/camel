@@ -29,7 +29,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
+public abstract class RabbitMQITSupport extends CamelTestSupport {
 
     @RegisterExtension
     public static RabbitMQService service = RabbitMQServiceFactory.createService();
