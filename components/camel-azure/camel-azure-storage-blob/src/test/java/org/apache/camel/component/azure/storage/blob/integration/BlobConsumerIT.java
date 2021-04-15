@@ -215,7 +215,7 @@ class BlobConsumerIT extends Base {
             @Override
             public void configure() {
                 from("direct:createBlob")
-                        .to("azure-storage-blob://cameldev?blobServiceClient=#serviceClient&operation=uploadBlockBlob");
+                        .to("azure-storage-blob://cameldev?operation=uploadBlockBlob");
 
                 from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName
                      + "&blobServiceClient=#serviceClient&fileDir="
@@ -225,15 +225,15 @@ class BlobConsumerIT extends Base {
                      + "&blobServiceClient=#serviceClient")
                              .to("mock:resultOutputStream");
 
-                from("azure-storage-blob://cameldev/" + batchContainerName + "?blobServiceClient=#serviceClient")
+                from("azure-storage-blob://cameldev/" + batchContainerName)
                         .to("mock:resultBatch");
 
-                from("azure-storage-blob://cameldev/" + batchContainerName + "?blobServiceClient=#serviceClient&fileDir="
+                from("azure-storage-blob://cameldev/" + batchContainerName + "?fileDir="
                      + testDir.toString()).to("mock:resultBatchFile");
 
                 // if regex is set then prefix should have no effect
                 from("azure-storage-blob://cameldev/" + batchContainerName
-                     + "?blobServiceClient=#serviceClient&prefix=aaaa&regex=" + regex)
+                     + "?prefix=aaaa&regex=" + regex)
                              .idempotentConsumer(body(), new MemoryIdempotentRepository())
                              .to("mock:resultRegex");
             }

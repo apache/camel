@@ -212,7 +212,7 @@ class BlobProducerIT extends Base {
     }
 
     private String componentUri(final String operation) {
-        return String.format("azure-storage-blob://cameldev/%s?blobServiceClient=#serviceClient&operation=%s", containerName,
+        return String.format("azure-storage-blob://cameldev/%s?operation=%s", containerName,
                 operation);
     }
 }
