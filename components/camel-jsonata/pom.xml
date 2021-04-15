@@ -50,7 +50,6 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.ibm.jsonata4java/JSONata4Java -->
         <dependency>
             <groupId>com.ibm.jsonata4java</groupId>
             <artifactId>JSONata4Java</artifactId>
