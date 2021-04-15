@@ -79,6 +79,11 @@ public class CosmosDbContainerOperationsBuilder {
         return applyToContainer(container -> container.replaceThroughput(containerThroughputProperties));
     }
 
+    // container operations
+    public CosmosDbItemOperationsBuilder getItemOperationBuilder() {
+        return new CosmosDbItemOperationsBuilder(getContainerAndCreateContainerIfNotExist());
+    }
+
     private Mono<CosmosAsyncContainer> getContainerAndCreateContainerIfNotExist() {
         validateContainerName();
 

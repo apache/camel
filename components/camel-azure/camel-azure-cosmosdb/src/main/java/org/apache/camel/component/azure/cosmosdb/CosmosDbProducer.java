@@ -19,12 +19,9 @@ package org.apache.camel.component.azure.cosmosdb;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbDatabaseOperations;
 import org.apache.camel.support.DefaultAsyncProducer;
 
 public class CosmosDbProducer extends DefaultAsyncProducer {
-
-    private CosmosDbDatabaseOperations producerOperations;
 
     public CosmosDbProducer(final Endpoint endpoint) {
         super(endpoint);
