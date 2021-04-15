@@ -117,7 +117,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
                                 + "?maxRedeliverCount=5&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
         PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:" + topicUri + "-subs-DLQ");
 
-        to.expectedMessageCount(5);
+        to.expectedMessageCount(6);
         deadLetter.expectedMessageCount(1);
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -129,7 +129,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         });
         producer.send("Hello World!");
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         PulsarEndpoint deadLetterFrom
                 = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
 
-        to.expectedMessageCount(5);
+        to.expectedMessageCount(6);
         deadLetter.expectedMessageCount(1);
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -155,7 +155,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         });
 
         producer.send("Hello World!");
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -188,7 +188,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         });
 
         producer.send("Hello World!");
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
