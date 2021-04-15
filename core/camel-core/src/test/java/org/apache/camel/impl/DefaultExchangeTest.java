@@ -25,14 +25,20 @@ import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
+
+    private static final String SAFE_PROPERTY = "SAFE_PROPERTY";
+    private static final String UNSAFE_PROPERTY = "UNSAFE_PROPERTY";
 
     @Test
     public void testBody() throws Exception {
@@ -248,6 +254,37 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         Message destIn = destExchange.getIn();
 
         assertEquals(sourceIn.getClass(), destIn.getClass(), "Dest message should be of the same type as source message");
+    }
+
+    @Test
+    public void testExchangeSafeCopy() {
+        DefaultExchange exchange = new DefaultExchange(context);
+        SafeProperty property = new SafeProperty();
+        UnsafeProperty unsafeProperty = new UnsafeProperty();
+        exchange.setSafeCopyProperty(SAFE_PROPERTY, property);
+        exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
+
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
+        assertThat(copy.getProperty(SAFE_PROPERTY)).isNotSameAs(property);
+        assertThat(copy.getProperty(UNSAFE_PROPERTY)).isSameAs(unsafeProperty);
+
+    }
+
+    private static final class SafeProperty implements SafeCopyProperty {
+        private SafeProperty() {
+
+        }
+
+        @Override
+        public SafeProperty safeCopy() {
+            return new SafeProperty();
+        }
+
+    }
+
+    private static class UnsafeProperty {
+
     }
 
     public static class MyMessage extends DefaultMessage {

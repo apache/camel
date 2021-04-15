@@ -34,6 +34,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
@@ -69,6 +70,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean interruptable = true;
     private boolean redeliveryExhausted;
     private Boolean errorHandlerHandled;
+    private Map<String, SafeCopyProperty> safeCopyProperties;
 
     public DefaultExchange(CamelContext context) {
         this.context = context;
@@ -147,7 +149,11 @@ public final class DefaultExchange implements ExtendedExchange {
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
-            safeCopyProperties(getProperties(), exchange.getProperties());
+            safeProperties(getProperties(), exchange.getProperties());
+        }
+
+        if (hasSafeCopyProperties()) {
+            safeCopyProperties(this.safeCopyProperties, exchange.getSafeCopyProperties());
         }
 
         return exchange;
@@ -170,7 +176,7 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     @SuppressWarnings("unchecked")
-    private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
+    private void safeProperties(Map<String, Object> source, Map<String, Object> target) {
         source.entrySet().stream().forEach(entry -> {
             if (entry.getValue() != null && entry.getValue() instanceof CamelCopySafeProperty) {
                 //create deep copy of the object to avoid mutations by different threads/routes
@@ -188,6 +194,13 @@ public final class DefaultExchange implements ExtendedExchange {
                 target.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
             }
         }
+    }
+
+    private void safeCopyProperties(
+            Map<String, SafeCopyProperty> source, Map<String, SafeCopyProperty> target) {
+        source.entrySet().stream().forEach(entry -> {
+            target.put(entry.getKey(), entry.getValue().safeCopy());
+        });
     }
 
     @Override
@@ -330,9 +343,20 @@ public final class DefaultExchange implements ExtendedExchange {
         return properties;
     }
 
+    Map<String, SafeCopyProperty> getSafeCopyProperties() {
+        if (safeCopyProperties == null) {
+            this.safeCopyProperties = new ConcurrentHashMap<>(2);
+        }
+        return safeCopyProperties;
+    }
+
     @Override
     public boolean hasProperties() {
         return !properties.isEmpty();
+    }
+
+    private boolean hasSafeCopyProperties() {
+        return safeCopyProperties != null && !safeCopyProperties.isEmpty();
     }
 
     @Override
@@ -722,6 +746,36 @@ public final class DefaultExchange implements ExtendedExchange {
 
     protected String createExchangeId() {
         return context.getUuidGenerator().generateUuid();
+    }
+
+    @Override
+    public void setSafeCopyProperty(String key, SafeCopyProperty value) {
+        if (value != null) {
+            // avoid the NullPointException
+            if (safeCopyProperties == null) {
+                this.safeCopyProperties = new ConcurrentHashMap<>(2);
+            }
+            safeCopyProperties.put(key, value);
+        } else if (safeCopyProperties != null) {
+            // if the value is null, we just remove the key from the map
+            safeCopyProperties.remove(key);
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getSafeCopyProperty(String key, Class<T> type) {
+        if (!hasSafeCopyProperties()) {
+            return null;
+        }
+        Object value = getSafeCopyProperties().get(key);
+
+        if (type.isInstance(value)) {
+            return (T) value;
+        }
+
+        return ExchangeHelper.convertToType(this, type, value);
     }
 
 }

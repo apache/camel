@@ -163,4 +163,23 @@ public interface ExtendedExchange extends Exchange {
      */
     void setErrorHandlerHandled(Boolean errorHandlerHandled);
 
+    /**
+     * Method to set SafeCopyProperties on the exchange. {@link SafeCopyProperty}
+     *
+     * @param key
+     *
+     * @param SafeCopyProperty
+     */
+    void setSafeCopyProperty(String key, SafeCopyProperty value);
+
+    /**
+     * Method to get SafeCopyProperties from the exchange
+     *
+     * @param  key
+     * @param  type the type of the property
+     * @return
+     */
+
+    <T> T getSafeCopyProperty(String key, Class<T> type);
+
 }
