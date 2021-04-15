@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -35,11 +35,13 @@ import com.braintreegateway.TextEvidenceRequest;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DisputeGatewayApiMethod;
 import org.apache.camel.component.braintree.internal.DocumentUploadGatewayApiMethod;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +50,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DisputeGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DisputeGatewayIT.class);
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(DisputeGatewayApiMethod.class).getName();
     private static final String TRANSACTION_PATH_PREFIX

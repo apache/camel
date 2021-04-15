@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,8 +30,10 @@ import com.braintreegateway.ValidationErrors;
 import com.braintreegateway.exceptions.NotFoundException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.CustomerGatewayApiMethod;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +45,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final String PATH_PREFIX = getApiNameAsString(CustomerGatewayApiMethod.class);
-    private static final Logger LOG = LoggerFactory.getLogger(CustomerGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerGatewayIT.class);
 
     /**
      * Customers management workflow: - create a customer - lookup by id - update first name - delete by id - confirm
