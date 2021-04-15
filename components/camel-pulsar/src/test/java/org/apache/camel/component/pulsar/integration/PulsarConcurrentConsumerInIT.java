@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
@@ -36,15 +37,16 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PulsarConsumerInTest extends PulsarTestSupport {
+public class PulsarConcurrentConsumerInIT extends PulsarITSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConcurrentConsumerInIT.class);
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer-1";
+    private static final String TOPIC_URI = "non-persistent://public/default/concurrent-camel-topic";
+    private static final String PRODUCER = "camel-producer";
+    private static final int NUMBER_OF_CONSUMERS = 5;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -57,7 +59,7 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
             Processor processor = new Processor() {
                 @Override
                 public void process(final Exchange exchange) {
-                    LOGGER.info("Processing message {}", exchange.getIn().getBody());
+                    LOGGER.info("Processing message {} on Thread {}", exchange.getIn().getBody(), Thread.currentThread());
                 }
             };
 
@@ -78,7 +80,7 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
     }
 
     private void registerPulsarBeans(SimpleRegistry registry) throws PulsarClientException {
-        PulsarClient pulsarClient = givenPulsarClient();
+        PulsarClient pulsarClient = concurrentPulsarClient();
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
         registry.bind("pulsarClient", pulsarClient);
@@ -89,19 +91,23 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
 
     }
 
-    private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+    private PulsarClient concurrentPulsarClient() throws PulsarClientException {
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(5).listenerThreads(5).build();
     }
 
     @Test
-    public void testAMessageToClusterIsConsumed() throws Exception {
-        to.expectedMessageCount(1);
+    public void testMultipleMessageConsumedByClusterwithConcurrentConfiguration() throws Exception {
+        to.expectedMinimumMessageCount(1);
 
         Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+                = concurrentPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
-        producer.send("Hello World!");
+        for (int i = 0; i < NUMBER_OF_CONSUMERS; i++) {
+            producer.send("Hello World!");
+        }
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
     }
 }

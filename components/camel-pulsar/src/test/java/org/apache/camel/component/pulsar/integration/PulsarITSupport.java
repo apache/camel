@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import org.apache.camel.test.infra.pulsar.services.PulsarService;
 import org.apache.camel.test.infra.pulsar.services.PulsarServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class PulsarTestSupport extends CamelTestSupport {
+public class PulsarITSupport extends CamelTestSupport {
     @RegisterExtension
     static PulsarService service = PulsarServiceFactory.createService();
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
+import org.apache.camel.component.pulsar.PulsarMessageReceipt;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
@@ -40,9 +42,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
-public class PulsarConsumerInAsynchronousTest extends PulsarTestSupport {
+public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInAsynchronousTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInAsynchronousIT.class);
 
     private static final String TOPIC_URI_SYNCHRONOUS_FALSE = "persistent://public/default/synchronousFalse";
 

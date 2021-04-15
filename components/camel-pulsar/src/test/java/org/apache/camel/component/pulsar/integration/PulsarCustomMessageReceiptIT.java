@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +22,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
+import org.apache.camel.component.pulsar.PulsarMessageReceipt;
+import org.apache.camel.component.pulsar.PulsarMessageReceiptFactory;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
@@ -43,9 +46,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
+public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarCustomMessageReceiptTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarCustomMessageReceiptIT.class);
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";

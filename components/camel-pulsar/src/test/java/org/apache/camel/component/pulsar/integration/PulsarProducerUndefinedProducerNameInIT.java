@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +24,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
@@ -32,18 +33,26 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.jupiter.api.Test;
 
-public class PulsarProducerInTest extends PulsarTestSupport {
+public class PulsarProducerUndefinedProducerNameInIT extends PulsarITSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
-    private static final String PRODUCER = "camel-producer";
 
-    @Produce("direct:start")
-    private ProducerTemplate producerTemplate;
+    @Produce("direct:start1")
+    private ProducerTemplate producerTemplate1;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1"
-                    + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
-    private Endpoint from;
+    @Produce("direct:start2")
+    private ProducerTemplate producerTemplate2;
+
+    @EndpointInject("pulsar:" + TOPIC_URI
+                    + "?numberOfConsumers=1"
+                    + "&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription"
+                    + "&consumerQueueSize=1"
+                    + "&consumerName=camel-consumer")
+    private Endpoint pulsarEndpoint1;
+
+    @EndpointInject("pulsar:" + TOPIC_URI)
+    private Endpoint pulsarEndpoint2;
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -54,22 +63,24 @@ public class PulsarProducerInTest extends PulsarTestSupport {
 
             @Override
             public void configure() {
-                from("direct:start").to(from);
-                from(from).to(to);
+                from("direct:start1").to(pulsarEndpoint1);
+                from("direct:start2").to(pulsarEndpoint2);
+
+                from(pulsarEndpoint1).to(to);
             }
         };
     }
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
+        Registry registry = new SimpleRegistry();
 
         registerPulsarBeans(registry);
 
         return registry;
     }
 
-    private void registerPulsarBeans(SimpleRegistry registry) throws PulsarClientException {
+    private void registerPulsarBeans(Registry registry) throws PulsarClientException {
         PulsarClient pulsarClient = givenPulsarClient();
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
@@ -78,20 +89,22 @@ public class PulsarProducerInTest extends PulsarTestSupport {
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
         registry.bind("pulsar", comp);
-
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
-    public void testAMessageToRouteIsSentAndThenConsumed() throws Exception {
-        to.expectedMessageCount(3);
+    public void testAMessageToRouteIsSentFromBothProducersAndThenConsumed() throws Exception {
+        to.expectedMessageCount(2);
 
-        producerTemplate.sendBody("Hello ");
-        producerTemplate.sendBody("World ");
-        producerTemplate.sendBody(10);
+        producerTemplate1.sendBody("Test First");
+        producerTemplate2.sendBody("Test Second");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
@@ -26,7 +26,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
+import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.PulsarClient;
@@ -34,21 +36,24 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.jupiter.api.Test;
 
-public class PulsarConcurrentProducerInTest extends PulsarTestSupport {
+public class PulsarProducerHeadersInIT extends PulsarITSupport {
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-concurrent-producers-topic";
+    private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
     private static final String PRODUCER = "camel-producer";
 
     @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=3&subscriptionType=Shared"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=5"
-                    + "&consumerNamePrefix=camel-consumer" + "&producerName=" + PRODUCER)
-    private Endpoint from;
+    @EndpointInject("pulsar:" + TOPIC_URI
+                    + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription"
+                    + "&consumerQueueSize=1"
+                    + "&consumerName=camel-consumer"
+                    + "&producerName=" + PRODUCER)
+    private Endpoint pulsar;
 
     @EndpointInject("mock:result")
-    private MockEndpoint to;
+    private MockEndpoint mock;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -56,22 +61,22 @@ public class PulsarConcurrentProducerInTest extends PulsarTestSupport {
 
             @Override
             public void configure() {
-                from("direct:start").to(from);
-                from(from).to(to);
+                from("direct:start").to(pulsar);
+                from(pulsar).to(mock);
             }
         };
     }
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
+        Registry registry = new SimpleRegistry();
 
         registerPulsarBeans(registry);
 
         return registry;
     }
 
-    private void registerPulsarBeans(SimpleRegistry registry) throws PulsarClientException {
+    private void registerPulsarBeans(final Registry registry) throws PulsarClientException {
         PulsarClient pulsarClient = givenPulsarClient();
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
@@ -80,34 +85,44 @@ public class PulsarConcurrentProducerInTest extends PulsarTestSupport {
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
         registry.bind("pulsar", comp);
-
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
-    public void testConcurrentMessagesAreSentAndThenConsumed() throws Exception {
-        to.expectedMessageCount(100);
+    public void propertyHeaderSetsPulsarProperties() throws InterruptedException {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("testProperty", "testValue");
+        mock.expectedHeaderReceived(PulsarMessageHeaders.PROPERTIES, properties);
 
-        sendMessages();
+        producerTemplate.sendBodyAndHeader("test", PulsarMessageHeaders.PROPERTIES_OUT, properties);
 
-        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
     }
 
-    private void sendMessages() {
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+    @Test
+    public void eventTimeHeaderSetsPulsarEventTime() throws InterruptedException {
+        long eventTime = 10000;
+        mock.expectedHeaderReceived(PulsarMessageHeaders.EVENT_TIME, eventTime);
 
-        for (int i = 0; i < 100; i++) {
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    producerTemplate.sendBody("Hello World!");
-                }
-            });
-        }
+        producerTemplate.sendBodyAndHeader("test", PulsarMessageHeaders.EVENT_TIME_OUT, eventTime);
 
-        executorService.shutdown();
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
+    }
+
+    @Test
+    public void keyHeaderSetsPulsarKey() throws InterruptedException {
+        String key = "testKey";
+        mock.expectedHeaderReceived(PulsarMessageHeaders.KEY, key);
+
+        producerTemplate.sendBodyAndHeader("test", PulsarMessageHeaders.KEY_OUT, key);
+
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
     }
 }
