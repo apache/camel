@@ -85,6 +85,9 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
             this.properties.clear();
             // reset array by copying over from empty which is a very fast JVM optimized operation
             System.arraycopy(EMPTY_INTERNAL_PROPERTIES, 0, this.internalProperties, 0, INTERNAL_LENGTH);
+            if (this.safeCopyProperties != null) {
+                this.safeCopyProperties.clear();
+            }
             this.exchangeId = null;
             if (in != null && in.getClass() == originalInClassType) {
                 // okay we can reuse in
