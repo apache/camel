@@ -20,7 +20,7 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(47);
+        Set<String> props = new HashSet<>(46);
         props.add("blobName");
         props.add("backoffMultiplier");
         props.add("accountName");
@@ -45,7 +45,6 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("closeStreamAfterWrite");
         props.add("repeatCount");
         props.add("timeUnit");
-        props.add("autoDiscoverClient");
         props.add("maxResultsPerPage");
         props.add("downloadLinkExpiration");
         props.add("sendEmptyMessageWhenIdle");

@@ -65,14 +65,13 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 28 options, which are listed below.
+The Azure Storage Blob Service component supports 27 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *blobName* (common) | The blob name, to consume specific blob from a container. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. There are 3 enums and the value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
@@ -85,7 +84,7 @@ The Azure Storage Blob Service component supports 28 options, which are listed b
 | *maxRetryRequests* (common) | Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body. | 0 | int
 | *prefix* (common) | Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs. |  | String
 | *regex* (common) | Filters the results to return only blobs whose names match the specified regular expression. May be null to return all if both prefix and regex are set, regex takes the priority and prefix is ignored. |  | String
-| *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
+| *serviceClient* (common) | *Autowired* Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
@@ -123,13 +122,12 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (45 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *blobName* (common) | The blob name, to consume specific blob from a container. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobServiceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through getBlobContainerClient(String), and operations on a blob are available on BlobClient through getBlobContainerClient(String).getBlobClient(String). |  | BlobServiceClient
@@ -142,7 +140,7 @@ with the following path and query parameters:
 | *maxRetryRequests* (common) | Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body. | 0 | int
 | *prefix* (common) | Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs. |  | String
 | *regex* (common) | Filters the results to return only blobs whose names match the specified regular expression. May be null to return all if both prefix and regex are set, regex takes the priority and prefix is ignored. |  | String
-| *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
+| *serviceClient* (common) | *Autowired* Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
