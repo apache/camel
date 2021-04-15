@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelCopySafeProperty;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTestSupport;
@@ -28,7 +29,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.support.CamelCopySafeProperty;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -303,30 +303,14 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     @Test
     public void testExchangeSafeCopy() {
         DefaultExchange exchange = new DefaultExchange(context);
-        exchange.setSafeCopyProperties(true);
         SafeProperty property = new SafeProperty();
         UnsafeProperty unsafeProperty = new UnsafeProperty();
-        exchange.setProperty(SAFE_PROPERTY, property);
+        exchange.setCopySafeProperty(SAFE_PROPERTY, property);
         exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
 
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
         assertThat(copy.getProperty(SAFE_PROPERTY)).isNotSameAs(property);
-        assertThat(copy.getProperty(UNSAFE_PROPERTY)).isSameAs(unsafeProperty);
-
-    }
-
-    @Test
-    public void testExchangeUnSafeCopy() {
-        DefaultExchange exchange = new DefaultExchange(context);
-        SafeProperty property = new SafeProperty();
-        UnsafeProperty unsafeProperty = new UnsafeProperty();
-        exchange.setProperty(SAFE_PROPERTY, property);
-        exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
-
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-
-        assertThat(copy.getProperty(SAFE_PROPERTY)).isSameAs(property);
         assertThat(copy.getProperty(UNSAFE_PROPERTY)).isSameAs(unsafeProperty);
 
     }

@@ -20,8 +20,8 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import brave.Span;
+import org.apache.camel.CamelCopySafeProperty;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.CamelCopySafeProperty;
 
 /**
  * The state of the zipkin trace which we store on the {@link Exchange}
