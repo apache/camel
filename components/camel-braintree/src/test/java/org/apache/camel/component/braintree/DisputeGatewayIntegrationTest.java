@@ -73,6 +73,8 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result result = requestBody(
                 "direct://ACCEPT",
                 createdDispute.getId());
+
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "accept result");
         assertTrue(result.isSuccess(), "accept result success");
 
@@ -98,6 +100,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 null,
                 headers);
 
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "addFileEvidence result");
         assertTrue(result.isSuccess(), "addFileEvidence result success");
     }
@@ -118,6 +121,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 null,
                 headers);
 
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "addFileEvidence result");
         assertTrue(result.isSuccess(), "addFileEvidence result success");
     }
@@ -137,6 +141,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 null,
                 headers);
 
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "addTextEvidence result");
         assertTrue(result.isSuccess(), "addTextEvidence result success");
 
@@ -161,6 +166,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 null,
                 headers);
 
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "addTextEvidence result");
         assertTrue(result.isSuccess(), "addTextEvidence result success");
 
@@ -176,12 +182,15 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result result = requestBody(
                 "direct://FINALIZE",
                 createdDispute.getId());
+
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "finalize result");
         assertTrue(result.isSuccess(), "finalize result success");
 
         final Dispute finalizedDispute = requestBody(
                 "direct://FIND",
                 createdDispute.getId());
+
         assertNotNull(finalizedDispute, "finalized dispute");
         assertEquals(Dispute.Status.DISPUTED, finalizedDispute.getStatus());
     }
@@ -214,6 +223,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 null,
                 addTextEvidenceHeaders);
 
+        LOG.info("Result message: {}", addTextEvidenceResult.getMessage());
         assertNotNull(addTextEvidenceResult, "addTextEvidence result");
         assertTrue(addTextEvidenceResult.isSuccess(), "addTextEvidence result success");
 
@@ -229,6 +239,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                 null,
                 removeTextEvidenceHeaders);
 
+        LOG.info("Result message: {}", removeTextEvidenceResult.getMessage());
         assertNotNull(removeTextEvidenceResult, "removeEvidence result");
         assertTrue(removeTextEvidenceResult.isSuccess(), "removeEvidence result success");
     }
@@ -301,11 +312,19 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         };
     }
 
+    private static int randomWithRange(int min, int max) {
+        int range = (max - min) + 1;
+
+        return (int) (Math.random() * range) + min;
+    }
+
     private Dispute createDispute() {
-        return createDispute(100.00);
+        double initialAmount = randomWithRange(100, 200);
+        return createDispute(initialAmount);
     }
 
     private Dispute createDispute(double amount) {
+        LOG.info("Creating dispute with amount {}", amount);
         final Result<Transaction> transactionResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
@@ -319,6 +338,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", transactionResult.getMessage());
         assertTrue(transactionResult.isSuccess());
         List<Dispute> disputes = transactionResult.getTarget().getDisputes();
         assertListSize(disputes, 1);

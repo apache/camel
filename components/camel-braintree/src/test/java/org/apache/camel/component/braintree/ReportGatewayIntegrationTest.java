@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.ReportGatewayApiMethod;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,10 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(ReportGatewayApiMethod.class).getName();
 
+    @EnabledIfEnvironmentVariables({
+            @EnabledIfEnvironmentVariable(named = "CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID", matches = ".*"),
+            @EnabledIfEnvironmentVariable(named = "CAMEL_BRAINTREE_REPORT_DATE", matches = ".*")
+    })
     @Test
     public void testTransactionLevelFees() throws Exception {
         String merchantAccountId = System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID");
@@ -57,6 +63,7 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
                 "direct://TRANSACTIONLEVELFEES",
                 request);
 
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "transactionLevelFees result");
         assertTrue(result.isSuccess(), "transactionLevelFees success");
         TransactionLevelFeeReport report = result.getTarget();

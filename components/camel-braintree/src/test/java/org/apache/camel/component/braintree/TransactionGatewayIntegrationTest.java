@@ -92,6 +92,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", result.getMessage());
         assertNotNull(result, "sale result");
         assertTrue(result.isSuccess());
 
@@ -106,13 +107,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.01"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(false)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -148,13 +150,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.02"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(false)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -175,13 +178,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.03"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(false)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -204,13 +208,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.04"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(false)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -237,13 +242,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.05"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(false)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -271,13 +277,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.06"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(true)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -304,13 +311,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.07"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(true)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
@@ -341,13 +349,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
                 new TransactionRequest()
-                        .amount(new BigDecimal("100.00"))
+                        .amount(new BigDecimal("100.08"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
                         .submitForSettlement(true)
                         .done(),
                 Result.class);
 
+        LOG.info("Result message: {}", createResult.getMessage());
         assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
