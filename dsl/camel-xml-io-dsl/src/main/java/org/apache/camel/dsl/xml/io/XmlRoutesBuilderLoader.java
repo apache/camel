@@ -21,6 +21,9 @@ import java.io.InputStream;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.xml.in.ModelParser;
@@ -54,8 +57,18 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 try (InputStream is = resource.getInputStream()) {
                     new ModelParser(is, NAMESPACE)
                             .parseRoutesDefinition()
-                            .ifPresent(this::setRouteCollection);
+                            .ifPresent(this::addRoutes);
                 }
+            }
+
+            private void addRoutes(RoutesDefinition routes) {
+                // xml routes must be marked as un-prepared as camel-core
+                // must do special handling for XML DSL
+                for (RouteDefinition route : routes.getRoutes()) {
+                    RouteDefinitionHelper.prepareRoute(getCamelContext(), route);
+                    route.markPrepared();
+                }
+                setRouteCollection(routes);
             }
         };
     }
