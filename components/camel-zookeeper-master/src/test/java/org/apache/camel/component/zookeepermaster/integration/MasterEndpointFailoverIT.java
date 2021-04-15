@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeepermaster;
+package org.apache.camel.component.zookeepermaster.integration;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeepermaster.CuratorFactoryBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -34,11 +35,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MasterEndpointFailoverTest {
+public class MasterEndpointFailoverIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MasterEndpointFailoverTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(MasterEndpointFailoverIT.class);
 
     protected ProducerTemplate template;
     protected CamelContext producerContext;
