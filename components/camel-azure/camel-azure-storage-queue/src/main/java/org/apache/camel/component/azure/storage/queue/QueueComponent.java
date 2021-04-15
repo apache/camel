@@ -71,9 +71,6 @@ public class QueueComponent extends DefaultComponent {
         final QueueEndpoint endpoint = new QueueEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        if (configuration.isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration);
-        }
 
         checkCredentials(configuration);
         validateConfigurations(configuration);
@@ -104,22 +101,7 @@ public class QueueComponent extends DefaultComponent {
             }
         }
     }
-
-    private void checkAndSetRegistryClient(final QueueConfiguration configuration) {
-        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
-            final Set<QueueServiceClient> clients = getCamelContext().getRegistry().findByType(QueueServiceClient.class);
-            if (clients.size() == 1) {
-                configuration.setServiceClient(clients.stream().findFirst().get());
-            } else if (clients.size() > 1) {
-                LOG.info("More than one QueueServiceClient instance in the registry, make sure to have only one instance");
-            } else {
-                LOG.info("No QueueServiceClient instance in the registry");
-            }
-        } else {
-            LOG.info("QueueServiceClient instance is already set at endpoint level: skipping the check in the registry");
-        }
-    }
-
+    
     private void validateConfigurations(final QueueConfiguration configuration) {
         if (configuration.getServiceClient() == null && configuration.getAccessKey() == null
                 && configuration.getCredentials() == null) {

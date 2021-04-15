@@ -40,8 +40,6 @@ public class QueueConfiguration implements Cloneable {
     @UriParam(label = "common")
     @Metadata(autowired = true)
     private QueueServiceClient serviceClient;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
     @UriParam(label = "producer", defaultValue = "true")
@@ -220,18 +218,6 @@ public class QueueConfiguration implements Cloneable {
 
     public void setPopReceipt(String popReceipt) {
         this.popReceipt = popReceipt;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************
