@@ -26,7 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,6 @@ public class QueueComponent extends DefaultComponent {
         final QueueEndpoint endpoint = new QueueEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-
         checkCredentials(configuration);
         validateConfigurations(configuration);
 
@@ -101,7 +99,7 @@ public class QueueComponent extends DefaultComponent {
             }
         }
     }
-    
+
     private void validateConfigurations(final QueueConfiguration configuration) {
         if (configuration.getServiceClient() == null && configuration.getAccessKey() == null
                 && configuration.getCredentials() == null) {

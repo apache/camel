@@ -20,7 +20,7 @@ public class QueueEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(33);
         props.add("backoffMultiplier");
         props.add("accountName");
         props.add("credentials");
@@ -38,7 +38,6 @@ public class QueueEndpointUriFactory extends org.apache.camel.support.component.
         props.add("scheduledExecutorService");
         props.add("repeatCount");
         props.add("timeUnit");
-        props.add("autoDiscoverClient");
         props.add("sendEmptyMessageWhenIdle");
         props.add("schedulerProperties");
         props.add("exchangePattern");

@@ -50,43 +50,6 @@ public interface QueueEndpointBuilderFactory {
             return (AdvancedQueueEndpointConsumerBuilder) this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default QueueEndpointConsumerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default QueueEndpointConsumerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
@@ -1048,43 +1011,6 @@ public interface QueueEndpointBuilderFactory {
             return (AdvancedQueueEndpointProducerBuilder) this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default QueueEndpointProducerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default QueueEndpointProducerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
@@ -1494,43 +1420,6 @@ public interface QueueEndpointBuilderFactory {
                 QueueEndpointProducerBuilder {
         default AdvancedQueueEndpointBuilder advanced() {
             return (AdvancedQueueEndpointBuilder) this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default QueueEndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default QueueEndpointBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
         }
         /**
          * Service client to a storage account to interact with the queue

@@ -53,24 +53,6 @@ public interface AzureStorageQueueComponentBuilderFactory {
             extends
                 ComponentBuilder<QueueComponent> {
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClient the value to set
-         * @return the dsl builder
-         */
-        default AzureStorageQueueComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * The component configurations.
          * 
          * The option is a:
@@ -375,7 +357,6 @@ public interface AzureStorageQueueComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoDiscoverClient": getOrCreateConfiguration((QueueComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((QueueComponent) component).setConfiguration((org.apache.camel.component.azure.storage.queue.QueueConfiguration) value); return true;
             case "serviceClient": getOrCreateConfiguration((QueueComponent) component).setServiceClient((com.azure.storage.queue.QueueServiceClient) value); return true;
             case "bridgeErrorHandler": ((QueueComponent) component).setBridgeErrorHandler((boolean) value); return true;
