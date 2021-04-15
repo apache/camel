@@ -80,6 +80,7 @@ public class StorageQueueBase extends CamelTestSupport {
         configuration.setQueueName(queueName);
 
         serviceClient = AzureStorageClientUtils.getClient();
+        serviceClient.getQueueClient(queueName).create();
     }
 
 }
