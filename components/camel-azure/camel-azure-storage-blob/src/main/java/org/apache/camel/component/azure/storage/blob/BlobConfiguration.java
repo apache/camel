@@ -24,6 +24,7 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -38,6 +39,7 @@ public class BlobConfiguration implements Cloneable {
     @UriParam
     private StorageSharedKeyCredential credentials;
     @UriParam
+    @Metadata(autowired = true)
     private BlobServiceClient serviceClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -65,8 +67,6 @@ public class BlobConfiguration implements Cloneable {
     private Integer maxResultsPerPage;
     @UriParam(label = "common", defaultValue = "0")
     private int maxRetryRequests;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
     @UriParam(defaultValue = "true")
     private boolean closeStreamAfterRead = true;
     @UriParam(label = "producer", defaultValue = "true")
@@ -363,18 +363,6 @@ public class BlobConfiguration implements Cloneable {
 
     public void setBlockListType(BlockListType blockListType) {
         this.blockListType = blockListType;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     /**

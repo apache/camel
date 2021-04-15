@@ -72,10 +72,6 @@ public class BlobComponent extends DefaultComponent {
         final BlobEndpoint endpoint = new BlobEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
 
-        if (config.isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(config);
-        }
-
         checkCredentials(config);
         validateConfigurations(config);
 
@@ -103,21 +99,6 @@ public class BlobComponent extends DefaultComponent {
             if (storageSharedKeyCredentials.size() == 1) {
                 configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
             }
-        }
-    }
-
-    private void checkAndSetRegistryClient(final BlobConfiguration configuration) {
-        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
-            final Set<BlobServiceClient> clients = getCamelContext().getRegistry().findByType(BlobServiceClient.class);
-            if (clients.size() == 1) {
-                configuration.setServiceClient(clients.stream().findFirst().get());
-            } else if (clients.size() > 1) {
-                LOG.info("More than one BlobServiceClient instance in the registry, make sure to have only one instance");
-            } else {
-                LOG.info("No BlobServiceClient instance in the registry");
-            }
-        } else {
-            LOG.info("BlobServiceClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 
