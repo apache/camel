@@ -45,10 +45,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "accountName", matches = ".*",
-                         disabledReason = "Make sure to supply azure accessKey or accountName, e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QueueProducerIT extends CamelTestSupport {
+class StorageQueueProducerIT extends StorageQueueBase {
 
     @EndpointInject
     private ProducerTemplate template;
