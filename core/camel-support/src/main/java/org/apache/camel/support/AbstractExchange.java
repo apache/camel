@@ -36,6 +36,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
@@ -84,6 +85,7 @@ class AbstractExchange implements ExtendedExchange {
     boolean redeliveryExhausted;
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
+    Map<String, SafeCopyProperty> safeCopyProperties;
 
     public AbstractExchange(CamelContext context) {
         this.context = context;
@@ -152,7 +154,11 @@ class AbstractExchange implements ExtendedExchange {
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
-            safeCopyProperties(getProperties(), exchange.getProperties());
+            copyProperties(getProperties(), exchange.getProperties());
+        }
+
+        if (hasSafeCopyProperties()) {
+            safeCopyProperties(this.safeCopyProperties, exchange.getSafeCopyProperties());
         }
         // copy over internal properties
         System.arraycopy(internalProperties, 0, exchange.internalProperties, 0, internalProperties.length);
@@ -188,8 +194,15 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     @SuppressWarnings("unchecked")
-    private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
+    private void copyProperties(Map<String, Object> source, Map<String, Object> target) {
         target.putAll(source);
+    }
+
+    private void safeCopyProperties(
+            Map<String, SafeCopyProperty> source, Map<String, SafeCopyProperty> target) {
+        source.entrySet().stream().forEach(entry -> {
+            target.put(entry.getKey(), entry.getValue().safeCopy());
+        });
     }
 
     @Override
@@ -250,6 +263,7 @@ class AbstractExchange implements ExtendedExchange {
         internalProperties[key.ordinal()] = value;
     }
 
+    @Override
     public Object removeProperty(ExchangePropertyKey key) {
         Object old = internalProperties[key.ordinal()];
         internalProperties[key.ordinal()] = null;
@@ -428,6 +442,13 @@ class AbstractExchange implements ExtendedExchange {
         return properties;
     }
 
+    Map<String, SafeCopyProperty> getSafeCopyProperties() {
+        if (safeCopyProperties == null) {
+            this.safeCopyProperties = new ConcurrentHashMap<>(2);
+        }
+        return safeCopyProperties;
+    }
+
     @Override
     public Map<String, Object> getAllProperties() {
         // include also internal properties (creates a new map)
@@ -441,6 +462,10 @@ class AbstractExchange implements ExtendedExchange {
     @Override
     public boolean hasProperties() {
         return properties != null && !properties.isEmpty();
+    }
+
+    private boolean hasSafeCopyProperties() {
+        return safeCopyProperties != null && !safeCopyProperties.isEmpty();
     }
 
     @Override
@@ -809,6 +834,7 @@ class AbstractExchange implements ExtendedExchange {
         this.redeliveryExhausted = redeliveryExhausted;
     }
 
+    @Override
     public Boolean getErrorHandlerHandled() {
         return errorHandlerHandled;
     }
@@ -884,6 +910,36 @@ class AbstractExchange implements ExtendedExchange {
         } else {
             return "Exchange[]";
         }
+    }
+
+    @Override
+    public void setSafeCopyProperty(String key, SafeCopyProperty value) {
+        if (value != null) {
+            // avoid the NullPointException
+            if (safeCopyProperties == null) {
+                this.safeCopyProperties = new ConcurrentHashMap<>(2);
+            }
+            safeCopyProperties.put(key, value);
+        } else if (safeCopyProperties != null) {
+            // if the value is null, we just remove the key from the map
+            safeCopyProperties.remove(key);
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getSafeCopyProperty(String key, Class<T> type) {
+        if (!hasSafeCopyProperties()) {
+            return null;
+        }
+        Object value = getSafeCopyProperties().get(key);
+
+        if (type.isInstance(value)) {
+            return (T) value;
+        }
+
+        return ExchangeHelper.convertToType(this, type, value);
     }
 
 }
