@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CosmosDbOperationsBuilderIT {
+class CosmosDbDatabaseOperationsBuilderIT {
 
     private CosmosAsyncClientWrapper clientWrapper;
 
@@ -38,8 +38,8 @@ class CosmosDbOperationsBuilderIT {
         final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
         // test create database
-        final CosmosDatabaseResponse createdDatabase = CosmosDbOperationsBuilder.withClient(clientWrapper)
-                .databaseName(databaseName)
+        final CosmosDatabaseResponse createdDatabase = CosmosDbDatabaseOperationsBuilder.withClient(clientWrapper)
+                .withDatabaseName(databaseName)
                 .createDatabase()
                 .block();
 
@@ -49,10 +49,9 @@ class CosmosDbOperationsBuilderIT {
         // successful if response code within 2xx
         assertTrue(createdDatabase.getStatusCode() >= 200 && createdDatabase.getStatusCode() < 300);
 
-
         // test delete the created database
-        final CosmosDatabaseResponse deletedDatabase = CosmosDbOperationsBuilder.withClient(clientWrapper)
-                .databaseName(databaseName)
+        final CosmosDatabaseResponse deletedDatabase = CosmosDbDatabaseOperationsBuilder.withClient(clientWrapper)
+                .withDatabaseName(databaseName)
                 .deleteDatabase()
                 .block();
 

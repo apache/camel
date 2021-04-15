@@ -1,15 +1,19 @@
 package org.apache.camel.component.azure.cosmosdb.operations;
 
+import java.util.function.Function;
+
 import com.azure.cosmos.CosmosAsyncContainer;
+import com.azure.cosmos.CosmosAsyncDatabase;
 import com.azure.cosmos.models.CosmosContainerRequestOptions;
 import com.azure.cosmos.models.CosmosContainerResponse;
 import com.azure.cosmos.models.ThroughputProperties;
 import com.azure.cosmos.models.ThroughputResponse;
-import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Mono;
 
-public class CosmosDbContainerOperationsBuilder extends CosmosDbOperationsBuilder<CosmosDbContainerOperationsBuilder> {
+public class CosmosDbContainerOperationsBuilder {
+
+    private final Mono<CosmosAsyncDatabase> database;
 
     // properties
     private String containerId;
@@ -18,74 +22,88 @@ public class CosmosDbContainerOperationsBuilder extends CosmosDbOperationsBuilde
     private CosmosContainerRequestOptions containerRequestOptions;
     private boolean createContainerIfNotExist;
 
-    protected CosmosDbContainerOperationsBuilder(CosmosAsyncClientWrapper client) {
-        super(client);
-    }
-
-    public static CosmosDbContainerOperationsBuilder withClient(final CosmosAsyncClientWrapper client) {
-        return new CosmosDbContainerOperationsBuilder(client);
+    // visible for testing
+    public CosmosDbContainerOperationsBuilder(final Mono<CosmosAsyncDatabase> database) {
+        this.database = database;
     }
 
     // properties DSL
-    public CosmosDbOperationsBuilder containerId(String containerId) {
+    public CosmosDbContainerOperationsBuilder withContainerId(String containerId) {
         this.containerId = containerId;
         return this;
     }
 
-    public CosmosDbOperationsBuilder containerPartitionKeyPath(String containerPartitionKeyPath) {
+    public CosmosDbContainerOperationsBuilder withContainerPartitionKeyPath(String containerPartitionKeyPath) {
         this.containerPartitionKeyPath = containerPartitionKeyPath;
         return this;
     }
 
-    public CosmosDbOperationsBuilder containerThroughputProperties(ThroughputProperties containerThroughputProperties) {
+    public CosmosDbContainerOperationsBuilder withContainerThroughputProperties(ThroughputProperties containerThroughputProperties) {
         this.containerThroughputProperties = containerThroughputProperties;
         return this;
     }
 
-    public CosmosDbOperationsBuilder createContainerIfNotExist() {
-        this.createContainerIfNotExist = true;
+    public CosmosDbContainerOperationsBuilder withCreateContainerIfNotExist(final boolean createContainerIfNotExist) {
+        this.createContainerIfNotExist = createContainerIfNotExist;
         return this;
     }
 
-    public CosmosDbOperationsBuilder containerRequestOptions(CosmosContainerRequestOptions containerRequestOptions) {
+    public CosmosDbContainerOperationsBuilder withContainerRequestOptions(CosmosContainerRequestOptions containerRequestOptions) {
         this.containerRequestOptions = containerRequestOptions;
         return this;
     }
 
     // operations
     public Mono<CosmosContainerResponse> createContainer() {
-        validateContainerProperties();
+        validateContainerName();
 
-        return getAndCreateDatabaseIfNotExist()
-                .flatMap(response -> response.createContainerIfNotExists(containerId, containerPartitionKeyPath, containerThroughputProperties));
+        // we need to check for containerPartitionKeyPath
+        if (ObjectHelper.isEmpty(containerPartitionKeyPath)) {
+            throw new IllegalArgumentException("containerPartitionKeyPath cannot be empty to create a new container!");
+        }
+
+        // containerPartitionKeyPath it needs to start with /
+        if (!containerPartitionKeyPath.startsWith("/")) {
+            containerPartitionKeyPath = "/" + containerPartitionKeyPath;
+        }
+
+        return applyToDatabase(database -> database.createContainerIfNotExists(containerId, containerPartitionKeyPath,
+                containerThroughputProperties));
     }
 
     public Mono<CosmosContainerResponse> deleteContainer() {
-        return getContainer().delete(containerRequestOptions);
+        return applyToContainer(container -> container.delete(containerRequestOptions));
     }
 
     public Mono<ThroughputResponse> replaceContainerThroughput() {
-        return getContainer().replaceThroughput(containerThroughputProperties);
+        return applyToContainer(container -> container.replaceThroughput(containerThroughputProperties));
     }
 
-    protected CosmosAsyncContainer getContainer() {
-        validateContainerProperties();
+    private Mono<CosmosAsyncContainer> getContainerAndCreateContainerIfNotExist() {
+        validateContainerName();
 
-        return getDatabase().getContainer(containerId);
-    }
-
-    protected Mono<CosmosAsyncContainer> getAndCreateContainerIfNotExist() {
         if (createContainerIfNotExist) {
-            return getAndCreateDatabaseIfNotExist()
-                    .map(response -> response.getContainer(containerId));
+            return createContainer()
+                    .then(database)
+                    .map(database -> database.getContainer(containerId));
         }
 
-        return Mono.just(getContainer());
+        return database
+                .map(database -> database.getContainer(containerId));
     }
 
-    private void validateContainerProperties() {
+    private void validateContainerName() {
         if (ObjectHelper.isEmpty(containerId)) {
             throw new IllegalArgumentException("Container ID cannot be empty!");
         }
+    }
+
+    private <T> Mono<T> applyToDatabase(final Function<CosmosAsyncDatabase, Mono<T>> fn) {
+        return database.flatMap(fn);
+    }
+
+    private <T> Mono<T> applyToContainer(final Function<CosmosAsyncContainer, Mono<T>> fn) {
+        validateContainerName();
+        return getContainerAndCreateContainerIfNotExist().flatMap(fn);
     }
 }

@@ -8,7 +8,7 @@ import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper
 import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Mono;
 
-public class CosmosDbOperationsBuilder <T extends CosmosDbOperationsBuilder<T>> {
+public class CosmosDbDatabaseOperationsBuilder {
 
     private final CosmosAsyncClientWrapper client;
 
@@ -18,38 +18,38 @@ public class CosmosDbOperationsBuilder <T extends CosmosDbOperationsBuilder<T>> 
     private CosmosDatabaseRequestOptions databaseRequestOptions;
     private boolean createDatabaseIfNotExist;
 
-    protected CosmosDbOperationsBuilder(final CosmosAsyncClientWrapper client) {
+    private CosmosDbDatabaseOperationsBuilder(final CosmosAsyncClientWrapper client) {
         this.client = client;
     }
 
-    public static CosmosDbOperationsBuilder<?> withClient(final CosmosAsyncClientWrapper client) {
-        return new CosmosDbOperationsBuilder<>(client);
+    public static CosmosDbDatabaseOperationsBuilder withClient(final CosmosAsyncClientWrapper client) {
+        return new CosmosDbDatabaseOperationsBuilder(client);
     }
 
     // properties DSL
-    public T databaseName(final String databaseName) {
+    public CosmosDbDatabaseOperationsBuilder withDatabaseName(final String databaseName) {
         this.databaseName = databaseName;
-        return self();
+        return this;
     }
 
-    public T databaseThroughputProperties(final ThroughputProperties throughputProperties) {
+    public CosmosDbDatabaseOperationsBuilder withDatabaseThroughputProperties(final ThroughputProperties throughputProperties) {
         this.databaseThroughputProperties = throughputProperties;
-        return self();
+        return this;
     }
 
-    public T createDatabaseIfNotExist() {
-        this.createDatabaseIfNotExist = true;
-        return self();
+    public CosmosDbDatabaseOperationsBuilder withCreateDatabaseIfNotExist(final boolean createDatabaseIfNotExist) {
+        this.createDatabaseIfNotExist = createDatabaseIfNotExist;
+        return this;
     }
 
-    public T databaseRequestOptions(CosmosDatabaseRequestOptions databaseRequestOptions) {
+    public CosmosDbDatabaseOperationsBuilder withDatabaseRequestOptions(CosmosDatabaseRequestOptions databaseRequestOptions) {
         this.databaseRequestOptions = databaseRequestOptions;
-        return self();
+        return this;
     }
 
     // Database operations
     public Mono<CosmosDatabaseResponse> createDatabase() {
-        validateDatabaseProperties();
+        validateDatabaseName();
 
         return client.createDatabaseIfNotExists(databaseName, databaseThroughputProperties);
     }
@@ -67,20 +67,20 @@ public class CosmosDbOperationsBuilder <T extends CosmosDbOperationsBuilder<T>> 
         return Mono.just(getDatabase());
     }
 
-    public CosmosAsyncDatabase getDatabase() {
-        validateDatabaseProperties();
+    // container operations
+    public CosmosDbContainerOperationsBuilder getContainerOperationBuilder() {
+        return new CosmosDbContainerOperationsBuilder(getAndCreateDatabaseIfNotExist());
+    }
+
+    private CosmosAsyncDatabase getDatabase() {
+        validateDatabaseName();
 
         return client.getDatabase(databaseName);
     }
 
-    private void validateDatabaseProperties() {
+    private void validateDatabaseName() {
         if (ObjectHelper.isEmpty(databaseName)) {
             throw new IllegalArgumentException("Database name cannot be empty!");
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private T self() {
-        return (T) this;
     }
 }

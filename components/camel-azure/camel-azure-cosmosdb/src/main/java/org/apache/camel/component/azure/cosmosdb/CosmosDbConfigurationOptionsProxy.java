@@ -50,11 +50,13 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public boolean isCreateDatabaseIfNotExist(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST, configuration::isCreateDatabaseIfNotExists, boolean.class);
+        return getOption(exchange, CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST, configuration::isCreateDatabaseIfNotExists,
+                boolean.class);
     }
 
     public boolean isCreateContainerIfNotExist(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST, configuration::isCreateContainerIfNotExists, boolean.class);
+        return getOption(exchange, CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST, configuration::isCreateContainerIfNotExists,
+                boolean.class);
     }
 
     public CosmosDbConfiguration getConfiguration() {
