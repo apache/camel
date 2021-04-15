@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
@@ -32,7 +33,7 @@ import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.jupiter.api.Test;
 
-public class PulsarConsumerNoAcknowledgementTest extends PulsarTestSupport {
+public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";

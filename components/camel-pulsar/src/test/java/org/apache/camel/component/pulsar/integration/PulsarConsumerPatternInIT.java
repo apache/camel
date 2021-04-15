@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
@@ -36,9 +37,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PulsarConsumerPatternInTest extends PulsarTestSupport {
+public class PulsarConsumerPatternInIT extends PulsarITSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerPatternInTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerPatternInIT.class);
 
     private static final String TOPIC_URI = "persistent://public/default/camel-foo";
     private static final String TOPIC_TWO_URI = "persistent://public/default/camel-bar";

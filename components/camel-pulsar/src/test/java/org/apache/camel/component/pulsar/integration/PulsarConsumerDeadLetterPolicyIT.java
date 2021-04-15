@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
+package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pulsar.PulsarComponent;
+import org.apache.camel.component.pulsar.PulsarEndpoint;
+import org.apache.camel.component.pulsar.PulsarMessageReceipt;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
@@ -39,8 +42,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerDeadLetterPolicyTest.class);
+public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerDeadLetterPolicyIT.class);
     private static final String TOPIC_URI = "persistent://public/default/camel-topic-";
     private static int topicId;
 
@@ -84,7 +87,7 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         }
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
 
-        topicUri = PulsarConsumerDeadLetterPolicyTest.TOPIC_URI + ++topicId;
+        topicUri = PulsarConsumerDeadLetterPolicyIT.TOPIC_URI + ++topicId;
         producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
     }
 
