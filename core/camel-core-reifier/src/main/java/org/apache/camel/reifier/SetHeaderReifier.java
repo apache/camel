@@ -22,6 +22,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 
 public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
@@ -34,7 +35,13 @@ public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "headerName");
         Expression expr = createExpression(definition.getExpression());
-        Expression nameExpr = camelContext.resolveLanguage("simple").createExpression(parseString(definition.getName()));
+        Expression nameExpr;
+        String key = parseString(definition.getName());
+        if (LanguageSupport.hasSimpleFunction(key)) {
+            nameExpr = camelContext.resolveLanguage("simple").createExpression(key);
+        } else {
+            nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
+        }
         nameExpr.init(camelContext);
         return new SetHeaderProcessor(nameExpr, expr);
     }
