@@ -588,10 +588,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private void clientRequest(Tracing brave, String serviceName, ExchangeSendingEvent event) {
         // reuse existing span if we do multiple requests from the same
         ExtendedExchange exchange = event.getExchange().adapt(ExtendedExchange.class);
-        ZipkinState state = exchange.getCopySafeProperty(ZipkinState.KEY, ZipkinState.class);
+        ZipkinState state = exchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            exchange.setCopySafeProperty(ZipkinState.KEY, state);
+            exchange.setSafeCopyProperty(ZipkinState.KEY, state);
         }
         // if we started from a server span then lets reuse that when we call a
         // downstream service
@@ -644,7 +644,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private void clientResponse(Tracing brave, String serviceName, ExchangeSentEvent event) {
         Span span = null;
         ExtendedExchange exchange = event.getExchange().adapt(ExtendedExchange.class);
-        ZipkinState state = exchange.getCopySafeProperty(ZipkinState.KEY, ZipkinState.class);
+        ZipkinState state = exchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
             // only process if it was a zipkin client event
             span = state.popClientSpan();
@@ -678,10 +678,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private Span serverRequest(Tracing brave, String serviceName, Exchange exchange) {
         // reuse existing span if we do multiple requests from the same
         ExtendedExchange extendedExchange = exchange.adapt(ExtendedExchange.class);
-        ZipkinState state = extendedExchange.getCopySafeProperty(ZipkinState.KEY, ZipkinState.class);
+        ZipkinState state = extendedExchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            extendedExchange.setCopySafeProperty(ZipkinState.KEY, state);
+            extendedExchange.setSafeCopyProperty(ZipkinState.KEY, state);
         }
         Span span = null;
         Span.Kind spanKind = getConsumerComponentSpanKind(exchange.getFromEndpoint());
@@ -727,7 +727,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private void serverResponse(Tracing brave, String serviceName, Exchange exchange) {
         Span span = null;
         ExtendedExchange extendedExchange = exchange.adapt(ExtendedExchange.class);
-        ZipkinState state = extendedExchange.getCopySafeProperty(ZipkinState.KEY, ZipkinState.class);
+        ZipkinState state = extendedExchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
         if (state != null) {
             // only process if it was a zipkin server event
             span = state.popServerSpan();

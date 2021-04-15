@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelCopySafeProperty;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTestSupport;
@@ -28,6 +27,7 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
@@ -305,7 +305,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         SafeProperty property = new SafeProperty();
         UnsafeProperty unsafeProperty = new UnsafeProperty();
-        exchange.setCopySafeProperty(SAFE_PROPERTY, property);
+        exchange.setSafeCopyProperty(SAFE_PROPERTY, property);
         exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
 
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
@@ -315,7 +315,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
     }
 
-    private static final class SafeProperty implements CamelCopySafeProperty<SafeProperty> {
+    private static final class SafeProperty implements SafeCopyProperty {
 
         private SafeProperty() {
 

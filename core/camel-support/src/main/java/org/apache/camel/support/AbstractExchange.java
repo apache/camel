@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelCopySafeProperty;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -37,6 +36,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
@@ -85,7 +85,7 @@ class AbstractExchange implements ExtendedExchange {
     boolean redeliveryExhausted;
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
-    Map<String, CamelCopySafeProperty<?>> copySafeProperties;
+    Map<String, SafeCopyProperty> safeCopyProperties;
 
     public AbstractExchange(CamelContext context) {
         this.context = context;
@@ -157,8 +157,8 @@ class AbstractExchange implements ExtendedExchange {
             copyProperties(getProperties(), exchange.getProperties());
         }
 
-        if (hasCopySafeProperties()) {
-            safeCopyProperties(this.copySafeProperties, exchange.getCopySafeProperties());
+        if (hasSafeCopyProperties()) {
+            safeCopyProperties(this.safeCopyProperties, exchange.getSafeCopyProperties());
         }
         // copy over internal properties
         System.arraycopy(internalProperties, 0, exchange.internalProperties, 0, internalProperties.length);
@@ -199,7 +199,7 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     private void safeCopyProperties(
-            Map<String, CamelCopySafeProperty<?>> source, Map<String, CamelCopySafeProperty<?>> target) {
+            Map<String, SafeCopyProperty> source, Map<String, SafeCopyProperty> target) {
         source.entrySet().stream().forEach(entry -> {
             target.put(entry.getKey(), entry.getValue().safeCopy());
         });
@@ -442,11 +442,11 @@ class AbstractExchange implements ExtendedExchange {
         return properties;
     }
 
-    Map<String, CamelCopySafeProperty<?>> getCopySafeProperties() {
-        if (copySafeProperties == null) {
-            this.copySafeProperties = new ConcurrentHashMap<>(2);
+    Map<String, SafeCopyProperty> getSafeCopyProperties() {
+        if (safeCopyProperties == null) {
+            this.safeCopyProperties = new ConcurrentHashMap<>(2);
         }
-        return copySafeProperties;
+        return safeCopyProperties;
     }
 
     @Override
@@ -464,8 +464,8 @@ class AbstractExchange implements ExtendedExchange {
         return properties != null && !properties.isEmpty();
     }
 
-    private boolean hasCopySafeProperties() {
-        return copySafeProperties != null && !copySafeProperties.isEmpty();
+    private boolean hasSafeCopyProperties() {
+        return safeCopyProperties != null && !safeCopyProperties.isEmpty();
     }
 
     @Override
@@ -913,25 +913,27 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     @Override
-    public void setCopySafeProperty(String key, CamelCopySafeProperty<?> value) {
+    public void setSafeCopyProperty(String key, SafeCopyProperty value) {
         if (value != null) {
             // avoid the NullPointException
-            if (copySafeProperties == null) {
-                this.copySafeProperties = new ConcurrentHashMap<>(2);
+            if (safeCopyProperties == null) {
+                this.safeCopyProperties = new ConcurrentHashMap<>(2);
             }
-            copySafeProperties.put(key, value);
-        } else if (copySafeProperties != null) {
+            safeCopyProperties.put(key, value);
+        } else if (safeCopyProperties != null) {
             // if the value is null, we just remove the key from the map
-            copySafeProperties.remove(key);
+            safeCopyProperties.remove(key);
         }
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCopySafeProperty(String key, Class<T> type) {
-
-        Object value = getCopySafeProperties().get(key);
+    public <T> T getSafeCopyProperty(String key, Class<T> type) {
+        if (!hasSafeCopyProperties()) {
+            return null;
+        }
+        Object value = getSafeCopyProperties().get(key);
 
         if (type.isInstance(value)) {
             return (T) value;

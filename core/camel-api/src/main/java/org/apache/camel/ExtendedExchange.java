@@ -205,21 +205,21 @@ public interface ExtendedExchange extends Exchange {
     void setDefaultConsumerCallback(AsyncCallback callback);
 
     /**
-     * Method to set properties which for which deep copies can be created
+     * Method to set SafeCopyProperties on the exchange. {@link SafeCopyProperty}
      *
      * @param key
      *
-     * @param CamelCopySafeProperty
+     * @param SafeCopyProperty
      */
-    void setCopySafeProperty(String key, CamelCopySafeProperty<?> value);
+    void setSafeCopyProperty(String key, SafeCopyProperty value);
 
     /**
-     * Method to get copy safe properties
+     * Method to get SafeCopyProperties from the exchange
      *
      * @param  key
      * @param  type the type of the property
      * @return
      */
 
-    <T> T getCopySafeProperty(String key, Class<T> type);
+    <T> T getSafeCopyProperty(String key, Class<T> type);
 }

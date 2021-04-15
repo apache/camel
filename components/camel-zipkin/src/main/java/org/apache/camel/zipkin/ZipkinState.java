@@ -20,8 +20,8 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import brave.Span;
-import org.apache.camel.CamelCopySafeProperty;
 import org.apache.camel.Exchange;
+import org.apache.camel.SafeCopyProperty;
 
 /**
  * The state of the zipkin trace which we store on the {@link Exchange}
@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
  * This is needed to keep track of of correlating when an existing span is calling downstream service(s) and therefore
  * must be able to correlate those service calls with the parent span.
  */
-public final class ZipkinState implements CamelCopySafeProperty<ZipkinState> {
+public final class ZipkinState implements SafeCopyProperty {
 
     public static final String KEY = "CamelZipkinState";
 
