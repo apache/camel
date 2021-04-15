@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,11 +22,13 @@ import java.util.Calendar;
 import com.braintreegateway.TransactionLevelFeeReport;
 import com.braintreegateway.TransactionLevelFeeReportRequest;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.ReportGatewayApiMethod;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link com.braintreegateway.ReportGateway} APIs.
  */
-public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class ReportGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReportGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReportGatewayIT.class);
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(ReportGatewayApiMethod.class).getName();
 

@@ -14,46 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import com.braintreegateway.Address;
-import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
+import com.braintreegateway.PaymentMethod;
+import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.internal.AddressGatewayApiMethod;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
+import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(AddressGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(AddressGatewayApiMethod.class).getName();
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PaymentMethodGatewayIT.class);
+    private static final String PATH_PREFIX = getApiNameAsString(PaymentMethodGatewayApiMethod.class);
 
     private BraintreeGateway gateway;
     private Customer customer;
-    private final List<String> addressIds;
+    private final List<String> paymentMethodsTokens;
 
     // *************************************************************************
     //
     // *************************************************************************
 
-    public AddressGatewayIntegrationTest() {
+    public PaymentMethodGatewayIT() {
         this.customer = null;
         this.gateway = null;
-        this.addressIds = new LinkedList<>();
+        this.paymentMethodsTokens = new LinkedList<>();
     }
 
     @Override
@@ -73,16 +75,16 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        if (this.gateway != null && customer != null) {
-            for (String id : this.addressIds) {
-                if (this.gateway.address().delete(customer.getId(), id).isSuccess()) {
-                    LOG.info("Address deleted - customer={}, id={}", customer.getId(), id);
+        if (this.gateway != null) {
+            for (String token : this.paymentMethodsTokens) {
+                if (this.gateway.paymentMethod().delete(token).isSuccess()) {
+                    LOG.info("PaymentMethod deleted - token={}", token);
                 } else {
-                    LOG.warn("Unable to delete address - customer={}, id={}", customer.getId(), id);
+                    LOG.warn("Unable to delete PaymentMethod - token={}", token);
                 }
             }
 
-            this.addressIds.clear();
+            this.paymentMethodsTokens.clear();
 
             if (this.gateway.customer().delete(this.customer.getId()).isSuccess()) {
                 LOG.info("Customer deleted - id={}", this.customer.getId());
@@ -92,19 +94,16 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         }
     }
 
-    private Address createAddress() {
-        // Create address
-        final Result<Address> result = gateway.address().create(
-                this.customer.getId(),
-                new AddressRequest()
-                        .company("Apache")
-                        .streetAddress("1901 Munsey Drive")
-                        .locality("Forest Hill"));
+    private PaymentMethod createPaymentMethod() {
+        Result<? extends PaymentMethod> result = this.gateway.paymentMethod().create(
+                new PaymentMethodRequest()
+                        .customerId(this.customer.getId())
+                        .paymentMethodNonce("fake-valid-payroll-nonce"));
 
-        assertNotNull(result, "create");
+        assertNotNull(result, "create result");
         assertTrue(result.isSuccess());
 
-        LOG.info("Address created - customer={}, id={}", this.customer.getId(), result.getTarget().getId());
+        LOG.info("PaymentMethod created - token={}", result.getTarget().getToken());
 
         return result.getTarget();
     }
@@ -118,23 +117,17 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
-        final Result<Address> address = requestBodyAndHeaders(
-                "direct://CREATE",
-                null,
-                new BraintreeHeaderBuilder()
-                        .add("customerId", customer.getId())
-                        .add("request", new AddressRequest()
-                                .company("Apache")
-                                .streetAddress("1901 Munsey Drive")
-                                .locality("Forest Hill"))
-                        .build(),
+        final Result<PaymentMethod> result = requestBody("direct://CREATE",
+                new PaymentMethodRequest()
+                        .customerId(this.customer.getId())
+                        .paymentMethodNonce("fake-valid-payroll-nonce"),
                 Result.class);
 
-        assertNotNull(address, "create");
-        assertTrue(address.isSuccess());
+        assertNotNull(result, "create result");
+        assertTrue(result.isSuccess());
 
-        LOG.info("Address created - customer={}, id={}", customer.getId(), address.getTarget().getId());
-        this.addressIds.add(address.getTarget().getId());
+        LOG.info("PaymentMethod created - token={}", result.getTarget().getToken());
+        this.paymentMethodsTokens.add(result.getTarget().getToken());
     }
 
     @Test
@@ -142,20 +135,14 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
-        final Address address = createAddress();
-        final Result<Address> result = requestBodyAndHeaders(
-                "direct://DELETE",
-                null,
-                new BraintreeHeaderBuilder()
-                        .add("customerId", customer.getId())
-                        .add("id", address.getId())
-                        .build(),
-                Result.class);
+        final PaymentMethod paymentMethod = createPaymentMethod();
+        final Result<PaymentMethod> deleteResult = requestBody(
+                "direct://DELETE", paymentMethod.getToken(), Result.class);
 
-        assertNotNull(address, "delete");
-        assertTrue(result.isSuccess());
+        assertNotNull(deleteResult, "create result");
+        assertTrue(deleteResult.isSuccess());
 
-        LOG.info("Address deleted - customer={}, id={}", customer.getId(), address.getId());
+        LOG.info("PaymentMethod deleted - token={}", paymentMethod.getToken());
     }
 
     @Test
@@ -163,19 +150,14 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
-        final Address addressRef = createAddress();
-        this.addressIds.add(addressRef.getId());
+        final PaymentMethod paymentMethod = createPaymentMethod();
+        this.paymentMethodsTokens.add(paymentMethod.getToken());
 
-        final Address address = requestBodyAndHeaders(
-                "direct://FIND", null,
-                new BraintreeHeaderBuilder()
-                        .add("customerId", customer.getId())
-                        .add("id", addressRef.getId())
-                        .build(),
-                Address.class);
+        final PaymentMethod method = requestBody(
+                "direct://FIND", paymentMethod.getToken(), PaymentMethod.class);
 
-        assertNotNull(address, "find");
-        LOG.info("Address found - customer={}, id={}", customer.getId(), address.getId());
+        assertNotNull(method, "find result");
+        LOG.info("PaymentMethod found - token={}", method.getToken());
     }
 
     @Test
@@ -183,29 +165,29 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
-        final Address addressRef = createAddress();
-        this.addressIds.add(addressRef.getId());
+        final PaymentMethod paymentMethod = createPaymentMethod();
+        this.paymentMethodsTokens.add(paymentMethod.getToken());
 
-        final Result<Address> result = requestBodyAndHeaders(
+        final Result<PaymentMethod> result = requestBodyAndHeaders(
                 "direct://UPDATE", null,
                 new BraintreeHeaderBuilder()
-                        .add("customerId", customer.getId())
-                        .add("id", addressRef.getId())
-                        .add("request", new AddressRequest()
+                        .add("token", paymentMethod.getToken())
+                        .add("request", new PaymentMethodRequest()
+                                .billingAddress()
                                 .company("Apache")
-                                .streetAddress(customer.getId())
-                                .locality(customer.getId()))
+                                .streetAddress("100 Maple Lane")
+                                .done())
                         .build(),
                 Result.class);
 
-        assertNotNull(result, "update");
+        assertNotNull(result, "update result");
         assertTrue(result.isSuccess());
 
-        LOG.info("Address updated - customer={}, id={}", customer.getId(), result.getTarget().getId());
+        LOG.info("PaymentMethod updated - token={}", result.getTarget().getToken());
     }
 
     // *************************************************************************
-    // Routes
+    // ROUTES
     // *************************************************************************
 
     @Override
@@ -214,13 +196,13 @@ public class AddressGatewayIntegrationTest extends AbstractBraintreeTestSupport 
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                        .to("braintree://" + PATH_PREFIX + "/create");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for delete
                 from("direct://DELETE")
-                        .to("braintree://" + PATH_PREFIX + "/delete");
+                        .to("braintree://" + PATH_PREFIX + "/delete?inBody=token");
                 // test route for find
                 from("direct://FIND")
-                        .to("braintree://" + PATH_PREFIX + "/find");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=token");
                 // test route for update
                 from("direct://UPDATE")
                         .to("braintree://" + PATH_PREFIX + "/update");

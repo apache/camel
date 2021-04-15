@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.SubscriptionGatewayApiMethod;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionGatewayIT.class);
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(SubscriptionGatewayApiMethod.class).getName();
 

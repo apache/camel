@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,20 +29,23 @@ import com.braintreegateway.TransactionCloneRequest;
 import com.braintreegateway.TransactionRefundRequest;
 import com.braintreegateway.TransactionRequest;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransactionGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TransactionGatewayIT.class);
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(TransactionGatewayApiMethod.class).getName();
 
@@ -53,7 +56,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     //
     // *************************************************************************
 
-    public TransactionGatewayIntegrationTest() {
+    public TransactionGatewayIT() {
         this.gateway = null;
         this.transactionIds = new LinkedList<>();
     }

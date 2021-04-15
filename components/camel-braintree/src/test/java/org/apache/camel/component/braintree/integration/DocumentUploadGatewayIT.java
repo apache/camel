@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.io.File;
 
@@ -22,9 +22,11 @@ import com.braintreegateway.DocumentUpload;
 import com.braintreegateway.DocumentUploadRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DocumentUploadGatewayApiMethod;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class DocumentUploadGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DocumentUploadGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentUploadGatewayIT.class);
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
 

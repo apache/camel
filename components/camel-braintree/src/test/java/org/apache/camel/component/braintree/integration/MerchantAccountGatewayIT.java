@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,16 +24,19 @@ import com.braintreegateway.MerchantAccount;
 import com.braintreegateway.MerchantAccountRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.MerchantAccountGatewayApiMethod;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class MerchantAccountGatewayIT extends AbstractBraintreeTestSupport {
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
 

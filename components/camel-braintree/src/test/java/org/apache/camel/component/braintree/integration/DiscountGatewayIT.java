@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree;
+package org.apache.camel.component.braintree.integration;
 
 import java.util.List;
 
 import com.braintreegateway.Discount;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DiscountGatewayApiMethod;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DiscountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
+@EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
+public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DiscountGatewayIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DiscountGatewayIT.class);
     private static final String PATH_PREFIX
             = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
 
