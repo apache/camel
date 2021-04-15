@@ -21,6 +21,7 @@ import java.time.Duration;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.queue.QueueServiceClient;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -37,6 +38,7 @@ public class QueueConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "common")
+    @Metadata(autowired = true)
     private QueueServiceClient serviceClient;
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoDiscoverClient = true;
