@@ -20,7 +20,7 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(30);
         props.add("backoffMultiplier");
         props.add("eventFetchStrategy");
         props.add("initialDelay");
@@ -48,6 +48,7 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
         props.add("delay");
         props.add("pollStrategy");
         props.add("startScheduler");
+        props.add("startingSha");
         props.add("exceptionHandler");
         props.add("targetUrl");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
@@ -70,6 +71,7 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
 
         uri = buildPathParameter(syntax, uri, "type", null, true, copy);
         uri = buildPathParameter(syntax, uri, "branchName", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "startingSha", "last", false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

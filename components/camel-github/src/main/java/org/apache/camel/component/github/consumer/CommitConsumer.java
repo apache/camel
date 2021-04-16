@@ -35,15 +35,18 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
 
     private CommitService commitService;
-    private String branchName;
+    private final String branchName;
+    private final String startingSha;
 
     // keep a chunk of the last hashes so we can filter out duplicates
-    private Queue<String> commitHashes = new ArrayBlockingQueue<>(100);
+    private final Queue<String> commitHashes = new ArrayBlockingQueue<>(100);
     private volatile String lastSha;
 
-    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName) throws Exception {
+    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName,
+                          String startingSha) throws Exception {
         super(endpoint, processor);
         this.branchName = branchName;
+        this.startingSha = startingSha;
 
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
@@ -69,11 +72,19 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         commitHashes.clear();
         lastSha = null;
 
-        LOG.info("GitHub CommitConsumer: Indexing current commits...");
-        List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
-        for (RepositoryCommit commit : commits) {
-            commitHashes.add(commit.getSha());
-            lastSha = commit.getSha();
+        if (startingSha.equals("last")) {
+            LOG.info("GitHub CommitConsumer: Indexing current commits...");
+            List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
+            for (RepositoryCommit commit : commits) {
+                commitHashes.add(commit.getSha());
+                lastSha = commit.getSha();
+            }
+            LOG.info("GitHub CommitConsumer: Starting from last sha: {}", lastSha);
+        } else if (!startingSha.equals("beginning")) {
+            lastSha = startingSha;
+            LOG.info("GitHub CommitConsumer: Starting from sha: {}", lastSha);
+        } else {
+            LOG.info("GitHub CommitConsumer: Starting from beginning");
         }
     }
 

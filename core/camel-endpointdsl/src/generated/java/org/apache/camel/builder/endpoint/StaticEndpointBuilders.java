@@ -5284,6 +5284,12 @@ public class StaticEndpointBuilders {
      * Path parameter: branchName
      * Name of branch
      * 
+     * Path parameter: startingSha
+     * The starting sha to use for polling commits with the commit consumer. The
+     * value can either be a sha for the sha to start from, or use beginning to
+     * start from the beginning, or last to start from the last commit.
+     * Default value: last
+     * 
      * @param path type/branchName
      * @return the dsl builder
      */
@@ -5309,6 +5315,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: branchName
      * Name of branch
+     * 
+     * Path parameter: startingSha
+     * The starting sha to use for polling commits with the commit consumer. The
+     * value can either be a sha for the sha to start from, or use beginning to
+     * start from the beginning, or last to start from the last commit.
+     * Default value: last
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
