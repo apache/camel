@@ -1156,11 +1156,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-crypto-cms</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-crypto</artifactId>
 				<version>${project.version}</version>
 			</dependency>
