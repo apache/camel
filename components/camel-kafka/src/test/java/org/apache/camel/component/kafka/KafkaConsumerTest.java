@@ -45,6 +45,7 @@ public class KafkaConsumerTest {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
+        when(endpoint.getKafkaClientFactory()).thenReturn(clientFactory);
         when(component.getKafkaClientFactory()).thenReturn(clientFactory);
         when(clientFactory.getBrokers(any())).thenThrow(new IllegalArgumentException());
         final KafkaConsumer kafkaConsumer = new KafkaConsumer(endpoint, processor);

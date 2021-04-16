@@ -79,9 +79,14 @@ public class KafkaProducerTest {
         kafka.init();
 
         endpoint = kafka.createEndpoint("kafka:sometopic", "sometopic", new HashMap());
+        endpoint.doBuild();
+        assertTrue(endpoint.getKafkaClientFactory() instanceof DefaultKafkaClientFactory);
+
         producer = new KafkaProducer(endpoint);
 
         fromEndpoint = kafka.createEndpoint("kafka:fromtopic", "fromtopic", new HashMap());
+        fromEndpoint.doBuild();
+        assertTrue(fromEndpoint.getKafkaClientFactory() instanceof DefaultKafkaClientFactory);
 
         RecordMetadata rm = new RecordMetadata(null, 0, 0, 0, 0L, 0, 0);
         Future future = Mockito.mock(Future.class);

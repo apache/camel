@@ -50,6 +50,8 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     private static final String CALLBACK_HANDLER_CLASS_CONFIG = "sasl.login.callback.handler.class";
 
+    private KafkaClientFactory kafkaClientFactory;
+
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
 
@@ -71,6 +73,20 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public KafkaClientFactory getKafkaClientFactory() {
+        return this.kafkaClientFactory;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+        kafkaClientFactory = getComponent().getKafkaClientFactory();
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = new DefaultKafkaClientFactory();
+        }
     }
 
     @Override
