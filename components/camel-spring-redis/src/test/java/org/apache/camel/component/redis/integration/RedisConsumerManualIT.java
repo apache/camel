@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.redis;
+package org.apache.camel.component.redis.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.redis.RedisConstants;
+import org.apache.camel.component.redis.RedisTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Disabled;
@@ -26,8 +28,8 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-@Disabled
-public class RedisConsumerIntegrationTest extends RedisTestSupport {
+@Disabled("Requires manual setup")
+public class RedisConsumerManualIT extends RedisTestSupport {
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
     private static final RedisMessageListenerContainer LISTENER_CONTAINER = new RedisMessageListenerContainer();
 

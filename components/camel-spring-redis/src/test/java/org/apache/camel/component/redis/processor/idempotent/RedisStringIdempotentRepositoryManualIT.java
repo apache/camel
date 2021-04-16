@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("requires online connection")
-public class RedisStringIdempotentRepositoryIntegrationTest extends CamelTestSupport {
+public class RedisStringIdempotentRepositoryManualIT extends CamelTestSupport {
 
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
 
