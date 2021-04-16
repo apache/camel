@@ -1030,20 +1030,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CryptoComponentBuilderFactory.crypto();
     }
     /**
-     * Crypto CMS (camel-crypto-cms)
-     * Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
-     * 
-     * Category: security,transformation
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-crypto-cms
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.CryptoCmsComponentBuilderFactory.CryptoCmsComponentBuilder cryptoCms() {
-        return org.apache.camel.builder.component.dsl.CryptoCmsComponentBuilderFactory.cryptoCms();
-    }
-    /**
      * CXF (camel-cxf)
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
