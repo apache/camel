@@ -43,9 +43,9 @@ public class VertxKafkaComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private VertxOptions vertxOptions;
     @Metadata(label = "advanced", autowired = true)
-    private VertxKafkaClientFactory vertxKafkaClientFactory = new DefaultVertxKafkaClientFactory();
+    private VertxKafkaClientFactory vertxKafkaClientFactory;
     @Metadata(label = "consumer,advanced", autowired = true)
-    private VertxKafkaManualCommitFactory kafkaManualCommitFactory = new DefaultVertxKafkaManualCommitFactory();
+    private VertxKafkaManualCommitFactory kafkaManualCommitFactory;
 
     public VertxKafkaComponent() {
     }
@@ -91,6 +91,14 @@ public class VertxKafkaComponent extends DefaultComponent {
                 vertx = Vertx.vertx();
             }
             managedVertx = true;
+        }
+
+        if (vertxKafkaClientFactory == null) {
+            vertxKafkaClientFactory = new DefaultVertxKafkaClientFactory();
+        }
+
+        if (kafkaManualCommitFactory == null) {
+            kafkaManualCommitFactory = new DefaultVertxKafkaManualCommitFactory();
         }
     }
 
