@@ -75,7 +75,7 @@ class EventHubsComponentTest extends CamelTestSupport {
         context.getRegistry().bind("producerClient", producerAsyncClient);
 
         assertNotNull(context
-                .getEndpoint("azure-eventhubs:name/hubName?autoDiscoverClient=false&producerAsyncClient=#producerClient"));
+                .getEndpoint("azure-eventhubs:name/hubName?producerAsyncClient=#producerClient"));
     }
 
     @Test
