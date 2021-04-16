@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.calendar;
+package org.apache.camel.component.google.calendar.integration;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,9 +27,11 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport;
 import org.apache.camel.component.google.calendar.internal.CalendarEventsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +41,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Events} APIs.
  */
-public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+           disabledReason = "Google Calendar credentials were not provided")
+public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarEventsIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarEventsIT.class);
     private static final String PATH_PREFIX
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarEventsApiMethod.class).getName();
 
