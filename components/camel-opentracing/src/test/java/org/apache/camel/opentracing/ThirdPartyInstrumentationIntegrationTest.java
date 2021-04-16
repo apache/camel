@@ -115,7 +115,7 @@ public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
         Tracer.SpanBuilder spanBuilder = tracer.buildSpan("third-party-span")
                 .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER);
         Span span = spanBuilder.start();
-        try (Scope ignored = tracer.scopeManager().activate(span, false)) {
+        try (Scope ignored = tracer.scopeManager().activate(span)) {
             closure.run();
         } catch (Exception e) {
             Tags.ERROR.set(span, Boolean.TRUE);

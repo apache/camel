@@ -62,7 +62,7 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
     }
 
     protected void assertHealthCheckOutput(
-            String expectedName, HealthCheckResponse.State expectedState, JsonObject healthObject,
+            String expectedName, HealthCheckResponse.Status expectedState, JsonObject healthObject,
             Consumer<JsonObject> dataObjectAssertions) {
         assertEquals(expectedName, healthObject.getString("name"));
         assertEquals(expectedState.name(), healthObject.getString("status"));

@@ -417,10 +417,10 @@
     <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
     <metrics-version>4.1.12.1</metrics-version>
     <micrometer-version>1.6.1</micrometer-version>
-    <microprofile-config-version>1.4</microprofile-config-version>
-    <microprofile-fault-tolerance-version>2.1</microprofile-fault-tolerance-version>
-    <microprofile-health-version>2.2</microprofile-health-version>
-    <microprofile-metrics-version>2.3</microprofile-metrics-version>
+    <microprofile-config-version>2.0</microprofile-config-version>
+    <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
+    <microprofile-health-version>3.0</microprofile-health-version>
+    <microprofile-metrics-version>3.0</microprofile-metrics-version>
     <milo-guava-version>26.0-jre</milo-guava-version>
     <milo-version>0.3.7</milo-version>
     <mimepull-version>1.9.13</mimepull-version>
@@ -456,7 +456,7 @@
     <openstack4j-version>3.8</openstack4j-version>
     <opentelemetry-version>0.15.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
-    <opentracing-version>0.31.0</opentracing-version>
+    <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <optaplanner-version>8.5.0.Final</optaplanner-version>
@@ -513,10 +513,10 @@
     <slf4j-api-version>1.7.30</slf4j-api-version>
     <slf4j-version>1.7.30</slf4j-version>
     <smack-version>4.3.5</smack-version>
-    <smallrye-config-version>1.10.2</smallrye-config-version>
-    <smallrye-fault-tolerance-version>4.3.2</smallrye-fault-tolerance-version>
-    <smallrye-health-version>2.2.5</smallrye-health-version>
-    <smallrye-metrics-version>2.4.5</smallrye-metrics-version>
+    <smallrye-config-version>2.2.0</smallrye-config-version>
+    <smallrye-fault-tolerance-version>5.0.0</smallrye-fault-tolerance-version>
+    <smallrye-health-version>3.0.1</smallrye-health-version>
+    <smallrye-metrics-version>3.0.1</smallrye-metrics-version>
     <snakeyaml-engine-version>2.2.1</snakeyaml-engine-version>
     <snakeyaml-version>1.28</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
