@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LuceneQueryProcessorTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(LuceneQueryProcessorTest.class);
+public class LuceneQueryProcessorIT extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(LuceneQueryProcessorIT.class);
 
     @Override
     public boolean isUseRouteBuilder() {
