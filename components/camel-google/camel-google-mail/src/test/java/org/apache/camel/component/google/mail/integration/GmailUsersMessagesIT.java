@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.mail;
+package org.apache.camel.component.google.mail.integration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,9 +31,11 @@ import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport;
 import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
  */
-public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+           disabledReason = "Google Mail credentials were not provided")
+public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
 
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
-    private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesIT.class);
     private static final String PATH_PREFIX
             = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
 

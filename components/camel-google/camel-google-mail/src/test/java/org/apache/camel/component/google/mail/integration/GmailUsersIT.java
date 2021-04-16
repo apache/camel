@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.mail;
+package org.apache.camel.component.google.mail.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport;
 import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users} APIs.
  */
-public class GmailUsersIntegrationTest extends AbstractGoogleMailTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+           disabledReason = "Google Mail credentials were not provided")
+public class GmailUsersIT extends AbstractGoogleMailTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GmailUsersIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GmailUsersIT.class);
     private static final String PATH_PREFIX
             = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
 
