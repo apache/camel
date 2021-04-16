@@ -32,9 +32,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -47,14 +48,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class S3ConsumerIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class S3ConsumerManualIT extends CamelTestSupport {
+    private static final String ACCESS_KEY = System.getProperty("aws.access.key");
+    private static final String SECRET_KEY = System.getProperty("aws.secret.key");
 
     @BindToRegistry("amazonS3Client")
     S3Client client
             = S3Client.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("xxxx", "yyyy")))
+                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
                     .region(Region.EU_WEST_1).build();
 
     @EndpointInject

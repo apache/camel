@@ -21,8 +21,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.Runtime;
@@ -30,8 +31,12 @@ import software.amazon.awssdk.services.lambda.model.Runtime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class LambdaComponentIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class LambdaComponentManualIT extends CamelTestSupport {
 
     @Test
     public void lambdaListFunctionsTest() throws Exception {
@@ -69,10 +74,10 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:listFunctions")
-                        .to("aws2-lambda://myFunction?operation=listFunctions&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                        .to("aws2-lambda://myFunction?operation=listFunctions&accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&region=eu-west-1");
 
                 from("direct:getFunction")
-                        .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                        .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&region=eu-west-1");
 
             }
         };

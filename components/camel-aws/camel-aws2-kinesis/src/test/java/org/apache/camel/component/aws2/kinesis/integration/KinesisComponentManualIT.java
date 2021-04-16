@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Must be manually tested.")
-public class KinesisComponentIntegrationTest extends CamelTestSupport {
+public class KinesisComponentManualIT extends CamelTestSupport {
 
     @BindToRegistry("amazonKinesisClient")
     KinesisClient client = KinesisClient.builder().build();

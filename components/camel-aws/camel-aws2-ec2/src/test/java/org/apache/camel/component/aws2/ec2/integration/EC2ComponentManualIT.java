@@ -25,12 +25,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Constants;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class EC2ComponentIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class EC2ComponentManualIT extends CamelTestSupport {
 
     @Test
     public void createAndRunInstancesTest() {
@@ -214,16 +219,23 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:createAndRun")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
-                from("direct:stop").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
-                from("direct:start").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
-                from("direct:terminate").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
-                from("direct:describe").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstances");
+                        .to("aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=createAndRunInstances");
+                from("direct:stop").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=stopInstances");
+                from("direct:start").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=startInstances");
+                from("direct:terminate").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=terminateInstances");
+                from("direct:describe").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=describeInstances");
                 from("direct:describeStatus")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstancesStatus");
-                from("direct:reboot").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=rebootInstances");
-                from("direct:monitor").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=monitorInstances");
-                from("direct:unmonitor").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=unmonitorInstances");
+                        .to("aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=describeInstancesStatus");
+                from("direct:reboot").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=rebootInstances");
+                from("direct:monitor").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=monitorInstances");
+                from("direct:unmonitor").to(
+                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=unmonitorInstances");
             }
         };
     }

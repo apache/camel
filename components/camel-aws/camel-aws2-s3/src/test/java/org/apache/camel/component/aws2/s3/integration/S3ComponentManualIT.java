@@ -26,16 +26,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class S3ComponentIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class S3ComponentManualIT extends CamelTestSupport {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -116,7 +121,7 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String s3EndpointUri
-                        = "aws2-s3://mycamelbucket?accessKey=xxx&secretKey=yyy&region=us-west-1&autoCreateBucket=false";
+                        = "aws2-s3://mycamelbucket?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&region=us-west-1&autoCreateBucket=false";
 
                 from("direct:start").to(s3EndpointUri);
 
