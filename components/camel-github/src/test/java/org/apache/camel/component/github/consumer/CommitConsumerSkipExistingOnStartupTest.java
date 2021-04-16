@@ -21,10 +21,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
-import org.eclipse.egit.github.core.RepositoryCommit;
 import org.junit.jupiter.api.Test;
 
-public class CommitConsumerTest extends GitHubComponentTestBase {
+public class CommitConsumerSkipExistingOnStartupTest extends GitHubComponentTestBase {
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -32,6 +32,7 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 from("github://commit/master?repoOwner=anotherguy&repoName=somerepo")
+                        .routeId("foo").noAutoStartup()
                         .process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }
@@ -40,10 +41,18 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
 
     @Test
     public void commitConsumerTest() throws Exception {
-        mockResultEndpoint.expectedMessageCount(2);
-        RepositoryCommit commit1 = commitService.addRepositoryCommit("test-1");
-        RepositoryCommit commit2 = commitService.addRepositoryCommit("test-2");
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commit1.getCommit().getMessage(), commit2.getCommit().getMessage());
+        // add 2 commits before starting route
+        commitService.addRepositoryCommit("test-1");
+        commitService.addRepositoryCommit("test-2");
+
+        mockResultEndpoint.expectedMessageCount(3);
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder("test-3", "test-4", "test-5");
+
+        context.getRouteController().startAllRoutes();
+
+        commitService.addRepositoryCommit("test-3");
+        commitService.addRepositoryCommit("test-4");
+        commitService.addRepositoryCommit("test-5");
 
         mockResultEndpoint.assertIsSatisfied();
     }
