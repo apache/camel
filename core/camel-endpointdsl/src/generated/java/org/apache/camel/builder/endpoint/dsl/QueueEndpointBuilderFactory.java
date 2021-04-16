@@ -1062,7 +1062,7 @@ public interface QueueEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param createQueue the value to set
@@ -1079,7 +1079,7 @@ public interface QueueEndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
          * @param createQueue the value to set

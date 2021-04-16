@@ -42,8 +42,8 @@ public class QueueConfiguration implements Cloneable {
     private QueueServiceClient serviceClient;
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean createQueue = true;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean createQueue = false;
     // queue properties
     @UriParam(label = "queue")
     private Duration timeToLive;

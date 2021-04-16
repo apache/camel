@@ -24,11 +24,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class StorageQueueProducerIT extends StorageQueueBase {
 
@@ -65,19 +64,18 @@ class StorageQueueProducerIT extends StorageQueueBase {
 
     @Test
     public void testSendAndDeleteMessage() throws InterruptedException {
-        final String queueName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
         // first test if queue is not created
         template.send("direct:sendMessage", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, queueName);
             exchange.getIn().setBody("test-message-1");
-            exchange.getIn().setHeader(QueueConstants.CREATE_QUEUE, false);
+            exchange.getIn().setHeader(QueueConstants.CREATE_QUEUE, true);
         });
 
         result.assertIsSatisfied();
 
-        // queue not created because of the flag
-        assertTrue(result.getExchanges().isEmpty());
+        // queue is created because of the flag
+        assertFalse(result.getExchanges().isEmpty());
 
         result.reset();
 
