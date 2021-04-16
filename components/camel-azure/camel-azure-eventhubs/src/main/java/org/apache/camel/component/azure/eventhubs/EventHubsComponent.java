@@ -50,7 +50,8 @@ public class EventHubsComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         // if we don't have client nor connectionString, we check for params
-        if (areAzureClientsNotSet(configuration) && ObjectHelper.isEmpty(configuration.getConnectionString())) {
+        if (areAzureClientsNotSet(configuration) && ObjectHelper.isEmpty(configuration.getConnectionString())
+                && ObjectHelper.isEmpty(configuration.getProducerAsyncClient())) {
             checkAndSetNamespaceAndHubName(configuration, remaining);
             validateConfigurations(configuration);
         }

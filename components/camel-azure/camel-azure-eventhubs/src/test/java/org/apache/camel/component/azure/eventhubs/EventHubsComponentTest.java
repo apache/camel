@@ -101,7 +101,8 @@ class EventHubsComponentTest extends CamelTestSupport {
 
         context.getRegistry().bind("producerClient", producerAsyncClient);
 
-        final EventHubsEndpoint endpoint = (EventHubsEndpoint) context.getEndpoint("azure-eventhubs:name/hubName");
+        final EventHubsEndpoint endpoint
+                = (EventHubsEndpoint) context.getEndpoint("azure-eventhubs:name/hubName?producerAsyncClient=#producerClient");
 
         assertEquals(producerAsyncClient, endpoint.getConfiguration().getProducerAsyncClient());
     }
