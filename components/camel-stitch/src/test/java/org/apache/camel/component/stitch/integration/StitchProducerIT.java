@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch;
+package org.apache.camel.component.stitch.integration;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -28,15 +28,18 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.stitch.StitchConstants;
 import org.apache.camel.component.stitch.client.models.StitchMessage;
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = "token", matches = ".*", disabledReason = "Stitch token was not provided")
 class StitchProducerIT extends CamelTestSupport {
 
     @EndpointInject

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch.operations;
+package org.apache.camel.component.stitch.operations.integration;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -35,10 +35,12 @@ import org.apache.camel.component.stitch.client.models.StitchMessage;
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchResponse;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
+import org.apache.camel.component.stitch.operations.StitchProducerOperations;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -46,6 +48,7 @@ import reactor.core.publisher.Mono;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = "token", matches = ".*", disabledReason = "Stitch token was not provided")
 class StitchProducerOperationsIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(StitchProducerOperationsIT.class);
