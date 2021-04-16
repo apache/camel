@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive;
+package org.apache.camel.component.google.drive.integration;
 
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.PermissionList;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.internal.DrivePropertiesApiMethod;
+import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
+import org.apache.camel.component.google.drive.internal.DrivePermissionsApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
- * Test class for com.google.api.services.drive.Drive$Properties APIs.
+ * Test class for com.google.api.services.drive.Drive$Permissions APIs.
  */
-public class DrivePropertiesIntegrationTest extends AbstractGoogleDriveTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+           disabledReason = "Google Drive credentials were not provided")
+public class DrivePermissionsIT extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DrivePropertiesIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DrivePermissionsIT.class);
     private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DrivePropertiesApiMethod.class).getName();
+            = GoogleDriveApiCollection.getCollection().getApiName(DrivePermissionsApiMethod.class).getName();
 
     @Test
     public void testList() throws Exception {
@@ -41,10 +44,13 @@ public class DrivePropertiesIntegrationTest extends AbstractGoogleDriveTestSuppo
         String fileId = testFile.getId();
 
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.model.PropertyList result = requestBody("direct://LIST", fileId);
+        final com.google.api.services.drive.model.PermissionList result = requestBody("direct://LIST", fileId);
 
         assertNotNull(result, "list result");
         LOG.debug("list: " + result);
+    }
+
+    private void assertNotNull(PermissionList result, String listResult) {
     }
 
     @Override
@@ -58,6 +64,10 @@ public class DrivePropertiesIntegrationTest extends AbstractGoogleDriveTestSuppo
                 // test route for get
                 from("direct://GET")
                         .to("google-drive://" + PATH_PREFIX + "/get");
+
+                // test route for getIdForEmail
+                from("direct://GETIDFOREMAIL")
+                        .to("google-drive://" + PATH_PREFIX + "/getIdForEmail?inBody=email");
 
                 // test route for insert
                 from("direct://INSERT")
@@ -78,6 +88,7 @@ public class DrivePropertiesIntegrationTest extends AbstractGoogleDriveTestSuppo
                 // just used to upload file for test
                 from("direct://INSERT_1")
                         .to("google-drive://drive-files/insert");
+
             }
         };
     }

@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive;
+package org.apache.camel.component.google.drive.integration;
 
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
-public class FilesConsumerIntegrationTest extends AbstractGoogleDriveTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+           disabledReason = "Google Drive credentials were not provided")
+public class FilesConsumerIT extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FilesConsumerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FilesConsumerIT.class);
     private static final String PATH_PREFIX
             = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
 
