@@ -38,7 +38,35 @@ import org.junit.jupiter.api.TestInstance;
 public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
 
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+    private static Properties properties;
     private Calendar calendar;
+
+    static {
+        properties = loadProperties();
+    }
+
+    private static Properties loadProperties() {
+        // read GoogleCalendar component configuration from
+        // TEST_OPTIONS_PROPERTIES
+        final Properties properties = new Properties();
+        try {
+            properties.load(AbstractGoogleCalendarTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
+        }
+
+        return properties;
+    }
+
+    // Used by JUnit to determine whether or not to run the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        loadProperties();
+
+        return (!properties.getProperty("clientId", "").isEmpty())
+                && (!properties.getProperty("clientSecret", "").isEmpty())
+                && (!properties.getProperty("accessToken", "").isEmpty());
+    }
 
     @BeforeEach
     public void createTestCalendar() {
@@ -67,19 +95,7 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
 
         final CamelContext context = super.createCamelContext();
 
-        // read GoogleCalendar component configuration from
-        // TEST_OPTIONS_PROPERTIES
-        final Properties properties = new Properties();
-        try {
-            properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
-        }
-
-        Map<String, Object> options = new HashMap<>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            options.put(entry.getKey().toString(), entry.getValue());
-        }
+        Map<String, Object> options = getTestOptions();
 
         final GoogleCalendarConfiguration configuration = new GoogleCalendarConfiguration();
         PropertyBindingSupport.bindProperties(context, configuration, options);
@@ -90,6 +106,14 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
         context.addComponent("google-calendar", component);
 
         return context;
+    }
+
+    private Map<String, Object> getTestOptions() throws IOException {
+        Map<String, Object> options = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            options.put(entry.getKey().toString(), entry.getValue());
+        }
+        return options;
     }
 
     @SuppressWarnings("unchecked")

@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.calendar;
+package org.apache.camel.component.google.calendar.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport;
 import org.apache.camel.component.google.calendar.internal.CalendarColorsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Colors} APIs.
  */
-public class CalendarColorsIntegrationTest extends AbstractGoogleCalendarTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+           disabledReason = "Google Calendar credentials were not provided")
+public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarColorsIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarColorsIT.class);
     private static final String PATH_PREFIX
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarColorsApiMethod.class).getName();
 
