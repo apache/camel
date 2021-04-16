@@ -25,8 +25,11 @@ import org.apache.camel.component.beanstalk.Headers;
 import org.apache.camel.component.beanstalk.Helper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class ConsumerIntegrationTest extends BeanstalkCamelTestSupport {
+@EnabledIfSystemProperty(named = "beanstalk.host", matches = ".*",
+                         disabledReason = "Requires a beanstalk server running")
+public class ConsumerIntegrationIT extends BeanstalkCamelITSupport {
     final String testMessage = "Hello, world!";
 
     @EndpointInject("mock:result")

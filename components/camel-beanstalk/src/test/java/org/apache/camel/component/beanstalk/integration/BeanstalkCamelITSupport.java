@@ -22,7 +22,7 @@ import org.apache.camel.component.beanstalk.ConnectionSettingsFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 
-public abstract class BeanstalkCamelTestSupport extends CamelTestSupport {
+public abstract class BeanstalkCamelITSupport extends CamelTestSupport {
     protected final ConnectionSettingsFactory connFactory = ConnectionSettingsFactory.DEFAULT;
     protected final String tubeName = String.format("test%d", System.currentTimeMillis());
     protected Client reader;
@@ -33,7 +33,8 @@ public abstract class BeanstalkCamelTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        ConnectionSettings conn = connFactory.parseUri(tubeName);
+        String host = System.getProperty("beanstalk.host");
+        ConnectionSettings conn = connFactory.parseUri(host + "/" + tubeName);
         writer = conn.newWritingClient();
         reader = conn.newReadingClient(false);
     }

@@ -30,12 +30,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.beanstalk.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PutProducerIntegrationTest extends BeanstalkCamelTestSupport {
+@EnabledIfSystemProperty(named = "beanstalk.host", matches = ".*",
+                         disabledReason = "Requires a beanstalk server running")
+public class PutProducerIntegrationIT extends BeanstalkCamelITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
