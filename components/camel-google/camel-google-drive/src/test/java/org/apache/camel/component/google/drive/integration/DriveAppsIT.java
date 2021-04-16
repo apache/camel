@@ -14,32 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive;
+package org.apache.camel.component.google.drive.integration;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
+import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
+import org.apache.camel.component.google.drive.internal.DriveAppsApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for com.google.api.services.drive.Drive$About APIs.
+ * Test class for com.google.api.services.drive.Drive$Apps APIs.
  */
-public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+           disabledReason = "Google Drive credentials were not provided")
+public class DriveAppsIT extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DriveAboutIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DriveAppsIT.class);
     private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveAppsApiMethod.class).getName();
 
+    // TODO getting permission errors for this one
+    // May have to adjust scopes used
+    @Disabled
     @Test
-    public void testGet() throws Exception {
-        final com.google.api.services.drive.model.About result = requestBody("direct://GET", null);
+    public void testList() throws Exception {
+        final com.google.api.services.drive.model.App result = requestBody("direct://LIST", null);
 
-        assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        assertNotNull(result, "list result");
+        LOG.debug("list: " + result);
     }
 
     @Override
@@ -48,7 +56,11 @@ public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                        .to("google-drive://" + PATH_PREFIX + "/get");
+                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=appId");
+
+                // test route for list
+                from("direct://LIST")
+                        .to("google-drive://" + PATH_PREFIX + "/list");
 
             }
         };

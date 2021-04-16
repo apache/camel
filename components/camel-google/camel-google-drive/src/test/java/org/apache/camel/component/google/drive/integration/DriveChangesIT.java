@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive;
+package org.apache.camel.component.google.drive.integration;
 
 import java.util.List;
 
 import com.google.api.services.drive.model.Change;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
 import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +34,11 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
  */
-public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+           disabledReason = "Google Drive credentials were not provided")
+public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DriveChangesIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DriveChangesIT.class);
     private static final String PATH_PREFIX
             = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
 

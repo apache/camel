@@ -52,6 +52,42 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
 
+    // Used by JUnit to dynamically execute integration tests if credentials are provided
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        Properties properties = loadProperties();
+
+        return !properties.getProperty("clientId", "").isEmpty()
+                && !properties.getProperty("clientSecret").isEmpty();
+    }
+
+    private static Properties loadProperties() {
+        final InputStream in = AbstractGoogleDriveTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES);
+        if (in == null) {
+            throw new RuntimeException(TEST_OPTIONS_PROPERTIES + " could not be found");
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append(System.lineSeparator());
+            }
+            propertyText = builder.toString();
+
+            final Properties properties = new Properties();
+
+            properties.load(new StringReader(propertyText));
+
+            return properties;
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
+                    e);
+        }
+    }
+
     protected File uploadTestFile() {
         File fileMetadata = new File();
         fileMetadata.setTitle(UPLOAD_FILE.getName());
@@ -80,27 +116,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
 
-        final InputStream in = getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES);
-        if (in == null) {
-            throw new IOException(TEST_OPTIONS_PROPERTIES + " could not be found");
-        }
-
-        final StringBuilder builder = new StringBuilder();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            builder.append(line).append(System.lineSeparator());
-        }
-        propertyText = builder.toString();
-
-        final Properties properties = new Properties();
-        try {
-            properties.load(new StringReader(propertyText));
-        } catch (IOException e) {
-            throw new IOException(
-                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                    e);
-        }
+        final Properties properties = loadProperties();
         //
         //        // cache test properties
         //        refreshToken = properties.getProperty(REFRESH_TOKEN_PROPERTY);
