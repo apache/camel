@@ -25,14 +25,19 @@ import org.apache.camel.component.aws2.translate.Translate2LanguageEnum;
 import org.apache.camel.component.aws2.translate.Translate2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("This test must be manually started, you need to specify AWS Credentials")
-public class Translate2ProducerIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class Translate2ProducerManualIT extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -102,13 +107,13 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:translateText").to(
-                        "aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText")
+                        "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText")
                         .to("mock:result");
                 from("direct:translateTextAuto")
-                        .to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true")
+                        .to("aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true")
                         .to("mock:result");
                 from("direct:translateTextPojo").to(
-                        "aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&pojoRequest=true")
+                        "aws2-translate://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=translateText&pojoRequest=true")
                         .to("mock:result");
             }
         };

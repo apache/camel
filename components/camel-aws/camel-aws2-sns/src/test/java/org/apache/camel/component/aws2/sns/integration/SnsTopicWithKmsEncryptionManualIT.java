@@ -22,13 +22,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sns.Sns2Constants;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class SnsComponentIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class SnsTopicWithKmsEncryptionManualIT extends CamelTestSupport {
 
     @Test
     public void sendInOnly() throws Exception {
@@ -60,8 +65,7 @@ public class SnsComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("aws2-sns://MyNewTopic?accessKey=xxx&secretKey=yyy&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,"
-                            + "%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message&autoCreateTopic=true");
+                        .to("aws2-sns://MyNewTopic1?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=EU_WEST_1&subject=The+subject+message&serverSideEncryptionEnabled=true&kmsMasterKeyId=RAW(xxx)&autoCreateTopic=true");
             }
         };
     }

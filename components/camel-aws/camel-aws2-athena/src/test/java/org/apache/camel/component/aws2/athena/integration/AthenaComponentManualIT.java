@@ -26,8 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.athena.Athena2Constants;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.athena.model.GetQueryExecutionResponse;
 import software.amazon.awssdk.services.athena.model.GetQueryResultsResponse;
 import software.amazon.awssdk.services.athena.model.InvalidRequestException;
@@ -42,8 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class AthenaComponentIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class AthenaComponentManualIT extends CamelTestSupport {
 
     private final String s3Bucket = "s3://your-s3-bucket/" + UUID.randomUUID().toString() + "/";
 
@@ -321,7 +326,7 @@ public class AthenaComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsCreds = "&accessKey=xxx&secretKey=yyy&region=eu-west-1";
+                String awsCreds = "&accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&region=eu-west-1";
 
                 from("direct:athenaGetQueryExecutionTest")
                         .setBody(constant("SELECT 1"))

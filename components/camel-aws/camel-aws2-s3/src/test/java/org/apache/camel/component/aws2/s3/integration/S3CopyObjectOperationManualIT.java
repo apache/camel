@@ -26,19 +26,28 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class S3CopyObjectOperationManualIT extends CamelTestSupport {
+    private static final String ACCESS_KEY = System.getProperty("aws.access.key");
+    private static final String SECRET_KEY = System.getProperty("aws.secret.key");
 
     @BindToRegistry("amazonS3Client")
     S3Client client
-            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+            = S3Client.builder().credentialsProvider(
+                    StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
                     .region(Region.EU_WEST_1).build();
 
     @EndpointInject

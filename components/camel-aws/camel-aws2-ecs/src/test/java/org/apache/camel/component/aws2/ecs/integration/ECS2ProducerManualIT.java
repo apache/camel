@@ -22,14 +22,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("This test must be manually started, you need to specify AWS Credentials")
-public class ECS2ProducerIntegrationTest extends CamelTestSupport {
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+})
+public class ECS2ProducerManualIT extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -55,7 +60,7 @@ public class ECS2ProducerIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listClusters")
-                        .to("aws2-ecs://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&operation=listClusters")
+                        .to("aws2-ecs://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=eu-west-1&operation=listClusters")
                         .to("mock:result");
             }
         };

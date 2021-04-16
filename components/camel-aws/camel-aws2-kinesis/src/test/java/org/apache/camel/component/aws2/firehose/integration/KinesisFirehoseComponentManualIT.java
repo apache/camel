@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.firehose.model.Record;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Must be manually tested.")
-public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
+public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
 
     @BindToRegistry("FirehoseClient")
     FirehoseClient client = FirehoseClient.builder().build();
