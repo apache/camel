@@ -459,7 +459,7 @@
     <opentracing-version>0.31.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <optaplanner-version>8.4.1.Final</optaplanner-version>
+    <optaplanner-version>8.5.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <osgi-version>6.0.0</osgi-version>
     <paho-version>1.2.5</paho-version>
