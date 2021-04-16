@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.redis;
+package org.apache.camel.component.redis.integration;
 
+import org.apache.camel.component.redis.RedisConstants;
+import org.apache.camel.component.redis.RedisTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Disabled;
@@ -26,7 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
-public class RedisProducerIntegrationTest extends RedisTestSupport {
+public class RedisProducerManualIT extends RedisTestSupport {
     private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
 
     static {
