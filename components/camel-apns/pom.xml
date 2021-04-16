@@ -29,7 +29,7 @@
     <artifactId>camel-apns</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: APNS</name>
+    <name>Camel :: APNS (deprecated)</name>
     <description>A Camel Apple Push Notification Server Component</description>
 
     <properties>
