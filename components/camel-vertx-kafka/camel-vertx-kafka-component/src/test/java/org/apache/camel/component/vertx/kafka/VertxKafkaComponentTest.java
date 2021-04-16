@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
+import org.apache.camel.component.vertx.kafka.offset.DefaultVertxKafkaManualCommitFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -55,6 +56,8 @@ class VertxKafkaComponentTest extends CamelTestSupport {
         assertEquals("broker1:12345,broker2:12566", endpoint.getComponent().getConfiguration().getBootstrapServers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitionerClass());
+        assertTrue(endpoint.getComponent().getVertxKafkaClientFactory() instanceof DefaultVertxKafkaClientFactory);
+        assertTrue(endpoint.getComponent().getKafkaManualCommitFactory() instanceof DefaultVertxKafkaManualCommitFactory);
     }
 
     @Test
