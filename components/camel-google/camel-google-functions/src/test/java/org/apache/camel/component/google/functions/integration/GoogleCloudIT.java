@@ -25,8 +25,11 @@ import org.apache.camel.component.google.functions.GoogleCloudFunctionsConstants
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-public class IntegrationTest extends CamelTestSupport {
+@EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
+                              disabledReason = "Application credentials were not provided")
+public class GoogleCloudIT extends CamelTestSupport {
 
     final String functionNameReverseString = "function-reverse-string";
     final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
