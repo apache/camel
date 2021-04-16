@@ -73,7 +73,6 @@
 ** xref:couchdb-component.adoc[CouchDB]
 ** xref:cron-component.adoc[Cron]
 ** xref:crypto-component.adoc[Crypto (JCE)]
-** xref:crypto-cms-component.adoc[Crypto CMS]
 ** xref:cxf-component.adoc[CXF]
 ** xref:cxfrs-component.adoc[CXF-RS]
 ** xref:dataformat-component.adoc[Data Format]

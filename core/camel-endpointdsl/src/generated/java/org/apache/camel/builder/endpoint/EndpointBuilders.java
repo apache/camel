@@ -72,7 +72,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory,
