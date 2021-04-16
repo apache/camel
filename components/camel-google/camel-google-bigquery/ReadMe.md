@@ -30,14 +30,12 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
-For the tests the `project.id` and `bigquery.datasetId` needs to be configured. By default
+For the tests the `project.id` and `bigquery.datasetId` needs to be configured. By default,
 the current google user will be used to connect but credentials can be provided either by
 account/key (via `service.account` and `service.key`) or a credentials file (`service.credentialsFileLocation`)
 
 Running tests against BigQuery instance:
 
 ```
-mvn -Pgoogle-bigquery-test verify
+mvn verify
 ```
-
-

@@ -31,8 +31,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class InsertIdTest extends BigQueryTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+           disabledReason = "Credentials were not provided")
+public class InsertIdIT extends BigQueryITSupport {
     private static final String TABLE_ID = "insertId";
 
     @EndpointInject("direct:withInsertId")

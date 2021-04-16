@@ -45,14 +45,14 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BigQueryTestSupport extends CamelTestSupport {
+public class BigQueryITSupport extends CamelTestSupport {
     public static final String SERVICE_KEY;
     public static final String SERVICE_ACCOUNT;
     public static final String PROJECT_ID;
     public static final String DATASET_ID;
     public static final String CREDENTIALS_FILE_LOCATION;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BigQueryTestSupport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BigQueryITSupport.class);
 
     private GoogleBigQueryConnectionFactory connectionFactory;
 
@@ -67,7 +67,7 @@ public class BigQueryTestSupport extends CamelTestSupport {
 
     private static Properties loadProperties() {
         Properties testProperties = new Properties();
-        InputStream fileIn = BigQueryTestSupport.class.getClassLoader().getResourceAsStream("simple.properties");
+        InputStream fileIn = BigQueryITSupport.class.getClassLoader().getResourceAsStream("simple.properties");
         try {
             testProperties.load(fileIn);
 
@@ -76,6 +76,12 @@ public class BigQueryTestSupport extends CamelTestSupport {
         }
 
         return testProperties;
+    }
+
+    // This is used by JUnit to to dynamically enable / disable the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        return (SERVICE_KEY != null && SERVICE_ACCOUNT != null) || CREDENTIALS_FILE_LOCATION != null;
     }
 
     protected void addBigqueryComponent(CamelContext context) {
