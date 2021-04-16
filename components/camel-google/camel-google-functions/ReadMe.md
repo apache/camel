@@ -33,7 +33,7 @@ or directly through the component endpoint
 Running tests against Google Functions instance:
 
 ```
-mvn -Pgoogle-functions-test verify
+mvn verify
 ```
 
 
