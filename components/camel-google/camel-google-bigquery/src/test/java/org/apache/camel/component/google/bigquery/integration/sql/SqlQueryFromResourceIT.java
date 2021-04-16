@@ -26,13 +26,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.bigquery.integration.BigQueryTestSupport;
+import org.apache.camel.component.google.bigquery.integration.BigQueryITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class SqlQueryFromResourceTest extends BigQueryTestSupport {
+@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+           disabledReason = "Credentials were not provided")
+public class SqlQueryFromResourceIT extends BigQueryITSupport {
     private static final String TABLE_ID = "test_sql_table";
 
     @EndpointInject("direct:in")

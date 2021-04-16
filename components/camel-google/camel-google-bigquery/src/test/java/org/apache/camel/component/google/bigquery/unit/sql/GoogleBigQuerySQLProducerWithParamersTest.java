@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.apache.camel.component.google.bigquery.integration.BigQueryTestSupport.PROJECT_ID;
+import static org.apache.camel.component.google.bigquery.integration.BigQueryITSupport.PROJECT_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
