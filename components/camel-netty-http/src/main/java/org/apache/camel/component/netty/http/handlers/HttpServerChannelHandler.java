@@ -323,10 +323,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
-
             if (cause instanceof ClosedChannelException) {
                 LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
@@ -344,8 +342,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
-        // must be prototype scoped (not pooled) so we create the exchange via endpoint
-        Exchange exchange = consumer.getEndpoint().createExchange();
+        Exchange exchange = this.consumer.createExchange(false);
 
         // create a new IN message as we cannot reuse with netty
         Message in;
