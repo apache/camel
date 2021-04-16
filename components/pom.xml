@@ -125,7 +125,6 @@
         <module>camel-corda</module>
         <module>camel-couchbase</module>
         <module>camel-couchdb</module>
-        <module>camel-crypto-cms</module>
         <module>camel-crypto</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
