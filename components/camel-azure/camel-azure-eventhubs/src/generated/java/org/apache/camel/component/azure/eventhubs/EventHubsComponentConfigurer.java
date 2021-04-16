@@ -32,8 +32,6 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "amqpRetryOptions": getOrCreateConfiguration(target).setAmqpRetryOptions(property(camelContext, com.azure.core.amqp.AmqpRetryOptions.class, value)); return true;
         case "amqptransporttype":
         case "amqpTransportType": getOrCreateConfiguration(target).setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blobaccesskey":
@@ -74,14 +72,17 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"producerAsyncClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "amqpretryoptions":
         case "amqpRetryOptions": return com.azure.core.amqp.AmqpRetryOptions.class;
         case "amqptransporttype":
         case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "blobaccesskey":
@@ -129,8 +130,6 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "amqpRetryOptions": return getOrCreateConfiguration(target).getAmqpRetryOptions();
         case "amqptransporttype":
         case "amqpTransportType": return getOrCreateConfiguration(target).getAmqpTransportType();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blobaccesskey":

@@ -17,11 +17,7 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;

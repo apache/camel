@@ -120,7 +120,6 @@ class EventHubsComponentTest extends CamelTestSupport {
         assertEquals("DummyAccessKeyName", endpoint.getConfiguration().getSharedAccessName());
         assertEquals("DummyKey", endpoint.getConfiguration().getSharedAccessKey());
         assertEquals(100, endpoint.getConfiguration().getPrefetchCount());
-        assertTrue(endpoint.getConfiguration().isAutoDiscoverClient());
     }
 
     private String getErrorMessage(final String uri) {

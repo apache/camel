@@ -77,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +85,6 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amqpRetryOptions* (common) | Sets the retry policy for EventHubAsyncClient. If not specified, the default retry options are used. |  | AmqpRetryOptions
 | *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is AmqpTransportType#AMQP. There are 2 enums and the value can be one of: Amqp, AmqpWebSockets | AMQP | AmqpTransportType
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *blobAccessKey* (consumer) | In case you chose the default BlobCheckpointStore, this sets access key for the associated azure account name to be used for authentication with azure blob services |  | String
 | *blobAccountName* (consumer) | In case you chose the default BlobCheckpointStore, this sets Azure account name to be used for authentication with azure blob services. |  | String
 | *blobContainerName* (consumer) | In case you chose the default BlobCheckpointStore, this sets the blob container that shall be used by the BlobCheckpointStore to store the checkpoint offsets |  | String
@@ -100,7 +99,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *partitionId* (producer) | Sets the identifier of the Event Hub partition that the events will be sent to. If the identifier is not specified, the Event Hubs service will be responsible for routing events that are sent to an available partition. |  | String
 | *partitionKey* (producer) | Sets a hashing key to be provided for the batch of events, which instructs the Event Hubs service to map this key to a specific partition. The selection of a partition is stable for a given partition hashing key. Should any other batches of events be sent using the same exact partition hashing key, the Event Hubs service will route them all to the same partition. This should be specified only when there is a need to group events by partition, but there is flexibility into which partition they are routed. If ensuring that a batch of events is sent only to a specific partition, it is recommended that the {link #setPartitionId(String) identifier of the position be specified directly} when sending the batch. |  | String
-| *producerAsyncClient* (producer) | Sets the EventHubProducerAsyncClient.An asynchronous producer responsible for transmitting EventData to a specific Event Hub, grouped together in batches. Depending on the options specified when creating an \{linkEventDataBatch}, the events may be automatically routed to an available partition or specific to a partition. Use by this component to produce the data in camel producer. |  | EventHubProducerAsyncClient
+| *producerAsyncClient* (producer) | *Autowired* Sets the EventHubProducerAsyncClient.An asynchronous producer responsible for transmitting EventData to a specific Event Hub, grouped together in batches. Depending on the options specified when creating an \{linkEventDataBatch}, the events may be automatically routed to an available partition or specific to a partition. Use by this component to produce the data in camel producer. |  | EventHubProducerAsyncClient
 | *connectionString* (security) | Instead of supplying namespace, sharedAccessKey, sharedAccessName ... etc, you can just supply the connection string for your eventHub. The connection string for EventHubs already include all the necessary information to connection to your EventHub. To learn on how to generate the connection string, take a look at this documentation: \https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string |  | String
 | *sharedAccessKey* (security) | The generated value for the SharedAccessName |  | String
 | *sharedAccessName* (security) | The name you chose for your EventHubs SAS keys |  | String
@@ -108,7 +107,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // component options: START
-The Azure Event Hubs component supports 21 options, which are listed below.
+The Azure Event Hubs component supports 20 options, which are listed below.
 
 
 
@@ -117,7 +116,6 @@ The Azure Event Hubs component supports 21 options, which are listed below.
 | Name | Description | Default | Type
 | *amqpRetryOptions* (common) | Sets the retry policy for EventHubAsyncClient. If not specified, the default retry options are used. |  | AmqpRetryOptions
 | *amqpTransportType* (common) | Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is AmqpTransportType#AMQP. There are 2 enums and the value can be one of: Amqp, AmqpWebSockets | AMQP | AmqpTransportType
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (common) | The component configurations |  | EventHubsConfiguration
 | *blobAccessKey* (consumer) | In case you chose the default BlobCheckpointStore, this sets access key for the associated azure account name to be used for authentication with azure blob services |  | String
 | *blobAccountName* (consumer) | In case you chose the default BlobCheckpointStore, this sets Azure account name to be used for authentication with azure blob services. |  | String
@@ -131,7 +129,7 @@ The Azure Event Hubs component supports 21 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *partitionId* (producer) | Sets the identifier of the Event Hub partition that the events will be sent to. If the identifier is not specified, the Event Hubs service will be responsible for routing events that are sent to an available partition. |  | String
 | *partitionKey* (producer) | Sets a hashing key to be provided for the batch of events, which instructs the Event Hubs service to map this key to a specific partition. The selection of a partition is stable for a given partition hashing key. Should any other batches of events be sent using the same exact partition hashing key, the Event Hubs service will route them all to the same partition. This should be specified only when there is a need to group events by partition, but there is flexibility into which partition they are routed. If ensuring that a batch of events is sent only to a specific partition, it is recommended that the {link #setPartitionId(String) identifier of the position be specified directly} when sending the batch. |  | String
-| *producerAsyncClient* (producer) | Sets the EventHubProducerAsyncClient.An asynchronous producer responsible for transmitting EventData to a specific Event Hub, grouped together in batches. Depending on the options specified when creating an \{linkEventDataBatch}, the events may be automatically routed to an available partition or specific to a partition. Use by this component to produce the data in camel producer. |  | EventHubProducerAsyncClient
+| *producerAsyncClient* (producer) | *Autowired* Sets the EventHubProducerAsyncClient.An asynchronous producer responsible for transmitting EventData to a specific Event Hub, grouped together in batches. Depending on the options specified when creating an \{linkEventDataBatch}, the events may be automatically routed to an available partition or specific to a partition. Use by this component to produce the data in camel producer. |  | EventHubProducerAsyncClient
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *connectionString* (security) | Instead of supplying namespace, sharedAccessKey, sharedAccessName ... etc, you can just supply the connection string for your eventHub. The connection string for EventHubs already include all the necessary information to connection to your EventHub. To learn on how to generate the connection string, take a look at this documentation: \https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string |  | String
 | *sharedAccessKey* (security) | The generated value for the SharedAccessName |  | String

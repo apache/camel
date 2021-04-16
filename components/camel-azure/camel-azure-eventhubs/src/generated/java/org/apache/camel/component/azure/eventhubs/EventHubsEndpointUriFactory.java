@@ -20,10 +20,9 @@ public class EventHubsEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(23);
+        Set<String> props = new HashSet<>(22);
         props.add("blobStorageSharedKeyCredential");
         props.add("connectionString");
-        props.add("autoDiscoverClient");
         props.add("prefetchCount");
         props.add("sharedAccessKey");
         props.add("sharedAccessName");

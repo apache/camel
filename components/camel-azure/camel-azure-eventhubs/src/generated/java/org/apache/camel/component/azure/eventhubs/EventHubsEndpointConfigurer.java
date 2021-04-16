@@ -25,8 +25,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "amqpRetryOptions": target.getConfiguration().setAmqpRetryOptions(property(camelContext, com.azure.core.amqp.AmqpRetryOptions.class, value)); return true;
         case "amqptransporttype":
         case "amqpTransportType": target.getConfiguration().setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "blobaccesskey":
         case "blobAccessKey": target.getConfiguration().setBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "blobaccountname":
@@ -68,14 +66,17 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"producerAsyncClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "amqpretryoptions":
         case "amqpRetryOptions": return com.azure.core.amqp.AmqpRetryOptions.class;
         case "amqptransporttype":
         case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "blobaccesskey":
         case "blobAccessKey": return java.lang.String.class;
         case "blobaccountname":
@@ -124,8 +125,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "amqpRetryOptions": return target.getConfiguration().getAmqpRetryOptions();
         case "amqptransporttype":
         case "amqpTransportType": return target.getConfiguration().getAmqpTransportType();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "blobaccesskey":
         case "blobAccessKey": return target.getConfiguration().getBlobAccessKey();
         case "blobaccountname":
