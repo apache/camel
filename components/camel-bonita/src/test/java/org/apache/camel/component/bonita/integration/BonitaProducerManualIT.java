@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * See test-options.properties for configuration options.
  */
 @Disabled("Requires local Bonita instance to test")
-public class BonitaProducerIntegrationTest extends BonitaIntegrationTestSupport {
+public class BonitaProducerManualIT extends BonitaIntegrationTestSupport {
 
     @Test
     public void testStartCase() throws Exception {
