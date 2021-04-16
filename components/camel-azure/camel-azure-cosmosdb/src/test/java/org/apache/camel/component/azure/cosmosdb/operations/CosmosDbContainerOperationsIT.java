@@ -1,12 +1,10 @@
 package org.apache.camel.component.azure.cosmosdb.operations;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClientBuilder;
-import com.azure.cosmos.models.CosmosItemResponse;
+import com.azure.cosmos.models.CosmosContainerResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -18,12 +16,10 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CosmosDbItemOperationsBuilderIT {
+class CosmosDbContainerOperationsIT {
 
     private CosmosAsyncClientWrapper clientWrapper;
     private final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-    private final String containerPath = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
     @BeforeAll
     void prepare() throws Exception {
@@ -43,24 +39,36 @@ class CosmosDbItemOperationsBuilderIT {
     }
 
     @Test
-    void testItemCreateAndDelete() {
-        final Map<String, Object> item = new HashMap<>();
-        item.put("id", "test-id-1");
-        item.put("field1", 12234);
-        item.put("field2", "awesome!");
+    void testCreateDeleteContainer() {
+        final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
-        final CosmosItemResponse<Object> response = CosmosDbDatabaseOperationsBuilder.withClient(clientWrapper)
+        // test create container
+        final CosmosContainerResponse createdContainer = CosmosDbDatabaseOperations.withClient(clientWrapper)
                 .withCreateDatabaseIfNotExist(true)
                 .withDatabaseName(databaseName)
                 .getContainerOperationBuilder()
-                .withCreateContainerIfNotExist(true)
                 .withContainerId(containerId)
-                .withContainerPartitionKeyPath(containerPath)
-                .getItemOperationBuilder()
-                .withItem(item)
-                .createItem()
+                .withContainerPartitionKeyPath("/test")
+                .createContainer()
                 .block();
 
-        System.out.println(response);
+        assertNotNull(createdContainer);
+        assertEquals(containerId, createdContainer.getProperties().getId());
+
+        // successful if response code within 2xx
+        assertTrue(createdContainer.getStatusCode() >= 200 && createdContainer.getStatusCode() < 300);
+
+        // test delete container
+        final CosmosContainerResponse deletedContainer = CosmosDbDatabaseOperations.withClient(clientWrapper)
+                .withDatabaseName(databaseName)
+                .getContainerOperationBuilder()
+                .withContainerId(containerId)
+                .deleteContainer()
+                .block();
+
+        assertNotNull(deletedContainer);
+
+        // successful if response code within 2xx
+        assertTrue(deletedContainer.getStatusCode() >= 200 && deletedContainer.getStatusCode() < 300);
     }
 }

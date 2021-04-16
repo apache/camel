@@ -8,7 +8,7 @@ import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper
 import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Mono;
 
-public class CosmosDbDatabaseOperationsBuilder {
+public class CosmosDbDatabaseOperations {
 
     private final CosmosAsyncClientWrapper client;
 
@@ -18,31 +18,31 @@ public class CosmosDbDatabaseOperationsBuilder {
     private CosmosDatabaseRequestOptions databaseRequestOptions;
     private boolean createDatabaseIfNotExist;
 
-    private CosmosDbDatabaseOperationsBuilder(final CosmosAsyncClientWrapper client) {
+    private CosmosDbDatabaseOperations(final CosmosAsyncClientWrapper client) {
         this.client = client;
     }
 
-    public static CosmosDbDatabaseOperationsBuilder withClient(final CosmosAsyncClientWrapper client) {
-        return new CosmosDbDatabaseOperationsBuilder(client);
+    public static CosmosDbDatabaseOperations withClient(final CosmosAsyncClientWrapper client) {
+        return new CosmosDbDatabaseOperations(client);
     }
 
     // properties DSL
-    public CosmosDbDatabaseOperationsBuilder withDatabaseName(final String databaseName) {
+    public CosmosDbDatabaseOperations withDatabaseName(final String databaseName) {
         this.databaseName = databaseName;
         return this;
     }
 
-    public CosmosDbDatabaseOperationsBuilder withDatabaseThroughputProperties(final ThroughputProperties throughputProperties) {
+    public CosmosDbDatabaseOperations withDatabaseThroughputProperties(final ThroughputProperties throughputProperties) {
         this.databaseThroughputProperties = throughputProperties;
         return this;
     }
 
-    public CosmosDbDatabaseOperationsBuilder withCreateDatabaseIfNotExist(final boolean createDatabaseIfNotExist) {
+    public CosmosDbDatabaseOperations withCreateDatabaseIfNotExist(final boolean createDatabaseIfNotExist) {
         this.createDatabaseIfNotExist = createDatabaseIfNotExist;
         return this;
     }
 
-    public CosmosDbDatabaseOperationsBuilder withDatabaseRequestOptions(CosmosDatabaseRequestOptions databaseRequestOptions) {
+    public CosmosDbDatabaseOperations withDatabaseRequestOptions(CosmosDatabaseRequestOptions databaseRequestOptions) {
         this.databaseRequestOptions = databaseRequestOptions;
         return this;
     }
@@ -68,8 +68,8 @@ public class CosmosDbDatabaseOperationsBuilder {
     }
 
     // container operations
-    public CosmosDbContainerOperationsBuilder getContainerOperationBuilder() {
-        return new CosmosDbContainerOperationsBuilder(getAndCreateDatabaseIfNotExist());
+    public CosmosDbContainerOperations getContainerOperationBuilder() {
+        return new CosmosDbContainerOperations(getAndCreateDatabaseIfNotExist());
     }
 
     private CosmosAsyncDatabase getDatabase() {
