@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.sheets;
+package org.apache.camel.component.google.sheets.integration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +30,7 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.sheets.AbstractGoogleSheetsTestSupport;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
@@ -46,9 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values} APIs.
  */
-public class SheetsSpreadsheetsValuesIntegrationTest extends AbstractGoogleSheetsTestSupport {
+public class SheetsSpreadsheetsValuesIT extends AbstractGoogleSheetsTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsValuesIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsValuesIT.class);
     private static final String PATH_PREFIX
             = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsValuesApiMethod.class).getName();
 
