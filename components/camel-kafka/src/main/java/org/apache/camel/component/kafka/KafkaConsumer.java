@@ -95,7 +95,7 @@ public class KafkaConsumer extends DefaultConsumer {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
         endpoint.updateClassProperties(props);
 
-        String brokers = endpoint.getComponent().getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
+        String brokers = endpoint.getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
         if (brokers != null) {
             props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         }
@@ -255,7 +255,7 @@ public class KafkaConsumer extends DefaultConsumer {
                         .setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
                 // this may throw an exception if something is wrong with kafka
                 // consumer
-                this.consumer = endpoint.getComponent().getKafkaClientFactory().getConsumer(kafkaProps);
+                this.consumer = endpoint.getKafkaClientFactory().getConsumer(kafkaProps);
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
             }

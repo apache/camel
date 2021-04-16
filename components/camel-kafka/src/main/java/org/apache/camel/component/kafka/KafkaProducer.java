@@ -70,7 +70,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Properties props = endpoint.getConfiguration().createProducerProperties();
         endpoint.updateClassProperties(props);
 
-        String brokers = endpoint.getComponent().getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
+        String brokers = endpoint.getKafkaClientFactory().getBrokers(endpoint.getConfiguration());
         if (brokers != null) {
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         }
@@ -111,7 +111,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 Thread.currentThread()
                         .setContextClassLoader(org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
                 LOG.trace("Creating KafkaProducer");
-                kafkaProducer = endpoint.getComponent().getKafkaClientFactory().getProducer(props);
+                kafkaProducer = endpoint.getKafkaClientFactory().getProducer(props);
                 closeKafkaProducer = true;
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);

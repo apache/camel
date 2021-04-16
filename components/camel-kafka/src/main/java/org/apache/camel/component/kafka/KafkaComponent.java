@@ -36,7 +36,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     @Metadata(label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
     @Metadata(autowired = true, label = "advanced")
-    private KafkaClientFactory kafkaClientFactory = new DefaultKafkaClientFactory();
+    private KafkaClientFactory kafkaClientFactory;
     @Metadata(autowired = true, label = "consumer,advanced")
     private PollExceptionStrategy pollExceptionStrategy;
 
