@@ -43,7 +43,7 @@ public class QueueConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
     @UriParam(label = "producer", defaultValue = "false")
-    private boolean createQueue = false;
+    private boolean createQueue;
     // queue properties
     @UriParam(label = "queue")
     private Duration timeToLive;
