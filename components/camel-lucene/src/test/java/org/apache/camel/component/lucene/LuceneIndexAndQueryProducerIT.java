@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
+public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerIT.class);
 
     private String[] humorousQuotes = {
             "I think, therefore I am. I think - George Carlin",
