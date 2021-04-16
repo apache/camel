@@ -1,12 +1,13 @@
 [[apns-component]]
-= APNS Component
+= APNS Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-apns/src/main/docs/apns-component.adoc
 :docTitle: APNS
 :artifactId: camel-apns
 :description: Send notifications to Apple iOS devices.
 :since: 2.8
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/apns.adoc[opts=optional]
 

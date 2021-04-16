@@ -40,6 +40,7 @@ public interface ApnsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static ApnsComponentBuilder apns() {
         return new ApnsComponentBuilderImpl();
     }

@@ -239,6 +239,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.endpointBuilder("apns", path);
@@ -261,6 +262,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
             String componentName,
             String path) {

@@ -878,6 +878,7 @@ public interface ApnsEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default ApnsEndpointBuilder apns(String path) {
             return ApnsEndpointBuilderFactory.endpointBuilder("apns", path);
         }
@@ -899,10 +900,12 @@ public interface ApnsEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default ApnsEndpointBuilder apns(String componentName, String path) {
             return ApnsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static ApnsEndpointBuilder endpointBuilder(String componentName, String path) {
         class ApnsEndpointBuilderImpl extends AbstractEndpointBuilder implements ApnsEndpointBuilder, AdvancedApnsEndpointBuilder {
             public ApnsEndpointBuilderImpl(String path) {
