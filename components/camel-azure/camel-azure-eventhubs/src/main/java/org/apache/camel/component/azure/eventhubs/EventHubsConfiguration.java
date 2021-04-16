@@ -28,6 +28,7 @@ import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.models.EventPosition;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -49,8 +50,6 @@ public class EventHubsConfiguration implements Cloneable {
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
     @UriParam(label = "consumer", defaultValue = "$Default")
     private String consumerGroupName = "$Default";
     @UriParam(label = "consumer", defaultValue = "500")
@@ -68,6 +67,7 @@ public class EventHubsConfiguration implements Cloneable {
     @UriParam(label = "consumer")
     private Map<String, EventPosition> eventPosition = new HashMap<>();
     @UriParam(label = "producer")
+    @Metadata(autowired = true)
     private EventHubProducerAsyncClient producerAsyncClient;
     @UriParam(label = "producer")
     private String partitionKey;
@@ -193,18 +193,6 @@ public class EventHubsConfiguration implements Cloneable {
 
     public void setProducerAsyncClient(EventHubProducerAsyncClient producerAsyncClient) {
         this.producerAsyncClient = producerAsyncClient;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     /**

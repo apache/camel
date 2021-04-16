@@ -53,11 +53,6 @@ public class EventHubsComponent extends DefaultComponent {
         final EventHubsEndpoint endpoint = new EventHubsEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        if (configuration.isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration::setProducerAsyncClient, configuration::getProducerAsyncClient,
-                    EventHubProducerAsyncClient.class);
-        }
-
         // if we don't have client nor connectionString, we check for params
         if (areAzureClientsNotSet(configuration) && ObjectHelper.isEmpty(configuration.getConnectionString())) {
             checkAndSetNamespaceAndHubName(configuration, remaining);
@@ -76,24 +71,6 @@ public class EventHubsComponent extends DefaultComponent {
 
     public void setConfiguration(EventHubsConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    private <C> void checkAndSetRegistryClient(
-            final Consumer<C> setClientFn, final Supplier<C> getClientFn, final Class<C> clientType) {
-        if (ObjectHelper.isEmpty(getClientFn.get())) {
-            final Set<C> clients = getCamelContext().getRegistry().findByType(clientType);
-            if (clients.size() == 1) {
-                setClientFn.accept(clients.stream().findFirst().get());
-            } else if (clients.size() > 1) {
-                LOG.info(String.format("More than one %s instance in the registry, make sure to have only one instance",
-                        clientType.getSimpleName()));
-            } else {
-                LOG.info(String.format("No %s instance in the registry", clientType.getSimpleName()));
-            }
-        } else {
-            LOG.info(String.format("%s instance is already set at endpoint level: skipping the check in the registry",
-                    clientType.getSimpleName()));
-        }
     }
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
