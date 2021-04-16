@@ -18,17 +18,19 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQInOutIT extends RabbitMQITSupport {
 
     @Test
-    public void testConsumer() throws Exception {
+    public void testInOut() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.requestBody("direct:start", "World");
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
@@ -39,11 +41,15 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo");
-
-                from("spring-rabbitmq:foo")
-                        .to("log:result")
+                        .to("log:request")
+                        .to(ExchangePattern.InOut, "spring-rabbitmq:cheese?routingKey=foo.bar")
+                        .to("log:response")
                         .to("mock:result");
+
+                from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
+                        .to("log:input")
+                        .to("mock:input")
+                        .transform(body().prepend("Hello "));
             }
         };
     }

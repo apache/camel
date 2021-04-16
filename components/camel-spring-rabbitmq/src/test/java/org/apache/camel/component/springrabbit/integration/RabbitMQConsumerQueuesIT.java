@@ -18,21 +18,16 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.MessagePropertiesBuilder;
 
-public class RabbitMQConsumerPooledExchangeIntTest extends AbstractRabbitMQIntTest {
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
-        return camelContext;
-    }
+public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
 
     @Test
     public void testConsumer() throws Exception {
@@ -44,11 +39,31 @@ public class RabbitMQConsumerPooledExchangeIntTest extends AbstractRabbitMQIntTe
     }
 
     @Test
-    public void testConsumerTwo() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
+    public void testConsumerWithHeader() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedHeaderReceived("cheese", "gouda");
 
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
+        template.sendBodyAndHeader("direct:start", "Hello World", "cheese", "gouda");
+
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConsumerWithMessage() throws Exception {
+        MessageProperties props = MessagePropertiesBuilder.newInstance()
+                .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
+                .setMessageId("123")
+                .setHeader("bar", "baz")
+                .build();
+        Message body = MessageBuilder.withBody("foo".getBytes())
+                .andProperties(props)
+                .build();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("foo");
+        getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
+        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+
+        template.sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
@@ -61,7 +76,7 @@ public class RabbitMQConsumerPooledExchangeIntTest extends AbstractRabbitMQIntTe
                 from("direct:start")
                         .to("spring-rabbitmq:foo");
 
-                from("spring-rabbitmq:foo")
+                from("spring-rabbitmq:foo?queues=myqueue")
                         .to("log:result")
                         .to("mock:result");
             }

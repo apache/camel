@@ -18,19 +18,37 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.ExchangePattern;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
 
-public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQConsumerPooledExchangeIT extends RabbitMQITSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        camelContext.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
+        return camelContext;
+    }
 
     @Test
-    public void testInOut() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("World");
+    public void testConsumer() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.requestBody("direct:start", "World");
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConsumerTwo() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
@@ -41,15 +59,11 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("log:request")
-                        .to(ExchangePattern.InOut, "spring-rabbitmq:cheese?routingKey=foo.bar")
-                        .to("log:response")
-                        .to("mock:result");
+                        .to("spring-rabbitmq:foo");
 
-                from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
-                        .to("log:input")
-                        .to("mock:input")
-                        .transform(body().prepend("Hello "));
+                from("spring-rabbitmq:foo")
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

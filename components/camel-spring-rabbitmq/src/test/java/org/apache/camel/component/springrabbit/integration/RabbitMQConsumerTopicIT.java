@@ -18,7 +18,6 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 
-public class RabbitMQConsumerQueuesIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQConsumerTopicIT extends RabbitMQITSupport {
 
     @Test
     public void testConsumer() throws Exception {
@@ -61,7 +60,6 @@ public class RabbitMQConsumerQueuesIntTest extends AbstractRabbitMQIntTest {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
 
         template.sendBody("direct:start", body);
 
@@ -74,9 +72,9 @@ public class RabbitMQConsumerQueuesIntTest extends AbstractRabbitMQIntTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo");
+                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
 
-                from("spring-rabbitmq:foo?queues=myqueue")
+                from("spring-rabbitmq:foo?exchangeType=topic&queues=myqueue&routingKey=foo.#")
                         .to("log:result")
                         .to("mock:result");
             }

@@ -26,7 +26,7 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 
-public class RabbitMQConsumerTopicIntTest extends AbstractRabbitMQIntTest {
+public class RabbitMQConsumerRoutingKeyIT extends RabbitMQITSupport {
 
     @Test
     public void testConsumer() throws Exception {
@@ -74,7 +74,7 @@ public class RabbitMQConsumerTopicIntTest extends AbstractRabbitMQIntTest {
                 from("direct:start")
                         .to("spring-rabbitmq:foo?routingKey=foo.bar");
 
-                from("spring-rabbitmq:foo?exchangeType=topic&queues=myqueue&routingKey=foo.#")
+                from("spring-rabbitmq:foo?queues=myqueue&routingKey=foo.bar")
                         .to("log:result")
                         .to("mock:result");
             }
