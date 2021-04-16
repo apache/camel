@@ -4,7 +4,7 @@
     "name": "apns",
     "title": "APNS",
     "description": "Send notifications to Apple iOS devices.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.8.0",
     "label": "eventbus,mobile",
     "javaType": "org.apache.camel.component.apns.ApnsComponent",
