@@ -24,10 +24,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Example for wiki documentation
  */
+@DisabledOnOs(OS.AIX)
 public class AtomGoodBlogsTest {
 
     // START SNIPPET: e1

@@ -19,12 +19,15 @@ package org.apache.camel.component.atom;
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for AtomProducer.
  */
+@DisabledOnOs(OS.AIX)
 public class AtomProducerTest extends CamelTestSupport {
 
     @Test
