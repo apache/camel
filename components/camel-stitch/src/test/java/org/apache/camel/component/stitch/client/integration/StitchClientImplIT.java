@@ -14,25 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stitch.client;
+package org.apache.camel.component.stitch.client.integration;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.component.stitch.StitchTestUtils;
+import org.apache.camel.component.stitch.client.StitchClient;
+import org.apache.camel.component.stitch.client.StitchClientBuilder;
+import org.apache.camel.component.stitch.client.StitchRegion;
 import org.apache.camel.component.stitch.client.models.StitchException;
 import org.apache.camel.component.stitch.client.models.StitchMessage;
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchResponse;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@EnabledIfSystemProperty(named = "token", matches = ".*", disabledReason = "Stitch token was not provided")
 class StitchClientImplIT {
 
     @Test
