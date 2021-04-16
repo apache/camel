@@ -33,11 +33,10 @@ or directly through the component endpoint
 
 `from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")`
 
-
-Running tests against Storage instance:
+Running integration tests will be automatically executed if the GOOGLE_APPLICATION_CREDENTIALS is exported, and the `verify` target is executed:
 
 ```
-mvn -Pgoogle-storage-test verify
+mvn verify
 ```
 
 

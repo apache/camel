@@ -27,8 +27,11 @@ import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-public class ComplexIntegrationTest extends CamelTestSupport {
+@EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
+                              disabledReason = "Application credentials were not provided")
+public class ComplexIT extends CamelTestSupport {
 
     @EndpointInject
     private ProducerTemplate template;
