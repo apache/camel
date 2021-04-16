@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  */
 @Disabled("Must be manually tested")
-public class SmppConsumerReconnectIntegrationTest extends CamelTestSupport {
+public class SmppProducerReconnectManualIT extends CamelTestSupport {
 
     @Test
     public void test() throws Exception {
@@ -39,8 +39,8 @@ public class SmppConsumerReconnectIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
-                        .to("mock:result");
+                from("direct:start")
+                        .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producerr");
             }
         };
     }

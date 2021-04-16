@@ -20,13 +20,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.smpp.SmppConstants;
 import org.apache.camel.component.smpp.SmppMessageType;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
  */
 @Disabled("Must be manually tested")
-public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
+public class SmppComponentManualIT extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -177,8 +177,16 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/smpp/integration/SmppComponentSpringIntegrationTest-context.xml");
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producer");
+
+                from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
+                        .to("mock:result");
+            }
+        };
     }
 }
