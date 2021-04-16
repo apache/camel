@@ -587,7 +587,10 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
         </plugins>
 
         <pluginManagement>
@@ -607,31 +610,5 @@
         </pluginManagement>
 
     </build>
-
-    <profiles>
-        <profile>
-            <id>integration</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <failIfNoTests>false</failIfNoTests>
-                            <runOrder>alphabetical</runOrder>
-                            <includes>
-                                <include>**/*IntegrationTest.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*XXXTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

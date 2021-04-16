@@ -31,6 +31,7 @@ import org.apache.camel.component.box.internal.BoxGroupsManagerApiMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link BoxGroupsManager} APIs.
  */
-public class BoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
+@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+           disabledReason = "Box credentials were not provided")
+public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BoxGroupsManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BoxGroupsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
             .getApiName(BoxGroupsManagerApiMethod.class).getName();
     private static final String CAMEL_TEST_GROUP_DESCRIPTION = "CamelTestGroupDescription";
