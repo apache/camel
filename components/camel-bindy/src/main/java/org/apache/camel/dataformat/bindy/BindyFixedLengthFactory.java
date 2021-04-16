@@ -41,9 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The BindyFixedLengthFactory is the class who allows to : Generate a model associated to a fixed length record, bind data from
- * a record to the POJOs, export data of POJOs to a fixed length record and format data into String, Date, Double, ...
- * according to the format/pattern defined
+ * The BindyFixedLengthFactory is the class who allows to : Generate a model associated to a fixed length record, bind
+ * data from a record to the POJOs, export data of POJOs to a fixed length record and format data into String, Date,
+ * Double, ... according to the format/pattern defined
  */
 public class BindyFixedLengthFactory extends BindyAbstractFactory implements BindyFactory {
 
