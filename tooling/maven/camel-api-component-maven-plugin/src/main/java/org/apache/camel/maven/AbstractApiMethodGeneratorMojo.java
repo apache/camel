@@ -201,7 +201,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
-               + "IntegrationTest";
+               + "IT";
     }
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
