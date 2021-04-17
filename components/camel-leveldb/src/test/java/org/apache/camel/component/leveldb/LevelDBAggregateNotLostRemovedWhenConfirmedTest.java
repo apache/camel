@@ -23,11 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTestSupport {
 
     private LevelDBAggregationRepository repo;

@@ -23,10 +23,13 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregationRepositoryAlotDataTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;

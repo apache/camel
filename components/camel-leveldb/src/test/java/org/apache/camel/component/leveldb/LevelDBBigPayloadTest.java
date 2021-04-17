@@ -24,6 +24,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test issue with leveldb file store growing to large
  */
 @Disabled("Run this test manually")
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBBigPayloadTest extends LevelDBTestSupport {
 
     private static final long TIME = 60 * 1000;
