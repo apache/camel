@@ -58,6 +58,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     private volatile String endpointUri;
     private volatile ProducerTemplate template;
     private volatile boolean cloned;
+    private volatile boolean useDefaultEndpoint = true;
 
     public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
@@ -89,7 +90,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     private DefaultFluentProducerTemplate newClone() {
         this.cloned = true;
         return new DefaultFluentProducerTemplate(
-                this, context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template, endpoint,
+                parent, context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template, endpoint,
                 endpointUri);
     }
 
@@ -310,28 +311,17 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate to(String endpointUri) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
-        // optimize if we send to the same endpoint as before
-        if (clone.endpoint != null && clone.endpointUri != null && clone.endpointUri.equals(endpointUri)) {
-            return clone;
-        } else {
-            // store state of this endpoint so we can potentially reuse it again if sending to same endpoint next time
-            clone.endpointUri = endpointUri;
-            clone.endpoint = context.getEndpoint(endpointUri);
-            if (this.parent != null) {
-                this.parent.endpointUri = endpointUri;
-                this.parent.endpoint = clone.endpoint;
-            } else {
-                this.endpointUri = endpointUri;
-                this.endpoint = clone.endpoint;
-            }
-            return clone;
-        }
+        clone.useDefaultEndpoint = false;
+        clone.endpointUri = endpointUri;
+        clone.endpoint = context.getEndpoint(endpointUri);
+        return clone;
     }
 
     @Override
     public FluentProducerTemplate to(Endpoint endpoint) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        clone.useDefaultEndpoint = false;
         clone.endpoint = endpoint;
         return clone;
     }
@@ -364,6 +354,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
         // reset cloned flag so when we use it again it has to set values again
         cloned = false;
+        useDefaultEndpoint = true;
 
         T result;
         if (type == Exchange.class) {
@@ -400,6 +391,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
         // reset cloned flag so when we use it again it has to set values again
         cloned = false;
+        useDefaultEndpoint = true;
 
         Future<T> result;
         if (ObjectHelper.isNotEmpty(clone.headers)) {
@@ -501,7 +493,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private Endpoint target() {
-        if (endpoint != null) {
+        if (!useDefaultEndpoint && endpoint != null) {
             return endpoint;
         }
         if (defaultEndpoint != null) {

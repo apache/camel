@@ -408,6 +408,27 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testUseFourTimesSameThread() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:echo");
+        mock.expectedBodiesReceived("Camel", "Beer");
+        mock.message(0).header("foo").isEqualTo("!");
+        mock.message(1).header("foo").isNull();
+
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        fluent.setDefaultEndpointUri("direct:red");
+        Object result = fluent.withBody("Camel").withHeader("foo", "!").to("direct:echo").request();
+        Object result2 = fluent.withBody("World").to("direct:hi").request();
+        Object result3 = fluent.withBody("Beer").to("direct:echo").request();
+        Object result4 = fluent.withBody("Wine").request();
+        assertEquals("CamelCamel!", result);
+        assertEquals("Hi World", result2);
+        assertEquals("BeerBeer", result3);
+        assertEquals("Red Wine", result4);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -435,6 +456,10 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 from("direct:async").to("mock:async");
 
                 from("direct:echo").to("mock:echo").setBody().simple("${body}${body}${header.foo}");
+
+                from("direct:hi").setBody().simple("Hi ${body}");
+
+                from("direct:red").setBody().simple("Red ${body}");
 
             }
         };
