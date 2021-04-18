@@ -904,11 +904,15 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-The transaction API has 13 method(s) which is represented by the following method signatures
+The transaction API has 14 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
 
 [source,java]
 ----
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> adjustAuthorization(String id, com.braintreegateway.TransactionRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> adjustAuthorization(String id, java.math.BigDecimal amount);
 
 com.braintreegateway.Result<com.braintreegateway.Transaction> cancelRelease(String id);
 
@@ -954,12 +958,13 @@ The transaction API is defined in the syntax as follows:
 braintree:transaction/methodName?[parameters]
 ----
 
-The 13 method(s) is listed in the table below.
+The 14 method(s) is listed in the table below.
 (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
+| *adjustAuthorization* |  | Submits the transaction with the given id to be adjusted for the given amount which must be less than or equal to the authorization amount
 | *cancelRelease* |  | Cancels a pending release of a transaction with the given id from escrow
 | *cloneTransaction* |  | 
 | *credit* |  | Creates a credit Transaction
@@ -979,6 +984,9 @@ The transaction API method(s) has the following set of parameters listed in the 
 [width="100%",cols="2,2,4,2",options="header"]
 |===
 | Method | Parameter | Description | Type
+| adjustAuthorization | *amount* |  To be adjusted | BigDecimal
+| adjustAuthorization | *id* |  Of the transaction to to be adjusted | String
+| adjustAuthorization | *request* |  Is the TransactionRequest object with amount details | TransactionRequest
 | cancelRelease | *id* |  Of the transaction to cancel release from escrow of | String
 | cloneTransaction | *cloneRequest* |   | TransactionCloneRequest
 | cloneTransaction | *id* |   | String
