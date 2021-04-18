@@ -23,7 +23,7 @@ import io.smallrye.health.SmallRyeHealth;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.health.ContextHealthCheck;
-import org.eclipse.microprofile.health.HealthCheckResponse.State;
+import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,13 +44,13 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
 
         JsonObject healthObject = getHealthJson(health);
 
-        assertEquals(State.UP.name(), healthObject.getString("status"));
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), checksJson -> {
-            assertEquals(State.UP.name(), checksJson.getString("context"));
+        assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), checksJson -> {
+            assertEquals(Status.UP.name(), checksJson.getString("context"));
         });
     }
 
@@ -68,13 +68,13 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.DOWN.name(), healthObject.getString("status"));
+        assertEquals(Status.DOWN.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.DOWN, checks.getJsonObject(0), checksJson -> {
-            assertEquals(State.DOWN.name(), checksJson.getString("context"));
+        assertHealthCheckOutput("camel-readiness-checks", Status.DOWN, checks.getJsonObject(0), checksJson -> {
+            assertEquals(Status.DOWN.name(), checksJson.getString("context"));
         });
     }
 
@@ -93,15 +93,15 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.UP.name(), healthObject.getString("status"));
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
         JsonObject checksObject = checks.getJsonObject(0);
-        assertHealthCheckOutput("camel-liveness-checks", State.UP, checksObject, checksJson -> {
-            assertEquals(State.UP.name(), checksJson.getString("liveness-1"));
-            assertEquals(State.UP.name(), checksJson.getString("liveness-2"));
+        assertHealthCheckOutput("camel-liveness-checks", Status.UP, checksObject, checksJson -> {
+            assertEquals(Status.UP.name(), checksJson.getString("liveness-1"));
+            assertEquals(Status.UP.name(), checksJson.getString("liveness-2"));
         });
     }
 
@@ -120,15 +120,15 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.DOWN.name(), healthObject.getString("status"));
+        assertEquals(Status.DOWN.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
         JsonObject checksObject = checks.getJsonObject(0);
-        assertHealthCheckOutput("camel-liveness-checks", State.DOWN, checksObject, checksJson -> {
-            assertEquals(State.UP.name(), checksJson.getString("liveness-1"));
-            assertEquals(State.DOWN.name(), checksJson.getString("liveness-2"));
+        assertHealthCheckOutput("camel-liveness-checks", Status.DOWN, checksObject, checksJson -> {
+            assertEquals(Status.UP.name(), checksJson.getString("liveness-1"));
+            assertEquals(Status.DOWN.name(), checksJson.getString("liveness-2"));
         });
     }
 
@@ -147,14 +147,14 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.UP.name(), healthObject.getString("status"));
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(State.UP.name(), jsonObject.getString("readiness-1"));
-            assertEquals(State.UP.name(), jsonObject.getString("readiness-2"));
+        assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
+            assertEquals(Status.UP.name(), jsonObject.getString("readiness-1"));
+            assertEquals(Status.UP.name(), jsonObject.getString("readiness-2"));
         });
     }
 
@@ -173,14 +173,14 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.DOWN.name(), healthObject.getString("status"));
+        assertEquals(Status.DOWN.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.DOWN, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(State.UP.name(), jsonObject.getString("readiness-1"));
-            assertEquals(State.DOWN.name(), jsonObject.getString("readiness-2"));
+        assertHealthCheckOutput("camel-readiness-checks", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
+            assertEquals(Status.UP.name(), jsonObject.getString("readiness-1"));
+            assertEquals(Status.DOWN.name(), jsonObject.getString("readiness-2"));
         });
     }
 
@@ -197,12 +197,12 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.UP.name(), healthObject.getString("status"));
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), jsonObject -> {
+        assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
             assertNull(jsonObject);
         });
     }
@@ -220,16 +220,16 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.UP.name(), healthObject.getString("status"));
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(2, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), jsonObject -> {
+        assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
             assertNull(jsonObject);
         });
 
-        assertHealthCheckOutput("camel-liveness-checks", State.UP, checks.getJsonObject(1), jsonObject -> {
+        assertHealthCheckOutput("camel-liveness-checks", Status.UP, checks.getJsonObject(1), jsonObject -> {
             assertNull(jsonObject);
         });
     }

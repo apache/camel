@@ -23,7 +23,7 @@ import io.smallrye.health.SmallRyeHealth;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.eclipse.microprofile.health.HealthCheckResponse.State;
+import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,13 +44,13 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.UP.name(), healthObject.getString("status"));
+        assertEquals(Status.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(State.UP.name(), jsonObject.getString("route:healthyRoute"));
+        assertHealthCheckOutput("camel-readiness-checks", Status.UP, checks.getJsonObject(0), jsonObject -> {
+            assertEquals(Status.UP.name(), jsonObject.getString("route:healthyRoute"));
         });
     }
 
@@ -70,13 +70,13 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.DOWN.name(), healthObject.getString("status"));
+        assertEquals(Status.DOWN.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.DOWN, checks.getJsonObject(0), jsonObject -> {
-            assertEquals(State.DOWN.name(), jsonObject.getString("route:healthyRoute"));
+        assertHealthCheckOutput("camel-readiness-checks", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
+            assertEquals(Status.DOWN.name(), jsonObject.getString("route:healthyRoute"));
         });
     }
 

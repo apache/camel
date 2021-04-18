@@ -42,18 +42,18 @@ public class MicroProfileMetricsMetadataTest extends MicroProfileMetricsTestSupp
     public void testMetricMetadata() {
         template.sendBody("direct:metadata", null);
         Metadata metadata = getMetricMetadata("test-counter");
-        assertEquals(METRIC_DESCRIPTION, metadata.getDescription().get());
+        assertEquals(METRIC_DESCRIPTION, metadata.getDescription());
         assertEquals(METRIC_DISPLAY_NAME, metadata.getDisplayName());
-        assertEquals(KILOBYTES, metadata.getUnit().get());
+        assertEquals(KILOBYTES, metadata.getUnit());
     }
 
     @Test
     public void testMetricMetadataFromHeader() {
         template.sendBody("direct:metadataHeader", null);
         Metadata metadata = getMetricMetadata("test-counter-header");
-        assertEquals(METRIC_DESCRIPTION, metadata.getDescription().get());
+        assertEquals(METRIC_DESCRIPTION, metadata.getDescription());
         assertEquals(METRIC_DISPLAY_NAME, metadata.getDisplayName());
-        assertEquals(KILOBYTES, metadata.getUnit().get());
+        assertEquals(KILOBYTES, metadata.getUnit());
     }
 
     @Test
@@ -65,9 +65,9 @@ public class MicroProfileMetricsMetadataTest extends MicroProfileMetricsTestSupp
 
         template.sendBodyAndHeaders("direct:metadata", null, headers);
         Metadata metadata = getMetricMetadata("test-counter");
-        assertEquals(METRIC_DISPLAY_NAME_MODIFIED, metadata.getDescription().get());
+        assertEquals(METRIC_DISPLAY_NAME_MODIFIED, metadata.getDescription());
         assertEquals(METRIC_DESCRIPTION_MODIFIED, metadata.getDisplayName());
-        assertEquals(MEGABITS, metadata.getUnit().get());
+        assertEquals(MEGABITS, metadata.getUnit());
     }
 
     @Override

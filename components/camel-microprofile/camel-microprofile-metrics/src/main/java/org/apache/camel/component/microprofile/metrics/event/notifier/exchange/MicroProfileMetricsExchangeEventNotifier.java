@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.microprofile.metrics.event.notifier.exchange;
 
+import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
@@ -123,7 +123,7 @@ public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfi
             timer = getMetricRegistry().timer(name + PROCESSING_METRICS_SUFFIX, tags);
             sentEvent.getExchange().setProperty("eventTimer:" + name, timer);
         }
-        timer.update(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
+        timer.update(Duration.ofMillis(sentEvent.getTimeTaken()));
     }
 
     protected void handleDoneEvent(ExchangeEvent doneEvent) {
