@@ -18,15 +18,17 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK;
+import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_FEED;
 
-public class CordaConsumerVaultTrackIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerStateMachineFeedIT extends CordaConsumerITSupport {
 
     @Test
-    public void vaultTrackTest() throws Exception {
+    public void stateMachineFeedTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
@@ -38,9 +40,8 @@ public class CordaConsumerVaultTrackIntegrationTest extends CordaConsumerTestSup
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK
-                     + "&contractStateClass=#contractStateClass")
-                             .to("mock:result");
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + STATE_MACHINE_FEED)
+                        .to("mock:result");
             }
         };
     }

@@ -18,15 +18,17 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY_WITH_PAGING_SPEC;
+import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK;
 
-public class CordaConsumerVaultTrackByWithPagingSpecIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerVaultTrackIT extends CordaConsumerITSupport {
 
     @Test
-    public void vaultTrackByWithPagingSpecTest() throws Exception {
+    public void vaultTrackTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
@@ -38,10 +40,8 @@ public class CordaConsumerVaultTrackByWithPagingSpecIntegrationTest extends Cord
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_WITH_PAGING_SPEC
-                     + "&contractStateClass=#contractStateClass"
-                     + "&queryCriteria=#queryCriteria"
-                     + "&pageSpecification=#pageSpecification")
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK
+                     + "&contractStateClass=#contractStateClass")
                              .to("mock:result");
             }
         };

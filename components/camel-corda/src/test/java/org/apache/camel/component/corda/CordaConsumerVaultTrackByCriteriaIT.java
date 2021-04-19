@@ -18,21 +18,20 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.START_TRACKED_FLOW_DYNAMIC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY_CRITERIA;
 
-public class CordaConsumerStartTrackedFlowDynamicIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerVaultTrackByCriteriaIT extends CordaConsumerITSupport {
 
     @Test
-    public void startTrackedFlowDynamicTest() throws Exception {
-        //Expects CamelFlow is deployed on the node
+    public void vaultTrackByCriteriaTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals("Hello world!", mockResult.getExchanges().get(0).getIn().getBody());
     }
 
     @Override
@@ -41,9 +40,9 @@ public class CordaConsumerStartTrackedFlowDynamicIntegrationTest extends CordaCo
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + START_TRACKED_FLOW_DYNAMIC
-                     + "&flowLociClass=#flowLociClass"
-                     + "&arguments=#arguments")
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_CRITERIA
+                     + "&contractStateClass=#contractStateClass"
+                     + "&queryCriteria=#queryCriteria")
                              .to("mock:result");
             }
         };

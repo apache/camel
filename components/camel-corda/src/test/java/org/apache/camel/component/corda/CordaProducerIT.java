@@ -48,6 +48,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +60,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class CordaProducerIntegrationTest extends CordaTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(CordaProducerIntegrationTest.class);
+@Disabled("Requires manual steps to setup and run")
+public class CordaProducerIT extends CordaITSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CordaProducerIT.class);
     private static final SecureHash.SHA256 TEST_SHA_256
             = SecureHash.parse("6D1687C143DF792A011A1E80670A4E4E0C25D0D87A39514409B1ABFC2043581F");
 
