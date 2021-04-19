@@ -104,9 +104,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link org.apache.camel.component.as2.api.AS2ClientManager} APIs.
  */
-public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
+public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AS2ClientManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AS2ClientManagerIT.class);
     private static final String PATH_PREFIX
             = AS2ApiCollection.getCollection().getApiName(AS2ClientManagerApiMethod.class).getName();
 

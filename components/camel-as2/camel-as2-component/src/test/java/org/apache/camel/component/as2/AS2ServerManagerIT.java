@@ -82,11 +82,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link org.apache.camel.component.as2.api.AS2ServerManager} APIs.
  */
-public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
+public class AS2ServerManagerIT extends AbstractAS2ITSupport {
 
     private static final String PROCESSOR_EXCEPTION_MSG = "Processor Exception";
     private static final String EXPECTED_EXCEPTION_MSG = "Failed to process AS2 message: " + PROCESSOR_EXCEPTION_MSG;
-    private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManagerIT.class);
     private static final String PATH_PREFIX
             = AS2ApiCollection.getCollection().getApiName(AS2ServerManagerApiMethod.class).getName();
 
