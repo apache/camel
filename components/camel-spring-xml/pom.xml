@@ -718,18 +718,5 @@
                 </plugins>
             </build>
         </profile>
-
-        <!-- skip management tests on AIX as it hangs CI servers -->
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <name>aix</name>
-                </os>
-            </activation>
-            <properties>
-                <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
-            </properties>
-        </profile>
     </profiles>
 </project>

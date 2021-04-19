@@ -20,12 +20,15 @@ import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spring.EndpointReferenceTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
 
     @Override

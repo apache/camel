@@ -20,11 +20,14 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledOnOs(OS.AIX)
 public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport {
 
     @Override
