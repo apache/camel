@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 //http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html
 //http://camel.apache.org/async.html
-public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
+public class CamelWorkItemHandlerIT extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
