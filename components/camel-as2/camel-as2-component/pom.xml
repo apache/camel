@@ -169,32 +169,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-                Some part of the test code is auto-generated and fails with the naming
-                pattern *IT.java. As such, we keep the previous one and configure both
-                surefire and failsafe.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <excludes>
-                        <exclude>*IntegrationTest*.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <includes>
-                        <include>*IntegrationTest*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 

@@ -342,9 +342,6 @@
                     <excludes>
                         <exclude>${platform.skip.tests}</exclude>
                     </excludes>
-                    <includes>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
                 </configuration>
                 <executions>
                     <execution>

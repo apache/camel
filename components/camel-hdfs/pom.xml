@@ -166,15 +166,6 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <!-- skip tests on Windows due CAMEL-8445 -->
     <profiles>
         <profile>

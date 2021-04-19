@@ -159,7 +159,6 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <visibleassertions.silence>true</visibleassertions.silence>
                         <infinispan.test.jgroups.protocol>tcp</infinispan.test.jgroups.protocol>
                     </systemPropertyVariables>
                 </configuration>
