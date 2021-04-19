@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.calendar.integration;
+package org.apache.camel.component.google.calendar;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +27,6 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport;
 import org.apache.camel.component.google.calendar.internal.CalendarEventsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.jupiter.api.Test;

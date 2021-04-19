@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive.integration;
+package org.apache.camel.component.google.drive;
 
 import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
-import org.apache.camel.component.google.drive.internal.DriveRevisionsApiMethod;
+import org.apache.camel.component.google.drive.internal.DrivePropertiesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -29,15 +28,15 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for com.google.api.services.drive.Drive$Revisions APIs.
+ * Test class for com.google.api.services.drive.Drive$Properties APIs.
  */
 @EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
            disabledReason = "Google Drive credentials were not provided")
-public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
+public class DrivePropertiesIT extends AbstractGoogleDriveTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DriveRevisionsIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DrivePropertiesIT.class);
     private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveRevisionsApiMethod.class).getName();
+            = GoogleDriveApiCollection.getCollection().getApiName(DrivePropertiesApiMethod.class).getName();
 
     @Test
     public void testList() throws Exception {
@@ -45,7 +44,7 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
         String fileId = testFile.getId();
 
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.model.RevisionList result = requestBody("direct://LIST", fileId);
+        final com.google.api.services.drive.model.PropertyList result = requestBody("direct://LIST", fileId);
 
         assertNotNull(result, "list result");
         LOG.debug("list: " + result);
@@ -62,6 +61,10 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
                 // test route for get
                 from("direct://GET")
                         .to("google-drive://" + PATH_PREFIX + "/get");
+
+                // test route for insert
+                from("direct://INSERT")
+                        .to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
                 from("direct://LIST")

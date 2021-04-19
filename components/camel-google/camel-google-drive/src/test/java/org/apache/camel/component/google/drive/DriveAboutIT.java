@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive.integration;
+package org.apache.camel.component.google.drive;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
 import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.junit.jupiter.api.Test;

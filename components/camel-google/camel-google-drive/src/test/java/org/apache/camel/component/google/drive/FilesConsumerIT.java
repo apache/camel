@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.drive.integration;
+package org.apache.camel.component.google.drive;
 
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.mock.MockEndpoint;

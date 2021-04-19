@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.sheets.integration;
+package org.apache.camel.component.google.sheets;
 
 import java.security.SecureRandom;
 import java.util.Collections;
@@ -28,7 +28,6 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
 import com.google.api.services.sheets.v4.model.UpdateSpreadsheetPropertiesRequest;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.sheets.AbstractGoogleSheetsTestSupport;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsApiMethod;

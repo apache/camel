@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.mail.integration;
+package org.apache.camel.component.google.mail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +29,6 @@ import javax.mail.internet.MimeMessage;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.model.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport;
 import org.apache.camel.component.google.mail.internal.GmailUsersThreadsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.jupiter.api.Test;

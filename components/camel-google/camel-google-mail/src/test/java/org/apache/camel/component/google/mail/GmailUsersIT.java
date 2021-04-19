@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.mail.integration;
+package org.apache.camel.component.google.mail;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport;
 import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.junit.jupiter.api.Test;

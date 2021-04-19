@@ -14,52 +14,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.calendar.integration;
+package org.apache.camel.component.google.calendar;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.api.services.calendar.model.Calendar;
-import com.google.api.services.calendar.model.CalendarList;
-import com.google.api.services.calendar.model.CalendarListEntry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport;
-import org.apache.camel.component.google.calendar.internal.CalendarCalendarListApiMethod;
+import org.apache.camel.component.google.calendar.internal.CalendarCalendarsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Test class for {@link com.google.api.services.calendar.Calendar$CalendarList} APIs.
+ * Test class for {@link com.google.api.services.calendar.Calendar$Calendars} APIs.
  */
 @EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
            disabledReason = "Google Calendar credentials were not provided")
-public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
+public class CalendarCalendarsIT extends AbstractGoogleCalendarTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarCalendarsIT.class);
 
     private static final String PATH_PREFIX
-            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarListApiMethod.class).getName();
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
 
     @Test
-    public void testCalendarList() throws Exception {
+    public void testCalendars() throws Exception {
         Calendar calendar = getCalendar();
-        assertTrue(isCalendarInList(calendar), "Test calendar should be in the list");
-
-        CalendarListEntry calendarFromGet = requestBody("direct://GET", calendar.getId());
+        Calendar calendarFromGet = requestBody("direct://GET", calendar.getId());
         assertEquals(calendar.getId(), calendarFromGet.getId());
-    }
 
-    protected boolean isCalendarInList(Calendar calendar) {
-        CalendarList calendarList = requestBody("direct://LIST", null);
+        final Map<String, Object> headers = new HashMap<>();
+        // parameter type is String
+        headers.put("CamelGoogleCalendar.calendarId", calendar.getId());
+        // parameter type is com.google.api.services.calendar.model.Calendar
+        headers.put("CamelGoogleCalendar.content", calendar.setDescription("foo"));
 
-        java.util.List<CalendarListEntry> items = calendarList.getItems();
+        Calendar result = requestBodyAndHeaders("direct://UPDATE", null, headers);
+        assertEquals("foo", result.getDescription());
 
-        boolean found = false;
-        for (CalendarListEntry calendarListEntry : items) {
-            if (calendar.getSummary().equals(calendarListEntry.getSummary())) {
-                found = true;
-            }
+        requestBody("direct://DELETE", calendar.getId());
+        try {
+            calendarFromGet = requestBody("direct://GET", calendar.getId());
+            fail("Should have not found deleted calendar.");
+        } catch (Exception e) {
+            // Likely safe to ignore in this context
+            LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
         }
-        return found;
     }
 
     @Override
@@ -67,6 +72,9 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // test route for clear
+                from("direct://CLEAR").to("google-calendar://" + PATH_PREFIX + "/clear?inBody=calendarId");
+
                 // test route for delete
                 from("direct://DELETE").to("google-calendar://" + PATH_PREFIX + "/delete?inBody=calendarId");
 
@@ -76,17 +84,11 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
                 // test route for insert
                 from("direct://INSERT").to("google-calendar://" + PATH_PREFIX + "/insert?inBody=content");
 
-                // test route for list
-                from("direct://LIST").to("google-calendar://" + PATH_PREFIX + "/list");
-
                 // test route for patch
                 from("direct://PATCH").to("google-calendar://" + PATH_PREFIX + "/patch");
 
                 // test route for update
                 from("direct://UPDATE").to("google-calendar://" + PATH_PREFIX + "/update");
-
-                // test route for watch
-                from("direct://WATCH").to("google-calendar://" + PATH_PREFIX + "/watch?inBody=contentChannel");
 
             }
         };

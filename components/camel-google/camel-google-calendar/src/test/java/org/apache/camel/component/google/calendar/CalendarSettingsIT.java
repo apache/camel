@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.calendar.integration;
+package org.apache.camel.component.google.calendar;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport;
-import org.apache.camel.component.google.calendar.internal.CalendarColorsApiMethod;
+import org.apache.camel.component.google.calendar.internal.CalendarSettingsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -28,22 +27,31 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link com.google.api.services.calendar.Calendar$Colors} APIs.
+ * Test class for {@link com.google.api.services.calendar.Calendar$Settings} APIs.
  */
 @EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
            disabledReason = "Google Calendar credentials were not provided")
-public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
+public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarColorsIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarSettingsIT.class);
     private static final String PATH_PREFIX
-            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarColorsApiMethod.class).getName();
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarSettingsApiMethod.class).getName();
 
     @Test
     public void testGet() throws Exception {
-        com.google.api.services.calendar.model.Colors result = requestBody("direct://GET", null);
+        // using String message body for single parameter "setting"
+        final com.google.api.services.calendar.model.Setting result = requestBody("direct://GET", "timezone");
 
         assertNotNull(result, "get result");
         LOG.debug("get: " + result);
+    }
+
+    @Test
+    public void testList() throws Exception {
+        final com.google.api.services.calendar.model.Settings result = requestBody("direct://LIST", null);
+
+        assertNotNull(result, "list result");
+        LOG.debug("list: " + result);
     }
 
     @Override
@@ -52,7 +60,13 @@ public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
             @Override
             public void configure() {
                 // test route for get
-                from("direct://GET").to("google-calendar://" + PATH_PREFIX + "/get");
+                from("direct://GET").to("google-calendar://" + PATH_PREFIX + "/get?inBody=setting");
+
+                // test route for list
+                from("direct://LIST").to("google-calendar://" + PATH_PREFIX + "/list");
+
+                // test route for watch
+                from("direct://WATCH").to("google-calendar://" + PATH_PREFIX + "/watch?inBody=contentChannel");
 
             }
         };
