@@ -589,8 +589,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
+        } else {
+            state = ZipkinState.fromZipkinState(state);
         }
-        event.getExchange().setProperty(ZipkinState.KEY, ZipkinState.fromZipkinState(state));
+        event.getExchange().setProperty(ZipkinState.KEY, state);
         // if we started from a server span then lets reuse that when we call a
         // downstream service
         Span last = state.peekServerSpan();
@@ -677,8 +679,10 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         ZipkinState state = exchange.getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
+        } else {
+            state = ZipkinState.fromZipkinState(state);
         }
-        exchange.setProperty(ZipkinState.KEY, ZipkinState.fromZipkinState(state));
+        exchange.setProperty(ZipkinState.KEY, state);
         Span span = null;
         Span.Kind spanKind = getConsumerComponentSpanKind(exchange.getFromEndpoint());
         CamelRequest cr = new CamelRequest(exchange.getIn(), spanKind);
