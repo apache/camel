@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("run manually since it requires a running local splunk server")
-public class SplunkHECIntegrationTest extends CamelTestSupport {
+public class SplunkHECIT extends CamelTestSupport {
 
     @Test
     public void testSendHEC() throws Exception {
