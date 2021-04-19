@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UriConfigurationTest {
 
     private CamelContext context = new DefaultCamelContext();
-    private CamelTwitterTestSupport support = new CamelTwitterTestSupport();
+    private CamelTwitterITSupport support = new CamelTwitterITSupport();
 
     @Test
     public void testBasicAuthentication() throws Exception {

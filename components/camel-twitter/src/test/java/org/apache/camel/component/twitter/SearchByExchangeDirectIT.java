@@ -26,13 +26,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
 
     @Produce("direct:start")
     protected ProducerTemplate template;

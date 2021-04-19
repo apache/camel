@@ -14,13 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.timeline;
+package org.apache.camel.component.twitter;
 
-import org.apache.camel.component.twitter.AbstractComponentVerifierTest;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TwitterTimelineComponentVerifierTest extends AbstractComponentVerifierTest {
+/**
+ * consumes tweets
+ */
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class SearchDirectIT extends CamelTwitterConsumerITSupport {
+
     @Override
-    protected String getComponentScheme() {
-        return "twitter-timeline";
+    protected String getUri() {
+        return "twitter-search://java?type=direct&";
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(SearchDirectIT.class);
     }
 }

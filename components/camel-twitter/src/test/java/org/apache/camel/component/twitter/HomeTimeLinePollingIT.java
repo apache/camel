@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.twitter;
 
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * consumes tweets
  */
-public class UserTimeLineDirectTest extends CamelTwitterConsumerTestSupport {
-
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class HomeTimeLinePollingIT extends CamelTwitterConsumerITSupport {
     @Override
     protected String getUri() {
-        return "twitter-timeline://user?type=direct&user=brettemeyer&";
+        return "twitter-timeline://home?type=polling&";
     }
 
     @Override
     protected Logger getLogger() {
-        return LoggerFactory.getLogger(UserTimeLineDirectTest.class);
+        return LoggerFactory.getLogger(HomeTimeLinePollingIT.class);
     }
 }

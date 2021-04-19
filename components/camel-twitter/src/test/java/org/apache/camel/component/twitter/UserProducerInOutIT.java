@@ -26,6 +26,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -38,9 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Tests posting a twitter update and getting the status update id from the Twitter API response
  */
-public class UserProducerInOutTest extends CamelTwitterTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class UserProducerInOutIT extends CamelTwitterITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutIT.class);
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;

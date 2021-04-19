@@ -17,13 +17,16 @@
 package org.apache.camel.component.twitter;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * consumes tweets
  */
-public class DirectMessageDirectTest extends CamelTwitterConsumerTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class DirectMessageDirectIT extends CamelTwitterConsumerITSupport {
 
     @Override
     @BeforeEach
@@ -47,6 +50,6 @@ public class DirectMessageDirectTest extends CamelTwitterConsumerTestSupport {
 
     @Override
     protected Logger getLogger() {
-        return LoggerFactory.getLogger(DirectMessageDirectTest.class);
+        return LoggerFactory.getLogger(DirectMessageDirectIT.class);
     }
 }

@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
-public abstract class CamelTwitterConsumerTestSupport extends CamelTwitterTestSupport {
+public abstract class CamelTwitterConsumerITSupport extends CamelTwitterITSupport {
     protected abstract String getUri();
 
     protected abstract Logger getLogger();

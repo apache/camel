@@ -14,22 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter;
+package org.apache.camel.component.twitter.directmessage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.component.twitter.AbstractComponentVerifierIT;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-/**
- * consumes tweets
- */
-public class SearchPollingTest extends CamelTwitterConsumerTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class TwitterDirectmessageComponentVerifierIT extends AbstractComponentVerifierIT {
     @Override
-    protected String getUri() {
-        return "twitter-search://java?type=polling&delay=5000&";
-    }
-
-    @Override
-    protected Logger getLogger() {
-        return LoggerFactory.getLogger(SearchPollingTest.class);
+    protected String getComponentScheme() {
+        return "twitter-directmessage";
     }
 }
