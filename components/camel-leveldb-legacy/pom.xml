@@ -97,30 +97,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <!-- skip tests on AIX and HP-UX -->
-    <profiles>
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <family>AIX</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-        <profile>
-            <id>hpux</id>
-            <activation>
-                <os>
-                    <family>HP-UX</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-    </profiles>
 </project>
