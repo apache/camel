@@ -25,6 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,25 +36,28 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Tests posting a twitter update with the default In Message Exchange Pattern
  */
-public class DirectMessageProducerTest extends CamelTwitterTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class UserProducerInOnlyIT extends CamelTwitterITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DirectMessageProducerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyIT.class);
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test
-    public void testDirectMessage() throws Exception {
+    public void testPostStatusUpdateRequestResponse() throws Exception {
         Date now = new Date();
-        String tweet = "Test a tweet posted on " + now.toString();
+        String tweet = "UserProducerInOnlyTest: This is a tweet posted on " + now.toString();
         LOG.info("Tweet: " + tweet);
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         // send tweet to the twitter endpoint
-        producerTemplate.sendBody("direct:tweets", tweet);
+        producerTemplate.sendBodyAndHeader("direct:tweets", tweet, "customHeader", 12312);
 
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodyReceived().body(String.class);
         // Message headers should be preserved
+        resultEndpoint.expectedHeaderReceived("customHeader", 12312);
         resultEndpoint.assertIsSatisfied();
 
         List<Exchange> tweets = resultEndpoint.getExchanges();
@@ -69,7 +73,7 @@ public class DirectMessageProducerTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .to("twitter-directmessage:cameltweet?" + getUriTokens())
+                        .to("twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }

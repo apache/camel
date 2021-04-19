@@ -16,26 +16,23 @@
  */
 package org.apache.camel.component.twitter;
 
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.component.twitter.search.TwitterSearchComponent;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * consumes tweets
  */
-public class SearchDirectCustomComponentTest extends CamelTwitterConsumerTestSupport {
-
-    @BindToRegistry("my-twitter")
-    private TwitterSearchComponent component = new TwitterSearchComponent();
-
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class SearchPollingIT extends CamelTwitterConsumerITSupport {
     @Override
     protected String getUri() {
-        return "my-twitter://java?type=direct&";
+        return "twitter-search://java?type=polling&delay=5000&";
     }
 
     @Override
     protected Logger getLogger() {
-        return LoggerFactory.getLogger(SearchDirectCustomComponentTest.class);
+        return LoggerFactory.getLogger(SearchPollingIT.class);
     }
 }

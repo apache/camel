@@ -18,12 +18,16 @@ package org.apache.camel.component.twitter;
 
 import java.util.Map;
 
+import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public abstract class AbstractComponentVerifierTest extends CamelTwitterTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public abstract class AbstractComponentVerifierExtensionIT extends CamelTwitterITSupport {
 
     protected abstract String getComponentScheme();
 
@@ -34,8 +38,9 @@ public abstract class AbstractComponentVerifierTest extends CamelTwitterTestSupp
 
     @Test
     public void testConnectivity() {
-        AbstractTwitterComponent component = context().getComponent(getComponentScheme(), AbstractTwitterComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
+        Component component = context.getComponent(getComponentScheme());
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = getParameters();
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
@@ -45,8 +50,9 @@ public abstract class AbstractComponentVerifierTest extends CamelTwitterTestSupp
 
     @Test
     public void testInvalidKeyConfiguration() {
-        AbstractTwitterComponent component = context().getComponent(getComponentScheme(), AbstractTwitterComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
+        Component component = context().getComponent(getComponentScheme());
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = getParameters();
         parameters.put("consumerKey", "invalid");
@@ -65,8 +71,9 @@ public abstract class AbstractComponentVerifierTest extends CamelTwitterTestSupp
 
     @Test
     public void testInvalidTokenConfiguration() {
-        AbstractTwitterComponent component = context().getComponent(getComponentScheme(), AbstractTwitterComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
+        Component component = context().getComponent(getComponentScheme());
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = getParameters();
         parameters.put("accessToken", "invalid");

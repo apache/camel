@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.twitter.timeline;
 
-import org.apache.camel.component.twitter.AbstractComponentVerifierExtensionTest;
+import org.apache.camel.component.twitter.AbstractComponentVerifierIT;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class TwitterTimelineComponentVerifierExtensionTest extends AbstractComponentVerifierExtensionTest {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class TwitterTimelineComponentVerifierIT extends AbstractComponentVerifierIT {
     @Override
     protected String getComponentScheme() {
         return "twitter-timeline";

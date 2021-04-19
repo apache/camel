@@ -22,14 +22,17 @@ import java.util.List;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.component.twitter.AbstractComponentVerifierExtensionTest;
+import org.apache.camel.component.twitter.AbstractComponentVerifierExtensionIT;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TwitterSearchComponentVerifierExtensionTest extends AbstractComponentVerifierExtensionTest {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class TwitterSearchComponentVerifierExtensionIT extends AbstractComponentVerifierExtensionIT {
     @Override
     protected String getComponentScheme() {
         return "twitter-search";

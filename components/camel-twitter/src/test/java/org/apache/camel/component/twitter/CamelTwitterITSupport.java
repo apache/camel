@@ -25,10 +25,13 @@ import java.util.Properties;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CamelTwitterTestSupport extends CamelTestSupport {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class CamelTwitterITSupport extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected String consumerKey;
@@ -36,7 +39,7 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
     protected String accessToken;
     protected String accessTokenSecret;
 
-    public CamelTwitterTestSupport() {
+    public CamelTwitterITSupport() {
         Properties properties = new Properties();
 
         // Load from env

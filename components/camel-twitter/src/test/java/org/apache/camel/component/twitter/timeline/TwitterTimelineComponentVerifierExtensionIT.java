@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.directmessage;
+package org.apache.camel.component.twitter.timeline;
 
-import org.apache.camel.component.twitter.AbstractComponentVerifierExtensionTest;
+import org.apache.camel.component.twitter.AbstractComponentVerifierExtensionIT;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class TwitterDirectmessageComponentVerifierExtensionTest extends AbstractComponentVerifierExtensionTest {
+@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
+                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+public class TwitterTimelineComponentVerifierExtensionIT extends AbstractComponentVerifierExtensionIT {
     @Override
     protected String getComponentScheme() {
-        return "twitter-directmessage";
+        return "twitter-timeline";
     }
 }
