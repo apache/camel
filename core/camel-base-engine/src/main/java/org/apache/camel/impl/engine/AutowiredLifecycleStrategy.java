@@ -16,11 +16,14 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -33,14 +36,60 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AutowiredLifecycleStrategy.class);
 
+    // provisional maps to hold components, dataformats, languages that are created during
+    // starting camel, but need to defer autowiring until later in case additional configuration
+    // would turn this per instance
+    private final Map<String, Component> autowrieComponents = new HashMap<>();
+    private final Map<String, DataFormat> autowrieDataFormats = new HashMap<>();
+    private final Map<String, Language> autowrieLanguages = new HashMap<>();
     private final ExtendedCamelContext camelContext;
+    private volatile boolean initialized;
 
     public AutowiredLifecycleStrategy(CamelContext camelContext) {
         this.camelContext = (ExtendedCamelContext) camelContext;
     }
 
     @Override
+    public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
+        // we are initializd so lets do autowiring on what we have collected during bootstrap
+        autowrieComponents.forEach(this::autowireComponent);
+        autowrieDataFormats.forEach(this::autowireDataFormat);
+        autowrieLanguages.forEach(this::autowireLanguage);
+        autowrieComponents.clear();
+        autowrieDataFormats.clear();
+        autowrieLanguages.clear();
+        // we are now done initialized
+        initialized = true;
+    }
+
+    @Override
     public void onComponentAdd(String name, Component component) {
+        if (initialized) {
+            autowireComponent(name, component);
+        } else {
+            autowrieComponents.put(name, component);
+        }
+    }
+
+    @Override
+    public void onDataFormatCreated(String name, DataFormat dataFormat) {
+        if (initialized) {
+            autowireDataFormat(name, dataFormat);
+        } else {
+            autowrieDataFormats.put(name, dataFormat);
+        }
+    }
+
+    @Override
+    public void onLanguageCreated(String name, Language language) {
+        if (initialized) {
+            autowireLanguage(name, language);
+        } else {
+            autowrieLanguages.put(name, language);
+        }
+    }
+
+    private void autowireComponent(String name, Component component) {
         // autowiring can be turned off on context level and per component
         boolean enabled = camelContext.isAutowiredEnabled() && component.isAutowiredEnabled();
         if (enabled) {
@@ -48,8 +97,7 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
         }
     }
 
-    @Override
-    public void onDataFormatCreated(String name, DataFormat dataFormat) {
+    private void autowireDataFormat(String name, DataFormat dataFormat) {
         // autowiring can be turned off on context level
         boolean enabled = camelContext.isAutowiredEnabled();
         if (enabled) {
@@ -57,8 +105,7 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
         }
     }
 
-    @Override
-    public void onLanguageCreated(String name, Language language) {
+    private void autowireLanguage(String name, Language language) {
         // autowiring can be turned off on context level
         boolean enabled = camelContext.isAutowiredEnabled();
         if (enabled) {
