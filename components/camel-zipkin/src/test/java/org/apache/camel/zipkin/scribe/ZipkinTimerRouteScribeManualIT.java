@@ -16,8 +16,9 @@
  */
 package org.apache.camel.zipkin.scribe;
 
-import org.apache.camel.zipkin.ZipkinABCRouteTest;
+import org.apache.camel.zipkin.ZipkinTimerRouteTest;
 import org.apache.camel.zipkin.ZipkinTracer;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.libthrift.LibthriftSender;
 
@@ -26,7 +27,7 @@ import zipkin2.reporter.libthrift.LibthriftSender;
  *
  * <p>
  * The easiest way to run is locally:
- * 
+ *
  * <pre>
  * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s
@@ -43,7 +44,9 @@ import zipkin2.reporter.libthrift.LibthriftSender;
  * <p>
  * Note: the scribe transport is deprecated. Most use out-of-box defaults, such as Http, RabbitMQ or Kafka.
  */
-public class ZipkinABCRouteScribe extends ZipkinABCRouteTest {
+@EnabledIfSystemProperty(named = "enable.zipkin.scribe.itests", matches = "true",
+                         disabledReason = "Requires Zipkin/scribe running")
+public class ZipkinTimerRouteScribeManualIT extends ZipkinTimerRouteTest {
     @Override
     protected void setSpanReporter(ZipkinTracer zipkin) {
         zipkin.setSpanReporter(AsyncReporter.create(LibthriftSender.create("127.0.0.1")));

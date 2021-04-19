@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.zipkin.ZipkinTracer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
  * Integration test requires running Zipkin/Scribe running
@@ -46,7 +47,9 @@ import org.junit.jupiter.api.Test;
  * }
  * </pre>
  */
-public class ZipkinAutoConfigureScribe extends CamelTestSupport {
+@EnabledIfSystemProperty(named = "enable.zipkin.scribe.itests", matches = "true",
+                         disabledReason = "Requires Zipkin/scribe running")
+public class ZipkinAutoConfigureScribeManualIT extends CamelTestSupport {
 
     private ZipkinTracer zipkin;
 
