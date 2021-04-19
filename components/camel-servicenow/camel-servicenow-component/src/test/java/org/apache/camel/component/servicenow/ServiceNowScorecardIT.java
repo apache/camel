@@ -17,62 +17,36 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.List;
-import java.util.Map;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.servicenow.model.Scorecard;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
+@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
+                              disabledReason = "Service now instance was not provided")
+public class ServiceNowScorecardIT extends ServiceNowITSupport {
     @Produce("direct:servicenow")
     ProducerTemplate template;
 
     @Test
-    public void testRetrieveServiceCatalogsAndCategories() throws Exception {
-        List<Map<?, ?>> result1 = template.requestBodyAndHeaders(
+    public void testScorecard() throws Exception {
+        List<Scorecard> scorecardList = template.requestBodyAndHeaders(
                 "direct:servicenow",
                 null,
                 kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
+                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SCORECARDS)
                         .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_PERFORMANCE_ANALYTICS)
+                        .put(ServiceNowConstants.MODEL, Scorecard.class)
                         .build(),
                 List.class);
 
-        assertFalse(result1.isEmpty());
-
-        List<Map<?, ?>> result2 = template.requestBodyAndHeaders(
-                "direct:servicenow",
-                null,
-                kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                        .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_CATEGORIES)
-                        .put(ServiceNowParams.PARAM_SYS_ID, result1.get(0).get("sys_id"))
-                        .build(),
-                List.class);
-
-        assertFalse(result2.isEmpty());
-    }
-
-    @Test
-    public void testWrongSubject() throws Exception {
-        final Map<String, Object> invalid = kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
-                .build();
-
-        assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeaders(
-                        "direct:servicenow",
-                        null,
-                        invalid,
-                        List.class));
+        assertFalse(scorecardList.isEmpty());
     }
 
     // *************************************************************************

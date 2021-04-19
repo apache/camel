@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servicenow.model.AttachmentMeta;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.apache.camel.support.ResourceHelper.resolveResourceAsInputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
+@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
+                              disabledReason = "Service now instance was not provided")
+public class ServiceNowAttachmentIT extends ServiceNowITSupport {
     @Produce("direct:servicenow")
     ProducerTemplate template;
 

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * 1. Create a new web service named u_test_imp_incident targeting incident table 2. Create a mapping (automatic)
  */
 @Disabled
-public class ServiceNowImportSetTest extends ServiceNowTestSupport {
+public class ServiceNowImportSetIT extends ServiceNowITSupport {
 
     @Test
     public void testIncidentImport() throws Exception {

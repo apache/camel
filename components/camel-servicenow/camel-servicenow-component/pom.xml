@@ -125,38 +125,10 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>servicenow-tests</id>
-            <activation>
-                <property>
-                    <name>env.SERVICENOW_INSTANCE</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>false</skipTests>
-                            <systemPropertyVariables>
-                                <servicenow.instance>${env.SERVICENOW_INSTANCE}</servicenow.instance>
-                                <servicenow.username>${env.SERVICENOW_USERNAME}</servicenow.username>
-                                <servicenow.password>${env.SERVICENOW_PASSWORD}</servicenow.password>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
