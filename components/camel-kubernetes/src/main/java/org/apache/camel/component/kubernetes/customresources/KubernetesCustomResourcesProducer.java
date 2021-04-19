@@ -114,7 +114,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     protected void doListByLabels(Exchange exchange, String operation, String namespaceName) throws Exception {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, Map.class);
         JsonObject customResourcesListJSON = new JsonObject(
-                getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
+                getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName,
+                        labels));
         if (LOG.isDebugEnabled()) {
             LOG.debug(customResourcesListJSON.toString());
         }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +106,37 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     }
 
     @Test
+    public void listByLabelsTest() throws Exception {
+        JsonObject instance = new JsonObject(getClient().customResource(getCustomResourceContext()).load(gitHubSourceString));
+        JsonObject gitHubSourceList = new JsonObject();
+        JsonArray list = new JsonArray();
+        list.add(instance);
+        gitHubSourceList.put("items", list);
+
+        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/test/githubsources?labelSelector="
+                                       + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(200, gitHubSourceList.toJson()).once();
+
+        Exchange ex = template.request("direct:listCustomResourcesByLabels", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, labels);
+
+        });
+
+        List<Map<String, Object>> result = ex.getMessage().getBody(List.class);
+
+        assertTrue(1 == result.size());
+    }
+
+    @Test
     public void createAndDeleteTest() throws Exception {
         JsonObject instance = new JsonObject(getClient().customResource(getCustomResourceContext()).load(gitHubSourceString));
         JsonObject gitHubSourceList = new JsonObject();
@@ -175,6 +207,8 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
                         .toF("kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=getCustomResource");
                 from("direct:listCustomResources").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources");
+                from("direct:listCustomResourcesByLabels").toF(
+                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResourcesByLabels");
                 from("direct:deleteCustomResource").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=deleteCustomResource");
                 from("direct:createCustomResource").toF(
