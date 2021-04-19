@@ -24,6 +24,7 @@ import org.apache.camel.component.box.api.BoxSearchManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxSearchManagerApiMethod;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link BoxSearchManager} APIs.
  */
-public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
+@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+           disabledReason = "Box credentials were not provided")
+public class BoxSearchManagerIT extends AbstractBoxITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BoxSearchManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BoxSearchManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
             .getApiName(BoxSearchManagerApiMethod.class).getName();
 

@@ -31,6 +31,7 @@ import org.apache.camel.component.box.internal.BoxFoldersManagerApiMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,16 +42,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link BoxFoldersManager} APIs.
  */
-public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
+@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+           disabledReason = "Box credentials were not provided")
+public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BoxFoldersManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BoxFoldersManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
             .getApiName(BoxFoldersManagerApiMethod.class).getName();
     private static final String CAMEL_TEST_FOLDER = "CamelTestFolder";
     private static final String CAMEL_TEST_FOLDER_DESCRIPTION = "This is a description of CamelTestFolder";
-    private static final String CAMEL_TEST_COPY_FOLDER = BoxFoldersManagerIntegrationTest.CAMEL_TEST_FOLDER + "_Copy";
-    private static final String CAMEL_TEST_MOVE_FOLDER = BoxFoldersManagerIntegrationTest.CAMEL_TEST_FOLDER + "_Move";
-    private static final String CAMEL_TEST_RENAME_FOLDER = BoxFoldersManagerIntegrationTest.CAMEL_TEST_FOLDER
+    private static final String CAMEL_TEST_COPY_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER + "_Copy";
+    private static final String CAMEL_TEST_MOVE_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER + "_Move";
+    private static final String CAMEL_TEST_RENAME_FOLDER = BoxFoldersManagerIT.CAMEL_TEST_FOLDER
                                                            + "_Rename";
     private static final String CAMEL_TEST_ROOT_FOLDER_ID = "0";
     private static final String CAMEL_TEST_DESTINATION_FOLDER_ID = "0";

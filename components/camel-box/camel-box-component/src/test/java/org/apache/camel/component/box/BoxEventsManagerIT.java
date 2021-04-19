@@ -30,6 +30,7 @@ import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxEventsManagerApiMethod;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * remove @Ignore annotations. The class source won't be generated again if the generator MOJO finds it under
  * src/test/java.
  */
-public class BoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
+@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+           disabledReason = "Box credentials were not provided")
+public class BoxEventsManagerIT extends AbstractBoxITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BoxEventsManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BoxEventsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
             .getApiName(BoxEventsManagerApiMethod.class).getName();
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";

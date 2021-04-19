@@ -37,6 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +47,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link BoxTasksManager} APIs.
  */
-public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
+@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+           disabledReason = "Box credentials were not provided")
+public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BoxTasksManagerIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BoxTasksManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
             .getApiName(BoxTasksManagerApiMethod.class).getName();
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";
