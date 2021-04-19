@@ -149,7 +149,7 @@ public final class DefaultExchange implements ExtendedExchange {
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
-            safeProperties(getProperties(), exchange.getProperties());
+            copyProperties(getProperties(), exchange.getProperties());
         }
 
         if (hasSafeCopyProperties()) {
@@ -176,16 +176,8 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     @SuppressWarnings("unchecked")
-    private void safeProperties(Map<String, Object> source, Map<String, Object> target) {
-        source.entrySet().stream().forEach(entry -> {
-            if (entry.getValue() != null && entry.getValue() instanceof CamelCopySafeProperty) {
-                //create deep copy of the object to avoid mutations by different threads/routes
-                Object copy = ((CamelCopySafeProperty<?>) entry.getValue()).safeCopy();
-                target.put(entry.getKey(), copy);
-            } else {
-                target.put(entry.getKey(), entry.getValue());
-            }
-        });
+    private void copyProperties(Map<String, Object> source, Map<String, Object> target) {
+        target.putAll(source);
         if (getContext().isMessageHistory()) {
             // safe copy message history using a defensive copy
             List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
