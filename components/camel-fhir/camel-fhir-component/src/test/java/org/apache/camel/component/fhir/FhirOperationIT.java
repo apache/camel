@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class FhirOperationIT extends AbstractFhirTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FhirOperationIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FhirOperationIT.class);
     private static final String PATH_PREFIX
             = FhirApiCollection.getCollection().getApiName(FhirOperationApiMethod.class).getName();
 
