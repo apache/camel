@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
+public class SpringBatchIT extends CamelSpringTestSupport {
     @EndpointInject("mock:header")
     MockEndpoint headerEndpoint;
 
