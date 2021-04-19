@@ -35,17 +35,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
+@EnabledIf(value = "org.apache.camel.component.facebook.CamelFacebookTestSupport#hasCredentials",
+           disabledReason = "Facebook credentials were not provided")
+public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
     public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";
 
     private final Set<String> searchNames = new HashSet<>();
     private List<String> excludedNames;
 
-    public FacebookComponentConsumerTest() throws Exception {
+    public FacebookComponentConsumerIT() throws Exception {
         // find search methods for consumer tests
         for (Method method : SearchMethods.class.getDeclaredMethods()) {
             String name = getShortName(method.getName());

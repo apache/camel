@@ -24,6 +24,7 @@ import java.util.Map;
 import facebook4j.TestUser;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,12 +33,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test methods in {@link facebook4j.api.TestUserMethods}
  */
-public class TestUserMethodsTest extends CamelFacebookTestSupport {
+@EnabledIf(value = "org.apache.camel.component.facebook.CamelFacebookTestSupport#hasCredentials",
+           disabledReason = "Facebook credentials were not provided")
+public class TestUserMethodsIT extends CamelFacebookTestSupport {
 
     private static final String TEST_USER1 = "test one";
     private static final String TEST_USER2 = "test two";
 
-    public TestUserMethodsTest() throws Exception {
+    public TestUserMethodsIT() throws Exception {
     }
 
     @Test
