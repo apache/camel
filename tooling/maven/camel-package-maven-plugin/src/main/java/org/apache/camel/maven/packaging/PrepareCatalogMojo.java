@@ -1204,7 +1204,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"), dir.resolve("camel-vertx-common"),
-                        dir.resolve("camel-vertx-http"), dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
+                        dir.resolve("camel-vertx-http"),
+                        dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
                         dir.resolve("camel-vertx-websocket"));
             default:
                 return Collections.singletonList(dir);

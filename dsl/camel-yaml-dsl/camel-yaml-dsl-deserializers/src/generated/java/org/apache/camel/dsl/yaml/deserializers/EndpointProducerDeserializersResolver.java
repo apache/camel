@@ -312,7 +312,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "velocity":
             case "vertx":
             case "vertx-http":
-            case "vertx-kafka":
             case "vertx-websocket":
             case "vm":
             case "weather":

@@ -214,7 +214,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "twitter-timeline":
             case "undertow":
             case "vertx":
-            case "vertx-kafka":
             case "vertx-websocket":
             case "vm":
             case "weather":
