@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Validates that {@link OpenTracingTracer} is compatible with third-party tracing solutions, i.e. integrates into
  * active traces and allows others to integrate into Camel-initialized traces.
  */
-public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
+public class ThirdPartyInstrumentationIT extends CamelTestSupport {
 
     private MockTracer tracer;
 
@@ -130,7 +130,7 @@ public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:DirectProcessor")
-                        .process(ThirdPartyInstrumentationIntegrationTest.this::tracingProcessor);
+                        .process(ThirdPartyInstrumentationIT.this::tracingProcessor);
             }
         };
     }
