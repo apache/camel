@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.7.3-SNAPSHOT",
+    "version": "3.7.4-SNAPSHOT",
     "scheme": "kubernetes-custom-resources",
     "extendsScheme": "",
     "syntax": "kubernetes-custom-resources:masterUrl",
