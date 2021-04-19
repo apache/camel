@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.zendesk.internal.ZendeskApiMethod;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zendesk.client.v2.model.Comment;
@@ -36,8 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * The integration tests for ticket related Zendesk API.
  */
-public class ZendeskTicketIntegrationTest extends AbstractZendeskTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ZendeskTicketIntegrationTest.class);
+@EnabledIf(value = "org.apache.camel.component.zendesk.AbstractZendeskTestSupport#hasCredentials",
+           disabledReason = "Zendesk credentials were not provided")
+public class ZendeskTicketIT extends AbstractZendeskTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(ZendeskTicketIT.class);
 
     @Test
     public void testGetTickets() throws Exception {
