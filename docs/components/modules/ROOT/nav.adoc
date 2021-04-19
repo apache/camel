@@ -322,7 +322,6 @@
 ** xref:velocity-component.adoc[Velocity]
 ** xref:vertx-component.adoc[Vert.x]
 ** xref:vertx-http-component.adoc[Vert.x HTTP Client]
-** xref:vertx-kafka-component.adoc[Vert.x Kafka]
 ** xref:vertx-websocket-component.adoc[Vert.x WebSocket]
 ** xref:vm-component.adoc[VM]
 ** xref:weather-component.adoc[Weather]
