@@ -29,7 +29,7 @@
     <artifactId>camel-microprofile-health</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: MicroProfile Health</name>
+    <name>Camel :: MicroProfile :: Health</name>
     <description>Bridging Eclipse MicroProfile Health with Camel health checks</description>
 
     <properties>

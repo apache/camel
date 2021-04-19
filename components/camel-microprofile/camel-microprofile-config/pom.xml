@@ -29,7 +29,7 @@
     <artifactId>camel-microprofile-config</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: MicroProfile Config</name>
+    <name>Camel :: MicroProfile :: Config</name>
     <description>Bridging Eclipse MicroProfile Config with Camel properties</description>
 
     <properties>
