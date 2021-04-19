@@ -21,10 +21,12 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
+@EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
+public class DropboxConsumerSearchQueryIT extends DropboxTestSupport {
 
-    public static final String FILE_NAME = "myFile.txt";
+    public static final String FILE_NAME = "myTestFile.txt";
 
     @Test
     public void testCamelDropbox() throws Exception {
@@ -35,8 +37,7 @@ public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(content);
-        mock.expectedHeaderReceived(DropboxResultHeader.DOWNLOADED_FILE.name(), String.format("%s/%s", workdir, FILE_NAME));
+        mock.message(0).header(DropboxResultHeader.FOUND_FILES.name()).contains(String.format("%s/%s", workdir, FILE_NAME));
         mock.assertIsSatisfied();
     }
 
@@ -44,8 +45,8 @@ public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("dropbox://get?accessToken={{accessToken}}&remotePath=%s/%s", workdir, FILE_NAME))
-                        .autoStartup(false).id("consumer")
+                from(String.format("dropbox://search?accessToken={{accessToken}}&remotePath=%s&query=%s", workdir, FILE_NAME))
+                        .id("consumer").autoStartup(false)
                         .to("mock:result");
             }
         };

@@ -18,7 +18,6 @@ package org.apache.camel.component.dropbox.integration.producer;
 
 import java.io.IOException;
 
-import com.dropbox.core.DbxException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
@@ -26,16 +25,17 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class DropboxProducerMoveTest extends DropboxTestSupport {
+@EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
+public class DropboxProducerGetSingleIT extends DropboxTestSupport {
 
-    public static final String COPY_WORKDIR = "/test-workdir";
-    public static final String FILE = "file.txt";
+    public static final String FILE_NAME = "myFile.txt";
+    public static final String CONTENT = "Hi camels";
 
     @BeforeEach
-    public void removeDir() throws DbxException, IOException {
-        createDir(COPY_WORKDIR);
-        createFile(FILE, "content");
+    public void createFile() throws IOException {
+        createFile(FILE_NAME, CONTENT);
     }
 
     @Test
@@ -50,11 +50,11 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
 
     private void test(String endpoint) throws InterruptedException {
         template.sendBody(endpoint, null);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedHeaderReceived(DropboxResultHeader.MOVED_PATH.name(), workdir + "/" + FILE);
-        assertMockEndpointsSatisfied();
+        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILE.name()).contains(String.format("%s/%s", workdir, FILE_NAME));
+        mock.message(0).body(String.class).isEqualTo(CONTENT);
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -62,14 +62,12 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(String.format("dropbox://move?accessToken={{accessToken}}&remotePath=%s&newRemotePath=%s",
-                                workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
+                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=" + workdir + "/" + FILE_NAME)
                         .to("mock:result");
 
                 from("direct:start2")
-                        .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE))
-                        .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant(COPY_WORKDIR + "/" + FILE))
-                        .to("dropbox://move?accessToken={{accessToken}}")
+                        .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
+                        .to("dropbox://get?accessToken={{accessToken}}")
                         .to("mock:result");
             }
         };
