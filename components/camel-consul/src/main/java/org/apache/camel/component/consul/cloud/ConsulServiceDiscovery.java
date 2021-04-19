@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.consul.cloud;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +36,20 @@ import org.apache.camel.impl.cloud.DefaultServiceDiscovery;
 import org.apache.camel.impl.cloud.DefaultServiceHealth;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulServiceDiscovery.class);
+
     private final Supplier<Consul> client;
     private final QueryOptions queryOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
         this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()),
-                e -> RuntimeCamelException.wrapRuntimeCamelException(e));
+                e -> {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                });
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
@@ -53,10 +60,15 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
-        List<CatalogService> services = client.get().catalogClient().getService(name, queryOptions).getResponse();
-        List<ServiceHealth> healths = client.get().healthClient().getAllServiceInstances(name, queryOptions).getResponse();
+        try {
+            List<CatalogService> services = client.get().catalogClient().getService(name, queryOptions).getResponse();
+            List<ServiceHealth> healths = client.get().healthClient().getAllServiceInstances(name, queryOptions).getResponse();
 
-        return services.stream().map(service -> newService(name, service, healths)).collect(Collectors.toList());
+            return services.stream().map(service -> newService(name, service, healths)).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.warn("Error getting '{}' services from consul.", name, e);
+            return Collections.emptyList();
+        }
     }
 
     // *************************
