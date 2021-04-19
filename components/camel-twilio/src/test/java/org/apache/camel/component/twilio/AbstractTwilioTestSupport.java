@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.twilio;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -34,25 +33,40 @@ import org.junit.jupiter.api.TestInstance;
 public class AbstractTwilioTestSupport extends CamelTestSupport {
 
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+    private static Properties properties = new Properties();
+
+    static {
+        loadProperties();
+    }
+
+    private static void loadProperties() {
+        // read Twilio component configuration from TEST_OPTIONS_PROPERTIES
+        try {
+            properties.load(AbstractTwilioTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
+                    e);
+        }
+    }
+
+    private static boolean hasCredentials() {
+        if (properties.isEmpty()) {
+            loadProperties();
+        }
+
+        return !properties.getProperty("username", "").isEmpty()
+                && !properties.getProperty("password", "").isEmpty();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
 
         final CamelContext context = super.createCamelContext();
 
-        // read Twilio component configuration from TEST_OPTIONS_PROPERTIES
-        final Properties properties = new Properties();
-        try {
-            properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new IOException(
-                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                    e);
-        }
-
         Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            options.put(entry.getKey().toString(), entry.getValue());
+            options.put(entry.getKey().toString(), entry.getValue().toString().isEmpty() ? "value" : entry.getValue());
         }
 
         // add TwilioComponent to Camel context
