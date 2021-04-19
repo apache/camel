@@ -223,9 +223,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the
-     * configuration parameters are loaded from the properties component and optionally from the classpath file
-     * META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file
-     * with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
+     * configuration parameters are loaded from the properties component. You can prefix the parameters in the
+     * properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
      * camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1
      * - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as
      * seda,direct,jaxb.

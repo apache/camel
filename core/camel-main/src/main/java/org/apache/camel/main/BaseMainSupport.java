@@ -59,7 +59,6 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
@@ -1167,29 +1166,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void autoConfigurationFromProperties(CamelContext camelContext, Map<String, String> autoConfiguredProperties)
             throws Exception {
-        // load optional META-INF/services/org/apache/camel/autowire.properties
         Properties prop = new OrderedProperties();
-        try {
-            InputStream is = camelContext.getClassResolver()
-                    .loadResourceAsStream("/META-INF/services/org/apache/camel/autowire.properties");
-            if (is != null) {
-                prop.load(is);
-                if (!prop.isEmpty()) {
-                    LOG.info(
-                            "Autowired enabled from classpath: META-INF/services/org/apache/camel/autowire.properties with {} properties",
-                            prop.size());
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Properties from classpath: META-INF/services/org/apache/camel/autowire.properties:");
-                        for (String key : prop.stringPropertyNames()) {
-                            LOG.debug("    {}={}", key, prop.getProperty(key));
-                        }
-                    }
-                }
-                IOHelper.close(is);
-            }
-        } catch (Throwable e) {
-            // ignore as this file is optional
-        }
 
         // load properties from properties component (override existing)
         Properties propPC = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
@@ -1221,7 +1198,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = helper.loadJvmSystemPropertiesAsProperties(
+            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(
                     new String[] { "camel.component.", "camel.dataformat.", "camel.language." });
             if (!propJVM.isEmpty()) {
                 prop.putAll(propJVM);
