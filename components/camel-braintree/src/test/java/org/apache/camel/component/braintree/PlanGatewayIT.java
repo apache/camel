@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree.integration;
+package org.apache.camel.component.braintree;
 
 import java.util.List;
 
-import com.braintreegateway.AddOn;
+import com.braintreegateway.Plan;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
-import org.apache.camel.component.braintree.internal.AddOnGatewayApiMethod;
+import org.apache.camel.component.braintree.internal.PlanGatewayApiMethod;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -31,15 +30,15 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
-public class AddOnGatewayIT extends AbstractBraintreeTestSupport {
+public class PlanGatewayIT extends AbstractBraintreeTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AddOnGatewayIT.class);
-    private static final String PATH_PREFIX = getApiNameAsString(AddOnGatewayApiMethod.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlanGatewayIT.class);
+    private static final String PATH_PREFIX = getApiNameAsString(PlanGatewayApiMethod.class);
 
     @Disabled
     @Test
     public void testAll() throws Exception {
-        final List<AddOn> result = requestBody("direct://ALL", null, List.class);
+        final List<Plan> result = requestBody("direct://ALL", null, List.class);
 
         assertNotNull(result, "all result");
         LOG.debug("all: " + result);

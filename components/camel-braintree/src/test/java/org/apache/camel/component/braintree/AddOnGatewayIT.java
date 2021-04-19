@@ -14,34 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree.integration;
+package org.apache.camel.component.braintree;
 
+import java.util.List;
+
+import com.braintreegateway.AddOn;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
-import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.component.braintree.internal.AddOnGatewayApiMethod;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
-public class ClientTokenGatewayIT extends AbstractBraintreeTestSupport {
-    private static final String PATH_PREFIX = getApiNameAsString(ClientTokenGatewayApiMethod.class);
+public class AddOnGatewayIT extends AbstractBraintreeTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AddOnGatewayIT.class);
+    private static final String PATH_PREFIX = getApiNameAsString(AddOnGatewayApiMethod.class);
+
+    @Disabled
     @Test
-    public void testClientTokenGeneration() throws Exception {
-        final String token = requestBody("direct://GENERATE", null, String.class);
+    public void testAll() throws Exception {
+        final List<AddOn> result = requestBody("direct://ALL", null, List.class);
 
-        assertTrue(ObjectHelper.isNotEmpty(token));
+        assertNotNull(result, "all result");
+        LOG.debug("all: " + result);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://GENERATE")
-                        .to("braintree://" + PATH_PREFIX + "/generate");
+                // test route for all
+                from("direct://ALL")
+                        .to("braintree://" + PATH_PREFIX + "/all");
             }
         };
     }

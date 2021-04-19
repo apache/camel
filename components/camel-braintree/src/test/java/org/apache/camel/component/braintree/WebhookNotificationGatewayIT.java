@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree.integration;
+package org.apache.camel.component.braintree;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -25,8 +25,6 @@ import com.braintreegateway.ConnectedMerchantPayPalStatusChanged;
 import com.braintreegateway.ConnectedMerchantStatusTransitioned;
 import com.braintreegateway.WebhookNotification;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
-import org.apache.camel.component.braintree.AuthenticationType;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.WebhookNotificationGatewayApiMethod;

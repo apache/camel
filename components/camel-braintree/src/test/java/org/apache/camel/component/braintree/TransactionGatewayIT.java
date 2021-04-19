@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree.integration;
+package org.apache.camel.component.braintree;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,7 +29,6 @@ import com.braintreegateway.TransactionCloneRequest;
 import com.braintreegateway.TransactionRefundRequest;
 import com.braintreegateway.TransactionRequest;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
 import org.junit.jupiter.api.AfterEach;

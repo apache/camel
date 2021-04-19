@@ -14,46 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree.integration;
+package org.apache.camel.component.braintree;
 
-import java.util.List;
-
-import com.braintreegateway.Discount;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
-import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
-import org.apache.camel.component.braintree.internal.DiscountGatewayApiMethod;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
-public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
+public class ClientTokenGatewayIT extends AbstractBraintreeTestSupport {
+    private static final String PATH_PREFIX = getApiNameAsString(ClientTokenGatewayApiMethod.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(DiscountGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
-
-    @Disabled
     @Test
-    public void testAll() throws Exception {
-        final List<Discount> result = requestBody("direct://ALL", null, List.class);
+    public void testClientTokenGeneration() throws Exception {
+        final String token = requestBody("direct://GENERATE", null, String.class);
 
-        assertNotNull(result, "all result");
-        LOG.debug("all: " + result);
+        assertTrue(ObjectHelper.isNotEmpty(token));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // test route for all
-                from("direct://ALL")
-                        .to("braintree://" + PATH_PREFIX + "/all");
+                from("direct://GENERATE")
+                        .to("braintree://" + PATH_PREFIX + "/generate");
             }
         };
     }

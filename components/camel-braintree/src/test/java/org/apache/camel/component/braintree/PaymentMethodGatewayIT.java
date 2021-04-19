@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.braintree.integration;
+package org.apache.camel.component.braintree;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +27,6 @@ import com.braintreegateway.PaymentMethod;
 import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.braintree.AbstractBraintreeTestSupport;
 import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
