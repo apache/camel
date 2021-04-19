@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.twilio.internal.AccountApiMethod;
 import org.apache.camel.component.twilio.internal.TwilioApiCollection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test class for {@link com.twilio.rest.api.v2010.Account} APIs.
  */
-public class AccountIntegrationTest extends AbstractTwilioTestSupport {
+@EnabledIf(value = "org.apache.camel.component.twilio.AbstractTwilioTestSupport#hasCredentials",
+           disabledReason = "Twilio credentials were not provided")
+public class AccountIT extends AbstractTwilioTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AccountIT.class);
     private static final String PATH_PREFIX = TwilioApiCollection.getCollection().getApiName(AccountApiMethod.class).getName();
 
     @Test
