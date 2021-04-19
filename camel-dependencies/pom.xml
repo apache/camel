@@ -484,7 +484,7 @@
     <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
     <reactive-streams-version>1.0.3</reactive-streams-version>
     <reactor-netty-version>1.0.2</reactor-netty-version>
-    <reactor-version>3.2.16.RELEASE</reactor-version>
+    <reactor-version>3.4.5</reactor-version>
     <redisson-version>3.15.3</redisson-version>
     <rescu-version>2.0.4</rescu-version>
     <resilience4j-version>1.7.0</resilience4j-version>
