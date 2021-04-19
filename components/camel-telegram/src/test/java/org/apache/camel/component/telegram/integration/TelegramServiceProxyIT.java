@@ -22,10 +22,12 @@ import org.apache.camel.component.telegram.util.TelegramApiConfig;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TelegramServiceProxyTest extends TelegramTestSupport {
+@EnabledIfEnvironmentVariable(named = "TELEGRAM_AUTHORIZATION_TOKEN", matches = ".*")
+public class TelegramServiceProxyIT extends TelegramTestSupport {
 
     private static String proxyHost;
     private static String proxyPort;

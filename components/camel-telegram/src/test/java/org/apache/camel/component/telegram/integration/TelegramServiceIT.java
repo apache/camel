@@ -57,10 +57,12 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TelegramServiceTest extends TelegramTestSupport {
+@EnabledIfEnvironmentVariable(named = "TELEGRAM_AUTHORIZATION_TOKEN", matches = ".*")
+public class TelegramServiceIT extends TelegramTestSupport {
 
     protected TelegramApiConfig getTelegramApiConfig() {
         return TelegramApiConfig.fromEnv();
