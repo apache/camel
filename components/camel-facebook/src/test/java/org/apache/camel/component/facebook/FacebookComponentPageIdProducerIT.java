@@ -21,8 +21,11 @@ import facebook4j.ResponseList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class FacebookComponentPageIdProducerTest extends CamelFacebookTestSupport {
+@EnabledIf(value = "org.apache.camel.component.facebook.CamelFacebookTestSupport#hasCredentials",
+           disabledReason = "Facebook credentials were not provided")
+public class FacebookComponentPageIdProducerIT extends CamelFacebookTestSupport {
     public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";
 
     long lastTimestamp = -1;

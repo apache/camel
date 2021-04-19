@@ -32,18 +32,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
+@EnabledIf(value = "org.apache.camel.component.facebook.CamelFacebookTestSupport#hasCredentials",
+           disabledReason = "Facebook credentials were not provided")
+public class FacebookComponentProducerIT extends CamelFacebookTestSupport {
 
     private final Set<String> noArgNames = new HashSet<>();
 
     private final List<String> idExcludes;
     private final List<String> readingExcludes;
 
-    public FacebookComponentProducerTest() throws Exception {
+    public FacebookComponentProducerIT() throws Exception {
         for (Class<?> clazz : Facebook.class.getInterfaces()) {
             final String clazzName = clazz.getSimpleName();
             if (clazzName.endsWith("Methods") && !clazzName.equals("GameMethods")) {

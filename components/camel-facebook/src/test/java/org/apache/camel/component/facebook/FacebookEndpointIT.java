@@ -20,13 +20,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 /**
  * Test preconfigured Facebook component.
  */
-public class FacebookEndpointTest extends CamelFacebookTestSupport {
+@EnabledIf(value = "org.apache.camel.component.facebook.CamelFacebookTestSupport#hasCredentials",
+           disabledReason = "Facebook credentials were not provided")
+public class FacebookEndpointIT extends CamelFacebookTestSupport {
 
-    public FacebookEndpointTest() throws Exception {
+    public FacebookEndpointIT() throws Exception {
     }
 
     @Test
