@@ -589,11 +589,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         ZipkinState state = event.getExchange().getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            event.getExchange().setProperty(ZipkinState.KEY, state);
         }
+        event.getExchange().setProperty(ZipkinState.KEY, ZipkinState.fromZipkinState(state));
         // if we started from a server span then lets reuse that when we call a
         // downstream service
-        Span last = state.findMatchingServerSpan(event.getExchange());
+        Span last = state.peekServerSpan();
         Span span;
         if (last != null) {
             span = brave.tracer().newChild(last.context());
@@ -677,8 +677,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         ZipkinState state = exchange.getProperty(ZipkinState.KEY, ZipkinState.class);
         if (state == null) {
             state = new ZipkinState();
-            exchange.setProperty(ZipkinState.KEY, state);
         }
+        exchange.setProperty(ZipkinState.KEY, ZipkinState.fromZipkinState(state));
         Span span = null;
         Span.Kind spanKind = getConsumerComponentSpanKind(exchange.getFromEndpoint());
         CamelRequest cr = new CamelRequest(exchange.getIn(), spanKind);
