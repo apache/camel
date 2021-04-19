@@ -22,22 +22,23 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
+        <artifactId>camel-vertx-parent</artifactId>
         <version>3.10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-vertx-http</artifactId>
+    <artifactId>camel-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Vert.x :: HTTP</name>
-    <description>Send requests to external HTTP servers using Vert.x</description>
+    <name>Camel :: Vertx</name>
+    <description>Camel Vertx support</description>
 
     <properties>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http-base</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -45,8 +46,14 @@
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-web-client</artifactId>
+            <artifactId>vertx-core</artifactId>
             <version>${vertx-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- testing -->
@@ -58,21 +65,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-undertow</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-rest-openapi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-openapi-java</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

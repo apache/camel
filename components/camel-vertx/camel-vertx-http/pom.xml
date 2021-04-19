@@ -22,35 +22,58 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
+        <artifactId>camel-vertx-parent</artifactId>
         <version>3.10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-vertx-common</artifactId>
+    <artifactId>camel-vertx-http</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Vert.x :: Common</name>
-    <description>Camel Vert.x Common support</description>
+    <name>Camel :: Vert.x :: HTTP</name>
+    <description>Send requests to external HTTP servers using Vert.x</description>
 
     <properties>
-        <firstVersion>3.9.0</firstVersion>
-        <label>eventbus,reactive</label>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-http-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-vertx-common</artifactId>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
+            <artifactId>vertx-web-client</artifactId>
             <version>${vertx-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-undertow</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest-openapi</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-openapi-java</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
