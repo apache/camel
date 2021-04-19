@@ -205,21 +205,16 @@ public interface ExtendedExchange extends Exchange {
     void setDefaultConsumerCallback(AsyncCallback callback);
 
     /**
-     * Method to set SafeCopyProperties on the exchange. {@link SafeCopyProperty}
+     * To set a property that must be copied specially (thread safe with deep cloning).
      *
-     * @param key
-     *
-     * @param SafeCopyProperty
+     * @see SafeCopyProperty
      */
     void setSafeCopyProperty(String key, SafeCopyProperty value);
 
     /**
-     * Method to get SafeCopyProperties from the exchange
+     * To get a property that was copied specially (thread safe with deep cloning).
      *
-     * @param  key
-     * @param  type the type of the property
-     * @return
+     * @see SafeCopyProperty
      */
-
     <T> T getSafeCopyProperty(String key, Class<T> type);
 }
