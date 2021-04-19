@@ -17,8 +17,11 @@
 package org.apache.camel.component.weather;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class CurrentWeatherMadridConsumerTest extends BaseWeatherConsumerTest {
+@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
+                         disabledReason = "Disabled to avoid hitting API limits")
+public class CurrentWeatherMadridConsumerIT extends BaseWeatherConsumerIT {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

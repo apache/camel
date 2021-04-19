@@ -17,17 +17,23 @@
 package org.apache.camel.component.weather;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 
-public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
+@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
+                         disabledReason = "Disabled to avoid hitting API limits")
+public class CurrentWeatherConsumerHtmlIT extends BaseWeatherConsumerIT {
 
     @Override
     protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", WeatherMode.XML, LS, weather);
+        log.debug("The weather in {} format is {}{}", WeatherMode.HTML, LS, weather);
 
-        assertStringContains(weather, "<coord");
-        assertStringContains(weather, "<temperature");
+        assertStringContains(weather, "<!DOCTYPE html>");
+        assertStringContains(weather, "<head>");
+        assertStringContains(weather, "<body>");
+        assertStringContains(weather,
+                "<meta name=\"description\" content=\"A layer with current weather conditions in cities for world wide\" />");
     }
 
     @Override
@@ -35,7 +41,8 @@ public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373").to("mock:result");
+                from("weather:foo?mode=HTML&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test&location=Rome")
+                        .to("mock:result");
             }
         };
     }

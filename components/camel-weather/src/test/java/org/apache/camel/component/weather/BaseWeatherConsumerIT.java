@@ -30,7 +30,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
+public abstract class BaseWeatherConsumerIT extends CamelTestSupport {
 
     public static final String LS = System.lineSeparator();
 

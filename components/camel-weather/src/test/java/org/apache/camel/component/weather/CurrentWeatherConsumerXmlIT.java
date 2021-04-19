@@ -17,16 +17,28 @@
 package org.apache.camel.component.weather;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class Forecast7WeatherMadridConsumerTest extends BaseWeatherConsumerTest {
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+
+@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
+                         disabledReason = "Disabled to avoid hitting API limits")
+public class CurrentWeatherConsumerXmlIT extends BaseWeatherConsumerIT {
+
+    @Override
+    protected void checkWeatherContent(String weather) {
+        log.debug("The weather in {} format is {}{}", WeatherMode.XML, LS, weather);
+
+        assertStringContains(weather, "<coord");
+        assertStringContains(weather, "<temperature");
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("weather:foo?location=Madrid,Spain&period=7 days&units=IMPERIAL&appid=9162755b2efa555823cfe0451d7fff38")
-                        .to("mock:result");
+                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373").to("mock:result");
             }
         };
     }
