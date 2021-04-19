@@ -1166,8 +1166,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 return Collections.singletonList(dir.resolve("camel-servicenow-component"));
             case "camel-fhir":
                 return Collections.singletonList(dir.resolve("camel-fhir-component"));
-            case "camel-vertx-kafka":
-                return Collections.singletonList(dir.resolve("camel-vertx-kafka-component"));
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
             case "camel-azure":
@@ -1206,7 +1204,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"), dir.resolve("camel-vertx-common"),
-                        dir.resolve("camel-vertx-http"), dir.resolve("camel-vertx-kafka"),
+                        dir.resolve("camel-vertx-http"), dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
                         dir.resolve("camel-vertx-websocket"));
             default:
                 return Collections.singletonList(dir);
