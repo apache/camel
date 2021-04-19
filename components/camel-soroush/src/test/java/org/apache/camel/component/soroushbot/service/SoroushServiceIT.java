@@ -40,20 +40,26 @@ import org.glassfish.jersey.media.sse.EventInput;
 import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * check if soroush BOT Api work as expected
  */
-@Disabled("Need the token to work")
-public class SoroushServiceTest {
+@EnabledIfEnvironmentVariables({
+        @EnabledIfEnvironmentVariable(named = "soroushBotAuthorizationToken", matches = ".*",
+                                      disabledReason = "Bot authorization token is required"),
+        @EnabledIfEnvironmentVariable(named = "soroushBotReceiverId", matches = ".*",
+                                      disabledReason = "Bot receiver ID is required")
+})
+
+public class SoroushServiceIT {
     static String authorizationToken;
     static String receiverId;
     private static SoroushService soroushService;
@@ -62,9 +68,7 @@ public class SoroushServiceTest {
     public static void setUp() {
         authorizationToken = System.getenv("soroushBotAuthorizationToken");
         receiverId = System.getenv("soroushBotReceiverId");
-        assertTrue(authorizationToken != null && receiverId != null,
-                "you need to define `soroushBotAuthorizationToken` and "
-                                                                     + "`soroushBotReceiverId` environment variable in order to do integration test ");
+
         soroushService = SoroushService.get();
         soroushService.setAlternativeUrl(null);
     }
