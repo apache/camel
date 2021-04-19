@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Next, start it and import Evaluation sample project, build and deploy. Once done this test can be ran out of the box.
  */
 @Disabled("This is an integration test that needs jBPM running on the local machine")
-public class JBPMComponentIntegrationTest extends CamelTestSupport {
+public class JBPMComponentIT extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
