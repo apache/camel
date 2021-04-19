@@ -2551,17 +2551,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-vertx-parent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-vertx-websocket</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-vertx</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-vertx-parent</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
