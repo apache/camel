@@ -25,12 +25,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * To test CAMEL-4118 support for completing all aggregation groups with a signal message
  */
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
 
     @Override

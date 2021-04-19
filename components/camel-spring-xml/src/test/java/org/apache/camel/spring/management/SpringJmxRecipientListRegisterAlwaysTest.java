@@ -22,6 +22,8 @@ import javax.management.ObjectName;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +31,7 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisabledOnOs(OS.AIX)
 public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport {
 
     @Override
