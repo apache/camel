@@ -1,7 +1,7 @@
 [[vertx-websocket-component]]
 = Vert.x WebSocket Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-vertx-websocket/src/main/docs/vertx-websocket-component.adoc
+:page-source: components/camel-vertx/camel-vertx-websocket/src/main/docs/vertx-websocket-component.adoc
 :docTitle: Vert.x WebSocket
 :artifactId: camel-vertx-websocket
 :description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x

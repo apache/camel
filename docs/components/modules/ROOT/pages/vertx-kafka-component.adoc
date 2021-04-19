@@ -1,7 +1,7 @@
 [[vertx-kafka-component]]
 = Vert.x Kafka Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-vertx-kafka/camel-vertx-kafka-component/src/main/docs/vertx-kafka-component.adoc
+:page-source: components/camel-vertx/camel-vertx-kafka/camel-vertx-kafka-component/src/main/docs/vertx-kafka-component.adoc
 :docTitle: Vert.x Kafka
 :artifactId: camel-vertx-kafka
 :description: Sent and receive messages to/from an Apache Kafka broker using vert.x Kafka client

@@ -1,7 +1,7 @@
 [[vertx-component]]
 = Vert.x Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-vertx/src/main/docs/vertx-component.adoc
+:page-source: components/camel-vertx/camel-vertx/src/main/docs/vertx-component.adoc
 :docTitle: Vert.x
 :artifactId: camel-vertx
 :description: Send and receive messages to/from Vert.x Event Bus.
