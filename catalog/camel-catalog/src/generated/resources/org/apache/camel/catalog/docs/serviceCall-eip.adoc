@@ -379,7 +379,9 @@ And in XML
 </camelContext>
 ----
 
-== Blacklist Service Filter
+== Service Filter
+
+=== Blacklist Service Filter
 
 This service filter implementation removes the listed services from those found by the service discovery.
 Each service should be provided in the following form:
@@ -438,13 +440,55 @@ And in XML
 </camelContext>
 ----
 
+=== Custom Service Filter
+
+Service Filters choose suitable candidates from the service definitions found in the service discovery. 
+
+As of Camel 3.10.0 they have access to the current exchange, which allows you to create service filters 
+comparing service metadata with message content.
+
+Assuming you have labeled one of the services in your service discovery to support a certain type of requests:
+
+[source,java]
+----
+serviceDiscovery.addServer(new DefaultServiceDefinition("service", "127.0.0.1", 1003, 
+    Collections.singletonMap("supports", "foo")));
+----
+
+The current exchange has a property which says that it needs a foo service:
+
+[source,java]
+----
+exchange.setProperty("needs", "foo")
+----
+
+You can then use a `ServiceFilter` to select the service instances which match the exchange:
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall()
+        .name("service")
+        .serviceFilter((exchange, services) -> services.stream()
+			.filter(serviceDefinition -> Optional.ofNullable(serviceDefinition.getMetadata()
+				.get("supports"))
+				.orElse("")
+				.equals(exchange.getProperty("needs", String.class)))
+			.collect(Collectors.toList()));
+        .end()
+    .to("mock:result");
+----
+
 == Load Balancer
 
-The Service Call EIP comes with its own Load Balancer which is instantiated by default if a custom is not configured and
-glues Service Discovery, Service Filer, Service Chooser and Service Expression together to load balance requests among the available services.
+The Service Call EIP comes with its own loadbalancer which is instantiated by default if a custom loadbalancer is not configured. It glues Service Discovery, Service Filter, Service Chooser and Service Expression together to load balance requests among the available services.
 
-If you need a more sophisticate load balancer you can use Ribbon by adding camel-ribbon to the mix,
+If you need a more sophisticated load balancer you can use Ribbon by adding camel-ribbon to the mix,
 maven users will need to add the following dependency to their pom.xml
+
+NOTE: The `RibbonServiceLoadBalancer` has no concept of a current `Exchange`. 
+Service filters therefore receive a dummy exchange when used with Ribbon.
+
 
 [source,xml]
 ----
@@ -491,7 +535,7 @@ And in XML
 </camelContext>
 ----
 
-You can configure Ribbon key programmatic using `RibbonConfiguration`:
+You can configure Ribbon key programmatically using `RibbonConfiguration`:
 
 [source,java]
 ----
@@ -540,7 +584,7 @@ globalConf.setServiceChooser(
 
 ServiceCallConfigurationDefinition httpsConf = new ServiceCallConfigurationDefinition();
 httpsConf.setServiceFilter(
-    list -> list.stream().filter(s -> s.getPort() == 443).collect(toList())
+    list -> list.stream().filter((exchange, s) -> s.getPort() == 443).collect(toList())
 );
 
 getContext().setServiceCallConfiguration(globalConf);
