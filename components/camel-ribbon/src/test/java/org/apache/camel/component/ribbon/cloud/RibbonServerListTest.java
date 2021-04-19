@@ -20,6 +20,7 @@ import com.netflix.loadbalancer.LoadBalancerBuilder;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ public class RibbonServerListTest {
     public void testFixedServerList() throws Exception {
         ZoneAwareLoadBalancer<RibbonServiceDefinition> lb = LoadBalancerBuilder.<RibbonServiceDefinition> newBuilder()
                 .withDynamicServerList(new RibbonServiceLoadBalancer.RibbonServerList(
+                        new DefaultCamelContext(),
                         "unknown",
                         StaticServiceDiscovery.forServices(
                                 new RibbonServiceDefinition("unknown", "localhost", 9090),

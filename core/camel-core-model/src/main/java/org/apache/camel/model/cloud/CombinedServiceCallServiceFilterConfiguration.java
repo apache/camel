@@ -59,7 +59,7 @@ public class CombinedServiceCallServiceFilterConfiguration extends ServiceCallSe
 
     /**
      * List of ServiceFilter configuration to use
-     * 
+     *
      * @param serviceFilterConfigurations
      */
     public void setServiceFilterConfigurations(List<ServiceCallServiceFilterConfiguration> serviceFilterConfigurations) {

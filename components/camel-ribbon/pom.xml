@@ -45,6 +45,10 @@
             <artifactId>camel-cloud</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.netflix.ribbon</groupId>
             <artifactId>ribbon-core</artifactId>
             <version>${ribbon-version}</version>
@@ -53,6 +57,12 @@
             <groupId>com.netflix.ribbon</groupId>
             <artifactId>ribbon-loadbalancer</artifactId>
             <version>${ribbon-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.servo</groupId>
+            <artifactId>servo-core</artifactId>
+            <scope>provided</scope>
+            <version>${servo-version}</version>
         </dependency>
 
         <!-- testing -->
