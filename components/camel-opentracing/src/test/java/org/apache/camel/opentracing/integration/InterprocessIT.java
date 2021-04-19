@@ -28,7 +28,7 @@ import org.apache.camel.opentracing.SpanTestData;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-public class InterprocessTest extends CamelOpenTracingTestSupport {
+public class InterprocessIT extends CamelOpenTracingTestSupport {
     private static final String URL = "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/test";
     private static final String URI = "jetty:" + URL;
 
@@ -52,7 +52,7 @@ public class InterprocessTest extends CamelOpenTracingTestSupport {
                     .addTag(Tags.HTTP_STATUS.getKey(), "200")
     };
 
-    public InterprocessTest() {
+    public InterprocessIT() {
         super(testdata);
     }
 
