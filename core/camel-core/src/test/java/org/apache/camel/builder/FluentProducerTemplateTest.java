@@ -429,6 +429,15 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testPerformance() throws Exception {
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        for (int i = 0; i < 1000; i++) {
+            Object result = fluent.withBody("Camel").withHeader("foo", "" + i).to("direct:echo").request();
+            assertEquals("CamelCamel" + i, result);
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

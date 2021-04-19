@@ -477,18 +477,25 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     private Processor defaultProcessor() {
         return exchange -> {
-            ObjectHelper.ifNotEmpty(headers, exchange.getIn().getHeaders()::putAll);
-            ObjectHelper.ifNotEmpty(body, exchange.getIn()::setBody);
+            if (headers != null) {
+                exchange.getIn().getHeaders().putAll(headers);
+            }
+            if (body != null) {
+                exchange.getIn().setBody(body);
+            }
         };
     }
 
     private Processor defaultAsyncProcessor() {
         final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers) ? new HashMap<>(this.headers) : null;
         final Object bodyCopy = this.body;
-
         return exchange -> {
-            ObjectHelper.ifNotEmpty(headersCopy, exchange.getIn().getHeaders()::putAll);
-            ObjectHelper.ifNotEmpty(bodyCopy, exchange.getIn()::setBody);
+            if (headersCopy != null) {
+                exchange.getIn().getHeaders().putAll(headersCopy);
+            }
+            if (bodyCopy != null) {
+                exchange.getIn().setBody(bodyCopy);
+            }
         };
     }
 
