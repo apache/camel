@@ -26,7 +26,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
-public class CordaTestSupport extends CamelTestSupport {
+public class CordaITSupport extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResult;

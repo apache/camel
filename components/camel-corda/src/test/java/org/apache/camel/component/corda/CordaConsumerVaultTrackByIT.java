@@ -18,15 +18,17 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY_CRITERIA;
+import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY;
 
-public class CordaConsumerVaultTrackByCriteriaIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerVaultTrackByIT extends CordaConsumerITSupport {
 
     @Test
-    public void vaultTrackByCriteriaTest() throws Exception {
+    public void vaultTrackByTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
@@ -38,9 +40,11 @@ public class CordaConsumerVaultTrackByCriteriaIntegrationTest extends CordaConsu
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_CRITERIA
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY
                      + "&contractStateClass=#contractStateClass"
-                     + "&queryCriteria=#queryCriteria")
+                     + "&queryCriteria=#queryCriteria"
+                     + "&pageSpecification=#pageSpecification"
+                     + "&sort=#sort")
                              .to("mock:result");
             }
         };

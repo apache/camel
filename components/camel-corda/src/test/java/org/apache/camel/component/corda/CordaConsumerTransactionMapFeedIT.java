@@ -18,15 +18,17 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.corda.CordaConstants.NETWORK_MAP_FEED;
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
+import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED;
 
-public class CordaConsumerNetworkMapFeedIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerTransactionMapFeedIT extends CordaConsumerITSupport {
 
     @Test
-    public void networkMapFeedTest() throws Exception {
+    public void transactionMapFeedTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
@@ -38,7 +40,7 @@ public class CordaConsumerNetworkMapFeedIntegrationTest extends CordaConsumerTes
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + NETWORK_MAP_FEED)
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED)
                         .to("mock:result");
             }
         };

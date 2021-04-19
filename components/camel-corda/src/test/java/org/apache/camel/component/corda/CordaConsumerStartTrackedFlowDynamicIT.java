@@ -18,18 +18,23 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED;
+import static org.apache.camel.component.corda.CordaConstants.START_TRACKED_FLOW_DYNAMIC;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CordaConsumerTransactionMapFeedIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerStartTrackedFlowDynamicIT extends CordaConsumerITSupport {
 
     @Test
-    public void transactionMapFeedTest() throws Exception {
+    public void startTrackedFlowDynamicTest() throws Exception {
+        //Expects CamelFlow is deployed on the node
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
+        assertEquals("Hello world!", mockResult.getExchanges().get(0).getIn().getBody());
     }
 
     @Override
@@ -38,8 +43,10 @@ public class CordaConsumerTransactionMapFeedIntegrationTest extends CordaConsume
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED)
-                        .to("mock:result");
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + START_TRACKED_FLOW_DYNAMIC
+                     + "&flowLociClass=#flowLociClass"
+                     + "&arguments=#arguments")
+                             .to("mock:result");
             }
         };
     }

@@ -18,12 +18,14 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
 import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY_WITH_SORTING;
 
-public class CordaConsumerVaultTrackByWithSortingIntegrationTest extends CordaConsumerTestSupport {
+@Disabled("Requires manual steps to setup and run")
+public class CordaConsumerVaultTrackByWithSortingIT extends CordaConsumerITSupport {
 
     @Test
     public void vaultTrackByWithSortingTest() throws Exception {

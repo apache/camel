@@ -28,7 +28,7 @@ import org.apache.camel.BindToRegistry;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.MAX_PAGE_SIZE;
 
-public class CordaConsumerTestSupport extends CordaTestSupport {
+public class CordaConsumerITSupport extends CordaITSupport {
 
     @Override
     public boolean isUseAdviceWith() {
