@@ -31,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.Incident;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ServiceNowTest extends ServiceNowTestSupport {
+@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
+                              disabledReason = "Service now instance was not provided")
+public class ServiceNowIT extends ServiceNowITSupport {
 
     @Test
     public void testExceptions() {

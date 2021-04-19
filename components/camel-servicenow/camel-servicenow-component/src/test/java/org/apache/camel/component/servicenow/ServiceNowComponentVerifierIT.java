@@ -22,13 +22,16 @@ import javax.ws.rs.ProcessingException;
 
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
-    public ServiceNowComponentVerifierTest() {
+@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
+                              disabledReason = "Service now instance was not provided")
+public class ServiceNowComponentVerifierIT extends ServiceNowITSupport {
+    public ServiceNowComponentVerifierIT() {
         super(false);
     }
 

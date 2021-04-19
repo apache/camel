@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.extension.MetaDataExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtensionTest.class);
+@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
+                              disabledReason = "Service now instance was not provided")
+public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtensionIT.class);
 
-    public ServiceNowMetaDataExtensionTest() {
+    public ServiceNowMetaDataExtensionIT() {
         super(false);
     }
 
