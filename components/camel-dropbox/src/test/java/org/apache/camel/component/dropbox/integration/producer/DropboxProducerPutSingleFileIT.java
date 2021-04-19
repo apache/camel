@@ -32,11 +32,13 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
+@EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
+public class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
     public static final String FILENAME = "newFile.txt";
 
     @Test

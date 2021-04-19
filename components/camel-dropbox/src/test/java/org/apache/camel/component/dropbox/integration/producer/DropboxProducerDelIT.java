@@ -14,37 +14,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.integration.consumer;
+package org.apache.camel.component.dropbox.integration.producer;
+
+import java.io.IOException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-public class DropboxConsumerSearchQueryTest extends DropboxTestSupport {
+@EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
+public class DropboxProducerDelIT extends DropboxTestSupport {
 
-    public static final String FILE_NAME = "myTestFile.txt";
+    public static final String FILE_NAME = "file.txt";
+
+    @BeforeEach
+    public void createFile() throws IOException {
+        createFile(FILE_NAME, "content");
+    }
 
     @Test
     public void testCamelDropbox() throws Exception {
-        final String content = "Hi camels";
-        createFile(FILE_NAME, content);
+        test("direct:start");
+    }
 
-        context.start();
+    @Test
+    public void testCamelDropboxWithOptionInHeader() throws Exception {
+        test("direct:start2");
+    }
 
+    private void test(String endpointURI) throws InterruptedException {
+        template.sendBody(endpointURI, null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.message(0).header(DropboxResultHeader.FOUND_FILES.name()).contains(String.format("%s/%s", workdir, FILE_NAME));
-        mock.assertIsSatisfied();
+        mock.expectedHeaderReceived(DropboxResultHeader.DELETED_PATH.name(), workdir + "/" + FILE_NAME);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("dropbox://search?accessToken={{accessToken}}&remotePath=%s&query=%s", workdir, FILE_NAME))
-                        .id("consumer").autoStartup(false)
+                from("direct:start")
+                        .to("dropbox://del?accessToken={{accessToken}}&remotePath=" + workdir + "/" + FILE_NAME)
+                        .to("mock:result");
+
+                from("direct:start2")
+                        .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
+                        .to("dropbox://del?accessToken={{accessToken}}")
                         .to("mock:result");
             }
         };
