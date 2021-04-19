@@ -33,8 +33,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,8 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Must be manually tested. Provide your own oAuthToken")
-public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSupport {
+@EnabledIf(value = "org.apache.camel.component.digitalocean.integration.DigitalOceanTestSupport#hasCredentials",
+           disabledReason = "Must be manually tested. Provide your own oAuthToken on test-options.properties")
+public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
