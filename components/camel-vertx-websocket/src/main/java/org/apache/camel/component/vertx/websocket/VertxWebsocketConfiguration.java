@@ -28,11 +28,11 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class VertxWebsocketConfiguration {
 
-    @UriPath(name = "host", defaultValue = VertxWebsocketContants.DEFAULT_VERTX_SERVER_HOST)
+    @UriPath(name = "host", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST)
     private String host;
     @UriPath(name = "port", defaultValue = "0")
     private int port;
-    @UriPath(name = "path", defaultValue = VertxWebsocketContants.DEFAULT_VERTX_SERVER_PATH)
+    @UriPath(name = "path", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PATH)
     @Metadata(required = true)
     private String path;
     @UriParam(label = "consumer")

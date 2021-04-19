@@ -108,7 +108,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         String connectionKey = connectedPeers.keySet().iterator().next();
 
         template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
-                VertxWebsocketContants.CONNECTION_KEY, connectionKey);
+                VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -121,7 +121,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         mockEndpoint.expectedBodiesReceived("Hello world");
         mockEndpoint.setResultWaitTime(500);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", VertxWebsocketContants.CONNECTION_KEY, "invalid-key");
+        template.sendBodyAndHeader("direct:start", "Hello World", VertxWebsocketConstants.CONNECTION_KEY, "invalid-key");
 
         // Since the message body is null, the WebSocket producer will not send payload to the WS endpoint
         mockEndpoint.assertIsNotSatisfied();
@@ -154,7 +154,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         }
 
         template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
-                VertxWebsocketContants.CONNECTION_KEY, joiner.toString());
+                VertxWebsocketConstants.CONNECTION_KEY, joiner.toString());
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -202,7 +202,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         }
 
         template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
-                VertxWebsocketContants.SEND_TO_ALL, true);
+                VertxWebsocketConstants.SEND_TO_ALL, true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());

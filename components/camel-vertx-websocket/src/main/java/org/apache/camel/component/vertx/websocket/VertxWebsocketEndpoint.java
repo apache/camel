@@ -19,9 +19,7 @@ package org.apache.camel.component.vertx.websocket;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
@@ -92,7 +90,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
         return getComponent().getVertx();
     }
 
-    protected WebSocket getWebSocket(Exchange exchange) throws InterruptedException, ExecutionException, TimeoutException {
+    protected WebSocket getWebSocket(Exchange exchange) throws Exception {
         if (webSocket == null || webSocket.isClosed()) {
             HttpClientOptions options = configuration.getClientOptions();
             HttpClient client;

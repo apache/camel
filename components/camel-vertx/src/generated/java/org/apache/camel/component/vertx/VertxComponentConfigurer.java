@@ -32,7 +32,7 @@ public class VertxComponentConfigurer extends PropertyConfigurerSupport implemen
         case "timeout": target.setTimeout(property(camelContext, int.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
         case "vertxfactory":
-        case "vertxFactory": target.setVertxFactory(property(camelContext, io.vertx.core.spi.VertxFactory.class, value)); return true;
+        case "vertxFactory": target.setVertxFactory(property(camelContext, io.vertx.core.impl.VertxBuilder.class, value)); return true;
         case "vertxoptions":
         case "vertxOptions": target.setVertxOptions(property(camelContext, io.vertx.core.VertxOptions.class, value)); return true;
         default: return false;
@@ -58,7 +58,7 @@ public class VertxComponentConfigurer extends PropertyConfigurerSupport implemen
         case "timeout": return int.class;
         case "vertx": return io.vertx.core.Vertx.class;
         case "vertxfactory":
-        case "vertxFactory": return io.vertx.core.spi.VertxFactory.class;
+        case "vertxFactory": return io.vertx.core.impl.VertxBuilder.class;
         case "vertxoptions":
         case "vertxOptions": return io.vertx.core.VertxOptions.class;
         default: return null;
