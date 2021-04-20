@@ -38,33 +38,40 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
 
     // provisional maps to hold components, dataformats, languages that are created during
     // starting camel, but need to defer autowiring until later in case additional configuration
-    // would turn this per instance
+    // would turn off autowired for some components
     private final Map<String, Component> autowrieComponents = new HashMap<>();
     private final Map<String, DataFormat> autowrieDataFormats = new HashMap<>();
     private final Map<String, Language> autowrieLanguages = new HashMap<>();
     private final ExtendedCamelContext camelContext;
-    private volatile boolean initialized;
+    private volatile boolean initializing;
 
     public AutowiredLifecycleStrategy(CamelContext camelContext) {
         this.camelContext = (ExtendedCamelContext) camelContext;
     }
 
     @Override
-    public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
-        // we are initializd so lets do autowiring on what we have collected during bootstrap
+    public void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
+        // we have parsed configuration (such as via camel-main) and are now initializing
+        // so lets do autowiring on what we have collected so far
+        // we also need to eager autowire components as when they create endpoints they must be configured with
+        // those autowired options
         autowrieComponents.forEach(this::autowireComponent);
         autowrieDataFormats.forEach(this::autowireDataFormat);
         autowrieLanguages.forEach(this::autowireLanguage);
         autowrieComponents.clear();
         autowrieDataFormats.clear();
         autowrieLanguages.clear();
-        // we are now done initialized
-        initialized = true;
+        initializing = true;
+    }
+
+    @Override
+    public void onContextStopped(CamelContext context) {
+        initializing = false;
     }
 
     @Override
     public void onComponentAdd(String name, Component component) {
-        if (initialized) {
+        if (initializing) {
             autowireComponent(name, component);
         } else {
             autowrieComponents.put(name, component);
@@ -73,7 +80,7 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
 
     @Override
     public void onDataFormatCreated(String name, DataFormat dataFormat) {
-        if (initialized) {
+        if (initializing) {
             autowireDataFormat(name, dataFormat);
         } else {
             autowrieDataFormats.put(name, dataFormat);
@@ -82,7 +89,7 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
 
     @Override
     public void onLanguageCreated(String name, Language language) {
-        if (initialized) {
+        if (initializing) {
             autowireLanguage(name, language);
         } else {
             autowrieLanguages.put(name, language);
