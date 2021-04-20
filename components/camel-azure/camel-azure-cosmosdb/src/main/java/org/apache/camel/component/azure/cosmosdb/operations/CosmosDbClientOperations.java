@@ -47,7 +47,7 @@ public class CosmosDbClientOperations {
 
     public CosmosDbDatabaseOperations createDatabaseIfNotExistAndGetDatabaseOperations(
             final String databaseName, final ThroughputProperties throughputProperties) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "Database Name");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "databaseName");
 
         return new CosmosDbDatabaseOperations(getAndCreateDatabaseIfNotExist(databaseName, true, throughputProperties));
     }

@@ -40,6 +40,9 @@ public class CosmosDbDatabaseOperations {
     }
 
     // Database operations
+    public Mono<String> getDatabaseId() {
+        return database.map(CosmosAsyncDatabase::getId);
+    }
     public Mono<CosmosDatabaseResponse> deleteDatabase(final CosmosDatabaseRequestOptions databaseRequestOptions) {
         return applyToDatabase(database -> database.delete(databaseRequestOptions));
     }
