@@ -41,6 +41,10 @@ public class CosmosDbContainerOperations {
     }
 
     // operations on the container
+    public Mono<String> getContainerId() {
+        return container.map(CosmosAsyncContainer::getId);
+    }
+
     public Mono<CosmosContainerResponse> deleteContainer(final CosmosContainerRequestOptions containerRequestOptions) {
         return applyToContainer(container -> container.delete(containerRequestOptions));
     }

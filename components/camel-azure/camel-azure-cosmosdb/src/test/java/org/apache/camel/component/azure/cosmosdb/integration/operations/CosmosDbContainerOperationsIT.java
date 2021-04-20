@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.cosmosdb.operations;
+package org.apache.camel.component.azure.cosmosdb.integration.operations;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClientBuilder;
-import com.azure.cosmos.models.PartitionKey;
+import com.azure.cosmos.models.CosmosContainerResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CosmosDbItemOperationsIT {
+class CosmosDbContainerOperationsIT {
 
     private CosmosAsyncClientWrapper clientWrapper;
     private final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
     @BeforeAll
     void prepare() throws Exception {
@@ -56,32 +56,31 @@ class CosmosDbItemOperationsIT {
     }
 
     @Test
-    void testItemCreateAndDelete() {
-        final Map<String, Object> item1 = new HashMap<>();
-        item1.put("id", "test-id-1");
-        item1.put("partition", "test-1");
-        item1.put("field1", 12234);
-        item1.put("field2", "awesome!");
+    void testCreateDeleteContainer() {
+        final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
-        final Map<String, Object> item2 = new HashMap<>();
-        item2.put("id", "test-id-2");
-        item2.put("partition", "test-1");
-        item2.put("field1", 6654);
-        item2.put("field2", "super awesome!");
-
-        final CosmosDbContainerOperations operations = CosmosDbClientOperations.withClient(clientWrapper)
+        // test create container
+        final CosmosContainerResponse createdContainer = CosmosDbClientOperations.withClient(clientWrapper)
                 .createDatabaseIfNotExistAndGetDatabaseOperations(databaseName, null)
-                .createContainerIfNotExistAndGetContainerOperations(containerId, "partition", null);
+                .createContainer(containerId, "/test", null)
+                .block();
 
-        operations.createItem(item1, new PartitionKey("test-1"), null).block();
-        operations.createItem(item2, new PartitionKey("test-1"), null).block();
+        assertNotNull(createdContainer);
+        assertEquals(containerId, createdContainer.getProperties().getId());
 
-        final Iterable<Object> items = CosmosDbClientOperations.withClient(clientWrapper)
-                .createDatabaseIfNotExistAndGetDatabaseOperations(databaseName, null)
-                .createContainerIfNotExistAndGetContainerOperations(containerId, "id", null)
-                .readAllItems(new PartitionKey("test-1"), null, Object.class, null)
-                .toIterable();
+        // successful if response code within 2xx
+        assertTrue(createdContainer.getStatusCode() >= 200 && createdContainer.getStatusCode() < 300);
 
-        items.forEach(data -> System.out.println(data));
+        // test delete container
+        final CosmosContainerResponse deletedContainer = CosmosDbClientOperations.withClient(clientWrapper)
+                .getDatabaseOperations(databaseName)
+                .getContainerOperations(containerId)
+                .deleteContainer(null)
+                .block();
+
+        assertNotNull(deletedContainer);
+
+        // successful if response code within 2xx
+        assertTrue(deletedContainer.getStatusCode() >= 200 && deletedContainer.getStatusCode() < 300);
     }
 }

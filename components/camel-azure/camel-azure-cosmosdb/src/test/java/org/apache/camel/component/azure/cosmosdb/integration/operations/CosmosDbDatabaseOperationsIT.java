@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.cosmosdb.operations;
+package org.apache.camel.component.azure.cosmosdb.integration.operations;
 
 import java.util.Properties;
 
@@ -23,6 +23,7 @@ import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.models.CosmosDatabaseResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.function.Executable;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class CosmosDbTestUtils {
 
@@ -52,6 +55,10 @@ public final class CosmosDbTestUtils {
         properties.setProperty("access_key", System.getProperty("accessKey"));
 
         return properties;
+    }
+
+    public static void assertIllegalArgumentException(final Executable executable) {
+        assertThrows(IllegalArgumentException.class, executable);
     }
 
     public static class Latch {
