@@ -5,5 +5,5 @@
 - [ ] Write a pull request description that is detailed enough to understand what the pull request does, how, and why.
 - [ ] Run `mvn clean install -Psourcecheck` in your module with source check enabled to make sure basic checks pass and there are no checkstyle violations. A more thorough check will be performed on your pull request automatically.
 Below are the contribution guidelines:
-https://github.com/apache/camel/blob/master/CONTRIBUTING.md
+https://github.com/apache/camel/blob/main/CONTRIBUTING.md
 -->
