@@ -581,7 +581,7 @@ syntax.
   <xs:element name="hystrixConfiguration" type="tns:hystrixConfigurationDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Hystrix Circuit Breaker EIP configuration
+Deprecated: Hystrix Circuit Breaker EIP configuration
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -606,7 +606,7 @@ Filters out duplicate messages
   <xs:element name="inOnly" type="tns:inOnlyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marks the exchange pattern for the route to one way
+Deprecated: Marks the exchange pattern for the route to one way
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -614,7 +614,7 @@ Marks the exchange pattern for the route to one way
   <xs:element name="inOut" type="tns:inOutDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marks the exchange pattern for the route to request/reply
+Deprecated: Marks the exchange pattern for the route to request/reply
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
