@@ -90,25 +90,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <!-- the tests does not work - due to complex ldap server tests - maybe try with testcontainers with existing ldap server -->
-    <profiles>
-        <profile>
-            <id>ldap-skip-tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>
