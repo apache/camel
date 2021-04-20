@@ -39,9 +39,9 @@ Red Hat provides a commercial
 distribution of an ESB which includes Camel, ActiveMQ, CXF, ServiceMix,
 Karaf, http://fabric8.io/[Fabric8], and http://hawt.io/[Hawtio].
 
-|http://tools.jboss.org/features/apachecamel.html[Tools for Apache Camel]
-(formerly know as Fuse IDE) |JBoss provides developer tooling for
-Camel, ActiveMQ, ServiceMix, Karaf, CXF, and
+|https://tools.jboss.org/features/fusetools.html[Eclipse Desktop Tools for Apache Camel]
+|Red Hat provides developer tooling for
+Camel, ActiveMQ, OpenShift, SpringBoot, Karaf, CXF, and
 http://fabric8.io/[fabric8]. The tools is a set of Eclipse plugins, such
 as a graphical Camel editor and also includes a Camel route debugger,
 where you can set breakpoints in your routes.
@@ -49,6 +49,10 @@ where you can set breakpoints in your routes.
 |https://github.com/camel-idea-plugin/camel-idea-plugin[Apache Camel
 IDEA Plugin] |Plugin for IntelliJ IDEA to provide a set of Apache Camel
 related editing capabilities to the code editor.
+
+|https://github.com/camel-tooling/camel-language-server[Camel Language Server]| A server implementation of the https://github.com/Microsoft/language-server-protocol[Language Server protocol] that provides Camel DSL smartness (completion, validation, hover, outline). It is packaged for https://marketplace.visualstudio.com/items?itemName=redhat.vscode-apache-camel[VS Code], https://marketplace.eclipse.org/content/language-support-apache-camel[Eclipse Desktop IDE] and https://www.eclipse.org/che/[Eclipse Che]. It can be embedded in several https://github.com/camel-tooling/camel-language-server#clients[other editors and IDEs].
+
+|https://marketplace.visualstudio.com/items?itemName=redhat.apache-camel-extension-pack[VS Code extension pack for Camel]|It provides a set of tools to develop Camel applications.
 
 |https://syndesis.io/[Syndesis] |
 Syndesis is for anyone that wants to integrate services. Syndesis
