@@ -67,20 +67,7 @@ public class KinesisClientIAMOptimizedImpl implements KinesisInternalClient {
                                            + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            DefaultCredentialsProvider cred = DefaultCredentialsProvider.create();
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(cred);
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(cred);
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
+            clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
