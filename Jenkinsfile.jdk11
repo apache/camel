@@ -60,7 +60,7 @@ pipeline {
 
         stage('Build & Deploy') {
             when {
-                branch 'master'
+                branch 'main'
             }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"

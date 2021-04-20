@@ -60,7 +60,7 @@ pipeline {
 
         stage('Build & Deploy') {
             when {
-                branch 'master'
+                branch 'main'
             }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
@@ -69,12 +69,12 @@ pipeline {
 
         stage('Website update') {
             when {
-                branch 'master'
+                branch 'main'
                 changeset 'docs/**/*'
             }
 
             steps {
-                build job: 'Camel/Camel.website/master', wait: false
+                build job: 'Camel/Camel.website/main', wait: false
             }
         }
 
