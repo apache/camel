@@ -48,9 +48,9 @@ pipeline {
         stage('Camel full pipeline') {
 
             steps {
-                build job: 'Camel/Apache Camel/master/', wait: true
-                build job: 'Camel/Camel-Karaf Daily/master/', wait: true
-                build job: 'Camel/Camel-Spring-Boot Daily/master', wait: true
+                build job: 'Camel/Apache Camel/main/', wait: true
+                build job: 'Camel/Camel-Karaf Daily/main/', wait: true
+                build job: 'Camel/Camel-Spring-Boot Daily/main', wait: true
             }
         }
 
