@@ -54,9 +54,9 @@ public class DocumentationEnricher {
         }
     }
 
-    public void enrichTypeAttributesDocumentation(Log log, NodeList attributeElements, File jsonFile) throws IOException {
-        for (int j = 0; j < attributeElements.getLength(); j++) {
-            Element item = (Element) attributeElements.item(j);
+    public void enrichElementDocumentation(Log log, NodeList elements, File jsonFile) throws IOException {
+        for (int j = 0; j < elements.getLength(); j++) {
+            Element item = (Element) elements.item(j);
             addAttributeDocumentation(log, item, jsonFile);
         }
     }
@@ -77,7 +77,6 @@ public class DocumentationEnricher {
     }
 
     private void addAttributeDocumentation(Log log, Element item, File jsonFile) throws IOException {
-
         String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
         if (isNullOrEmpty(name)) {
             return;
