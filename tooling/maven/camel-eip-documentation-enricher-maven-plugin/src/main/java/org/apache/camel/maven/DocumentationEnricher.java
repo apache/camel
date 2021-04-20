@@ -65,6 +65,9 @@ public class DocumentationEnricher {
     private void addElementDocumentation(Element item, File jsonFile) {
         BaseModel<?> model = JsonMapper.generateModel(jsonFile.toPath());
         String descriptionText = model.getDescription();
+        if (model.isDeprecated()) {
+            descriptionText = "Deprecated: " + descriptionText;
+        }
         addDocumentation(item, descriptionText);
     }
 
