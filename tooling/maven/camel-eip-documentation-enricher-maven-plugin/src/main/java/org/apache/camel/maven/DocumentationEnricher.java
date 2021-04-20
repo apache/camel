@@ -66,6 +66,10 @@ public class DocumentationEnricher {
         for (Map<String, String> row : rows) {
             if (row.containsKey(Constants.DESCRIPTION_ATTRIBUTE_NAME)) {
                 String descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
+                String deprecatedText = row.get(Constants.DEPRECATED_ATTRIBUTE_NAME);
+                if ("true".equals(deprecatedText)) {
+                    descriptionText = "Deprecated: " + descriptionText;
+                }
                 addDocumentation(item, descriptionText);
                 break;
             }
