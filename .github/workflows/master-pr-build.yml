@@ -15,12 +15,12 @@
 # limitations under the License.
 #
 
-name: master pr build
+name: main pr build
 
 on:
   pull_request:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
