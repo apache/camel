@@ -16,12 +16,10 @@
  */
 package org.apache.camel.zipkin;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import brave.Span;
-import brave.propagation.TraceContextOrSamplingFlags;
 import org.apache.camel.Exchange;
 
 /**
@@ -34,14 +32,25 @@ public final class ZipkinState {
 
     public static final String KEY = "CamelZipkinState";
 
-    private final Deque<Span> clientSpans = new ArrayDeque<>();
-    private final Deque<Span> serverSpans = new ArrayDeque<>();
+    private final Deque<Span> clientSpans = new ConcurrentLinkedDeque<>();
+    private final Deque<Span> serverSpans = new ConcurrentLinkedDeque<>();
 
-    public synchronized void pushClientSpan(Span span) {
+    public ZipkinState() {
+
+    }
+
+    public static ZipkinState fromZipkinState(ZipkinState fromState) {
+        ZipkinState state = new ZipkinState();
+        state.clientSpans.addAll(fromState.clientSpans);
+        state.serverSpans.addAll(fromState.serverSpans);
+        return state;
+    }
+
+    public void pushClientSpan(Span span) {
         clientSpans.push(span);
     }
 
-    public synchronized Span popClientSpan() {
+    public Span popClientSpan() {
         if (!clientSpans.isEmpty()) {
             return clientSpans.pop();
         } else {
@@ -49,11 +58,11 @@ public final class ZipkinState {
         }
     }
 
-    public synchronized void pushServerSpan(Span span) {
+    public void pushServerSpan(Span span) {
         serverSpans.push(span);
     }
 
-    public synchronized Span popServerSpan() {
+    public Span popServerSpan() {
         if (!serverSpans.isEmpty()) {
             return serverSpans.pop();
         } else {
@@ -61,34 +70,12 @@ public final class ZipkinState {
         }
     }
 
-    private Span peekServerSpan() {
+    public Span peekServerSpan() {
         if (!serverSpans.isEmpty()) {
             return serverSpans.peek();
         } else {
             return null;
         }
-    }
-
-    public synchronized Span findMatchingServerSpan(Exchange exchange) {
-        String spanId = (String) exchange.getIn().getHeader(ZipkinConstants.SPAN_ID);
-        Span lastSpan = peekServerSpan();
-        if (spanId == null) {
-            return lastSpan;
-        }
-        TraceContextOrSamplingFlags traceContext
-                = ZipkinTracer.EXTRACTOR.extract(new CamelRequest(exchange.getIn(), Span.Kind.SERVER));
-        if (traceContext.context().spanId() == lastSpan.context().spanId()) {
-            return lastSpan;
-        }
-
-        Iterator<Span> spanItr = serverSpans.iterator();
-        while (spanItr.hasNext()) {
-            Span span = spanItr.next();
-            if (span.context().spanId() == traceContext.context().spanId()) {
-                return span;
-            }
-        }
-        return lastSpan;
     }
 
 }
