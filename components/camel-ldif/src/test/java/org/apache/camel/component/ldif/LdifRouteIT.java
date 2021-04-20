@@ -44,6 +44,7 @@ import org.apache.directory.server.core.integ5.DirectoryExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.apache.directory.server.integ.ServerIntegrationUtils.getWiredConnection;
@@ -56,7 +57,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(DirectoryExtension.class)
 @CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
-public class LdifRouteTest extends AbstractLdapTestUnit {
+@EnabledIfSystemProperty(named = "enable.ldif.itests", matches = "true",
+                         disabledReason = "the tests does not work due to complex ldap server environment")
+public class LdifRouteIT extends AbstractLdapTestUnit {
     // Constants
     private static final String LDAP_CONN_NAME = "conn";
     private static final String ENDPOINT_LDIF = "ldif:" + LDAP_CONN_NAME;
