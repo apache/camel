@@ -22,10 +22,10 @@ release
 
 The catalog provides a wealth of information that tooling can tap into and use.
 
-For example, Camel tooling for IDEA, Eclipse and VSCode uses the catalog in the editor
+For example, https://plugins.jetbrains.com/plugin/9371-apache-camel-idea-plugin[Camel tooling for IDEA], https://marketplace.eclipse.org/content/language-support-apache-camel[Eclipse] and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-apache-camel[VSCode] uses the catalog in the editor
 to know all details about every EIP and component Camel supports.
 
-The Camel Maven validation plugin uses the catalog during validation of all the
+The https://camel.apache.org/manual/latest/camel-report-maven-plugin.html#_running_the_goal_on_any_maven_project[Camel Maven validation] plugin uses the catalog during validation of all the
 Camel endpoints found while scanning the source code.
 
 == Layout of camel-catalog
