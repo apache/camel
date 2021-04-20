@@ -33,6 +33,8 @@ function deleteComponentSymlinks () {
   return del([
     'components/modules/ROOT/pages/*',
     '!components/modules/ROOT/pages/index.adoc',
+    '!components/modules/ROOT/pages/vertx-kafka-component.adoc',
+
   ])
 }
 
