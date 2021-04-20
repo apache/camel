@@ -68,6 +68,8 @@ public class AthenaEndpointTest {
                                                                                          + "&delay=3"
                                                                                          + "&maxAttempts=4"
                                                                                          + "&retry=always"
+                                                                                         + "&accessKey=unused"
+                                                                                         + "&secretKey=unused"
                                                                                          + "&resetWaitTimeoutOnRetry=false"))
                                                                                                  .getConfiguration();
 
@@ -96,7 +98,7 @@ public class AthenaEndpointTest {
     @Test
     public void defaultEndpointParams() {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
-                "aws2-athena://label")).getConfiguration();
+                "aws2-athena://label?accessKey=unused&secretKey=unused")).getConfiguration();
 
         assertEquals(amazonAthenaClient, configuration.getAmazonAthenaClient());
         assertEquals(Athena2Operations.startQueryExecution, configuration.getOperation());
@@ -125,6 +127,8 @@ public class AthenaEndpointTest {
         Athena2Configuration configuration = ((Athena2Endpoint) camelContext.getEndpoint(
                 "aws2-athena://label"
                                                                                          + "?operation=getQueryExecution"
+                                                                                         + "&accessKey=unused"
+                                                                                         + "&secretKey=unused"
                                                                                          + "&queryExecutionId=123"))
                                                                                                  .getConfiguration();
 
@@ -140,6 +144,8 @@ public class AthenaEndpointTest {
                                                                                          + "&queryExecutionId=123"
                                                                                          + "&outputType=SelectList"
                                                                                          + "&maxResults=1"
+                                                                                         + "&accessKey=unused"
+                                                                                         + "&secretKey=unused"
                                                                                          + "&nextToken=nt")).getConfiguration();
 
         assertEquals(Athena2Operations.getQueryResults, configuration.getOperation());
@@ -156,6 +162,8 @@ public class AthenaEndpointTest {
                                                                                          + "?operation=listQueryExecutions"
                                                                                          + "&maxResults=1"
                                                                                          + "&nextToken=nt"
+                                                                                         + "&accessKey=unused"
+                                                                                         + "&secretKey=unused"
                                                                                          + "&workGroup=wg")).getConfiguration();
 
         assertEquals(Athena2Operations.listQueryExecutions, configuration.getOperation());

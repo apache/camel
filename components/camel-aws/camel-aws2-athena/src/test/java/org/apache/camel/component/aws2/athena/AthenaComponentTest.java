@@ -373,19 +373,19 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:getQueryExecution")
-                        .to("aws2-athena://label?operation=getQueryExecution")
+                        .to("aws2-athena://label?operation=getQueryExecution&accessKey=unused&secretKey=unused&region=eu-west-1")
                         .to("mock:result");
 
                 from("direct:getQueryResults")
-                        .to("aws2-athena://label?operation=getQueryResults")
+                        .to("aws2-athena://label?operation=getQueryResults&accessKey=unused&secretKey=unused&region=eu-west-1")
                         .to("mock:result");
 
                 from("direct:listQueryExecutions")
-                        .to("aws2-athena://label?operation=listQueryExecutions")
+                        .to("aws2-athena://label?operation=listQueryExecutions&accessKey=unused&secretKey=unused&region=eu-west-1")
                         .to("mock:result");
 
                 from("direct:startQueryExecution")
-                        .to("aws2-athena://label")
+                        .to("aws2-athena://label?accessKey=unused&secretKey=unused")
                         .to("mock:result");
             }
         };
