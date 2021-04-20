@@ -30,10 +30,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
 })
 public class EC2ComponentManualIT extends CamelTestSupport {
 
@@ -219,23 +219,23 @@ public class EC2ComponentManualIT extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:createAndRun")
-                        .to("aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=createAndRunInstances");
+                        .to("aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=createAndRunInstances");
                 from("direct:stop").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=stopInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=stopInstances");
                 from("direct:start").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=startInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=startInstances");
                 from("direct:terminate").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=terminateInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=terminateInstances");
                 from("direct:describe").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=describeInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=describeInstances");
                 from("direct:describeStatus")
-                        .to("aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=describeInstancesStatus");
+                        .to("aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=describeInstancesStatus");
                 from("direct:reboot").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=rebootInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=rebootInstances");
                 from("direct:monitor").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=monitorInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=monitorInstances");
                 from("direct:unmonitor").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}&operation=unmonitorInstances");
+                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=unmonitorInstances");
             }
         };
     }

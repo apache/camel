@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
 })
 public class S3ComponentManualIT extends CamelTestSupport {
 

@@ -41,14 +41,14 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.access.key and -Daws.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
+        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
 })
 public class EventbridgePutRuleSqsManualIT extends CamelTestSupport {
-    private static String accessKey = System.getProperty("aws.access.key");
-    private static String secretKey = System.getProperty("aws.secret.key");
+    private static String accessKey = System.getProperty("aws.manual.access.key");
+    private static String secretKey = System.getProperty("aws.manual.secret.key");
 
     @BindToRegistry("eventbridge-client")
     EventBridgeClient eventbridgeClient
