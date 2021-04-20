@@ -23,7 +23,6 @@ import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -60,26 +59,13 @@ public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
         S3ClientBuilder clientBuilder = S3Client.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
                                            + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            DefaultCredentialsProvider cred = DefaultCredentialsProvider.create();
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(cred);
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(cred);
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
+            clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
