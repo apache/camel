@@ -2968,52 +2968,10 @@ Language, such as en for english.
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element name="correlationExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The expression used to calculate the correlation key to use for aggregation. The
-Exchange which has the same correlation key is aggregated together. If the
-correlation key could not be evaluated an Exception is thrown. You can disable
-this by using the ignoreBadCorrelationKeys option.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="completionPredicate" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-A Predicate to indicate when an aggregated exchange is complete. If this is not
-specified and the AggregationStrategy object implements Predicate, the
-aggregationStrategy object will be used as the completionPredicate.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="completionTimeoutExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Time in millis that an aggregated exchange should be inactive before its
-complete (timeout). This option can be set as either a fixed value or using an
-Expression which allows you to evaluate a timeout dynamically - will use Long as
-result. If both are set Camel will fallback to use the fixed value if the
-Expression result was null or 0. You cannot use this option together with
-completionInterval, only one of the two can be used. By default the timeout
-checker runs every second, you can use the completionTimeoutCheckerInterval
-option to configure how frequently to run the checker. The timeout is an
-approximation and there is no guarantee that the a timeout is triggered exactly
-after the timeout value. It is not recommended to use very low timeout values or
-checker intervals.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="completionSizeExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Number of messages aggregated before the aggregation is complete. This option
-can be set as either a fixed value or using an Expression which allows you to
-evaluate a size dynamically - will use Integer as result. If both are set Camel
-will fallback to use the fixed value if the Expression result was null or 0.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element name="correlationExpression" type="tns:expressionSubElementDefinition"/>
+          <xs:element minOccurs="0" name="completionPredicate" type="tns:expressionSubElementDefinition"/>
+          <xs:element minOccurs="0" name="completionTimeoutExpression" type="tns:expressionSubElementDefinition"/>
+          <xs:element minOccurs="0" name="completionSizeExpression" type="tns:expressionSubElementDefinition"/>
           <xs:element minOccurs="0" ref="tns:optimisticLockRetryPolicy"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
@@ -3464,22 +3422,8 @@ implementation. Default value: Singleton
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="exception" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The exception(s) to catch.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets an additional predicate that should be true before the onCatch is
-triggered. To be used for fine grained controlling whether a thrown exception
-should be intercepted by this exception type or not.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="exception" type="xs:string"/>
+          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
@@ -4474,20 +4418,8 @@ POJOs as the AggregationStrategy.
 
   <xs:complexType name="contextScanDefinition">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="excludes" type="xs:string">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Exclude finding route builder from these java package names.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="includes" type="xs:string">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Include finding route builder from these java package names.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="excludes" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="includes" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="includeNonSingletons" type="xs:string">
       <xs:annotation>
@@ -5477,14 +5409,7 @@ specified using uri syntax, eg mynamecount=4&type=gold.
     <xs:complexContent>
       <xs:extension base="tns:loadBalancer">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="exception" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-A list of class names for specific exceptions to monitor. If no exceptions are
-configured then all exceptions are monitored.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="exception" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="roundRobin" type="xs:string">
           <xs:annotation>
@@ -5571,13 +5496,7 @@ Refers to the custom load balancer to lookup from the registry.
     <xs:complexContent>
       <xs:extension base="tns:loadBalancer">
         <xs:sequence>
-          <xs:element name="correlationExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The correlation expression to use to calculate the correlation key.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element name="correlationExpression" type="tns:expressionSubElementDefinition"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -5849,24 +5768,8 @@ it reaches the end when Camel is shut down. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="configuration" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Configurations for Apache Any23 as key-value pairs in order to customize the
-extraction process. The list of supported parameters can be found here. If not
-provided, a default configuration is used.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="extractors" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-List of Any23 extractors to be used in the unmarshal operation. A list of the
-available extractors can be found here here. If not provided, all the available
-extractors are used.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="configuration" type="tns:propertyDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="extractors" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="outputFormat" type="xs:string">
           <xs:annotation>
@@ -6289,13 +6192,7 @@ stream. Is by default false. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-To configure the CSV headers.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="formatRef" type="xs:string">
           <xs:annotation>
@@ -7990,38 +7887,10 @@ value: false
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="converters" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-List of class names for using custom XStream converters. The classes must be of
-type com.thoughtworks.xstream.converters.Converter.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="aliases" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Alias a Class to a shorter name to be used in XML elements.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="omitFields" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Prevents a field from being serialized. To omit a field you must always provide
-the declaring type and not necessarily the type that is converted. Multiple
-values can be separated by comma.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="implicitCollections" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Adds a default implicit collection which is used for any unmapped XML tag.
-Multiple values can be separated by comma.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="converters" type="tns:propertyDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="aliases" type="tns:propertyDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="omitFields" type="tns:propertyDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="implicitCollections" type="tns:propertyDefinition"/>
         </xs:sequence>
         <xs:attribute name="permissions" type="xs:string">
           <xs:annotation>
@@ -8598,15 +8467,7 @@ backward compatibility. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets an additional predicate that should be true before the onCompletion is
-triggered. To be used for fine grained controlling whether a completion callback
-should be invoked or not.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
@@ -8735,46 +8596,12 @@ this on completion. By default this feature is off. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" name="exception" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-A set of exceptions to react upon.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets an additional predicate that should be true before the onException is
-triggered. To be used for fine grained controlling whether a thrown exception
-should be intercepted by this exception type or not.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="retryWhile" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the retry while predicate. Will continue retrying until predicate returns
-false.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" name="exception" type="xs:string"/>
+          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition"/>
+          <xs:element minOccurs="0" name="retryWhile" type="tns:expressionSubElementDefinition"/>
           <xs:element minOccurs="0" ref="tns:redeliveryPolicy"/>
-          <xs:element minOccurs="0" name="handled" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets whether the exchange should be marked as handled or not.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="continued" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets whether the exchange should handle and continue routing from the point of
-failure. If this option is enabled then its considered handled as well.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="handled" type="tns:expressionSubElementDefinition"/>
+          <xs:element minOccurs="0" name="continued" type="tns:expressionSubElementDefinition"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
@@ -9246,27 +9073,9 @@ Set if validation is required for this output type. Default value: false
 
   <xs:complexType name="packageScanDefinition">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" name="package" type="xs:string">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Sets the java package names to use for scanning for route builder classes.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="excludes" type="xs:string">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Exclude finding route builder from these java package names.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="includes" type="xs:string">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Include finding route builder from these java package names.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element maxOccurs="unbounded" name="package" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="excludes" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="includes" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -10424,37 +10233,9 @@ producers.
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element minOccurs="0" name="compensation" type="tns:sagaActionUriDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The compensation endpoint URI that must be called to compensate all changes done
-in the route. The route corresponding to the compensation URI must perform
-compensation and complete without error. If errors occur during compensation,
-the saga service may call again the compensation URI to retry.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="completion" type="tns:sagaActionUriDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The completion endpoint URI that will be called when the Saga is completed
-successfully. The route corresponding to the completion URI must perform
-completion tasks and terminate without error. If errors occur during completion,
-the saga service may call again the completion URI to retry.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:sagaOptionDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Allows to save properties of the current exchange in order to re-use them in a
-compensation/completion callback route. Options are usually helpful e.g. to
-store and retrieve identifiers of objects that should be deleted in compensating
-actions. Option values will be transformed into input headers of the
-compensation/completion exchange.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="compensation" type="tns:sagaActionUriDefinition"/>
+          <xs:element minOccurs="0" name="completion" type="tns:sagaActionUriDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:sagaOptionDefinition"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
@@ -11327,14 +11108,7 @@ rejection handler. Is by default true. Default value: true
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
           </xs:choice>
-          <xs:element minOccurs="0" name="correlationExpression" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The expression used to calculate the correlation key to use for throttle
-grouping. The Exchange which has the same correlation key is throttled together.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="correlationExpression" type="tns:expressionSubElementDefinition"/>
         </xs:sequence>
         <xs:attribute name="executorServiceRef" type="xs:string">
           <xs:annotation>
@@ -11775,14 +11549,7 @@ Sets a reference to use for lookup the policy in the registry.
     <xs:complexContent>
       <xs:extension base="tns:toDynamicDefinition">
         <xs:sequence>
-          <xs:element minOccurs="0" name="body" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Uses the expression for creating a new body as the message to use for wire
-tapping.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="body" type="tns:expressionSubElementDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:setHeader"/>
         </xs:sequence>
         <xs:attribute name="processorRef" type="xs:string">
@@ -11835,14 +11602,7 @@ needed before the exchange is send.
     <xs:complexContent>
       <xs:extension base="tns:serviceCallServiceFilterConfiguration">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="servers" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the server blacklist. Each entry can be a list of servers separated by
-comma in the format: servicehost:port,servicehost2:port,servicehost3:port.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="servers" type="xs:string"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -11860,15 +11620,7 @@ comma in the format: servicehost:port,servicehost2:port,servicehost3:port.
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="properties" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Set client properties to use. These properties are specific to what service call
-implementation are in use. For example if using ribbon, then the client
-properties are define in com.netflix.client.config.CommonClientConfigKey.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="properties" type="tns:propertyDefinition"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -12232,14 +11984,7 @@ Default value: false
     <xs:complexContent>
       <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="servers" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the server list. Each entry can be a list of servers separated by comma in
-the format: servicehost:port,servicehost2:port,servicehost3:port.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="servers" type="xs:string"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -12368,13 +12113,7 @@ Sets the Ribbon client name.
             <xs:element ref="tns:ribbonLoadBalancer"/>
             <xs:element ref="tns:defaultLoadBalancer"/>
           </xs:choice>
-          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Configures the Expression using the given configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration"/>
         </xs:sequence>
         <xs:attribute name="uri" type="xs:string">
           <xs:annotation>
@@ -12576,13 +12315,7 @@ ServiceCallConstants.SERVICE_PORT. Default value: CamelServiceCallServicePort
             <xs:element ref="tns:ribbonLoadBalancer"/>
             <xs:element ref="tns:defaultLoadBalancer"/>
           </xs:choice>
-          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Configures the Expression using the given configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string">
           <xs:annotation>
@@ -13355,23 +13088,11 @@ default value is true.
       <xs:element minOccurs="0" name="allowableValues">
         <xs:complexType>
           <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string">
-              <xs:annotation>
-                <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter list of allowable values (enum).
-                ]]></xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter examples.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required">
       <xs:annotation>
@@ -13459,20 +13180,8 @@ Property value.
 
   <xs:complexType name="restOperationResponseMsgDefinition">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="tns:restOperationResponseHeaderDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Adds a response header.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Examples of response messages.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="tns:restOperationResponseHeaderDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition"/>
     </xs:sequence>
     <xs:attribute name="code" type="xs:string">
       <xs:annotation>
@@ -13502,13 +13211,7 @@ The response model.
       <xs:element minOccurs="0" name="allowableValues">
         <xs:complexType>
           <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string">
-              <xs:annotation>
-                <xs:documentation xml:lang="en"><![CDATA[
-Sets the Swagger Parameter list of allowable values.
-                ]]></xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -13708,55 +13411,12 @@ Sets the component name that this definition will apply to.
 
   <xs:complexType name="restConfigurationDefinition">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="componentProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure as many additional properties for the rest component in use.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="endpointProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure as many additional properties for the rest endpoint in use.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="consumerProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure as many additional properties for the rest consumer in use.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormatProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure as many additional properties for the data formats in use.
-For example set property prettyPrint to true to have json outputted in pretty
-mode. The properties can be prefixed to denote the option is only for either
-JSON or XML and for either the IN or the OUT. The prefixes are: json.in.
-json.out. xml.in. xml.out. For example a key with value
-xml.out.mustBeJAXBElement is only for the XML data format for the outgoing. A
-key without a prefix is a common key for all situations.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="apiProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure as many additional properties for the api documentation
-(swagger). For example set property api.title to my cool stuff.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="corsHeaders" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Allows to configure custom CORS headers.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="componentProperty" type="tns:restPropertyDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="endpointProperty" type="tns:restPropertyDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="consumerProperty" type="tns:restPropertyDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormatProperty" type="tns:restPropertyDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="apiProperty" type="tns:restPropertyDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="corsHeaders" type="tns:restPropertyDefinition"/>
     </xs:sequence>
     <xs:attribute name="component" type="xs:string">
       <xs:annotation>
@@ -14130,13 +13790,7 @@ A short description for security scheme.
     <xs:complexContent>
       <xs:extension base="tns:restSecurityDefinition">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="scopes" type="tns:restPropertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The available scopes for an OAuth2 security scheme.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="scopes" type="tns:restPropertyDefinition"/>
         </xs:sequence>
         <xs:attribute name="authorizationUrl" type="xs:string">
           <xs:annotation>
@@ -14349,17 +14003,7 @@ password, application or accessCode.
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:globalOptions"/>
           <xs:element minOccurs="0" ref="tns:propertyPlaceholder"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="package" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the package names to be recursively searched for Java classes which extend
-org.apache.camel.builder.RouteBuilder to be auto-wired up to the CamelContext as
-a route. Note that classes are excluded if they are specifically configured in
-the spring.xml A more advanced configuration can be done using
-setPackageScan(org.apache.camel.model.PackageScanDefinition).
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="package" type="xs:string"/>
           <xs:element minOccurs="0" ref="tns:packageScan"/>
           <xs:element minOccurs="0" ref="tns:contextScan"/>
           <xs:element minOccurs="0" ref="tns:streamCaching"/>
@@ -14371,44 +14015,14 @@ setPackageScan(org.apache.camel.model.PackageScanDefinition).
             <xs:element ref="tns:consumerTemplate"/>
           </xs:choice>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:errorHandler"/>
-          <xs:element minOccurs="0" name="defaultServiceCallConfiguration" type="tns:serviceCallConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-ServiceCall EIP default configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="defaultServiceCallConfiguration" type="tns:serviceCallConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:serviceCallConfiguration"/>
-          <xs:element minOccurs="0" name="defaultHystrixConfiguration" type="tns:hystrixConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Hystrix EIP default configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="defaultHystrixConfiguration" type="tns:hystrixConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:hystrixConfiguration"/>
-          <xs:element minOccurs="0" name="defaultResilience4jConfiguration" type="tns:resilience4JConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Resilience4j EIP default configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="defaultResilience4jConfiguration" type="tns:resilience4JConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:resilience4jConfiguration"/>
-          <xs:element minOccurs="0" name="defaultFaultToleranceConfiguration" type="tns:faultToleranceConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-MicroProfile Fault Tolerance EIP default configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="faultToleranceConfiguration" type="tns:resilience4JConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-MicroProfile Circuit Breaker EIP configurations.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="defaultFaultToleranceConfiguration" type="tns:faultToleranceConfigurationDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="faultToleranceConfiguration" type="tns:resilience4JConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplateContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeBuilder"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeContextRef"/>
@@ -14747,13 +14361,7 @@ Default value: WARN
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence>
-          <xs:element minOccurs="0" name="redeliveryPolicy" type="tns:camelRedeliveryPolicyFactoryBean">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the redelivery settings.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="redeliveryPolicy" type="tns:camelRedeliveryPolicyFactoryBean"/>
         </xs:sequence>
         <xs:attribute name="type" type="tns:errorHandlerType">
           <xs:annotation>
