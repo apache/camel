@@ -280,15 +280,15 @@ above PGPDataFormat class selects in a certain predefined way the keys
 which should be used for signing/encryption or verifying/decryption. If
 you have special requirements how your keys should be selected you
 should use the
-https://github.com/apache/camel/blob/master/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPKeyAccessDataFormat.java[PGPKeyAccessDataFormat]
+https://github.com/apache/camel/blob/main/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPKeyAccessDataFormat.java[PGPKeyAccessDataFormat]
 class instead and implement the interfaces
-https://github.com/apache/camel/blob/master/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPPublicKeyAccessor.java[PGPPublicKeyAccessor]
+https://github.com/apache/camel/blob/main/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPPublicKeyAccessor.java[PGPPublicKeyAccessor]
 and
-https://github.com/apache/camel/blob/master/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPSecretKeyAccessor.java[PGPSecretKeyAccessor]
+https://github.com/apache/camel/blob/main/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/PGPSecretKeyAccessor.java[PGPSecretKeyAccessor]
 as beans. There are default implementations
-https://github.com/apache/camel/blob/master/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/DefaultPGPPublicKeyAccessor.java[DefaultPGPPublicKeyAccessor]
+https://github.com/apache/camel/blob/main/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/DefaultPGPPublicKeyAccessor.java[DefaultPGPPublicKeyAccessor]
 and
-https://github.com/apache/camel/blob/master/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/DefaultPGPSecretKeyAccessor.java[DefaultPGPSecretKeyAccessor]
+https://github.com/apache/camel/blob/main/components/camel-crypto/src/main/java/org/apache/camel/converter/crypto/DefaultPGPSecretKeyAccessor.java[DefaultPGPSecretKeyAccessor]
 which cache the keys, so that not every time the keyring is parsed when
 the processor is called.
 

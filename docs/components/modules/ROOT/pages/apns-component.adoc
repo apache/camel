@@ -149,7 +149,7 @@ source code].
 In order to use secure connection, an instance of `org.apache.camel.support.jsse.SSLContextParameters`
  should be injected to `org.apache.camel.component.apns.factory.ApnsServiceFactory` which is
  used to configure the component. See the test resources for an example.
- https://github.com/apache/camel/blob/master/components/camel-apns/src/test/resources/org/apache/camel/component/apns/spring/SpringApnsConsumerTest-context.xml[ssl example]
+ https://github.com/apache/camel/blob/main/components/camel-apns/src/test/resources/org/apache/camel/component/apns/spring/SpringApnsConsumerTest-context.xml[ssl example]
 
 == Exchange data format
 
