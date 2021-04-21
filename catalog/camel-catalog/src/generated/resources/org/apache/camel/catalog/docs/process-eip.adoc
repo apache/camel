@@ -96,7 +96,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/P
 which supports the full xref:latest@manual:ROOT:endpoint.adoc[Endpoint] semantics given a
 Processor instance.
 
-So you just need to create a https://github.com/apache/camel/tree/master/components[Component] class by
+So you just need to create a https://github.com/apache/camel/tree/main/components[Component] class by
 deriving from
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
