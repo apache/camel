@@ -58,7 +58,8 @@ class CosmosDbClientOperationsIT {
         // delete all databases being used in the test
         clientWrapper.readAllDatabases()
                 .toIterable()
-                .forEach(cosmosDatabaseProperties -> clientWrapper.getDatabase(cosmosDatabaseProperties.getId()).delete().block());
+                .forEach(cosmosDatabaseProperties -> clientWrapper.getDatabase(cosmosDatabaseProperties.getId()).delete()
+                        .block());
     }
 
     @Test
@@ -117,8 +118,8 @@ class CosmosDbClientOperationsIT {
         final String prefixDatabaseNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
-        for(int i = 0 ; i < expectedSize; i++) {
-            clientWrapper.createDatabase(prefixDatabaseNames+i).block();
+        for (int i = 0; i < expectedSize; i++) {
+            clientWrapper.createDatabase(prefixDatabaseNames + i).block();
         }
 
         final long queryTotalSize = CosmosDbClientOperations.withClient(clientWrapper)
@@ -136,7 +137,7 @@ class CosmosDbClientOperationsIT {
         assertEquals(expectedSize, readAllTotalSize);
 
         // test against query single database
-        final String specificDatabaseName = prefixDatabaseNames+2;
+        final String specificDatabaseName = prefixDatabaseNames + 2;
         final String query = String.format("SELECT * from c where c.id = '%s'", specificDatabaseName);
         final CosmosDatabaseProperties singleDatabase = CosmosDbClientOperations.withClient(clientWrapper)
                 .queryDatabases(query, null)

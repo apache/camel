@@ -58,8 +58,7 @@ class CosmosDbDatabaseOperationsIT {
         // create our testing database
         clientWrapper.createDatabase(databaseName).block();
 
-        operations = CosmosDbClientOperations.withClient(clientWrapper)
-                .createDatabaseIfNotExistAndGetDatabaseOperations(databaseName, null);
+        operations = CosmosDbClientOperations.withClient(clientWrapper).getDatabaseOperations(databaseName);
     }
 
     @AfterAll
