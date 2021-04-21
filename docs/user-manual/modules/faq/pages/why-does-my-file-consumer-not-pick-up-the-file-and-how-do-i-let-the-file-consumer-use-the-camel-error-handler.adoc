@@ -36,12 +36,12 @@ documentation.
 ====
 
 If the component consumer extends the
-https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/impl/DefaultConsumer.java[`DefaultConsumer`]
+https://github.com/apache/camel/blob/main/camel-core/src/main/java/org/apache/camel/impl/DefaultConsumer.java[`DefaultConsumer`]
 from Camel, then it offers an
-https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/spi/ExceptionHandler.java[`org.apache.camel.spi.ExceptionHandler`]
+https://github.com/apache/camel/blob/main/camel-core/src/main/java/org/apache/camel/spi/ExceptionHandler.java[`org.apache.camel.spi.ExceptionHandler`]
 hook for end users to plug-in a custom strategy. The default
 implementation from Camel is
-https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/impl/LoggingExceptionHandler.java[`LoggingExceptionHandler`]
+https://github.com/apache/camel/blob/main/camel-core/src/main/java/org/apache/camel/impl/LoggingExceptionHandler.java[`LoggingExceptionHandler`]
 that will log the exception at `ERROR`/`WARN` level, and then ignore the
 exception.
 
