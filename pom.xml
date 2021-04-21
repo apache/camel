@@ -133,7 +133,7 @@
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
-        <groovy-version>3.0.7</groovy-version>
+        <groovy-version>3.0.8</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
