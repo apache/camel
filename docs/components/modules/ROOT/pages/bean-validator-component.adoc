@@ -281,7 +281,7 @@ and the `constraints-car.xml` file
 </constraint-mappings>
 ----------------------------------------------------------------------------------------------------
 
-Here is the XML syntax for the example route definition where **OrderedChecks** can be https://github.com/apache/camel/blob/master/components/camel-bean-validator/src/test/java/org/apache/camel/component/bean/validator/OrderedChecks.java 
+Here is the XML syntax for the example route definition where **OrderedChecks** can be https://github.com/apache/camel/blob/main/components/camel-bean-validator/src/test/java/org/apache/camel/component/bean/validator/OrderedChecks.java 
 
 Note that the body should include an instance of a class to validate.
 

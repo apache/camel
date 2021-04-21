@@ -414,7 +414,7 @@ And the equivalent Spring sample:
 == Using client timeout - SO_TIMEOUT
 
 See the
-https://github.com/apache/camel/blob/master/components/camel-http/src/test/java/org/apache/camel/component/http/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
+https://github.com/apache/camel/blob/main/components/camel-http/src/test/java/org/apache/camel/component/http/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
 unit test.
 
 == Configuring a Proxy

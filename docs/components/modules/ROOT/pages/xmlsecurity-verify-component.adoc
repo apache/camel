@@ -207,17 +207,17 @@ corresponding public key is necessary; you specify a key selector bean
 which provides this public key.
 
 The key accessor bean must implement the
-https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/KeyAccessor.java[`KeyAccessor`]
+https://github.com/apache/camel/blob/main/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/KeyAccessor.java[`KeyAccessor`]
 interface. The package `org.apache.camel.component.xmlsecurity.api`
 contains the default implementation class
-https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/DefaultKeyAccessor.java[`DefaultKeyAccessor`]
+https://github.com/apache/camel/blob/main/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/DefaultKeyAccessor.java[`DefaultKeyAccessor`]
 which reads the private key from a Java keystore.
 
 The key selector bean must implement the
 http://docs.oracle.com/javase/6/docs/api/javax/xml/crypto/KeySelector.html[`javax.xml.crypto.KeySelector`]
 interface. The package `org.apache.camel.component.xmlsecurity.api`
 contains the default implementation class
-https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/DefaultKeySelector.java[`DefaultKeySelector`]
+https://github.com/apache/camel/blob/main/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/DefaultKeySelector.java[`DefaultKeySelector`]
 which reads the public key from a keystore.
 
 In the example, the default signature algorithm
@@ -328,9 +328,9 @@ with the following path and query parameters:
 After the validation the node is extracted from the XML signature
 document which is finally returned to the output-message body. In the
 enveloping XML signature case, the default implementation
-https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/DefaultXmlSignature2Message.java[`DefaultXmlSignature2Message`]
+https://github.com/apache/camel/blob/main/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/DefaultXmlSignature2Message.java[`DefaultXmlSignature2Message`]
 of
-https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/XmlSignature2Message.java[`XmlSignature2Message`]
+https://github.com/apache/camel/blob/main/components/camel-xmlsecurity/src/main/java/org/apache/camel/component/xmlsecurity/api/XmlSignature2Message.java[`XmlSignature2Message`]
 does this for the node search type `Default` in the following way (see
 option `xmlSignature2Message`):
 
