@@ -78,8 +78,8 @@ from("activemq:My.Queue")
 For further examples of this pattern in use you could look at one of the
 JUnit tests
 
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
 
 *Using Spring XML*
 
@@ -164,7 +164,7 @@ dynamic language that can compute the uri dynamically using values from
 the current  xref:latest@manual:ROOT:exchange.adoc[Exchange].
 
 |`strategyRef` |  |Refers to an
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
 to be used to merge the reply from the external service, into a single
 outgoing message. By default Camel will use the reply from the external
 service as outgoing message. From *Camel 2.12* onwards you can also use
@@ -377,7 +377,7 @@ dynamic language that can compute the uri dynamically using values from
 the current xref:latest@manual:ROOT:exchange.adoc[Exchange].
 
 |`strategyRef` |  |Refers to an
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/AggregationStrategy.java[AggregationStrategy]
 to be used to merge the reply from the external service, into a single
 outgoing message. By default Camel will use the reply from the external
 service as outgoing message. From *Camel 2.12* onwards you can also use

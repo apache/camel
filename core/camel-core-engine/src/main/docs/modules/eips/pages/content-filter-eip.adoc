@@ -27,8 +27,8 @@ In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor]
 For further examples of this pattern in use you could look at one of the
 JUnit tests
 
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
-* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
+* https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
 
 == Using Spring XML
 

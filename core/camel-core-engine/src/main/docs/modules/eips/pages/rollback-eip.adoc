@@ -146,7 +146,7 @@ And then refer to "required" from the route:
 In this sample we want to ensure that two endpoints is under transaction
 control. These two endpoints inserts data into a database. +
 The sample is in its full as a
-https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit
+https://github.com/apache/camel/blob/main/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit
 test].
 
 First of all we setup the usual spring stuff in its configuration file.
@@ -162,12 +162,12 @@ configure a transaction policy bean, so we do not have any
 `PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
 *standard* Spring beans only, eg. there are no Camel specific
 configuration at
-all.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]Then
+all.https://github.com/apache/camel/blob/main/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]Then
 we are ready to define our Camel routes. We have two routes: 1 for
 success conditions, and 1 for a forced rollback condition. +
 This is after all based on a unit test. Notice that we mark each route
 as transacted using the *transacted*
-tag.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]That
+tag.https://github.com/apache/camel/blob/main/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]That
 is all that is needed to configure a Camel route as being transacted.
 Just remember to use the *transacted* DSL. The rest is standard Spring
 XML to setup the transaction manager.
@@ -176,15 +176,15 @@ XML to setup the transaction manager.
 
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
-its based on a https://github.com/apache/camel/blob/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[TransactionMinimalConfigurationTest.java] the destination is a mock endpoint.
+its based on a https://github.com/apache/camel/blob/main/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[TransactionMinimalConfigurationTest.java] the destination is a mock endpoint.
 
 First we configure the standard Spring XML to declare a JMS connection
 factory, a JMS transaction manager and our ActiveMQ component that we
 use in our
-routing.https://github.com/apache/camel/blob/master/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]And
+routing.https://github.com/apache/camel/blob/main/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]And
 then we configure our routes. Notice that all we have to do is mark the
 route as transacted using the *transacted*
-tag.https://github.com/apache/camel/blob/master/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]
+tag.https://github.com/apache/camel/blob/main/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]
 
 Transaction error handler
 
@@ -233,10 +233,10 @@ propagation behaviors for that where you configure it as follows:
 * The second route use `PROPAGATION_REQUIRES_NEW`
 
 This is configured in the Spring XML
-file.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml[MixedTransactionPropagationTest.xml]Then
+file.https://github.com/apache/camel/blob/main/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml[MixedTransactionPropagationTest.xml]Then
 in the routes you use transacted DSL to indicate which of these two
 propagations it
-uses.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.java[MixedTransactionPropagationTest.java]Notice
+uses.https://github.com/apache/camel/blob/main/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.java[MixedTransactionPropagationTest.java]Notice
 how we have configured the `onException` in the 2nd route to indicate in
 case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells

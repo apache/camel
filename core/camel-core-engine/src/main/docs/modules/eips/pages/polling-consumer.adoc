@@ -5,9 +5,9 @@ Camel supports implementing the
 http://www.enterpriseintegrationpatterns.com/PollingConsumer.html[Polling
 Consumer] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using the
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer]
 interface which can be created via the
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/Endpoint.java[Endpoint.createPollingConsumer()]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/Endpoint.java[Endpoint.createPollingConsumer()]
 method.
 
 image::eip/PollingConsumerSolution.gif[image]
@@ -24,21 +24,21 @@ Exchange exchange = consumer.receive();
 The *`ConsumerTemplate`* (discussed below) is also available.
 
 There are three main polling methods on
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer]
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Method name |Description
-|https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer.receive()]
+|https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer.receive()]
 |Waits until a message is available and then returns it; potentially
 blocking forever
 
-|https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer.receive(long)]
+|https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer.receive(long)]
 |Attempts to receive a message exchange, waiting up to the given timeout
 and returning null if no message exchange could be received within the
 time available
 
-|https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer.receiveNoWait()]
+|https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer.receiveNoWait()]
 |Attempts to receive a message exchange immediately without waiting and
 returning null if a message exchange is not available yet
 |=======================================================================
@@ -163,16 +163,16 @@ scheduled poll is used to monitor some kind of state or resource and
 then fire message exchanges.
 
 Since this a such a common pattern, polling components can extend the
-https://github.com/apache/camel/blob/master/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
+https://github.com/apache/camel/blob/main/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
 base class which makes it simpler to implement this pattern. There is
 also the xref:components::quartz-component.adoc[Quartz Component] which provides scheduled
 delivery of messages using the Quartz enterprise scheduler.
 
 For more details see:
 
-* https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer]
+* https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/PollingConsumer.java[PollingConsumer]
 * Scheduled Polling Components
-** https://github.com/apache/camel/blob/master/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
+** https://github.com/apache/camel/blob/main/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
 ** xref:components::scheduler-component.adoc[Scheduler]
 ** xref:components::atom-component.adoc[Atom]
 ** xref:components::beanstalk-component.adoc[Beanstalk]
@@ -316,7 +316,7 @@ kicking-in.
 [[PollingConsumer-AboutErrorHandlingandScheduledPollingConsumers]]
 === About Error Handling and Scheduled Polling Consumers
 
-https://github.com/apache/camel/blob/master/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
+https://github.com/apache/camel/blob/main/core/camel-support/src/main/java/org/apache/camel/support/ScheduledPollConsumer.java[ScheduledPollConsumer]
 is scheduled based and its *`run`* method is invoked periodically based
 on schedule settings. But errors can also occur when a poll is being
 executed. For instance if Camel should poll a file network, and this
