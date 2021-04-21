@@ -63,7 +63,7 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         }
         Tag tag = getEndpoint().getDigitalOceanClient().createTag(name);
         LOG.trace("Create Tag [{}] ", tag);
-        exchange.getOut().setBody(tag);
+        exchange.getMessage().setBody(tag);
     }
 
     private void getTag(Exchange exchange) throws Exception {
@@ -74,14 +74,14 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         }
         Tag tag = getEndpoint().getDigitalOceanClient().getTag(name);
         LOG.trace("Tag [{}] ", tag);
-        exchange.getOut().setBody(tag);
+        exchange.getMessage().setBody(tag);
     }
 
     private void getTags(Exchange exchange) throws Exception {
         Tags tags = getEndpoint().getDigitalOceanClient().getAvailableTags(configuration.getPage(), configuration.getPerPage());
         LOG.trace("All Tags : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 tags.getTags());
-        exchange.getOut().setBody(tags.getTags());
+        exchange.getMessage().setBody(tags.getTags());
     }
 
     private void deleteTag(Exchange exchange) throws Exception {
@@ -92,7 +92,7 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         }
         Delete delete = getEndpoint().getDigitalOceanClient().deleteTag(name);
         LOG.trace("Delete Tag [{}] ", delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
     }
 
 }
