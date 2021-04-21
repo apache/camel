@@ -98,12 +98,20 @@ public class SplunkHECProducer extends DefaultProducer {
 
     Map<String, Object> createPayload(Message message) {
         Object body = message.getBody();
-        Map<String, Object> eventPayload = new HashMap<>();
-        eventPayload.put("body", body);
-        eventPayload.put("headers", message.getHeaders());
         Map<String, Object> payload = new HashMap<>();
         buildPayload(payload);
-        payload.put("event", eventPayload);
+
+        if (endpoint.getConfiguration().isBodyOnly()) {
+            payload.put("event", body);
+        } else if (endpoint.getConfiguration().isHeadersOnly()) {
+            payload.put("event", message.getHeaders());
+        } else {
+            Map<String, Object> eventPayload = new HashMap<>();
+            eventPayload.put("body", body);
+            eventPayload.put("headers", message.getHeaders());
+            payload.put("event", eventPayload);
+        }
+
         return payload;
     }
 

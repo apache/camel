@@ -21,6 +21,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bodyonly":
+        case "bodyOnly": target.getConfiguration().setBodyOnly(property(camelContext, boolean.class, value)); return true;
+        case "headersonly":
+        case "headersOnly": target.getConfiguration().setHeadersOnly(property(camelContext, boolean.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "https": target.getConfiguration().setHttps(property(camelContext, boolean.class, value)); return true;
         case "index": target.getConfiguration().setIndex(property(camelContext, java.lang.String.class, value)); return true;
@@ -38,6 +42,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bodyonly":
+        case "bodyOnly": return boolean.class;
+        case "headersonly":
+        case "headersOnly": return boolean.class;
         case "host": return java.lang.String.class;
         case "https": return boolean.class;
         case "index": return java.lang.String.class;
@@ -56,6 +64,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bodyonly":
+        case "bodyOnly": return target.getConfiguration().isBodyOnly();
+        case "headersonly":
+        case "headersOnly": return target.getConfiguration().isHeadersOnly();
         case "host": return target.getConfiguration().getHost();
         case "https": return target.getConfiguration().isHttps();
         case "index": return target.getConfiguration().getIndex();
