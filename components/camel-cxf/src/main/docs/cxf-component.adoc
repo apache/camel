@@ -308,7 +308,7 @@ ambiguity in name spaces to relay instance mappings.
 Take a look at the tests that show how you'd be able to relay/drop
 headers here:
 
-https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
+https://github.com/apache/camel/blob/main/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://github.com/apache/camel/blob/main/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
 
 * `POJO` and `PAYLOAD` modes are supported. In `POJO` mode, only
 out-of-band message headers are available for filtering as the in-band
