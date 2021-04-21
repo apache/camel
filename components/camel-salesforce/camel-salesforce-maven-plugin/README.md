@@ -1,6 +1,6 @@
 # Maven plugin for camel-salesforce component #
 
-This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component). 
+This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component). 
 
 ## Usage ##
 
