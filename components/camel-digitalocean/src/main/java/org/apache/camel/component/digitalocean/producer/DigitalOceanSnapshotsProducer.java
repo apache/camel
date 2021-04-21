@@ -75,7 +75,7 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         LOG.trace("All Snapshots : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 snapshots.getSnapshots());
-        exchange.getOut().setBody(snapshots.getSnapshots());
+        exchange.getMessage().setBody(snapshots.getSnapshots());
     }
 
     private void getSnapshot(Exchange exchange) throws Exception {
@@ -87,7 +87,7 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         Snapshot snapshot = getEndpoint().getDigitalOceanClient().getSnaphotInfo(snapshotId);
         LOG.trace("Snapshot [{}] ", snapshot);
-        exchange.getOut().setBody(snapshot);
+        exchange.getMessage().setBody(snapshot);
 
     }
 
@@ -100,7 +100,7 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteSnapshot(snapshotId);
         LOG.trace("Delete Snapshot [{}] ", delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
 
     }
 

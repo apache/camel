@@ -73,13 +73,13 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
                     DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
         }
         LOG.trace("Key [{}] ", key);
-        exchange.getOut().setBody(key);
+        exchange.getMessage().setBody(key);
     }
 
     private void getKeys(Exchange exchange) throws Exception {
         Keys keys = getEndpoint().getDigitalOceanClient().getAvailableKeys(configuration.getPage());
         LOG.trace("All Keys : page {} [{}] ", configuration.getPage(), keys.getKeys());
-        exchange.getOut().setBody(keys.getKeys());
+        exchange.getMessage().setBody(keys.getKeys());
     }
 
     private void deleteKey(Exchange exchange) throws Exception {
@@ -97,7 +97,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Delete Key {}", delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
     }
 
     private void createKey(Exchange exchange) throws Exception {
@@ -122,7 +122,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
 
         key = getEndpoint().getDigitalOceanClient().createKey(key);
         LOG.trace("Key created {}", key);
-        exchange.getOut().setBody(key);
+        exchange.getMessage().setBody(key);
 
     }
 
@@ -147,7 +147,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Update Key [{}] ", key);
-        exchange.getOut().setBody(key);
+        exchange.getMessage().setBody(key);
     }
 
 }

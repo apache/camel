@@ -34,7 +34,7 @@ public class DigitalOceanAccountProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
         Account accountInfo = getEndpoint().getDigitalOceanClient().getAccountInfo();
         LOG.trace("Account [{}] ", accountInfo);
-        exchange.getOut().setBody(accountInfo);
+        exchange.getMessage().setBody(accountInfo);
     }
 
 }

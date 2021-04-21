@@ -86,7 +86,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
 
         Volumes volumes = getEndpoint().getDigitalOceanClient().getAvailableVolumes(region);
         LOG.trace("All Volumes for region {} [{}] ", region, volumes.getVolumes());
-        exchange.getOut().setBody(volumes.getVolumes());
+        exchange.getMessage().setBody(volumes.getVolumes());
 
     }
 
@@ -121,7 +121,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
 
         volume = getEndpoint().getDigitalOceanClient().createVolume(volume);
         LOG.trace("Volume created {}", volume);
-        exchange.getOut().setBody(volume);
+        exchange.getMessage().setBody(volume);
     }
 
     private void getVolume(Exchange exchange) throws Exception {
@@ -147,7 +147,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Volume [{}] ", volume);
-        exchange.getOut().setBody(volume);
+        exchange.getMessage().setBody(volume);
 
     }
 
@@ -160,7 +160,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         Snapshots snapshots = getEndpoint().getDigitalOceanClient().getVolumeSnapshots(volumeId, configuration.getPage(),
                 configuration.getPerPage());
         LOG.trace("All Snapshots for volume {} [{}] ", volumeId, snapshots.getSnapshots());
-        exchange.getOut().setBody(snapshots.getSnapshots());
+        exchange.getMessage().setBody(snapshots.getSnapshots());
     }
 
     private void deleteVolume(Exchange exchange) throws Exception {
@@ -183,7 +183,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Delete Volume [{}] ", delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
 
     }
 
@@ -214,7 +214,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
                     DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.VOLUME_NAME + " must be specified");
         }
 
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 
     private void detachVolumeToDroplet(Exchange exchange) throws Exception {
@@ -244,7 +244,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
                     DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.VOLUME_NAME + " must be specified");
         }
 
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
 
     }
 
@@ -280,7 +280,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
 
         Actions actions = getEndpoint().getDigitalOceanClient().getAvailableVolumeActions(volumeId);
         LOG.trace("Actions for Volume {} [{}] ", volumeId, actions.getActions());
-        exchange.getOut().setBody(actions.getActions());
+        exchange.getMessage().setBody(actions.getActions());
     }
 
 }

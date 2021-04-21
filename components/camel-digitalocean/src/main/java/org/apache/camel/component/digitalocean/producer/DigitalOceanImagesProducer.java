@@ -77,7 +77,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
                 = getEndpoint().getDigitalOceanClient().getUserImages(configuration.getPage(), configuration.getPerPage());
         LOG.trace("User images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 images.getImages());
-        exchange.getOut().setBody(images.getImages());
+        exchange.getMessage().setBody(images.getImages());
     }
 
     private void getImages(Exchange exchange) throws Exception {
@@ -93,7 +93,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         }
         LOG.trace("All Images : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
                 images.getImages());
-        exchange.getOut().setBody(images.getImages());
+        exchange.getMessage().setBody(images.getImages());
     }
 
     private void getImage(Exchange exchange) throws Exception {
@@ -112,7 +112,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         }
 
         LOG.trace("Image [{}] ", image);
-        exchange.getOut().setBody(image);
+        exchange.getMessage().setBody(image);
     }
 
     private void getImageActions(Exchange exchange) throws Exception {
@@ -126,7 +126,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
                 configuration.getPerPage());
         LOG.trace("Actions for Image {} : page {} / {} per page [{}] ", imageId, configuration.getPage(),
                 configuration.getPerPage(), actions.getActions());
-        exchange.getOut().setBody(actions.getActions());
+        exchange.getMessage().setBody(actions.getActions());
     }
 
     private void updateImage(Exchange exchange) throws Exception {
@@ -146,7 +146,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
         image.setName(name);
         image = getEndpoint().getDigitalOceanClient().updateImage(image);
         LOG.trace("Update Image {} [{}] ", imageId, image);
-        exchange.getOut().setBody(image);
+        exchange.getMessage().setBody(image);
     }
 
     private void deleteImage(Exchange exchange) throws Exception {
@@ -158,7 +158,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteImage(imageId);
         LOG.trace("Delete  Image {} [{}] ", imageId, delete);
-        exchange.getOut().setBody(delete);
+        exchange.getMessage().setBody(delete);
     }
 
     private void transferImage(Exchange exchange) throws Exception {
@@ -176,7 +176,7 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         Action action = getEndpoint().getDigitalOceanClient().transferImage(imageId, region);
         LOG.trace("Transfer  Image {} to Region {} [{}] ", imageId, region, action);
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 
     private void convertImageToSnapshot(Exchange exchange) throws Exception {
@@ -188,6 +188,6 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         Action action = getEndpoint().getDigitalOceanClient().convertImage(imageId);
         LOG.trace("Convert Image {} [{}] ", imageId, action);
-        exchange.getOut().setBody(action);
+        exchange.getMessage().setBody(action);
     }
 }
