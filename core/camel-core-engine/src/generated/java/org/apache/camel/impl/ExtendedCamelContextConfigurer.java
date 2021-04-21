@@ -61,6 +61,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "delayer":
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
+        case "dumproutes":
+        case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": target.setErrorHandlerFactory(property(camelContext, org.apache.camel.ErrorHandlerFactory.class, value)); return true;
         case "eventnotificationapplicable":
@@ -236,6 +238,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "delayer":
         case "Delayer": return java.lang.Long.class;
+        case "dumproutes":
+        case "DumpRoutes": return java.lang.Boolean.class;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return org.apache.camel.ErrorHandlerFactory.class;
         case "eventnotificationapplicable":
@@ -412,6 +416,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "delayer":
         case "Delayer": return target.getDelayer();
+        case "dumproutes":
+        case "DumpRoutes": return target.isDumpRoutes();
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return target.getErrorHandlerFactory();
         case "eventnotificationapplicable":

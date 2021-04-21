@@ -190,6 +190,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final boolean eventNotificationApplicable;
     private final boolean useDataType;
     private final boolean useBreadcrumb;
+    private final boolean dumpRoutes;
     private final String mdcLoggingKeysPattern;
     private final boolean useMDCLogging;
     private final List<Route> routes;
@@ -237,6 +238,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         eventNotificationApplicable = context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable();
         useDataType = context.isUseDataType();
         useBreadcrumb = context.isUseBreadcrumb();
+        dumpRoutes = context.isDumpRoutes();
         mdcLoggingKeysPattern = context.getMDCLoggingKeysPattern();
         useMDCLogging = context.isUseMDCLogging();
         messageHistory = context.isMessageHistory();
@@ -1159,6 +1161,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Boolean isDumpRoutes() {
+        return dumpRoutes;
+    }
+
+    @Override
+    public void setDumpRoutes(Boolean dumpRoutes) {
         throw new UnsupportedOperationException();
     }
 

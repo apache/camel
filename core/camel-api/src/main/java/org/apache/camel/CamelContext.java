@@ -1199,6 +1199,32 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setMDCLoggingKeysPattern(String pattern);
 
     /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     *
+     * @return <tt>true</tt> if dumping is enabled
+     */
+    Boolean isDumpRoutes();
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     *
+     * @param dumpRoutes <tt>true</tt> to enable dumping routes.
+     */
+    void setDumpRoutes(Boolean dumpRoutes);
+
+    /**
      * Whether to enable using data type on Camel messages.
      * <p/>
      * Data type are automatic turned on if one ore more routes has been explicit configured with input and output

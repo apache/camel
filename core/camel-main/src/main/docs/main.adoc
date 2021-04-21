@@ -38,6 +38,7 @@ The following table lists all the options:
 | *camel.main.configuration{zwsp}Classes* | Sets classes names that will be used to configure the camel context as example by providing custom beans through org.apache.camel.BindToRegistry annotation. |  | String
 | *camel.main.configurations* | Sets the configuration objects used to configure the camel context. |  | List
 | *camel.main.consumerTemplate{zwsp}CacheSize* | Consumer template endpoints cache size. | 1000 | int
+| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended to be used for production usage. This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML. | false | boolean
 | *camel.main.durationHitExitCode* | Sets the exit code for the application if duration was hit |  | int
 | *camel.main.durationMaxIdle{zwsp}Seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
 | *camel.main.durationMaxMessages* | To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
