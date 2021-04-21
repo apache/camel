@@ -46,6 +46,10 @@ public final class CosmosDbUtils {
         });
     }
 
+    public static <T> Flux<T> convertCosmosPagedFluxToFluxResults(final CosmosPagedFlux<T> pagedFlux) {
+        return convertCosmosPagedFluxToFluxResults(pagedFlux, null);
+    }
+
     public static void validateIfParameterIsNotEmpty(final Object param, final String paramName) {
         if (ObjectHelper.isEmpty(param)) {
             throw new IllegalArgumentException(paramName + " cannot be empty!");

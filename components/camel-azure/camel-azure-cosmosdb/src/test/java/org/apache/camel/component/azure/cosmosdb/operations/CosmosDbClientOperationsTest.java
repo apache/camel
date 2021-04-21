@@ -67,8 +67,8 @@ class CosmosDbClientOperationsTest {
 
         final CosmosDbClientOperations operations = CosmosDbClientOperations.withClient(client);
 
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryDatabases(null, null, null));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryDatabases("", null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryDatabases(null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryDatabases("", null));
     }
 
 }

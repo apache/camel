@@ -58,15 +58,15 @@ public class CosmosDbClientOperations {
         return new CosmosDbDatabaseOperations(getAndCreateDatabaseIfNotExist(databaseName, false, null));
     }
 
-    public Flux<CosmosDatabaseProperties> readAllDatabases(final Integer maxResults) {
-        return CosmosDbUtils.convertCosmosPagedFluxToFluxResults(client.readAllDatabases(), maxResults);
+    public Flux<CosmosDatabaseProperties> readAllDatabases() {
+        return CosmosDbUtils.convertCosmosPagedFluxToFluxResults(client.readAllDatabases());
     }
 
     public Flux<CosmosDatabaseProperties> queryDatabases(
-            final String query, final CosmosQueryRequestOptions queryRequestOptions, final Integer maxResults) {
+            final String query, final CosmosQueryRequestOptions queryRequestOptions) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
 
-        return CosmosDbUtils.convertCosmosPagedFluxToFluxResults(client.queryDatabases(query, queryRequestOptions), maxResults);
+        return CosmosDbUtils.convertCosmosPagedFluxToFluxResults(client.queryDatabases(query, queryRequestOptions));
     }
 
     private Mono<CosmosAsyncDatabase> getAndCreateDatabaseIfNotExist(

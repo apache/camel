@@ -88,7 +88,7 @@ class CosmosDbDatabaseOperationsTest {
 
         final CosmosDbDatabaseOperations databaseOperations = new CosmosDbDatabaseOperations(Mono.just(database));
 
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.queryContainers(null, null, null));
-        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.queryContainers("", null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.queryContainers(null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(() -> databaseOperations.queryContainers("", null));
     }
 }

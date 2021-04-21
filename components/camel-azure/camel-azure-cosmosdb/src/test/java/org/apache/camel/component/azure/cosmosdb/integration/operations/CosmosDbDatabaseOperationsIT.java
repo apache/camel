@@ -20,23 +20,29 @@ import java.util.Properties;
 
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClientBuilder;
-import com.azure.cosmos.models.CosmosDatabaseResponse;
+import com.azure.cosmos.models.CosmosContainerProperties;
+import com.azure.cosmos.models.CosmosContainerResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbDatabaseOperations;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbDatabaseOperationsIT {
+    private final static String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
+    private CosmosDbDatabaseOperations operations;
 
     @BeforeAll
     void prepare() throws Exception {
@@ -48,32 +54,100 @@ class CosmosDbDatabaseOperationsIT {
                 .buildAsyncClient();
 
         clientWrapper = new CosmosAsyncClientWrapper(client);
+
+        // create our testing database
+        clientWrapper.createDatabase(databaseName).block();
+
+        operations = CosmosDbClientOperations.withClient(clientWrapper)
+                .createDatabaseIfNotExistAndGetDatabaseOperations(databaseName, null);
+    }
+
+    @AfterAll
+    void tearDown() {
+        clientWrapper.getDatabase(databaseName).delete().block();
     }
 
     @Test
-    void testCreateDeleteDatabase() {
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    void testCreateDeleteContainer() {
+        final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
-        // test create database
-        final CosmosDatabaseResponse createdDatabase = CosmosDbClientOperations.withClient(clientWrapper)
-                .createDatabase(databaseName, null)
+        // test create container
+        final CosmosContainerResponse createdContainer = operations
+                .createContainer(containerId, "/test", null)
                 .block();
 
-        assertNotNull(createdDatabase);
-        assertEquals(databaseName, createdDatabase.getProperties().getId());
+        assertNotNull(createdContainer);
+        assertEquals(containerId, createdContainer.getProperties().getId());
 
         // successful if response code within 2xx
-        assertTrue(createdDatabase.getStatusCode() >= 200 && createdDatabase.getStatusCode() < 300);
+        assertTrue(createdContainer.getStatusCode() >= 200 && createdContainer.getStatusCode() < 300);
 
-        // test delete the created database
-        final CosmosDatabaseResponse deletedDatabase = CosmosDbClientOperations.withClient(clientWrapper)
-                .getDatabaseOperations(databaseName)
-                .deleteDatabase(null)
+        // test delete container
+        final CosmosContainerResponse deletedContainer = operations
+                .getContainerOperations(containerId)
+                .deleteContainer(null)
                 .block();
 
-        assertNotNull(deletedDatabase);
+        assertNotNull(deletedContainer);
 
         // successful if response code within 2xx
-        assertTrue(deletedDatabase.getStatusCode() >= 200 && deletedDatabase.getStatusCode() < 300);
+        assertTrue(deletedContainer.getStatusCode() >= 200 && deletedContainer.getStatusCode() < 300);
+    }
+
+    @Test
+    void testGetContainerOperations() {
+        final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+
+        // first try to get operations without creating the container
+        operations
+                .getContainerOperations(containerId)
+                .getContainerId()
+                .block();
+
+        // we expect an exception since container is not existing and we don't want to create a container
+        assertThrows(Exception.class, () -> clientWrapper.getDatabase(databaseName).getContainer(containerId).read().block());
+
+        // second we test if we want to create a container when we get container operations
+        operations
+                .createContainerIfNotExistAndGetContainerOperations(containerId, "/path", null)
+                .getContainerId()
+                .block();
+
+        assertNotNull(clientWrapper.getDatabase(databaseName).getContainer(containerId).read().block());
+    }
+
+    @Test
+    void testQueryAndReadAllContainers() {
+        // create bunch of containers
+        final String prefixContainerNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final int expectedSize = 5;
+
+        for (int i = 0; i < expectedSize; i++) {
+            clientWrapper.getDatabase(databaseName).createContainer(prefixContainerNames + i, "/path").block();
+        }
+
+        final long queryTotalSize = operations
+                .queryContainers("SELECT * from c", null)
+                .toStream()
+                .count();
+
+        final long readAllTotalSize = operations
+                .readAllContainers(null)
+                .toStream()
+                .count();
+
+        // assert all databases
+        assertEquals(expectedSize, queryTotalSize);
+        assertEquals(expectedSize, readAllTotalSize);
+
+        // test against query single container
+        final String specificContainerName = prefixContainerNames + 2;
+        final String query = String.format("SELECT * from c where c.id = '%s'", specificContainerName);
+        final CosmosContainerProperties singleContainer = operations
+                .queryContainers(query, null)
+                .blockFirst();
+
+        assertNotNull(singleContainer);
+        assertEquals(singleContainer.getId(), specificContainerName);
     }
 }

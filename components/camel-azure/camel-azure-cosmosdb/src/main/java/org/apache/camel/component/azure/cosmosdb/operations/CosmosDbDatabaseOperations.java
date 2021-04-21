@@ -85,19 +85,19 @@ public class CosmosDbDatabaseOperations {
     }
 
     public Flux<CosmosContainerProperties> readAllContainers(
-            final CosmosQueryRequestOptions queryRequestOptions, final Integer maxResults) {
+            final CosmosQueryRequestOptions queryRequestOptions) {
         return database
                 .flatMapMany(database -> CosmosDbUtils
-                        .convertCosmosPagedFluxToFluxResults(database.readAllContainers(queryRequestOptions), maxResults));
+                        .convertCosmosPagedFluxToFluxResults(database.readAllContainers(queryRequestOptions)));
     }
 
     public Flux<CosmosContainerProperties> queryContainers(
-            final String query, final CosmosQueryRequestOptions queryRequestOptions, final Integer maxResults) {
+            final String query, final CosmosQueryRequestOptions queryRequestOptions) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
 
         return database
                 .flatMapMany(database -> CosmosDbUtils
-                        .convertCosmosPagedFluxToFluxResults(database.queryContainers(query, queryRequestOptions), maxResults));
+                        .convertCosmosPagedFluxToFluxResults(database.queryContainers(query, queryRequestOptions)));
     }
 
     private Mono<CosmosAsyncContainer> getAndCreateContainerIfNotExist(

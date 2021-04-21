@@ -99,8 +99,7 @@ public class CosmosDbContainerOperations {
     }
 
     public <T> Flux<T> readAllItems(
-            final PartitionKey partitionKey, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType,
-            final Integer maxResults) {
+            final PartitionKey partitionKey, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
         CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
 
@@ -109,18 +108,17 @@ public class CosmosDbContainerOperations {
                 = queryRequestOptions == null ? new CosmosQueryRequestOptions() : queryRequestOptions;
         return container
                 .flatMapMany(container -> CosmosDbUtils.convertCosmosPagedFluxToFluxResults(
-                        container.readAllItems(partitionKey, requestOptions, itemType), maxResults));
+                        container.readAllItems(partitionKey, requestOptions, itemType)));
     }
 
     public <T> Flux<T> queryItems(
-            final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType,
-            final Integer maxResults) {
+            final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
         CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
 
         return container
                 .flatMapMany(container -> CosmosDbUtils.convertCosmosPagedFluxToFluxResults(
-                        container.queryItems(query, queryRequestOptions, itemType), maxResults));
+                        container.queryItems(query, queryRequestOptions, itemType)));
     }
 
     private <T> Mono<T> applyToContainer(final Function<CosmosAsyncContainer, Mono<T>> fn) {
