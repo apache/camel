@@ -121,6 +121,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String shutdownEager;
 
     @XmlAttribute
+    private String dumpRoutes;
+
+    @XmlAttribute
     private String useMDCLogging;
 
     @XmlAttribute
@@ -761,6 +764,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setShutdownEager(String shutdownEager) {
         this.shutdownEager = shutdownEager;
+    }
+
+    @Override
+    public String getDumpRoutes() {
+        return dumpRoutes;
+    }
+
+    public void setDumpRoutes(String dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
     }
 
     @Override
