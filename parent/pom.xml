@@ -509,7 +509,7 @@
         <snakeyaml-engine-version>2.2.1</snakeyaml-engine-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
-        <solr-version>8.6.1</solr-version>
+        <solr-version>8.8.2</solr-version>
         <solr-version-range>[8,9)</solr-version-range>
         <spark-version>2.4.6</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
