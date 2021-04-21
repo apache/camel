@@ -1112,7 +1112,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // are we already a try?
         if (def instanceof TryDefinition) {
-            return (TryDefinition) def;
+            // then we need special logic to end
+            TryDefinition td = (TryDefinition) def;
+            return (TryDefinition) td.onEndDoTry();
         }
 
         // okay end this and get back to the try

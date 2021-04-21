@@ -74,8 +74,78 @@ the `end()` should be at the end of the finally block. If we are not
 using a finally, then the `end()` should be at the end of the `doCatch`
 to indicate the end there.
 
+TIP: Instead of `end()` you can use `endDoTry()` to end and return back to try .. catch scope.
+
+=== Using nested doTry .. doCatch EIPs
+
+When nesting doTry .. doCatch from an outer doTry .. doCatch EIP, then pay extra attention
+when using Java DSL as the Java programming language is not _indent aware_ so you may write
+Java code that are indented in a way where you think that a catch block is associated with
+the other doTry but it is not.
+
+Given the following Java DSL:
+
+[source,java]
+----
+from("direct:test").routeId("myroute")
+    .doTry().
+        doTry().
+            throwException(new IllegalArgumentException("Forced by me"))
+        .doCatch(Exception.class)
+            .log("docatch 1")
+            .throwException(new IllegalArgumentException("Second forced by me"))
+    .doCatch(Exception.class)
+        .log("docatch 2")
+    .end();
+----
+
+Then you may think that _docatch2_ is associated on the outer doTry because of how the code is formatted.
+But it is **not**, both __docatch1__ and __docatch2__ are in the inner doTry, and the outer doTry has no catch blocks.
+
+So in this example the route will throw the 1st exception which is then handled in __docatch1__ which
+then throw a 2nd exception, that is not caught.
+
+So what you must do is to end the doCatch block correct (notice how we use `doEndTry()` two times) as shown below:
+
+[source,java]
+----
+from("direct:test").routeId("myroute")
+    .doTry().
+        doTry().
+            throwException(new IllegalArgumentException("Forced by me"))
+        .doCatch(Exception.class)
+            .log("docatch 1")
+            .throwException(new IllegalArgumentException("Second forced by me"))
+         .endDoTry() // end this doCatch block
+     .endDoTry() // end the inner doTry
+    .doCatch(Exception.class)
+        .log("docatch 2")
+    .end();
+----
+
+And by using the `doEndTry()` we can end the block correctly, and an XML representation of the route would be as follows:
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<route xmlns="http://camel.apache.org/schema/spring">
+    <from uri="direct:test"/>
+    <doTry>
+        <doTry>
+            <throwException id="throwException1"/>
+            <doCatch id="doCatch1">
+                <log id="log1" message="docatch 1"/>
+                <throwException id="throwException2"/>
+            </doCatch>
+        </doTry>
+        <doCatch id="doCatch2">
+            <log id="log2" message="docatch 2"/>
+        </doCatch>
+    </doTry>
+</route>
+----
+
 [[TryCatchFinally-Usingtry..catch..finallyinSpringDSL]]
-== Using try .. catch .. finally in Spring DSL
+== Using try .. catch .. finally in XML DSL
 
 In the route below we have all keywords in action. As the code is based
 on a unit test we route using xref:components::mock-component.adoc[Mock].

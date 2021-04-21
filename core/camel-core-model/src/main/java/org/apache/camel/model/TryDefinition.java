@@ -49,6 +49,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     private boolean initialized;
     @XmlTransient
     private List<ProcessorDefinition<?>> outputsWithoutCatches;
+    @XmlTransient
+    protected int endCounter;
 
     public TryDefinition() {
     }
@@ -185,7 +187,17 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         initialized = false;
+        endCounter = 0;
         super.addOutput(output);
+    }
+
+    protected ProcessorDefinition<?> onEndDoTry() {
+        if (endCounter > 0) {
+            return end();
+        } else {
+            endCounter++;
+        }
+        return this;
     }
 
     @Override
