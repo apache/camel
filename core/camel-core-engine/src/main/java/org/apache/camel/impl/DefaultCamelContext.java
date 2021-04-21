@@ -129,8 +129,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     protected void doDumpRoutes() {
         ModelToXMLDumper dumper = getModelToXMLDumper();
 
-        getRouteDefinitions()
-
         int size = getRouteDefinitions().size();
         if (size > 0) {
             LOG.info("Dumping {} routes as XML", size);
