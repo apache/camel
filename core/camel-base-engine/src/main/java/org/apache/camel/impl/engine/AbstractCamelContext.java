@@ -2476,18 +2476,21 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void init() {
-        super.init();
+        try {
+            super.init();
+        } catch (RuntimeCamelException e) {
+            if (e.getCause() != null && e.getCause() instanceof VetoCamelContextStartException) {
+                vetoed = (VetoCamelContextStartException) e.getCause();
+            } else {
+                throw e;
+            }
+        }
 
         // was the initialization vetoed?
         if (vetoed != null) {
-            if (vetoed.isRethrowException()) {
-                throw RuntimeCamelException.wrapRuntimeException(vetoed);
-            } else {
-                LOG.info("CamelContext ({}) vetoed to not initialize due to {}", getName(), vetoed.getMessage());
-                // swallow exception and change state of this camel context to stopped
-                fail(vetoed);
-                return;
-            }
+            LOG.info("CamelContext ({}) vetoed to not initialize due to {}", getName(), vetoed.getMessage());
+            failOnStartup(vetoed);
+            return;
         }
     }
 
@@ -2502,14 +2505,10 @@ public abstract class AbstractCamelContext extends BaseService
 
         // did the start veto?
         if (vetoed != null) {
-            if (vetoed.isRethrowException()) {
-                throw RuntimeCamelException.wrapRuntimeException(vetoed);
-            } else {
-                LOG.info("CamelContext ({}) vetoed to not start due to {}", getName(), vetoed.getMessage());
-                // swallow exception and change state of this camel context to stopped
-                stop();
-                return;
-            }
+            LOG.info("CamelContext ({}) vetoed to not start due to {}", getName(), vetoed.getMessage());
+            failOnStartup(vetoed);
+            stop();
+            return;
         }
 
         for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -2623,6 +2622,8 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void doInit() throws Exception {
         StopWatch watch = new StopWatch();
+
+        vetoed = null;
 
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Init CamelContext");
 
@@ -4845,6 +4846,21 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public String toString() {
         return "CamelContext(" + getName() + ")";
+    }
+
+
+    protected void failOnStartup(Exception e) {
+        if (e instanceof VetoCamelContextStartException) {
+            VetoCamelContextStartException vetoException = (VetoCamelContextStartException) e;
+            if (vetoException.isRethrowException()) {
+                fail(e);
+            } else {
+                // swallow exception and change state of this camel context to stopped
+                status = FAILED;
+            }
+        } else {
+            fail(e);
+        }
     }
 
     protected abstract ExchangeFactory createExchangeFactory();
