@@ -56,7 +56,7 @@ the catch should trigger or not at runtime.
 In the route below we have all keywords in action. As the code is based
 on a unit test we route using xref:components::mock-component.adoc[Mock].
 
-https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel/processor/TryProcessorMultipleExceptionTest.java[TryProcessorMultipleExceptionTest.java]
+https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel/processor/TryProcessorMultipleExceptionTest.java[TryProcessorMultipleExceptionTest.java]
 
 And finally we have an example of the `onWhen` predicate in action. We
 can attach it to a `doCatch` block and at runtime determine if the block
@@ -64,7 +64,7 @@ should be triggered or not.
 In our case we only want to trigger if the caused exception message
 contains the *damn* word.
 
-https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel/processor/TryProcessorOnWhenTest.java[TryProcessorOnWhenTest.java]
+https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel/processor/TryProcessorOnWhenTest.java[TryProcessorOnWhenTest.java]
 
 === Use end() to end the block
 
@@ -150,7 +150,7 @@ And by using the `doEndTry()` we can end the block correctly, and an XML represe
 In the route below we have all keywords in action. As the code is based
 on a unit test we route using xref:components::mock-component.adoc[Mock].
 
-https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorMultipleExceptionTest.xml[SpringTryProcessorMultipleExceptionTest.xml]
+https://github.com/apache/camel/tree/main/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorMultipleExceptionTest.xml[SpringTryProcessorMultipleExceptionTest.xml]
 
 And finally we have an example of the `onWhen` predicate in action. We
 can attach it to a `doCatch` block and at runtime determine if the block
@@ -158,5 +158,5 @@ should be triggered or not.
 In our case we only want to trigger if the caused exception message
 contains the *damn* word.
 
-https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorOnWhenTest.xml[SpringTryProcessorOnWhenTest.xml]
+https://github.com/apache/camel/tree/main/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorOnWhenTest.xml[SpringTryProcessorOnWhenTest.xml]
 

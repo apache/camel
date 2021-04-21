@@ -1,7 +1,7 @@
 = Camel Maven Plugin
 
 The
-https://github.com/apache/camel/tree/master/tooling/maven/camel-maven-plugin[Camel
+https://github.com/apache/camel/tree/main/tooling/maven/camel-maven-plugin[Camel
 Maven Plugin] allows you to run your
 xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] using xref:spring.adoc[Spring] for

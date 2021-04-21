@@ -56,7 +56,7 @@ Deprecated components are *not* supported and issues such as bugs may
 not be fixed. We encourage users to migrate away from using any
 deprecated component. A list of deprecated components is on the
 github page at:
-https://github.com/apache/camel/tree/master/components#components
+https://github.com/apache/camel/tree/main/components#components
 
 [[Support-Howtogethelp]]
 == How to get help
