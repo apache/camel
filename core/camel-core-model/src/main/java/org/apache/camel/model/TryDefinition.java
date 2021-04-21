@@ -50,7 +50,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @XmlTransient
     private List<ProcessorDefinition<?>> outputsWithoutCatches;
     @XmlTransient
-    protected int endCounter;
+    private int endCounter; // used for detecting multiple nested doTry blocks
 
     public TryDefinition() {
     }
@@ -187,6 +187,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         initialized = false;
+        // reset end counter as we are adding some outputs
         endCounter = 0;
         super.addOutput(output);
     }
