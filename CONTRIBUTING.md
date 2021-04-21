@@ -53,7 +53,7 @@ For more information, see [How does the website work](https://camel.apache.org/m
 
 Please raise a new issue in our [issue tracker](https://issues.apache.org/jira/browse/CAMEL)
 If you can create a JUnit test case, then your issue is more likely to be resolved quicker.
-e.g., take a look at some of the existing [unit tests cases](https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel)
+e.g., take a look at some of the existing [unit tests cases](https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel)
 
 
 ## Working on the code

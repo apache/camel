@@ -47,7 +47,7 @@ The up to date list is available online at the Camel website:
 Apache Camel comes with many examples.
 The up to date list is available online at GitHub:
 
-* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
+* Examples: <https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples>
 
 ## Getting Started
 
@@ -59,7 +59,7 @@ To help you get started, try the following links:
 
 The beginner examples are another powerful alternative pathway for getting started with Apache Camel.
 
-* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
+* Examples: <https://github.com/apache/camel-examples/tree/main/examples#welcome-to-the-apache-camel-examples>
 
 **Building**
 
@@ -69,7 +69,7 @@ The beginner examples are another powerful alternative pathway for getting start
 
 We welcome all kinds of contributions, the details of which are specified here:
 
-<https://github.com/apache/camel/blob/master/CONTRIBUTING.md>
+<https://github.com/apache/camel/blob/main/CONTRIBUTING.md>
 
 
 Please refer to the website for details of finding the issue tracker, 
