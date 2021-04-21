@@ -76,7 +76,7 @@ injection annotations].
 === Camel Test Example
 
 Here is the Camel Test
-https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/FilterTest.java[example]:
+https://github.com/apache/camel/blob/main/core/camel-core/src/test/java/org/apache/camel/processor/FilterTest.java[example]:
 
 [source,java]
 ----
@@ -91,7 +91,7 @@ overrides the `createRouteBuilder()` method.
 === CDI Test Example
 
 Here is the CDI Testing
-https://github.com/apache/camel/blob/master/components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
+https://github.com/apache/camel/blob/main/components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
 
 [source,java]
 ----
@@ -105,7 +105,7 @@ and the test classes that come with it.
 === Spring Test with XML Config Example
 
 Here is the Spring Testing
-https://github.com/apache/camel/blob/master/components/camel-spring-xml/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
+https://github.com/apache/camel/blob/main/components/camel-spring-xml/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
 using XML Config]:
 
 [source,java]
@@ -121,7 +121,7 @@ sending to an endpoint that is then reused in another test method).
 
 Also notice the use of `@ContextConfiguration` to indicate that by
 default we should look for the
-https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
+https://github.com/apache/camel/blob/main/components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
 on the classpath] to configure the test case which looks like this:
 
 [source,xml]
@@ -133,7 +133,7 @@ include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache
 === Spring Test with Java Config Example
 
 Here is the Spring Testing
-https://github.com/apache/camel/blob/master/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
+https://github.com/apache/camel/blob/main/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
 using Java Config]:
 
 [source,java]
@@ -159,7 +159,7 @@ register the RouteBuilder we create.
 
 Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
 `CamelSpringDelegatingTestContextLoader` like
-https://github.com/apache/camel/blob/master/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
+https://github.com/apache/camel/blob/main/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
 using Java Config with `CamelSpringJUnit4ClassRunner`]:
 
 Since *Camel 2.18.0* `CamelSpringJUnit4ClassRunner` is deprecated. you can use the `CamelSpringRunner`
@@ -173,7 +173,7 @@ include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apac
 === Spring Test with XML Config and Declarative Configuration Example
 
 Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
-Testing] https://github.com/apache/camel/blob/master/components/camel-test/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
+Testing] https://github.com/apache/camel/blob/main/components/camel-test/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
 using XML Config and pure Spring Test based configuration of the Camel
 Context]:
 

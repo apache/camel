@@ -110,8 +110,8 @@ xref:components:languages:groovy-language.adoc[Groovy] |
 
 |xref:components::sql-component.adoc[SQL] |
 
-|xref:components:languages:xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/master/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
+|xref:components:languages:xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/main/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
 
-|xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
+|xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/main/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================
 
