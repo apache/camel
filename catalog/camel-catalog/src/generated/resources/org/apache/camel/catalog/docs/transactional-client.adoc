@@ -139,7 +139,7 @@ And then refer to "required" from the route:
 In this sample we want to ensure that two endpoints is under transaction
 control. These two endpoints inserts data into a database.
 The sample is in its full as a
-https://github.com/apache/camel/tree/master/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit test].
+https://github.com/apache/camel/tree/main/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit test].
 
 First of all we setup the usual spring stuff in its configuration file.
 Here we have defined a DataSource to the HSQLDB and a most
@@ -226,7 +226,7 @@ XML to setup the transaction manager.
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
 it is based on a
-https://github.com/apache/camel/tree/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[unit test]
+https://github.com/apache/camel/tree/main/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[unit test]
 the destination is a mock endpoint.
 
 First we configure the standard Spring XML to declare a JMS connection

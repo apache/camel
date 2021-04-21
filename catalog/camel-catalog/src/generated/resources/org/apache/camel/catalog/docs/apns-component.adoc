@@ -140,7 +140,7 @@ The `ApnsComponent` must be configured with a
 configured using the
 `org.apache.camel.component.apns.factory.ApnsServiceFactory`. See
 further below for an example. And as well in the
-https://github.com/apache/camel/tree/master/components/camel-apns[test
+https://github.com/apache/camel/tree/main/components/camel-apns[test
 source code].
 
 ==== SSL Setting

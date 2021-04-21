@@ -257,7 +257,7 @@ resultEndpoint.message(0).header("foo").isEqualTo("bar");
 ----
 
 There are some examples of the Mock endpoint in use in the
-https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
+https://github.com/apache/camel/tree/main/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
 processor tests].
 
 == Mocking existing endpoints

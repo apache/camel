@@ -33,7 +33,7 @@ for this component:
 [NOTE]
 ====
 Developers wishing to contribute to the component are instructed
-to look at the https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
+to look at the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
 setup your environment for running integration tests.
 ====
 
@@ -355,7 +355,7 @@ from("salesforce:data/Employee__ChangeEvent?replayId=-1").log("being notified of
 
 The received message contains either `java.util.Map<String,Object>` or `org.cometd.bayeux.Message` in the body depending on the `rawPayload` being `false` or `true` respectively. The `CamelSalesforceChangeType` header could be valued to one of `CREATE`, `UPDATE`,  `DELETE` or `UNDELETE`.
 
-More details about how to use the Camel Salesforce component change data capture capabilities could be found in the https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component/src/test/java/org/apache/camel/component/salesforce/ChangeEventsConsumerIntegrationTest.java[ChangeEventsConsumerIntegrationTest].
+More details about how to use the Camel Salesforce component change data capture capabilities could be found in the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/src/test/java/org/apache/camel/component/salesforce/ChangeEventsConsumerIntegrationTest.java[ChangeEventsConsumerIntegrationTest].
 
 The https://developer.salesforce.com/docs/atlas.en-us.change_data_capture.meta/change_data_capture/cdc_intro.htm[Salesforce developer guide]
 is a good fit to better know the subtleties of implementing a change data capture integration application.
@@ -771,7 +771,7 @@ field types are supported. Date and time fields are mapped to
 generated Java Enumerations.
 
 Please refer to
-https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
+https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
 for details on how to generate the DTO.
 
 == Options
