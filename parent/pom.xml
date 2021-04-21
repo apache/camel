@@ -373,7 +373,7 @@
         <log4j2-version>2.13.3</log4j2-version>
         <logback-version>1.2.3</logback-version>
         <lucene3-version>3.6.0</lucene3-version>
-        <lucene-version>8.6.1</lucene-version>
+        <lucene-version>8.8.2</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
         <lz4-version>1.6.0</lz4-version>
