@@ -40,6 +40,10 @@ public class SplunkHECConfiguration {
     private boolean skipTlsVerify;
     @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;
+    @UriParam
+    private boolean bodyOnly;
+    @UriParam
+    private boolean headersOnly;
 
     public String getSourceType() {
         return sourceType;
@@ -113,5 +117,27 @@ public class SplunkHECConfiguration {
      */
     public void setHttps(boolean https) {
         this.https = https;
+    }
+
+    /**
+     * Send only the message body
+     */
+    public boolean isBodyOnly() {
+        return bodyOnly;
+    }
+
+    public void setBodyOnly(boolean bodyOnly) {
+        this.bodyOnly = bodyOnly;
+    }
+
+    /**
+     * Send only message headers
+     */
+    public boolean isHeadersOnly() {
+        return headersOnly;
+    }
+
+    public void setHeadersOnly(boolean headersOnly) {
+        this.headersOnly = headersOnly;
     }
 }

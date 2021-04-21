@@ -65,4 +65,16 @@ public class SplunkHECConfigurationTest {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
         assertEquals(true, config.isHttps());
     }
+
+    @Test
+    public void testDefaultBodyOnly() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertEquals(false, config.isBodyOnly());
+    }
+
+    @Test
+    public void testDefaultHeadersOnly() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertEquals(false, config.isHeadersOnly());
+    }
 }
