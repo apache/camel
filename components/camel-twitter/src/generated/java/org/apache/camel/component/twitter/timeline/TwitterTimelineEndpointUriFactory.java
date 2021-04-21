@@ -20,7 +20,7 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(44);
+        Set<String> props = new HashSet<>(45);
         props.add("backoffMultiplier");
         props.add("latitude");
         props.add("httpProxyHost");
@@ -50,6 +50,7 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
         props.add("exchangePattern");
         props.add("count");
         props.add("httpProxyPort");
+        props.add("list");
         props.add("accessToken");
         props.add("httpProxyPassword");
         props.add("backoffIdleThreshold");
