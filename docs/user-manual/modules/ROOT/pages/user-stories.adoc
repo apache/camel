@@ -63,7 +63,7 @@ countries.
 |https://akkasource.org/[Akka] |Akka uses Apache Camel to implement
 additional messaging interfaces for
 https://doc.akkasource.org/actors[actors]. Any Camel
-https://camel.apache.org/components.html[component] can be used to send
+xref:latest@components::index.adoc[component] can be used to send
 and receive messages from Akka actors. For details refer to the
 documentation of the https://doc.akkasource.org/camel[akka-camel]
 extension module.
@@ -85,8 +85,8 @@ Server] |JOnAS Application Server integrates with Camel.
 Activity Monitoring for ServiceMix, Camel and ActiveMQ.
 
 |https://touk.pl/toukeu/rw/pages/index.en.do[TouK] |We are using Apache
-ServiceMix (both 3.x and 4.x) with https://camel.apache.org/[Apache
-Camel], https://ode.apache.org/[Apache ODE] and
+ServiceMix (both 3.x and 4.x) with Apache
+Camel, https://ode.apache.org/[Apache ODE] and
 https://incubator.apache.org/hise/[Apache HISE] as a middleware
 integration platform, with the biggest deployment for
 https://www.playmobile.pl/[Play], mobile telco operator in Poland
