@@ -521,8 +521,9 @@
     <snakeyaml-engine-version>2.2.1</snakeyaml-engine-version>
     <snakeyaml-version>1.28</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
-    <solr-version>8.6.1</solr-version>
+    <solr-version>8.8.2</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
+    <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
     <sourcecheckExcludes></sourcecheckExcludes>
     <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
