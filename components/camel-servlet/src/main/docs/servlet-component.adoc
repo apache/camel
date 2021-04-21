@@ -241,9 +241,9 @@ In this sample, we define a route that exposes a HTTP service at
 http://localhost:8080/camel/services/hello.
 
 First, you need to publish the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 through the normal Web Container, or OSGi Service. Use the `Web.xml` file to publish the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 as follows:
 
 [source,xml]
@@ -306,7 +306,7 @@ often required to load the Spring ApplicationContext _after_ the Servlet
 component has started. This can be accomplished by using Spring's
 `ContextLoaderServlet` instead of `ContextLoaderListener`. In that case
 you'll need to start `ContextLoaderServlet` after
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 like this:
 
 [source,xml]
@@ -332,7 +332,7 @@ like this:
 === Sample when using OSGi
 
 You can publish the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 as an OSGi service with Blueprint like this:
 
 [source,xml]
@@ -402,7 +402,7 @@ Then use this service in your Camel route like this:
 
 You can use an `Activator` to publish
 the
-https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+https://github.com/apache/camel/blob/main/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 on the OSGi platform:
 
 [source,java]
