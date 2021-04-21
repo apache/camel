@@ -19,7 +19,7 @@ mvn camel:run
 
 What this does is boot up the Spring ApplicationContext defined in the
 file
-https://github.com/apache/camel/blob/master/examples/camel-example-spring/src/main/resources/META-INF/spring/camel-context.xml[META-INF/spring/camel-context.xml]
+https://github.com/apache/camel/blob/main/examples/camel-example-spring/src/main/resources/META-INF/spring/camel-context.xml[META-INF/spring/camel-context.xml]
 on the classpath. This is a regular Spring XML document which uses the
 Camel link:xml-configuration.html[Xml Configuration] to configure a
 link:camelcontext.html[CamelContext]. Notice how the <camelContext>
@@ -36,7 +36,7 @@ The packages attribute defines the comma separated list of Java package
 names which are recursively searched for Java classes on the classpath
 which implement the xref:route-builder.adoc[RouteBuilder] interface. What
 this means is that Camel will automatically detect our
-https://github.com/apache/camel/blob/master/examples/camel-example-spring/src/main/java/org/apache/camel/example/spring/MyRouteBuilder.java[MyRouteBuilder
+https://github.com/apache/camel/blob/main/examples/camel-example-spring/src/main/java/org/apache/camel/example/spring/MyRouteBuilder.java[MyRouteBuilder
 class] and automatically install its routes. Of course, in practice you
 should not specify org.apache.camel (or a sub package of this) as the
 package name because this will instruct Camel to search in its own
@@ -49,6 +49,6 @@ of XML bloat. Of course if you prefer you can create all of your routes
 in the xref:xml-configuration.adoc[Xml Configuration].
 
 Also note at the end of this
-https://github.com/apache/camel/blob/master/examples/camel-example-spring/src/main/resources/META-INF/spring/camel-context.xml[XML
+https://github.com/apache/camel/blob/main/examples/camel-example-spring/src/main/resources/META-INF/spring/camel-context.xml[XML
 example file] we explicitly configure the xref:components::activemq-component.adoc[ActiveMQ]
 component with details of how to connect to the broker.

@@ -2,16 +2,16 @@
 = Registry
 
 Camel supports a pluggable
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/spi/Registry.java[Registry]
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/spi/Registry.java[Registry]
 plugin strategy. This allows Camel to easily work with some kind of
 registry like
 
-* https://github.com/apache/camel/blob/master/core/camel-support/src/main/java/org/apache/camel/support/SimpleRegistry.java[SimpleRegistry]
+* https://github.com/apache/camel/blob/main/core/camel-support/src/main/java/org/apache/camel/support/SimpleRegistry.java[SimpleRegistry]
 which is a simple `java.util.Map` based registry.
-* https://github.com/apache/camel/blob/master/core/camel-core-engine/src/main/java/org/apache/camel/impl/JndiRegistry.java[JndiRegistry]
+* https://github.com/apache/camel/blob/main/core/camel-core-engine/src/main/java/org/apache/camel/impl/JndiRegistry.java[JndiRegistry]
 which uses the JNDI InitialContext as the registry
 
 You can also access the Registry from the
 CamelContext via the
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/CamelContext.java#L690[camelContext.getRegistry()
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/CamelContext.java#L690[camelContext.getRegistry()
 method]

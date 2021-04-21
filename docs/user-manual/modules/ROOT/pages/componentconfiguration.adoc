@@ -10,7 +10,7 @@ editting of Camel routes for example).
 
 To get an idea for the kinds of things you can do with the
 ComponentConfiguration API
-https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/impl/ComponentConfigurationTest.java#L72[check
+https://github.com/apache/camel/blob/main/camel-core/src/test/java/org/apache/camel/impl/ComponentConfigurationTest.java#L72[check
 out the test case].
 
 For example given a Component object you can create a new configuration;

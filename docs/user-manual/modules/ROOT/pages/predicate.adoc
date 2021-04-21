@@ -173,9 +173,9 @@ xref:parameter-binding-annotations.adoc[Annotation Based
 Expression Language].
 
 You can easily write your own plugin predicate by implementing the
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/Predicate.java[Predicate
+https://github.com/apache/camel/blob/main/core/camel-api/src/main/java/org/apache/camel/Predicate.java[Predicate
 interface].
 
 There are also a number of helper builders available such as the
-https://github.com/apache/camel/blob/master/core/camel-core/src/main/java/org/apache/camel/builder/PredicateBuilder.java[PredicateBuilder
+https://github.com/apache/camel/blob/main/core/camel-core/src/main/java/org/apache/camel/builder/PredicateBuilder.java[PredicateBuilder
 class]
