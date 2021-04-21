@@ -36,7 +36,6 @@ public class TwoDoTryAndThrowInInnerCatchIssueTest extends ContextTestSupport {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myroute"));
         log.info(xml);
-        System.out.println(xml);
 
         getMockEndpoint("mock:catch1").expectedMessageCount(0);
         getMockEndpoint("mock:catch2").expectedMessageCount(0);
