@@ -914,6 +914,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getMDCLoggingKeysPattern();
 
+    public abstract String getDumpRoutes();
+
     public abstract String getUseDataType();
 
     public abstract String getUseBreadcrumb();
@@ -1053,6 +1055,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getMDCLoggingKeysPattern() != null) {
             context.setMDCLoggingKeysPattern(CamelContextHelper.parseText(context, getMDCLoggingKeysPattern()));
+        }
+        if (getDumpRoutes() != null) {
+            context.setDumpRoutes(CamelContextHelper.parseBoolean(context, getDumpRoutes()));
         }
         if (getUseDataType() != null) {
             context.setUseDataType(CamelContextHelper.parseBoolean(context, getUseDataType()));

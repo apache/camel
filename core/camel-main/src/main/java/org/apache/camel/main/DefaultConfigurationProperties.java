@@ -94,6 +94,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
+    private boolean dumpRoutes;
     // route controller
     @Metadata(defaultValue = "DEBUG")
     @Deprecated
@@ -997,6 +998,23 @@ public abstract class DefaultConfigurationProperties<T> {
         this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
     }
 
+    public boolean isDumpRoutes() {
+        return dumpRoutes;
+    }
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     */
+    public void setDumpRoutes(boolean dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
+    }
+
     @Deprecated
     public LoggingLevel getRouteControllerLoggingLevel() {
         return routeControllerLoggingLevel;
@@ -1882,6 +1900,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withExchangeFactoryStatisticsEnabled(boolean exchangeFactoryStatisticsEnabled) {
         this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * If enable then Camel will during startup dump all loaded routes (incl rests and route templates) represented as
+     * XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     */
+    public T withDumpRoutes(boolean dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
         return (T) this;
     }
 

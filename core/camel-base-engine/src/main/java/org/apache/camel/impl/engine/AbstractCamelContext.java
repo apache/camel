@@ -256,6 +256,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
+    private Boolean dumpRoutes = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private String mdcLoggingKeysPattern;
     private Boolean useDataType = Boolean.FALSE;
@@ -3159,6 +3160,10 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
+        if (isDumpRoutes() != null && isDumpRoutes()) {
+            doDumpRoutes();
+        }
+
         // invoke this logic to warmup the routes and if possible also start the routes
         StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Routes");
         EventHelper.notifyCamelContextRoutesStarting(this);
@@ -3348,6 +3353,10 @@ public abstract class AbstractCamelContext extends BaseService
         super.doFail(e);
         // reset flag in case of startup fail as we want to be able to allow to start again
         firstStartDone = false;
+    }
+
+    protected void doDumpRoutes() {
+        // noop
     }
 
     protected void logRouteStopSummary() {
@@ -4081,6 +4090,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    @Override
+    public Boolean isDumpRoutes() {
+        return dumpRoutes;
+    }
+
+    @Override
+    public void setDumpRoutes(Boolean dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
     }
 
     @Override

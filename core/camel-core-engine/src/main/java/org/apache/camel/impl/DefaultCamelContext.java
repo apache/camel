@@ -65,6 +65,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
@@ -121,6 +122,62 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         super(init);
         if (isDisableJmx()) {
             disableJMX();
+        }
+    }
+
+    @Override
+    protected void doDumpRoutes() {
+        ModelToXMLDumper dumper = getModelToXMLDumper();
+
+        getRouteDefinitions()
+
+        int size = getRouteDefinitions().size();
+        if (size > 0) {
+            LOG.info("Dumping {} routes as XML", size);
+            LOG.info("================================================================================");
+            for (int i = 0; i < size; i++) {
+                RouteDefinition def = getRouteDefinitions().get(i);
+                try {
+                    String xml = dumper.dumpModelAsXml(this, def, true, true);
+                    LOG.info("#{} (route: {})\n{}\n", i + 1, def.getRouteId(), xml);
+                } catch (Exception e) {
+                    LOG.warn("Error dumping route to XML due to " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+            LOG.info("================================================================================");
+        }
+
+        size = getRestDefinitions().size();
+        if (size > 0) {
+            LOG.info("Dumping {} rests as XML", size);
+            LOG.info("================================================================================");
+            for (int i = 0; i < size; i++) {
+                RestDefinition def = getRestDefinitions().get(i);
+                try {
+                    String xml = dumper.dumpModelAsXml(this, def, true, true);
+                    LOG.info("#{} (rest: {})\n{}\n", i + 1, def.getPath(), xml);
+                } catch (Exception e) {
+                    LOG.warn("Error dumping rest to XML due to " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+            LOG.info("================================================================================");
+        }
+
+        size = getRouteTemplateDefinitions().size();
+        if (size > 0) {
+            LOG.info("Dumping {} route templates as XML", size);
+            LOG.info("================================================================================");
+            for (int i = 0; i < size; i++) {
+                RouteTemplateDefinition def = getRouteTemplateDefinitions().get(i);
+                try {
+                    String xml = dumper.dumpModelAsXml(this, def, true, true);
+                    LOG.info("#{} (route-template: {})\n{}\n", i + 1, def.getId(), xml);
+                } catch (Exception e) {
+                    LOG.warn("Error dumping route-template to XML due to " + e.getMessage() + ". This exception is ignored.",
+                            e);
+                }
+            }
+            LOG.info("================================================================================");
         }
     }
 

@@ -53,6 +53,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": target.setConfigurations(property(camelContext, java.util.List.class, value)); return true;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
+        case "dumproutes":
+        case "DumpRoutes": target.setDumpRoutes(property(camelContext, boolean.class, value)); return true;
         case "durationhitexitcode":
         case "DurationHitExitCode": target.setDurationHitExitCode(property(camelContext, int.class, value)); return true;
         case "durationmaxidleseconds":
@@ -244,6 +246,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return java.util.List.class;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return int.class;
+        case "dumproutes":
+        case "DumpRoutes": return boolean.class;
         case "durationhitexitcode":
         case "DurationHitExitCode": return int.class;
         case "durationmaxidleseconds":
@@ -436,6 +440,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Configurations": return target.getConfigurations();
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
+        case "dumproutes":
+        case "DumpRoutes": return target.isDumpRoutes();
         case "durationhitexitcode":
         case "DurationHitExitCode": return target.getDurationHitExitCode();
         case "durationmaxidleseconds":
