@@ -138,6 +138,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Metadata(defaultValue = "true")
     private String shutdownEager;
     @XmlAttribute
+    @Metadata(defaultValue = "false")
+    private String dumpRoutes;
+    @XmlAttribute
     @Metadata(displayName = "Use MDC Logging")
     private String useMDCLogging;
     @XmlAttribute
@@ -906,6 +909,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setShutdownEager(String shutdownEager) {
         this.shutdownEager = shutdownEager;
+    }
+
+    @Override
+    public String getDumpRoutes() {
+        return dumpRoutes;
+    }
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended to be used for production usage.
+     *
+     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     */
+    public void setDumpRoutes(String dumpRoutes) {
+        this.dumpRoutes = dumpRoutes;
     }
 
     @Override
