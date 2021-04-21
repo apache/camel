@@ -512,6 +512,7 @@
         <!-- solr version aligned with lucene -->
         <solr-version>8.8.2</solr-version>
         <solr-version-range>[8,9)</solr-version-range>
+        <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
         <spark-version>2.4.6</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spock-version>2.0-M4-groovy-3.0</spock-version>
