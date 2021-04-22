@@ -55,9 +55,12 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.BeanRepository;
@@ -76,6 +79,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,50 +136,55 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         int size = getRouteDefinitions().size();
         if (size > 0) {
             LOG.info("Dumping {} routes as XML", size);
-            LOG.info("================================================================================");
-            for (int i = 0; i < size; i++) {
-                RouteDefinition def = getRouteDefinitions().get(i);
-                try {
-                    String xml = dumper.dumpModelAsXml(this, def, true, true);
-                    LOG.info("#{} (route: {})\n{}\n", i + 1, def.getRouteId(), xml);
-                } catch (Exception e) {
-                    LOG.warn("Error dumping route to XML due to " + e.getMessage() + ". This exception is ignored.", e);
-                }
+            // for XML to output nicely all routes in one XML then lets put them into <routes>
+            RoutesDefinition def = new RoutesDefinition();
+            def.setRoutes(getRouteDefinitions());
+            try {
+                String xml = dumper.dumpModelAsXml(this, def, true, true);
+                // lets separate routes with empty line
+                xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
+                        "xmlns=\"http://camel.apache.org/schema/spring\">\n");
+                xml = StringHelper.replaceAll(xml, "</route>", "</route>\n");
+                LOG.info("\n\n" + xml + "\n");
+            } catch (Exception e) {
+                LOG.warn("Error dumping routes to XML due to " + e.getMessage() + ". This exception is ignored.", e);
             }
-            LOG.info("================================================================================");
         }
 
         size = getRestDefinitions().size();
         if (size > 0) {
             LOG.info("Dumping {} rests as XML", size);
-            LOG.info("================================================================================");
-            for (int i = 0; i < size; i++) {
-                RestDefinition def = getRestDefinitions().get(i);
-                try {
-                    String xml = dumper.dumpModelAsXml(this, def, true, true);
-                    LOG.info("#{} (rest: {})\n{}\n", i + 1, def.getPath(), xml);
-                } catch (Exception e) {
-                    LOG.warn("Error dumping rest to XML due to " + e.getMessage() + ". This exception is ignored.", e);
-                }
+            // for XML to output nicely all routes in one XML then lets put them into <routes>
+            RestsDefinition def = new RestsDefinition();
+            def.setRests(getRestDefinitions());
+            try {
+                String xml = dumper.dumpModelAsXml(this, def, true, true);
+                // lets separate rests with empty line
+                xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
+                        "xmlns=\"http://camel.apache.org/schema/spring\">\n");
+                xml = StringHelper.replaceAll(xml, "</rest>", "</rest>\n");
+                LOG.info("\n\n" + xml + "\n");
+            } catch (Exception e) {
+                LOG.warn("Error dumping rests to XML due to " + e.getMessage() + ". This exception is ignored.", e);
             }
-            LOG.info("================================================================================");
         }
 
         size = getRouteTemplateDefinitions().size();
         if (size > 0) {
             LOG.info("Dumping {} route templates as XML", size);
-            LOG.info("================================================================================");
-            for (int i = 0; i < size; i++) {
-                RouteTemplateDefinition def = getRouteTemplateDefinitions().get(i);
-                try {
-                    String xml = dumper.dumpModelAsXml(this, def, true, true);
-                    LOG.info("#{} (route-template: {})\n{}\n", i + 1, def.getId(), xml);
-                } catch (Exception e) {
-                    LOG.warn("Error dumping route-template to XML due to " + e.getMessage() + ". This exception is ignored.",
-                            e);
-                }
+            // for XML to output nicely all routes in one XML then lets put them into <routes>
+            RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+            def.setRouteTemplates(getRouteTemplateDefinitions());
+            try {
+                String xml = dumper.dumpModelAsXml(this, def, true, true);
+                // lets separate rests with empty line
+                xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
+                        "xmlns=\"http://camel.apache.org/schema/spring\">\n");
+                xml = StringHelper.replaceAll(xml, "</routeTemplate>", "</routeTemplate>\n");
+                LOG.info("\n\n" + xml + "\n");
+            } catch (Exception e) {
+                LOG.warn("Error dumping route-templates to XML due to " + e.getMessage() + ". This exception is ignored.", e);
             }
-            LOG.info("================================================================================");
         }
     }
 
