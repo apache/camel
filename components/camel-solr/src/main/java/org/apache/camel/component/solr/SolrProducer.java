@@ -17,9 +17,13 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -29,10 +33,15 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.AbstractUpdateRequest.ACTION;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.DirectXmlRequest;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 
@@ -110,10 +119,25 @@ public class SolrProducer extends DefaultProducer {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.setAction(ACTION.OPTIMIZE, true, true, 1);
             updateRequest.process(serverToUse);
+        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_QUERY)) {
+            query(exchange, serverToUse);
         } else {
             throw new IllegalArgumentException(
                     SolrConstants.OPERATION + " header value '" + operation + "' is not supported");
         }
+    }
+
+    private void query(Exchange exchange, SolrClient serverToUse) throws SolrServerException, IOException {
+        SolrQuery solrQuery = new SolrQuery();
+        if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(SolrConstants.QUERY_STRING))) {
+            solrQuery.setQuery(exchange.getMessage().getHeader(SolrConstants.QUERY_STRING, String.class));
+        } else {
+            throw new IllegalArgumentException("Query String needs to be set as header while querying Solr");
+        }
+        QueryRequest queryRequest = new QueryRequest(solrQuery);
+        queryRequest.setBasicAuthCredentials(getEndpoint().getUsername(), getEndpoint().getPassword());
+        QueryResponse p = queryRequest.process(serverToUse);
+        exchange.getMessage().setBody(p.getResults());
     }
 
     private void insert(Exchange exchange, SolrClient solrServer) throws Exception {

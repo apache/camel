@@ -22,11 +22,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.test.junit5.params.Test;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.UpdateParams;
 import org.junit.jupiter.api.BeforeEach;
@@ -258,6 +260,26 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         SolrDocument doc = response.getResults().get(0);
         assertEquals("A Game of Thrones", doc.getFieldValue("name"));
         assertEquals(7.99f, doc.getFieldValue("price"));
+    }
+
+    @Test
+    public void queryDocumentsToCSVUpdateHandlerWithoutParameters() throws Exception {
+        solrEndpoint.setRequestHandler("/update/csv");
+
+        Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
+        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
+        template.send("direct:start", exchange);
+        solrCommit();
+
+        Exchange exchange1 = createExchangeWithBody(null);
+        exchange1.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_QUERY);
+        exchange1.getIn().setHeader(SolrConstants.QUERY_STRING, "id:0553573403");
+        Exchange result = template.send("direct:start", exchange1);
+
+        SolrDocumentList list = result.getMessage().getBody(SolrDocumentList.class);
+        assertEquals("A Game of Thrones", list.get(0).getFieldValue("name"));
+        assertEquals(7.99f, list.get(0).getFieldValue("price"));
     }
 
     @Test
