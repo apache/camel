@@ -111,8 +111,11 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
+            boolean serverWasStarted = server.isStarted();
             server.stop();
-            server.destroy();
+            if (serverWasStarted) {
+                server.destroy();
+            }
             server = null;
         }
         super.doStop();
