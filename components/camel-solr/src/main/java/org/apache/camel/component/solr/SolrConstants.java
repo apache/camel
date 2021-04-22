@@ -31,6 +31,8 @@ public final class SolrConstants {
     public static final String OPERATION_ADD_BEANS = "ADD_BEANS";
     public static final String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
     public static final String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
+    public static final String OPERATION_QUERY = "QUERY";
+    public static final String QUERY_STRING = "CamelSolrQueryString";
 
     public static final String PARAM_STREAMING_QUEUE_SIZE = "streamingQueueSize";
     public static final String PARAM_STREAMING_THREAD_COUNT = "streamingThreadCount";
