@@ -104,7 +104,6 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         Element documentElement = dom.getDocumentElement();
         for (Map.Entry<String, String> entry : namespaces.entrySet()) {
             String nsPrefix = entry.getKey();
-
             String prefix = nsPrefix.equals("xmlns") ? nsPrefix : "xmlns:" + nsPrefix;
             documentElement.setAttribute(prefix, entry.getValue());
         }
@@ -112,8 +111,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         // We invoke the type converter directly because we need to pass some
         // custom XML output options
         Properties outputProperties = new Properties();
-        outputProperties.put(OutputKeys.INDENT, "yes");
-        outputProperties.put(OutputKeys.STANDALONE, "yes");
+        outputProperties.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
         outputProperties.put(OutputKeys.ENCODING, "UTF-8");
         try {
             return xmlConverter.toStringFromDocument(dom, outputProperties);
