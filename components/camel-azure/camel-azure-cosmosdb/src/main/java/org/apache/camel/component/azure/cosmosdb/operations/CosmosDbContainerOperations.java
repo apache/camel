@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.cosmosdb.operations;
 
+import java.util.List;
 import java.util.function.Function;
 
 import com.azure.cosmos.CosmosAsyncContainer;
@@ -54,20 +55,36 @@ public class CosmosDbContainerOperations {
     }
 
     // operations on the item
-    public Mono<CosmosItemResponse<Object>> createItem(
-            final Object item, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
+    public <T> Mono<CosmosItemResponse<T>> createItem(
+            final T item, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(item, "item");
         CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
 
         return applyToContainer(container -> container.createItem(item, partitionKey, itemRequestOptions));
     }
 
-    public Mono<CosmosItemResponse<Object>> upsertItem(
-            final Object item, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
+    public <T> Flux<CosmosItemResponse<T>> createItems(
+            final List<T> items, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
+        CosmosDbUtils.validateIfParameterIsNotEmpty(items, "items");
+
+        return Flux.fromIterable(items)
+                .flatMap(item -> createItem(item, partitionKey, itemRequestOptions));
+    }
+
+    public <T> Mono<CosmosItemResponse<T>> upsertItem(
+            final T item, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(item, "item");
         CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
 
         return applyToContainer(container -> container.upsertItem(item, partitionKey, itemRequestOptions));
+    }
+
+    public <T> Flux<CosmosItemResponse<T>> upsertItems(
+            final List<T> items, final PartitionKey partitionKey, final CosmosItemRequestOptions itemRequestOptions) {
+        CosmosDbUtils.validateIfParameterIsNotEmpty(items, "items");
+
+        return Flux.fromIterable(items)
+                .flatMap(item -> upsertItem(item, partitionKey, itemRequestOptions));
     }
 
     public Mono<CosmosItemResponse<Object>> deleteItem(
@@ -78,8 +95,8 @@ public class CosmosDbContainerOperations {
         return applyToContainer(container -> container.deleteItem(itemId, partitionKey, itemRequestOptions));
     }
 
-    public Mono<CosmosItemResponse<Object>> replaceItem(
-            final Object item, final String itemId, final PartitionKey partitionKey,
+    public <T> Mono<CosmosItemResponse<T>> replaceItem(
+            final T item, final String itemId, final PartitionKey partitionKey,
             final CosmosItemRequestOptions itemRequestOptions) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(item, "item");
         CosmosDbUtils.validateIfParameterIsNotEmpty(itemId, "itemId");

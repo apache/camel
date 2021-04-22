@@ -26,7 +26,7 @@ import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -53,9 +53,9 @@ class CosmosDbClientOperationsIT {
         clientWrapper = new CosmosAsyncClientWrapper(client);
     }
 
-    @AfterAll
+    @AfterEach
     void tearDown() {
-        // delete all databases being used in the test
+        // delete all databases being used in the test after each test
         clientWrapper.readAllDatabases()
                 .toIterable()
                 .forEach(cosmosDatabaseProperties -> clientWrapper.getDatabase(cosmosDatabaseProperties.getId()).delete()
