@@ -13,7 +13,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/solr.adoc[
 *{component-header}*
 
 The Solr component allows you to interface with an
-http://lucene.apache.org/solr/[Apache Lucene Solr] server.
+https://solr.apache.org/[Apache Solr] server.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
