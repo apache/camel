@@ -89,7 +89,8 @@ public class AbstractCamelContextFactoryBeanTest {
             asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
                     "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
                     "{{getCaseInsensitiveHeaders}}",
-                    "{{getAutoStartup}}", "{{getDumpRoutes}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}",
+                    "{{getAutoStartup}}", "{{getDumpRoutes}}", "{{getUseMDCLogging}}", "{{getUseDataType}}",
+                    "{{getUseBreadcrumb}}",
                     "{{getBeanPostProcessorEnabled}}", "{{getAllowUseOriginalMessage}}",
                     "{{getLoadTypeConverters}}", "{{getTypeConverterStatisticsEnabled}}",
                     "{{getInflightRepositoryBrowseEnabled}}"));
