@@ -44,6 +44,7 @@ import static java.util.Collections.emptyList;
  * "http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
  * Spring annotation-based</a> configurations for working with Camel.
  */
+@Deprecated
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
 
