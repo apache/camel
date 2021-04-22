@@ -4848,7 +4848,6 @@ public abstract class AbstractCamelContext extends BaseService
         return "CamelContext(" + getName() + ")";
     }
 
-
     protected void failOnStartup(Exception e) {
         if (e instanceof VetoCamelContextStartException) {
             VetoCamelContextStartException vetoException = (VetoCamelContextStartException) e;
