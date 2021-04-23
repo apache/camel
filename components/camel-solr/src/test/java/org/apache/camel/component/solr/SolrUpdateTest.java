@@ -356,27 +356,4 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         assertEquals("tutorial.pdf", doc.getFieldValue("id"));
         assertEquals(Arrays.asList("application/pdf"), doc.getFieldValue("content_type"));
     }
-
-    @Test
-    @Disabled("No real advantage has yet been discovered to specifying the file in a header.")
-    public void indexPDFDocumentSpecifyingFileInParameters() throws Exception {
-        solrEndpoint.setRequestHandler("/update/extract");
-
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
-        exchange.getIn().setHeader("SolrParam.stream.file", "src/test/resources/data/tutorial.pdf");
-        exchange.getIn().setHeader("SolrParam.literal.id", "tutorial.pdf");
-
-        template.send("direct:start", exchange);
-        solrCommit();
-
-        QueryResponse response = executeSolrQuery("*:*");
-        assertEquals(0, response.getStatus());
-        assertEquals(1, response.getResults().getNumFound());
-
-        SolrDocument doc = response.getResults().get(0);
-        assertEquals("Solr", doc.getFieldValue("subject"));
-        assertEquals("tutorial.pdf", doc.getFieldValue("id"));
-        assertEquals(Arrays.asList("application/pdf"), doc.getFieldValue("content_type"));
-    }
 }
