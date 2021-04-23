@@ -250,7 +250,6 @@ public class SolrProducer extends DefaultProducer {
                         doc.setField(entry.getKey(), entry.getValue());
                     }
                     solrServer.add(doc);
-                    solrServer.commit();
                 } else {
                     invalid = true;
                 }
