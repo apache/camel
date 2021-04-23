@@ -650,7 +650,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             boolean annotationBasedOptions = fields.stream().anyMatch(f -> f.getAnnotation(Metadata.class) != null)
                     || methods.stream().anyMatch(m -> m.getAnnotation(Metadata.class) != null);
 
-            if (methods.size() > 0 && !annotationBasedOptions) {
+            if (!methods.isEmpty() && !annotationBasedOptions) {
                 getLog().warn("Component class " + classElement.getName() + " has not been marked up with @Metadata for "
                               + methods.size() + " options.");
             }
@@ -1376,7 +1376,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         String propName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         for (MethodSource<JavaClassSource> getter : source.getMethods()) {
-            if (getter.getParameters().size() == 0
+            if (getter.getParameters().isEmpty()
                     && (getter.getName().equals("get" + propName) || getter.getName().equals("is" + propName))) {
                 String doc = getJavaDocText(loadJavaSource(classElement.getName()), getter);
                 if (!Strings.isNullOrEmpty(doc)) {
@@ -1396,7 +1396,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
                 }
                 for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                    if (builder.getParameters().size() == 0 && builder.getName().equals(name)) {
+                    if (builder.getParameters().isEmpty() && builder.getName().equals(name)) {
                         String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
                         if (!Strings.isNullOrEmpty(doc)) {
                             return doc;
@@ -1413,7 +1413,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
             for (MethodSource<JavaClassSource> builder : source.getMethods()) {
-                if (builder.getParameters().size() == 0 && builder.getName().equals(fieldName)) {
+                if (builder.getParameters().isEmpty() && builder.getName().equals(fieldName)) {
                     String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
                     if (!Strings.isNullOrEmpty(doc)) {
                         return doc;
@@ -1431,7 +1431,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         JavaDoc<?> javaDoc = member.getJavaDoc();
         Javadoc jd = (Javadoc) javaDoc.getInternal();
-        if (source != null && jd.tags().size() > 0) {
+        if (source != null && !jd.tags().isEmpty()) {
             ASTNode n = (ASTNode) jd.tags().get(0);
             String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
             return txt

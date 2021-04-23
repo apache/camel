@@ -157,14 +157,14 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                     removeStackElement(JsonToken.END_OBJECT);
                     removeStackElement(JsonToken.START_OBJECT);
                     removeStackElement(JsonToken.FIELD_NAME);
-                    eof = tokenStack.size() == 0;
+                    eof = tokenStack.isEmpty();
 
                     return XMLStreamConstants.END_ELEMENT;
                 case END_ARRAY:
                     removeStackElement(JsonToken.END_ARRAY);
                     removeStackElement(JsonToken.START_ARRAY);
                     removeStackElement(JsonToken.FIELD_NAME);
-                    eof = tokenStack.size() == 0;
+                    eof = tokenStack.isEmpty();
 
                     return XMLStreamConstants.END_ELEMENT;
                 default:
@@ -395,7 +395,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             return XMLStreamConstants.END_DOCUMENT;
         }
 
-        if (tokenStack.size() == 0) {
+        if (tokenStack.isEmpty()) {
             return XMLStreamConstants.START_DOCUMENT;
         }
 

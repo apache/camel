@@ -222,8 +222,7 @@ public class RestOpenApiReader {
 
         // setup security definitions
         RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
-        if (sd != null && sd.getSecurityDefinitions().size() != 0
-                && openApi.components == null) {
+        if (sd != null && !sd.getSecurityDefinitions().isEmpty() && openApi.components == null) {
             openApi.components = openApi
                     .createComponents();
         }
@@ -297,7 +296,7 @@ public class RestOpenApiReader {
 
         // setup security definitions
         RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
-        if (sd != null && sd.getSecurityDefinitions().size() != 0 && openApi.securityDefinitions == null) {
+        if (sd != null && !sd.getSecurityDefinitions().isEmpty() && openApi.securityDefinitions == null) {
             openApi.securityDefinitions = openApi.createSecurityDefinitions();
         }
         if (sd != null) {
@@ -338,7 +337,7 @@ public class RestOpenApiReader {
                     auth.flow = flow;
                     auth.authorizationUrl = getValue(camelContext, rs.getAuthorizationUrl());
                     auth.tokenUrl = getValue(camelContext, rs.getTokenUrl());
-                    if (rs.getScopes().size() != 0 && auth.scopes == null) {
+                    if (!rs.getScopes().isEmpty() && auth.scopes == null) {
                         auth.scopes = auth.createScopes();
                     }
                     for (RestPropertyDefinition scope : rs.getScopes()) {
@@ -529,7 +528,7 @@ public class RestOpenApiReader {
                         oas30Schema.default_ = getValue(camelContext, param.getDefaultValue());
                     }
                     // add examples
-                    if (param.getExamples() != null && param.getExamples().size() >= 1) {
+                    if (param.getExamples() != null && !param.getExamples().isEmpty()) {
                         // we can only set one example on the parameter
                         Extension exampleExtension = parameter30.createExtension();
                         boolean emptyKey = param.getExamples().get(0).getKey().length() == 0;
@@ -750,7 +749,7 @@ public class RestOpenApiReader {
                         serializableParameter.default_ = getValue(camelContext, param.getDefaultValue());
                     }
                     // add examples
-                    if (param.getExamples() != null && param.getExamples().size() >= 1) {
+                    if (param.getExamples() != null && !param.getExamples().isEmpty()) {
                         // we can only set one example on the parameter
                         Extension exampleExtension = serializableParameter.createExtension();
                         boolean emptyKey = param.getExamples().get(0).getKey().length() == 0;

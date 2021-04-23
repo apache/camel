@@ -281,7 +281,7 @@ public class CdiCamelExtension implements Extension {
                 .filter(hasType(CamelContext.class))
                 .collect(toSet());
 
-        if (contexts.size() == 0 && shouldDeployDefaultCamelContext(allBeans)) {
+        if (contexts.isEmpty() && shouldDeployDefaultCamelContext(allBeans)) {
             // Add @Default Camel context bean if any
             extraBeans.add(camelContextBean(manager, null, ANY, DEFAULT, APPLICATION_SCOPED));
         } else if (contexts.size() == 1) {

@@ -1652,7 +1652,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         int expected = forceCompletionOfAllGroups();
 
         StopWatch watch = new StopWatch();
-        while (inProgressCompleteExchanges.size() > 0) {
+        while (!inProgressCompleteExchanges.isEmpty()) {
             LOG.trace("Waiting for {} inflight exchanges to complete", getInProgressCompleteExchanges());
             try {
                 Thread.sleep(100);

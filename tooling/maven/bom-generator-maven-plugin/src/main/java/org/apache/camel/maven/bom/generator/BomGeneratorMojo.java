@@ -328,7 +328,7 @@ public class BomGeneratorMojo extends AbstractMojo {
             }
         }
 
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             StringBuilder msg = new StringBuilder();
             msg.append("Found ").append(errors.size())
                     .append(" conflicts between the current managed dependencies and the external BOMS:\n");

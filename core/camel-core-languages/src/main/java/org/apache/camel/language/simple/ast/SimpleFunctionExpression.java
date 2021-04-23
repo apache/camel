@@ -1091,7 +1091,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // and the key can also be OGNL (eg if there is a dot)
             boolean index = false;
             List<String> parts = splitOgnl(key);
-            if (parts.size() > 0) {
+            if (!parts.isEmpty()) {
                 String s = parts.get(0);
                 int pos = s.indexOf('[');
                 if (pos != -1) {

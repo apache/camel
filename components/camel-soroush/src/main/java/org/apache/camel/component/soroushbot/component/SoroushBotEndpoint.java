@@ -193,7 +193,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             }
         }
 
-        if (pathParts.size() > 2 || pathParts.size() == 0) {
+        if (pathParts.size() > 2 || pathParts.isEmpty()) {
             throw new IllegalArgumentException(
                     "Unexpected URI format. Expected soroush://" + getSupportedEndpointAsString()
                                                + "[/<authorizationToken>][?options]', found " + uri);

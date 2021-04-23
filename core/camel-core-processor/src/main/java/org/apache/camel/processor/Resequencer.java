@@ -309,7 +309,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
             // out batch is disabled, so go ahead and send.
             return true;
         }
-        return collection.size() > 0 && collection.size() >= outBatchSize;
+        return !collection.isEmpty() && collection.size() >= outBatchSize;
     }
 
     /**
