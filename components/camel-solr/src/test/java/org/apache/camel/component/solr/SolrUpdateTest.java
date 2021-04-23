@@ -284,6 +284,37 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     }
 
     @Test
+    public void queryDocumentsToMap() throws Exception {
+        solrEndpoint.setRequestHandler("/update/csv");
+
+        Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
+        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
+        template.send("direct:start", exchange);
+        solrCommit();
+
+        // 0553579908,book,A Clash of Kings,7.99,true,George R.R. Martin,"A Song of Ice and Fire",2,fantasy
+        Exchange exchange1 = createExchangeWithBody(null);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", "0553579934");
+        map.put("cat", "Test");
+        map.put("name", "Test");
+        map.put("price", "7.99");
+        map.put("author_t", "Test");
+        map.put("series_t", "Test");
+        map.put("sequence_i", "3");
+        map.put("genre_s", "Test");
+        exchange1.getMessage().setBody(map);
+        exchange1.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        template.send("direct:start", exchange1);
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:0553579934");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
+
+    @Test
     public void indexDocumentsToCSVUpdateHandlerWithParameters() throws Exception {
         solrEndpoint.setRequestHandler("/update/csv");
 
