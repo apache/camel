@@ -191,7 +191,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
         templateNotAllowCustomHeaders.sendBodyAndHeaders("new message", headers);
 
         Thread.sleep(500);
-        assertEquals(received.get(0), "new message");
+        assertEquals("new message", received.get(0));
         assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
         assertFalse(receivedHeaders.containsKey(CUSTOM_HEADER));
     }
@@ -210,7 +210,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
         templateAllowCustomHeaders.sendBodyAndHeaders("new message", headers);
 
         Thread.sleep(500);
-        assertEquals(received.get(0), "new message");
+        assertEquals("new message", received.get(0));
         assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
         assertTrue(receivedHeaders.containsKey(CUSTOM_HEADER));
     }

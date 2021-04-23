@@ -82,7 +82,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         pongResponse = template.requestBody("direct:grpc-sync-proto-method-name", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
+        assertEquals(GRPC_TEST_PING_ID, ((PongResponse) pongResponse).getPongId());
     }
 
     @Test

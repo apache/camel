@@ -87,7 +87,7 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
                                                                         + ".PingPong?method=pingSyncSync&autoDiscoverClientInterceptors=false");
 
         assertFalse(endpoint.getConfiguration().isAutoDiscoverClientInterceptors());
-        assertEquals(endpoint.getConfiguration().getClientInterceptors().size(), 0);
+        assertEquals(0, endpoint.getConfiguration().getClientInterceptors().size());
     }
 
     @Override

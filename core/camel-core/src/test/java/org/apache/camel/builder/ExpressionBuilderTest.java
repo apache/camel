@@ -105,7 +105,7 @@ public class ExpressionBuilderTest extends TestSupport {
         expression = camelContextPropertiesExpression();
         expression.init(camelContext);
         Map<?, ?> properties = expression.evaluate(exchange, Map.class);
-        assertEquals(properties.size(), 1, "Get a wrong properties size");
+        assertEquals(1, properties.size(), "Get a wrong properties size");
     }
 
     @Test

@@ -84,7 +84,7 @@ public class ProducerAutoUploadFileTest extends SoroushBotTestSupport {
         assertEquals(SoroushBotWS.getReceivedMessages().get(0), body, "message sent successfully");
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
         Map<String, String> fileIdToContent = SoroushBotWS.getFileIdToContent();
-        assertEquals(fileIdToContent.size(), 2, "file uploaded successfully");
+        assertEquals(2, fileIdToContent.size(), "file uploaded successfully");
         assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);
         assertEquals(fileIdToContent.get(mockedMessage.getThumbnailUrl()), thumbContent);
     }

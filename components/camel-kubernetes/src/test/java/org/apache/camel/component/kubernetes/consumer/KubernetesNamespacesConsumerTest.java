@@ -62,7 +62,7 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
         Namespace ns = ex.getMessage().getBody(Namespace.class);
 
-        assertEquals(ns.getMetadata().getName(), "test");
+        assertEquals("test", ns.getMetadata().getName());
 
         ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();

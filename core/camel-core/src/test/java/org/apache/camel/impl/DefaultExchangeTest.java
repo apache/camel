@@ -99,7 +99,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         RuntimeCamelException rce = exchange.getException(RuntimeCamelException.class);
         assertNotNull(rce);
-        assertNotSame(rce.getMessage(), "Cannot connect to remote server");
+        assertNotSame("Cannot connect to remote server", rce.getMessage());
         assertEquals("Cannot connect to remote server", rce.getCause().getMessage());
     }
 
@@ -166,7 +166,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("fr*");
         assertTrue(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 1);
+        assertEquals(1, exchange.getProperties().size());
         assertEquals(null, exchange.getProperty("fruit", String.class));
         assertEquals(null, exchange.getProperty("fruit1", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
@@ -184,7 +184,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("*");
         assertFalse(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 0);
+        assertEquals(0, exchange.getProperties().size());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("fr*", "fruit1", "fruit2");
         assertTrue(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 3);
+        assertEquals(3, exchange.getProperties().size());
         assertEquals(null, exchange.getProperty("fruit", String.class));
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
@@ -230,7 +230,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         exchange.removeProperties("fr*", "fruit", "fruit1", "fruit2", "zone");
         assertTrue(exchange.hasProperties());
-        assertEquals(exchange.getProperties().size(), 4);
+        assertEquals(4, exchange.getProperties().size());
         assertEquals("apple", exchange.getProperty("fruit", String.class));
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));

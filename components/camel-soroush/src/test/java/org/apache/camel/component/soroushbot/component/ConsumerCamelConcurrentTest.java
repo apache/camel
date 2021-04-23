@@ -62,9 +62,9 @@ public class ConsumerCamelConcurrentTest extends SoroushBotTestSupport {
         mockEndpoint.expectedMessageCount(10);
         mockEndpoint.assertIsSatisfied();
         LogManager.getLogger().info(fromOrder.toString());
-        assertEquals(fromOrder.size(), 10);
-        assertEquals(fromOrder.get(7), "u0");
-        assertEquals(fromOrder.get(8), "u0");
-        assertEquals(fromOrder.get(9), "u0");
+        assertEquals(10, fromOrder.size());
+        assertEquals("u0", fromOrder.get(7));
+        assertEquals("u0", fromOrder.get(8));
+        assertEquals("u0", fromOrder.get(9));
     }
 }
