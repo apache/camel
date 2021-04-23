@@ -106,5 +106,10 @@ public class UriConfigurationTest {
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.USER, timelineEndpoint.getTimelineType());
+
+        endpoint = context.getEndpoint("twitter-timeline:list");
+        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
+        timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
+        assertEquals(TimelineType.LIST, timelineEndpoint.getTimelineType());
     }
 }

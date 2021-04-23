@@ -45,8 +45,10 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     private TimelineType timelineType;
     @UriParam(description = "The username when using timelineType=user")
     private String user;
+    @UriParam(description = "The list name when using timelineType=list")
+    private String list;
 
-    public TwitterTimelineEndpoint(String uri, String remaining, String user, TwitterTimelineComponent component,
+    public TwitterTimelineEndpoint(String uri, String remaining, String user, String list, TwitterTimelineComponent component,
                                    TwitterConfiguration properties) {
         super(uri, component, properties);
         if (remaining == null) {
@@ -54,6 +56,7 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
         }
         this.timelineType = component.getCamelContext().getTypeConverter().convertTo(TimelineType.class, remaining);
         this.user = user;
+        this.list = list;
     }
 
     public String getUser() {
@@ -62,6 +65,14 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getList() {
+        return list;
+    }
+
+    public void setList(String list) {
+        this.list = list;
     }
 
     @Override
@@ -87,6 +98,10 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
                 break;
             case RETWEETSOFME:
                 handler = new RetweetsConsumerHandler(this);
+                break;
+            case LIST:
+                TwitterTimelineComponent component = (TwitterTimelineComponent) getComponent();
+                handler = new UserListConsumerHandler(this, user, list);
                 break;
             case USER:
                 if (user == null || user.trim().isEmpty()) {
