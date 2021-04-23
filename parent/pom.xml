@@ -255,7 +255,7 @@
         <huaweicloud-sdk-version>3.0.32-rc</huaweicloud-sdk-version>
         <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
-        <icu4j-version>68.2</icu4j-version>
+        <icu4j-version>69.1</icu4j-version>
         <ignite-version>2.10.0</ignite-version>
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
         <infinispan-version>12.1.1.Final</infinispan-version>
