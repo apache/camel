@@ -64,11 +64,7 @@ public class PulsarConsumer extends DefaultConsumer {
 
     @Override
     protected void doResume() throws Exception {
-        pulsarConsumers = stopConsumers(pulsarConsumers);
-
-        Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
-
-        pulsarConsumers.addAll(consumers);
+        doStart();
     }
 
     private Collection<Consumer<byte[]>> createConsumers(
