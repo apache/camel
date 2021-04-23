@@ -74,6 +74,8 @@ public class SolrEndpoint extends DefaultEndpoint {
     private String username;
     @UriParam(label = "security", secret = true)
     private String password;
+    @UriParam(defaultValue = "false")
+    private boolean autoCommit;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
@@ -312,4 +314,14 @@ public class SolrEndpoint extends DefaultEndpoint {
         this.password = password;
     }
 
+    public boolean isAutoCommit() {
+        return autoCommit;
+    }
+
+    /**
+     * If true, each producer operation will be committed automatically
+     */
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
+    }
 }

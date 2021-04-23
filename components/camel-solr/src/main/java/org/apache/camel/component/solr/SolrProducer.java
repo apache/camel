@@ -262,6 +262,10 @@ public class SolrProducer extends DefaultProducer {
                     SolrException.ErrorCode.BAD_REQUEST,
                     "unable to find data in Exchange to update Solr");
         }
+
+        if (getEndpoint().isAutoCommit()) {
+            solrServer.commit();
+        }
     }
 
     private String getRequestHandler() {
