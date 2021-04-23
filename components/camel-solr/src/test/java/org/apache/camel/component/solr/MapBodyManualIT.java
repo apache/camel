@@ -1,8 +1,10 @@
 package org.apache.camel.component.solr;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -11,13 +13,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnabledIfSystemProperty(named = "solr.address", matches = ".*",
-        disabledReason = "The Solr address (host:port) was not provided")
+                         disabledReason = "The Solr address (host:port) was not provided")
 public class MapBodyManualIT extends CamelTestSupport {
 
     @EndpointInject
@@ -35,7 +32,7 @@ public class MapBodyManualIT extends CamelTestSupport {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String,String> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 map.put("id", "0553579923");
                 map.put("cat", "Test");
                 map.put("name", "Test");
