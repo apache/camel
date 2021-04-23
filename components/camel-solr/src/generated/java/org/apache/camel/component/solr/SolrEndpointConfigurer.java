@@ -23,6 +23,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": target.setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autocommit":
+        case "autoCommit": target.setAutoCommit(property(camelContext, boolean.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -57,6 +59,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": return java.lang.Boolean.class;
+        case "autocommit":
+        case "autoCommit": return boolean.class;
         case "collection": return java.lang.String.class;
         case "connectiontimeout":
         case "connectionTimeout": return java.lang.Integer.class;
@@ -92,6 +96,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": return target.getAllowCompression();
+        case "autocommit":
+        case "autoCommit": return target.isAutoCommit();
         case "collection": return target.getCollection();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();
