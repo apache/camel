@@ -22,16 +22,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chatscript.ChatScriptMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.test.infra.chatscript.services.ChatScriptService;
+import org.apache.camel.test.infra.chatscript.services.ChatScriptServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@EnabledIfSystemProperty(named = "chatscript.address", matches = ".*",
-                         disabledReason = "The ChatScript address (host:port) was not provided")
-public class ChatScriptComponentManualIT extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentManualIT.class);
+public class ChatScriptComponentIT extends CamelTestSupport {
+    @RegisterExtension
+    static ChatScriptService service = ChatScriptServiceFactory.createService();
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentIT.class);
 
     @Test
     public void testChatScript() throws Exception {
