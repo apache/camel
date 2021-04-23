@@ -19,9 +19,7 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.params.Test;
