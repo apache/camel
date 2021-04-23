@@ -654,7 +654,7 @@ class AbstractExchange implements ExtendedExchange {
 
     @Override
     public void setTransacted(boolean transacted) {
-        this.transacted = true;
+        this.transacted = transacted;
     }
 
     @Override
