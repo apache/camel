@@ -385,7 +385,7 @@ public class RestSwaggerReader {
                             qp.setDefaultValue(param.getDefaultValue());
                         }
                         // add examples
-                        if (param.getExamples() != null && param.getExamples().size() >= 1) {
+                        if (param.getExamples() != null && !param.getExamples().isEmpty()) {
                             // we can only set one example on the parameter
                             qp.example(param.getExamples().get(0).getValue());
                         }

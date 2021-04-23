@@ -116,7 +116,7 @@ public class CamelSubscription implements Subscription {
 
     protected void checkAndFlush() {
         mutex.lock();
-        boolean shouldFlush = !terminated && !sending && requested > 0 && buffer.size() > 0;
+        boolean shouldFlush = !terminated && !sending && requested > 0 && !buffer.isEmpty();
         if (shouldFlush) {
             sending = true;
         }

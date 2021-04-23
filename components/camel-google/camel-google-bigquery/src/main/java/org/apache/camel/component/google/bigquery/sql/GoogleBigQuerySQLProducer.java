@@ -117,7 +117,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     }
 
     private Map<String, Object> extractParameters(Exchange exchange) {
-        if (queryParameterNames == null || queryParameterNames.size() == 0) {
+        if (queryParameterNames == null || queryParameterNames.isEmpty()) {
             return null;
         }
 

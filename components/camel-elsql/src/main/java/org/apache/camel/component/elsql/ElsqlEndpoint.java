@@ -151,7 +151,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
             }
         }
 
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             final URL[] urls = list.toArray(new URL[list.size()]);
             elSql = ElSql.parse(elSqlConfig, urls);
         }

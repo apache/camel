@@ -294,7 +294,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             listRes.stream()
                     .flatMap(r -> r.contents().stream())
                     .forEach(content -> list.add(content));
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 list.sort(Comparator.comparing(S3Object::lastModified));
                 int listSize = list.size();
                 String fileName = AWS2S3Utils.determineFileName(list.get(listSize - 1).key());

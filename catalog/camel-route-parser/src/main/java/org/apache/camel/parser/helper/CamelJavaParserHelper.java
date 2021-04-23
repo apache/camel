@@ -657,7 +657,7 @@ public final class CamelJavaParserHelper {
                     if (expression instanceof MethodInvocation) {
                         MethodInvocation mi = (MethodInvocation) expression;
                         List args = mi.arguments();
-                        if (args != null && args.size() > 0) {
+                        if (args != null && !args.isEmpty()) {
                             // the first argument has the endpoint uri
                             expression = (Expression) args.get(0);
                             return getLiteralValue(clazz, block, expression);

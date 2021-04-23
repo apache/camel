@@ -82,7 +82,7 @@ public class IPFSProducer extends DefaultProducer {
             List<String> cids = ipfsAdd(path);
             Object resp = cids;
             if (path.toFile().isFile()) {
-                resp = cids.size() > 0 ? cids.get(0) : null;
+                resp = !cids.isEmpty() ? cids.get(0) : null;
             }
             exchange.getMessage().setBody(resp);
         } else if (IPFSCommand.cat == cmd) {
