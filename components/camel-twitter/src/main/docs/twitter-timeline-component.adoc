@@ -56,16 +56,17 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *timelineType* | *Required* The timeline type to produce/consume. There are 6 enums and the value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME, UNKNOWN |  | TimelineType
+| *timelineType* | *Required* The timeline type to produce/consume. There are 7 enums and the value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME, LIST, UNKNOWN |  | TimelineType
 |===
 
 
-=== Query Parameters (43 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *list* (common) | The list name when using timelineType=list |  | String
 | *user* (common) | The username when using timelineType=user |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
