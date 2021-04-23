@@ -64,6 +64,37 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true, each producer operation will be committed automatically.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoCommit the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder autoCommit(boolean autoCommit) {
+            doSetProperty("autoCommit", autoCommit);
+            return this;
+        }
+        /**
+         * If true, each producer operation will be committed automatically.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoCommit the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder autoCommit(String autoCommit) {
+            doSetProperty("autoCommit", autoCommit);
+            return this;
+        }
+        /**
          * connectionTimeout on the underlying HttpConnectionManager.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.

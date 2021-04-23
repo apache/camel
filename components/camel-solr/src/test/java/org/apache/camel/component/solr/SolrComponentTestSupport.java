@@ -65,7 +65,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     }
 
     String solrRouteAutocommitUri() {
-        return getSolrFixtures().solrRouteUri();
+        return getSolrFixtures().solrRouteAutocommitUri();
     }
 
     protected void solrInsertTestEntry(String id) {
@@ -110,6 +110,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
                         .end()
                         .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
                         .to(solrRouteUri());
+                from("direct:startAutoCommit").to(solrRouteAutocommitUri());
             }
         };
     }

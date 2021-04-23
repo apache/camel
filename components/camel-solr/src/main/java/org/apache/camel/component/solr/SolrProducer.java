@@ -80,25 +80,43 @@ public class SolrProducer extends DefaultProducer {
 
         if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT)) {
             insert(exchange, serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT_STREAMING)) {
             insert(exchange, serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_ID)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.deleteById(exchange.getIn().getBody(String.class));
             updateRequest.process(serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.deleteByQuery(exchange.getIn().getBody(String.class));
             updateRequest.process(serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.add(serverToUse.getBinder().toSolrInputDocument(exchange.getIn().getBody()));
             updateRequest.process(serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEANS)) {
             UpdateRequest updateRequest = createUpdateRequest();
             Collection<Object> body = exchange.getIn().getBody(Collection.class);
             updateRequest.add(body.stream().map(serverToUse.getBinder()::toSolrInputDocument).collect(Collectors.toList()));
             updateRequest.process(serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.setAction(ACTION.COMMIT, true, true);
@@ -111,16 +129,28 @@ public class SolrProducer extends DefaultProducer {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.rollback();
             updateRequest.process(serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_OPTIMIZE)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.setAction(ACTION.OPTIMIZE, true, true, 1);
             updateRequest.process(serverToUse);
+            if (getEndpoint().isAutoCommit()) {
+                commit(serverToUse);
+            }
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_QUERY)) {
             query(exchange, serverToUse);
         } else {
             throw new IllegalArgumentException(
                     SolrConstants.OPERATION + " header value '" + operation + "' is not supported");
         }
+    }
+
+    private void commit(SolrClient serverToUse) throws SolrServerException, IOException {
+        UpdateRequest updateRequest = createUpdateRequest();
+        updateRequest.setAction(ACTION.COMMIT, true, true);
+        updateRequest.process(serverToUse);
     }
 
     private void query(Exchange exchange, SolrClient serverToUse) throws SolrServerException, IOException {
@@ -261,10 +291,6 @@ public class SolrProducer extends DefaultProducer {
             throw new SolrException(
                     SolrException.ErrorCode.BAD_REQUEST,
                     "unable to find data in Exchange to update Solr");
-        }
-
-        if (getEndpoint().isAutoCommit()) {
-            solrServer.commit();
         }
     }
 

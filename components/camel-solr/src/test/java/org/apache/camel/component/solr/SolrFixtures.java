@@ -67,14 +67,14 @@ public class SolrFixtures {
     String solrRouteAutocommitUri() {
         if (serverType == TestServerType.USE_HTTPS) {
             return "solrs://127.0.0.1:" + httpsPort + "/solr/collection1"
-                    + "?username=solr&password=SolrRocks&autoCommit=true";
+                   + "?username=solr&password=SolrRocks&autoCommit=true";
         } else if (serverType == TestServerType.USE_CLOUD) {
             String zkAddrStr = cloudFixture.miniCluster.getZkServer().getZkAddress();
             return "solrCloud://localhost:" + httpsPort + "/solr?zkHost=" + zkAddrStr
-                    + "&collection=collection1&username=solr&password=SolrRocks&autoCommit=true";
+                   + "&collection=collection1&username=solr&password=SolrRocks&autoCommit=true";
         } else {
             return "solr://localhost:" + port + "/solr/collection1"
-                    + "?username=solr&password=SolrRocks&autoCommit=true";
+                   + "?username=solr&password=SolrRocks&autoCommit=true";
         }
     }
 

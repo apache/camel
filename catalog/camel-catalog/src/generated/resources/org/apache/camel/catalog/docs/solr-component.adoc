@@ -74,13 +74,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (15 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *allowCompression* (producer) | Server side must support gzip or deflate for this to have any effect |  | Boolean
+| *autoCommit* (producer) | If true, each producer operation will be committed automatically | false | boolean
 | *connectionTimeout* (producer) | connectionTimeout on the underlying HttpConnectionManager |  | Integer
 | *defaultMaxConnectionsPerHost* (producer) | maxConnectionsPerHost on the underlying HttpConnectionManager |  | Integer
 | *followRedirects* (producer) | indicates whether redirects are used to get to the Solr server |  | Boolean
