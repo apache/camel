@@ -18,7 +18,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/log.adoc[o
 The Log component logs message exchanges to the underlying logging
 mechanism.
 
-Camel uses http://www.slf4j.org/[slf4j] which allows you to configure
+Camel uses http://www.slf4j.org/[SLF4J] which allows you to configure
 logging via, among others:
 
 * Log4j
@@ -341,7 +341,7 @@ When using Log component inside OSGi (e.g., in Karaf), the underlying
 logging mechanisms are provided by PAX logging. It searches for a bundle
 which invokes `org.slf4j.LoggerFactory.getLogger()` method and
 associates the bundle with the logger instance. Without specifying
-custom `org.sfl4j.Logger` instance, the logger created by Log component
+custom `org.slf4j.Logger` instance, the logger created by Log component
 is associated with `camel-core` bundle.
 
 In some scenarios it is required that the bundle associated with logger
