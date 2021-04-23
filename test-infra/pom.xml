@@ -71,6 +71,7 @@
         <module>camel-test-infra-fhir</module>
         <module>camel-test-infra-mosquitto</module>
         <module>camel-test-infra-activemq</module>
+        <module>camel-test-infra-chatscript</module>
     </modules>
 
     <build>
