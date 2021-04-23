@@ -64,6 +64,10 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
         return getSolrFixtures().solrRouteUri();
     }
 
+    String solrRouteAutocommitUri() {
+        return getSolrFixtures().solrRouteUri();
+    }
+
     protected void solrInsertTestEntry(String id) {
         Map<String, Object> headers = new HashMap<>();
         headers.put(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
