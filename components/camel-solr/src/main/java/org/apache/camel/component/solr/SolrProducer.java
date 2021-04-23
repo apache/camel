@@ -38,6 +38,7 @@ import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 
@@ -219,7 +220,6 @@ public class SolrProducer extends DefaultProducer {
                 }
 
                 if (hasSolrHeaders) {
-
                     UpdateRequest updateRequest = createUpdateRequest();
 
                     SolrInputDocument doc = new SolrInputDocument();
@@ -244,10 +244,19 @@ public class SolrProducer extends DefaultProducer {
                     xmlRequest.setBasicAuthCredentials(getEndpoint().getUsername(), getEndpoint().getPassword());
 
                     solrServer.request(xmlRequest);
+                } else if (body instanceof Map) {
+                    SolrInputDocument doc = new SolrInputDocument();
+                    Map<String, Object> bodyMap = (Map<String,Object>) body;
+                    for (Map.Entry<String, Object> entry : bodyMap.entrySet()) {
+                            doc.setField(entry.getKey(), entry.getValue());
+                    }
+                    solrServer.add(doc);
+                    solrServer.commit();
                 } else {
                     invalid = true;
                 }
-            }
+
+                }
         }
 
         if (invalid) {
