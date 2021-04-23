@@ -222,7 +222,7 @@ public class SolrProducer extends DefaultProducer {
             } else if (body instanceof List<?>) {
                 List<?> list = (List<?>) body;
 
-                if (list.size() > 0 && list.get(0) instanceof SolrInputDocument) {
+                if (!list.isEmpty() && list.get(0) instanceof SolrInputDocument) {
                     UpdateRequest updateRequest = createUpdateRequest();
                     updateRequest.add((List<SolrInputDocument>) list);
 

@@ -70,7 +70,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
 
         List<Update> updates = updateResult.getUpdates();
 
-        if (updates.size() > 0) {
+        if (!updates.isEmpty()) {
             LOG.debug("Received {} updates from Telegram service", updates.size());
         } else {
             LOG.debug("No updates received from Telegram service");

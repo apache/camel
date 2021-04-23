@@ -172,7 +172,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
-            if (answer.size() > 0) {
+            if (!answer.isEmpty()) {
                 log.info("Loaded {} ({} millis) additional RoutesBuilder from: {}, pattern: {}", answer.size(), watch.taken(),
                         include,
                         includePattern);

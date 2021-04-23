@@ -229,7 +229,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     separators.add(matcher.group());
                 }
                 // Add terminal separator
-                if (separators.size() > 0) {
+                if (!separators.isEmpty()) {
                     separators.add(separators.get(separators.size() - 1));
                 }
 

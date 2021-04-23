@@ -224,7 +224,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
     public void writeCharacters(String text) {
         // check for non coalescing read
         final List<TreeElement> childs = currentTreeElement.childs;
-        if (childs.size() > 0) {
+        if (!childs.isEmpty()) {
             final TreeElement child = childs.get(childs.size() - 1);
             if (child.getXmlEvent() == XMLStreamConstants.CHARACTERS) {
                 child.appendValue(text);

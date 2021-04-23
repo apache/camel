@@ -1259,7 +1259,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // package scan
         addPackageElementContentsToScanDefinition();
         PackageScanDefinition packageScanDef = getPackageScan();
-        if (packageScanDef != null && packageScanDef.getPackages().size() > 0) {
+        if (packageScanDef != null && !packageScanDef.getPackages().isEmpty()) {
             // use package scan filter
             PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
             // support property placeholders in include and exclude

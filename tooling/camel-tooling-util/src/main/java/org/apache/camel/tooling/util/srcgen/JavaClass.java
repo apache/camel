@@ -534,7 +534,7 @@ public class JavaClass {
                     sb.append(" ");
                 }
                 sb.append(method.name);
-                if (method.parameters.size() > 0) {
+                if (!method.parameters.isEmpty()) {
                     sb.append("(\n");
                     sb.append(method.parameters.stream()
                             .map(p -> p.vararg
