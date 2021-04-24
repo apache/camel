@@ -159,11 +159,11 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
-        assertEquals(exchangeList.size(), 15, "Fifteen Exchanges are expected");
+        assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             List<RecordMetadata> recordMetaData1
                     = getRecordMetadata(exchange);
-            assertEquals(recordMetaData1.size(), 1, "One RecordMetadata is expected.");
+            assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).getOffset() >= 0, "Offset is positive");
             assertTrue(recordMetaData1.get(0).getTopic().startsWith("test"), "Topic Name start with 'test'");
         }
@@ -189,7 +189,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
-        assertEquals(exchangeList.size(), 15, "Fifteen Exchanges are expected");
+        assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             List<RecordMetadata> recordMetaData1
                     = getRecordMetadata(exchange);
@@ -267,7 +267,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
-        assertEquals(exchangeList.size(), 15, "Fifteen Exchanges are expected");
+        assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             List<RecordMetadata> recordMetaData1
                     = getRecordMetadata(exchange);

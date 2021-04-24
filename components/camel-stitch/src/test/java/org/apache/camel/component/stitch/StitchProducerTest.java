@@ -76,7 +76,7 @@ class StitchProducerTest extends CamelTestSupport {
 
         final Message message = result.getExchanges().get(0).getMessage();
 
-        assertEquals(message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"), "test");
+        assertEquals("test", message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"));
     }
 
     @Test
@@ -140,7 +140,7 @@ class StitchProducerTest extends CamelTestSupport {
 
         final Message message = result.getExchanges().get(0).getMessage();
 
-        assertEquals(message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"), "test");
+        assertEquals("test", message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"));
     }
 
     @Test

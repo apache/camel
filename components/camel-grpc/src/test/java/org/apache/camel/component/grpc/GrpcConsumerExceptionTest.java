@@ -112,7 +112,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
         @Override
         public void onError(Throwable t) {
-            assertEquals(t.getMessage(), "INTERNAL: GRPC Camel exception message");
+            assertEquals("INTERNAL: GRPC Camel exception message", t.getMessage());
             LOG.info("Exception", t);
             latch.countDown();
         }

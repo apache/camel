@@ -146,7 +146,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 assertEquals(CONTENT_TYPE, contentType, "Get a wrong content type");
                 // assert camel http header
                 String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
-                assertEquals(charsetEncoding, "UTF-8", "Get a wrong charset name from the message header");
+                assertEquals("UTF-8", charsetEncoding, "Get a wrong charset name from the message header");
                 // assert exchange charset
                 assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME),
                         "Get a wrong charset naem from the exchange property");

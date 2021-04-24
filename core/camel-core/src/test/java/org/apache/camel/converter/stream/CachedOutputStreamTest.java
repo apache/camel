@@ -103,7 +103,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(is);
 
         files = file.list();
-        assertEquals(files.length, 0, "we should have a temp file");
+        assertEquals(0, files.length, "we should have a temp file");
         IOHelper.close(cos);
     }
 

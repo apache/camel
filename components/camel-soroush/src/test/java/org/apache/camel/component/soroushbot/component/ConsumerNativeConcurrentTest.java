@@ -67,7 +67,7 @@ public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
         mockEndpoint.assertIsSatisfied();
         LogManager.getLogger().info(userToThread.size());
         LogManager.getLogger().info(userToThread.values());
-        assertEquals(badThread.get(), 0, "previous and current thread must be equal");
+        assertEquals(0, badThread.get(), "previous and current thread must be equal");
         assertTrue(new HashSet<>(userToThread.values()).size() > 1,
                 "there must be more than 1 thread in $userToThread unless this test is not useful");
     }

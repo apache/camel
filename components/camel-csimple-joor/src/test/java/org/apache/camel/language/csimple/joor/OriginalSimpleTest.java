@@ -1322,7 +1322,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionEvaluationException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals(cause.getMessage(), "Index 3 out of bounds for length 2");
+            assertEquals("Index 3 out of bounds for length 2", cause.getMessage());
         }
     }
 

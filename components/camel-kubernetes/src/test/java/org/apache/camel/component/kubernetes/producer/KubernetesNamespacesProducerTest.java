@@ -65,7 +65,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
         Namespace ns = ex.getMessage().getBody(Namespace.class);
 
-        assertEquals(ns.getMetadata().getName(), "test");
+        assertEquals("test", ns.getMetadata().getName());
 
     }
 

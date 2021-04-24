@@ -77,7 +77,7 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
 
         Service serv = ex.getMessage().getBody(Service.class);
 
-        assertEquals(serv.getMetadata().getName(), "test");
+        assertEquals("test", serv.getMetadata().getName());
 
         ex = template.request("direct:deleteService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");

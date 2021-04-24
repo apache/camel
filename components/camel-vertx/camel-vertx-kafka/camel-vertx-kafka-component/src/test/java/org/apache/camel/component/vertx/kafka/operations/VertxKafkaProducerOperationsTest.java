@@ -119,7 +119,7 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
 
         assertProducedMessages(records -> {
             // assert the size
-            assertEquals(records.size(), 6);
+            assertEquals(6, records.size());
 
             // assert the content
             final ProducerRecord<Object, Object> record1 = records.get(0);

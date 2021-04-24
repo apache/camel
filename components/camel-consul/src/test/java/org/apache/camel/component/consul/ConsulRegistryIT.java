@@ -137,7 +137,7 @@ public class ConsulRegistryIT implements Serializable {
         ConsulTestClass testObject = new ConsulTestClass();
         registry.put("objectTestClass", testObject);
         ConsulTestClass clone = (ConsulTestClass) registry.lookupByName("objectTestClass");
-        assertEquals(clone.hello("World"), "Hello World");
+        assertEquals("Hello World", clone.hello("World"));
         registry.remove("objectTestClass");
     }
 

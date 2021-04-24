@@ -34,7 +34,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
                 .createEndpoint(
                         "aws2-s3://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&overrideEndpoint=true&uriEndpointOverride=http://localhost:4572");
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
-        assertEquals(endpoint.getConfiguration().getUriEndpointOverride(), "http://localhost:4572");
+        assertEquals("http://localhost:4572", endpoint.getConfiguration().getUriEndpointOverride());
     }
 
     @Test

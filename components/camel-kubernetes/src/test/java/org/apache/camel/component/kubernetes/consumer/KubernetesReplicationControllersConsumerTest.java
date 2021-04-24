@@ -74,7 +74,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
 
         ReplicationController rc = ex.getMessage().getBody(ReplicationController.class);
 
-        assertEquals(rc.getMetadata().getName(), "test");
+        assertEquals("test", rc.getMetadata().getName());
 
         ex = template.request("direct:deleteReplicationController", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");

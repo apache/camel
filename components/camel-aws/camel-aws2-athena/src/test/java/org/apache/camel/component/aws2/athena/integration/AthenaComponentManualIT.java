@@ -206,7 +206,7 @@ public class AthenaComponentManualIT extends CamelTestSupport {
         assertTrue(exchange.getMessage().getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Long.class) > 0);
 
         GetQueryExecutionResponse response = exchange.getMessage().getBody(GetQueryExecutionResponse.class);
-        assertEquals(response.queryExecution().query(), "SELECT 1");
+        assertEquals("SELECT 1", response.queryExecution().query());
     }
 
     @Test
@@ -248,7 +248,7 @@ public class AthenaComponentManualIT extends CamelTestSupport {
 
         GetQueryExecutionResponse response = exchange.getMessage().getBody(GetQueryExecutionResponse.class);
         assertEquals(QueryExecutionState.FAILED, response.queryExecution().status().state());
-        assertEquals(response.queryExecution().query(), "SELECT INVALID SQL");
+        assertEquals("SELECT INVALID SQL", response.queryExecution().query());
     }
 
     @Test

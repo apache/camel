@@ -365,8 +365,8 @@ public class CMISProducerTest extends CMISTestSupport {
 
         assertNotNull(copy);
         assertNotEquals(document.getName(), copy.getName());
-        assertEquals(document.getName(), "document.txt");
-        assertEquals(copy.getName(), "renamedDocument.txt");
+        assertEquals("document.txt", document.getName());
+        assertEquals("renamedDocument.txt", copy.getName());
         assertEquals(document.getContentStreamLength(), copy.getContentStreamLength());
         assertEquals(destination.getId(), copy.getParents().get(0).getId());
     }
