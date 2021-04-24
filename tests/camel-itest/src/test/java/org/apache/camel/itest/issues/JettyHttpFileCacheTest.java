@@ -52,7 +52,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
 
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertEquals(files.length, 0, "There should not have any temp file");
+        assertEquals(0, files.length, "There should not have any temp file");
 
     }
 

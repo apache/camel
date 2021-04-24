@@ -76,7 +76,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
         // should be closed by http client
         try {
-            assertEquals(context.getTypeConverter().convertTo(String.class, exchange, is), "camel rocks!");
+            assertEquals("camel rocks!", context.getTypeConverter().convertTo(String.class, exchange, is));
             fail("Should fail");
         } catch (TypeConversionException e) {
             // expected

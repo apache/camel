@@ -44,15 +44,15 @@ public class SjmsEndpointTest extends CamelTestSupport {
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint sjms = (SjmsEndpoint) endpoint;
-        assertEquals(sjms.getEndpointUri(), "sjms://test");
-        assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
+        assertEquals("sjms://test", sjms.getEndpointUri());
+        assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
     }
 
     @Test
     public void testQueueEndpoint() throws Exception {
         Endpoint sjms = context.getEndpoint("sjms:queue:test");
         assertNotNull(sjms);
-        assertEquals(sjms.getEndpointUri(), "sjms://queue:test");
+        assertEquals("sjms://queue:test", sjms.getEndpointUri());
         assertTrue(sjms instanceof SjmsEndpoint);
     }
 
@@ -90,7 +90,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;
         assertEquals(qe.getReplyTo(), replyTo);
-        assertEquals(qe.createExchange().getPattern(), ExchangePattern.InOut);
+        assertEquals(ExchangePattern.InOut, qe.createExchange().getPattern());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;
         assertEquals(qe.getReplyTo(), replyTo);
-        assertEquals(qe.createExchange().getPattern(), ExchangePattern.InOut);
+        assertEquals(ExchangePattern.InOut, qe.createExchange().getPattern());
     }
 
     @Test

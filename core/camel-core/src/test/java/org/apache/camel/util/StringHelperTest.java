@@ -194,9 +194,9 @@ public class StringHelperTest {
 
     @Test
     public void testRemoveInitialCharacters() throws Exception {
-        assertEquals(StringHelper.removeStartingCharacters("foo", '/'), "foo");
-        assertEquals(StringHelper.removeStartingCharacters("/foo", '/'), "foo");
-        assertEquals(StringHelper.removeStartingCharacters("//foo", '/'), "foo");
+        assertEquals("foo", StringHelper.removeStartingCharacters("foo", '/'));
+        assertEquals("foo", StringHelper.removeStartingCharacters("/foo", '/'));
+        assertEquals("foo", StringHelper.removeStartingCharacters("//foo", '/'));
     }
 
     @Test
@@ -304,9 +304,9 @@ public class StringHelperTest {
 
     @Test
     public void testTrimToNull() {
-        assertEquals(StringHelper.trimToNull("abc"), "abc");
-        assertEquals(StringHelper.trimToNull(" abc"), "abc");
-        assertEquals(StringHelper.trimToNull(" abc "), "abc");
+        assertEquals("abc", StringHelper.trimToNull("abc"));
+        assertEquals("abc", StringHelper.trimToNull(" abc"));
+        assertEquals("abc", StringHelper.trimToNull(" abc "));
         assertNull(StringHelper.trimToNull(" "));
         assertNull(StringHelper.trimToNull("\t"));
         assertNull(StringHelper.trimToNull(" \t "));

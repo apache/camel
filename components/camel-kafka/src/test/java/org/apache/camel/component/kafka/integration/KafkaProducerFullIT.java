@@ -180,12 +180,12 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
-        assertEquals(exchangeList.size(), 15, "Fifteen Exchanges are expected");
+        assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1
                     = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORDMETA));
-            assertEquals(recordMetaData1.size(), 1, "One RecordMetadata is expected.");
+            assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
             assertTrue(recordMetaData1.get(0).topic().startsWith("test"), "Topic Name start with 'test'");
         }
@@ -211,7 +211,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
-        assertEquals(exchangeList.size(), 15, "Fifteen Exchanges are expected");
+        assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1
@@ -313,7 +313,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
-        assertEquals(exchangeList.size(), 15, "Fifteen Exchanges are expected");
+        assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
             List<RecordMetadata> recordMetaData1

@@ -50,7 +50,7 @@ public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
         mockEndpoint.setExpectedCount(4);
         mockEndpoint.assertIsSatisfied();
         List<Exchange> exchanges = mockEndpoint.getExchanges();
-        assertEquals(exchanges.size(), 4);
+        assertEquals(4, exchanges.size());
         exchanges.forEach(exchange -> {
             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
             assertTrue(body.getFile() == null ^ body.getFileUrl() != null,

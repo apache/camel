@@ -103,7 +103,7 @@ public class MultipleJpaRouteEndpointTest extends CamelTestSupport {
     private void assertEntityManagerMap(Exchange exchange) {
         HashMap<String, EntityManager> entityManagerMap = exchange.getProperty(JpaConstants.ENTITY_MANAGER, HashMap.class);
         assertNotNull(entityManagerMap);
-        assertEquals(entityManagerMap.keySet().size(), 2);
+        assertEquals(2, entityManagerMap.keySet().size());
         assertTrue(entityManagerMap.containsKey(String.valueOf(emf1.hashCode())));
         EntityManager entityManager1 = entityManagerMap.get(String.valueOf(emf1.hashCode()));
         assertTrue(entityManagerMap.containsKey(String.valueOf(emf2.hashCode())));
