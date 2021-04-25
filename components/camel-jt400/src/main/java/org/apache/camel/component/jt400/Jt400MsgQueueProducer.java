@@ -51,7 +51,7 @@ public class Jt400MsgQueueProducer extends DefaultProducer {
 
     private void process(MessageQueue queue, Exchange exchange) throws Exception {
         String msgText = exchange.getIn().getBody(String.class);
-        byte[] messageKey =  exchange.getIn().getHeader(Jt400Constants.MESSAGE_REPLYTO_KEY, byte[].class);
+        byte[] messageKey = exchange.getIn().getHeader(Jt400Constants.MESSAGE_REPLYTO_KEY, byte[].class);
         if (ObjectHelper.isNotEmpty(messageKey) && ObjectHelper.isNotEmpty(msgText)) {
             queue.reply(messageKey, msgText);
         } else {
