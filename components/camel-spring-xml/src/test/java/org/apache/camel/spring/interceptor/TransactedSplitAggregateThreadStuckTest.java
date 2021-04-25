@@ -26,8 +26,10 @@ public class TransactedSplitAggregateThreadStuckTest extends TransactionClientDa
     @Test
     @Timeout(value = 10)
     public void testThreadStuck() throws Exception {
-        getMockEndpoint("mock:aggregated").expectedBodiesReceived("A");
+        getMockEndpoint("mock:aggregated").expectedBodiesReceived("Aggregated A");
         getMockEndpoint("mock:end").expectedBodiesReceived("Done A");
+        // ensure they execute in this order, where Aggregate EIP completes before done (due to 1 completion size)
+        getMockEndpoint("mock:result").expectedBodiesReceived("Aggregated A", "Done A");
 
         template.sendBody("seda:start", "A");
 
@@ -44,7 +46,7 @@ public class TransactedSplitAggregateThreadStuckTest extends TransactionClientDa
                         .to("direct:split")
                         .log("End ${threadName}")
                         .setBody(simple("Done ${body}"))
-                        .to("mock:end");
+                        .to("mock:result", "mock:end");
 
                 from("direct:split")
                         .split(body())
@@ -54,7 +56,8 @@ public class TransactedSplitAggregateThreadStuckTest extends TransactionClientDa
                     .aggregate(constant("true"))
                     .completionSize(1).aggregationStrategy(StringAggregationStrategy::new)
                         .log("Aggregated ${threadName}")
-                        .to("mock:aggregated")
+                        .setBody(simple("Aggregated ${body}"))
+                        .to("mock:result", "mock:aggregated")
                     .end();
             }
         };
