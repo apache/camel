@@ -206,27 +206,11 @@ delete routes and then call the commit route.
 
 == Querying Solr
 
-Currently, this component doesn't support querying data natively (may be
-added later). For now, you can query Solr using xref:http-component.adoc[HTTP] as
-follows:
+The components provides a producer operation to query Solr.
 
-[source,java]
---------------------------------------------------------------------------------
-//define the route to perform a basic query
-from("direct:query")
-    .recipientList(simple("http://localhost:8983/solr/select/?q=${body}"))
-    .convertBodyTo(String.class);
-...
-//query for an id of '1234' (url encoded)
-String responseXml = (String) template.requestBody("direct:query", "id%3A1234");
---------------------------------------------------------------------------------
+For more information:
 
-For more information, see these resources...
-
-http://lucene.apache.org/solr/tutorial.html#Querying+Data[Solr Query
-Tutorial]
-
-https://lucene.apache.org/solr/guide/8_4/the-standard-query-parser.html[Solr Query Syntax]
+https://solr.apache.org/guide/8_8/the-standard-query-parser.html[Solr Query Syntax]
 
 
 include::{page-component-version}@camel-spring-boot::page$solr-starter.adoc[]
