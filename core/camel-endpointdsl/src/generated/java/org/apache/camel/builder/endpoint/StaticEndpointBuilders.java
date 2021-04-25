@@ -3146,11 +3146,11 @@ public class StaticEndpointBuilders {
      * beanRef is defined using bean:id
      * 
      * Path parameter: hosts
-     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
+     * Hostname(s) Cassandra server(s). Multiple hosts can be separated by
      * comma.
      * 
      * Path parameter: port
-     * Port number of cassansdra server(s)
+     * Port number of Cassandra server(s)
      * 
      * Path parameter: keyspace
      * Keyspace to use
@@ -3177,11 +3177,11 @@ public class StaticEndpointBuilders {
      * beanRef is defined using bean:id
      * 
      * Path parameter: hosts
-     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
+     * Hostname(s) Cassandra server(s). Multiple hosts can be separated by
      * comma.
      * 
      * Path parameter: port
-     * Port number of cassansdra server(s)
+     * Port number of Cassandra server(s)
      * 
      * Path parameter: keyspace
      * Keyspace to use

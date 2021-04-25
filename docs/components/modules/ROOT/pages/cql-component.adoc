@@ -97,8 +97,8 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *beanRef* | beanRef is defined using bean:id |  | String
-| *hosts* | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma. |  | String
-| *port* | Port number of cassansdra server(s) |  | Integer
+| *hosts* | Hostname(s) Cassandra server(s). Multiple hosts can be separated by comma. |  | String
+| *port* | Port number of Cassandra server(s) |  | Integer
 | *keyspace* | Keyspace to use |  | String
 |===
 
