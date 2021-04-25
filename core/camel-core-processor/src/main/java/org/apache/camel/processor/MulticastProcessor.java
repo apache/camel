@@ -559,12 +559,29 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
             // compute time taken if sending to another endpoint
             StopWatch watch = beforeSend(pair);
-            Processor sync = pair.getProcessor();
-            try {
-                sync.process(exchange);
-            } finally {
-                afterSend(pair, watch);
+
+            // when running as transacted and processing is performed from the same single thread
+            // that involves the Aggregate EIP that triggers an completion, then the reactive
+            // routing engine could lead to out of order work tasks. Which means that if
+            // the processing below was executed with synchronous processor, and AsyncProcessorAwaitManager
+            // would wait for the callback to signal its done, then that callback (due to out of order)
+            // would not happen, and the AsyncProcessorAwaitManager would block and wait
+            // (made worse because its all done by the same single thread).
+            // The solution is to use async processing but draining the work queues at both
+            // the callback and after the process method. This simulates being processed synchronously
+            // to sync up the processing order, which means that when executing afterSend then
+            // all pending work tasks from the thread has been completed (see CAMEL-16550).
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(pair.getProcessor());
+            async.process(exchange, doneSync -> {
+                while (reactiveExecutor.executeFromQueue()) {
+                    LOG.trace("Draining work queue before done callback: {}", exchange);
+                }
+            });
+
+            while (reactiveExecutor.executeFromQueue()) {
+                LOG.trace("Draining work queue before continue processing: {}", exchange);
             }
+            afterSend(pair, watch);
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
             // remember to test for stop on exception and aggregate before copying back results
