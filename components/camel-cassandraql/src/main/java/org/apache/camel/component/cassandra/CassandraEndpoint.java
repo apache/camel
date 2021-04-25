@@ -206,7 +206,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
+     * Hostname(s) Cassandra server(s). Multiple hosts can be separated by comma.
      */
     public void setHosts(String hosts) {
         this.hosts = hosts;
@@ -217,7 +217,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Port number of cassansdra server(s)
+     * Port number of Cassandra server(s)
      */
     public void setPort(Integer port) {
         this.port = port;
