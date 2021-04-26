@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.cw.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.cw.Cw2Configuration;
 import org.apache.camel.component.aws2.cw.client.Cw2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -29,8 +31,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS CloudWatch client for all users to use (enabling temporary creds). This implementation is for remote
@@ -62,7 +62,7 @@ public class Cw2ClientIAMOptimizedImpl implements Cw2InternalClient {
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);

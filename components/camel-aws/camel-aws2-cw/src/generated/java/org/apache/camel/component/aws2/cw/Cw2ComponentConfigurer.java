@@ -55,6 +55,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "unit": getOrCreateConfiguration(target).setUnit(property(camelContext, java.lang.String.class, value)); return true;
         case "uriendpointoverride":
         case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "value": getOrCreateConfiguration(target).setValue(property(camelContext, java.lang.Double.class, value)); return true;
         default: return false;
         }
@@ -95,6 +97,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "unit": return java.lang.String.class;
         case "uriendpointoverride":
         case "uriEndpointOverride": return java.lang.String.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         case "value": return java.lang.Double.class;
         default: return null;
         }
@@ -131,6 +135,8 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "unit": return getOrCreateConfiguration(target).getUnit();
         case "uriendpointoverride":
         case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "value": return getOrCreateConfiguration(target).getValue();
         default: return null;
         }
