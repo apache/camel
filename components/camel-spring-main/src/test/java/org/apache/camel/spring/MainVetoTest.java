@@ -34,7 +34,7 @@ public class MainVetoTest {
         main.run();
 
         // should complete normally due veto
-        assertEquals(0, main.getExitCode());
+        assertEquals(99, main.getExitCode());
     }
 
 }
