@@ -136,6 +136,10 @@ public class Athena2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(defaultValue = "false",
+            description = "Set whether the Athena client should expect to load credentials through a default credentials provider or to expect " +
+                    "static credentials to be passed in")
+    private boolean useDefaultCredentialsProvider;
 
     public String getAccessKey() {
         return accessKey;
@@ -439,6 +443,18 @@ public class Athena2Configuration implements Cloneable {
      */
     public void setIncludeTrace(boolean includeTrace) {
         this.includeTrace = includeTrace;
+    }
+
+    /**
+     * Set whether the Athena client should expect to load credentials through a default credentials provider or to expect
+     * static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     // *************************************************

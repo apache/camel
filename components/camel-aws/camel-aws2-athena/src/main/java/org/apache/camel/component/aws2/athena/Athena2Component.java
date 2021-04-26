@@ -52,9 +52,10 @@ public class Athena2Component extends DefaultComponent {
                 = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (configuration.getAmazonAthenaClient() == null && (configuration.getAccessKey() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonAthenaClient() == null
+                && (configuration.getAccessKey() == null
                 || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("accessKey/secretKey or amazonAthenaClient must be specified");
+            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, accessKey/secretKey or amazonAthenaClient must be specified");
         }
         return endpoint;
     }

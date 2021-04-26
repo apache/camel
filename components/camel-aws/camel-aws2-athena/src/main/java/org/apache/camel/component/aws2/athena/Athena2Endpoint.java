@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -68,8 +69,7 @@ public class Athena2Endpoint extends DefaultEndpoint {
         super.doInit();
 
         athenaClient = configuration.getAmazonAthenaClient() != null
-                ? configuration.getAmazonAthenaClient()
-                : createAthenaClient();
+                ? configuration.getAmazonAthenaClient() : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
     }
 
     @Override
@@ -96,39 +96,5 @@ public class Athena2Endpoint extends DefaultEndpoint {
 
     public void setAthenaClient(AthenaClient athenaClient) {
         this.athenaClient = athenaClient;
-    }
-
-    AthenaClient createAthenaClient() {
-        AthenaClient client = null;
-        AthenaClientBuilder clientBuilder = AthenaClient.builder();
-        ProxyConfiguration.Builder proxyConfig = null;
-        ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
-            proxyConfig.endpoint(proxyEndpoint);
-            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(StaticCredentialsProvider.create(cred));
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
-        }
-        client = clientBuilder.build();
-        return client;
     }
 }
