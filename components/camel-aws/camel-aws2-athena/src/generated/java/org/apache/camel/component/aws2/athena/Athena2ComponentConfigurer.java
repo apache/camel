@@ -76,6 +76,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "retry": getOrCreateConfiguration(target).setRetry(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "waittimeout":
         case "waitTimeout": getOrCreateConfiguration(target).setWaitTimeout(property(camelContext, long.class, value)); return true;
         case "workgroup":
@@ -140,6 +142,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "retry": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         case "waittimeout":
         case "waitTimeout": return long.class;
         case "workgroup":
@@ -200,6 +204,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "retry": return getOrCreateConfiguration(target).getRetry();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "waittimeout":
         case "waitTimeout": return getOrCreateConfiguration(target).getWaitTimeout();
         case "workgroup":

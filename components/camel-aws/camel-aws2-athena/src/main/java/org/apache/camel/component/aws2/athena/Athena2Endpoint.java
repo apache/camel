@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.athena;
 
-import java.net.URI;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -28,13 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.athena.AthenaClient;
-import software.amazon.awssdk.services.athena.AthenaClientBuilder;
 
 /**
  * Access AWS Athena service using AWS SDK version 2.x.
@@ -69,7 +61,8 @@ public class Athena2Endpoint extends DefaultEndpoint {
         super.doInit();
 
         athenaClient = configuration.getAmazonAthenaClient() != null
-                ? configuration.getAmazonAthenaClient() : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
+                ? configuration.getAmazonAthenaClient()
+                : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
     }
 
     @Override
