@@ -80,7 +80,7 @@ public class CosmosDbDatabaseOperations {
         return new CosmosDbContainerOperations(getAndCreateContainerIfNotExist(containerId, null, false, null));
     }
 
-    public Mono<ThroughputResponse> replaceContainerThroughput(final ThroughputProperties throughputProperties) {
+    public Mono<ThroughputResponse> replaceDatabaseThroughput(final ThroughputProperties throughputProperties) {
         return applyToDatabase(database -> database.replaceThroughput(throughputProperties));
     }
 

@@ -15,12 +15,12 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class CosmosDbEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":namespace/eventHubName";
+    private static final String BASE = ":databaseName/containerName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(19);
         props.add("createDatabaseIfNotExists");
         props.add("databaseName");
         props.add("throughputProperties");
@@ -39,6 +39,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("consistencyLevel");
         props.add("multipleWriteRegionsEnabled");
         props.add("exceptionHandler");
+        props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("accountKey");
@@ -57,7 +58,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "databaseName", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "databaseName", null, false, copy);
         uri = buildPathParameter(syntax, uri, "containerName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;

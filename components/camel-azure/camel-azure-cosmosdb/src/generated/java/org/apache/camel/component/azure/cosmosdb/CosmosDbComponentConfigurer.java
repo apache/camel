@@ -53,6 +53,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": getOrCreateConfiguration(target).setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
         case "preferredregions":
         case "preferredRegions": getOrCreateConfiguration(target).setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
         case "readrequestsfallbackenabled":
@@ -96,6 +97,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return boolean.class;
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": return boolean.class;
+        case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
         case "preferredregions":
         case "preferredRegions": return java.util.List.class;
         case "readrequestsfallbackenabled":
@@ -135,6 +137,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": return getOrCreateConfiguration(target).isMultipleWriteRegionsEnabled();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "preferredregions":
         case "preferredRegions": return getOrCreateConfiguration(target).getPreferredRegions();
         case "readrequestsfallbackenabled":

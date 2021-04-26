@@ -1888,9 +1888,9 @@ public class StaticEndpointBuilders {
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
      * 
-     * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
+     * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
      * 
-     * Path parameter: databaseName (required)
+     * Path parameter: databaseName
      * The name of the Cosmos database that component should connect to. In case
      * you are producing data and have createDatabaseIfNotExists=true, the
      * component will automatically auto create a Cosmos database.
@@ -1900,7 +1900,7 @@ public class StaticEndpointBuilders {
      * case you are producing data and have createContainerIfNotExists=true, the
      * component will automatically auto create a Cosmos container.
      * 
-     * @param path namespace/eventHubName
+     * @param path databaseName/containerName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(
@@ -1919,9 +1919,9 @@ public class StaticEndpointBuilders {
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
      * 
-     * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
+     * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
      * 
-     * Path parameter: databaseName (required)
+     * Path parameter: databaseName
      * The name of the Cosmos database that component should connect to. In case
      * you are producing data and have createDatabaseIfNotExists=true, the
      * component will automatically auto create a Cosmos database.
@@ -1933,7 +1933,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path namespace/eventHubName
+     * @param path databaseName/containerName
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(

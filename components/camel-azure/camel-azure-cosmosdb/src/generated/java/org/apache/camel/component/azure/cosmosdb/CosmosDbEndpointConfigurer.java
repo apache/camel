@@ -32,7 +32,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "consistencylevel":
         case "consistencyLevel": target.getConfiguration().setConsistencyLevel(property(camelContext, com.azure.cosmos.ConsistencyLevel.class, value)); return true;
         case "cosmosasyncclient":
-        case "cosmosAsyncClient": target.getConfiguration().setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
+        case "cosmosAsyncClient": target.setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": target.getConfiguration().setCreateContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "createdatabaseifnotexists":
@@ -47,6 +47,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": target.getConfiguration().setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
         case "preferredregions":
         case "preferredRegions": target.getConfiguration().setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
         case "readrequestsfallbackenabled":
@@ -55,11 +56,6 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "throughputProperties": target.getConfiguration().setThroughputProperties(property(camelContext, com.azure.cosmos.models.ThroughputProperties.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public String[] getAutowiredNames() {
-        return new String[]{"cosmosAsyncClient"};
     }
 
     @Override
@@ -91,6 +87,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": return boolean.class;
+        case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
         case "preferredregions":
         case "preferredRegions": return java.util.List.class;
         case "readrequestsfallbackenabled":
@@ -116,7 +113,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "consistencylevel":
         case "consistencyLevel": return target.getConfiguration().getConsistencyLevel();
         case "cosmosasyncclient":
-        case "cosmosAsyncClient": return target.getConfiguration().getCosmosAsyncClient();
+        case "cosmosAsyncClient": return target.getCosmosAsyncClient();
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": return target.getConfiguration().isCreateContainerIfNotExists();
         case "createdatabaseifnotexists":
@@ -131,6 +128,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": return target.getConfiguration().isMultipleWriteRegionsEnabled();
+        case "operation": return target.getConfiguration().getOperation();
         case "preferredregions":
         case "preferredRegions": return target.getConfiguration().getPreferredRegions();
         case "readrequestsfallbackenabled":

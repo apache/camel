@@ -31,14 +31,12 @@ import org.apache.camel.spi.UriPath;
 public class CosmosDbConfiguration implements Cloneable {
 
     @UriPath
-    @Metadata(required = true)
     private String databaseName;
     @UriPath
     private String containerName;
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String accountKey;
-
     @UriParam(label = "common")
     @Metadata(required = true)
     private String databaseEndpoint;
@@ -59,7 +57,8 @@ public class CosmosDbConfiguration implements Cloneable {
     private boolean readRequestsFallbackEnabled = true;
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
-
+    @UriParam(label = "producer", defaultValue = "listDatabases")
+    private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean createDatabaseIfNotExists;
     @UriParam(label = "producer", defaultValue = "false")
@@ -137,7 +136,9 @@ public class CosmosDbConfiguration implements Cloneable {
     }
 
     /**
-     * Inject an external {@link CosmosAsyncClient} into the component
+     * Inject an external {@link CosmosAsyncClient} into the component which provides a client-side logical
+     * representation of the Azure Cosmos DB service. This asynchronous client is used to configure and execute requests
+     * against the service.
      */
     public CosmosAsyncClient getCosmosAsyncClient() {
         return cosmosAsyncClient;
@@ -254,6 +255,17 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setThroughputProperties(ThroughputProperties throughputProperties) {
         this.throughputProperties = throughputProperties;
+    }
+
+    /**
+     * The CosmosDB operation that can be used with this component on the producer.
+     */
+    public CosmosDbOperationsDefinition getOperation() {
+        return operation;
+    }
+
+    public void setOperation(CosmosDbOperationsDefinition operation) {
+        this.operation = operation;
     }
 
     // *************************************************

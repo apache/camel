@@ -18,10 +18,12 @@ package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +41,31 @@ public class CosmosDbComponent extends DefaultComponent {
     public CosmosDbComponent() {
     }
 
+    public CosmosDbComponent(final CamelContext context) {
+        super(context);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         final CosmosDbConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new CosmosDbConfiguration();
 
+        if (ObjectHelper.isNotEmpty(remaining) && remaining.trim().length() > 0) {
+            final String[] parts = remaining.split("/");
+
+            // only database name is being set
+            configuration.setDatabaseName(parts[0]);
+
+            // also container name is being set
+            if (parts.length > 1) {
+                configuration.setContainerName(parts[1]);
+            }
+        }
+
         final CosmosDbEndpoint endpoint = new CosmosDbEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -60,5 +79,16 @@ public class CosmosDbComponent extends DefaultComponent {
 
     public void setConfiguration(CosmosDbConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    private void validateConfigurations(final CosmosDbConfiguration configuration) {
+        if (configuration.getCosmosAsyncClient() == null) {
+            if (ObjectHelper.isEmpty(configuration.getDatabaseEndpoint())) {
+                throw new IllegalArgumentException("Azure CosmosDB database endpoint must be specified.");
+            }
+            if (ObjectHelper.isEmpty(configuration.getAccountKey())) {
+                throw new IllegalArgumentException("Azure CosmosDB account key must be specified.");
+            }
+        }
     }
 }

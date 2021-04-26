@@ -943,7 +943,7 @@
     "version": "3.10.0-SNAPSHOT",
     "scheme": "azure-cosmosdb",
     "extendsScheme": "",
-    "syntax": "azure-cosmosdb:namespace\/eventHubName",
+    "syntax": "azure-cosmosdb:databaseName\/containerName",
     "async": false,
     "api": false,
     "consumerOnly": false,

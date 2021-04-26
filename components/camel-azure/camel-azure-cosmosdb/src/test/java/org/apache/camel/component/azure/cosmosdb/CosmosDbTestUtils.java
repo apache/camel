@@ -23,6 +23,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.CosmosClientBuilder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.function.Executable;
 
@@ -55,6 +57,15 @@ public final class CosmosDbTestUtils {
         properties.setProperty("access_key", System.getProperty("accessKey"));
 
         return properties;
+    }
+
+    public static CosmosAsyncClient createAsyncClient() throws Exception {
+        final Properties properties = loadAzureAccessFromJvmEnv();
+
+        return new CosmosClientBuilder()
+                .key(properties.getProperty("access_key"))
+                .endpoint(properties.getProperty("endpoint"))
+                .buildAsyncClient();
     }
 
     public static void assertIllegalArgumentException(final Executable executable) {

@@ -27,6 +27,9 @@ public final class CosmosDbConstants {
 
     // headers set by the consumer only
 
+    // headers evaluated by the producer only
+    public static final String OPERATION = HEADER_PREFIX + "Operation";
+
     private CosmosDbConstants() {
     }
 }

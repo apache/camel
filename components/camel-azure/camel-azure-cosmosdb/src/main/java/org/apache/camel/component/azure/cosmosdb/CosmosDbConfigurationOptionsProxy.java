@@ -59,6 +59,11 @@ public class CosmosDbConfigurationOptionsProxy {
                 boolean.class);
     }
 
+    public CosmosDbOperationsDefinition getOperation(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.OPERATION, configuration::getOperation,
+                CosmosDbOperationsDefinition.class);
+    }
+
     public CosmosDbConfiguration getConfiguration() {
         return configuration;
     }

@@ -182,7 +182,10 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -198,7 +201,10 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -686,7 +692,10 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -702,7 +711,10 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -1020,6 +1032,41 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB operation that can be used with this component on the
+         * producer.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition&lt;/code&gt; type.
+         * 
+         * Default: listDatabases
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder operation(
+                CosmosDbOperationsDefinition operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The CosmosDB operation that can be used with this component on the
+         * producer.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition&lt;/code&gt; type.
+         * 
+         * Default: listDatabases
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Sets either a master or readonly key used to perform authentication
          * for accessing resource.
          * 
@@ -1194,7 +1241,10 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -1210,7 +1260,10 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -1447,6 +1500,29 @@ public interface CosmosDbEndpointBuilderFactory {
         CONSISTENT_PREFIX;
     }
 
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition</code> enum.
+     */
+    enum CosmosDbOperationsDefinition {
+        listDatabases,
+        createDatabase,
+        queryDatabases,
+        deleteDatabase,
+        createContainer,
+        replaceDatabaseThroughput,
+        listContainers,
+        queryContainers,
+        deleteContainer,
+        replaceContainerThroughput,
+        createItem,
+        upsertItem,
+        deleteItem,
+        readItem,
+        readAllItems,
+        queryItem;
+    }
+
     public interface CosmosDbBuilders {
         /**
          * Azure CosmosDB (camel-azure-cosmosdb)
@@ -1460,9 +1536,9 @@ public interface CosmosDbEndpointBuilderFactory {
          * Since: 3.10
          * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
          * 
-         * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
+         * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
          * 
-         * Path parameter: databaseName (required)
+         * Path parameter: databaseName
          * The name of the Cosmos database that component should connect to. In
          * case you are producing data and have createDatabaseIfNotExists=true,
          * the component will automatically auto create a Cosmos database.
@@ -1472,7 +1548,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * case you are producing data and have createContainerIfNotExists=true,
          * the component will automatically auto create a Cosmos container.
          * 
-         * @param path namespace/eventHubName
+         * @param path databaseName/containerName
          * @return the dsl builder
          */
         default CosmosDbEndpointBuilder azureCosmosdb(String path) {
@@ -1490,9 +1566,9 @@ public interface CosmosDbEndpointBuilderFactory {
          * Since: 3.10
          * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
          * 
-         * Syntax: <code>azure-cosmosdb:namespace/eventHubName</code>
+         * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
          * 
-         * Path parameter: databaseName (required)
+         * Path parameter: databaseName
          * The name of the Cosmos database that component should connect to. In
          * case you are producing data and have createDatabaseIfNotExists=true,
          * the component will automatically auto create a Cosmos database.
@@ -1504,7 +1580,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path namespace/eventHubName
+         * @param path databaseName/containerName
          * @return the dsl builder
          */
         default CosmosDbEndpointBuilder azureCosmosdb(

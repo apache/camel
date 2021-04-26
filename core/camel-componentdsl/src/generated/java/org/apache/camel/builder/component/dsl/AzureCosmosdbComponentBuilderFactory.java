@@ -141,7 +141,10 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Inject an external CosmosAsyncClient into the component.
+         * Inject an external CosmosAsyncClient into the component which
+         * provides a client-side logical representation of the Azure Cosmos DB
+         * service. This asynchronous client is used to configure and execute
+         * requests against the service.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.CosmosAsyncClient&lt;/code&gt; type.
@@ -335,6 +338,24 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB operation that can be used with this component on the
+         * producer.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition&lt;/code&gt; type.
+         * 
+         * Default: listDatabases
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder operation(
+                org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -409,6 +430,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
             case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;
             case "lazyStartProducer": ((CosmosDbComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((CosmosDbComponent) component).setOperation((org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
             default: return false;
