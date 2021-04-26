@@ -18,7 +18,7 @@
 package org.apache.camel.test.infra.aws.common;
 
 public final class AWSProperties {
-    public static final String AWS_CONTAINER = "aws.container.";
+    public static final String AWS_CONTAINER = "aws.container";
 
     private AWSProperties() {
 
