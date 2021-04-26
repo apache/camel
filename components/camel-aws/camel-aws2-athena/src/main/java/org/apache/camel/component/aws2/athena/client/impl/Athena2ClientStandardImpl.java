@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.athena.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.athena.Athena2Configuration;
 import org.apache.camel.component.aws2.athena.client.Athena2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -29,11 +31,9 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.athena.AthenaClient;
 import software.amazon.awssdk.services.athena.AthenaClientBuilder;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Athena client for all users to use. This implementation is for local instances to use a static and solid
- * credential set.
+ * Manage an AWS Athena client for all users to use. This implementation is for local instances to use a static and
+ * solid credential set.
  */
 public class Athena2ClientStandardImpl implements Athena2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Athena2ClientStandardImpl.class);
@@ -62,7 +62,7 @@ public class Athena2ClientStandardImpl implements Athena2InternalClient {
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;

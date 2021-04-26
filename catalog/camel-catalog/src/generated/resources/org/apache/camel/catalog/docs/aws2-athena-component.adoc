@@ -60,7 +60,7 @@ from("direct:start")
 
 
 // component options: START
-The AWS 2 Athena component supports 29 options, which are listed below.
+The AWS 2 Athena component supports 30 options, which are listed below.
 
 
 
@@ -92,6 +92,7 @@ The AWS 2 Athena component supports 29 options, which are listed below.
 | *resetWaitTimeoutOnRetry* (producer) | Reset the waitTimeout countdown in the event of a query retry. If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | true | boolean
 | *retry* (producer) | Optional comma separated list of error types to retry the query for. Use 'retryable' to retry all retryable failure conditions (e.g. generic errors and resources exhausted), 'generic' to retry 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that have exhausted resource limits, 'always' to always retry regardless of failure condition, or 'never' or null to never retry (default). See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. There are 5 enums and the value can be one of: never, always, retryable, exhausted, generic | never | String
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the Athena client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in | false | boolean
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
@@ -128,7 +129,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -158,6 +159,7 @@ with the following path and query parameters:
 | *resetWaitTimeoutOnRetry* (producer) | Reset the waitTimeout countdown in the event of a query retry. If set to true, potential max time spent waiting for queries is equal to waitTimeout x maxAttempts. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | true | boolean
 | *retry* (producer) | Optional comma separated list of error types to retry the query for. Use 'retryable' to retry all retryable failure conditions (e.g. generic errors and resources exhausted), 'generic' to retry 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that have exhausted resource limits, 'always' to always retry regardless of failure condition, or 'never' or null to never retry (default). See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. There are 5 enums and the value can be one of: never, always, retryable, exhausted, generic | never | String
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the Athena client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in | false | boolean
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String

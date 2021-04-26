@@ -470,6 +470,24 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Athena client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Optional max wait time in millis to wait for a successful query
          * completion. See the section 'Waiting for Query Completion and
          * Retrying Failed Queries' to learn more.
@@ -586,6 +604,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "resetWaitTimeoutOnRetry": getOrCreateConfiguration((Athena2Component) component).setResetWaitTimeoutOnRetry((boolean) value); return true;
             case "retry": getOrCreateConfiguration((Athena2Component) component).setRetry((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Athena2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
             case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
             case "autowiredEnabled": ((Athena2Component) component).setAutowiredEnabled((boolean) value); return true;

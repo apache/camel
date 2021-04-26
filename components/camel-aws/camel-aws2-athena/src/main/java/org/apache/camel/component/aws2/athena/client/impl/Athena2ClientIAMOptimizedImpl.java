@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.athena.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.athena.Athena2Configuration;
 import org.apache.camel.component.aws2.athena.client.Athena2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -27,11 +29,9 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.athena.AthenaClient;
 import software.amazon.awssdk.services.athena.AthenaClientBuilder;
 
-import java.net.URI;
-
 /**
- * Manage an AWS Athena client for all users to use (enabling temporary creds). This implementation is for remote instances
- * to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS Athena client for all users to use (enabling temporary creds). This implementation is for remote
+ * instances to manage the credentials on their own (eliminating credential rotations)
  */
 public class Athena2ClientIAMOptimizedImpl implements Athena2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Athena2ClientIAMOptimizedImpl.class);
