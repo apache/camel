@@ -23,8 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon CloudWatch SDK v2.
@@ -60,7 +58,8 @@ public class Cw2Component extends DefaultComponent {
 
         if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonCwClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, AmazonCwClient or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException(
+                    "useDefaultCredentialsProvider is set to false, AmazonCwClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
