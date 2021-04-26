@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateEndpoint;
@@ -99,6 +100,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         } catch (Exception e) {
             throw new TypeConversionException(xml, Document.class, e);
         }
+
+        sanitizeXml(dom);
 
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
@@ -183,6 +186,22 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         }
 
         return xml;
+    }
+
+    private static void sanitizeXml(Node node) {
+        // we want to remove all customId="false" attributes as they are noisy
+        if (node.hasAttributes()) {
+            Node att = node.getAttributes().getNamedItem("customId");
+            if (att != null && "false".equals(att.getNodeValue())) {
+                node.getAttributes().removeNamedItem("customId");
+            }
+        }
+        if (node.hasChildNodes()) {
+            for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+                Node child = node.getChildNodes().item(i);
+                sanitizeXml(child);
+            }
+        }
     }
 
 }
