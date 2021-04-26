@@ -28,24 +28,24 @@ public class AthenaClientFactoryTest {
 
     @Test
     public void getStandardAthenaClientDefault() {
-        Athena2Configuration AthenaConfiguration = new Athena2Configuration();
-        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(AthenaConfiguration);
+        Athena2Configuration athena2Configuration = new Athena2Configuration();
+        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(athena2Configuration);
         assertTrue(athenaClient instanceof Athena2ClientStandardImpl);
     }
 
     @Test
     public void getStandardAthenaClient() {
-        Athena2Configuration AthenaConfiguration = new Athena2Configuration();
-        AthenaConfiguration.setUseDefaultCredentialsProvider(false);
-        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(AthenaConfiguration);
+        Athena2Configuration athena2Configuration = new Athena2Configuration();
+        athena2Configuration.setUseDefaultCredentialsProvider(false);
+        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(athena2Configuration);
         assertTrue(athenaClient instanceof Athena2ClientStandardImpl);
     }
 
     @Test
     public void getIAMOptimizedAthenaClient() {
-        Athena2Configuration AthenaConfiguration = new Athena2Configuration();
-        AthenaConfiguration.setUseDefaultCredentialsProvider(true);
-        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(AthenaConfiguration);
+        Athena2Configuration athena2Configuration = new Athena2Configuration();
+        athena2Configuration.setUseDefaultCredentialsProvider(true);
+        Athena2InternalClient athenaClient = Athena2ClientFactory.getAWSAthenaClient(athena2Configuration);
         assertTrue(athenaClient instanceof Athena2ClientIAMOptimizedImpl);
     }
 }
