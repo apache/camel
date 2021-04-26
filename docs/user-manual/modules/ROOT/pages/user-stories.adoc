@@ -34,7 +34,7 @@ possible with traditional disk-based or flash technologies.
 It uses Camel for its universal streamer.
 
 |https://www.redhat.com/fr/products/integration[Red Hat integration]
-Red Hat provides a commercial
+ |Red Hat provides a commercial
 distribution of an ESB which includes Camel, ActiveMQ, CXF,
 Karaf, EAP, OpenShift, https://fabric8.io/[Fabric8], and https://hawt.io/[Hawtio].
 
