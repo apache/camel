@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 @Component("aws2-cw")
 public class Cw2Component extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Cw2Component.class);
-
     @Metadata
     private Cw2Configuration configuration = new Cw2Configuration();
 
@@ -60,9 +58,9 @@ public class Cw2Component extends DefaultComponent {
         // parameters
         setProperties(endpoint, parameters);
 
-        if (configuration.getAmazonCwClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonCwClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, AmazonCwClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
