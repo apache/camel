@@ -32,7 +32,7 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 
         Iterator<ProcessorDefinition> it
-                = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+                = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class).iterator();
         assertNotNull(it);
 
         assertThat(it.next().getId()).matches("choice[0-9]+");

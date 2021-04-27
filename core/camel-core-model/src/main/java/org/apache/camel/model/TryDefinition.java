@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -130,9 +130,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // TryDefinition
         // to configure all with try .. catch .. finally
         // set the onWhen predicate on all the catch definitions
-        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
-        while (it.hasNext()) {
-            CatchDefinition doCatch = it.next();
+        Collection<CatchDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
+        for (CatchDefinition doCatch : col) {
             doCatch.setOnWhen(new WhenDefinition(predicate));
         }
         return this;

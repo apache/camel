@@ -15,6 +15,9 @@ functional interface methods take the current `Exchange` as additional parameter
 to allow for content-based filtering of service candidates. `RibbonServiceLoadBalancer` 
 has no notion of a current exchange, service filters therefore receive a dummy exchange when used with Ribbon.
 
+The two methods `filterTypeInOutputs` on `org.apache.camel.model.ProcessorDefinitionHelper` has changed
+to return `Collection` instead of `Iterator`.
+
 === camel-scheduler
 
 The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.

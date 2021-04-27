@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -538,13 +539,11 @@ public final class AdviceWithTasks {
         }
 
         @SuppressWarnings("rawtypes")
-        Iterator<ProcessorDefinition> itAll
+        Collection<ProcessorDefinition> all
                 = ProcessorDefinitionHelper.filterTypeInOutputs(outputs, ProcessorDefinition.class, maxDeep);
-        while (itAll.hasNext()) {
-            ProcessorDefinition<?> next = itAll.next();
-
-            if (matchBy.match(next)) {
-                matched.add(next);
+        for (ProcessorDefinition proc : all) {
+            if (matchBy.match(proc)) {
+                matched.add(proc);
             }
         }
 

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -434,10 +433,9 @@ public class DefaultModel implements Model {
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
-            Iterator<ProcessorDefinition> it
+            Collection<ProcessorDefinition> col
                     = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
-            while (it.hasNext()) {
-                ProcessorDefinition<?> proc = it.next();
+            for (ProcessorDefinition proc : col) {
                 if (id.equals(proc.getId())) {
                     return proc;
                 }

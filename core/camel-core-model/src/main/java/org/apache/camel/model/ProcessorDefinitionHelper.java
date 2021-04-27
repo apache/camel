@@ -17,7 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +45,7 @@ public final class ProcessorDefinitionHelper {
      * @param  type    the type to look for
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
+    public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         return filterTypeInOutputs(outputs, type, -1);
     }
 
@@ -57,10 +57,10 @@ public final class ProcessorDefinitionHelper {
      * @param  maxDeep maximum levels deep to traverse
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
+    public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<>();
         doFindType(outputs, type, found, maxDeep);
-        return found.iterator();
+        return found;
     }
 
     /**
