@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 DynamoDB component supports 20 options, which are listed below.
+The AWS 2 DynamoDB component supports 21 options, which are listed below.
 
 
 
@@ -65,6 +65,7 @@ The AWS 2 DynamoDB component supports 20 options, which are listed below.
 | *region* (producer) | The region in which DDB client needs to work |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
@@ -94,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (18 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -115,6 +116,7 @@ with the following path and query parameters:
 | *region* (producer) | The region in which DDB client needs to work |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (producer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (producer) | Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String

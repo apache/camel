@@ -311,6 +311,24 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
@@ -415,6 +433,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Ddb2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ddb2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
             case "autowiredEnabled": ((Ddb2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
