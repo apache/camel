@@ -162,6 +162,9 @@ public class Jt400Configuration {
     @UriParam(label = "consumer", defaultValue = "OLD")
     private MessageAction messageAction = MessageAction.OLD;
 
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean sendingReply = true;
+
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
@@ -379,6 +382,19 @@ public class Jt400Configuration {
      */
     public void setMessageAction(MessageAction messageAction) {
         this.messageAction = messageAction;
+    }
+
+    public boolean isSendingReply() {
+        return this.sendingReply;
+    }
+
+    /**
+     * If true, the consumer endpoint will set the Jt400Constants.MESSAGE_REPLYTO_KEY header of the camel message for
+     * any IBM i inquiry messages received. If that message is then routed to a producer endpoint, the action will not
+     * be processed as sending a message to the queue, but rather a reply to the specific inquiry message.
+     */
+    public void setSendingReply(boolean sendingReply) {
+        this.sendingReply = sendingReply;
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {
