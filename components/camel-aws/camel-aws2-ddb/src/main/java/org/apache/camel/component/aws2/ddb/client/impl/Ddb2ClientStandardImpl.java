@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ddb.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
 import org.apache.camel.component.aws2.ddb.client.Ddb2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -31,8 +33,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS DynamoDB client for all users to use. This implementation is for local instances to use a static and
@@ -65,7 +65,7 @@ public class Ddb2ClientStandardImpl implements Ddb2InternalClient {
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
