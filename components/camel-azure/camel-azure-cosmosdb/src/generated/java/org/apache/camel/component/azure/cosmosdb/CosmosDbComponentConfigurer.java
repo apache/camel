@@ -41,6 +41,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "connectionSharingAcrossClientsEnabled": getOrCreateConfiguration(target).setConnectionSharingAcrossClientsEnabled(property(camelContext, boolean.class, value)); return true;
         case "consistencylevel":
         case "consistencyLevel": getOrCreateConfiguration(target).setConsistencyLevel(property(camelContext, com.azure.cosmos.ConsistencyLevel.class, value)); return true;
+        case "containerpartitionkeypath":
+        case "containerPartitionKeyPath": getOrCreateConfiguration(target).setContainerPartitionKeyPath(property(camelContext, java.lang.String.class, value)); return true;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": getOrCreateConfiguration(target).setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
@@ -56,6 +58,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
         case "preferredregions":
         case "preferredRegions": getOrCreateConfiguration(target).setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
+        case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": getOrCreateConfiguration(target).setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
@@ -85,6 +88,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "connectionSharingAcrossClientsEnabled": return boolean.class;
         case "consistencylevel":
         case "consistencyLevel": return com.azure.cosmos.ConsistencyLevel.class;
+        case "containerpartitionkeypath":
+        case "containerPartitionKeyPath": return java.lang.String.class;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return com.azure.cosmos.CosmosAsyncClient.class;
         case "createcontainerifnotexists":
@@ -100,6 +105,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
         case "preferredregions":
         case "preferredRegions": return java.util.List.class;
+        case "query": return java.lang.String.class;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
@@ -125,6 +131,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "connectionSharingAcrossClientsEnabled": return getOrCreateConfiguration(target).isConnectionSharingAcrossClientsEnabled();
         case "consistencylevel":
         case "consistencyLevel": return getOrCreateConfiguration(target).getConsistencyLevel();
+        case "containerpartitionkeypath":
+        case "containerPartitionKeyPath": return getOrCreateConfiguration(target).getContainerPartitionKeyPath();
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return getOrCreateConfiguration(target).getCosmosAsyncClient();
         case "createcontainerifnotexists":
@@ -140,6 +148,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "preferredregions":
         case "preferredRegions": return getOrCreateConfiguration(target).getPreferredRegions();
+        case "query": return getOrCreateConfiguration(target).getQuery();
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return getOrCreateConfiguration(target).isReadRequestsFallbackEnabled();
         case "throughputproperties":

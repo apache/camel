@@ -19,16 +19,30 @@ package org.apache.camel.component.azure.cosmosdb;
 public final class CosmosDbConstants {
     private static final String HEADER_PREFIX = "CamelAzureCosmosDb";
     // common headers, set by consumer and evaluated by producer
-    public static final String DATABASE_NAME = HEADER_PREFIX + "DatabaseName";
-    public static final String THROUGHPUT_PROPERTIES = HEADER_PREFIX + "ThroughputProperties";
-    public static final String DATABASE_REQUEST_OPTIONS = HEADER_PREFIX + "DatabaseRequestOptions";
-    public static final String CREATE_DATABASE_IF_NOT_EXIST = HEADER_PREFIX + "createDatabaseIfNotExist";
-    public static final String CREATE_CONTAINER_IF_NOT_EXIST = HEADER_PREFIX + "CreateContainerIfNotExist";
 
     // headers set by the consumer only
 
     // headers evaluated by the producer only
+    public static final String DATABASE_NAME = HEADER_PREFIX + "DatabaseName";
+    public static final String CONTAINER_NAME = HEADER_PREFIX + "ContainerName";
     public static final String OPERATION = HEADER_PREFIX + "Operation";
+    public static final String QUERY = HEADER_PREFIX + "Query";
+    public static final String QUERY_REQUEST_OPTIONS = HEADER_PREFIX + "QueryRequestOptions";
+    public static final String CREATE_DATABASE_IF_NOT_EXIST = HEADER_PREFIX + "createDatabaseIfNotExist";
+    public static final String CREATE_CONTAINER_IF_NOT_EXIST = HEADER_PREFIX + "CreateContainerIfNotExist";
+    public static final String THROUGHPUT_PROPERTIES = HEADER_PREFIX + "ThroughputProperties";
+    public static final String DATABASE_REQUEST_OPTIONS = HEADER_PREFIX + "DatabaseRequestOptions";
+    public static final String CONTAINER_PARTITION_KEY_PATH = HEADER_PREFIX + "ContainerPartitionKeyPath";
+
+    // headers set by the producer
+    public static final String RESOURCE_ID = HEADER_PREFIX + "RecourseId";
+    public static final String E_TAG = HEADER_PREFIX + "Etag";
+    public static final String TIMESTAMP = HEADER_PREFIX + "Timestamp";
+    public static final String RESPONSE_HEADERS = HEADER_PREFIX + "ResponseHeaders";
+    public static final String STATUS_CODE = HEADER_PREFIX + "StatusCode";
+    public static final String DEFAULT_TIME_TO_LIVE_SECONDS = HEADER_PREFIX + "DefaultTimeToLiveInSeconds";
+    public static final String MANUAL_THROUGHPUT = HEADER_PREFIX + "ManualThroughput";
+    public static final String AUTOSCALE_MAX_THROUGHPUT = HEADER_PREFIX + "AutoscaleMaxThroughput";
 
     private CosmosDbConstants() {
     }

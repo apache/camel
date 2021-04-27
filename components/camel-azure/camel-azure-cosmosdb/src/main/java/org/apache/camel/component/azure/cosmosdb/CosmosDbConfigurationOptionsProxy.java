@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.cosmosdb;
 import java.util.function.Supplier;
 
 import com.azure.cosmos.models.CosmosDatabaseRequestOptions;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
@@ -49,6 +50,10 @@ public class CosmosDbConfigurationOptionsProxy {
                 CosmosDatabaseRequestOptions.class);
     }
 
+    public CosmosQueryRequestOptions getQueryRequestOptions(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.QUERY_REQUEST_OPTIONS, nullFallback(), CosmosQueryRequestOptions.class);
+    }
+
     public boolean isCreateDatabaseIfNotExist(final Exchange exchange) {
         return getOption(exchange, CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST, configuration::isCreateDatabaseIfNotExists,
                 boolean.class);
@@ -62,6 +67,19 @@ public class CosmosDbConfigurationOptionsProxy {
     public CosmosDbOperationsDefinition getOperation(final Exchange exchange) {
         return getOption(exchange, CosmosDbConstants.OPERATION, configuration::getOperation,
                 CosmosDbOperationsDefinition.class);
+    }
+
+    public String getQuery(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.QUERY, configuration::getQuery, String.class);
+    }
+
+    public String getContainerName(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.CONTAINER_NAME, configuration::getContainerName, String.class);
+    }
+
+    public String getContainerPartitionKeyPath(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH, configuration::getContainerPartitionKeyPath,
+                String.class);
     }
 
     public CosmosDbConfiguration getConfiguration() {

@@ -31,6 +31,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "connectionSharingAcrossClientsEnabled": target.getConfiguration().setConnectionSharingAcrossClientsEnabled(property(camelContext, boolean.class, value)); return true;
         case "consistencylevel":
         case "consistencyLevel": target.getConfiguration().setConsistencyLevel(property(camelContext, com.azure.cosmos.ConsistencyLevel.class, value)); return true;
+        case "containerpartitionkeypath":
+        case "containerPartitionKeyPath": target.getConfiguration().setContainerPartitionKeyPath(property(camelContext, java.lang.String.class, value)); return true;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": target.setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
@@ -50,6 +52,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
         case "preferredregions":
         case "preferredRegions": target.getConfiguration().setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
+        case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": target.getConfiguration().setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
@@ -71,6 +74,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "connectionSharingAcrossClientsEnabled": return boolean.class;
         case "consistencylevel":
         case "consistencyLevel": return com.azure.cosmos.ConsistencyLevel.class;
+        case "containerpartitionkeypath":
+        case "containerPartitionKeyPath": return java.lang.String.class;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return com.azure.cosmos.CosmosAsyncClient.class;
         case "createcontainerifnotexists":
@@ -90,6 +95,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
         case "preferredregions":
         case "preferredRegions": return java.util.List.class;
+        case "query": return java.lang.String.class;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
@@ -112,6 +118,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "connectionSharingAcrossClientsEnabled": return target.getConfiguration().isConnectionSharingAcrossClientsEnabled();
         case "consistencylevel":
         case "consistencyLevel": return target.getConfiguration().getConsistencyLevel();
+        case "containerpartitionkeypath":
+        case "containerPartitionKeyPath": return target.getConfiguration().getContainerPartitionKeyPath();
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return target.getCosmosAsyncClient();
         case "createcontainerifnotexists":
@@ -131,6 +139,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "operation": return target.getConfiguration().getOperation();
         case "preferredregions":
         case "preferredRegions": return target.getConfiguration().getPreferredRegions();
+        case "query": return target.getConfiguration().getQuery();
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return target.getConfiguration().isReadRequestsFallbackEnabled();
         case "throughputproperties":

@@ -20,9 +20,10 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(21);
         props.add("createDatabaseIfNotExists");
         props.add("databaseName");
+        props.add("query");
         props.add("throughputProperties");
         props.add("exchangePattern");
         props.add("cosmosAsyncClient");
@@ -34,6 +35,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("containerName");
         props.add("clientTelemetryEnabled");
         props.add("preferredRegions");
+        props.add("containerPartitionKeyPath");
         props.add("databaseEndpoint");
         props.add("readRequestsFallbackEnabled");
         props.add("consistencyLevel");

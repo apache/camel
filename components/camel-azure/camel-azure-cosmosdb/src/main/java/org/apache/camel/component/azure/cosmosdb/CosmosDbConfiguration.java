@@ -41,6 +41,8 @@ public class CosmosDbConfiguration implements Cloneable {
     @Metadata(required = true)
     private String databaseEndpoint;
     @UriParam(label = "common")
+    private String containerPartitionKeyPath;
+    @UriParam(label = "common")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
     @UriParam(label = "common", defaultValue = "ConsistencyLevel.SESSION")
@@ -55,6 +57,8 @@ public class CosmosDbConfiguration implements Cloneable {
     private boolean multipleWriteRegionsEnabled = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean readRequestsFallbackEnabled = true;
+    @UriParam(label = "common")
+    private String query;
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
     @UriParam(label = "producer", defaultValue = "listDatabases")
@@ -111,6 +115,17 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setDatabaseEndpoint(String databaseEndpoint) {
         this.databaseEndpoint = databaseEndpoint;
+    }
+
+    /**
+     * Sets the container partition key path.
+     */
+    public String getContainerPartitionKeyPath() {
+        return containerPartitionKeyPath;
+    }
+
+    public void setContainerPartitionKeyPath(String containerPartitionKeyPath) {
+        this.containerPartitionKeyPath = containerPartitionKeyPath;
     }
 
     /**
@@ -244,6 +259,18 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setReadRequestsFallbackEnabled(boolean readRequestsFallbackEnabled) {
         this.readRequestsFallbackEnabled = readRequestsFallbackEnabled;
+    }
+
+    /**
+     * An SQL query to execute on a given resources. To learn more about Cosmos SQL API, check this link
+     * {@link https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}
+     */
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     /**

@@ -23,12 +23,18 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.models.CosmosContainerProperties;
+import com.azure.cosmos.models.CosmosContainerResponse;
 import com.azure.cosmos.models.CosmosDatabaseProperties;
+import com.azure.cosmos.models.CosmosDatabaseResponse;
+import com.azure.cosmos.models.CosmosResponse;
+import com.azure.cosmos.models.ThroughputResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbDatabaseOperations;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -45,6 +51,13 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
 
     {
         bind(CosmosDbOperationsDefinition.listDatabases, listDatabases());
+        bind(CosmosDbOperationsDefinition.createDatabase, createDatabase());
+        bind(CosmosDbOperationsDefinition.queryDatabases, queryDatabases());
+        bind(CosmosDbOperationsDefinition.deleteDatabase, deleteDatabase());
+        bind(CosmosDbOperationsDefinition.createContainer, createContainer());
+        bind(CosmosDbOperationsDefinition.listContainers, listContainers());
+        bind(CosmosDbOperationsDefinition.queryContainers, queryContainers());
+        bind(CosmosDbOperationsDefinition.replaceDatabaseThroughput, replaceDatabaseThroughput());
     }
 
     public CosmosDbProducer(final Endpoint endpoint) {
@@ -77,8 +90,7 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
      * Entry method that selects the appropriate CosmosDbOperations operation and executes it
      */
     private boolean invokeOperation(
-            final CosmosDbOperationsDefinition operation, final Exchange exchange, final AsyncCallback callback)
-            throws Exception {
+            final CosmosDbOperationsDefinition operation, final Exchange exchange, final AsyncCallback callback) {
         final CosmosDbOperationsDefinition operationsToInvoke;
 
         // we put listDatabases operation as default in case no operation has been selected
@@ -117,6 +129,92 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
         };
     }
 
+    private BiFunction<Exchange, AsyncCallback, Boolean> createDatabase() {
+        return (exchange, callback) -> {
+            final Mono<CosmosDatabaseResponse> operation = CosmosDbClientOperations.withClient(clientWrapper)
+                    .createDatabase(configurationOptionsProxy.getDatabaseName(exchange),
+                            configurationOptionsProxy.getThroughputProperties(exchange));
+
+            subscribeToMono(operation, exchange, setCosmosDatabaseResponseOnExchange(exchange), callback);
+
+            return false;
+        };
+    }
+
+    private BiFunction<Exchange, AsyncCallback, Boolean> queryDatabases() {
+        return (exchange, callback) -> {
+            final Mono<List<CosmosDatabaseProperties>> operation = CosmosDbClientOperations.withClient(clientWrapper)
+                    .queryDatabases(configurationOptionsProxy.getQuery(exchange),
+                            configurationOptionsProxy.getQueryRequestOptions(exchange))
+                    .collectList();
+
+            subscribeToMono(operation, exchange, results -> setMessageBody(exchange, results), callback);
+
+            return false;
+        };
+    }
+
+    private BiFunction<Exchange, AsyncCallback, Boolean> deleteDatabase() {
+        return (exchange, callback) -> {
+            final Mono<CosmosDatabaseResponse> operation = CosmosDbClientOperations.withClient(clientWrapper)
+                    .getDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange))
+                    .deleteDatabase(configurationOptionsProxy.getCosmosDatabaseRequestOptions(exchange));
+
+            subscribeToMono(operation, exchange, setCosmosDatabaseResponseOnExchange(exchange), callback);
+
+            return false;
+        };
+    }
+
+    private BiFunction<Exchange, AsyncCallback, Boolean> createContainer() {
+        return (exchange, callback) -> {
+            final Mono<CosmosContainerResponse> operation = getDatabaseOperations(exchange)
+                    .createContainer(configurationOptionsProxy.getContainerName(exchange),
+                            configurationOptionsProxy.getContainerPartitionKeyPath(exchange),
+                            configurationOptionsProxy.getThroughputProperties(exchange));
+
+            subscribeToMono(operation, exchange, setCosmosContainerResponseOnExchange(exchange), callback);
+
+            return false;
+        };
+    }
+
+    private BiFunction<Exchange, AsyncCallback, Boolean> replaceDatabaseThroughput() {
+        return (exchange, callback) -> {
+            final Mono<ThroughputResponse> operation = getDatabaseOperations(exchange)
+                    .replaceDatabaseThroughput(configurationOptionsProxy.getThroughputProperties(exchange));
+
+            subscribeToMono(operation, exchange, setThroughputResponse(exchange), callback);
+
+            return false;
+        };
+    }
+
+    private BiFunction<Exchange, AsyncCallback, Boolean> listContainers() {
+        return (exchange, callback) -> {
+            final Mono<List<CosmosContainerProperties>> operation = getDatabaseOperations(exchange)
+                    .readAllContainers(configurationOptionsProxy.getQueryRequestOptions(exchange))
+                    .collectList();
+
+            subscribeToMono(operation, exchange, results -> setMessageBody(exchange, results), callback);
+
+            return false;
+        };
+    }
+
+    private BiFunction<Exchange, AsyncCallback, Boolean> queryContainers() {
+        return (exchange, callback) -> {
+            final Mono<List<CosmosContainerProperties>> operation = getDatabaseOperations(exchange)
+                    .queryContainers(configurationOptionsProxy.getQuery(exchange),
+                            configurationOptionsProxy.getQueryRequestOptions(exchange))
+                    .collectList();
+
+            subscribeToMono(operation, exchange, results -> setMessageBody(exchange, results), callback);
+
+            return false;
+        };
+    }
+
     private <T> void subscribeToMono(
             final Mono<T> inputMono, final Exchange exchange, final Consumer<T> resultsCallback, final AsyncCallback callback) {
         inputMono
@@ -134,7 +232,68 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
                 });
     }
 
+    private CosmosDbDatabaseOperations getDatabaseOperations(final Exchange exchange) {
+        final boolean createDatabaseIfNotExist = configurationOptionsProxy.isCreateDatabaseIfNotExist(exchange);
+
+        // if we enabled this flag, we create a database first before running the operation
+        if (createDatabaseIfNotExist) {
+            return CosmosDbClientOperations.withClient(clientWrapper)
+                    .createDatabaseIfNotExistAndGetDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange),
+                            configurationOptionsProxy.getThroughputProperties(exchange));
+        }
+
+        // otherwise just return the operation without creating a database if it is not existing
+        return CosmosDbClientOperations.withClient(clientWrapper)
+                .getDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange));
+    }
+
+    private Consumer<CosmosDatabaseResponse> setCosmosDatabaseResponseOnExchange(final Exchange exchange) {
+        return response -> {
+            if (ObjectHelper.isNotEmpty(response.getProperties())) {
+                setMessageHeader(exchange, CosmosDbConstants.RESOURCE_ID, response.getProperties().getResourceId());
+                setMessageHeader(exchange, CosmosDbConstants.E_TAG, response.getProperties().getETag());
+                setMessageHeader(exchange, CosmosDbConstants.TIMESTAMP, response.getProperties().getTimestamp());
+            }
+            setCommonResponseOnExchange(exchange, response);
+        };
+    }
+
+    private Consumer<CosmosContainerResponse> setCosmosContainerResponseOnExchange(final Exchange exchange) {
+        return response -> {
+            if (ObjectHelper.isNotEmpty(response.getProperties())) {
+                setMessageHeader(exchange, CosmosDbConstants.RESOURCE_ID, response.getProperties().getResourceId());
+                setMessageHeader(exchange, CosmosDbConstants.E_TAG, response.getProperties().getETag());
+                setMessageHeader(exchange, CosmosDbConstants.TIMESTAMP, response.getProperties().getTimestamp());
+                setMessageHeader(exchange, CosmosDbConstants.DEFAULT_TIME_TO_LIVE_SECONDS,
+                        response.getProperties().getDefaultTimeToLiveInSeconds());
+            }
+            setCommonResponseOnExchange(exchange, response);
+        };
+    }
+
+    private Consumer<ThroughputResponse> setThroughputResponse(final Exchange exchange) {
+        return response -> {
+            if (ObjectHelper.isNotEmpty(response.getProperties())) {
+                setMessageHeader(exchange, CosmosDbConstants.AUTOSCALE_MAX_THROUGHPUT,
+                        response.getProperties().getAutoscaleMaxThroughput());
+                setMessageHeader(exchange, CosmosDbConstants.MANUAL_THROUGHPUT, response.getProperties().getManualThroughput());
+                setMessageHeader(exchange, CosmosDbConstants.E_TAG, response.getProperties().getETag());
+                setMessageHeader(exchange, CosmosDbConstants.TIMESTAMP, response.getProperties().getTimestamp());
+            }
+            setCommonResponseOnExchange(exchange, response);
+        };
+    }
+
+    private <T> void setCommonResponseOnExchange(final Exchange exchange, final CosmosResponse<T> response) {
+        setMessageHeader(exchange, CosmosDbConstants.RESPONSE_HEADERS, response.getResponseHeaders());
+        setMessageHeader(exchange, CosmosDbConstants.STATUS_CODE, response.getStatusCode());
+    }
+
     private void setMessageBody(final Exchange exchange, final Object body) {
         exchange.getMessage().setBody(body);
+    }
+
+    private void setMessageHeader(final Exchange exchange, final String headerKey, final Object headerValue) {
+        exchange.getMessage().setHeader(headerKey, headerValue);
     }
 }

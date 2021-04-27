@@ -40,7 +40,7 @@ public class CosmosDbClientOperations {
 
     public Mono<CosmosDatabaseResponse> createDatabase(
             final String databaseName, final ThroughputProperties throughputProperties) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "Database Name");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(databaseName, "databaseName");
 
         return client.createDatabaseIfNotExists(databaseName, throughputProperties);
     }
