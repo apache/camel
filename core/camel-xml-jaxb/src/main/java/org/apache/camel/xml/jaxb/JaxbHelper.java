@@ -18,7 +18,7 @@ package org.apache.camel.xml.jaxb;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,10 +66,9 @@ public final class JaxbHelper {
      * @param namespaces the map of namespaces to add discovered XML namespaces into
      */
     public static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
-        Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-        while (it.hasNext()) {
-            NamespaceAware na = getNamespaceAwareFromExpression(it.next());
-
+        Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
+        for (ExpressionNode en : col) {
+            NamespaceAware na = getNamespaceAwareFromExpression(en);
             if (na != null) {
                 Map<String, String> map = na.getNamespaces();
                 if (map != null && !map.isEmpty()) {
@@ -137,9 +136,9 @@ public final class JaxbHelper {
     }
 
     public static void applyNamespaces(RouteDefinition route, Map<String, String> namespaces) {
-        Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-        while (it.hasNext()) {
-            NamespaceAware na = getNamespaceAwareFromExpression(it.next());
+        Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
+        for (ExpressionNode en : col) {
+            NamespaceAware na = getNamespaceAwareFromExpression(en);
             if (na != null) {
                 na.setNamespaces(namespaces);
             }
