@@ -122,7 +122,7 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     }
 
     @Test
-    void testCreateAndContainer() throws InterruptedException {
+    void testCreateAndDeleteContainer() throws InterruptedException {
         final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
         final String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
@@ -161,6 +161,23 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
 
         result.reset();
+
+        // test delete container
+        result.reset();
+
+        template.send("direct:deleteContainer", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+        });
+
+        result.expectedMessageCount(1);
+
+        result.assertIsSatisfied(1000);
+
+        // check headers
+        final Message responseDeleted = result.getExchanges().get(0).getMessage();
+
+        assertTrue(responseDeleted.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
     }
 
     @Test
@@ -227,10 +244,12 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
                 from("direct:listDatabases").to("azure-cosmosdb://?operation=listDatabases").to(resultName);
                 from("direct:createDatabase").to("azure-cosmosdb://?operation=createDatabase").to(resultName);
                 from("direct:deleteDatabase").to("azure-cosmosdb://?operation=deleteDatabase").to(resultName);
-                from("direct:createContainer").to("azure-cosmosdb://?operation=createContainer").to(resultName);
+                from("direct:createContainer").to("azure-cosmosdb://?operation=createContainer")
+                        .to(resultName);
                 from("direct:replaceDatabaseThroughput").to("azure-cosmosdb://?operation=replaceDatabaseThroughput")
                         .to(resultName);
                 from("direct:queryContainers").to("azure-cosmosdb://?operation=queryContainers").to(resultName);
+                from("direct:deleteContainer").to("azure-cosmosdb://?operation=deleteContainer").to(resultName);
             }
         };
     }

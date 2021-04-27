@@ -141,6 +141,21 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the container partition key path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param containerPartitionKeyPath the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder containerPartitionKeyPath(
+                java.lang.String containerPartitionKeyPath) {
+            doSetProperty("containerPartitionKeyPath", containerPartitionKeyPath);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -173,6 +188,24 @@ public interface AzureCosmosdbComponentBuilderFactory {
         default AzureCosmosdbComponentBuilder databaseEndpoint(
                 java.lang.String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder itemPartitionKey(
+                com.azure.cosmos.models.PartitionKey itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -217,6 +250,22 @@ public interface AzureCosmosdbComponentBuilderFactory {
         default AzureCosmosdbComponentBuilder preferredRegions(
                 java.util.List<java.lang.String> preferredRegions) {
             doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * An SQL query to execute on a given resources. To learn more about
+         * Cosmos SQL API, check this link {link
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder query(java.lang.String query) {
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -420,10 +469,13 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "configuration": ((CosmosDbComponent) component).setConfiguration((org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration) value); return true;
             case "connectionSharingAcrossClientsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setConnectionSharingAcrossClientsEnabled((boolean) value); return true;
             case "consistencyLevel": getOrCreateConfiguration((CosmosDbComponent) component).setConsistencyLevel((com.azure.cosmos.ConsistencyLevel) value); return true;
+            case "containerPartitionKeyPath": getOrCreateConfiguration((CosmosDbComponent) component).setContainerPartitionKeyPath((java.lang.String) value); return true;
             case "cosmosAsyncClient": getOrCreateConfiguration((CosmosDbComponent) component).setCosmosAsyncClient((com.azure.cosmos.CosmosAsyncClient) value); return true;
             case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
+            case "itemPartitionKey": getOrCreateConfiguration((CosmosDbComponent) component).setItemPartitionKey((com.azure.cosmos.models.PartitionKey) value); return true;
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.util.List) value); return true;
+            case "query": getOrCreateConfiguration((CosmosDbComponent) component).setQuery((java.lang.String) value); return true;
             case "readRequestsFallbackEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setReadRequestsFallbackEnabled((boolean) value); return true;
             case "throughputProperties": getOrCreateConfiguration((CosmosDbComponent) component).setThroughputProperties((com.azure.cosmos.models.ThroughputProperties) value); return true;
             case "bridgeErrorHandler": ((CosmosDbComponent) component).setBridgeErrorHandler((boolean) value); return true;

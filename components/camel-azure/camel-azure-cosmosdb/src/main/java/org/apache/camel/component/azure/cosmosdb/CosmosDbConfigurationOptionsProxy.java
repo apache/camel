@@ -18,8 +18,11 @@ package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.function.Supplier;
 
+import com.azure.cosmos.models.CosmosContainerRequestOptions;
 import com.azure.cosmos.models.CosmosDatabaseRequestOptions;
+import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
@@ -80,6 +83,24 @@ public class CosmosDbConfigurationOptionsProxy {
     public String getContainerPartitionKeyPath(final Exchange exchange) {
         return getOption(exchange, CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH, configuration::getContainerPartitionKeyPath,
                 String.class);
+    }
+
+    public CosmosContainerRequestOptions getContainerRequestOptions(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.CONTAINER_REQUEST_OPTIONS, nullFallback(),
+                CosmosContainerRequestOptions.class);
+    }
+
+    public PartitionKey getItemPartitionKey(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.ITEM_PARTITION_KEY, configuration::getItemPartitionKey,
+                PartitionKey.class);
+    }
+
+    public Object getItem(final Exchange exchange) {
+        return exchange.getIn().getBody();
+    }
+
+    public CosmosItemRequestOptions getItemRequestOptions(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.ITEM_REQUEST_OPTIONS, nullFallback(), CosmosItemRequestOptions.class);
     }
 
     public CosmosDbConfiguration getConfiguration() {

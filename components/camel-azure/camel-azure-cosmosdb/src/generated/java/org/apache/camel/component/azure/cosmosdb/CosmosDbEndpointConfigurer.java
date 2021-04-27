@@ -45,6 +45,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "itempartitionkey":
+        case "itemPartitionKey": target.getConfiguration().setItemPartitionKey(property(camelContext, com.azure.cosmos.models.PartitionKey.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "multiplewriteregionsenabled":
@@ -88,6 +90,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "itempartitionkey":
+        case "itemPartitionKey": return com.azure.cosmos.models.PartitionKey.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "multiplewriteregionsenabled":
@@ -132,6 +136,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "itempartitionkey":
+        case "itemPartitionKey": return target.getConfiguration().getItemPartitionKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "multiplewriteregionsenabled":

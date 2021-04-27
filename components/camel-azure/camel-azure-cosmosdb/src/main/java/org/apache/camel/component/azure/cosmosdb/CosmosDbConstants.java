@@ -33,6 +33,9 @@ public final class CosmosDbConstants {
     public static final String THROUGHPUT_PROPERTIES = HEADER_PREFIX + "ThroughputProperties";
     public static final String DATABASE_REQUEST_OPTIONS = HEADER_PREFIX + "DatabaseRequestOptions";
     public static final String CONTAINER_PARTITION_KEY_PATH = HEADER_PREFIX + "ContainerPartitionKeyPath";
+    public static final String CONTAINER_REQUEST_OPTIONS = HEADER_PREFIX + "ContainerRequestOptions";
+    public static final String ITEM_PARTITION_KEY = HEADER_PREFIX + "ItemPartitionKey";
+    public static final String ITEM_REQUEST_OPTIONS = HEADER_PREFIX + "ItemRequestOptions";
 
     // headers set by the producer
     public static final String RESOURCE_ID = HEADER_PREFIX + "RecourseId";

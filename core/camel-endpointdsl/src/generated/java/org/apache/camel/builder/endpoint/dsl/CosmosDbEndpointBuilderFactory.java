@@ -182,6 +182,21 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the container partition key path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param containerPartitionKeyPath the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder containerPartitionKeyPath(
+                String containerPartitionKeyPath) {
+            doSetProperty("containerPartitionKeyPath", containerPartitionKeyPath);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -234,6 +249,42 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder itemPartitionKey(
+                Object itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder itemPartitionKey(
+                String itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -323,6 +374,22 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder preferredRegions(
                 String preferredRegions) {
             doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * An SQL query to execute on a given resources. To learn more about
+         * Cosmos SQL API, check this link {link
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder query(String query) {
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -692,6 +759,21 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the container partition key path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param containerPartitionKeyPath the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder containerPartitionKeyPath(
+                String containerPartitionKeyPath) {
+            doSetProperty("containerPartitionKeyPath", containerPartitionKeyPath);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -744,6 +826,42 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointProducerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder itemPartitionKey(
+                Object itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder itemPartitionKey(
+                String itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -833,6 +951,22 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointProducerBuilder preferredRegions(
                 String preferredRegions) {
             doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * An SQL query to execute on a given resources. To learn more about
+         * Cosmos SQL API, check this link {link
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder query(String query) {
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -1241,6 +1375,21 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the container partition key path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param containerPartitionKeyPath the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder containerPartitionKeyPath(
+                String containerPartitionKeyPath) {
+            doSetProperty("containerPartitionKeyPath", containerPartitionKeyPath);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -1292,6 +1441,40 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder databaseEndpoint(String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder itemPartitionKey(Object itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
+            return this;
+        }
+        /**
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemPartitionKey the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder itemPartitionKey(String itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -1380,6 +1563,22 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder preferredRegions(String preferredRegions) {
             doSetProperty("preferredRegions", preferredRegions);
+            return this;
+        }
+        /**
+         * An SQL query to execute on a given resources. To learn more about
+         * Cosmos SQL API, check this link {link
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder query(String query) {
+            doSetProperty("query", query);
             return this;
         }
         /**

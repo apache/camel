@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -42,6 +43,8 @@ public class CosmosDbConfiguration implements Cloneable {
     private String databaseEndpoint;
     @UriParam(label = "common")
     private String containerPartitionKeyPath;
+    @UriParam(label = "common")
+    private PartitionKey itemPartitionKey;
     @UriParam(label = "common")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
@@ -126,6 +129,18 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setContainerPartitionKeyPath(String containerPartitionKeyPath) {
         this.containerPartitionKeyPath = containerPartitionKeyPath;
+    }
+
+    /**
+     * Sets partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key
+     * identifies the partition where the item is stored in.
+     */
+    public PartitionKey getItemPartitionKey() {
+        return itemPartitionKey;
+    }
+
+    public void setItemPartitionKey(PartitionKey itemPartitionKey) {
+        this.itemPartitionKey = itemPartitionKey;
     }
 
     /**

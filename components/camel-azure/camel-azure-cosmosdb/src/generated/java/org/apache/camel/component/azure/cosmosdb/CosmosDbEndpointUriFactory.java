@@ -20,7 +20,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("createDatabaseIfNotExists");
         props.add("databaseName");
         props.add("query");
@@ -42,6 +42,7 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("multipleWriteRegionsEnabled");
         props.add("exceptionHandler");
         props.add("operation");
+        props.add("itemPartitionKey");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("accountKey");
