@@ -65,6 +65,8 @@ public class Ddb2Configuration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
 
     public String getAccessKey() {
         return accessKey;
@@ -264,6 +266,18 @@ public class Ddb2Configuration implements Cloneable {
      */
     public void setKeyScalarType(String keyScalarType) {
         this.keyScalarType = keyScalarType;
+    }
+
+    /**
+     * Set whether the S3 client should expect to load credentials through a default credentials provider or to expect
+     * static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     // *************************************************
