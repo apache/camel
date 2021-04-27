@@ -9,6 +9,7 @@
     "label": "api,messaging,cloud",
     "javaType": "org.apache.camel.component.twilio.TwilioComponent",
     "supportLevel": "Stable",
+    "metadata": { "string": "foo", "number": 42, "boolean": true, "list": [ "bar", "baz" ], "map": { "k1": "v1", "k2": "v2" } },
     "groupId": "org.apache.camel",
     "artifactId": "camel-twilio",
     "version": "3.7.0-SNAPSHOT",
