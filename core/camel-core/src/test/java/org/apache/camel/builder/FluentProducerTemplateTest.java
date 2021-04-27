@@ -92,9 +92,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         FluentProducerTemplate on = DefaultFluentProducerTemplate.on(context);
-        on.withBody("Hello World");
-        on.toF("direct:%s", "in");
-        Object result = on.request();
+        Object result = on.withBody("Hello World").toF("direct:%s", "in").request();
 
         assertMockEndpointsSatisfied();
 
@@ -108,7 +106,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context).withDefaultEndpoint("direct:in");
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context, "direct:in");
 
         Object result = template.withBody("Hello World").request();
 

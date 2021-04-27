@@ -31,7 +31,36 @@ import org.apache.camel.util.ObjectHelper;
  * {@link org.apache.camel.CamelExecutionException} while others stores any thrown exception on the returned
  * {@link Exchange}. <br/>
  * <p/>
- * The {@link FluentProducerTemplate} is <b>thread safe</b>. <br/>
+ * The {@link FluentProducerTemplate} is <b>thread safe</b> with the assumption that its the same (single) thread that
+ * builds the message (via the fluent methods) that also sends the message. <br/>
+ * When using the fluent template its required to chain the methods such as:
+ * 
+ * <pre>
+ *     FluentProducerTemplate fluent = ...
+ *     fluent.withHeader("foo", 123).withHeader("bar", 456).withBody("Hello World").to("kafka:cheese").send();
+ * </pre>
+ * 
+ * The following code is <b>wrong</b> (do not do this)
+ * 
+ * <pre>
+ *     FluentProducerTemplate fluent = ...
+ *     fluent.withHeader("foo", 123);
+ *     fluent.withHeader("bar", 456);
+ *     fluent.withBody("Hello World");
+ *     fluent.to("kafka:cheese");
+ *     fluent.send();
+ * </pre>
+ * 
+ * If you do not want to chain fluent methods you can do as follows:
+ * 
+ * <pre>
+ *     FluentProducerTemplate fluent = ...
+ *     fluent = fluent.withHeader("foo", 123);
+ *     fluent = fluent.withHeader("bar", 456);
+ *     fluent = fluent.withBody("Hello World");
+ *     fluent = fluent.to("kafka:cheese")
+ *     fluent.send();
+ * </pre>
  * <p/>
  * All the methods which sends a message may throw {@link FailedToCreateProducerException} in case the {@link Producer}
  * could not be created. Or a {@link NoSuchEndpointException} if the endpoint could not be resolved. There may be other
@@ -49,7 +78,7 @@ import org.apache.camel.util.ObjectHelper;
  * <br/>
  * <p/>
  * Before using the template it must be started. And when you are done using the template, make sure to {@link #stop()}
- * the template. <br/>
+ * the template.<br/>
  * <p/>
  * <b>Important note on usage:</b> See this
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before
