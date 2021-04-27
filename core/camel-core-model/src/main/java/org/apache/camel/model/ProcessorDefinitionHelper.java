@@ -23,17 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.NamedNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for ProcessorDefinition and the other model classes.
  */
 public final class ProcessorDefinitionHelper {
-
-    public static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
-
-    private static final Logger LOG = LoggerFactory.getLogger(ProcessorDefinitionHelper.class);
 
     private ProcessorDefinitionHelper() {
     }
