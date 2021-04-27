@@ -17,7 +17,7 @@
 package org.apache.camel.dsl.xml.jaxb.definition;
 
 import java.io.InputStream;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -104,23 +104,24 @@ public class CreateModelFromXmlTest extends ContextTestSupport {
 
     private void assertNamespacesPresent(RoutesDefinition routesDefinition, Map<String, String> expectedNamespaces) {
         for (RouteDefinition route : routesDefinition.getRoutes()) {
-            Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-            if (it.hasNext()) {
-                ExpressionNode en = it.next();
-                ExpressionDefinition ed = en.getExpression();
-
-                NamespaceAware na = null;
-                Expression exp = ed.getExpressionValue();
-                if (exp instanceof NamespaceAware) {
-                    na = (NamespaceAware) exp;
-                } else if (ed instanceof NamespaceAware) {
-                    na = (NamespaceAware) ed;
-                }
-
-                assertNotNull(na);
-                assertEquals(expectedNamespaces, na.getNamespaces());
-            } else {
+            Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
+            if (col.isEmpty()) {
                 fail("Expected to find at least one ExpressionNode in route");
+            } else {
+                for (ExpressionNode en : col) {
+                    ExpressionDefinition ed = en.getExpression();
+
+                    NamespaceAware na = null;
+                    Expression exp = ed.getExpressionValue();
+                    if (exp instanceof NamespaceAware) {
+                        na = (NamespaceAware) exp;
+                    } else if (ed instanceof NamespaceAware) {
+                        na = (NamespaceAware) ed;
+                    }
+
+                    assertNotNull(na);
+                    assertEquals(expectedNamespaces, na.getNamespaces());
+                }
             }
         }
     }
