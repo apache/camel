@@ -136,7 +136,7 @@
         <compress-lzf-version>1.0.4</compress-lzf-version>
         <consul-client-version>1.4.2</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-        <corda-version>4.7</corda-version>
+        <corda-version>4.8</corda-version>
         <couchbase-client-version>3.1.4</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
         <cxf-version>3.4.3</cxf-version>
