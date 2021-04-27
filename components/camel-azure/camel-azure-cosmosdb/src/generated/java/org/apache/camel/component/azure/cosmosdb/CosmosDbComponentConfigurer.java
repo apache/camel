@@ -51,6 +51,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createDatabaseIfNotExists": getOrCreateConfiguration(target).setCreateDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "databaseendpoint":
         case "databaseEndpoint": getOrCreateConfiguration(target).setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "itempartitionkey":
+        case "itemPartitionKey": getOrCreateConfiguration(target).setItemPartitionKey(property(camelContext, com.azure.cosmos.models.PartitionKey.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "multiplewriteregionsenabled":
@@ -98,6 +100,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createDatabaseIfNotExists": return boolean.class;
         case "databaseendpoint":
         case "databaseEndpoint": return java.lang.String.class;
+        case "itempartitionkey":
+        case "itemPartitionKey": return com.azure.cosmos.models.PartitionKey.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "multiplewriteregionsenabled":
@@ -141,6 +145,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "createDatabaseIfNotExists": return getOrCreateConfiguration(target).isCreateDatabaseIfNotExists();
         case "databaseendpoint":
         case "databaseEndpoint": return getOrCreateConfiguration(target).getDatabaseEndpoint();
+        case "itempartitionkey":
+        case "itemPartitionKey": return getOrCreateConfiguration(target).getItemPartitionKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "multiplewriteregionsenabled":
