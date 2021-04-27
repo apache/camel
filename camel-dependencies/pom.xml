@@ -152,7 +152,7 @@
     <compiler.fork>true</compiler.fork>
     <compress-lzf-version>1.0.4</compress-lzf-version>
     <consul-client-version>1.4.2</consul-client-version>
-    <corda-version>4.7</corda-version>
+    <corda-version>4.8</corda-version>
     <couchbase-client-version>3.1.4</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
     <cxf-codegen-plugin-version>3.4.3</cxf-codegen-plugin-version>
