@@ -34,9 +34,6 @@ public interface AtlasMapEndpointBuilderFactory {
      * Builder for endpoint for the AtlasMap component.
      */
     public interface AtlasMapEndpointBuilder extends EndpointProducerBuilder {
-        default AdvancedAtlasMapEndpointBuilder advanced() {
-            return (AdvancedAtlasMapEndpointBuilder) this;
-        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -239,33 +236,6 @@ public interface AtlasMapEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AtlasMap component.
-     */
-    public interface AdvancedAtlasMapEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default AtlasMapEndpointBuilder basic() {
-            return (AtlasMapEndpointBuilder) this;
-        }
-        /**
-         * The URI of the properties file which is used for AtlasContextFactory
-         * initialization.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param propertiesFile the value to set
-         * @return the dsl builder
-         */
-        default AdvancedAtlasMapEndpointBuilder propertiesFile(
-                String propertiesFile) {
-            doSetProperty("propertiesFile", propertiesFile);
-            return this;
-        }
-    }
-
-    /**
      * Proxy enum for
      * <code>org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode</code> enum.
      */
@@ -332,7 +302,7 @@ public interface AtlasMapEndpointBuilderFactory {
     static AtlasMapEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class AtlasMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtlasMapEndpointBuilder, AdvancedAtlasMapEndpointBuilder {
+        class AtlasMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtlasMapEndpointBuilder {
             public AtlasMapEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }
