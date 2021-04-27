@@ -96,7 +96,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (32 parameters):
+=== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,6 +112,7 @@ with the following path and query parameters:
 | *readTimeout* (consumer) | Timeout in millis the consumer will wait while trying to read a new message of the data queue. | 30000 | int
 | *searchType* (consumer) | Search type such as EQ for equal etc. There are 6 enums and the value can be one of: EQ, NE, LT, LE, GT, GE | EQ | SearchType
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *sendingReply* (consumer) | If true, the consumer endpoint will set the Jt400Constants.MESSAGE_REPLYTO_KEY header of the camel message for any IBM i inquiry messages received. If that message is then routed to a producer endpoint, the action will not be processed as sending a message to the queue, but rather a reply to the specific inquiry message. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
@@ -199,10 +200,19 @@ be determined, the headers will not be set
 [width="100%",cols="2m,2m,1m,5",options="header"]
 |===
 | Header constant                          | Header value                      | Type    | Description
-| Jt400Endpoint.MESSAGE_ID                 | "CamelJt400MessageID"             | String  | The message identifier
-| Jt400Endpoint.MESSAGE_FILE               | "CamelJt400MessageFile"           | String  | The message file name
-| Jt400Endpoint.MESSAGE_TYPE               | "CamelJt400MessageType"           | Integer | The message type (corresponds to constants defined in the AS400Message class)
-| Jt400Endpoint.SENDER_INFORMATION         | "SENDER_INFORMATION"              | String  | The job identifier of the sending job
+| Jt400Constants.MESSAGE_ID                | "CamelJt400MessageID"             | String  | The message identifier
+| Jt400Constants.MESSAGE_FILE              | "CamelJt400MessageFile"           | String  | The message file name
+| Jt400Constants.MESSAGE_TYPE              | "CamelJt400MessageType"           | Integer | The message type (corresponds to constants defined in the AS400Message class)
+| Jt400Constants.MESSAGE_DFT_RPY           | "CamelJt400MessageDefaultReply"   | String  | The default message reply, when the message is an inquiry message
+| Jt400Constants.MESSAGE_REPLYTO_KEY       | "CamelJt400MessageReplyToKey"     | byte[]  | The key of the message that will be replied to (if the `sendingReply` parameter is set to `true`)
+| Jt400Constants.SENDER_INFORMATION        | "SENDER_INFORMATION"              | String  | The job identifier of the sending job
+|===
+
+=== Producer headers when sending to message queues
+
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|===
+| Jt400Constants.MESSAGE_REPLYTO_KEY        | "CamelJt400MessageReplyToKey"     | byte[]  | If set, and if the message body is not empty, a new message will not be sent to the provided message queue. Instead, a response will be sent to the message identified by the given key. This is set automatically when reading from the message queue if the `sendingReply` parameter is set to `true`.
 |===
 
 == Example
@@ -270,8 +280,22 @@ from("jms:queue:input")
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
-from("jt400://username:password@system/lib.lib/MSGOUTQ.DTAQ")
+from("jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ")
 .to("jms:queue:output");
+-------------------------------------------------------------------------------------------------------
+
+=== Replying to an inquiry message on a message queue
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingReply=true")
+.choice()
+    .when(header(Jt400Constants.MESSAGE_TYPE).isEqualTo(AS400Message.INQUIRY))
+        .process((exchange) -> {
+            String reply = // insert reply logic here
+            exchange.getIn().setBody(reply);
+        })
+        .to("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq");
 -------------------------------------------------------------------------------------------------------
 
 

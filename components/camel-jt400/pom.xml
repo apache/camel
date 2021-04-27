@@ -28,8 +28,8 @@
 
     <artifactId>camel-jt400</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Java Toolbox for AS/400</name>
-    <description>Camel AS/400 support</description>
+    <name>Camel :: Java Toolbox for IBM i</name>
+    <description>Camel IBM i support</description>
 
     <properties>
     </properties>
