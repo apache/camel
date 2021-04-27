@@ -44,7 +44,7 @@ mapping definition, either ADM archive file or mapping definition JSON file
 
 
 // component options: START
-The AtlasMap component supports 3 options, which are listed below.
+The AtlasMap component supports 4 options, which are listed below.
 
 
 
@@ -54,6 +54,7 @@ The AtlasMap component supports 3 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *atlasContextFactory* (advanced) | To use the AtlasContextFactory otherwise a new engine is created. |  | AtlasContextFactory
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *propertiesFile* (advanced) | The URI of the properties file which is used for AtlasContextFactory initialization. |  | String
 |===
 // component options: END
 
@@ -79,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +92,6 @@ with the following path and query parameters:
 | *sourceMapName* (producer) | The Exchange property name for a source message map which hold java.util.Map&lt;String, Message&gt; where the key is AtlasMap Document ID. AtlasMap consumes Message bodies as source documents, as well as message headers as source properties where the scope equals to Document ID. |  | String
 | *targetMapMode* (producer) | TargetMapMode enum value to specify how multiple target documents are delivered if exist. 'MAP': Stores them into a java.util.Map, and the java.util.Map is set to an exchange property if 'targetMapName' is specified, otherwise message body. 'MESSAGE_HEADER': Stores them into message headers. 'EXCHANGE_PROPERTY': Stores them into exchange properties. ). There are 3 enums and the value can be one of: MAP, MESSAGE_HEADER, EXCHANGE_PROPERTY | MAP | TargetMapMode
 | *targetMapName* (producer) | The Exchange property name for a target document map which hold java.util.Map&lt;String, Object&gt; where the key is AtlasMap Document ID. AtlasMap populates multiple target documents into this map. |  | String
-| *propertiesFile* (advanced) | The URI of the properties file which is used for AtlasContextFactory initialization. |  | String
 |===
 // endpoint options: END
 

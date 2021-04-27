@@ -27,6 +27,8 @@ public class AtlasMapComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "propertiesfile":
+        case "propertiesFile": target.setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -40,6 +42,8 @@ public class AtlasMapComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "propertiesfile":
+        case "propertiesFile": return java.lang.String.class;
         default: return null;
         }
     }
@@ -54,6 +58,8 @@ public class AtlasMapComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "propertiesfile":
+        case "propertiesFile": return target.getPropertiesFile();
         default: return null;
         }
     }
