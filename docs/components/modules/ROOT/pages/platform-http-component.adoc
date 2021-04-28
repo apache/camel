@@ -16,7 +16,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/platform-h
 *Since Camel 3.0*
 
 
-The Platform HTTP is used to allow Camel to use the existing HTTP server from the rumtime.
+The Platform HTTP is used to allow Camel to use the existing HTTP server from the runtime.
 For example when running Camel on Spring Boot, Quarkus, or other runtimes.
 
 Maven users will need to add the following dependency to their `pom.xml`
