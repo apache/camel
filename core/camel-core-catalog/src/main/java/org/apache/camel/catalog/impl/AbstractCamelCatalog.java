@@ -54,7 +54,6 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -1528,7 +1527,7 @@ public abstract class AbstractCamelCatalog {
     private static String stripOptionalPrefixFromName(Map<String, BaseOptionModel> rows, String name) {
         for (BaseOptionModel row : rows.values()) {
             String optionalPrefix = row.getOptionalPrefix();
-            if (ObjectHelper.isNotEmpty(optionalPrefix) && name.startsWith(optionalPrefix)) {
+            if (optionalPrefix != null && !optionalPrefix.isEmpty() && name.startsWith(optionalPrefix)) {
                 // try again
                 return stripOptionalPrefixFromName(rows, name.substring(optionalPrefix.length()));
             } else {
@@ -1543,7 +1542,7 @@ public abstract class AbstractCamelCatalog {
     private static String getPropertyNameFromNameWithPrefix(Map<String, BaseOptionModel> rows, String name) {
         for (BaseOptionModel row : rows.values()) {
             String prefix = row.getPrefix();
-            if (ObjectHelper.isNotEmpty(prefix) && name.startsWith(prefix)) {
+            if (prefix != null && !prefix.isEmpty() && name.startsWith(prefix)) {
                 return row.getName();
             }
         }
