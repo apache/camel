@@ -38,7 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.JSonSchemaResolver;
@@ -1308,15 +1307,18 @@ public abstract class AbstractCamelCatalog {
         Object context = null;
         Object instance = null;
         Class<?> clazz = null;
+
         try {
             // need a simple camel context for the simple language parser to be able to parse
             clazz = classLoader.loadClass("org.apache.camel.impl.engine.SimpleCamelContext");
             context = clazz.getDeclaredConstructor(boolean.class).newInstance(false);
             clazz = classLoader.loadClass("org.apache.camel.language.simple.SimpleLanguage");
             instance = clazz.getDeclaredConstructor().newInstance();
-            instance.getClass().getMethod("setCamelContext", CamelContext.class).invoke(instance, context);
+            clazz = classLoader.loadClass("org.apache.camel.CamelContext");
+            instance.getClass().getMethod("setCamelContext", clazz).invoke(instance, context);
         } catch (Exception e) {
-            // ignore
+            clazz = null;
+            answer.setError(e.getMessage());
         }
 
         if (clazz != null && context != null && instance != null) {
