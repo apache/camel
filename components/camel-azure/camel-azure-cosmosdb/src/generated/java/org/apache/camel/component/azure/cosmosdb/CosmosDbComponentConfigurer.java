@@ -63,6 +63,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "preferredregions":
         case "preferredRegions": getOrCreateConfiguration(target).setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "queryrequestoptions":
+        case "queryRequestOptions": getOrCreateConfiguration(target).setQueryRequestOptions(property(camelContext, com.azure.cosmos.models.CosmosQueryRequestOptions.class, value)); return true;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": getOrCreateConfiguration(target).setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
@@ -114,6 +116,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "preferredregions":
         case "preferredRegions": return java.util.List.class;
         case "query": return java.lang.String.class;
+        case "queryrequestoptions":
+        case "queryRequestOptions": return com.azure.cosmos.models.CosmosQueryRequestOptions.class;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
@@ -161,6 +165,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "preferredregions":
         case "preferredRegions": return getOrCreateConfiguration(target).getPreferredRegions();
         case "query": return getOrCreateConfiguration(target).getQuery();
+        case "queryrequestoptions":
+        case "queryRequestOptions": return getOrCreateConfiguration(target).getQueryRequestOptions();
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return getOrCreateConfiguration(target).isReadRequestsFallbackEnabled();
         case "throughputproperties":

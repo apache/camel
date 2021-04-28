@@ -25,6 +25,7 @@ import com.azure.cosmos.models.CosmosContainerResponse;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import com.azure.cosmos.models.ThroughputResponse;
@@ -128,6 +129,19 @@ public class CosmosDbContainerOperations {
                         container.readAllItems(partitionKey, requestOptions, itemType)));
     }
 
+    public <T> Flux<FeedResponse<T>> readAllItemsAsFeed(
+            final PartitionKey partitionKey, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
+        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
+
+        // a bug in Azure SDK, see: https://github.com/Azure/azure-sdk-for-java/issues/20743
+        final CosmosQueryRequestOptions requestOptions
+                = queryRequestOptions == null ? new CosmosQueryRequestOptions() : queryRequestOptions;
+
+        return container
+                .flatMapMany(container -> container.readAllItems(partitionKey, requestOptions, itemType).byPage());
+    }
+
     public <T> Flux<T> queryItems(
             final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
@@ -136,6 +150,15 @@ public class CosmosDbContainerOperations {
         return container
                 .flatMapMany(container -> CosmosDbUtils.convertCosmosPagedFluxToFluxResults(
                         container.queryItems(query, queryRequestOptions, itemType)));
+    }
+
+    public <T> Flux<FeedResponse<T>> queryItemsAsFeed(
+            final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
+        CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
+
+        return container
+                .flatMapMany(container -> container.queryItems(query, queryRequestOptions, itemType).byPage());
     }
 
     private <T> Mono<T> applyToContainer(final Function<CosmosAsyncContainer, Mono<T>> fn) {

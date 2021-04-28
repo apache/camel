@@ -16,44 +16,57 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
-import org.apache.camel.AsyncCallback;
+import java.util.function.Consumer;
+
+import com.azure.cosmos.models.CosmosItemResponse;
+import com.azure.cosmos.models.FeedResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.EmptyAsyncCallback;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.ObjectHelper;
 
 public class CosmosDbConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CosmosDbConsumer.class);
-
-    // we use the EventProcessorClient as recommended by Azure docs to consume from all partitions
+    private Synchronization onCompletion;
+    private CosmosAsyncClientWrapper clientWrapper;
 
     public CosmosDbConsumer(final CosmosDbEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        // create the client
-
-        // start the client but we will rely on the Azure Client Scheduler for thread management
+    protected void doInit() throws Exception {
+        super.doInit();
+        this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
+        this.onCompletion = new ConsumerOnCompletion();
     }
 
     @Override
-    protected void doStop() throws Exception {
-        /*if (processorClient != null) {
-            // shutdown the client
-            processorClient.stop();
-        }*/
+    protected void doStart() throws Exception {
+        super.doStart();
 
-        // shutdown camel consumer
-        super.doStop();
+        // start consuming events
+        if (ObjectHelper.isNotEmpty(getConfiguration().getItemId())
+                && ObjectHelper.isNotEmpty(getConfiguration().getItemPartitionKey())) {
+            // if we have only itemId, just read that
+            readItem(this::onEventListener, this::onErrorListener);
+        } else if (ObjectHelper.isNotEmpty(getConfiguration().getItemPartitionKey())) {
+            // we have partitionKey, we just get all items in a container
+            readAllItems(this::onEventListener, this::onErrorListener);
+        } else if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
+            // if we have query, we run the query instead
+            queryItems(this::onEventListener, this::onErrorListener);
+        } else {
+            throw new IllegalArgumentException(
+                    "To consume you need to either set itemId/partitionKey or partitionKey or query.");
+        }
     }
 
     public CosmosDbConfiguration getConfiguration() {
@@ -65,68 +78,72 @@ public class CosmosDbConsumer extends DefaultConsumer {
         return (CosmosDbEndpoint) super.getEndpoint();
     }
 
-    private Exchange createAzureEventHubExchange() {
+    private void onEventListener(final Exchange exchange) {
+        // add exchange callback
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+        // use default consumer callback
+        getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
+    }
+
+    private void onErrorListener(final Throwable error) {
+        getExceptionHandler().handleException("Error processing exchange", error);
+    }
+
+    private void readAllItems(final Consumer<Exchange> resultCallback, final Consumer<Throwable> errorCallback) {
+        getContainerOperations()
+                .readAllItemsAsFeed(getConfiguration().getItemPartitionKey(), getConfiguration().getQueryRequestOptions(),
+                        Object.class)
+                .subscribe(tFeedResponse -> resultCallback.accept(createAzureCosmosDbExchange(tFeedResponse)), errorCallback);
+    }
+
+    private void queryItems(final Consumer<Exchange> resultCallback, final Consumer<Throwable> errorCallback) {
+        getContainerOperations()
+                .queryItemsAsFeed(getConfiguration().getQuery(), getConfiguration().getQueryRequestOptions(), Object.class)
+                .subscribe(tFeedResponse -> resultCallback.accept(createAzureCosmosDbExchange(tFeedResponse)), errorCallback);
+    }
+
+    private void readItem(final Consumer<Exchange> resultCallback, final Consumer<Throwable> errorCallback) {
+        getContainerOperations()
+                .readItem(getConfiguration().getItemId(), getConfiguration().getItemPartitionKey(), null, Object.class)
+                .subscribe(itemResponse -> resultCallback.accept(createAzureCosmosDbExchange(itemResponse)), errorCallback);
+    }
+
+    private <T> Exchange createAzureCosmosDbExchange(final FeedResponse<T> tFeedResponse) {
         final Exchange exchange = createExchange(true);
         final Message message = exchange.getIn();
+        // set body
+        message.setBody(tFeedResponse.getResults());
+        // set headers
+        message.setHeader(CosmosDbConstants.RESPONSE_HEADERS, tFeedResponse.getResponseHeaders());
 
         return exchange;
     }
 
-    private void onEventListener() {
-        final Exchange exchange = createAzureEventHubExchange();
+    private <T> Exchange createAzureCosmosDbExchange(final CosmosItemResponse<T> itemResponse) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+        // set body
+        message.setBody(itemResponse.getItem());
+        // set headers
+        message.setHeader(CosmosDbConstants.RESPONSE_HEADERS, itemResponse.getResponseHeaders());
+        message.setHeader(CosmosDbConstants.E_TAG, itemResponse.getETag());
 
-        // add exchange callback
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-            @Override
-            public void onComplete(Exchange exchange) {
-                // we update the consumer offsets
-                processCommit(exchange);
+        return exchange;
+    }
+
+    private CosmosDbContainerOperations getContainerOperations() {
+        return CosmosDbUtils.getContainerOperations(null, new CosmosDbConfigurationOptionsProxy(getConfiguration()),
+                clientWrapper);
+    }
+
+    private class ConsumerOnCompletion extends SynchronizationAdapter {
+
+        @Override
+        public void onFailure(Exchange exchange) {
+            final Exception cause = exchange.getException();
+            if (cause != null) {
+                getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
             }
-
-            @Override
-            public void onFailure(Exchange exchange) {
-                // we do nothing here
-                processRollback(exchange);
-            }
-        });
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
-    }
-
-    private void onErrorListener() {
-        final Exchange exchange = createAzureEventHubExchange();
-
-        // log exception if an exception occurred and was not handled
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange,
-                    exchange.getException());
-        }
-    }
-
-    /**
-     * Strategy to commit the offset after message being processed successfully.
-     *
-     * @param exchange the exchange
-     */
-    private void processCommit(final Exchange exchange) {
-        try {
-            // eventContext.updateCheckpoint();
-        } catch (Exception ex) {
-            getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
-                    exchange, ex);
-        }
-    }
-
-    /**
-     * Strategy when processing the exchange failed.
-     *
-     * @param exchange the exchange
-     */
-    private void processRollback(Exchange exchange) {
-        final Exception cause = exchange.getException();
-        if (cause != null) {
-            getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
         }
     }
 }

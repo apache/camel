@@ -408,6 +408,42 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder queryRequestOptions(
+                Object queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder queryRequestOptions(
+                String queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
+            return this;
+        }
+        /**
          * Sets whether to allow for reads to go to multiple regions configured
          * on an account of Azure Cosmos DB service. DEFAULT value is true. If
          * this property is not set, the default is true for all Consistency
@@ -997,6 +1033,42 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointProducerBuilder query(String query) {
             doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder queryRequestOptions(
+                Object queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder queryRequestOptions(
+                String queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
             return this;
         }
         /**
@@ -1624,6 +1696,42 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder query(String query) {
             doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder queryRequestOptions(
+                Object queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder queryRequestOptions(
+                String queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
             return this;
         }
         /**

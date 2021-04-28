@@ -26,6 +26,7 @@ import org.apache.camel.component.azure.cosmosdb.client.CosmosDbClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Azure Cosmos DB is Microsoft’s globally distributed, multi-model database service for operational and analytics
@@ -55,6 +56,11 @@ public class CosmosDbEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        // we need to have database and container set to consume events
+        if (ObjectHelper.isEmpty(configuration.getDatabaseName()) && ObjectHelper.isEmpty(configuration.getContainerName())) {
+            throw new IllegalArgumentException("Database name and container name must be set.");
+        }
+
         final Consumer cosmosDbConsumer = new CosmosDbConsumer(this, processor);
         configureConsumer(cosmosDbConsumer);
 

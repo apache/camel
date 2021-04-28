@@ -284,6 +284,24 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder queryRequestOptions(
+                com.azure.cosmos.models.CosmosQueryRequestOptions queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
+            return this;
+        }
+        /**
          * Sets whether to allow for reads to go to multiple regions configured
          * on an account of Azure Cosmos DB service. DEFAULT value is true. If
          * this property is not set, the default is true for all Consistency
@@ -492,6 +510,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.util.List) value); return true;
             case "query": getOrCreateConfiguration((CosmosDbComponent) component).setQuery((java.lang.String) value); return true;
+            case "queryRequestOptions": getOrCreateConfiguration((CosmosDbComponent) component).setQueryRequestOptions((com.azure.cosmos.models.CosmosQueryRequestOptions) value); return true;
             case "readRequestsFallbackEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setReadRequestsFallbackEnabled((boolean) value); return true;
             case "throughputProperties": getOrCreateConfiguration((CosmosDbComponent) component).setThroughputProperties((com.azure.cosmos.models.ThroughputProperties) value); return true;
             case "bridgeErrorHandler": ((CosmosDbComponent) component).setBridgeErrorHandler((boolean) value); return true;

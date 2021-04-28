@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
@@ -66,6 +67,8 @@ public class CosmosDbConfiguration implements Cloneable {
     private String query;
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
+    @UriParam(label = "common")
+    private CosmosQueryRequestOptions queryRequestOptions;
     @UriParam(label = "producer", defaultValue = "listDatabases")
     private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
     @UriParam(label = "producer", defaultValue = "false")
@@ -189,6 +192,18 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setCosmosAsyncClient(CosmosAsyncClient cosmosAsyncClient) {
         this.cosmosAsyncClient = cosmosAsyncClient;
+    }
+
+    /**
+     * Set additional QueryRequestOptions that can be used with queryItems, queryContainers, queryDatabases,
+     * listDatabases, listItems, listContainers operations
+     */
+    public CosmosQueryRequestOptions getQueryRequestOptions() {
+        return queryRequestOptions;
+    }
+
+    public void setQueryRequestOptions(CosmosQueryRequestOptions queryRequestOptions) {
+        this.queryRequestOptions = queryRequestOptions;
     }
 
     /**

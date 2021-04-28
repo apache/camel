@@ -57,6 +57,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "preferredregions":
         case "preferredRegions": target.getConfiguration().setPreferredRegions(property(camelContext, java.util.List.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "queryrequestoptions":
+        case "queryRequestOptions": target.getConfiguration().setQueryRequestOptions(property(camelContext, com.azure.cosmos.models.CosmosQueryRequestOptions.class, value)); return true;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": target.getConfiguration().setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
@@ -104,6 +106,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "preferredregions":
         case "preferredRegions": return java.util.List.class;
         case "query": return java.lang.String.class;
+        case "queryrequestoptions":
+        case "queryRequestOptions": return com.azure.cosmos.models.CosmosQueryRequestOptions.class;
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
@@ -152,6 +156,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "preferredregions":
         case "preferredRegions": return target.getConfiguration().getPreferredRegions();
         case "query": return target.getConfiguration().getQuery();
+        case "queryrequestoptions":
+        case "queryRequestOptions": return target.getConfiguration().getQueryRequestOptions();
         case "readrequestsfallbackenabled":
         case "readRequestsFallbackEnabled": return target.getConfiguration().isReadRequestsFallbackEnabled();
         case "throughputproperties":

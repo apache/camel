@@ -56,7 +56,8 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public CosmosQueryRequestOptions getQueryRequestOptions(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.QUERY_REQUEST_OPTIONS, nullFallback(), CosmosQueryRequestOptions.class);
+        return getOption(exchange, CosmosDbConstants.QUERY_REQUEST_OPTIONS, configuration::getQueryRequestOptions,
+                CosmosQueryRequestOptions.class);
     }
 
     public boolean isCreateDatabaseIfNotExist(final Exchange exchange) {

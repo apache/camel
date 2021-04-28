@@ -47,8 +47,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CosmosDbProducer.class);
 
-    private final CosmosAsyncClientWrapper clientWrapper;
-    private final CosmosDbConfigurationOptionsProxy configurationOptionsProxy;
+    private CosmosAsyncClientWrapper clientWrapper;
+    private CosmosDbConfigurationOptionsProxy configurationOptionsProxy;
     private final Map<CosmosDbOperationsDefinition, BiConsumer<Exchange, AsyncCallback>> operations = new HashMap<>();
 
     {
@@ -73,7 +73,12 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
 
     public CosmosDbProducer(final Endpoint endpoint) {
         super(endpoint);
-        this.clientWrapper = new CosmosAsyncClientWrapper(getCosmosAsyncClient());
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
         this.configurationOptionsProxy = new CosmosDbConfigurationOptionsProxy(getConfiguration());
     }
 
@@ -331,34 +336,11 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     }
 
     private CosmosDbContainerOperations getContainerOperations(final Exchange exchange) {
-        final boolean createContainerIfNotExist = configurationOptionsProxy.isCreateContainerIfNotExist(exchange);
-
-        // if we enabled this flag, we create a container first before running the operation
-        if (createContainerIfNotExist) {
-            return getDatabaseOperations(exchange)
-                    .createContainerIfNotExistAndGetContainerOperations(configurationOptionsProxy.getContainerName(exchange),
-                            configurationOptionsProxy.getContainerPartitionKeyPath(exchange),
-                            configurationOptionsProxy.getThroughputProperties(exchange));
-        }
-
-        // otherwise just return the operation without creating a container if it is not existing
-        return getDatabaseOperations(exchange)
-                .getContainerOperations(configurationOptionsProxy.getContainerName(exchange));
+        return CosmosDbUtils.getContainerOperations(exchange, configurationOptionsProxy, clientWrapper);
     }
 
     private CosmosDbDatabaseOperations getDatabaseOperations(final Exchange exchange) {
-        final boolean createDatabaseIfNotExist = configurationOptionsProxy.isCreateDatabaseIfNotExist(exchange);
-
-        // if we enabled this flag, we create a database first before running the operation
-        if (createDatabaseIfNotExist) {
-            return CosmosDbClientOperations.withClient(clientWrapper)
-                    .createDatabaseIfNotExistAndGetDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange),
-                            configurationOptionsProxy.getThroughputProperties(exchange));
-        }
-
-        // otherwise just return the operation without creating a database if it is not existing
-        return CosmosDbClientOperations.withClient(clientWrapper)
-                .getDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange));
+        return CosmosDbUtils.getDatabaseOperations(exchange, configurationOptionsProxy, clientWrapper);
     }
 
     private Consumer<CosmosDatabaseResponse> setCosmosDatabaseResponseOnExchange(final Exchange exchange) {
