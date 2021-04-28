@@ -4009,6 +4009,11 @@
                     <version>${project.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
                     <version>${jaxb2-maven-plugin-version}</version>
