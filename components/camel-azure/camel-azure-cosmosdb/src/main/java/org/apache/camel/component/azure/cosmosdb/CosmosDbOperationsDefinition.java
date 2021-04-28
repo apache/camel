@@ -35,7 +35,8 @@ public enum CosmosDbOperationsDefinition {
     createItem,
     upsertItem,
     deleteItem,
+    replaceItem,
     readItem,
     readAllItems,
-    queryItem
+    queryItems
 }

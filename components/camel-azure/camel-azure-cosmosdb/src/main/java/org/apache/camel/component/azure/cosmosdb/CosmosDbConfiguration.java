@@ -46,6 +46,8 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common")
     private PartitionKey itemPartitionKey;
     @UriParam(label = "common")
+    private String itemId;
+    @UriParam(label = "common")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
     @UriParam(label = "common", defaultValue = "ConsistencyLevel.SESSION")
@@ -141,6 +143,17 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setItemPartitionKey(PartitionKey itemPartitionKey) {
         this.itemPartitionKey = itemPartitionKey;
+    }
+
+    /**
+     * Sets the itemId in case needed for operation on item like delete, replace
+     */
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     /**

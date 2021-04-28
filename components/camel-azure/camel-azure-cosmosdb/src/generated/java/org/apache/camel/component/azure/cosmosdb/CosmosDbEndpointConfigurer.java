@@ -45,6 +45,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "itemid":
+        case "itemId": target.getConfiguration().setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
         case "itemPartitionKey": target.getConfiguration().setItemPartitionKey(property(camelContext, com.azure.cosmos.models.PartitionKey.class, value)); return true;
         case "lazystartproducer":
@@ -90,6 +92,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "itemid":
+        case "itemId": return java.lang.String.class;
         case "itempartitionkey":
         case "itemPartitionKey": return com.azure.cosmos.models.PartitionKey.class;
         case "lazystartproducer":
@@ -136,6 +140,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "itemid":
+        case "itemId": return target.getConfiguration().getItemId();
         case "itempartitionkey":
         case "itemPartitionKey": return target.getConfiguration().getItemPartitionKey();
         case "lazystartproducer":

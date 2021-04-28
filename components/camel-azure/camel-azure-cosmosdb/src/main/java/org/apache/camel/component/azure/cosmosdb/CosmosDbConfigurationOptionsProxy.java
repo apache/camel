@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.azure.cosmos.models.CosmosContainerRequestOptions;
@@ -97,6 +99,28 @@ public class CosmosDbConfigurationOptionsProxy {
 
     public Object getItem(final Exchange exchange) {
         return exchange.getIn().getBody();
+    }
+
+    public List<Object> getItems(final Exchange exchange) {
+        final Object body = exchange.getIn().getBody();
+
+        if (ObjectHelper.isEmpty(body)) {
+            throw new IllegalArgumentException("Item on the message body cannot be empty.");
+        }
+
+        List<Object> items = null;
+        if (body instanceof List) {
+            // noinspection unchecked
+            items = (List<Object>) body;
+        } else {
+            items = Collections.singletonList(body);
+        }
+
+        return items;
+    }
+
+    public String getItemId(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.ITEM_ID, configuration::getItemId, String.class);
     }
 
     public CosmosItemRequestOptions getItemRequestOptions(final Exchange exchange) {

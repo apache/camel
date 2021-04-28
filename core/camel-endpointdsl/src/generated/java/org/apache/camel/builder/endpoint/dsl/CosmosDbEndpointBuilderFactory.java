@@ -252,6 +252,21 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the itemId in case needed for operation on item like delete,
+         * replace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemId the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder itemId(String itemId) {
+            doSetProperty("itemId", itemId);
+            return this;
+        }
+        /**
          * Sets partition key. Represents a partition key value in the Azure
          * Cosmos DB database service. A partition key identifies the partition
          * where the item is stored in.
@@ -826,6 +841,21 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointProducerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
+            return this;
+        }
+        /**
+         * Sets the itemId in case needed for operation on item like delete,
+         * replace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemId the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder itemId(String itemId) {
+            doSetProperty("itemId", itemId);
             return this;
         }
         /**
@@ -1444,6 +1474,21 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the itemId in case needed for operation on item like delete,
+         * replace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemId the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder itemId(String itemId) {
+            doSetProperty("itemId", itemId);
+            return this;
+        }
+        /**
          * Sets partition key. Represents a partition key value in the Azure
          * Cosmos DB database service. A partition key identifies the partition
          * where the item is stored in.
@@ -1717,9 +1762,10 @@ public interface CosmosDbEndpointBuilderFactory {
         createItem,
         upsertItem,
         deleteItem,
+        replaceItem,
         readItem,
         readAllItems,
-        queryItem;
+        queryItems;
     }
 
     public interface CosmosDbBuilders {

@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.azure.cosmosdb.integration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosDatabaseProperties;
+import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Message;
@@ -236,6 +239,188 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
         assertEquals(specificContainerName, returnedContainers.get(0).getId());
     }
 
+    @Test
+    void testCreateUpsertReplaceAndDeleteItem() throws InterruptedException {
+        final String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+
+        final Map<String, Object> item1 = new HashMap<>();
+        item1.put("id", "test-id-1");
+        item1.put("partition", "test-1");
+        item1.put("field1", 12234);
+        item1.put("field2", "awesome!");
+
+        // test create item
+        result.expectedMessageCount(1);
+
+        template.send("direct:createItem", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH, "partition");
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
+            exchange.getIn().setHeader(CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST, true);
+            exchange.getIn().setHeader(CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST, true);
+            exchange.getIn().setBody(item1);
+        });
+
+        result.assertIsSatisfied(1000);
+
+        // check headers
+        Message response = result.getExchanges().get(0).getMessage();
+        assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
+
+        result.reset();
+
+        // test upsert
+        final Map<String, Object> item2 = new HashMap<>();
+        item2.put("id", "test-id-2");
+        item2.put("partition", "test-1");
+        item2.put("field1", 12234);
+        item2.put("field2", "awesome!");
+
+        result.expectedMessageCount(1);
+
+        template.send("direct:upsertItem", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
+            exchange.getIn().setBody(item2);
+        });
+
+        result.assertIsSatisfied(1000);
+
+        // check headers
+        response = result.getExchanges().get(0).getMessage();
+        assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
+
+        result.reset();
+
+        // test replace
+        final Map<String, Object> item3 = new HashMap<>();
+        item3.put("id", "test-id-2");
+        item3.put("partition", "test-1");
+        item3.put("field1", 99944);
+        item3.put("field2", "super awesome!");
+
+        result.expectedMessageCount(1);
+
+        template.send("direct:replaceItem", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_ID, "test-id-2");
+            exchange.getIn().setBody(item3);
+        });
+
+        result.assertIsSatisfied(1000);
+
+        // check headers
+        response = result.getExchanges().get(0).getMessage();
+        assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
+
+        result.reset();
+
+        // we make sure we only have two items in this container (one create and one upserted)
+        assertEquals(2, client.getDatabase(databaseName).getContainer(containerName)
+                .readAllItems(new PartitionKey("test-1"), Object.class).collectList().block().size());
+
+        // test delete
+        result.expectedMessageCount(1);
+
+        template.send("direct:deleteItem", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_ID, "test-id-1");
+        });
+
+        result.assertIsSatisfied(1000);
+
+        // check headers
+        response = result.getExchanges().get(0).getMessage();
+        assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
+
+        result.reset();
+
+        result.expectedMessageCount(1);
+
+        template.send("direct:deleteItem", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
+            exchange.getIn().setHeader(CosmosDbConstants.ITEM_ID, "test-id-2");
+        });
+
+        result.assertIsSatisfied(1000);
+
+        // check headers
+        response = result.getExchanges().get(0).getMessage();
+        assertTrue(response.getHeader(CosmosDbConstants.STATUS_CODE, Integer.class) < 300);
+
+        // we make sure we no items
+        assertEquals(0, client.getDatabase(databaseName).getContainer(containerName)
+                .readAllItems(new PartitionKey("test-1"), Object.class).collectList().block().size());
+    }
+
+    @Test
+    void testQueryItems() {
+        final String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+
+        // create testing items
+        final Map<String, Object> item1 = new HashMap<>();
+        item1.put("id", "test-id-1");
+        item1.put("partition", "test-1");
+        item1.put("field1", 12234);
+        item1.put("field2", "awesome!");
+
+        final Map<String, Object> item2 = new HashMap<>();
+        item2.put("id", "test-id-2");
+        item2.put("partition", "test-1");
+        item2.put("field1", 6654);
+        item2.put("field2", "super awesome!");
+
+        final Map<String, Object> item3 = new HashMap<>();
+        item3.put("id", "test-id-3");
+        item3.put("partition", "test-2");
+        item3.put("field1", 6654);
+        item3.put("field2", "super super awesome!");
+
+        client.createDatabaseIfNotExists(databaseName).block();
+        client.getDatabase(databaseName).createContainerIfNotExists(containerName, "/partition").block();
+        client.getDatabase(databaseName).getContainer(containerName).createItem(item1, new PartitionKey("test-1"), null)
+                .block();
+        client.getDatabase(databaseName).getContainer(containerName).createItem(item2, new PartitionKey("test-1"), null)
+                .block();
+        client.getDatabase(databaseName).getContainer(containerName).createItem(item3, new PartitionKey("test-2"), null)
+                .block();
+
+        final String query = "SELECT c.id,c.field2,c.field1 from c where c.id = 'test-id-2'";
+
+        result.expectedMessageCount(1);
+
+        template.send("direct:queryItems", exchange -> {
+            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, databaseName);
+            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, containerName);
+            exchange.getIn().setHeader(CosmosDbConstants.QUERY, query);
+        });
+
+        final List returnedResults
+                = result.getExchanges().get(0).getMessage().getBody(List.class);
+
+        assertEquals(1, returnedResults.size());
+
+        final Map<String, ?> returnedItem = (Map<String, ?>) returnedResults.get(0);
+
+        // we should have only 3 keys
+        assertEquals(3, returnedItem.keySet().size());
+
+        // assert against item2
+        assertEquals(item2.get("id"), returnedItem.get("id"));
+        assertEquals(item2.get("field2"), returnedItem.get("field2"));
+        assertEquals(item2.get("field1"), returnedItem.get("field1"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -250,6 +435,11 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
                         .to(resultName);
                 from("direct:queryContainers").to("azure-cosmosdb://?operation=queryContainers").to(resultName);
                 from("direct:deleteContainer").to("azure-cosmosdb://?operation=deleteContainer").to(resultName);
+                from("direct:createItem").to("azure-cosmosdb://?operation=createItem").to(resultName);
+                from("direct:upsertItem").to("azure-cosmosdb://?operation=upsertItem").to(resultName);
+                from("direct:replaceItem").to("azure-cosmosdb://?operation=replaceItem").to(resultName);
+                from("direct:deleteItem").to("azure-cosmosdb://?operation=deleteItem").to(resultName);
+                from("direct:queryItems").to("azure-cosmosdb://?operation=queryItems").to(resultName);
             }
         };
     }

@@ -191,6 +191,21 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the itemId in case needed for operation on item like delete,
+         * replace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param itemId the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder itemId(java.lang.String itemId) {
+            doSetProperty("itemId", itemId);
+            return this;
+        }
+        /**
          * Sets partition key. Represents a partition key value in the Azure
          * Cosmos DB database service. A partition key identifies the partition
          * where the item is stored in.
@@ -472,6 +487,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "containerPartitionKeyPath": getOrCreateConfiguration((CosmosDbComponent) component).setContainerPartitionKeyPath((java.lang.String) value); return true;
             case "cosmosAsyncClient": getOrCreateConfiguration((CosmosDbComponent) component).setCosmosAsyncClient((com.azure.cosmos.CosmosAsyncClient) value); return true;
             case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
+            case "itemId": getOrCreateConfiguration((CosmosDbComponent) component).setItemId((java.lang.String) value); return true;
             case "itemPartitionKey": getOrCreateConfiguration((CosmosDbComponent) component).setItemPartitionKey((com.azure.cosmos.models.PartitionKey) value); return true;
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.util.List) value); return true;
