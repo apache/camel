@@ -21,8 +21,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Consumer;
 
+import com.azure.cosmos.ChangeFeedProcessor;
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.models.PartitionKey;
@@ -30,6 +33,7 @@ import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbOperationsBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,6 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbContainerOperationsIT {
     private final static String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private final static String leaseDatabaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbContainerOperations containerOperations;
@@ -56,6 +62,7 @@ class CosmosDbContainerOperationsIT {
         final Properties properties = CosmosDbTestUtils.loadAzureAccessFromJvmEnv();
 
         final CosmosAsyncClient client = new CosmosClientBuilder()
+                .contentResponseOnWriteEnabled(true)
                 .key(properties.getProperty("access_key"))
                 .endpoint(properties.getProperty("endpoint"))
                 .buildAsyncClient();
@@ -66,6 +73,7 @@ class CosmosDbContainerOperationsIT {
     @AfterAll
     void tearDown() {
         clientWrapper.getDatabase(databaseName).delete().block();
+        clientWrapper.getDatabase(leaseDatabaseName).delete().block();
     }
 
     @BeforeEach
@@ -276,6 +284,54 @@ class CosmosDbContainerOperationsIT {
         assertEquals(2, actualItem.keySet().stream().count());
         assertEquals("test-id-2", actualItem.get("id"));
         assertEquals("super awesome!", actualItem.get("field2"));
+    }
+
+    @Test
+    void testCaptureChangeFeed() throws InterruptedException {
+        // we create our lease container first with our lease database
+        final Mono<CosmosAsyncContainer> leaseContainer = CosmosDbOperationsBuilder.withClient(clientWrapper)
+                .withContainerName("camel-lease")
+                .withContainerPartitionKeyPath("/id")
+                .withDatabaseName(leaseDatabaseName)
+                .withCreateContainerIfNotExist(true)
+                .withCreateDatabaseIfNotExist(true)
+                .buildContainerOperations()
+                .getContainer();
+
+        final CosmosDbTestUtils.Latch latch = new CosmosDbTestUtils.Latch();
+        final Consumer<List<Map<String, ?>>> onEvent = event -> {
+            assertEquals(2, event.size());
+            assertEquals("test-id-1", event.get(0).get("id"));
+            assertEquals("test-id-2", event.get(1).get("id"));
+            latch.done();
+        };
+
+        final ChangeFeedProcessor changeFeedProcessorMono
+                = containerOperations.captureEventsWithChangeFeed(leaseContainer, "my-host", onEvent, null);
+
+        // start our events processor
+        changeFeedProcessorMono.start().block();
+
+        // insert our testing items
+        final Map<String, Object> item1 = new HashMap<>();
+        item1.put("id", "test-id-1");
+        item1.put("partition", "test-1");
+        item1.put("field1", 12234);
+        item1.put("field2", "awesome!");
+
+        final Map<String, Object> item2 = new HashMap<>();
+        item2.put("id", "test-id-2");
+        item2.put("partition", "test-2");
+        item2.put("field1", 6654);
+        item2.put("field2", "super awesome!");
+
+        containerOperations.createItem(item1, new PartitionKey("test-1"), null).block();
+        containerOperations.createItem(item2, new PartitionKey("test-2"), null).block();
+
+        latch.await(10000);
+
+        // stop our events processor
+        changeFeedProcessorMono.stop().block();
     }
 
     private CosmosItemResponse<Map> readItem(final String itemId, final String partitionKey) {

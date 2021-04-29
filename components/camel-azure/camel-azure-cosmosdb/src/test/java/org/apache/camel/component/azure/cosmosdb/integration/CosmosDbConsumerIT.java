@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.azure.cosmos.models.PartitionKey;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.azure.cosmosdb.CosmosDbConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -19,11 +18,21 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 
     private final static String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
     private String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private String leaseDatabaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     @BeforeEach
     void createDatabaseContainerAndItems() {
         client.createDatabaseIfNotExists(databaseName).block();
         client.getDatabase(databaseName).createContainerIfNotExists(containerName, "/partition", null).block();
+    }
+
+    @Test
+    void testConsumeEvents() throws Exception {
+        // start our route
+        context.getRouteController().startRoute("readEventsRoute");
+
+        // we give some time for our route to start
+        Thread.sleep(10000);
 
         // create testing items
         final Map<String, Object> item1 = new HashMap<>();
@@ -48,8 +57,33 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
                 .block();
         client.getDatabase(databaseName).getContainer(containerName).createItem(item2, new PartitionKey("test-1"), null)
                 .block();
+
+        // start testing
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:readEvents");
+        mockEndpoint.expectedMessageCount(1);
+
+        mockEndpoint.assertIsSatisfied(1000);
+
+        final List returnedResults
+                = mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
+
+        assertEquals(2, returnedResults.size());
+
+        mockEndpoint.reset();
+
+        // we send one more record
         client.getDatabase(databaseName).getContainer(containerName).createItem(item3, new PartitionKey("test-2"), null)
                 .block();
+
+        mockEndpoint.expectedMessageCount(1);
+
+        mockEndpoint.assertIsSatisfied(1000);
+
+        final List<Map> returnedResults2
+                = mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
+
+        assertEquals(1, returnedResults2.size());
+        assertEquals("test-id-3", returnedResults2.get(0).get("id"));
     }
 
     @AfterEach
@@ -61,87 +95,16 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
                         .block());
     }
 
-    @Test
-    void testReadAllItems() throws Exception {
-        // start our test route
-        context.getRouteController().startRoute("readAllItemsRoute");
-
-        // start testing
-        final MockEndpoint mockEndpoint = getMockEndpoint("mock:readAllItems");
-        mockEndpoint.expectedMessageCount(1);
-
-        mockEndpoint.assertIsSatisfied(1000);
-
-        final List returnedResults
-                = mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
-
-        assertEquals(2, returnedResults.size());
-    }
-
-    @Test
-    void testReadItem() throws Exception {
-        // start our test route
-        context.getRouteController().startRoute("readItemRoute");
-
-        // start testing
-        final MockEndpoint mockEndpoint = getMockEndpoint("mock:readItem");
-        mockEndpoint.expectedMessageCount(1);
-
-        mockEndpoint.assertIsSatisfied(1000);
-
-        assertNotNull(mockEndpoint.getExchanges().get(0).getMessage().getHeader(CosmosDbConstants.E_TAG));
-
-        final Map<String, ?> returnedResults
-                = mockEndpoint.getExchanges().get(0).getMessage().getBody(Map.class);
-
-        // assert against item2
-        assertEquals("test-id-2", returnedResults.get("id"));
-        assertEquals("super awesome!", returnedResults.get("field2"));
-    }
-
-    @Test
-    void testQueryItems() throws Exception {
-        // start our test route
-        context.getRouteController().startRoute("queryItemsRoute");
-
-        // start testing
-        final MockEndpoint mockEndpoint = getMockEndpoint("mock:queryItems");
-        mockEndpoint.expectedMessageCount(1);
-
-        mockEndpoint.assertIsSatisfied(1000);
-
-        final List returnedResults
-                = mockEndpoint.getExchanges().get(0).getMessage().getBody(List.class);
-
-        assertEquals(1, returnedResults.size());
-
-        final Map<String, ?> returnedItem = (Map<String, ?>) returnedResults.get(0);
-
-        // assert against item3
-        assertEquals("test-id-3", returnedItem.get("id"));
-        assertEquals("super super awesome!", returnedItem.get("field2"));
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("azure-cosmosdb://%s/%s?itemPartitionKey=test-1", databaseName, containerName))
-                        .routeId("readAllItemsRoute")
-                        .to("mock:readAllItems")
-                        .setAutoStartup("false");
-
-                from(String.format("azure-cosmosdb://%s/%s?itemPartitionKey=test-1&itemId=test-id-2&query=SELECT", databaseName,
-                        containerName))
-                                .routeId("readItemRoute")
-                                .to("mock:readItem")
-                                .setAutoStartup("false");
-
-                from(String.format("azure-cosmosdb://%s/%s?query=SELECT * FROM c WHERE c.id = 'test-id-3'", databaseName,
-                        containerName))
-                                .routeId("queryItemsRoute")
-                                .to("mock:queryItems")
+                from(String.format(
+                        "azure-cosmosdb://%s/%s?leaseDatabaseName=%s&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true",
+                        databaseName, containerName, leaseDatabaseName))
+                                .routeId("readEventsRoute")
+                                .to("mock:readEvents")
                                 .setAutoStartup("false");
             }
         };

@@ -17,9 +17,16 @@
 package org.apache.camel.component.azure.cosmosdb.operations;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.azure.cosmos.ChangeFeedProcessor;
+import com.azure.cosmos.ChangeFeedProcessorBuilder;
 import com.azure.cosmos.CosmosAsyncContainer;
+import com.azure.cosmos.implementation.Utils;
+import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.models.CosmosContainerRequestOptions;
 import com.azure.cosmos.models.CosmosContainerResponse;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
@@ -29,6 +36,8 @@ import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import com.azure.cosmos.models.ThroughputResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -43,6 +52,10 @@ public class CosmosDbContainerOperations {
     }
 
     // operations on the container
+    public Mono<CosmosAsyncContainer> getContainer() {
+        return container;
+    }
+
     public Mono<String> getContainerId() {
         return container.map(CosmosAsyncContainer::getId);
     }
@@ -159,6 +172,41 @@ public class CosmosDbContainerOperations {
 
         return container
                 .flatMapMany(container -> container.queryItems(query, queryRequestOptions, itemType).byPage());
+    }
+
+    public ChangeFeedProcessor captureEventsWithChangeFeed(
+            final Mono<CosmosAsyncContainer> leaseContainerMono, final String hostName,
+            final Consumer<List<Map<String, ?>>> resultsCallback, final ChangeFeedProcessorOptions changeFeedProcessorOptions) {
+        CosmosDbUtils.validateIfParameterIsNotEmpty(leaseContainerMono, "leaseContainer");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(resultsCallback, "resultsCallback");
+        CosmosDbUtils.validateIfParameterIsNotEmpty(hostName, "hostName");
+
+        final ObjectMapper mapper = Utils.getSimpleObjectMapper();
+
+        return container.zipWith(leaseContainerMono)
+                .map(tupleResults -> {
+                    final CosmosAsyncContainer feedContainer = tupleResults.getT1();
+                    final CosmosAsyncContainer leaseContainer = tupleResults.getT2();
+
+                    return new ChangeFeedProcessorBuilder()
+                            .feedContainer(feedContainer)
+                            .leaseContainer(leaseContainer)
+                            .handleChanges(jsonNodes -> {
+                                final List<Map<String, ?>> events = jsonNodes.stream()
+                                        .map(jsonNode -> mapper.convertValue(jsonNode,
+                                                new TypeReference<Map<String, Object>>() {
+                                                }))
+                                        .collect(Collectors.toList());
+
+                                // feed our callback
+                                resultsCallback.accept(events);
+                            })
+                            .hostName(hostName)
+                            .options(changeFeedProcessorOptions)
+                            .buildChangeFeedProcessor();
+                })
+                // we will just block this instance here since we will return only a mono
+                .block();
     }
 
     private <T> Mono<T> applyToContainer(final Function<CosmosAsyncContainer, Mono<T>> fn) {

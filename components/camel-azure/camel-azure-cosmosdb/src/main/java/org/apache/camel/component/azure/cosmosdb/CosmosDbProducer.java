@@ -37,6 +37,7 @@ import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbDatabaseOperations;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbOperationsBuilder;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -336,11 +337,22 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
     }
 
     private CosmosDbContainerOperations getContainerOperations(final Exchange exchange) {
-        return CosmosDbUtils.getContainerOperations(exchange, configurationOptionsProxy, clientWrapper);
+        return CosmosDbOperationsBuilder.withClient(clientWrapper)
+                .withDatabaseName(configurationOptionsProxy.getDatabaseName(exchange))
+                .withCreateDatabaseIfNotExist(configurationOptionsProxy.isCreateDatabaseIfNotExist(exchange))
+                .withThroughputProperties(configurationOptionsProxy.getThroughputProperties(exchange))
+                .withContainerName(configurationOptionsProxy.getContainerName(exchange))
+                .withContainerPartitionKeyPath(configurationOptionsProxy.getContainerPartitionKeyPath(exchange))
+                .withCreateContainerIfNotExist(configurationOptionsProxy.isCreateContainerIfNotExist(exchange))
+                .buildContainerOperations();
     }
 
     private CosmosDbDatabaseOperations getDatabaseOperations(final Exchange exchange) {
-        return CosmosDbUtils.getDatabaseOperations(exchange, configurationOptionsProxy, clientWrapper);
+        return CosmosDbOperationsBuilder.withClient(clientWrapper)
+                .withDatabaseName(configurationOptionsProxy.getDatabaseName(exchange))
+                .withCreateDatabaseIfNotExist(configurationOptionsProxy.isCreateDatabaseIfNotExist(exchange))
+                .withThroughputProperties(configurationOptionsProxy.getThroughputProperties(exchange))
+                .buildDatabaseOperations();
     }
 
     private Consumer<CosmosDatabaseResponse> setCosmosDatabaseResponseOnExchange(final Exchange exchange) {

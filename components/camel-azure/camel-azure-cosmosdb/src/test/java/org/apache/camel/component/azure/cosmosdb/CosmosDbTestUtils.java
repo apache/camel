@@ -65,6 +65,7 @@ public final class CosmosDbTestUtils {
         return new CosmosClientBuilder()
                 .key(properties.getProperty("access_key"))
                 .endpoint(properties.getProperty("endpoint"))
+                .contentResponseOnWriteEnabled(true)
                 .buildAsyncClient();
     }
 

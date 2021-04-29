@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.Map;
 
-import com.azure.cosmos.models.CosmosItemResponse;
-import com.azure.cosmos.models.FeedResponse;
+import com.azure.cosmos.ChangeFeedProcessor;
+import com.azure.cosmos.implementation.apachecommons.lang.RandomStringUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
+import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbOperationsBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EmptyAsyncCallback;
@@ -36,6 +38,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
 
     private Synchronization onCompletion;
     private CosmosAsyncClientWrapper clientWrapper;
+    private ChangeFeedProcessor changeFeedProcessor;
 
     public CosmosDbConsumer(final CosmosDbEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -46,27 +49,19 @@ public class CosmosDbConsumer extends DefaultConsumer {
         super.doInit();
         this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
         this.onCompletion = new ConsumerOnCompletion();
+        this.changeFeedProcessor = getContainerOperations().captureEventsWithChangeFeed(
+                getLeaseContainerOperations().getContainer(), getHostName(),
+                this::onEventListener, getConfiguration().getChangeFeedProcessorOptions());
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        // start consuming events
-        if (ObjectHelper.isNotEmpty(getConfiguration().getItemId())
-                && ObjectHelper.isNotEmpty(getConfiguration().getItemPartitionKey())) {
-            // if we have only itemId, just read that
-            readItem(this::onEventListener, this::onErrorListener);
-        } else if (ObjectHelper.isNotEmpty(getConfiguration().getItemPartitionKey())) {
-            // we have partitionKey, we just get all items in a container
-            readAllItems(this::onEventListener, this::onErrorListener);
-        } else if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
-            // if we have query, we run the query instead
-            queryItems(this::onEventListener, this::onErrorListener);
-        } else {
-            throw new IllegalArgumentException(
-                    "To consume you need to either set itemId/partitionKey or partitionKey or query.");
-        }
+        // start our changeFeedProcessor
+        changeFeedProcessor.start()
+                .subscribe((aVoid) -> {
+                }, this::onErrorListener);
     }
 
     public CosmosDbConfiguration getConfiguration() {
@@ -74,66 +69,80 @@ public class CosmosDbConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        if (changeFeedProcessor != null) {
+            // we wait until it stops
+            changeFeedProcessor.stop().block();
+        }
+
+        super.doStop();
+    }
+
+    @Override
     public CosmosDbEndpoint getEndpoint() {
         return (CosmosDbEndpoint) super.getEndpoint();
     }
 
-    private void onEventListener(final Exchange exchange) {
+    private void onEventListener(final List<Map<String, ?>> record) {
+        final Exchange exchange = createAzureCosmosDbExchange(record);
+
         // add exchange callback
         exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
         // use default consumer callback
         getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
+    private Exchange createAzureCosmosDbExchange(final List<Map<String, ?>> record) {
+        final Exchange exchange = createExchange(true);
+        final Message message = exchange.getIn();
+
+        message.setBody(record);
+
+        return exchange;
+    }
+
     private void onErrorListener(final Throwable error) {
         getExceptionHandler().handleException("Error processing exchange", error);
     }
 
-    private void readAllItems(final Consumer<Exchange> resultCallback, final Consumer<Throwable> errorCallback) {
-        getContainerOperations()
-                .readAllItemsAsFeed(getConfiguration().getItemPartitionKey(), getConfiguration().getQueryRequestOptions(),
-                        Object.class)
-                .subscribe(tFeedResponse -> resultCallback.accept(createAzureCosmosDbExchange(tFeedResponse)), errorCallback);
-    }
-
-    private void queryItems(final Consumer<Exchange> resultCallback, final Consumer<Throwable> errorCallback) {
-        getContainerOperations()
-                .queryItemsAsFeed(getConfiguration().getQuery(), getConfiguration().getQueryRequestOptions(), Object.class)
-                .subscribe(tFeedResponse -> resultCallback.accept(createAzureCosmosDbExchange(tFeedResponse)), errorCallback);
-    }
-
-    private void readItem(final Consumer<Exchange> resultCallback, final Consumer<Throwable> errorCallback) {
-        getContainerOperations()
-                .readItem(getConfiguration().getItemId(), getConfiguration().getItemPartitionKey(), null, Object.class)
-                .subscribe(itemResponse -> resultCallback.accept(createAzureCosmosDbExchange(itemResponse)), errorCallback);
-    }
-
-    private <T> Exchange createAzureCosmosDbExchange(final FeedResponse<T> tFeedResponse) {
-        final Exchange exchange = createExchange(true);
-        final Message message = exchange.getIn();
-        // set body
-        message.setBody(tFeedResponse.getResults());
-        // set headers
-        message.setHeader(CosmosDbConstants.RESPONSE_HEADERS, tFeedResponse.getResponseHeaders());
-
-        return exchange;
-    }
-
-    private <T> Exchange createAzureCosmosDbExchange(final CosmosItemResponse<T> itemResponse) {
-        final Exchange exchange = createExchange(true);
-        final Message message = exchange.getIn();
-        // set body
-        message.setBody(itemResponse.getItem());
-        // set headers
-        message.setHeader(CosmosDbConstants.RESPONSE_HEADERS, itemResponse.getResponseHeaders());
-        message.setHeader(CosmosDbConstants.E_TAG, itemResponse.getETag());
-
-        return exchange;
-    }
-
     private CosmosDbContainerOperations getContainerOperations() {
-        return CosmosDbUtils.getContainerOperations(null, new CosmosDbConfigurationOptionsProxy(getConfiguration()),
-                clientWrapper);
+        return CosmosDbOperationsBuilder.withClient(clientWrapper)
+                .withDatabaseName(getConfiguration().getDatabaseName())
+                .withCreateDatabaseIfNotExist(getConfiguration().isCreateDatabaseIfNotExists())
+                .withContainerName(getConfiguration().getContainerName())
+                .withContainerPartitionKeyPath(getConfiguration().getContainerPartitionKeyPath())
+                .withCreateContainerIfNotExist(getConfiguration().isCreateContainerIfNotExists())
+                .withThroughputProperties(getConfiguration().getThroughputProperties())
+                .buildContainerOperations();
+    }
+
+    private CosmosDbContainerOperations getLeaseContainerOperations() {
+        final String leaseDatabaseName;
+        // Lease container need t0 be created with 'id' path
+        final String leaseContainerPartitionKeyPath = "/id";
+
+        if (ObjectHelper.isEmpty(getConfiguration().getLeaseDatabaseName())) {
+            leaseDatabaseName = getConfiguration().getDatabaseName();
+        } else {
+            leaseDatabaseName = getConfiguration().getLeaseDatabaseName();
+        }
+
+        return CosmosDbOperationsBuilder.withClient(clientWrapper)
+                .withDatabaseName(leaseDatabaseName)
+                .withCreateDatabaseIfNotExist(getConfiguration().isCreateLeaseDatabaseIfNotExists())
+                .withContainerName(getConfiguration().getLeaseContainerName())
+                .withContainerPartitionKeyPath(leaseContainerPartitionKeyPath)
+                .withCreateContainerIfNotExist(getConfiguration().isCreateLeaseContainerIfNotExists())
+                .withThroughputProperties(getConfiguration().getThroughputProperties())
+                .buildContainerOperations();
+    }
+
+    private String getHostName() {
+        if (ObjectHelper.isEmpty(getConfiguration().getHostName())) {
+            return RandomStringUtils.randomAlphabetic(10);
+        }
+
+        return getConfiguration().getHostName();
     }
 
     private class ConsumerOnCompletion extends SynchronizationAdapter {

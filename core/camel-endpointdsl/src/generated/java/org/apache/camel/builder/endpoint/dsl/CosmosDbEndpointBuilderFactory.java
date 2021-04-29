@@ -197,6 +197,49 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the boolean to only return the headers and status code in Cosmos
+         * DB response in case of Create, Update and Delete operations on
+         * CosmosItem. In Consumer, it is enabled by default because of the
+         * ChangeFeed in the consumer that needs this flag to be enabled and
+         * thus is shouldn't be overridden. In Producer, it advised to disable
+         * it since it reduces the network overhead.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param contentResponseOnWriteEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder contentResponseOnWriteEnabled(
+                boolean contentResponseOnWriteEnabled) {
+            doSetProperty("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled);
+            return this;
+        }
+        /**
+         * Sets the boolean to only return the headers and status code in Cosmos
+         * DB response in case of Create, Update and Delete operations on
+         * CosmosItem. In Consumer, it is enabled by default because of the
+         * ChangeFeed in the consumer that needs this flag to be enabled and
+         * thus is shouldn't be overridden. In Producer, it advised to disable
+         * it since it reduces the network overhead.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param contentResponseOnWriteEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder contentResponseOnWriteEnabled(
+                String contentResponseOnWriteEnabled) {
+            doSetProperty("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -235,6 +278,76 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createContainerIfNotExists(
+                boolean createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createContainerIfNotExists(
+                String createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createDatabaseIfNotExists(
+                boolean createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createDatabaseIfNotExists(
+                String createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
@@ -249,57 +362,6 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
-            return this;
-        }
-        /**
-         * Sets the itemId in case needed for operation on item like delete,
-         * replace.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemId the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder itemId(String itemId) {
-            doSetProperty("itemId", itemId);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder itemPartitionKey(
-                Object itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder itemPartitionKey(
-                String itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -389,58 +451,6 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder preferredRegions(
                 String preferredRegions) {
             doSetProperty("preferredRegions", preferredRegions);
-            return this;
-        }
-        /**
-         * An SQL query to execute on a given resources. To learn more about
-         * Cosmos SQL API, check this link {link
-         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param query the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder query(String query) {
-            doSetProperty("query", query);
-            return this;
-        }
-        /**
-         * Set additional QueryRequestOptions that can be used with queryItems,
-         * queryContainers, queryDatabases, listDatabases, listItems,
-         * listContainers operations.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param queryRequestOptions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder queryRequestOptions(
-                Object queryRequestOptions) {
-            doSetProperty("queryRequestOptions", queryRequestOptions);
-            return this;
-        }
-        /**
-         * Set additional QueryRequestOptions that can be used with queryItems,
-         * queryContainers, queryDatabases, listDatabases, listItems,
-         * listContainers operations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param queryRequestOptions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointConsumerBuilder queryRequestOptions(
-                String queryRequestOptions) {
-            doSetProperty("queryRequestOptions", queryRequestOptions);
             return this;
         }
         /**
@@ -563,6 +573,172 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Sets the ChangeFeedProcessorOptions to be used. Unless specifically
+         * set the default values that will be used are: maximum items per page
+         * or FeedResponse: 100 lease renew interval: 17 seconds lease acquire
+         * interval: 13 seconds lease expiration interval: 60 seconds feed poll
+         * delay: 5 seconds maximum scale count: unlimited.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.ChangeFeedProcessorOptions&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param changeFeedProcessorOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder changeFeedProcessorOptions(
+                Object changeFeedProcessorOptions) {
+            doSetProperty("changeFeedProcessorOptions", changeFeedProcessorOptions);
+            return this;
+        }
+        /**
+         * Sets the ChangeFeedProcessorOptions to be used. Unless specifically
+         * set the default values that will be used are: maximum items per page
+         * or FeedResponse: 100 lease renew interval: 17 seconds lease acquire
+         * interval: 13 seconds lease expiration interval: 60 seconds feed poll
+         * delay: 5 seconds maximum scale count: unlimited.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.ChangeFeedProcessorOptions&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param changeFeedProcessorOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder changeFeedProcessorOptions(
+                String changeFeedProcessorOptions) {
+            doSetProperty("changeFeedProcessorOptions", changeFeedProcessorOptions);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos lease container for the
+         * consumer automatically in case it doesn't exist in Cosmos database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param createLeaseContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createLeaseContainerIfNotExists(
+                boolean createLeaseContainerIfNotExists) {
+            doSetProperty("createLeaseContainerIfNotExists", createLeaseContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos lease container for the
+         * consumer automatically in case it doesn't exist in Cosmos database.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param createLeaseContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createLeaseContainerIfNotExists(
+                String createLeaseContainerIfNotExists) {
+            doSetProperty("createLeaseContainerIfNotExists", createLeaseContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos lease database for the
+         * consumer automatically in case it doesn't exist in Cosmos account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param createLeaseDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createLeaseDatabaseIfNotExists(
+                boolean createLeaseDatabaseIfNotExists) {
+            doSetProperty("createLeaseDatabaseIfNotExists", createLeaseDatabaseIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos lease database for the
+         * consumer automatically in case it doesn't exist in Cosmos account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param createLeaseDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder createLeaseDatabaseIfNotExists(
+                String createLeaseDatabaseIfNotExists) {
+            doSetProperty("createLeaseDatabaseIfNotExists", createLeaseDatabaseIfNotExists);
+            return this;
+        }
+        /**
+         * Sets the hostname. The host: a host is an application instance that
+         * uses the change feed processor to listen for changes. Multiple
+         * instances with the same lease configuration can run in parallel, but
+         * each instance should have a different instance name. If not
+         * specified, this will be a generated random hostname.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param hostName the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder hostName(String hostName) {
+            doSetProperty("hostName", hostName);
+            return this;
+        }
+        /**
+         * Sets the lease container which acts as a state storage and
+         * coordinates processing the change feed across multiple workers. The
+         * lease container can be stored in the same account as the monitored
+         * container or in a separate account. It will be auto created if
+         * createLeaseContainerIfNotExists is set to true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: camel-lease
+         * Group: consumer
+         * 
+         * @param leaseContainerName the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder leaseContainerName(
+                String leaseContainerName) {
+            doSetProperty("leaseContainerName", leaseContainerName);
+            return this;
+        }
+        /**
+         * Sets the lease database where the leaseContainerName will be stored.
+         * If it is not specified, this component will store the lease container
+         * in the same database that is specified in databaseName. It will be
+         * auto created if createLeaseDatabaseIfNotExists is set to true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param leaseDatabaseName the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder leaseDatabaseName(
+                String leaseDatabaseName) {
+            doSetProperty("leaseDatabaseName", leaseDatabaseName);
             return this;
         }
         /**
@@ -825,6 +1001,49 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the boolean to only return the headers and status code in Cosmos
+         * DB response in case of Create, Update and Delete operations on
+         * CosmosItem. In Consumer, it is enabled by default because of the
+         * ChangeFeed in the consumer that needs this flag to be enabled and
+         * thus is shouldn't be overridden. In Producer, it advised to disable
+         * it since it reduces the network overhead.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param contentResponseOnWriteEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder contentResponseOnWriteEnabled(
+                boolean contentResponseOnWriteEnabled) {
+            doSetProperty("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled);
+            return this;
+        }
+        /**
+         * Sets the boolean to only return the headers and status code in Cosmos
+         * DB response in case of Create, Update and Delete operations on
+         * CosmosItem. In Consumer, it is enabled by default because of the
+         * ChangeFeed in the consumer that needs this flag to be enabled and
+         * thus is shouldn't be overridden. In Producer, it advised to disable
+         * it since it reduces the network overhead.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param contentResponseOnWriteEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder contentResponseOnWriteEnabled(
+                String contentResponseOnWriteEnabled) {
+            doSetProperty("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -863,6 +1082,76 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createContainerIfNotExists(
+                boolean createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createContainerIfNotExists(
+                String createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createDatabaseIfNotExists(
+                boolean createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder createDatabaseIfNotExists(
+                String createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
@@ -877,57 +1166,6 @@ public interface CosmosDbEndpointBuilderFactory {
         default CosmosDbEndpointProducerBuilder databaseEndpoint(
                 String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
-            return this;
-        }
-        /**
-         * Sets the itemId in case needed for operation on item like delete,
-         * replace.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemId the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder itemId(String itemId) {
-            doSetProperty("itemId", itemId);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder itemPartitionKey(
-                Object itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder itemPartitionKey(
-                String itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -1020,58 +1258,6 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * An SQL query to execute on a given resources. To learn more about
-         * Cosmos SQL API, check this link {link
-         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param query the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder query(String query) {
-            doSetProperty("query", query);
-            return this;
-        }
-        /**
-         * Set additional QueryRequestOptions that can be used with queryItems,
-         * queryContainers, queryDatabases, listDatabases, listItems,
-         * listContainers operations.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param queryRequestOptions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder queryRequestOptions(
-                Object queryRequestOptions) {
-            doSetProperty("queryRequestOptions", queryRequestOptions);
-            return this;
-        }
-        /**
-         * Set additional QueryRequestOptions that can be used with queryItems,
-         * queryContainers, queryDatabases, listDatabases, listItems,
-         * listContainers operations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param queryRequestOptions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder queryRequestOptions(
-                String queryRequestOptions) {
-            doSetProperty("queryRequestOptions", queryRequestOptions);
-            return this;
-        }
-        /**
          * Sets whether to allow for reads to go to multiple regions configured
          * on an account of Azure Cosmos DB service. DEFAULT value is true. If
          * this property is not set, the default is true for all Consistency
@@ -1149,73 +1335,54 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets if the component should create Cosmos container automatically in
-         * case it doesn't exist in Cosmos database.
+         * Sets the itemId in case needed for operation on item like delete,
+         * replace.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
-         * @param createContainerIfNotExists the value to set
+         * @param itemId the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder createContainerIfNotExists(
-                boolean createContainerIfNotExists) {
-            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+        default CosmosDbEndpointProducerBuilder itemId(String itemId) {
+            doSetProperty("itemId", itemId);
             return this;
         }
         /**
-         * Sets if the component should create Cosmos container automatically in
-         * case it doesn't exist in Cosmos database.
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
-         * @param createContainerIfNotExists the value to set
+         * @param itemPartitionKey the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder createContainerIfNotExists(
-                String createContainerIfNotExists) {
-            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+        default CosmosDbEndpointProducerBuilder itemPartitionKey(
+                Object itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
-         * Sets if the component should create Cosmos database automatically in
-         * case it doesn't exist in Cosmos account.
+         * Sets partition key. Represents a partition key value in the Azure
+         * Cosmos DB database service. A partition key identifies the partition
+         * where the item is stored in.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
          * 
-         * Default: false
          * Group: producer
          * 
-         * @param createDatabaseIfNotExists the value to set
+         * @param itemPartitionKey the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder createDatabaseIfNotExists(
-                boolean createDatabaseIfNotExists) {
-            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
-            return this;
-        }
-        /**
-         * Sets if the component should create Cosmos database automatically in
-         * case it doesn't exist in Cosmos account.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param createDatabaseIfNotExists the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder createDatabaseIfNotExists(
-                String createDatabaseIfNotExists) {
-            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+        default CosmosDbEndpointProducerBuilder itemPartitionKey(
+                String itemPartitionKey) {
+            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -1300,6 +1467,58 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * An SQL query to execute on a given resources. To learn more about
+         * Cosmos SQL API, check this link {link
+         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder query(String query) {
+            doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder queryRequestOptions(
+                Object queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
+            return this;
+        }
+        /**
+         * Set additional QueryRequestOptions that can be used with queryItems,
+         * queryContainers, queryDatabases, listDatabases, listItems,
+         * listContainers operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param queryRequestOptions the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder queryRequestOptions(
+                String queryRequestOptions) {
+            doSetProperty("queryRequestOptions", queryRequestOptions);
             return this;
         }
         /**
@@ -1492,6 +1711,49 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the boolean to only return the headers and status code in Cosmos
+         * DB response in case of Create, Update and Delete operations on
+         * CosmosItem. In Consumer, it is enabled by default because of the
+         * ChangeFeed in the consumer that needs this flag to be enabled and
+         * thus is shouldn't be overridden. In Producer, it advised to disable
+         * it since it reduces the network overhead.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param contentResponseOnWriteEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder contentResponseOnWriteEnabled(
+                boolean contentResponseOnWriteEnabled) {
+            doSetProperty("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled);
+            return this;
+        }
+        /**
+         * Sets the boolean to only return the headers and status code in Cosmos
+         * DB response in case of Create, Update and Delete operations on
+         * CosmosItem. In Consumer, it is enabled by default because of the
+         * ChangeFeed in the consumer that needs this flag to be enabled and
+         * thus is shouldn't be overridden. In Producer, it advised to disable
+         * it since it reduces the network overhead.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param contentResponseOnWriteEnabled the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder contentResponseOnWriteEnabled(
+                String contentResponseOnWriteEnabled) {
+            doSetProperty("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled);
+            return this;
+        }
+        /**
          * Inject an external CosmosAsyncClient into the component which
          * provides a client-side logical representation of the Azure Cosmos DB
          * service. This asynchronous client is used to configure and execute
@@ -1530,6 +1792,76 @@ public interface CosmosDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder createContainerIfNotExists(
+                boolean createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos container automatically in
+         * case it doesn't exist in Cosmos database.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createContainerIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder createContainerIfNotExists(
+                String createContainerIfNotExists) {
+            doSetProperty("createContainerIfNotExists", createContainerIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder createDatabaseIfNotExists(
+                boolean createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
+         * Sets if the component should create Cosmos database automatically in
+         * case it doesn't exist in Cosmos account.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param createDatabaseIfNotExists the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder createDatabaseIfNotExists(
+                String createDatabaseIfNotExists) {
+            doSetProperty("createDatabaseIfNotExists", createDatabaseIfNotExists);
+            return this;
+        }
+        /**
          * Sets the Azure Cosmos database endpoint the component will connect
          * to.
          * 
@@ -1543,55 +1875,6 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder databaseEndpoint(String databaseEndpoint) {
             doSetProperty("databaseEndpoint", databaseEndpoint);
-            return this;
-        }
-        /**
-         * Sets the itemId in case needed for operation on item like delete,
-         * replace.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemId the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder itemId(String itemId) {
-            doSetProperty("itemId", itemId);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder itemPartitionKey(Object itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder itemPartitionKey(String itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
             return this;
         }
         /**
@@ -1680,58 +1963,6 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder preferredRegions(String preferredRegions) {
             doSetProperty("preferredRegions", preferredRegions);
-            return this;
-        }
-        /**
-         * An SQL query to execute on a given resources. To learn more about
-         * Cosmos SQL API, check this link {link
-         * https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param query the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder query(String query) {
-            doSetProperty("query", query);
-            return this;
-        }
-        /**
-         * Set additional QueryRequestOptions that can be used with queryItems,
-         * queryContainers, queryDatabases, listDatabases, listItems,
-         * listContainers operations.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param queryRequestOptions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder queryRequestOptions(
-                Object queryRequestOptions) {
-            doSetProperty("queryRequestOptions", queryRequestOptions);
-            return this;
-        }
-        /**
-         * Set additional QueryRequestOptions that can be used with queryItems,
-         * queryContainers, queryDatabases, listDatabases, listItems,
-         * listContainers operations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.CosmosQueryRequestOptions&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param queryRequestOptions the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointBuilder queryRequestOptions(
-                String queryRequestOptions) {
-            doSetProperty("queryRequestOptions", queryRequestOptions);
             return this;
         }
         /**

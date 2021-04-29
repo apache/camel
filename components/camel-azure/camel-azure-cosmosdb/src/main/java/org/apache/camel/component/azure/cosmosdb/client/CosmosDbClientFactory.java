@@ -40,6 +40,7 @@ public final class CosmosDbClientFactory {
         return new CosmosClientBuilder()
                 .key(configuration.getAccountKey())
                 .endpoint(configuration.getDatabaseEndpoint())
+                .contentResponseOnWriteEnabled(configuration.isContentResponseOnWriteEnabled())
                 .consistencyLevel(configuration.getConsistencyLevel())
                 .preferredRegions(configuration.getPreferredRegions())
                 .connectionSharingAcrossClientsEnabled(configuration.isConnectionSharingAcrossClientsEnabled())

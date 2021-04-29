@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
+import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
@@ -45,10 +46,6 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common")
     private String containerPartitionKeyPath;
     @UriParam(label = "common")
-    private PartitionKey itemPartitionKey;
-    @UriParam(label = "common")
-    private String itemId;
-    @UriParam(label = "common")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
     @UriParam(label = "common", defaultValue = "ConsistencyLevel.SESSION")
@@ -63,18 +60,36 @@ public class CosmosDbConfiguration implements Cloneable {
     private boolean multipleWriteRegionsEnabled = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean readRequestsFallbackEnabled = true;
-    @UriParam(label = "common")
-    private String query;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean contentResponseOnWriteEnabled = true;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean createDatabaseIfNotExists;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean createContainerIfNotExists;
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
-    @UriParam(label = "common")
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean createLeaseDatabaseIfNotExists;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean createLeaseContainerIfNotExists;
+    @UriParam(label = "consumer", defaultValue = "camel-lease")
+    private String leaseContainerName = "camel-lease";
+    @UriParam(label = "consumer")
+    private String leaseDatabaseName;
+    @UriParam(label = "consumer")
+    private String hostName;
+    @UriParam(label = "consumer")
+    private ChangeFeedProcessorOptions changeFeedProcessorOptions;
+    @UriParam(label = "producer")
+    private String query;
+    @UriParam(label = "producer")
+    private PartitionKey itemPartitionKey;
+    @UriParam(label = "producer")
+    private String itemId;
+    @UriParam(label = "producer")
     private CosmosQueryRequestOptions queryRequestOptions;
     @UriParam(label = "producer", defaultValue = "listDatabases")
     private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
-    @UriParam(label = "producer", defaultValue = "false")
-    private boolean createDatabaseIfNotExists;
-    @UriParam(label = "producer", defaultValue = "false")
-    private boolean createContainerIfNotExists;
 
     public CosmosDbConfiguration() {
     }
@@ -179,6 +194,30 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setCreateContainerIfNotExists(boolean createContainerIfNotExists) {
         this.createContainerIfNotExists = createContainerIfNotExists;
+    }
+
+    /**
+     * Sets if the component should create Cosmos lease database for the consumer automatically in case it doesn't exist
+     * in Cosmos account
+     */
+    public boolean isCreateLeaseDatabaseIfNotExists() {
+        return createLeaseDatabaseIfNotExists;
+    }
+
+    public void setCreateLeaseDatabaseIfNotExists(boolean createLeaseDatabaseIfNotExists) {
+        this.createLeaseDatabaseIfNotExists = createLeaseDatabaseIfNotExists;
+    }
+
+    /**
+     * Sets if the component should create Cosmos lease container for the consumer automatically in case it doesn't
+     * exist in Cosmos database
+     */
+    public boolean isCreateLeaseContainerIfNotExists() {
+        return createLeaseContainerIfNotExists;
+    }
+
+    public void setCreateLeaseContainerIfNotExists(boolean createLeaseContainerIfNotExists) {
+        this.createLeaseContainerIfNotExists = createLeaseContainerIfNotExists;
     }
 
     /**
@@ -325,6 +364,86 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setThroughputProperties(ThroughputProperties throughputProperties) {
         this.throughputProperties = throughputProperties;
+    }
+
+    /**
+     * Sets the boolean to only return the headers and status code in Cosmos DB response in case of Create, Update and
+     * Delete operations on CosmosItem.
+     *
+     * In Consumer, it is enabled by default because of the ChangeFeed in the consumer that needs this flag to be
+     * enabled and thus is shouldn't be overridden. In Producer, it advised to disable it since it reduces the network
+     * overhead
+     */
+    public boolean isContentResponseOnWriteEnabled() {
+        return contentResponseOnWriteEnabled;
+    }
+
+    public void setContentResponseOnWriteEnabled(boolean contentResponseOnWriteEnabled) {
+        this.contentResponseOnWriteEnabled = contentResponseOnWriteEnabled;
+    }
+
+    /**
+     * Sets the lease container which acts as a state storage and coordinates processing the change feed across multiple
+     * workers. The lease container can be stored in the same account as the monitored container or in a separate
+     * account.
+     *
+     * It will be auto created if {@link createLeaseContainerIfNotExists} is set to true.
+     */
+    public String getLeaseContainerName() {
+        return leaseContainerName;
+    }
+
+    public void setLeaseContainerName(String leaseContainerName) {
+        this.leaseContainerName = leaseContainerName;
+    }
+
+    /**
+     * Sets the lease database where the {@link leaseContainerName} will be stored. If it is not specified, this
+     * component will store the lease container in the same database that is specified in {@link databaseName}.
+     *
+     * It will be auto created if {@link createLeaseDatabaseIfNotExists} is set to true.
+     */
+    public String getLeaseDatabaseName() {
+        return leaseDatabaseName;
+    }
+
+    public void setLeaseDatabaseName(String leaseDatabaseName) {
+        this.leaseDatabaseName = leaseDatabaseName;
+    }
+
+    /**
+     * Sets the hostname. The host: a host is an application instance that uses the change feed processor to listen for
+     * changes. Multiple instances with the same lease configuration can run in parallel, but each instance should have
+     * a different instance name.
+     *
+     * If not specified, this will be a generated random hostname.
+     */
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    /**
+     * Sets the {@link ChangeFeedProcessorOptions} to be used. Unless specifically set the default values that will be
+     * used are:
+     * <ul>
+     * <li>maximum items per page or FeedResponse: 100</li>
+     * <li>lease renew interval: 17 seconds</li>
+     * <li>lease acquire interval: 13 seconds</li>
+     * <li>lease expiration interval: 60 seconds</li>
+     * <li>feed poll delay: 5 seconds</li>
+     * <li>maximum scale count: unlimited</li>
+     * </ul>
+     */
+    public ChangeFeedProcessorOptions getChangeFeedProcessorOptions() {
+        return changeFeedProcessorOptions;
+    }
+
+    public void setChangeFeedProcessorOptions(ChangeFeedProcessorOptions changeFeedProcessorOptions) {
+        this.changeFeedProcessorOptions = changeFeedProcessorOptions;
     }
 
     /**

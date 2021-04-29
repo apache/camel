@@ -19,11 +19,6 @@ package org.apache.camel.component.azure.cosmosdb;
 import com.azure.core.util.IterableStream;
 import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.util.CosmosPagedFlux;
-import org.apache.camel.Exchange;
-import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
-import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
-import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
-import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbDatabaseOperations;
 import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Flux;
 
@@ -59,40 +54,5 @@ public final class CosmosDbUtils {
         if (ObjectHelper.isEmpty(param)) {
             throw new IllegalArgumentException(paramName + " cannot be empty!");
         }
-    }
-
-    public static CosmosDbContainerOperations getContainerOperations(
-            final Exchange exchange, final CosmosDbConfigurationOptionsProxy configurationOptionsProxy,
-            final CosmosAsyncClientWrapper clientWrapper) {
-        final boolean createContainerIfNotExist = configurationOptionsProxy.isCreateContainerIfNotExist(exchange);
-
-        // if we enabled this flag, we create a container first before running the operation
-        if (createContainerIfNotExist) {
-            return getDatabaseOperations(exchange, configurationOptionsProxy, clientWrapper)
-                    .createContainerIfNotExistAndGetContainerOperations(configurationOptionsProxy.getContainerName(exchange),
-                            configurationOptionsProxy.getContainerPartitionKeyPath(exchange),
-                            configurationOptionsProxy.getThroughputProperties(exchange));
-        }
-
-        // otherwise just return the operation without creating a container if it is not existing
-        return getDatabaseOperations(exchange, configurationOptionsProxy, clientWrapper)
-                .getContainerOperations(configurationOptionsProxy.getContainerName(exchange));
-    }
-
-    public static CosmosDbDatabaseOperations getDatabaseOperations(
-            final Exchange exchange, final CosmosDbConfigurationOptionsProxy configurationOptionsProxy,
-            final CosmosAsyncClientWrapper clientWrapper) {
-        final boolean createDatabaseIfNotExist = configurationOptionsProxy.isCreateDatabaseIfNotExist(exchange);
-
-        // if we enabled this flag, we create a database first before running the operation
-        if (createDatabaseIfNotExist) {
-            return CosmosDbClientOperations.withClient(clientWrapper)
-                    .createDatabaseIfNotExistAndGetDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange),
-                            configurationOptionsProxy.getThroughputProperties(exchange));
-        }
-
-        // otherwise just return the operation without creating a database if it is not existing
-        return CosmosDbClientOperations.withClient(clientWrapper)
-                .getDatabaseOperations(configurationOptionsProxy.getDatabaseName(exchange));
     }
 }

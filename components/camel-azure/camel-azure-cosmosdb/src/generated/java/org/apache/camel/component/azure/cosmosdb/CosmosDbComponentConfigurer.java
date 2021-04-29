@@ -34,6 +34,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "changefeedprocessoroptions":
+        case "changeFeedProcessorOptions": getOrCreateConfiguration(target).setChangeFeedProcessorOptions(property(camelContext, com.azure.cosmos.models.ChangeFeedProcessorOptions.class, value)); return true;
         case "clienttelemetryenabled":
         case "clientTelemetryEnabled": getOrCreateConfiguration(target).setClientTelemetryEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration.class, value)); return true;
@@ -43,20 +45,32 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "consistencyLevel": getOrCreateConfiguration(target).setConsistencyLevel(property(camelContext, com.azure.cosmos.ConsistencyLevel.class, value)); return true;
         case "containerpartitionkeypath":
         case "containerPartitionKeyPath": getOrCreateConfiguration(target).setContainerPartitionKeyPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentresponseonwriteenabled":
+        case "contentResponseOnWriteEnabled": getOrCreateConfiguration(target).setContentResponseOnWriteEnabled(property(camelContext, boolean.class, value)); return true;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": getOrCreateConfiguration(target).setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": getOrCreateConfiguration(target).setCreateContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "createdatabaseifnotexists":
         case "createDatabaseIfNotExists": getOrCreateConfiguration(target).setCreateDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "createleasecontainerifnotexists":
+        case "createLeaseContainerIfNotExists": getOrCreateConfiguration(target).setCreateLeaseContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "createleasedatabaseifnotexists":
+        case "createLeaseDatabaseIfNotExists": getOrCreateConfiguration(target).setCreateLeaseDatabaseIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "databaseendpoint":
         case "databaseEndpoint": getOrCreateConfiguration(target).setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostname":
+        case "hostName": getOrCreateConfiguration(target).setHostName(property(camelContext, java.lang.String.class, value)); return true;
         case "itemid":
         case "itemId": getOrCreateConfiguration(target).setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
         case "itemPartitionKey": getOrCreateConfiguration(target).setItemPartitionKey(property(camelContext, com.azure.cosmos.models.PartitionKey.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "leasecontainername":
+        case "leaseContainerName": getOrCreateConfiguration(target).setLeaseContainerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "leasedatabasename":
+        case "leaseDatabaseName": getOrCreateConfiguration(target).setLeaseDatabaseName(property(camelContext, java.lang.String.class, value)); return true;
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": getOrCreateConfiguration(target).setMultipleWriteRegionsEnabled(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class, value)); return true;
@@ -87,6 +101,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "changefeedprocessoroptions":
+        case "changeFeedProcessorOptions": return com.azure.cosmos.models.ChangeFeedProcessorOptions.class;
         case "clienttelemetryenabled":
         case "clientTelemetryEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.azure.cosmosdb.CosmosDbConfiguration.class;
@@ -96,20 +112,32 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "consistencyLevel": return com.azure.cosmos.ConsistencyLevel.class;
         case "containerpartitionkeypath":
         case "containerPartitionKeyPath": return java.lang.String.class;
+        case "contentresponseonwriteenabled":
+        case "contentResponseOnWriteEnabled": return boolean.class;
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return com.azure.cosmos.CosmosAsyncClient.class;
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": return boolean.class;
         case "createdatabaseifnotexists":
         case "createDatabaseIfNotExists": return boolean.class;
+        case "createleasecontainerifnotexists":
+        case "createLeaseContainerIfNotExists": return boolean.class;
+        case "createleasedatabaseifnotexists":
+        case "createLeaseDatabaseIfNotExists": return boolean.class;
         case "databaseendpoint":
         case "databaseEndpoint": return java.lang.String.class;
+        case "hostname":
+        case "hostName": return java.lang.String.class;
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":
         case "itemPartitionKey": return com.azure.cosmos.models.PartitionKey.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "leasecontainername":
+        case "leaseContainerName": return java.lang.String.class;
+        case "leasedatabasename":
+        case "leaseDatabaseName": return java.lang.String.class;
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": return boolean.class;
         case "operation": return org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition.class;
@@ -136,6 +164,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "changefeedprocessoroptions":
+        case "changeFeedProcessorOptions": return getOrCreateConfiguration(target).getChangeFeedProcessorOptions();
         case "clienttelemetryenabled":
         case "clientTelemetryEnabled": return getOrCreateConfiguration(target).isClientTelemetryEnabled();
         case "configuration": return target.getConfiguration();
@@ -145,20 +175,32 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "consistencyLevel": return getOrCreateConfiguration(target).getConsistencyLevel();
         case "containerpartitionkeypath":
         case "containerPartitionKeyPath": return getOrCreateConfiguration(target).getContainerPartitionKeyPath();
+        case "contentresponseonwriteenabled":
+        case "contentResponseOnWriteEnabled": return getOrCreateConfiguration(target).isContentResponseOnWriteEnabled();
         case "cosmosasyncclient":
         case "cosmosAsyncClient": return getOrCreateConfiguration(target).getCosmosAsyncClient();
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": return getOrCreateConfiguration(target).isCreateContainerIfNotExists();
         case "createdatabaseifnotexists":
         case "createDatabaseIfNotExists": return getOrCreateConfiguration(target).isCreateDatabaseIfNotExists();
+        case "createleasecontainerifnotexists":
+        case "createLeaseContainerIfNotExists": return getOrCreateConfiguration(target).isCreateLeaseContainerIfNotExists();
+        case "createleasedatabaseifnotexists":
+        case "createLeaseDatabaseIfNotExists": return getOrCreateConfiguration(target).isCreateLeaseDatabaseIfNotExists();
         case "databaseendpoint":
         case "databaseEndpoint": return getOrCreateConfiguration(target).getDatabaseEndpoint();
+        case "hostname":
+        case "hostName": return getOrCreateConfiguration(target).getHostName();
         case "itemid":
         case "itemId": return getOrCreateConfiguration(target).getItemId();
         case "itempartitionkey":
         case "itemPartitionKey": return getOrCreateConfiguration(target).getItemPartitionKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "leasecontainername":
+        case "leaseContainerName": return getOrCreateConfiguration(target).getLeaseContainerName();
+        case "leasedatabasename":
+        case "leaseDatabaseName": return getOrCreateConfiguration(target).getLeaseDatabaseName();
         case "multiplewriteregionsenabled":
         case "multipleWriteRegionsEnabled": return getOrCreateConfiguration(target).isMultipleWriteRegionsEnabled();
         case "operation": return getOrCreateConfiguration(target).getOperation();
