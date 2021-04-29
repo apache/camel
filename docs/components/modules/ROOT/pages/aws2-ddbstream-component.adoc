@@ -45,7 +45,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 DynamoDB Streams component supports 16 options, which are listed below.
+The AWS 2 DynamoDB Streams component supports 17 options, which are listed below.
 
 
 
@@ -65,6 +65,7 @@ The AWS 2 DynamoDB Streams component supports 16 options, which are listed below
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (consumer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (consumer) | Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -95,7 +96,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (32 parameters):
+=== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,6 +115,7 @@ with the following path and query parameters:
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
 | *uriEndpointOverride* (consumer) | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
+| *useDefaultCredentialsProvider* (consumer) | Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect static credentials to be passed in. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy

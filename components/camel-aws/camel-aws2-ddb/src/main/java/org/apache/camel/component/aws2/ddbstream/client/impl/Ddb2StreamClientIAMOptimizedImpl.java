@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.aws2.ddbstream.client.impl;
 
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -27,13 +28,9 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS DynamoDB client for all users to use (enabling temporary creds). This implementation is for remote
@@ -47,7 +44,8 @@ public class Ddb2StreamClientIAMOptimizedImpl implements Ddb2StreamInternalClien
      * Constructor that uses the config file.
      */
     public Ddb2StreamClientIAMOptimizedImpl(Ddb2StreamConfiguration configuration) {
-        LOG.trace("Creating an AWS DynamoDB Streams client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
+        LOG.trace(
+                "Creating an AWS DynamoDB Streams client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
     }
 

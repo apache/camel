@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ddbstream.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -32,11 +34,9 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS DynamoDB Streams client for all users to use. This implementation is for local instances to use a static and
- * solid credential set.
+ * Manage an AWS DynamoDB Streams client for all users to use. This implementation is for local instances to use a
+ * static and solid credential set.
  */
 public class Ddb2StreamClientStandardImpl implements Ddb2StreamInternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2StreamClientStandardImpl.class);
