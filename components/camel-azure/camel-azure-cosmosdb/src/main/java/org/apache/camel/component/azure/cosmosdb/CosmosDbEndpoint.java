@@ -57,7 +57,7 @@ public class CosmosDbEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // we need to have database and container set to consume events
-        if (ObjectHelper.isEmpty(configuration.getDatabaseName()) && ObjectHelper.isEmpty(configuration.getContainerName())) {
+        if (ObjectHelper.isEmpty(configuration.getDatabaseName()) || ObjectHelper.isEmpty(configuration.getContainerName())) {
             throw new IllegalArgumentException("Database name and container name must be set.");
         }
 
