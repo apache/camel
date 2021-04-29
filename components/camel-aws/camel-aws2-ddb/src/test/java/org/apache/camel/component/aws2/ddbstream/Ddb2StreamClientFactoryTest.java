@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
-import org.apache.camel.component.aws2.ddb.client.Ddb2InternalClient;
-import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientStandardImpl;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamClientFactory;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamInternalClient;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMOptimizedImpl;
