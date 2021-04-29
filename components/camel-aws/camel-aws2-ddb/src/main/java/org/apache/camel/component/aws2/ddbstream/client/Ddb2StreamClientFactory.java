@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.ddbstream.client;
 
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientStandardImpl;
