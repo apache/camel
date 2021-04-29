@@ -14,20 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ddbstream;
+package org.apache.camel.component.aws2.ddbstream.client.impl;
 
-import java.net.URI;
-
-import org.apache.camel.Category;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
-import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamClientFactory;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
+import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamInternalClient;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
@@ -39,79 +32,31 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
+import java.net.URI;
+
 /**
- * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
+ * Manage an AWS DynamoDB Streams client for all users to use. This implementation is for local instances to use a static and
+ * solid credential set.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true,
-             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING, Category.STREAMS })
-public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
+public class Ddb2StreamClientStandardImpl implements Ddb2StreamInternalClient {
+    private static final Logger LOG = LoggerFactory.getLogger(Ddb2StreamClientStandardImpl.class);
+    private Ddb2StreamConfiguration configuration;
 
-    @UriParam
-    Ddb2StreamConfiguration configuration;
-
-    private DynamoDbStreamsClient ddbStreamClient;
-
-    public Ddb2StreamEndpoint(String uri, Ddb2StreamConfiguration configuration, Ddb2StreamComponent component) {
-        super(uri, component);
+    /**
+     * Constructor that uses the config file.
+     */
+    public Ddb2StreamClientStandardImpl(Ddb2StreamConfiguration configuration) {
+        LOG.trace("Creating an AWS DynamoDB Streams manager using static credentials.");
         this.configuration = configuration;
     }
 
+    /**
+     * Getting the DynamoDB Streams AWS client that is used.
+     * 
+     * @return Amazon DynamoDB Streams Client.
+     */
     @Override
-    public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        Ddb2StreamConsumer consumer = new Ddb2StreamConsumer(this, processor);
-        consumer.setSchedulerProperties(consumer.getEndpoint().getSchedulerProperties());
-        configureConsumer(consumer);
-        return consumer;
-    }
-
-    @Override
-    public void doStart() throws Exception {
-        super.doStart();
-
-        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null
-                ? configuration.getAmazonDynamoDbStreamsClient() : Ddb2StreamClientFactory.getDynamoDBStreamClient(configuration).getDynamoDBStreamClient();
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getAmazonDynamoDbStreamsClient())) {
-            if (ddbStreamClient != null) {
-                ddbStreamClient.close();
-            }
-        }
-        super.doStop();
-    }
-
-    public Ddb2StreamConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public DynamoDbStreamsClient getClient() {
-        return ddbStreamClient;
-    }
-
-    public String getSequenceNumber() {
-        switch (configuration.getIteratorType()) {
-            case AFTER_SEQUENCE_NUMBER:
-            case AT_SEQUENCE_NUMBER:
-                if (null == configuration.getSequenceNumberProvider()) {
-                    throw new IllegalStateException(
-                            "sequenceNumberProvider must be" + " provided, either as an implementation of"
-                                                    + " SequenceNumberProvider or a literal String.");
-                } else {
-                    return configuration.getSequenceNumberProvider().getSequenceNumber();
-                }
-            default:
-                return "";
-        }
-    }
-
-    DynamoDbStreamsClient createDdbStreamClient() {
+    public DynamoDbStreamsClient getDynamoDBStreamClient() {
         DynamoDbStreamsClient client = null;
         DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
@@ -155,14 +100,5 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         }
         client = clientBuilder.build();
         return client;
-    }
-
-    @Override
-    public String toString() {
-        return "DdbStreamEndpoint{" + "tableName=" + configuration.getTableName()
-               + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
-               + configuration.getMaxResultsPerRequest() + ", iteratorType=" + configuration.getIteratorType()
-               + ", sequenceNumberProvider="
-               + configuration.getSequenceNumberProvider() + ", uri=" + getEndpointUri() + '}';
     }
 }
