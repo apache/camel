@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.ecs.client.ECS2ClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -69,7 +70,8 @@ public class ECS2Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ecsClient = configuration.getEcsClient() != null ? configuration.getEcsClient() : createECSClient();
+        ecsClient = configuration.getEcsClient() != null
+                ? configuration.getEcsClient() : ECS2ClientFactory.getEcsClient(configuration).getEcsClient();
     }
 
     @Override
