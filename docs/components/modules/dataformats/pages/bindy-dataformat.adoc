@@ -31,18 +31,18 @@ property.
 For the BigDecimal numbers, you can also define the precision and the
 decimal or grouping separators.
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%m,10%m,70%",options="header",]
 |===
 |Type |Format Type |Pattern example |Link
 
-|Date |DateFormat |`dd-MM-yyyy` |http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html[http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html]
+|Date |DateFormat |dd-MM-yyyy |https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
 
-|Decimal* |Decimalformat |`##.###.###` |http://java.sun.com/j2se/1.5.0/docs/api/java/text/DecimalFormat.html[http://java.sun.com/j2se/1.5.0/docs/api/java/text/DecimalFormat.html]
+|Decimal* |DecimalFormat |+##.###.###+ |https://docs.oracle.com/javase/8/docs/api/java/text/DecimalFormat.html
 |===
 
-Decimal* = Double, Integer, Float, Short, Long
+*Decimal = Double, Integer, Float, Short, Long
 
- *Format supported*
+*Format supported*
 
 This first release only support comma separated values fields and key
 value pair fields (e.g. : FIX messages).
@@ -52,7 +52,7 @@ To work with camel-bindy, you must first define your model in a package
 Instrument, ...) add the required annotations (described hereafter) to
 the Class or field.
 
- *Multiple models*
+*Multiple models*
 
 As you configure bindy using class names instead of package names
 you can put multiple models in the same package.
@@ -80,7 +80,7 @@ The Bindy dataformat supports 5 options, which are listed below.
 == Annotations
 
 The annotations created allow to map different concept of your model to
-the POJO like :
+the POJO like:
 
 * Type of record (csv, key value pair (e.g. FIX message), fixed length
 ...),
@@ -93,19 +93,19 @@ financial messages),
 * BindyConverter,
 * FormatFactories
 
-This section will describe them :
+This section will describe them.
 
-== 1. CsvRecord
+=== 1. CsvRecord
 
 The CsvRecord annotation is used to identified the root class of the
-model. It represents a record = a line of a CSV file and can be linked
+model. It represents a record = "a line of a CSV file" and can be linked
 to several children model classes.
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*CsvRecord* |csv |Class
+|CsvRecord |csv |Class
 |===
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -348,7 +348,7 @@ public Class Order {
 Remark : pos is used to parse the file, stream while positions is used
 to generate the CSV
 
-== 2. Link
+=== 2. Link
 
 The link annotation will allow to link objects together.
 
@@ -400,7 +400,7 @@ public class Client {
 }
 ----
 
-== 3. DataField
+=== 3. DataField
 
 The DataField annotation defines the property of the field. Each
 datafield is identified by its position in the record, a type (string,
@@ -718,7 +718,7 @@ public class Order {
 
 This attribute is only applicable to optional fields.
 
-== 4. FixedLengthRecord
+=== 4. FixedLengthRecord
 
 The FixedLengthRecord annotation is used to identified the root class of
 the model. It represents a record = a line of a file/message containing
@@ -1161,7 +1161,7 @@ public static class Order {
 }
 ----
 
-== 5. Message
+=== 5. Message
 
 The Message annotation is used to identified the class of your model who
 will contain key value pairs fields. This kind of format is used mainly
@@ -1242,7 +1242,7 @@ message looks like (src\test\data\fix\fix.txt) and the Order, Trailer,
 Header classes
 (src\test\java\org\apache\camel\dataformat\bindy\model\fix\simple\Order.java)
 
-== 6. KeyValuePairField
+=== 6. KeyValuePairField
 
 The KeyValuePairField annotation defines the property of a key value
 pair field. Each KeyValuePairField is identified by a tag (= key) and
@@ -1338,7 +1338,7 @@ public class Order {
 }
 ----
 
-== 7. Section
+=== 7. Section
 
 In FIX message of fixed length records, it is common to have different
 sections in the representation of the information : header, body and
@@ -1420,7 +1420,7 @@ public class Trailer {
     }
 ----
 
-== 8. OneToMany
+=== 8. OneToMany
 
 The purpose of the annotation @OneToMany is to allow to work with a
 `List<?>` field defined a POJO class or from a record containing
@@ -1554,7 +1554,7 @@ public class Security {
 }
 ----
 
-== 9. BindyConverter
+=== 9. BindyConverter
 
 The purpose of the annotation @BindyConverter is define a converter
 to be used on field level. The provided class must implement the
@@ -1582,7 +1582,7 @@ public static class CustomConverter implements Format<String> {
 }
 ----
 
-== 10. FormatFactories
+=== 10. FormatFactories
 
 The purpose of the annotation @FormatFactories is to define a set of converters
 at record-level. The provided classes must implement the FormatFactoryInterface interface.
