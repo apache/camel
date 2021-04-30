@@ -20,22 +20,29 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.core.models.ExtensibleNode;
 import io.apicurio.datamodels.core.models.Extension;
+import io.apicurio.datamodels.core.models.Node;
 import io.apicurio.datamodels.core.models.common.AuthorizationCodeOAuthFlow;
 import io.apicurio.datamodels.core.models.common.ImplicitOAuthFlow;
 import io.apicurio.datamodels.core.models.common.OAuthFlow;
 import io.apicurio.datamodels.core.models.common.SecurityRequirement;
+import io.apicurio.datamodels.core.models.common.Tag;
+import io.apicurio.datamodels.core.visitors.TraverserDirection;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasParameter;
@@ -50,6 +57,7 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Response;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Schema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityScheme;
+import io.apicurio.datamodels.openapi.v2.visitors.Oas20AllNodeVisitor;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Header;
 import io.apicurio.datamodels.openapi.v3.models.Oas30MediaType;
@@ -59,6 +67,7 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
+import io.apicurio.datamodels.openapi.v3.visitors.Oas30AllNodeVisitor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
@@ -86,6 +95,15 @@ import static java.lang.invoke.MethodHandles.publicLookup;
  * This reader supports the <a href="https://www.openapis.org/">OpenApi Specification 2.0 and 3.0</a>
  */
 public class RestOpenApiReader {
+
+    public static final String OAS20_SCHEMA_DEFINITION_PREFIX = "#/definitions/";
+    public static final String OAS30_SCHEMA_DEFINITION_PREFIX = "#/components/schemas/";
+    // Types that are not allowed in references.
+    private static final Set<String> NO_REFERENCE_TYPE_NAMES = new HashSet<>(
+            Arrays.asList(
+                    "byte", "char", "short", "int", "java.lang.Integer", "long", "java.lang.Long", "float", "java.lang.Float",
+                    "double", "java.lang.Double", "string", "java.lang.String", "boolean", "java.lang.Boolean",
+                    "file", "java.io.File"));
 
     private static String getValue(CamelContext camelContext, String text) {
         return camelContext.resolvePropertyPlaceholders(text);
@@ -136,6 +154,27 @@ public class RestOpenApiReader {
             parse(camelContext, openApi, rest, camelContextId, classResolver);
         }
 
+        shortenClassNames(openApi);
+
+        /*
+         * Fixes the problem of not generating the "paths" section when no rest route is defined.
+         * A schema with no paths is considered invalid.
+         */
+        if (openApi.paths == null) {
+            openApi.paths = openApi.createPaths();
+        }
+
+        /*
+         * Fixes the problem of generating duplicated tags which is invalid per the specification
+         */
+        if (openApi.tags != null) {
+            openApi.tags = new ArrayList<>(
+                    openApi.tags
+                            .stream()
+                            .collect(Collectors.toMap(Tag::getName, Function.identity(), (prev, current) -> prev))
+                            .values());
+        }
+
         // configure before returning
         openApi = config.configure(openApi);
         return openApi;
@@ -148,7 +187,7 @@ public class RestOpenApiReader {
 
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
-        Collections.sort(verbs, new VerbOrdering(camelContext));
+        verbs.sort(new VerbOrdering(camelContext));
         // we need to group the operations within the same tag, so use the path as default if not
         // configured
         String pathAsTag = getValue(camelContext, rest.getTag() != null
@@ -563,7 +602,7 @@ public class RestOpenApiReader {
                             String ref = modelTypeAsRef(type, openApi);
                             if (ref != null) {
                                 Oas30Schema refModel = (Oas30Schema) bp.createSchema();
-                                refModel.$ref = "#/components/schemas/" + ref;
+                                refModel.$ref = OAS30_SCHEMA_DEFINITION_PREFIX + ref;
                                 bp.schema = refModel;
                             } else {
                                 OasSchema model = (Oas30Schema) bp.createSchema();
@@ -782,7 +821,7 @@ public class RestOpenApiReader {
                             String ref = modelTypeAsRef(type, openApi);
                             if (ref != null) {
                                 Oas20Schema refModel = (Oas20Schema) bp.createSchema();
-                                refModel.$ref = "#/definitions/" + ref;
+                                refModel.$ref = OAS20_SCHEMA_DEFINITION_PREFIX + ref;
                                 bp.schema = refModel;
                             } else {
                                 OasSchema model = (Oas20Schema) bp.createSchema();
@@ -1208,13 +1247,11 @@ public class RestOpenApiReader {
             typeName = typeName.substring(0, typeName.length() - 2);
         }
 
-        OasSchema model = asModel(typeName, openApi);
-        if (model != null) {
-            typeName = model.type;
-            return typeName;
+        if (NO_REFERENCE_TYPE_NAMES.contains(typeName)) {
+            return null;
         }
 
-        return null;
+        return typeName;
     }
 
     private OasSchema modelTypeAsProperty(String typeName, OasDocument openApi, OasSchema prop) {
@@ -1227,9 +1264,9 @@ public class RestOpenApiReader {
 
         if (ref != null) {
             if (openApi instanceof Oas20Document) {
-                prop.$ref = "#/definitions/" + ref;
+                prop.$ref = OAS20_SCHEMA_DEFINITION_PREFIX + ref;
             } else if (openApi instanceof Oas30Document) {
-                prop.$ref = "#/components/schemas/" + ref;
+                prop.$ref = OAS30_SCHEMA_DEFINITION_PREFIX + ref;
             }
         } else {
             // special for byte arrays
@@ -1362,6 +1399,80 @@ public class RestOpenApiReader {
             }
             return num;
         }
+    }
+
+    private void shortenClassNames(OasDocument document) {
+        if (document instanceof Oas30Document) {
+            Oas30Document oas30Document = (Oas30Document) document;
+            if (oas30Document.components == null || oas30Document.components.schemas == null) {
+                return;
+            }
+        } else {
+            Oas20Document oas20Document = (Oas20Document) document;
+            if (oas20Document.definitions == null || oas20Document.definitions.getDefinitions() == null) {
+                return;
+            }
+        }
+
+        // Make a mapping from full name to possibly shortened name.
+        Map<String, String> names = new HashMap<>();
+        Stream<String> schemaStream;
+        if (document instanceof Oas30Document) {
+            schemaStream = ((Oas30Document) document).components.schemas.keySet().stream();
+        } else {
+            schemaStream = ((Oas20Document) document).definitions.getDefinitions().stream()
+                    .map(Oas20SchemaDefinition::getName);
+        }
+        schemaStream.forEach(key -> {
+            String s = key.replaceAll("[^a-zA-Z0-9.-_]", "_");
+            String shortName = s.substring(s.lastIndexOf('.') + 1);
+            names.put(key, names.containsValue(shortName) ? s : shortName);
+        });
+
+        if (document instanceof Oas30Document) {
+            Library.visitTree(document, new Oas30AllNodeVisitor() {
+                @Override
+                protected void visitNode(Node node) {
+                    if (node instanceof Oas30SchemaDefinition) {
+                        Oas30SchemaDefinition definition = (Oas30SchemaDefinition) node;
+                        definition.rename(fixSchemaReference(definition.getName(), names, OAS30_SCHEMA_DEFINITION_PREFIX));
+                    } else if (node instanceof Oas30Schema) {
+                        Oas30Schema schema = (Oas30Schema) node;
+                        String ref = schema.$ref;
+                        if (ref != null) {
+                            schema.$ref = OAS30_SCHEMA_DEFINITION_PREFIX +
+                                          fixSchemaReference(ref, names, OAS30_SCHEMA_DEFINITION_PREFIX);
+                        }
+                    }
+                }
+            }, TraverserDirection.down);
+        } else {
+            Library.visitTree(document, new Oas20AllNodeVisitor() {
+                @Override
+                protected void visitNode(Node node) {
+                    if (node instanceof Oas20SchemaDefinition) {
+                        Oas20SchemaDefinition definition = (Oas20SchemaDefinition) node;
+                        definition.rename(fixSchemaReference(definition.getName(), names, OAS20_SCHEMA_DEFINITION_PREFIX));
+                    } else if (node instanceof Oas20Schema) {
+                        Oas20Schema schema = (Oas20Schema) node;
+                        String ref = schema.$ref;
+                        if (ref != null) {
+                            schema.$ref = OAS20_SCHEMA_DEFINITION_PREFIX +
+                                          fixSchemaReference(ref, names, OAS20_SCHEMA_DEFINITION_PREFIX);
+                        }
+                    }
+                }
+            }, TraverserDirection.down);
+        }
+    }
+
+    private String fixSchemaReference(String ref, Map<String, String> names, String prefix) {
+        if (ref.startsWith(prefix)) {
+            ref = ref.substring(prefix.length());
+        }
+
+        String name = names.get(ref);
+        return name == null ? ref : name;
     }
 
 }
