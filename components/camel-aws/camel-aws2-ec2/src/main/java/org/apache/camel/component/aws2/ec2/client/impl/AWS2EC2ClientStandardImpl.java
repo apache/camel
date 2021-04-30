@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ec2.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ec2.AWS2EC2Configuration;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -32,11 +34,9 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.Ec2ClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS EC2 client for all users to use. This implementation is for local instances to use a static and
- * solid credential set.
+ * Manage an AWS EC2 client for all users to use. This implementation is for local instances to use a static and solid
+ * credential set.
  */
 public class AWS2EC2ClientStandardImpl implements AWS2EC2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(AWS2EC2ClientStandardImpl.class);

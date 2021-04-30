@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ec2.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.ec2.AWS2EC2Configuration;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,11 +32,9 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.Ec2ClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
-import java.net.URI;
-
 /**
- * Manage an AWS EC2 client for all users to use (enabling temporary creds). This implementation is for remote
- * instances to manage the credentials on their own (eliminating credential rotations)
+ * Manage an AWS EC2 client for all users to use (enabling temporary creds). This implementation is for remote instances
+ * to manage the credentials on their own (eliminating credential rotations)
  */
 public class AWS2EC2ClientIAMOptimizedImpl implements AWS2EC2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(AWS2EC2ClientIAMOptimizedImpl.class);
