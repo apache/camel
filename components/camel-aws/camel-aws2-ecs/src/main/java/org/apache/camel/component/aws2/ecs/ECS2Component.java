@@ -52,9 +52,9 @@ public class ECS2Component extends DefaultComponent {
         ECS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new ECS2Configuration();
         ECS2Endpoint endpoint = new ECS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (configuration.getEcsClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getEcsClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, Amazon ecs client or accessKey and secretKey must be specified");
         }
 
         return endpoint;
