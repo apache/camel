@@ -268,11 +268,11 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 // so force reading the body as a String which we can work with
                 if (body == null) {
                     body = MessageHelper.extractBodyAsString(exchange.getIn());
-                    if (body != null) {
+                    if (ObjectHelper.isNotEmpty(body)) {
                         exchange.getIn().setBody(body);
                     }
                 }
-                if (body == null) {
+                if (ObjectHelper.isEmpty(body)) {
                     // this is a bad request, the client did not include a message body
                     exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                     exchange.getMessage().setBody("The request body is missing.");

@@ -247,7 +247,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                     }
                 }
             }
-            result.setBody(body);
+
+            if (!body.isEmpty()) {
+                result.setBody(body);
+            }
+
             if (isMultipartFormData) {
                 populateAttachments(ctx.fileUploads(), result);
             }
