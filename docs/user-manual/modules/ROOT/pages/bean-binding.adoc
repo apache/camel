@@ -31,13 +31,7 @@ uses this mechanism to allow any JMS MessageListener to be invoked
 directly by Camel without having to write any integration glue code. You
 can use the same mechanism to integrate Camel into any other
 messaging/remoting frameworks.
-* if the body of the message can be converted to a
-`org.apache.camel.component.bean.BeanInvocation`
-(the default payload used by the
-`org.apache.camel.component.bean.ProxyHelper`)
-component - then that is used to invoke the method and pass its
-arguments
-* otherwise the type of the body is used to find a matching method; an
+* the type of the body is used to find a matching method; an
 error is thrown if a single method cannot be chosen unambiguously.
 * you can also use Exchange as the parameter itself, but then the return
 type must be void.

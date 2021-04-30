@@ -17,13 +17,13 @@ exception. This is illustrated in the code sample:
 [source,java]
 ----
 @Test
-public void testBeanInvocation() {
+public void testOk() {
     int result = (Integer) template.sendBody("direct:input", ExchangePattern.InOut, "Hello London");
     assertEquals(1, result);
 }
 
 @Test
-public void testBeanInvocationFailure() {
+public void testFailure() {
     // must create an exchange to get the result as an exchange where we can get the caused exception
     Exchange exchange = getMandatoryEndpoint("direct:input").createExchange(ExchangePattern.InOut);
     exchange.getIn().setBody("Hello Paris");
