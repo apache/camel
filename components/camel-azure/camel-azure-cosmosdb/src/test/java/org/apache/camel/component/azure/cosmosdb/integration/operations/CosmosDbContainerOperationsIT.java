@@ -40,6 +40,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -48,10 +50,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbContainerOperationsIT {
-    private final static String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private final static String leaseDatabaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String LEASE_DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbContainerOperations containerOperations;
@@ -72,8 +80,8 @@ class CosmosDbContainerOperationsIT {
 
     @AfterAll
     void tearDown() {
-        clientWrapper.getDatabase(databaseName).delete().block();
-        clientWrapper.getDatabase(leaseDatabaseName).delete().block();
+        clientWrapper.getDatabase(DATABASE_NAME).delete().block();
+        clientWrapper.getDatabase(LEASE_DATABASE_NAME).delete().block();
     }
 
     @BeforeEach
@@ -81,7 +89,7 @@ class CosmosDbContainerOperationsIT {
         containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
         containerOperations = CosmosDbClientOperations.withClient(clientWrapper)
-                .createDatabaseIfNotExistAndGetDatabaseOperations(databaseName, null)
+                .createDatabaseIfNotExistAndGetDatabaseOperations(DATABASE_NAME, null)
                 .createContainerIfNotExistAndGetContainerOperations(containerId, "partition", null);
 
         // make sure container is created
@@ -292,7 +300,7 @@ class CosmosDbContainerOperationsIT {
         final Mono<CosmosAsyncContainer> leaseContainer = CosmosDbOperationsBuilder.withClient(clientWrapper)
                 .withContainerName("camel-lease")
                 .withContainerPartitionKeyPath("/id")
-                .withDatabaseName(leaseDatabaseName)
+                .withDatabaseName(LEASE_DATABASE_NAME)
                 .withCreateContainerIfNotExist(true)
                 .withCreateDatabaseIfNotExist(true)
                 .buildContainerOperations()

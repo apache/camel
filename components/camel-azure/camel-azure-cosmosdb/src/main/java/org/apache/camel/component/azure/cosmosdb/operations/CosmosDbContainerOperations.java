@@ -142,19 +142,6 @@ public class CosmosDbContainerOperations {
                         container.readAllItems(partitionKey, requestOptions, itemType)));
     }
 
-    public <T> Flux<FeedResponse<T>> readAllItemsAsFeed(
-            final PartitionKey partitionKey, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
-        CosmosDbUtils.validateIfParameterIsNotEmpty(partitionKey, "partitionKey");
-        CosmosDbUtils.validateIfParameterIsNotEmpty(itemType, "itemType");
-
-        // a bug in Azure SDK, see: https://github.com/Azure/azure-sdk-for-java/issues/20743
-        final CosmosQueryRequestOptions requestOptions
-                = queryRequestOptions == null ? new CosmosQueryRequestOptions() : queryRequestOptions;
-
-        return container
-                .flatMapMany(container -> container.readAllItems(partitionKey, requestOptions, itemType).byPage());
-    }
-
     public <T> Flux<T> queryItems(
             final String query, final CosmosQueryRequestOptions queryRequestOptions, final Class<T> itemType) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(query, "query");

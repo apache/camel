@@ -31,15 +31,23 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbDatabaseOperationsIT {
-    private final static String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbDatabaseOperations operations;
@@ -56,14 +64,14 @@ class CosmosDbDatabaseOperationsIT {
         clientWrapper = new CosmosAsyncClientWrapper(client);
 
         // create our testing database
-        clientWrapper.createDatabase(databaseName).block();
+        clientWrapper.createDatabase(DATABASE_NAME).block();
 
-        operations = CosmosDbClientOperations.withClient(clientWrapper).getDatabaseOperations(databaseName);
+        operations = CosmosDbClientOperations.withClient(clientWrapper).getDatabaseOperations(DATABASE_NAME);
     }
 
     @AfterAll
     void tearDown() {
-        clientWrapper.getDatabase(databaseName).delete().block();
+        clientWrapper.getDatabase(DATABASE_NAME).delete().block();
     }
 
     @Test
@@ -104,7 +112,7 @@ class CosmosDbDatabaseOperationsIT {
                 .block();
 
         // we expect an exception since container is not existing and we don't want to create a container
-        assertThrows(Exception.class, () -> clientWrapper.getDatabase(databaseName).getContainer(containerId).read().block());
+        assertThrows(Exception.class, () -> clientWrapper.getDatabase(DATABASE_NAME).getContainer(containerId).read().block());
 
         // second we test if we want to create a container when we get container operations
         operations
@@ -112,7 +120,7 @@ class CosmosDbDatabaseOperationsIT {
                 .getContainerId()
                 .block();
 
-        assertNotNull(clientWrapper.getDatabase(databaseName).getContainer(containerId).read().block());
+        assertNotNull(clientWrapper.getDatabase(DATABASE_NAME).getContainer(containerId).read().block());
     }
 
     @Test
@@ -122,7 +130,7 @@ class CosmosDbDatabaseOperationsIT {
         final int expectedSize = 5;
 
         for (int i = 0; i < expectedSize; i++) {
-            clientWrapper.getDatabase(databaseName).createContainer(prefixContainerNames + i, "/path").block();
+            clientWrapper.getDatabase(DATABASE_NAME).createContainer(prefixContainerNames + i, "/path").block();
         }
 
         final long queryTotalSize = operations

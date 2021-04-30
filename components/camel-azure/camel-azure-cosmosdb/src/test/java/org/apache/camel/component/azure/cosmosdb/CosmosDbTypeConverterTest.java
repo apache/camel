@@ -17,20 +17,22 @@
 package org.apache.camel.component.azure.cosmosdb;
 
 import com.azure.cosmos.models.PartitionKey;
-import org.apache.camel.Converter;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.Test;
 
-@Converter(generateLoader = true)
-public final class CosmosDbTypeConverter {
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    private CosmosDbTypeConverter() {
+class CosmosDbTypeConverterTest {
+
+    @Test
+    void testStringToPartitionKey() {
+        final String inputStr = "test-key";
+        final PartitionKey output = CosmosDbTypeConverter.toPartitionKey(inputStr);
+
+        assertTrue(output.toString().contains(inputStr));
+
+        // in empty case
+        assertNull(CosmosDbTypeConverter.toPartitionKey(""));
     }
 
-    @Converter
-    public static PartitionKey toPartitionKey(final String partitionKeyAsString) {
-        if (ObjectHelper.isNotEmpty(partitionKeyAsString)) {
-            return new PartitionKey(partitionKeyAsString);
-        }
-        return null;
-    }
 }

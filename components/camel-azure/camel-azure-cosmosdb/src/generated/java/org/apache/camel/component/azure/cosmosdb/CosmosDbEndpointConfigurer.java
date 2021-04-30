@@ -38,7 +38,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentresponseonwriteenabled":
         case "contentResponseOnWriteEnabled": target.getConfiguration().setContentResponseOnWriteEnabled(property(camelContext, boolean.class, value)); return true;
         case "cosmosasyncclient":
-        case "cosmosAsyncClient": target.setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
+        case "cosmosAsyncClient": target.getConfiguration().setCosmosAsyncClient(property(camelContext, com.azure.cosmos.CosmosAsyncClient.class, value)); return true;
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": target.getConfiguration().setCreateContainerIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "createdatabaseifnotexists":
@@ -79,6 +79,11 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "throughputProperties": target.getConfiguration().setThroughputProperties(property(camelContext, com.azure.cosmos.models.ThroughputProperties.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"cosmosAsyncClient"};
     }
 
     @Override
@@ -165,7 +170,7 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentresponseonwriteenabled":
         case "contentResponseOnWriteEnabled": return target.getConfiguration().isContentResponseOnWriteEnabled();
         case "cosmosasyncclient":
-        case "cosmosAsyncClient": return target.getCosmosAsyncClient();
+        case "cosmosAsyncClient": return target.getConfiguration().getCosmosAsyncClient();
         case "createcontainerifnotexists":
         case "createContainerIfNotExists": return target.getConfiguration().isCreateContainerIfNotExists();
         case "createdatabaseifnotexists":

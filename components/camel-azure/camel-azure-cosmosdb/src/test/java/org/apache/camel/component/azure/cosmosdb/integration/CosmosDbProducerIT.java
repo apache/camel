@@ -34,11 +34,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+})
 public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     @EndpointInject
     private ProducerTemplate template;

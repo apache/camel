@@ -39,10 +39,9 @@ import org.apache.camel.util.ObjectHelper;
 public class CosmosDbEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private CosmosAsyncClient cosmosAsyncClient;
-
-    @UriParam
     private CosmosDbConfiguration configuration;
+
+    private CosmosAsyncClient cosmosAsyncClient;
 
     public CosmosDbEndpoint(final String uri, final Component component, final CosmosDbConfiguration configuration) {
         super(uri, component);

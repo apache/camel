@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.cosmosdb.integration;
 
 import java.util.HashMap;
@@ -11,19 +27,27 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
+        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
+                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+})
 class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 
-    private final static String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
     private String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
     private String leaseDatabaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
 
     @BeforeEach
     void createDatabaseContainerAndItems() {
-        client.createDatabaseIfNotExists(databaseName).block();
-        client.getDatabase(databaseName).createContainerIfNotExists(containerName, "/partition", null).block();
+        client.createDatabaseIfNotExists(DATABASE_NAME).block();
+        client.getDatabase(DATABASE_NAME).createContainerIfNotExists(containerName, "/partition", null).block();
     }
 
     @Test
@@ -53,9 +77,9 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
         item3.put("field1", 6654);
         item3.put("field2", "super super awesome!");
 
-        client.getDatabase(databaseName).getContainer(containerName).createItem(item1, new PartitionKey("test-1"), null)
+        client.getDatabase(DATABASE_NAME).getContainer(containerName).createItem(item1, new PartitionKey("test-1"), null)
                 .block();
-        client.getDatabase(databaseName).getContainer(containerName).createItem(item2, new PartitionKey("test-1"), null)
+        client.getDatabase(DATABASE_NAME).getContainer(containerName).createItem(item2, new PartitionKey("test-1"), null)
                 .block();
 
         // start testing
@@ -72,7 +96,7 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
         mockEndpoint.reset();
 
         // we send one more record
-        client.getDatabase(databaseName).getContainer(containerName).createItem(item3, new PartitionKey("test-2"), null)
+        client.getDatabase(DATABASE_NAME).getContainer(containerName).createItem(item3, new PartitionKey("test-2"), null)
                 .block();
 
         mockEndpoint.expectedMessageCount(1);
@@ -102,7 +126,7 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
             public void configure() throws Exception {
                 from(String.format(
                         "azure-cosmosdb://%s/%s?leaseDatabaseName=%s&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true",
-                        databaseName, containerName, leaseDatabaseName))
+                        DATABASE_NAME, containerName, leaseDatabaseName))
                                 .routeId("readEventsRoute")
                                 .to("mock:readEvents")
                                 .setAutoStartup("false");

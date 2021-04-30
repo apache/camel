@@ -60,12 +60,8 @@ public class CosmosDbConsumer extends DefaultConsumer {
 
         // start our changeFeedProcessor
         changeFeedProcessor.start()
-                .subscribe((aVoid) -> {
+                .subscribe(aVoid -> {
                 }, this::onErrorListener);
-    }
-
-    public CosmosDbConfiguration getConfiguration() {
-        return getEndpoint().getConfiguration();
     }
 
     @Override
@@ -76,6 +72,10 @@ public class CosmosDbConsumer extends DefaultConsumer {
         }
 
         super.doStop();
+    }
+
+    public CosmosDbConfiguration getConfiguration() {
+        return getEndpoint().getConfiguration();
     }
 
     @Override
@@ -118,7 +118,7 @@ public class CosmosDbConsumer extends DefaultConsumer {
 
     private CosmosDbContainerOperations getLeaseContainerOperations() {
         final String leaseDatabaseName;
-        // Lease container need t0 be created with 'id' path
+        // Lease container need to be created with 'id' path
         final String leaseContainerPartitionKeyPath = "/id";
 
         if (ObjectHelper.isEmpty(getConfiguration().getLeaseDatabaseName())) {
