@@ -173,6 +173,70 @@ with the following path and query parameters:
 |CamelConsulResult|boolean|true if the response has a result
 |CamelConsulSession|String|The session id
 |CamelConsulValueAsString|boolean|To transform values retrieved from Consul i.e. on KV endpoint to string.
+|CamelConsulServiceId|String|The service id for agent deregistration
 |=======================================================================
+
+== Api Endpoint
+
+The `apiEndpoint` denotes the type of https://www.consul.io/api-docs[consul api] which should be addressed.
+
+[width="100%",options="header"]
+|===
+| Domain | Producer | Consumer
+| kv | ConsulKeyValueProducer | ConsulKeyValueConsumer
+| event | ConsulEventProducer | ConsulEventConsumer
+| agent | ConsulAgentProducer | -
+| coordinates | ConsulCoordinatesProducer | -
+| health | ConsulHealthProducer | -
+| status | ConsulStatusProducer | -
+| preparedQuery | ConsulPreparedQueryProducer | -
+| catalog | ConsulCatalogProducer | -
+| session | ConsulSessionProducer | -
+|===
+
+== Producer Examples
+
+As an example, we will show how to use the `ConsulAgentProducer` to register a service by means of the Consul agent api.
+
+Registering and deregistering are examples for possible actions against the Consul agent api.
+
+The desired action can be defined by setting the header `ConsulConstants.CONSUL_ACTION` to a value from the `ConsulXXXActions` interface of the respective Consul api. E.g.  `ConsulAgentActions` contains the actions for the agent api.
+
+If you set `CONSUL_ACTION` to `ConsulAgentActions.REGISTER`, the agent action `REGISTER` will be executed.
+
+TIP: Which producer action invokes which consul api is defined by the respective producer.
+E.g. the `ConsulAgentProducer` maps `ConsulAgentActions.REGISTER` to an invocation of `AgentClient.register`.
+
+[source,java]
+----
+from("direct:registerFooService")
+    .setBody().constant(ImmutableRegistration.builder()
+        .id("foo-1")
+        .name("foo")
+        .address("localhost")
+        .port(80)
+        .build())
+    .setHeader(ConsulConstants.CONSUL_ACTION, constant(ConsulAgentActions.REGISTER))
+    .to("consul:agent");
+----
+
+It is also possible to set a default action on the consul endpoint and do without the header:
+
+----
+consul:agent?action=REGISTER
+----
+
+== Registering Camel Routes with Consul
+
+You can employ a `ServiceRegistrationRoutePolicy` to register Camel routes as services with Consul automatically.
+
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/service/endpoint").routeId("foo-1")
+    .routeProperty(ServiceDefinition.SERVICE_META_ID, "foo-1")
+    .routeProperty(ServiceDefinition.SERVICE_META_NAME, "foo")
+    .routePolicy(new ServiceRegistrationRoutePolicy())
+...
+----
 
 include::{page-component-version}@camel-spring-boot::page$consul-starter.adoc[]
