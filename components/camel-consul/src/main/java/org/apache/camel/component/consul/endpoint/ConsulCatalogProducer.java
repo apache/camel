@@ -56,7 +56,7 @@ public final class ConsulCatalogProducer extends AbstractConsulProducer<CatalogC
 
     @InvokeOnHeader(ConsulCatalogActions.LIST_SERVICES)
     protected void listServices(Message message) throws Exception {
-        processConsulResponse(message, getClient().getNodes(buildQueryOptions(message, getConfiguration())));
+        processConsulResponse(message, getClient().getServices(buildQueryOptions(message, getConfiguration())));
     }
 
     @InvokeOnHeader(ConsulCatalogActions.GET_SERVICE)

@@ -17,6 +17,7 @@
 package org.apache.camel.component.consul;
 
 import java.util.List;
+import java.util.Map;
 
 import com.orbitz.consul.model.health.Node;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,6 +43,18 @@ public class ConsulCatalogIT extends ConsulTestSupport {
         List<Node> ref = getConsul().catalogClient().getNodes().getResponse();
         List<Node> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_NODES)
                 .to("direct:consul").request(List.class);
+
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
+    }
+
+    @Test
+    public void testListServices() {
+        Map<String, List<String>> ref = getConsul().catalogClient().getServices().getResponse();
+        Map<String, List<String>> res
+                = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_SERVICES)
+                        .to("direct:consul").request(Map.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());
