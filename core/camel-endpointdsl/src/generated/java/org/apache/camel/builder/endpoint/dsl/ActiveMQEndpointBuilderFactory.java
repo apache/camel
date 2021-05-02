@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -1104,6 +1105,54 @@ public interface ActiveMQEndpointBuilderFactory {
         default AdvancedActiveMQEndpointConsumerBuilder defaultTaskExecutorType(
                 String defaultTaskExecutorType) {
             doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
+            return this;
+        }
+        /**
+         * Destination Options are a way to provide extended configuration
+         * options to a JMS consumer without having to extend the JMS API. The
+         * options are encoded using URL query syntax in the destination name
+         * that the consumer is created on. See more details at
+         * https://activemq.apache.org/destination-options.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * destinationOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder destinationOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("destinationOptions", "destination." + key, value);
+            return this;
+        }
+        /**
+         * Destination Options are a way to provide extended configuration
+         * options to a JMS consumer without having to extend the JMS API. The
+         * options are encoded using URL query syntax in the destination name
+         * that the consumer is created on. See more details at
+         * https://activemq.apache.org/destination-options.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the
+         * destinationOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedActiveMQEndpointConsumerBuilder destinationOptions(
+                Map values) {
+            doSetMultiValueProperties("destinationOptions", "destination.", values);
             return this;
         }
         /**

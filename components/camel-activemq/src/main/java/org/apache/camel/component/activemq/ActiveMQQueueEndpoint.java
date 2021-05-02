@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms;
+package org.apache.camel.component.activemq;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +24,11 @@ import javax.jms.Queue;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.jms.DefaultQueueBrowseStrategy;
+import org.apache.camel.component.jms.JmsBrowsableEndpoint;
+import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.component.jms.QueueBrowseStrategy;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.springframework.jms.core.JmsOperations;
 
@@ -31,18 +36,18 @@ import org.springframework.jms.core.JmsOperations;
  * An endpoint for a JMS Queue which is also browsable
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
-public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoint, BrowsableEndpoint {
+public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsableEndpoint, BrowsableEndpoint {
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
-    public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-                            JmsConfiguration configuration) {
+    public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
+                                 JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
         setDestinationType("queue");
     }
 
-    public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-                            JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+    public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
+                                 JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
         setDestinationType("queue");
         if (queueBrowseStrategy == null) {
@@ -52,7 +57,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
         }
     }
 
-    public JmsQueueEndpoint(String endpointUri, String destination, QueueBrowseStrategy queueBrowseStrategy) {
+    public ActiveMQQueueEndpoint(String endpointUri, String destination, QueueBrowseStrategy queueBrowseStrategy) {
         super(endpointUri, destination, false);
         setDestinationType("queue");
         if (queueBrowseStrategy == null) {
@@ -62,7 +67,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
         }
     }
 
-    public JmsQueueEndpoint(String endpointUri, String destination) {
+    public ActiveMQQueueEndpoint(String endpointUri, String destination) {
         super(endpointUri, destination, false);
         setDestinationType("queue");
         queueBrowseStrategy = createQueueBrowseStrategy();

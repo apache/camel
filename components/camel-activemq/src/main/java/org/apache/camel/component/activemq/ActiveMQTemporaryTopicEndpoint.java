@@ -14,15 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms;
+package org.apache.camel.component.activemq;
 
-import java.util.List;
+import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.component.jms.JmsTemporaryTopicEndpoint;
 
-import org.apache.camel.Exchange;
-import org.springframework.jms.core.JmsOperations;
+public class ActiveMQTemporaryTopicEndpoint extends JmsTemporaryTopicEndpoint {
 
-public interface QueueBrowseStrategy {
+    public ActiveMQTemporaryTopicEndpoint(String uri, JmsComponent component, String destination,
+                                          JmsConfiguration configuration) {
+        super(uri, component, destination, configuration);
+    }
 
-    List<Exchange> browse(JmsOperations template, String queue, JmsBrowsableEndpoint endpoint);
-
+    public ActiveMQTemporaryTopicEndpoint(String endpointUri, String destination) {
+        super(endpointUri, destination);
+    }
 }

@@ -16,13 +16,29 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.List;
+import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.Exchange;
-import org.springframework.jms.core.JmsOperations;
 
-public interface QueueBrowseStrategy {
+/**
+ * JMS endpoint which is browsable.
+ */
+public interface JmsBrowsableEndpoint {
 
-    List<Exchange> browse(JmsOperations template, String queue, JmsBrowsableEndpoint endpoint);
+    /**
+     * If a number is set > 0 then this limits the number of messages that are returned when browsing the queue
+     */
+    int getMaximumBrowseSize();
+
+    /**
+     * The JMS selector to use (if any)
+     */
+    String getSelector();
+
+    /**
+     * To create exchange for the messages to be browsed.
+     */
+    Exchange createExchange(Message message, Session session);
 
 }
