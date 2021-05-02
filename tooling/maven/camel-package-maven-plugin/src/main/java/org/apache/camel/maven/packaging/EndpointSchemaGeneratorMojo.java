@@ -251,22 +251,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
 
-        // special for activemq
-        if ("activemq".equals(componentModel.getScheme())) {
-            EndpointOptionModel option = new EndpointOptionModel();
-            option.setName("destinationOptions");
-            option.setKind("parameter");
-            option.setDisplayName("Destination Options");
-            option.setGroup("consumer (advanced)");
-            option.setLabel("consumer,advanced");
-            option.setType("object");
-            option.setJavaType("java.util.Map<java.lang.String, java.lang.String>");
-            option.setPrefix("destination.");
-            option.setMultiValue(true);
-            option.setDescription("Destination options are a way to provide extended configuration options to a JMS consumer without having to extend the JMS API. The options are encoded using URL query syntax in the destination name that the consumer is created on. See more details at https://activemq.apache.org/destination-options.");
-            componentModel.addEndpointOption(option);
-        }
-
         String excludedEndpointProperties = "";
         Metadata endpointMetadata = classElement.getAnnotation(Metadata.class);
         if (endpointMetadata != null) {
