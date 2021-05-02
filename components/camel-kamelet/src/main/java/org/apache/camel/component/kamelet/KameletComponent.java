@@ -152,7 +152,7 @@ public class KameletComponent extends DefaultComponent {
 
             //
             // Load properties from the component configuration. Template and route specific properties
-            // can be set through properties, as example:
+            // can be set through properties, as an example:
             //
             //     camel.component.kamelet.template-properties[templateId].key = val
             //     camel.component.kamelet.route-properties[routeId].key = val
