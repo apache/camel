@@ -27,22 +27,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.PropertiesHelper.asProperties;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KameletGlobalPropertiesTest extends CamelTestSupport {
     @Test
     public void propertiesAreTakenFromRouteId() {
         assertThat(
                 fluentTemplate
+                        .to("direct:someId")
+                        .request(String.class)).isEqualTo("from-route-someId");
+
+        assertThat(
+                fluentTemplate
                         .to("kamelet:setBody/test")
                         .request(String.class)).isEqualTo("from-route");
-    }
-
-    @Test
-    public void propertiesAreTakenFromNonExistingRouteId() {
-        assertThrows(org.apache.camel.ResolveEndpointFailedException.class, () -> fluentTemplate
-                .to("kamelet:setBody/nonExisting")
-                .request(String.class));
     }
 
     @Test
@@ -146,7 +143,8 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                 "raw.proxy.pwd", "RAW(p+wd)",
                 "bodyValue", "from-uri",
                 Kamelet.PROPERTIES_PREFIX + "setBody.bodyValue", "from-template",
-                Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue", "from-route");
+                Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue", "from-route",
+                Kamelet.PROPERTIES_PREFIX + "setBody.someId.bodyValue", "from-route-someId");
     }
 
     @Obsolete
@@ -175,6 +173,11 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                         .from("timer:tick")
                         .setBody().constant("{{message}}")
                         .to("kamelet:sink");
+
+                // routes
+                from("direct:someId").to("kamelet:setBody/someId");
+
+                from("direct:test").to("kamelet:setBody");
             }
         };
     }
