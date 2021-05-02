@@ -27,14 +27,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.PropertiesHelper.asProperties;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class KameletPropertiesTest extends CamelTestSupport {
+public class KameletGlobalPropertiesTest extends CamelTestSupport {
     @Test
     public void propertiesAreTakenFromRouteId() {
         assertThat(
                 fluentTemplate
                         .to("kamelet:setBody/test")
                         .request(String.class)).isEqualTo("from-route");
+    }
+
+    @Test
+    public void propertiesAreTakenFromNonExistingRouteId() {
+        assertThrows(org.apache.camel.ResolveEndpointFailedException.class, () -> fluentTemplate
+                .to("kamelet:setBody/nonExisting")
+                .request(String.class));
     }
 
     @Test
