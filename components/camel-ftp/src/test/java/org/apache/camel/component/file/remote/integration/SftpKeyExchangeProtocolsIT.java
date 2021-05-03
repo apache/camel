@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote.integration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jcraft.jsch.JSch;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,10 +27,27 @@ import org.apache.camel.component.file.remote.sftp.integration.SftpServerTestSup
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated
 public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
+
+    private static String kex;
+
+    @BeforeAll
+    public static void beforeTests() {
+        kex = JSch.getConfig("kex");
+    }
+
+    @AfterAll
+    public static void afterTests() {
+        // restore after test
+        JSch.setConfig("kex", kex);
+    }
 
     protected String getFtpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols/?password=admin"
