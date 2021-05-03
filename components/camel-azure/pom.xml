@@ -37,6 +37,7 @@
         <module>camel-azure-storage-blob</module>
         <module>camel-azure-storage-datalake</module>
         <module>camel-azure-storage-queue</module>
+        <module>camel-azure-cosmosdb</module>
     </modules>
 
 </project>
