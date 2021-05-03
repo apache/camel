@@ -334,7 +334,7 @@ you can configure.
 
 The consumer may throw exception when invoking the Kafka `poll` API. For example if the message cannot be de-serialized due invalid data,
 and many other kind of errors. Those errors are in the form of `KafkaException` which are either _retryable_ or not. The exceptions
-which can be retired (`RetriableException`) will be retried again (with a poll timeout in between). All other kind of exceptions are
+which can be retried (`RetriableException`) will be retried again (with a poll timeout in between). All other kind of exceptions are
 handled according to the _pollOnError_ configuration. This configuration has the following values:
 
 * DISCARD will discard the message and continue to poll next message.
