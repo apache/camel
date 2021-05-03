@@ -2,7 +2,7 @@
 = Azure CosmosDB Component
 :docTitle: Azure CosmosDB
 :artifactId: camel-azure-cosmosdb
-:description: Azure Cosmos DB is Microsoft's globally distributed, multi-model database service for operational and analytics workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This component interacts with Azure CosmosDB through Azure SQL API
+:description: Azure Cosmos DB is Microsofts globally distributed, multi-model database service for operational and analytics workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This component interacts with Azure CosmosDB through Azure SQL API
 :since: 3.10
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
