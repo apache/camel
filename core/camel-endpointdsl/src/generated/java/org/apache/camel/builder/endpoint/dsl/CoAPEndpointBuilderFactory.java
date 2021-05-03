@@ -44,257 +44,6 @@ public interface CoAPEndpointBuilderFactory {
             return (AdvancedCoAPEndpointConsumerBuilder) this;
         }
         /**
-         * Sets the alias used to query the KeyStore for the private key and
-         * certificate. This parameter is used when we are enabling TLS with
-         * certificates on the service side, and similarly on the client side
-         * when TLS is used with certificates and client authentication. If the
-         * parameter is not specified then the default behavior is to use the
-         * first alias in the keystore that contains a key entry. This
-         * configuration parameter does not apply to configuring TLS via a Raw
-         * Public Key or a Pre-Shared Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param alias the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder alias(String alias) {
-            doSetProperty("alias", alias);
-            return this;
-        }
-        /**
-         * Sets the cipherSuites String. This is a comma separated String of
-         * ciphersuites to configure. If it is not specified, then it falls back
-         * to getting the ciphersuites from the sslContextParameters object.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cipherSuites the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder cipherSuites(String cipherSuites) {
-            doSetProperty("cipherSuites", cipherSuites);
-            return this;
-        }
-        /**
-         * Sets the configuration options for server-side client-authentication
-         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
-         * value is not specified, then it falls back to checking the
-         * sslContextParameters.getServerParameters().getClientAuthentication()
-         * value.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param clientAuthentication the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder clientAuthentication(
-                String clientAuthentication) {
-            doSetProperty("clientAuthentication", clientAuthentication);
-            return this;
-        }
-        /**
-         * Set the configured private key for use with Raw Public Key.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param privateKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the configured private key for use with Raw Public Key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param privateKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the configured public key for use with Raw Public Key.
-         * 
-         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param publicKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-        /**
-         * Set the configured public key for use with Raw Public Key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param publicKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-        /**
-         * The CBC cipher suites are not recommended. If you want to use them,
-         * you first need to set the recommendedCipherSuitesOnly option to
-         * false.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param recommendedCipherSuitesOnly the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
-                boolean recommendedCipherSuitesOnly) {
-            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
-            return this;
-        }
-        /**
-         * The CBC cipher suites are not recommended. If you want to use them,
-         * you first need to set the recommendedCipherSuitesOnly option to
-         * false.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param recommendedCipherSuitesOnly the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
-                String recommendedCipherSuitesOnly) {
-            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
-            return this;
-        }
-        /**
-         * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
-         * for TLS (as opposed to RPK or PKS).
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sslContextParameters the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
-         * for TLS (as opposed to RPK or PKS).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sslContextParameters the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder trustedRpkStore(
-                Object trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointConsumerBuilder trustedRpkStore(
-                String trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -353,6 +102,257 @@ public interface CoAPEndpointBuilderFactory {
         default CoAPEndpointConsumerBuilder coapMethodRestrict(
                 String coapMethodRestrict) {
             doSetProperty("coapMethodRestrict", coapMethodRestrict);
+            return this;
+        }
+        /**
+         * Sets the alias used to query the KeyStore for the private key and
+         * certificate. This parameter is used when we are enabling TLS with
+         * certificates on the service side, and similarly on the client side
+         * when TLS is used with certificates and client authentication. If the
+         * parameter is not specified then the default behavior is to use the
+         * first alias in the keystore that contains a key entry. This
+         * configuration parameter does not apply to configuring TLS via a Raw
+         * Public Key or a Pre-Shared Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder alias(String alias) {
+            doSetProperty("alias", alias);
+            return this;
+        }
+        /**
+         * Sets the cipherSuites String. This is a comma separated String of
+         * ciphersuites to configure. If it is not specified, then it falls back
+         * to getting the ciphersuites from the sslContextParameters object.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param cipherSuites the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder cipherSuites(String cipherSuites) {
+            doSetProperty("cipherSuites", cipherSuites);
+            return this;
+        }
+        /**
+         * Sets the configuration options for server-side client-authentication
+         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
+         * value is not specified, then it falls back to checking the
+         * sslContextParameters.getServerParameters().getClientAuthentication()
+         * value.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder clientAuthentication(
+                String clientAuthentication) {
+            doSetProperty("clientAuthentication", clientAuthentication);
+            return this;
+        }
+        /**
+         * Set the configured private key for use with Raw Public Key.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the configured private key for use with Raw Public Key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the PskStore to use for pre-shared key.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
+            doSetProperty("pskStore", pskStore);
+            return this;
+        }
+        /**
+         * Set the PskStore to use for pre-shared key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
+            doSetProperty("pskStore", pskStore);
+            return this;
+        }
+        /**
+         * Set the configured public key for use with Raw Public Key.
+         * 
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
+            doSetProperty("publicKey", publicKey);
+            return this;
+        }
+        /**
+         * Set the configured public key for use with Raw Public Key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
+            doSetProperty("publicKey", publicKey);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
+                boolean recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
+                String recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * Set the SSLContextParameters object for setting up TLS. This is
+         * required for coapstcp, and for coaps when we are using certificates
+         * for TLS (as opposed to RPK or PKS).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Set the SSLContextParameters object for setting up TLS. This is
+         * required for coapstcp, and for coaps when we are using certificates
+         * for TLS (as opposed to RPK or PKS).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Set the TrustedRpkStore to use to determine trust in raw public keys.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder trustedRpkStore(
+                Object trustedRpkStore) {
+            doSetProperty("trustedRpkStore", trustedRpkStore);
+            return this;
+        }
+        /**
+         * Set the TrustedRpkStore to use to determine trust in raw public keys.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder trustedRpkStore(
+                String trustedRpkStore) {
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
     }
@@ -448,257 +448,6 @@ public interface CoAPEndpointBuilderFactory {
             return (AdvancedCoAPEndpointProducerBuilder) this;
         }
         /**
-         * Sets the alias used to query the KeyStore for the private key and
-         * certificate. This parameter is used when we are enabling TLS with
-         * certificates on the service side, and similarly on the client side
-         * when TLS is used with certificates and client authentication. If the
-         * parameter is not specified then the default behavior is to use the
-         * first alias in the keystore that contains a key entry. This
-         * configuration parameter does not apply to configuring TLS via a Raw
-         * Public Key or a Pre-Shared Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param alias the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder alias(String alias) {
-            doSetProperty("alias", alias);
-            return this;
-        }
-        /**
-         * Sets the cipherSuites String. This is a comma separated String of
-         * ciphersuites to configure. If it is not specified, then it falls back
-         * to getting the ciphersuites from the sslContextParameters object.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cipherSuites the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder cipherSuites(String cipherSuites) {
-            doSetProperty("cipherSuites", cipherSuites);
-            return this;
-        }
-        /**
-         * Sets the configuration options for server-side client-authentication
-         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
-         * value is not specified, then it falls back to checking the
-         * sslContextParameters.getServerParameters().getClientAuthentication()
-         * value.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param clientAuthentication the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder clientAuthentication(
-                String clientAuthentication) {
-            doSetProperty("clientAuthentication", clientAuthentication);
-            return this;
-        }
-        /**
-         * Set the configured private key for use with Raw Public Key.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param privateKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the configured private key for use with Raw Public Key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param privateKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the PskStore to use for pre-shared key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param pskStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder pskStore(String pskStore) {
-            doSetProperty("pskStore", pskStore);
-            return this;
-        }
-        /**
-         * Set the configured public key for use with Raw Public Key.
-         * 
-         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param publicKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-        /**
-         * Set the configured public key for use with Raw Public Key.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param publicKey the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-        /**
-         * The CBC cipher suites are not recommended. If you want to use them,
-         * you first need to set the recommendedCipherSuitesOnly option to
-         * false.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param recommendedCipherSuitesOnly the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
-                boolean recommendedCipherSuitesOnly) {
-            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
-            return this;
-        }
-        /**
-         * The CBC cipher suites are not recommended. If you want to use them,
-         * you first need to set the recommendedCipherSuitesOnly option to
-         * false.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param recommendedCipherSuitesOnly the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
-                String recommendedCipherSuitesOnly) {
-            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
-            return this;
-        }
-        /**
-         * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
-         * for TLS (as opposed to RPK or PKS).
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sslContextParameters the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
-         * for TLS (as opposed to RPK or PKS).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param sslContextParameters the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder trustedRpkStore(
-                Object trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
-         * Set the TrustedRpkStore to use to determine trust in raw public keys.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param trustedRpkStore the value to set
-         * @return the dsl builder
-         */
-        default CoAPEndpointProducerBuilder trustedRpkStore(
-                String trustedRpkStore) {
-            doSetProperty("trustedRpkStore", trustedRpkStore);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -747,6 +496,257 @@ public interface CoAPEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Sets the alias used to query the KeyStore for the private key and
+         * certificate. This parameter is used when we are enabling TLS with
+         * certificates on the service side, and similarly on the client side
+         * when TLS is used with certificates and client authentication. If the
+         * parameter is not specified then the default behavior is to use the
+         * first alias in the keystore that contains a key entry. This
+         * configuration parameter does not apply to configuring TLS via a Raw
+         * Public Key or a Pre-Shared Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder alias(String alias) {
+            doSetProperty("alias", alias);
+            return this;
+        }
+        /**
+         * Sets the cipherSuites String. This is a comma separated String of
+         * ciphersuites to configure. If it is not specified, then it falls back
+         * to getting the ciphersuites from the sslContextParameters object.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param cipherSuites the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder cipherSuites(String cipherSuites) {
+            doSetProperty("cipherSuites", cipherSuites);
+            return this;
+        }
+        /**
+         * Sets the configuration options for server-side client-authentication
+         * requirements. The value must be one of NONE, WANT, REQUIRE. If this
+         * value is not specified, then it falls back to checking the
+         * sslContextParameters.getServerParameters().getClientAuthentication()
+         * value.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder clientAuthentication(
+                String clientAuthentication) {
+            doSetProperty("clientAuthentication", clientAuthentication);
+            return this;
+        }
+        /**
+         * Set the configured private key for use with Raw Public Key.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the configured private key for use with Raw Public Key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the PskStore to use for pre-shared key.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
+            doSetProperty("pskStore", pskStore);
+            return this;
+        }
+        /**
+         * Set the PskStore to use for pre-shared key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder pskStore(String pskStore) {
+            doSetProperty("pskStore", pskStore);
+            return this;
+        }
+        /**
+         * Set the configured public key for use with Raw Public Key.
+         * 
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
+            doSetProperty("publicKey", publicKey);
+            return this;
+        }
+        /**
+         * Set the configured public key for use with Raw Public Key.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder publicKey(String publicKey) {
+            doSetProperty("publicKey", publicKey);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
+                boolean recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
+                String recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * Set the SSLContextParameters object for setting up TLS. This is
+         * required for coapstcp, and for coaps when we are using certificates
+         * for TLS (as opposed to RPK or PKS).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Set the SSLContextParameters object for setting up TLS. This is
+         * required for coapstcp, and for coaps when we are using certificates
+         * for TLS (as opposed to RPK or PKS).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Set the TrustedRpkStore to use to determine trust in raw public keys.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder trustedRpkStore(
+                Object trustedRpkStore) {
+            doSetProperty("trustedRpkStore", trustedRpkStore);
+            return this;
+        }
+        /**
+         * Set the TrustedRpkStore to use to determine trust in raw public keys.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder trustedRpkStore(
+                String trustedRpkStore) {
+            doSetProperty("trustedRpkStore", trustedRpkStore);
+            return this;
+        }
     }
 
     /**
@@ -782,7 +782,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param alias the value to set
          * @return the dsl builder
@@ -798,7 +798,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param cipherSuites the value to set
          * @return the dsl builder
@@ -816,7 +816,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param clientAuthentication the value to set
          * @return the dsl builder
@@ -832,7 +832,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
          * type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param privateKey the value to set
          * @return the dsl builder
@@ -847,7 +847,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param privateKey the value to set
          * @return the dsl builder
@@ -862,7 +862,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param pskStore the value to set
          * @return the dsl builder
@@ -877,7 +877,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param pskStore the value to set
          * @return the dsl builder
@@ -892,7 +892,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
          * type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param publicKey the value to set
          * @return the dsl builder
@@ -907,7 +907,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param publicKey the value to set
          * @return the dsl builder
@@ -924,7 +924,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
-         * Group: common
+         * Group: security
          * 
          * @param recommendedCipherSuitesOnly the value to set
          * @return the dsl builder
@@ -943,7 +943,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * 
          * Default: true
-         * Group: common
+         * Group: security
          * 
          * @param recommendedCipherSuitesOnly the value to set
          * @return the dsl builder
@@ -961,7 +961,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param sslContextParameters the value to set
          * @return the dsl builder
@@ -979,7 +979,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param sslContextParameters the value to set
          * @return the dsl builder
@@ -995,7 +995,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param trustedRpkStore the value to set
          * @return the dsl builder
@@ -1010,7 +1010,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param trustedRpkStore the value to set
          * @return the dsl builder
