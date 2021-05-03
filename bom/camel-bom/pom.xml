@@ -271,6 +271,11 @@
         <artifactId>camel-azure-storage-queue</artifactId>
         <version>${project.version}</version>
       </dependency>
+            <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure-cosmosdb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-barcode</artifactId>
