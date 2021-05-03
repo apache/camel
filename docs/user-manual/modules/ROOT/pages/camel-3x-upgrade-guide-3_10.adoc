@@ -18,6 +18,9 @@ has no notion of a current exchange, service filters therefore receive a dummy e
 The two methods `filterTypeInOutputs` on `org.apache.camel.model.ProcessorDefinitionHelper` has changed
 to return `Collection` instead of `Iterator`.
 
+The annotation `@Consume` has removed its target for field/constructor injection as the `@Consume` is only to be used on methods.
+The annotations `@Produce` and `@EndpointInject` has removed its target for constructor injection as that is not supported (Camel only does bean post processing)
+
 === camel-scheduler
 
 The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.
