@@ -32,18 +32,19 @@ import org.junit.jupiter.api.Test;
 public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "sftp://admin@localhost:{{ftp.server.port}}/keyExchangeProtocols/?password=admin"
+        return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols/?password=admin"
                + "&noop=true";
     }
 
     @Test
     public void testNonExistingKey() throws Exception {
         Throwable exception = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/keyExchangeProtocols?" +
-                                                 "password=admin" +
-                                                 "&keyExchangeProtocols=nonExistingKeyExchange",
-                        "a", Exchange.FILE_NAME,
-                        "a.txt"));
+                () -> template
+                        .sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols?" +
+                                           "password=admin" +
+                                           "&keyExchangeProtocols=nonExistingKeyExchange",
+                                "a", Exchange.FILE_NAME,
+                                "a.txt"));
 
         final List<String> errorMessages = new ArrayList<>();
         while (exception.getCause() != null) {
@@ -59,7 +60,7 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/keyExchangeProtocols" +
+        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols" +
                                    "?password=admin" +
                                    "&keyExchangeProtocols=ecdh-sha2-nistp384",
                 "a", Exchange.FILE_NAME,
@@ -73,7 +74,7 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/keyExchangeProtocols" +
+        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols" +
                                    "?password=admin" +
                                    "&keyExchangeProtocols=ecdh-sha2-nistp384,diffie-hellman-group-exchange-sha256,nonExistingKey",
                 "a", Exchange.FILE_NAME,
