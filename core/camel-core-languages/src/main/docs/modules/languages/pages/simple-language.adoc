@@ -11,7 +11,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc
 
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for
-being a really small and simple language for evaluating
+being a very small and simple language for evaluating
 Expressions and Predicates
 without requiring any new dependencies or knowledge of
 xref:xpath-language.adoc[XPath]; so it is ideal for testing in camel-core. The
@@ -22,11 +22,17 @@ However for much more complex use cases you are generally recommended to
 choose a more expressive and powerful language such as:
 
 * xref:groovy-language.adoc[Groovy]
-* xref:spel-language.adoc[SpEL]
 * xref:mvel-language.adoc[MVEL]
 * xref:ognl-language.adoc[OGNL]
 
-The simple language uses `${body`} placeholders for complex expressions or functions.
+[NOTE]
+====
+The simple language requires `camel-bean` JAR as classpath dependency if the simple
+language uses OGNL expressions, such as calling a method named `myMethod` on the message body: `${body.myMethod()}`.
+At runtime the simple language will then us its built-in OGNL support which requires the `camel-bean` component.
+====
+
+The simple language uses `${body}` placeholders for complex expressions or functions.
 
 [NOTE]
 ====
@@ -245,9 +251,10 @@ log sensitive data from the message itself.
 
 == OGNL expression support
 
-INFO:Camel's OGNL support is for invoking methods only. You cannot access
-fields. Camel support accessing the length field of Java arrays.
+When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
 
+Camel's OGNL support is for invoking methods only. You cannot access
+fields. Camel support accessing the length field of Java arrays.
 
 The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] language now
 supports a Camel OGNL notation for invoking beans in a chain like
