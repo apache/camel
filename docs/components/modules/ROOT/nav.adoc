@@ -45,6 +45,7 @@
 *** xref:aws2-translate-component.adoc[AWS 2 Translate]
 *** xref:aws-secrets-manager-component.adoc[AWS Secrets Manager]
 ** xref:azure-summary.adoc[Azure]
+*** xref:azure-cosmosdb-component.adoc[Azure CosmosDB]
 *** xref:azure-eventhubs-component.adoc[Azure Event Hubs]
 *** xref:azure-storage-blob-component.adoc[Azure Storage Blob Service]
 *** xref:azure-storage-datalake-component.adoc[Azure storage datalake service]
