@@ -60,10 +60,10 @@ public final class ClassUtil {
     }
 
     public static boolean isSame(Type type1, Type type2) {
-        if ((type1 instanceof Class) && ((Class<?>) type1).isPrimitive()) {
+        if (type1 instanceof Class && ((Class<?>) type1).isPrimitive()) {
             type1 = PRIMITIVE_TO_WRAPPERS_MAP.get(type1);
         }
-        if ((type2 instanceof Class) && ((Class<?>) type2).isPrimitive()) {
+        if (type2 instanceof Class && ((Class<?>) type2).isPrimitive()) {
             type2 = PRIMITIVE_TO_WRAPPERS_MAP.get(type2);
         }
         return type1 == type2;
