@@ -58,7 +58,7 @@ public final class TimePatternConverter {
             matcher = createMatcher(MINUTES_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long minutes = Long.valueOf(matcher.group(1));
-                if ((minutes > 59) && foundFlag) {
+                if (minutes > 59 && foundFlag) {
                     throw new IllegalArgumentException("Minutes should contain a valid value between 0 and 59: " + source);
                 }
                 foundFlag = true;
@@ -68,7 +68,7 @@ public final class TimePatternConverter {
             matcher = createMatcher(SECONDS_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long seconds = Long.valueOf(matcher.group(1));
-                if ((seconds > 59) && foundFlag) {
+                if (seconds > 59 && foundFlag) {
                     throw new IllegalArgumentException("Seconds should contain a valid value between 0 and 59: " + source);
                 }
                 foundFlag = true;

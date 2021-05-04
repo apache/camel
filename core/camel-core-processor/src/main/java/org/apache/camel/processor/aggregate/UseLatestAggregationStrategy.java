@@ -74,7 +74,7 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         // propagate exception from old exchange if there isn't already an exception
         ExtendedExchange oee = (ExtendedExchange) oldExchange;
         if (oee.isFailed() || oee.isRollbackOnly() || oee.isRollbackOnlyLast()
-                || (oee.isErrorHandlerHandledSet() && oee.isErrorHandlerHandled())) {
+                || oee.isErrorHandlerHandledSet() && oee.isErrorHandlerHandled()) {
             // propagate failure by using old exchange as the answer
             return oldExchange;
         }

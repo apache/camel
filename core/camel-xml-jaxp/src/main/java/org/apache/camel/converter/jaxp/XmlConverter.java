@@ -138,7 +138,7 @@ public class XmlConverter {
         }
         transformer.setOutputProperties(outputProperties);
         if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY)
-                && (source instanceof StAXSource)) {
+                && source instanceof StAXSource) {
             //external xalan can't handle StAXSource, so convert StAXSource to SAXSource.
             source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
         }

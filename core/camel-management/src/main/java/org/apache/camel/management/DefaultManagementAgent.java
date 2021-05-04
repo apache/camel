@@ -333,7 +333,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             return false;
         }
         ObjectName on = mbeansRegistered.get(name);
-        return (on != null && server.isRegistered(on))
+        return on != null && server.isRegistered(on)
                 || server.isRegistered(name);
     }
 

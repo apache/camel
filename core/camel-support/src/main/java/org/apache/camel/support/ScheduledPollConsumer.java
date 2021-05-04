@@ -134,7 +134,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         // should we backoff if its enabled, and either the idle or error counter is > the threshold
         if (backoffMultiplier > 0
                 // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
-                && (idleCounter >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE))
+                && idleCounter >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
                 || errorCounter >= (backoffErrorThreshold > 0 ? backoffErrorThreshold : Integer.MAX_VALUE)) {
             if (backoffCounter++ < backoffMultiplier) {
                 // yes we should backoff
