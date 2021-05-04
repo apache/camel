@@ -507,8 +507,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
                         break;
                     case XMLStreamConstants.END_ELEMENT:
-                        if ((backtrack || (trackdepth > 0 && depth == trackdepth))
-                                && (mode == 'w' && group > 1 && !tokens.isEmpty())) {
+                        if ((backtrack || trackdepth > 0 && depth == trackdepth)
+                                && mode == 'w' && group > 1 && !tokens.isEmpty()) {
                             // flush the left over using the current context
                             code = XMLStreamConstants.END_ELEMENT;
                             return getGroupedToken();
@@ -524,7 +524,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
 
                         int pc = 0;
-                        if (backtrack || (trackdepth > 0 && depth == trackdepth - 1)) {
+                        if (backtrack || trackdepth > 0 && depth == trackdepth - 1) {
                             // reactive backtrack if not backtracking and update the track depth
                             backtrack = true;
                             trackdepth--;
@@ -543,8 +543,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                                 }
                             }
 
-                            if ((ancestor() == null && !isTop())
-                                    || (ancestor() != null && ancestor().matches(endname))) {
+                            if (ancestor() == null && !isTop()
+                                    || ancestor() != null && ancestor().matches(endname)) {
                                 up();
                             }
                         }

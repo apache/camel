@@ -207,7 +207,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);
             if (exp != null) {
-                if (sb.length() == 0 && (node instanceof LiteralNode)) {
+                if (sb.length() == 0 && node instanceof LiteralNode) {
                     firstIsLiteral = true;
                 }
                 if (sb.length() > 0) {

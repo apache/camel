@@ -220,7 +220,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (beforeIndex >= 0 && afterIndex < input.length()) {
                 char before = input.charAt(beforeIndex);
                 char after = input.charAt(afterIndex);
-                return (before == after) && (before == '\'' || before == '"');
+                return before == after && (before == '\'' || before == '"');
             }
             return false;
         }

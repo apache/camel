@@ -64,7 +64,7 @@ public class PredicateAsBeanTest extends ContextTestSupport {
         public boolean matches(Exchange exchange) {
             LOG.info("matches(exchange) called with: " + exchange);
             body = exchange.getIn().getBody(String.class);
-            return (null != body) && (body.equals("Wobble"));
+            return null != body && body.equals("Wobble");
         }
 
     }

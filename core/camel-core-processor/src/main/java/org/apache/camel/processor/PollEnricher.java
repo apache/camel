@@ -303,7 +303,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
 
         try {
-            if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
+            if (!isAggregateOnException() && resourceExchange != null && resourceExchange.isFailed()) {
                 // copy resource exchange onto original exchange (preserving pattern)
                 // and preserve redelivery headers
                 copyResultsPreservePattern(exchange, resourceExchange);
