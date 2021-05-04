@@ -31,8 +31,6 @@ import java.util.Set;
 /**
  * Jsoner provides JSON utilities for escaping strings to be JSON compatible, thread safe parsing (RFC 4627) JSON
  * strings, and serializing data to strings in JSON format.
- *
- * @since 2.0.0
  */
 public final class Jsoner {
     /** Flags to tweak the behavior of the primary deserialization method. */
@@ -509,9 +507,9 @@ public final class Jsoner {
                      * but could be mistaken by people reading it for a JSON
                      * relevant character.
                      */
-                    if (((character >= '\u0000') && (character <= '\u001F'))
-                            || ((character >= '\u007F') && (character <= '\u009F'))
-                            || ((character >= '\u2000') && (character <= '\u20FF'))) {
+                    if (character >= '\u0000' && character <= '\u001F'
+                            || character >= '\u007F' && character <= '\u009F'
+                            || character >= '\u2000' && character <= '\u20FF') {
                         final String characterHexCode = Integer.toHexString(character);
                         builder.append("\\u");
                         for (int k = 0; k < (4 - characterHexCode.length()); k++) {
@@ -592,7 +590,7 @@ public final class Jsoner {
     }
 
     public static String prettyPrint(final String printable, final int spaces, final int depth) {
-        if ((spaces > 10) || (spaces < 2)) {
+        if (spaces > 10 || spaces < 2) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
         final StringBuilder indentation = new StringBuilder("");
