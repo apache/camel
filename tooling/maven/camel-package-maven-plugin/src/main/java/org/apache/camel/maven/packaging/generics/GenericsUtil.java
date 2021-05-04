@@ -303,7 +303,7 @@ public final class GenericsUtil {
     }
 
     private static boolean isNotBound(final Type... bounds) {
-        return bounds == null || bounds.length == 0 || (bounds.length == 1 && Object.class == bounds[0]);
+        return bounds == null || bounds.length == 0 || bounds.length == 1 && Object.class == bounds[0];
     }
 
     private static boolean isAssignableFrom(boolean isDelegateOrEvent, TypeVariable<?> injectionPointType, Type beanType) {
@@ -344,8 +344,8 @@ public final class GenericsUtil {
             boolean isAssignable = false;
             for (Type beanSupertype : beanTypeClosure) {
                 if (isAssignableFrom(isDelegateOrEvent, false, bounds, beanSupertype)
-                        || (Class.class.isInstance(bounds) && ParameterizedType.class.isInstance(beanSupertype)
-                                && bounds == ParameterizedType.class.cast(beanSupertype).getRawType())) {
+                        || Class.class.isInstance(bounds) && ParameterizedType.class.isInstance(beanSupertype)
+                                && bounds == ParameterizedType.class.cast(beanSupertype).getRawType()) {
                     isAssignable = true;
                     break;
                 }
