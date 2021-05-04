@@ -1,6 +1,6 @@
 * xref:index.adoc[FAQ]
 ** xref:can-i-get-commercial-support.adoc[Can I get commercial support?]
-** xref:ROOT:support.adoc[How can I get help?]
+** link:/community/support/[How can I get help?]
 ** xref:how-can-i-get-the-source-code.adoc[How can I get the source code?]
 ** xref:how-does-camel-compare-to-mule.adoc[How does Camel compare to Mule?]
 ** xref:how-does-camel-compare-to-servicemix.adoc[How does Camel compare to ServiceMix?]

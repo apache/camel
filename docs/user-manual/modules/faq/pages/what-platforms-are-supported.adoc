@@ -7,7 +7,7 @@
 
 We regularly test Camel on Linux, Windows and OS X. If you have a
 platform that is not listed contact one of the companies that provide
-xref:ROOT:support.adoc[commercial support].
+link:/community/support/[commercial support].
 
 You can have a look at our builds by looking at the following CI Server jobs
 
