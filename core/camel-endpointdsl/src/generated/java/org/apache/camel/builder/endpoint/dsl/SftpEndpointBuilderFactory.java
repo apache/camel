@@ -2342,6 +2342,24 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of key exchange protocols that will be
+         * used in order of preference. Possible cipher names are defined by
+         * JCraft JSCH. Some examples include:
+         * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyExchangeProtocols the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder keyExchangeProtocols(
+                String keyExchangeProtocols) {
+            doSetProperty("keyExchangeProtocols", keyExchangeProtocols);
+            return this;
+        }
+        /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
@@ -4280,6 +4298,24 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of key exchange protocols that will be
+         * used in order of preference. Possible cipher names are defined by
+         * JCraft JSCH. Some examples include:
+         * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyExchangeProtocols the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder keyExchangeProtocols(
+                String keyExchangeProtocols) {
+            doSetProperty("keyExchangeProtocols", keyExchangeProtocols);
+            return this;
+        }
+        /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
          * 
@@ -5727,6 +5763,24 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder ciphers(String ciphers) {
             doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Set a comma separated list of key exchange protocols that will be
+         * used in order of preference. Possible cipher names are defined by
+         * JCraft JSCH. Some examples include:
+         * diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1,diffie-hellman-group14-sha1, diffie-hellman-group-exchange-sha256,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyExchangeProtocols the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder keyExchangeProtocols(
+                String keyExchangeProtocols) {
+            doSetProperty("keyExchangeProtocols", keyExchangeProtocols);
             return this;
         }
         /**

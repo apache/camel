@@ -111,6 +111,22 @@ public interface AtlasmapComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * The URI of the properties file which is used for AtlasContextFactory
+         * initialization.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param propertiesFile the value to set
+         * @return the dsl builder
+         */
+        default AtlasmapComponentBuilder propertiesFile(
+                java.lang.String propertiesFile) {
+            doSetProperty("propertiesFile", propertiesFile);
+            return this;
+        }
     }
 
     class AtlasmapComponentBuilderImpl
@@ -131,6 +147,7 @@ public interface AtlasmapComponentBuilderFactory {
             case "lazyStartProducer": ((AtlasMapComponent) component).setLazyStartProducer((boolean) value); return true;
             case "atlasContextFactory": ((AtlasMapComponent) component).setAtlasContextFactory((io.atlasmap.api.AtlasContextFactory) value); return true;
             case "autowiredEnabled": ((AtlasMapComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "propertiesFile": ((AtlasMapComponent) component).setPropertiesFile((java.lang.String) value); return true;
             default: return false;
             }
         }

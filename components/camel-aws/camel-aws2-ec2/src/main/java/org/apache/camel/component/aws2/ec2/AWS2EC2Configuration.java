@@ -56,6 +56,8 @@ public class AWS2EC2Configuration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
 
     public Ec2Client getAmazonEc2Client() {
         return amazonEc2Client;
@@ -191,6 +193,18 @@ public class AWS2EC2Configuration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    /**
+     * Set whether the EC2 client should expect to load credentials through a default credentials provider or to expect
+     * static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     // *************************************************

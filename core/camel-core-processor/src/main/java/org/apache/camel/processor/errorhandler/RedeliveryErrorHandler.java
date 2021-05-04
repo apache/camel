@@ -1357,8 +1357,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
                 if (!newException && shouldRedeliver) {
                     if (currentRedeliveryPolicy.isLogRetryAttempted()) {
-                        if ((currentRedeliveryPolicy.getRetryAttemptedLogInterval() > 1)
-                                && (redeliveryCounter % currentRedeliveryPolicy.getRetryAttemptedLogInterval()) != 0) {
+                        if (currentRedeliveryPolicy.getRetryAttemptedLogInterval() > 1
+                                && redeliveryCounter % currentRedeliveryPolicy.getRetryAttemptedLogInterval() != 0) {
                             // do not log retry attempt because it is excluded by the retryAttemptedLogInterval
                             return;
                         }

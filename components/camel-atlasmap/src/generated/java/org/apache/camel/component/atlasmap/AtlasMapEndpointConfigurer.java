@@ -27,8 +27,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "propertiesfile":
-        case "propertiesFile": target.setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcemapname":
         case "sourceMapName": target.setSourceMapName(property(camelContext, java.lang.String.class, value)); return true;
         case "targetmapmode":
@@ -48,8 +46,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentCache": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "propertiesfile":
-        case "propertiesFile": return java.lang.String.class;
         case "sourcemapname":
         case "sourceMapName": return java.lang.String.class;
         case "targetmapmode":
@@ -70,8 +66,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentCache": return target.isContentCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "propertiesfile":
-        case "propertiesFile": return target.getPropertiesFile();
         case "sourcemapname":
         case "sourceMapName": return target.getSourceMapName();
         case "targetmapmode":

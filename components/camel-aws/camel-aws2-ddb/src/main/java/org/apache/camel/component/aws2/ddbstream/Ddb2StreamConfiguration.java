@@ -73,6 +73,11 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam(description = " Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false",
+              description = "Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect "
+                            +
+                            " static credentials to be passed in.")
+    private boolean useDefaultCredentialsProvider;
 
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {
         return amazonDynamoDbStreamsClient;
@@ -184,6 +189,14 @@ public class Ddb2StreamConfiguration implements Cloneable {
 
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     // *************************************************

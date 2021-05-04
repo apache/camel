@@ -210,6 +210,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             JSch.setConfig(ciphers);
         }
 
+        if (isNotEmpty(sftpConfig.getKeyExchangeProtocols())) {
+            LOG.debug("Using KEX: {}", sftpConfig.getKeyExchangeProtocols());
+            JSch.setConfig("kex", sftpConfig.getKeyExchangeProtocols());
+        }
+
         if (isNotEmpty(sftpConfig.getPrivateKeyFile())) {
             LOG.debug("Using private keyfile: {}", sftpConfig.getPrivateKeyFile());
             if (isNotEmpty(sftpConfig.getPrivateKeyPassphrase())) {

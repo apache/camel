@@ -239,7 +239,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         // setting the appropriate Object Model, it is not wise to allow this in
         // XML because the order of invocation of the setters by JAXB may cause
         // undeterministic behaviour
-        if ((ObjectHelper.isNotEmpty(factoryRef) || ObjectHelper.isNotEmpty(objectModel)) && (saxon != null)) {
+        if ((ObjectHelper.isNotEmpty(factoryRef) || ObjectHelper.isNotEmpty(objectModel)) && saxon != null) {
             throw new IllegalArgumentException(
                     "The saxon attribute cannot be set on the xpath element if any of the following is also set: factory, objectModel"
                                                + this);

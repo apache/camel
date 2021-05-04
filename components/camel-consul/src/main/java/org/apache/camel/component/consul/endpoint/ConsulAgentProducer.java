@@ -18,8 +18,10 @@ package org.apache.camel.component.consul.endpoint;
 
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.spi.InvokeOnHeader;
 
@@ -47,6 +49,17 @@ public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClien
     @InvokeOnHeader("AGENT")
     public Object invokeAgent(Message message) throws Exception {
         return getClient().getAgent();
+    }
+
+    @InvokeOnHeader("REGISTER")
+    public void invokeRegister(Message message) throws Exception {
+        getClient().register(message.getMandatoryBody(Registration.class));
+    }
+
+    @InvokeOnHeader("DEREGISTER")
+    public void invokeDeregister(Message message) throws Exception {
+        getClient().deregister(getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE_ID, String.class),
+                buildQueryOptions(message, getConfiguration()));
     }
 
 }

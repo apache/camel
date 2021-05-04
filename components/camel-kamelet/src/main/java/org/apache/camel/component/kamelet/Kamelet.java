@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Predicate;
@@ -134,9 +134,8 @@ public final class Kamelet {
 
         // there must be at least one sink
         boolean sink = false;
-        Iterator<ToDefinition> it = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
-        while (it.hasNext()) {
-            ToDefinition to = it.next();
+        Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
+        for (ToDefinition to : col) {
             if (to.getEndpointUri().startsWith("kamelet:sink") || to.getEndpointUri().startsWith("kamelet://sink")) {
                 to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
                 sink = true;

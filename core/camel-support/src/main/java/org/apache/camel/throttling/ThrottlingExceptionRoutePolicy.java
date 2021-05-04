@@ -220,7 +220,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         logState();
         // failures exceed the threshold
         // AND the last of those failures occurred within window
-        if ((failures.get() >= failureThreshold) && (lastFailure >= System.currentTimeMillis() - failureWindow)) {
+        if (failures.get() >= failureThreshold && lastFailure >= System.currentTimeMillis() - failureWindow) {
             output = true;
         }
 

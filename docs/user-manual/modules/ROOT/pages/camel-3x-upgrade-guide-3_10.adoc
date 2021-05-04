@@ -15,6 +15,12 @@ functional interface methods take the current `Exchange` as additional parameter
 to allow for content-based filtering of service candidates. `RibbonServiceLoadBalancer` 
 has no notion of a current exchange, service filters therefore receive a dummy exchange when used with Ribbon.
 
+The two methods `filterTypeInOutputs` on `org.apache.camel.model.ProcessorDefinitionHelper` has changed
+to return `Collection` instead of `Iterator`.
+
+The annotation `@Consume` has removed its target for field/constructor injection as the `@Consume` is only to be used on methods.
+The annotations `@Produce` and `@EndpointInject` has removed its target for constructor injection as that is not supported (Camel only does bean post processing)
+
 === camel-scheduler
 
 The option `concurrentTasks` has been renamed to `poolSize` to better reflect its purpose.
@@ -25,6 +31,12 @@ The option configures the pool size of the scheduled thread pool used by the sch
 
 If the scheduler thread is being blocked by anywhere in the downstream routing, and you want the scheduler
 to schedule with a fixed interval, you can use the Threads EIP as queue for pending tasks.
+
+=== camel-jdbc
+
+The `camel-jdbc` component no longer depends on Spring Framework, instead a new `camel-spring-jdbc` component
+has been created. You should use `camel-spring-jdbc` if you use Spring and need Spring Transaction support.
+The `camel-jdbc` is using plain Java JDBC API only.
 
 === camel-jsonpath
 

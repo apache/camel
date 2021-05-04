@@ -131,25 +131,25 @@ if you would prefer to do it that way.
 
 Install the command line utilities on linux
 
-[source,java]
+[source,bash]
 ---------------------
 apt-get install gnupg
 ---------------------
 Create your keyring, entering a secure password
 
-[source,java]
+[source,bash]
 -------------
 gpg --gen-key
 -------------
 If you need to import someone elses public key so that you can encrypt a file for them.
 
-[source,java]
+[source,bash]
 --------------------------
 gpg --import <filename.key
 --------------------------
 The following files should now exist and can be used to run the example
 
-[source,java]
+[source,bash]
 -----------------------------------------------
 ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 -----------------------------------------------
@@ -263,7 +263,7 @@ from("direct:start")
 
 == Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
-*An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
+An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
 have a primary key and sub-keys. The usage of the keys is indicated by
 the so called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
 Flags]. For example, you can have a primary key with two sub-keys; the
@@ -277,7 +277,7 @@ primary key and its sub-keys have the same User IDs.
 
 == Support of Custom Key Accessors
 
-*You can implement custom key accessors for encryption/signing. The
+You can implement custom key accessors for encryption/signing. The
 above PGPDataFormat class selects in a certain predefined way the keys
 which should be used for signing/encryption or verifying/decryption. If
 you have special requirements how your keys should be selected you

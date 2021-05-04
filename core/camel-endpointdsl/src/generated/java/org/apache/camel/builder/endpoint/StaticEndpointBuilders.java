@@ -1877,6 +1877,71 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure CosmosDB (camel-azure-cosmosdb)
+     * Azure Cosmos DB is Microsofts globally distributed, multi-model database
+     * service for operational and analytics workloads. It offers
+     * multi-mastering feature by automatically scaling throughput, compute, and
+     * storage. This component interacts with Azure CosmosDB through Azure SQL
+     * API
+     * 
+     * Category: cloud,database
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
+     * 
+     * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
+     * 
+     * Path parameter: databaseName
+     * The name of the Cosmos database that component should connect to. In case
+     * you are producing data and have createDatabaseIfNotExists=true, the
+     * component will automatically auto create a Cosmos database.
+     * 
+     * Path parameter: containerName
+     * The name of the Cosmos container that component should connect to. In
+     * case you are producing data and have createContainerIfNotExists=true, the
+     * component will automatically auto create a Cosmos container.
+     * 
+     * @param path databaseName/containerName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory.endpointBuilder("azure-cosmosdb", path);
+    }
+    /**
+     * Azure CosmosDB (camel-azure-cosmosdb)
+     * Azure Cosmos DB is Microsofts globally distributed, multi-model database
+     * service for operational and analytics workloads. It offers
+     * multi-mastering feature by automatically scaling throughput, compute, and
+     * storage. This component interacts with Azure CosmosDB through Azure SQL
+     * API
+     * 
+     * Category: cloud,database
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
+     * 
+     * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
+     * 
+     * Path parameter: databaseName
+     * The name of the Cosmos database that component should connect to. In case
+     * you are producing data and have createDatabaseIfNotExists=true, the
+     * component will automatically auto create a Cosmos database.
+     * 
+     * Path parameter: containerName
+     * The name of the Cosmos container that component should connect to. In
+     * case you are producing data and have createContainerIfNotExists=true, the
+     * component will automatically auto create a Cosmos container.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path databaseName/containerName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service
@@ -13661,6 +13726,55 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Spring JDBC (camel-spring-jdbc)
+     * Access databases through SQL and JDBC with Spring Transaction support.
+     * 
+     * Category: database,sql
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-spring-jdbc
+     * 
+     * Syntax: <code>spring-jdbc:dataSourceName</code>
+     * 
+     * Path parameter: dataSourceName (required)
+     * Name of DataSource to lookup in the Registry. If the name is dataSource
+     * or default, then Camel will attempt to lookup a default DataSource from
+     * the registry, meaning if there is a only one instance of DataSource
+     * found, then this DataSource will be used.
+     * 
+     * @param path dataSourceName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SpringJdbcEndpointBuilderFactory.SpringJdbcEndpointBuilder springJdbc(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SpringJdbcEndpointBuilderFactory.endpointBuilder("spring-jdbc", path);
+    }
+    /**
+     * Spring JDBC (camel-spring-jdbc)
+     * Access databases through SQL and JDBC with Spring Transaction support.
+     * 
+     * Category: database,sql
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-spring-jdbc
+     * 
+     * Syntax: <code>spring-jdbc:dataSourceName</code>
+     * 
+     * Path parameter: dataSourceName (required)
+     * Name of DataSource to lookup in the Registry. If the name is dataSource
+     * or default, then Camel will attempt to lookup a default DataSource from
+     * the registry, meaning if there is a only one instance of DataSource
+     * found, then this DataSource will be used.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path dataSourceName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.SpringJdbcEndpointBuilderFactory.SpringJdbcEndpointBuilder springJdbc(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.SpringJdbcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spring LDAP (camel-spring-ldap)

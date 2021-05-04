@@ -27,6 +27,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.apache.camel.component.jms.QueueBrowseStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
@@ -261,4 +262,29 @@ public class ActiveMQComponent extends JmsComponent {
         return answer;
     }
 
+    @Override
+    protected JmsEndpoint createTemporaryTopicEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
+        return new ActiveMQTemporaryTopicEndpoint(uri, component, subject, configuration);
+    }
+
+    @Override
+    protected JmsEndpoint createTopicEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration) {
+        return new ActiveMQEndpoint(uri, component, subject, true, configuration);
+    }
+
+    @Override
+    protected JmsEndpoint createTemporaryQueueEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
+        return new ActiveMQTemporaryQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
+    }
+
+    @Override
+    protected JmsEndpoint createQueueEndpoint(
+            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
+        return new ActiveMQQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
+    }
 }

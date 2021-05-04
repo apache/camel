@@ -34,7 +34,7 @@
   <properties>
     <abdera-version>1.1.3</abdera-version>
     <activemq-artemis-version>2.17.0</activemq-artemis-version>
-    <activemq-version>5.16.1</activemq-version>
+    <activemq-version>5.16.2</activemq-version>
     <aether-version>1.0.2.v20150114</aether-version>
     <ahc-version>2.12.2</ahc-version>
     <android-annotations-version>4.1.1.4</android-annotations-version>
@@ -70,7 +70,7 @@
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
-    <aws-java-sdk2-version>2.16.46</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.16.54</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -83,8 +83,8 @@
     <brave-zipkin-version>5.13.3</brave-zipkin-version>
     <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.5</c3p0-version>
-    <caffeine-version>2.9.0</caffeine-version>
-    <californium-version>2.6.2</californium-version>
+    <caffeine-version>2.9.1</caffeine-version>
+    <californium-version>2.6.3</californium-version>
     <camel.osgi.activator></camel.osgi.activator>
     <camel.osgi.dynamic></camel.osgi.dynamic>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
@@ -122,7 +122,7 @@
     <cglib-version>3.2.12</cglib-version>
     <chunk-templates-version>3.6.1</chunk-templates-version>
     <citrus-version>2.8.0</citrus-version>
-    <classgraph-version>4.8.52</classgraph-version>
+    <classgraph-version>4.8.105</classgraph-version>
     <cmis-version>1.1.0</cmis-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <cometd-java-client-version>4.0.4</cometd-java-client-version>
@@ -152,7 +152,7 @@
     <compiler.fork>true</compiler.fork>
     <compress-lzf-version>1.0.4</compress-lzf-version>
     <consul-client-version>1.4.2</consul-client-version>
-    <corda-version>4.7</corda-version>
+    <corda-version>4.8</corda-version>
     <couchbase-client-version>3.1.4</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
     <cxf-codegen-plugin-version>3.4.3</cxf-codegen-plugin-version>
@@ -171,7 +171,7 @@
     <derby-version>10.14.2.0</derby-version>
     <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
     <directory-watcher-version>0.15.0</directory-watcher-version>
-    <disruptor-version>3.4.3</disruptor-version>
+    <disruptor-version>3.4.4</disruptor-version>
     <djl-mxnet-native-version>1.7.0-backport</djl-mxnet-native-version>
     <djl-pytorch-native-version>1.7.1</djl-pytorch-native-version>
     <djl-tensorflow-native-version>2.3.1</djl-tensorflow-native-version>
@@ -320,7 +320,7 @@
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-    <jbpm-version>7.52.0.Final</jbpm-version>
+    <jbpm-version>7.53.0.Final</jbpm-version>
     <jcache-bundle-version>1.1.0_1</jcache-bundle-version>
     <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
@@ -339,14 +339,14 @@
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
     <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
-    <jgroups-version>4.2.11.Final</jgroups-version>
+    <jgroups-version>4.2.14.Final</jgroups-version>
     <jing-version>20030619</jing-version>
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
     <jmh-version>1.26</jmh-version>
-    <jnats-version>2.10.0</jnats-version>
+    <jnats-version>2.11.0</jnats-version>
     <jodatime2-bundle-version>2.10.6</jodatime2-bundle-version>
-    <johnzon-version>1.2.10</johnzon-version>
+    <johnzon-version>1.2.11</johnzon-version>
     <jolokia-version>1.6.2</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
     <jool-version>0.9.12</jool-version>
@@ -404,7 +404,7 @@
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-model-version>3.2.5</maven-model-version>
-    <maven-owasp-plugin-version>6.1.5</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>6.1.6</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.0</maven-plugin-plugin-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -436,7 +436,7 @@
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.7</mustache-java-version>
     <mvel-version>2.4.12.Final</mvel-version>
-    <mybatis-version>3.5.6</mybatis-version>
+    <mybatis-version>3.5.7</mybatis-version>
     <narayana-version>5.11.0.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
@@ -485,7 +485,7 @@
     <reactive-streams-version>1.0.3</reactive-streams-version>
     <reactor-netty-version>1.0.2</reactor-netty-version>
     <reactor-version>3.4.5</reactor-version>
-    <redisson-version>3.15.3</redisson-version>
+    <redisson-version>3.15.4</redisson-version>
     <rescu-version>2.0.4</rescu-version>
     <resilience4j-version>1.7.0</resilience4j-version>
     <rest-assured-version>4.3.3</rest-assured-version>

@@ -31,7 +31,7 @@ import org.springframework.jms.core.JmsOperations;
  * An endpoint for a JMS Queue which is also browsable
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
-public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
+public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoint, BrowsableEndpoint {
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 

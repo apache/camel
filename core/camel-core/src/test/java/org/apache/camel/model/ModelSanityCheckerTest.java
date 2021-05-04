@@ -76,7 +76,7 @@ public class ModelSanityCheckerTest {
 
                 // only one of those 3 is allowed, so check that we don't have
                 // 2+ of them
-                if ((attribute && element) || (attribute && elementRef) || (element && elementRef)) {
+                if (attribute && element || attribute && elementRef || element && elementRef) {
                     fail("Class " + clazz.getName() + " has field " + field.getName()
                          + " which has 2+ annotations that are not allowed together.");
                 }

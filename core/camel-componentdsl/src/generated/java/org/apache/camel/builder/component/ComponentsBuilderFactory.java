@@ -599,6 +599,23 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2TranslateComponentBuilderFactory.aws2Translate();
     }
     /**
+     * Azure CosmosDB (camel-azure-cosmosdb)
+     * Azure Cosmos DB is Microsofts globally distributed, multi-model database
+     * service for operational and analytics workloads. It offers
+     * multi-mastering feature by automatically scaling throughput, compute, and
+     * storage. This component interacts with Azure CosmosDB through Azure SQL
+     * API
+     * 
+     * Category: cloud,database
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureCosmosdbComponentBuilderFactory.AzureCosmosdbComponentBuilder azureCosmosdb() {
+        return org.apache.camel.builder.component.dsl.AzureCosmosdbComponentBuilderFactory.azureCosmosdb();
+    }
+    /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
      * protocol. Azure EventHubs is a highly scalable publish-subscribe service
@@ -4004,6 +4021,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.SpringIntegrationComponentBuilder springIntegration() {
         return org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.springIntegration();
+    }
+    /**
+     * Spring JDBC (camel-spring-jdbc)
+     * Access databases through SQL and JDBC with Spring Transaction support.
+     * 
+     * Category: database,sql
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-spring-jdbc
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SpringJdbcComponentBuilderFactory.SpringJdbcComponentBuilder springJdbc() {
+        return org.apache.camel.builder.component.dsl.SpringJdbcComponentBuilderFactory.springJdbc();
     }
     /**
      * Spring LDAP (camel-spring-ldap)

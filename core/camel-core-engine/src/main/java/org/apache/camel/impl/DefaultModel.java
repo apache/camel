@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -29,6 +28,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -39,6 +39,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
@@ -282,6 +283,13 @@ public class DefaultModel implements Model {
             def.setId(routeId);
         }
         def.setTemplateParameters(prop);
+        // assign ids to the routes and validate that the id's are all unique
+        String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions);
+        if (duplicate != null) {
+            throw new FailedToCreateRouteFromTemplateException(
+                    routeId, routeTemplateId,
+                    "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+        }
         addRouteDefinition(def);
         return def.getId();
     }
@@ -434,10 +442,9 @@ public class DefaultModel implements Model {
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
-            Iterator<ProcessorDefinition> it
+            Collection<ProcessorDefinition> col
                     = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
-            while (it.hasNext()) {
-                ProcessorDefinition<?> proc = it.next();
+            for (ProcessorDefinition proc : col) {
                 if (id.equals(proc.getId())) {
                     return proc;
                 }

@@ -35,6 +35,7 @@ values from OS environment variables, JVM system properties, or the
 service idiom
 * *Camel 2.14.1* Using custom functions, which can be plugged into the
 property component
+* *Camel 3.9* Marking a property as optional, meaning that a property is not set if the property key does not exists
 
 [[UsingPropertyPlaceholder-Format]]
 == Format
@@ -139,6 +140,20 @@ Where `APP_HOME` is an OS environment variable.
 You can have multiple placeholders in the same location, such as:
 
 location=file:${env:APP_HOME}/etc/${prop.name}.properties
+
+== Using optional property placeholders
+
+Camel's elaborate property placeholder feature now supports optional placeholders,
+which is defined by a `?` (question mark) as prefix for the key name, eg
+
+    {{?myBufferSize}}
+
+And Camel understands when you use optional parameters when defining Camel endpoints, eg:
+
+    file:foo?bufferSize={{?myBufferSize}}
+
+Then the `bufferSize` option will only be configured if a placeholder exists.
+Otherwise the option will not be set on the endpoint, which allows to use any default value instead.
 
 [[UsingPropertyPlaceholder-ConfiguringinJavaDSL]]
 == Configuring in Java DSL

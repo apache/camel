@@ -28,4 +28,7 @@ public interface Jt400Constants {
     public static final String MESSAGE_ID = "CamelJt400MessageID";
     public static final String MESSAGE_FILE = "CamelJt400MessageFile";
     public static final String MESSAGE_TYPE = "CamelJt400MessageType";
+    public static final String MESSAGE_DFT_RPY = "CamelJt400MessageDefaultReply";
+    public static final String MESSAGE_REPLYTO_KEY = "CamelJt400MessageReplyToKey";
+
 }

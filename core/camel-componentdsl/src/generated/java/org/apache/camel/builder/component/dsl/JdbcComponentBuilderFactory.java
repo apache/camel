@@ -106,6 +106,25 @@ public interface JdbcComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * To use a custom strategy for working with connections. Do not use a
+         * custom strategy when using the spring-jdbc component because a
+         * special Spring ConnectionStrategy is used by default to support
+         * Spring Transactions.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jdbc.ConnectionStrategy&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionStrategy the value to set
+         * @return the dsl builder
+         */
+        default JdbcComponentBuilder connectionStrategy(
+                org.apache.camel.component.jdbc.ConnectionStrategy connectionStrategy) {
+            doSetProperty("connectionStrategy", connectionStrategy);
+            return this;
+        }
     }
 
     class JdbcComponentBuilderImpl
@@ -126,6 +145,7 @@ public interface JdbcComponentBuilderFactory {
             case "dataSource": ((JdbcComponent) component).setDataSource((javax.sql.DataSource) value); return true;
             case "lazyStartProducer": ((JdbcComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JdbcComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "connectionStrategy": ((JdbcComponent) component).setConnectionStrategy((org.apache.camel.component.jdbc.ConnectionStrategy) value); return true;
             default: return false;
             }
         }

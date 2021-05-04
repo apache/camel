@@ -38,7 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.JSonSchemaResolver;
@@ -55,7 +54,6 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -1308,15 +1306,18 @@ public abstract class AbstractCamelCatalog {
         Object context = null;
         Object instance = null;
         Class<?> clazz = null;
+
         try {
             // need a simple camel context for the simple language parser to be able to parse
             clazz = classLoader.loadClass("org.apache.camel.impl.engine.SimpleCamelContext");
             context = clazz.getDeclaredConstructor(boolean.class).newInstance(false);
             clazz = classLoader.loadClass("org.apache.camel.language.simple.SimpleLanguage");
             instance = clazz.getDeclaredConstructor().newInstance();
-            instance.getClass().getMethod("setCamelContext", CamelContext.class).invoke(instance, context);
+            clazz = classLoader.loadClass("org.apache.camel.CamelContext");
+            instance.getClass().getMethod("setCamelContext", clazz).invoke(instance, context);
         } catch (Exception e) {
-            // ignore
+            clazz = null;
+            answer.setError(e.getMessage());
         }
 
         if (clazz != null && context != null && instance != null) {
@@ -1526,7 +1527,7 @@ public abstract class AbstractCamelCatalog {
     private static String stripOptionalPrefixFromName(Map<String, BaseOptionModel> rows, String name) {
         for (BaseOptionModel row : rows.values()) {
             String optionalPrefix = row.getOptionalPrefix();
-            if (ObjectHelper.isNotEmpty(optionalPrefix) && name.startsWith(optionalPrefix)) {
+            if (optionalPrefix != null && !optionalPrefix.isEmpty() && name.startsWith(optionalPrefix)) {
                 // try again
                 return stripOptionalPrefixFromName(rows, name.substring(optionalPrefix.length()));
             } else {
@@ -1541,7 +1542,7 @@ public abstract class AbstractCamelCatalog {
     private static String getPropertyNameFromNameWithPrefix(Map<String, BaseOptionModel> rows, String name) {
         for (BaseOptionModel row : rows.values()) {
             String prefix = row.getPrefix();
-            if (ObjectHelper.isNotEmpty(prefix) && name.startsWith(prefix)) {
+            if (prefix != null && !prefix.isEmpty() && name.startsWith(prefix)) {
                 return row.getName();
             }
         }

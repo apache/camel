@@ -24,8 +24,8 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
         Set<String> props = new HashSet<>(15);
         props.add("recommendedCipherSuitesOnly");
         props.add("trustedRpkStore");
-        props.add("sslContextParameters");
         props.add("exchangePattern");
+        props.add("sslContextParameters");
         props.add("publicKey");
         props.add("uri");
         props.add("privateKey");
@@ -34,11 +34,13 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("cipherSuites");
         props.add("pskStore");
         props.add("alias");
-        props.add("clientAuthentication");
         props.add("coapMethodRestrict");
+        props.add("clientAuthentication");
         props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("privateKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override

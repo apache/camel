@@ -47,7 +47,7 @@
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
-        <activemq-version>5.16.1</activemq-version>
+        <activemq-version>5.16.2</activemq-version>
         <activemq-artemis-version>2.17.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.2</ahc-version>
@@ -82,7 +82,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
-        <aws-java-sdk2-version>2.16.46</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.16.54</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -96,8 +96,8 @@
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
-        <caffeine-version>2.9.0</caffeine-version>
-        <californium-version>2.6.2</californium-version>
+        <caffeine-version>2.9.1</caffeine-version>
+        <californium-version>2.6.3</californium-version>
         <cassandra-driver-version>4.11.0</cassandra-driver-version>
         <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
         <cassandra-version>3.11.8</cassandra-version>
@@ -106,7 +106,7 @@
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.6.1</chunk-templates-version>
         <citrus-version>2.8.0</citrus-version>
-        <classgraph-version>4.8.52</classgraph-version>
+        <classgraph-version>4.8.105</classgraph-version>
         <cmis-version>1.1.0</cmis-version>
         <cometd-java-client-version>4.0.4</cometd-java-client-version>
         <cometd-java-server>4.0.4</cometd-java-server>
@@ -135,7 +135,7 @@
         <compress-lzf-version>1.0.4</compress-lzf-version>
         <consul-client-version>1.4.2</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-        <corda-version>4.7</corda-version>
+        <corda-version>4.8</corda-version>
         <couchbase-client-version>3.1.4</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
         <cxf-version>3.4.3</cxf-version>
@@ -150,7 +150,7 @@
         <derby-version>10.14.2.0</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.15.0</directory-watcher-version>
-        <disruptor-version>3.4.3</disruptor-version>
+        <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.3.1</dnsjava-version>
         <djl-version>0.10.0</djl-version>
         <djl-mxnet-native-version>1.7.0-backport</djl-mxnet-native-version>
@@ -278,7 +278,7 @@
         <java-ewah-version>1.1.6</java-ewah-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>1.63.0</java-util-version>
-        <jnats-version>2.10.0</jnats-version>
+        <jnats-version>2.11.0</jnats-version>
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -298,7 +298,7 @@
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
-        <jbpm-version>7.52.0.Final</jbpm-version>
+        <jbpm-version>7.53.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
@@ -320,7 +320,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.1</jettison-version>
         <jgit-version>5.11.0.202103091610-r</jgit-version>
-        <jgroups-version>4.2.11.Final</jgroups-version>
+        <jgroups-version>4.2.14.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -336,7 +336,7 @@
         <jool-version>0.9.12</jool-version>
         <jooq-version>3.14.9</jooq-version>
         <joor-version>0.9.13</joor-version>
-        <johnzon-version>1.2.10</johnzon-version>
+        <johnzon-version>1.2.11</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.11</jslt-version>
@@ -385,7 +385,7 @@
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.40</maven-checkstyle-version>
-        <maven-owasp-plugin-version>6.1.5</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>6.1.6</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
@@ -422,7 +422,7 @@
         <msv-version>2013.6.1</msv-version>
         <mustache-java-version>0.9.7</mustache-java-version>
         <mvel-version>2.4.12.Final</mvel-version>
-        <mybatis-version>3.5.6</mybatis-version>
+        <mybatis-version>3.5.7</mybatis-version>
         <narayana-version>5.11.0.Final</narayana-version>
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
@@ -472,7 +472,7 @@
         <reactive-streams-version>1.0.3</reactive-streams-version>
         <reactor-version>3.4.5</reactor-version>
         <reactor-netty-version>1.0.2</reactor-netty-version>
-        <redisson-version>3.15.3</redisson-version>
+        <redisson-version>3.15.4</redisson-version>
         <rescu-version>2.0.4</rescu-version>
         <resilience4j-version>1.7.0</resilience4j-version>
         <rest-assured-version>4.3.3</rest-assured-version>
@@ -978,6 +978,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-aws2-translate</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-azure-cosmosdb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -2318,6 +2323,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-spring-javaconfig</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-jdbc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -4006,6 +4016,11 @@
                 <plugin>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-javadoc-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
                     <version>${project.version}</version>
                 </plugin>
                 <plugin>

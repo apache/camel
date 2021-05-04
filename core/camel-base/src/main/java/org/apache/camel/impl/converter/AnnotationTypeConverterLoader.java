@@ -391,8 +391,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) && (parameterTypes.length == 1
-                || (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
+        return parameterTypes.length == 1 || parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1]);
     }
 
     protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
@@ -406,9 +405,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidFallbackConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) && (parameterTypes.length == 3
-                || (parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1]))
-                        && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
+        return parameterTypes.length == 3 || parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1])
+                && TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1]);
     }
 
     /**

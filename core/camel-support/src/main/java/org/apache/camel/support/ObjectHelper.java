@@ -111,7 +111,7 @@ public final class ObjectHelper {
             Double rightNum = (Double) rightValue;
             return leftNum.compareTo(rightNum) == 0;
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
-                (leftValue instanceof String && isNumber((String) leftValue))) {
+                leftValue instanceof String && isNumber((String) leftValue)) {
             if (rightValue instanceof Integer) {
                 Integer leftNum = Integer.valueOf((String) leftValue);
                 Integer rightNum = (Integer) rightValue;
@@ -121,7 +121,7 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum) == 0;
             }
-        } else if ((rightValue instanceof String) &&
+        } else if (rightValue instanceof String &&
                 (leftValue instanceof Integer || leftValue instanceof Long)) {
             if (leftValue instanceof Integer) {
                 Integer leftNum = (Integer) leftValue;
@@ -211,7 +211,7 @@ public final class ObjectHelper {
             Double rightNum = (Double) rightValue;
             return leftNum.compareTo(rightNum);
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
-                (leftValue instanceof String && isNumber((String) leftValue))) {
+                leftValue instanceof String && isNumber((String) leftValue)) {
             if (rightValue instanceof Integer) {
                 Integer leftNum = Integer.valueOf((String) leftValue);
                 Integer rightNum = (Integer) rightValue;
@@ -221,7 +221,7 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum);
             }
-        } else if ((rightValue instanceof String) &&
+        } else if (rightValue instanceof String &&
                 (leftValue instanceof Integer || leftValue instanceof Long)) {
             if (leftValue instanceof Integer) {
                 Integer leftNum = (Integer) leftValue;
@@ -265,7 +265,7 @@ public final class ObjectHelper {
         // as all types can be converted to String which does not work well for comparison
         // as eg "10" < 6 would return true, where as 10 < 6 will return false.
         // if they are both String then it doesn't matter
-        if (rightValue instanceof String && (!(leftValue instanceof String))) {
+        if (rightValue instanceof String && !(leftValue instanceof String)) {
             // if right is String and left is not then flip order (remember to * -1 the result then)
             return typeCoerceCompare(converter, rightValue, leftValue) * -1;
         }

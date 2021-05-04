@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -3575,11 +3574,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
 
-        Iterator<OnCompletionDefinition> it
+        Collection<OnCompletionDefinition> col
                 = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), OnCompletionDefinition.class);
         // check if there is a clash
-        while (it.hasNext()) {
-            OnCompletionDefinition ocd = it.next();
+        for (OnCompletionDefinition ocd : col) {
             if (ocd.isRouteScoped()) {
                 throw new IllegalArgumentException("Only 1 onCompletion is allowed per route.");
             }

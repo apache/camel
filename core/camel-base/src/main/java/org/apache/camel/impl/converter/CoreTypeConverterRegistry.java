@@ -154,7 +154,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                             new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
-            } else if (type == Boolean.class && (value instanceof String)) {
+            } else if (type == Boolean.class && value instanceof String) {
                 // String -> Boolean
                 String str = (String) value;
                 // must be 4 or 5 in length
@@ -224,7 +224,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                             new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
-            } else if (type == Boolean.class && (value instanceof String)) {
+            } else if (type == Boolean.class && value instanceof String) {
                 // String -> Boolean
                 String str = (String) value;
                 // must be 4 or 5 in length
@@ -298,7 +298,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                             new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
-            } else if (type == Boolean.class && (value instanceof String)) {
+            } else if (type == Boolean.class && value instanceof String) {
                 // String -> Boolean
                 String str = (String) value;
                 // must be 4 or 5 in length

@@ -178,4 +178,4 @@ To let Camel discover custom sources then register the source into the Camel reg
 
 == See Also
 
-See the example https://github.com/apache/camel-examples/tree/master/examples/camel-example-routetemplate[camel-example-routetemplate].
+See the example https://github.com/apache/camel-examples/tree/master/examples/routetemplate[camel-example-routetemplate].
