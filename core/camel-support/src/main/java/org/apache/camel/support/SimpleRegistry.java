@@ -22,8 +22,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -100,6 +102,11 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
 
     @Override
     public void bind(String id, Class type, Object bean) {
+        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+    }
+
+    @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
         computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
     }
 

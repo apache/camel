@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.function.Supplier;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 
@@ -50,6 +52,8 @@ public interface Registry extends BeanRepository {
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException;
+
+    void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException;
 
     /**
      * Strategy to wrap the value to be stored in the registry.

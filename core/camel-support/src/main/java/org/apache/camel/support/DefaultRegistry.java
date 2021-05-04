@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -49,6 +50,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
     protected CamelContext camelContext;
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
+    protected Registry supplierRegistry = new SupplierRegistry();
 
     /**
      * Creates a default registry that uses {@link SimpleRegistry} as the fallback registry. The fallback registry can
@@ -98,6 +100,20 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
         this.fallbackRegistry = fallbackRegistry;
     }
 
+    /**
+     * Gets the supplier {@link Registry}
+     */
+    public Registry getSupplierRegistry() {
+        return supplierRegistry;
+    }
+
+    /**
+     * To use a custom {@link Registry} for suppliers.
+     */
+    public void setSupplierRegistry(Registry supplierRegistry) {
+        this.supplierRegistry = supplierRegistry;
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -131,7 +147,13 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
     }
 
     @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        supplierRegistry.bind(id, type, bean);
+    }
+
+    @Override
     public Object lookupByName(String name) {
+        Object answer;
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
@@ -144,18 +166,26 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
 
         if (repositories != null) {
             for (BeanRepository r : repositories) {
-                Object answer = r.lookupByName(name);
+                answer = r.lookupByName(name);
                 if (answer != null) {
                     return unwrap(answer);
                 }
             }
         }
-        return fallbackRegistry.lookupByName(name);
+        answer = supplierRegistry.lookupByName(name);
+        if (answer == null) {
+            answer = fallbackRegistry.lookupByName(name);
+        }
+        if (answer != null) {
+            answer = unwrap(answer);
+        }
+        return answer;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T lookupByNameAndType(String name, Class<T> type) {
+        T answer;
         try {
             // Must avoid attempting placeholder resolution when looking up
             // the properties component or else we end up in an infinite loop.
@@ -168,13 +198,21 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
 
         if (repositories != null) {
             for (BeanRepository r : repositories) {
-                T answer = r.lookupByNameAndType(name, type);
+                answer = r.lookupByNameAndType(name, type);
                 if (answer != null) {
                     return (T) unwrap(answer);
                 }
             }
         }
-        return fallbackRegistry.lookupByNameAndType(name, type);
+
+        answer = supplierRegistry.lookupByNameAndType(name, type);
+        if (answer == null) {
+            answer = fallbackRegistry.lookupByNameAndType(name, type);
+        }
+        if (answer != null) {
+            answer = (T) unwrap(answer);
+        }
+        return answer;
     }
 
     @Override
@@ -190,7 +228,11 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
             }
         }
 
-        Map<String, T> found = fallbackRegistry.findByTypeWithName(type);
+        Map<String, T> found = supplierRegistry.findByTypeWithName(type);
+        if (found != null && !found.isEmpty()) {
+            answer.putAll(found);
+        }
+        found = fallbackRegistry.findByTypeWithName(type);
         if (found != null && !found.isEmpty()) {
             answer.putAll(found);
         }
@@ -211,7 +253,11 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
             }
         }
 
-        Set<T> found = fallbackRegistry.findByType(type);
+        Set<T> found = supplierRegistry.findByType(type);
+        if (found != null && !found.isEmpty()) {
+            answer.addAll(found);
+        }
+        found = fallbackRegistry.findByType(type);
         if (found != null && !found.isEmpty()) {
             answer.addAll(found);
         }
@@ -222,9 +268,12 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        if (supplierRegistry instanceof Closeable) {
+            IOHelper.close((Closeable) supplierRegistry);
+        }
         if (fallbackRegistry instanceof Closeable) {
             IOHelper.close((Closeable) fallbackRegistry);
         }
-        ServiceHelper.stopAndShutdownService(fallbackRegistry);
+        ServiceHelper.stopAndShutdownServices(supplierRegistry, fallbackRegistry);
     }
 }
