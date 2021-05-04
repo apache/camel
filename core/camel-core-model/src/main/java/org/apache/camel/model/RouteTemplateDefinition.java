@@ -221,6 +221,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     @FunctionalInterface
     public interface Converter {
+
         /**
          * Default implementation that uses {@link #asRouteDefinition()} to convert a {@link RouteTemplateDefinition} to
          * a {@link RouteDefinition}
@@ -231,14 +232,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
                 return in.asRouteDefinition();
             }
         };
-
-        /**
-         * @deprecated use {@link #apply(RouteTemplateDefinition, Map)}
-         */
-        @Deprecated
-        default RouteDefinition apply(RouteTemplateDefinition in) throws Exception {
-            return apply(in, Collections.emptyMap());
-        }
 
         /**
          * Convert a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.

@@ -19,11 +19,14 @@ package org.apache.camel.builder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 
 /**
  * Fluent builder for adding new routes from route templates.
@@ -34,6 +37,7 @@ public final class TemplatedRouteBuilder {
     private final String routeTemplateId;
     private String routeId;
     private final Map<String, Object> parameters = new HashMap<>();
+    private final Registry localRegistry = new DefaultRegistry();
     private Consumer<RouteTemplateDefinition> handler;
 
     private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
@@ -85,6 +89,41 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
+     * Binds the bean to the template local repository (takes precedence over global beans)
+     *
+     * @param  id                    the id of the bean
+     * @param  bean                  the bean
+     */
+    public TemplatedRouteBuilder bind(String id, Object bean) {
+        localRegistry.bind(id, bean);
+        return this;
+    }
+
+    /**
+     * Binds the bean to the template local repository (takes precedence over global beans)
+     *
+     * @param  id                    the id of the bean
+     * @param  type                  the type of the bean to associate the binding
+     * @param  bean                  the bean
+     */
+    public TemplatedRouteBuilder bind(String id, Class<?> type, Object bean) {
+        localRegistry.bind(id, type, bean);
+        return this;
+    }
+
+    /**
+     * Binds the bean (via a supplier) to the template local repository (takes precedence over global beans)
+     *
+     * @param  id                    the id of the bean
+     * @param  type                  the type of the bean to associate the binding
+     * @param  bean                  the bean
+     */
+    public TemplatedRouteBuilder bind(String id, Class<?> type, Supplier<Object> bean) {
+        localRegistry.bind(id, type, bean);
+        return this;
+    }
+
+    /**
      * Sets a handler which gives access to the route template model that will be used for creating the route. This can
      * be used to do validation. Any changes to the model happens before the route is created and added, however these
      * changes affect future usage of the same template.
@@ -111,6 +150,8 @@ public final class TemplatedRouteBuilder {
                 }
                 handler.accept(def);
             }
+            // TODO: provide local beans from builder (either via new parameter here)
+            // or some way via a new RouteTemplateContext that stores such information
             return camelContext.addRouteFromTemplate(routeId, routeTemplateId, parameters);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
