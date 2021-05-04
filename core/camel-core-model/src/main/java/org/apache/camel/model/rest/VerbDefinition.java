@@ -118,6 +118,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlTransient
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 
+    @XmlAttribute
+    private Boolean deprecated = Boolean.FALSE;
+
     @Override
     public String getShortName() {
         return "verb";
@@ -139,6 +142,22 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         }
 
         route.addOutput(processorDefinition);
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    /**
+     * Sets deprecated flag in openapi
+     */
+    public VerbDefinition deprecated() {
+        this.deprecated = Boolean.TRUE;
+        return this;
+    }
+
+    public void setDeprecated(Boolean deprecated) {
+        this.deprecated = deprecated;
     }
 
     public List<RestOperationParamDefinition> getParams() {
