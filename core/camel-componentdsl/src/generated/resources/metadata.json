@@ -6634,6 +6634,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "SpringJdbcComponentBuilderFactory": {
+    "kind": "component",
+    "name": "spring-jdbc",
+    "title": "Spring JDBC",
+    "description": "Access databases through SQL and JDBC with Spring Transaction support.",
+    "deprecated": false,
+    "firstVersion": "3.10.0",
+    "label": "database,sql",
+    "javaType": "org.apache.camel.component.spring.jdbc.SpringJdbcComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spring-jdbc",
+    "version": "3.10.0-SNAPSHOT",
+    "scheme": "spring-jdbc",
+    "extendsScheme": "",
+    "syntax": "spring-jdbc:dataSourceName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "SpringLdapComponentBuilderFactory": {
     "kind": "component",
     "name": "spring-ldap",

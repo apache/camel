@@ -310,6 +310,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECBuilders,
             org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchBuilders,
             org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationBuilders,
+            org.apache.camel.builder.endpoint.dsl.SpringJdbcEndpointBuilderFactory.SpringJdbcBuilders,
             org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.SpringLdapBuilders,
             org.apache.camel.builder.endpoint.dsl.SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQBuilders,
             org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.SpringWebserviceBuilders,

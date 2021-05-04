@@ -74,7 +74,7 @@ public class JdbcComponent extends DefaultComponent {
 
         Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "statement.");
 
-        JdbcEndpoint jdbc = new JdbcEndpoint(uri, this, dataSource);
+        JdbcEndpoint jdbc = createEndpoint(uri, this, dataSource);
         if (connectionStrategy != null) {
             jdbc.setConnectionStrategy(connectionStrategy);
         }
@@ -83,6 +83,10 @@ public class JdbcComponent extends DefaultComponent {
         setProperties(jdbc, parameters);
 
         return jdbc;
+    }
+
+    protected JdbcEndpoint createEndpoint(String uri, JdbcComponent component, DataSource dataSource) {
+        return new JdbcEndpoint(uri, component, dataSource);
     }
 
     /**

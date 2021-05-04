@@ -4023,6 +4023,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.springIntegration();
     }
     /**
+     * Spring JDBC (camel-spring-jdbc)
+     * Access databases through SQL and JDBC with Spring Transaction support.
+     * 
+     * Category: database,sql
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-spring-jdbc
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SpringJdbcComponentBuilderFactory.SpringJdbcComponentBuilder springJdbc() {
+        return org.apache.camel.builder.component.dsl.SpringJdbcComponentBuilderFactory.springJdbc();
+    }
+    /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
      * 
