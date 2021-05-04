@@ -22,12 +22,56 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.apache.camel.NoSuchBeanException;
+
 /**
- * Used for storing beans that are lazy supplied via a {@link Supplier}.
+ * Used for storing beans that are lazy supplied (on first demand) via a {@link Supplier}.
  *
- * To bind a bean as a supplier, then use the {@link org.apache.camel.spi.Registry#bind(String, Class, Supplier)} method.
+ * To bind a bean as a supplier, then use the {@link org.apache.camel.spi.Registry#bind(String, Class, Supplier)}
+ * method.
  */
 public class SupplierRegistry extends SimpleRegistry {
+
+    @Override
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
+        Map<Class<?>, Object> map = this.get(name);
+        if (map == null) {
+            return null;
+        }
+
+        Object answer = map.get(type);
+        if (answer instanceof Supplier) {
+            // okay then eval the supplier to get the actual value
+            answer = ((Supplier<?>) answer).get();
+            map.put(type, answer);
+        }
+        if (answer == null) {
+            // look for first entry that is the type
+            for (Map.Entry<Class<?>, Object> entry : map.entrySet()) {
+                if (type.isAssignableFrom(entry.getKey())) {
+                    Object value = entry.getValue();
+                    if (value instanceof Supplier) {
+                        // okay then eval the supplier to get the actual value
+                        value = ((Supplier<?>) value).get();
+                        entry.setValue(value);
+                    }
+                    answer = value;
+                    break;
+                }
+            }
+        }
+        if (answer == null) {
+            return null;
+        }
+        try {
+            answer = unwrap(answer);
+            return type.cast(answer);
+        } catch (Throwable e) {
+            String msg = "Found bean: " + name + " in SimpleRegistry: " + this
+                         + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            throw new NoSuchBeanException(name, msg, e);
+        }
+    }
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
@@ -35,7 +79,12 @@ public class SupplierRegistry extends SimpleRegistry {
         for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
             for (Map.Entry<Class<?>, Object> subEntry : entry.getValue().entrySet()) {
                 if (type.isAssignableFrom(subEntry.getKey())) {
-                    Object value = unwrap(subEntry.getValue());
+                    Object value = subEntry.getValue();
+                    if (value instanceof Supplier) {
+                        // okay then eval the supplier to get the actual value
+                        value = ((Supplier<?>) value).get();
+                        subEntry.setValue(value);
+                    }
                     result.add(type.cast(value));
                 }
             }
@@ -49,20 +98,17 @@ public class SupplierRegistry extends SimpleRegistry {
         for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
             for (Map.Entry<Class<?>, Object> subEntry : entry.getValue().entrySet()) {
                 if (type.isAssignableFrom(subEntry.getKey())) {
-                    Object value = unwrap(subEntry.getValue());
+                    Object value = subEntry.getValue();
+                    if (value instanceof Supplier) {
+                        // okay then eval the supplier to get the actual value
+                        value = ((Supplier<?>) value).get();
+                        subEntry.setValue(value);
+                    }
                     result.put(entry.getKey(), type.cast(value));
                 }
             }
         }
         return result;
-    }
-
-    @Override
-    public Object unwrap(Object value) {
-        if (value instanceof Supplier) {
-            value = ((Supplier<?>) value).get();
-        }
-        return value;
     }
 
 }

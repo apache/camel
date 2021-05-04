@@ -56,9 +56,9 @@ public class DefaultRegistryTest {
 
         FooBar bar1 = (FooBar) registry.lookupByName("myBar");
         FooBar bar2 = (FooBar) registry.lookupByName("myBar");
-        assertNotSame(bar1, bar2);
+        assertSame(bar1, bar2);
         assertEquals("I am lazy 1 me", bar1.hello("me"));
-        assertEquals("I am lazy 2 me", bar2.hello("me"));
+        assertEquals("I am lazy 1 me", bar2.hello("me"));
     }
 
     @Test
@@ -73,9 +73,9 @@ public class DefaultRegistryTest {
 
         FooBar bar1 = registry.lookupByNameAndType("myBar", FooBar.class);
         FooBar bar2 = registry.lookupByNameAndType("myBar", FooBar.class);
-        assertNotSame(bar1, bar2);
+        assertSame(bar1, bar2);
         assertEquals("I am lazy 1 me", bar1.hello("me"));
-        assertEquals("I am lazy 2 me", bar2.hello("me"));
+        assertEquals("I am lazy 1 me", bar2.hello("me"));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class DefaultRegistryTest {
         set = registry.findByType(FooBar.class);
         assertEquals(2, set.size());
         it = set.iterator();
-        assertEquals("I am lazy 2 me", it.next().hello("me"));
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
         assertSame(myFooBar, it.next());
     }
 
@@ -124,7 +124,7 @@ public class DefaultRegistryTest {
         map = registry.findByTypeWithName(FooBar.class);
         assertEquals(2, map.size());
         it = map.values().iterator();
-        assertEquals("I am lazy 2 me", it.next().hello("me"));
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
         assertSame(myFooBar, it.next());
     }
 
