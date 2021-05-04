@@ -466,7 +466,7 @@
         <qpid-jms-client-version>0.58.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.2.0</quickfixj-version>
-        <rabbitmq-amqp-client-version>5.11.0</rabbitmq-amqp-client-version>
+        <rabbitmq-amqp-client-version>5.12.0</rabbitmq-amqp-client-version>
         <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
         <rdf4j-model-version>2.4.4</rdf4j-model-version>
         <reactive-streams-version>1.0.3</reactive-streams-version>
