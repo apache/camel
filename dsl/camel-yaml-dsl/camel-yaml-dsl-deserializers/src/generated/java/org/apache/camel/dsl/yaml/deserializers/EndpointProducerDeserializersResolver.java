@@ -287,6 +287,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "spring-batch":
             case "spring-event":
             case "spring-integration":
+            case "spring-jdbc":
             case "spring-ldap":
             case "spring-rabbitmq":
             case "spring-redis":
