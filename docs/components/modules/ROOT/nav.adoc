@@ -300,6 +300,7 @@
 *** xref:spring-ldap-component.adoc[Spring LDAP]
 *** xref:spring-redis-component.adoc[Spring Redis]
 *** xref:spring-ws-component.adoc[Spring WebService]
+** xref:spring-jdbc-component.adoc[Spring JDBC]
 ** xref:spring-rabbitmq-component.adoc[Spring RabbitMQ]
 ** xref:sql-component.adoc[SQL]
 ** xref:sql-stored-component.adoc[SQL Stored Procedure]

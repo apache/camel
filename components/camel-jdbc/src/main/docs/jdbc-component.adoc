@@ -18,6 +18,9 @@ the message body. This component uses the standard JDBC API, unlike the
 xref:sql-component.adoc[SQL Component] component, which uses
 spring-jdbc.
 
+NOTE: Use the xref:spring-jdbc-component.adoc[Spring JDBC Component] instead of this component,
+when you use Spring and need to support Spring Transactions.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
