@@ -476,6 +476,44 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom strategy for working with connections. Do not use a
+         * custom strategy when using the spring-jdbc component because a
+         * special Spring ConnectionStrategy is used by default to support
+         * Spring Transactions.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jdbc.ConnectionStrategy&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJdbcEndpointBuilder connectionStrategy(
+                Object connectionStrategy) {
+            doSetProperty("connectionStrategy", connectionStrategy);
+            return this;
+        }
+        /**
+         * To use a custom strategy for working with connections. Do not use a
+         * custom strategy when using the spring-jdbc component because a
+         * special Spring ConnectionStrategy is used by default to support
+         * Spring Transactions.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.jdbc.ConnectionStrategy&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJdbcEndpointBuilder connectionStrategy(
+                String connectionStrategy) {
+            doSetProperty("connectionStrategy", connectionStrategy);
+            return this;
+        }
+        /**
          * Allows the plugin to use a custom
          * org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to
          * control preparation of the query and prepared statement.

@@ -37,20 +37,21 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class JdbcProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
 
-    private DataSource dataSource;
-    private int readSize;
-    private Map<String, Object> parameters;
+    private final DataSource dataSource;
+    private final ConnectionStrategy connectionStrategy;
+    private final int readSize;
+    private final Map<String, Object> parameters;
 
-    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, int readSize,
-                        Map<String, Object> parameters) throws Exception {
+    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, ConnectionStrategy connectionStrategy,
+                        int readSize, Map<String, Object> parameters) throws Exception {
         super(endpoint);
         this.dataSource = dataSource;
+        this.connectionStrategy = connectionStrategy;
         this.readSize = readSize;
         this.parameters = parameters;
     }
@@ -79,7 +80,7 @@ public class JdbcProducer extends DefaultProducer {
         boolean shouldCloseResources = true;
 
         try {
-            conn = DataSourceUtils.getConnection(dataSource);
+            conn = connectionStrategy.getConnection(dataSource);
             autoCommit = conn.getAutoCommit();
             if (autoCommit) {
                 conn.setAutoCommit(false);
@@ -111,10 +112,10 @@ public class JdbcProducer extends DefaultProducer {
         boolean shouldCloseResources = true;
 
         try {
-            conn = DataSourceUtils.getConnection(dataSource);
+            conn = connectionStrategy.getConnection(dataSource);
             shouldCloseResources = createAndExecuteSqlStatement(exchange, sql, conn);
         } finally {
-            if (shouldCloseResources && !DataSourceUtils.isConnectionTransactional(conn, dataSource)) {
+            if (shouldCloseResources && !connectionStrategy.isConnectionTransactional(conn, dataSource)) {
                 closeQuietly(conn);
             }
         }
