@@ -31,6 +31,7 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.StartupStep;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
@@ -67,6 +68,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -393,6 +395,15 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        return model.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+    }
+
+    @Override
     public List<RestDefinition> getRestDefinitions() {
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
@@ -714,6 +725,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         }
 
         PropertiesComponent pc = getCamelContextReference().getPropertiesComponent();
+        LocalBeanRepositoryAware localBeans = null;
+        if (getCamelContextReference().getRegistry() instanceof LocalBeanRepositoryAware) {
+            localBeans = (LocalBeanRepositoryAware) getCamelContextReference().getRegistry();
+        }
         try {
             RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
             for (RouteDefinition routeDefinition : routeDefinitions) {
@@ -731,6 +746,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     Properties prop = new Properties();
                     prop.putAll(routeDefinition.getTemplateParameters());
                     pc.setLocalProperties(prop);
+
+                    // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
+                    if (localBeans != null) {
+                        localBeans.setLocalBeanRepository(routeDefinition.getRouteTemplateContext().getLocalBeanRepository());
+                    }
 
                     // need to reset auto assigned ids, so there is no clash when creating routes
                     ProcessorDefinitionHelper.resetAllAutoAssignedNodeIds(routeDefinition);
@@ -753,6 +773,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
                 // clear local after the route is created via the reifier
                 pc.setLocalProperties(null);
+                if (localBeans != null) {
+                    localBeans.setLocalBeanRepository(null);
+                }
             }
         } finally {
             if (!alreadyStartingRoutes) {

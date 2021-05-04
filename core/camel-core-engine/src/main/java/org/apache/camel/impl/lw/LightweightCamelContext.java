@@ -41,6 +41,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
@@ -1754,6 +1755,12 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
     }
 
     @Override

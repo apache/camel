@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -45,9 +46,11 @@ import org.apache.camel.util.IOHelper;
  * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans may not
  * support dependency injection and other features that the first-choice registry may offer.
  */
-public class DefaultRegistry extends ServiceSupport implements Registry, CamelContextAware {
+public class DefaultRegistry extends ServiceSupport implements Registry, LocalBeanRepositoryAware, CamelContextAware {
 
     protected CamelContext camelContext;
+    protected final ThreadLocal<BeanRepository> localRepository = new ThreadLocal<>();
+    protected volatile boolean localRepositoryEnabled; // flag to keep track if local is in use or not
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
     protected Registry supplierRegistry = new SupplierRegistry();
@@ -83,6 +86,19 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
     public DefaultRegistry(Collection<BeanRepository> repositories) {
         if (repositories != null) {
             this.repositories = new ArrayList<>(repositories);
+        }
+    }
+
+    /**
+     * Sets a special local bean repository (ie thread local) that take precedence and will use first, if a bean exists.
+     */
+    public void setLocalBeanRepository(BeanRepository repository) {
+        if (repository != null) {
+            this.localRepository.set(repository);
+            this.localRepositoryEnabled = true;
+        } else {
+            this.localRepository.remove();
+            this.localRepositoryEnabled = false;
         }
     }
 
@@ -164,6 +180,15 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            answer = local.lookupByName(name);
+            if (answer != null) {
+                return unwrap(answer);
+            }
+        }
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
                 answer = r.lookupByName(name);
@@ -196,6 +221,14 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            answer = local.lookupByNameAndType(name, type);
+            if (answer != null) {
+                return (T) unwrap(answer);
+            }
+        }
         if (repositories != null) {
             for (BeanRepository r : repositories) {
                 answer = r.lookupByNameAndType(name, type);
@@ -218,6 +251,15 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> answer = new LinkedHashMap<>();
+
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            Map<String, T> found = local.findByTypeWithName(type);
+            if (found != null && !found.isEmpty()) {
+                answer.putAll(found);
+            }
+        }
 
         if (repositories != null) {
             for (BeanRepository r : repositories) {
@@ -243,6 +285,15 @@ public class DefaultRegistry extends ServiceSupport implements Registry, CamelCo
     @Override
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> answer = new LinkedHashSet<>();
+
+        // local repository takes precedence
+        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        if (local != null) {
+            Set<T> found = local.findByType(type);
+            if (found != null && !found.isEmpty()) {
+                answer.addAll(found);
+            }
+        }
 
         if (repositories != null) {
             for (BeanRepository r : repositories) {

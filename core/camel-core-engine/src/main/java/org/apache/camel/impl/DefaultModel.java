@@ -29,6 +29,8 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
+import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.builder.DefaultRouteTemplateContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -48,6 +50,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
@@ -220,7 +223,15 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    @Deprecated
     public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
+            throws Exception {
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext, new SimpleRegistry(), parameters);
+        return addRouteFromTemplate(routeId, routeTemplateId, rtc);
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -243,7 +254,7 @@ public class DefaultModel implements Model {
                     prop.put(temp.getName(), temp.getDefaultValue());
                 } else {
                     // this is a required parameter do we have that as input
-                    if (!parameters.containsKey(temp.getName())) {
+                    if (!routeTemplateContext.getParameters().containsKey(temp.getName())) {
                         templatesBuilder.add(temp.getName());
                     }
                 }
@@ -256,8 +267,8 @@ public class DefaultModel implements Model {
         }
 
         // then override with user parameters
-        if (parameters != null) {
-            prop.putAll(parameters);
+        if (routeTemplateContext.getParameters() != null) {
+            prop.putAll(routeTemplateContext.getParameters());
         }
 
         RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
@@ -283,6 +294,8 @@ public class DefaultModel implements Model {
             def.setId(routeId);
         }
         def.setTemplateParameters(prop);
+        def.setRouteTemplateContext(routeTemplateContext);
+
         // assign ids to the routes and validate that the id's are all unique
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions);
         if (duplicate != null) {

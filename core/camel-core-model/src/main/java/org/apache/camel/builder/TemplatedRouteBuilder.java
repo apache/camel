@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteTemplateDefinition;
@@ -35,14 +36,18 @@ public final class TemplatedRouteBuilder {
 
     private final CamelContext camelContext;
     private final String routeTemplateId;
-    private String routeId;
     private final Map<String, Object> parameters = new HashMap<>();
+    // TODO: Need to shadow regular camel registry during route creation
     private final Registry localRegistry = new DefaultRegistry();
+    private final RouteTemplateContext routeTemplateContext;
+    private String routeId;
     private Consumer<RouteTemplateDefinition> handler;
+    private Consumer<RouteTemplateContext> configurer;
 
     private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
         this.camelContext = camelContext;
         this.routeTemplateId = routeTemplateId;
+        this.routeTemplateContext = new DefaultRouteTemplateContext(camelContext, localRegistry, parameters);
     }
 
     /**
@@ -91,8 +96,8 @@ public final class TemplatedRouteBuilder {
     /**
      * Binds the bean to the template local repository (takes precedence over global beans)
      *
-     * @param  id                    the id of the bean
-     * @param  bean                  the bean
+     * @param id   the id of the bean
+     * @param bean the bean
      */
     public TemplatedRouteBuilder bind(String id, Object bean) {
         localRegistry.bind(id, bean);
@@ -102,9 +107,9 @@ public final class TemplatedRouteBuilder {
     /**
      * Binds the bean to the template local repository (takes precedence over global beans)
      *
-     * @param  id                    the id of the bean
-     * @param  type                  the type of the bean to associate the binding
-     * @param  bean                  the bean
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
      */
     public TemplatedRouteBuilder bind(String id, Class<?> type, Object bean) {
         localRegistry.bind(id, type, bean);
@@ -114,9 +119,9 @@ public final class TemplatedRouteBuilder {
     /**
      * Binds the bean (via a supplier) to the template local repository (takes precedence over global beans)
      *
-     * @param  id                    the id of the bean
-     * @param  type                  the type of the bean to associate the binding
-     * @param  bean                  the bean
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
      */
     public TemplatedRouteBuilder bind(String id, Class<?> type, Supplier<Object> bean) {
         localRegistry.bind(id, type, bean);
@@ -136,6 +141,17 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
+     * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
+     * gives control over the creating process, such as binding local beans and doing other kind of customization.
+     *
+     * @param configurer the configurer with callback to invoke with the given route template context
+     */
+    public TemplatedRouteBuilder configure(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
+        return this;
+    }
+
+    /**
      * Adds the route to the {@link CamelContext} which is built from the configured route template.
      *
      * @return the route id of the route that was added.
@@ -150,9 +166,10 @@ public final class TemplatedRouteBuilder {
                 }
                 handler.accept(def);
             }
-            // TODO: provide local beans from builder (either via new parameter here)
-            // or some way via a new RouteTemplateContext that stores such information
-            return camelContext.addRouteFromTemplate(routeId, routeTemplateId, parameters);
+            if (configurer != null) {
+                configurer.accept(routeTemplateContext);
+            }
+            return camelContext.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
