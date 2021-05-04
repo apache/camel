@@ -29,11 +29,11 @@ Steps to edit a file:
 
 . Fork and clone the https://github.com/apache/camel-website[site generator repository] and the Camel repository that contains the documentation you want to change.
 . Follow the build instructions located in the site generator's https://github.com/apache/camel-website/blob/master/README.md[README file].
-. Open Antora's https://github.com/apache/camel-website/blob/master/site.yml[`site.yml`] configuration file and change the content sources to https://docs.antora.org/antora/2.1/playbook/configure-content-sources/#local-urls[local repositories].
+. Open Antora's https://github.com/apache/camel-website/blob/master/antora-playbook.yml[`antora-playbook.yml`] configuration file and change the content sources to https://docs.antora.org/antora/2.1/playbook/configure-content-sources/#local-urls[local repositories].
 . Edit the file.
 . Build the website.
 . Preview your changes locally.
-. Revert changes to `site.yml`.
+. Revert changes to `antora-playbook.yml`.
 . Push your changes to your forked repositories and send a pull request.
 
 [NOTE]
