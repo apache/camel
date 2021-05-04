@@ -21,13 +21,8 @@ import org.apache.camel.test.infra.chatscript.common.ChatScriptProperties;
 public class ChatScriptRemoteService implements ChatScriptService {
 
     @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
     public void initialize() {
-        registerProperties();
+        // NO-OP
     }
 
     @Override
