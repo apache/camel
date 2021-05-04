@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
@@ -55,6 +57,9 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         Object out = template.requestBody("direct:one", "World");
         assertEquals("Global World", out);
 
+        // should be a global bean
+        assertNotNull(context.getRegistry().lookupByName("myBar"));
+
         context.stop();
     }
 
@@ -82,6 +87,50 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
         Object out = template.requestBody("direct:one", "World");
         assertEquals("Builder World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanInBuilderTwo() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .bind("myBar", (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody()))
+                .routeId("myRoute")
+                .add();
+
+        // TODO: Fix me 
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "two")
+                .parameter("bar", "myBar")
+                .bind("myBar", (Processor) ex -> ex.getMessage().setBody("Builder2 " + ex.getMessage().getBody()))
+                .routeId("myRoute2")
+                .add();
+
+        assertEquals(2, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Builder World", out);
+        Object out2 = template.requestBody("direct:two", "Camel");
+        assertEquals("Builder2 Camel", out2);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
 
         context.stop();
     }
