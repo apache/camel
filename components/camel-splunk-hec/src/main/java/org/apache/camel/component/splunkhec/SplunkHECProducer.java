@@ -128,5 +128,8 @@ public class SplunkHECProducer extends DefaultProducer {
         if (endpoint.getConfiguration().getHost() != null) {
             payload.put("host", endpoint.getConfiguration().getHost());
         }
+        if (endpoint.getConfiguration().getTime() != null) {
+            payload.put("time", endpoint.getConfiguration().getTime());
+        }
     }
 }

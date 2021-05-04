@@ -70,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,6 +83,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *source* (producer) | Splunk source argument | camel | String
 | *sourceType* (producer) | Splunk sourcetype argument | camel | String
+| *time* (producer) | Time this even occurred. By default, the time will be when this event hits the splunk server. |  | Long
 | *https* (security) | Contact HEC over https. | true | boolean
 | *skipTlsVerify* (security) | Splunk HEC TLS verification. | false | boolean
 |===
