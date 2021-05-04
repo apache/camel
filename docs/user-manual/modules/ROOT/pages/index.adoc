@@ -34,7 +34,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 == Documentation
 
 * <<User Guide>>
-* xref:books.adoc[Books]
+* link:/community/books/[Books]
 * xref:examples.adoc[Examples]
 * xref:architecture.adoc[Architecture]
 * xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
@@ -144,13 +144,13 @@ Consult the xref:components::index.adoc[components] documentation.
 
 == Community
 
-* xref:support.adoc[Support]
+* link:/community/support/[Support]
 * xref:contributing.adoc[Contributing]
 * xref:release-guide.adoc[Release guide]
-* xref:mailing-lists.adoc[Mailing Lists]
+* link:/community/mailing-list/[Mailing Lists]
 * https://camel.zulipchat.com[Chat room]
-* xref:user-stories.adoc[User Stories]
-* xref:team.adoc[Team]
+* link:/community/user-stories/[User Stories]
+* link:/community/team/[Team]
 * https://github.com/camel-extra/camel-extra[Camel Extra]
 
 == Requirements
