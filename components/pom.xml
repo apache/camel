@@ -300,6 +300,7 @@
         <module>camel-spring-batch</module>
         <module>camel-spring-integration</module>
         <module>camel-spring-javaconfig</module>
+        <module>camel-spring-jdbc</module>
         <module>camel-spring-ldap</module>
         <module>camel-spring-rabbitmq</module>
         <module>camel-spring-redis</module>
