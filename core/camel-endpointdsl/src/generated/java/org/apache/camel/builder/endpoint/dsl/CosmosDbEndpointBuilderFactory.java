@@ -147,7 +147,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -170,7 +170,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -951,7 +951,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -974,7 +974,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1662,7 +1662,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1685,7 +1685,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set

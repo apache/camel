@@ -129,7 +129,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: ConsistencyLevel.SESSION
+         * Default: SESSION
          * Group: common
          * 
          * @param consistencyLevel the value to set
