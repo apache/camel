@@ -257,7 +257,7 @@ public class BeanInfo {
                         }
                     }
 
-                    if (methodInfo == null || (name != null && !name.equals(methodInfo.getMethod().getName()))) {
+                    if (methodInfo == null || name != null && !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
                 } else {
@@ -593,8 +593,8 @@ public class BeanInfo {
         if (noParameters && localOperationsWithNoBody != null && localOperationsWithNoBody.size() == 1) {
             // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
             return localOperationsWithNoBody.get(0);
-        } else if (!noParameters && (localOperationsWithBody != null && localOperationsWithBody.size() == 1
-                && localOperationsWithCustomAnnotation == null)) {
+        } else if (!noParameters && localOperationsWithBody != null && localOperationsWithBody.size() == 1
+                && localOperationsWithCustomAnnotation == null) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
         }
@@ -914,7 +914,7 @@ public class BeanInfo {
         }
 
         // return type must not be an Exchange and it should not be a bridge method
-        if ((method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) || method.isBridge()) {
+        if (Exchange.class.isAssignableFrom(method.getReturnType()) || method.isBridge()) {
             return false;
         }
 
