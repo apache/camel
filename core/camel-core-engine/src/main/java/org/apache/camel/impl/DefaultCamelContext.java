@@ -771,7 +771,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                 boolean clash = bbr.keys().stream().anyMatch(k -> k.equals(oldKey));
                                 if (clash) {
                                     String newKey = oldKey + "-" + UUID.generateUuid();
-                                    LOG.debug("Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique", routeDefinition.getId(), oldKey, newKey);
+                                    LOG.debug(
+                                            "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
+                                            routeDefinition.getId(), oldKey, newKey);
                                     bbr.swapKey(oldKey, newKey);
                                     param.setValue(newKey);
                                 }
