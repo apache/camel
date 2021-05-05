@@ -16,23 +16,16 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Set;
+
 /**
- * Allows a {@link BeanRepository} to temporary have a local repository take precedence, such as when creating route
- * templates to give more flexibility.
+ * A special {@link BeanRepository} which is used to store beans in local mode (their own namespace).
  */
-public interface LocalBeanRepositoryAware {
+public interface LocalBeanRepository extends BeanRepository {
 
-    /**
-     * Sets a special local bean repository (ie thread local) that take precedence and will use first, if a bean exists.
-     *
-     * @param repository the local repository, or <tt>null</tt> to unset when no longer needed.
-     */
-    void setLocalBeanRepository(BeanRepository repository);
+    Set<String> keys();
 
-    /**
-     * Gets the local bean repository (if any in use)
-     */
-    BeanRepository getLocalBeanRepository();
-
+    // TODO: Should we allow to mutate the keys, or just an SPI that allows to be Browsable
+    void swapKey(String oldKey, String newKey);
 
 }

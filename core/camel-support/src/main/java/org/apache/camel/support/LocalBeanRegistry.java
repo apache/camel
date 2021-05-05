@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.support;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Allows a {@link BeanRepository} to temporary have a local repository take precedence, such as when creating route
- * templates to give more flexibility.
+ * A special registry which is used for local beans where key bindings
+ * can be swapped to ensure keys are globally unique.
+ *
+ * This {@link org.apache.camel.spi.Registry} is only intended to be used by camel-core.
  */
-public interface LocalBeanRepositoryAware {
+public final class LocalBeanRegistry extends SupplierRegistry {
 
-    /**
-     * Sets a special local bean repository (ie thread local) that take precedence and will use first, if a bean exists.
-     *
-     * @param repository the local repository, or <tt>null</tt> to unset when no longer needed.
-     */
-    void setLocalBeanRepository(BeanRepository repository);
+    public Set<String> keys() {
+        return Collections.unmodifiableSet(keySet());
+    }
 
-    /**
-     * Gets the local bean repository (if any in use)
-     */
-    BeanRepository getLocalBeanRepository();
-
-
+    public void swapKey(String oldKey, String newKey) {
+        Map<Class<?>, Object> value = remove(oldKey);
+        if (value != null) {
+            put(newKey, value);
+        }
+    }
 }

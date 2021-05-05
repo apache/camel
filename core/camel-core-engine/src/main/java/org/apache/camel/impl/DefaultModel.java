@@ -50,7 +50,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ModelReifierFactory;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
@@ -226,7 +225,7 @@ public class DefaultModel implements Model {
     @Deprecated
     public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
             throws Exception {
-        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext, new SimpleRegistry(), parameters);
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext, parameters);
         return addRouteFromTemplate(routeId, routeTemplateId, rtc);
     }
 

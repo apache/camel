@@ -99,7 +99,6 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     }
 
     @Test
-    @Disabled("TODO: Fix me")
     public void testLocalBeanInBuilderTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -23,18 +24,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.support.SupplierRegistry;
 
 // TODO: Should this be moved to some other module/package?
 
 public final class DefaultRouteTemplateContext implements RouteTemplateContext {
 
     private final CamelContext camelContext;
-    private final Registry registry;
+    private final LocalBeanRegistry registry;
     private final Map<String, Object> parameters;
 
-    public DefaultRouteTemplateContext(CamelContext camelContext, Registry registry, Map<String, Object> parameters) {
+    public DefaultRouteTemplateContext(CamelContext camelContext, Map<String, Object> parameters) {
         this.camelContext = camelContext;
-        this.registry = registry;
+        // we just need the simple registry that also supports supplier style
+        this.registry = new LocalBeanRegistry();
         this.parameters = parameters;
     }
 

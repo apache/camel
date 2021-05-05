@@ -26,8 +26,6 @@ import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.DefaultRegistry;
 
 /**
  * Fluent builder for adding new routes from route templates.
@@ -36,9 +34,8 @@ public final class TemplatedRouteBuilder {
 
     private final CamelContext camelContext;
     private final String routeTemplateId;
+    // TODO: use parameters directly on routeTemplateContext (need SPI update)
     private final Map<String, Object> parameters = new HashMap<>();
-    // TODO: Need to shadow regular camel registry during route creation
-    private final Registry localRegistry = new DefaultRegistry();
     private final RouteTemplateContext routeTemplateContext;
     private String routeId;
     private Consumer<RouteTemplateDefinition> handler;
@@ -47,7 +44,7 @@ public final class TemplatedRouteBuilder {
     private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
         this.camelContext = camelContext;
         this.routeTemplateId = routeTemplateId;
-        this.routeTemplateContext = new DefaultRouteTemplateContext(camelContext, localRegistry, parameters);
+        this.routeTemplateContext = new DefaultRouteTemplateContext(camelContext, parameters);
     }
 
     /**
@@ -100,7 +97,7 @@ public final class TemplatedRouteBuilder {
      * @param bean the bean
      */
     public TemplatedRouteBuilder bind(String id, Object bean) {
-        localRegistry.bind(id, bean);
+        routeTemplateContext.bind(id, bean);
         return this;
     }
 
@@ -112,7 +109,7 @@ public final class TemplatedRouteBuilder {
      * @param bean the bean
      */
     public TemplatedRouteBuilder bind(String id, Class<?> type, Object bean) {
-        localRegistry.bind(id, type, bean);
+        routeTemplateContext.bind(id, type, bean);
         return this;
     }
 
@@ -124,7 +121,7 @@ public final class TemplatedRouteBuilder {
      * @param bean the bean
      */
     public TemplatedRouteBuilder bind(String id, Class<?> type, Supplier<Object> bean) {
-        localRegistry.bind(id, type, bean);
+        routeTemplateContext.bind(id, type, bean);
         return this;
     }
 

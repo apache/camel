@@ -106,6 +106,11 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         }
     }
 
+    @Override
+    public BeanRepository getLocalBeanRepository() {
+        return localRepositoryEnabled ? localRepository.get() : null;
+    }
+
     /**
      * Gets the fallback {@link Registry}
      */

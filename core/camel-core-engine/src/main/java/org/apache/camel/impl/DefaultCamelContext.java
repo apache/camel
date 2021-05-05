@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.SupplierRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -743,8 +745,24 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
                 if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
                         && routeDefinition.getTemplateParameters() != null) {
+
+                    // copy parameters/bean repository to not cause side-effect
+                    Map<String, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
+                    BeanRepository lbr = localBeans.getLocalBeanRepository();
+                    // make all bean in the bean repository use unique keys (need to add uuid counter)
+                    // so when the route template is used again to create another route, then there is
+                    // no side-effect from previously used values that Camel may use in its endpoint
+                    // registry and elsewhere
+
+                    for (Map.Entry<String, Object> param : params.entrySet()) {
+                        Object value = param.getValue();
+                        if (value instanceof String) {
+                            String oldKey = (String) value;
+                        }
+                    }
+
                     Properties prop = new Properties();
-                    prop.putAll(routeDefinition.getTemplateParameters());
+                    prop.putAll(params);
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
