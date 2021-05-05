@@ -144,7 +144,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         route.addOutput(processorDefinition);
     }
 
-    public boolean isDeprecated() {
+    public Boolean getDeprecated() {
         return deprecated;
     }
 
