@@ -2571,6 +2571,7 @@ public class ModelParser extends BaseParser {
                 case "bindingMode": def.setBindingMode(val); break;
                 case "clientRequestValidation": def.setClientRequestValidation(val); break;
                 case "consumes": def.setConsumes(val); break;
+                case "deprecated": def.setDeprecated(Boolean.valueOf(val)); break;
                 case "enableCORS": def.setEnableCORS(val); break;
                 case "method": def.setMethod(val); break;
                 case "outType": def.setOutType(val); break;
