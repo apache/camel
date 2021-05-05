@@ -175,9 +175,7 @@ public interface Model {
      * @param      parameters      parameters to use for the route template when creating the new route
      * @return                     the id of the route added (for example when an id was auto assigned)
      * @throws     Exception       is thrown if error creating and adding the new route
-     * @deprecated                 use {@link TemplatedRouteBuilder} instead.
      */
-    @Deprecated
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
 
     /**
