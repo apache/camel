@@ -327,6 +327,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition deprecated() {
+        if (!getVerbs().isEmpty()) {
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.deprecated();
+        }
+
+        return this;
+    }
+
     @Override
     public RestDefinition description(String text) {
         if (getVerbs().isEmpty()) {
