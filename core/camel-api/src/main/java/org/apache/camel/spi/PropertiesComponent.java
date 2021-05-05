@@ -186,14 +186,16 @@ public interface PropertiesComponent extends StaticService {
     void setLocalProperties(Properties localProperties);
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local)
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
+     * currently in use.
      */
     Properties getLocalProperties();
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local)
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
+     * currently in use.
      *
-     * @return a {@link Map} representing the local properties.
+     * @return a {@link Map} representing the local properties, or <tt>null</tt> if not currently in use.
      */
     @SuppressWarnings("unchecked")
     default Map<String, Object> getLocalPropertiesAsMap() {
