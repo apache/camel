@@ -30,6 +30,7 @@ public final class SensitiveUtils {
                     "accesskey",
                     "accesstoken",
                     "accesstokensecret",
+                    "accountkey",
                     "accountsid",
                     "acltoken",
                     "authorizationtoken",
