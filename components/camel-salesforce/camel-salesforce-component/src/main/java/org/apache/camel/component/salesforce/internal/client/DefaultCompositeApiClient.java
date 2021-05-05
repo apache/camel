@@ -115,7 +115,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(Optional.of(response), headers, ex);
+                callback.onResponse(Optional.ofNullable(response), headers, ex);
             }
         });
     }
