@@ -25,7 +25,9 @@ import java.util.function.Supplier;
 import org.apache.camel.NoSuchBeanException;
 
 /**
- * Used for storing beans that are lazy supplied (on first demand) via a {@link Supplier}.
+ * Used for storing beans that are supplied via a {@link Supplier}.
+ * <p/>
+ * Notice that the supplier will be called each time the bean is being looked up (not cached).
  *
  * To bind a bean as a supplier, then use the {@link org.apache.camel.spi.Registry#bind(String, Class, Supplier)}
  * method.
@@ -43,7 +45,6 @@ public class SupplierRegistry extends SimpleRegistry {
         if (answer instanceof Supplier) {
             // okay then eval the supplier to get the actual value
             answer = ((Supplier<?>) answer).get();
-            map.put(type, answer);
         }
         if (answer == null) {
             // look for first entry that is the type
@@ -53,7 +54,6 @@ public class SupplierRegistry extends SimpleRegistry {
                     if (value instanceof Supplier) {
                         // okay then eval the supplier to get the actual value
                         value = ((Supplier<?>) value).get();
-                        entry.setValue(value);
                     }
                     answer = value;
                     break;
@@ -83,7 +83,6 @@ public class SupplierRegistry extends SimpleRegistry {
                     if (value instanceof Supplier) {
                         // okay then eval the supplier to get the actual value
                         value = ((Supplier<?>) value).get();
-                        subEntry.setValue(value);
                     }
                     result.add(type.cast(value));
                 }
@@ -102,7 +101,6 @@ public class SupplierRegistry extends SimpleRegistry {
                     if (value instanceof Supplier) {
                         // okay then eval the supplier to get the actual value
                         value = ((Supplier<?>) value).get();
-                        subEntry.setValue(value);
                     }
                     result.put(entry.getKey(), type.cast(value));
                 }
@@ -111,4 +109,8 @@ public class SupplierRegistry extends SimpleRegistry {
         return result;
     }
 
+    @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) {
+        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+    }
 }

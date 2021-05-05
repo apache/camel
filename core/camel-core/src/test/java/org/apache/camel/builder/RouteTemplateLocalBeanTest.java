@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-// TODO: bind supplier (do not cache) mention in docs that on each lookup it will call the supplier
 // TODO: local bind extrapolate {{key}} with hashed so they are local (endpoint uri lookup problem)
 
 public class RouteTemplateLocalBeanTest extends ContextTestSupport {

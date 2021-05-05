@@ -56,6 +56,8 @@ public interface Registry extends BeanRepository {
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
      * <p/>
+     * Notice that the supplier will be called each time the bean is being looked up (not cached).
+     * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
