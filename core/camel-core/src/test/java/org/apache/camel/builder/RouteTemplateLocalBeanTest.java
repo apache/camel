@@ -16,12 +16,12 @@
  */
 package org.apache.camel.builder;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -224,7 +224,8 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                        .configure(rtc -> rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody())))
+                        .configure(rtc -> rtc.bind("myBar",
+                                (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody())))
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }
@@ -258,7 +259,10 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .configure(rtc -> rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Builder" +
-                                counter.incrementAndGet() + " " + ex.getMessage().getBody())))
+                                                                                                      counter.incrementAndGet()
+                                                                                                      + " "
+                                                                                                      + ex.getMessage()
+                                                                                                              .getBody())))
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }

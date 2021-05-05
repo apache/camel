@@ -77,19 +77,9 @@ Template parameters take precedence over regular property placeholders.
 
 == Creating a route from a route template
 
-To create routes from route templates, then you must use the Java API from `CamelContext`.
+To create routes from route templates, then you should use `org.apache.camel.builder.TemplatedRouteBuilder`.
 
-In the following you can see how this is done with the `addRouteFromTemplate` method
-
-[source,java]
-----
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("name", "one");
-    parameters.put("greeting", "hello");
-    context.addRouteFromTemplate(null, "myTemplate", parameters);
-----
-
-There is a fluent builder variation as shown below:
+In the following you can see how this is done with the builder as shown below:
 
 [source,java]
 ----
@@ -113,26 +103,54 @@ not started yet.
 If no route id is provided, then Camel will auto assign a route id. In the example above then Camel would
 assign route ids such as `route1`, `route2` to these routes.
 
-If you want to specify a route id, then do as follows, where the name is myCoolRoute:
-
-[source,java]
-----
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("name", "one");
-    parameters.put("greeting", "hello");
-    context.addRouteFromTemplate("myCoolRoute", "myTemplate", parameters);
-----
-
-Or with the fluent builder:
+If you want to specify a route id, then use `routeId` as follows, where the name is myCoolRoute:
 
 [source,java]
 ----
     TemplatedRouteBuilder.builder(context, "myTemplate")
         .routeId("myCoolRoute")
-        .parameter("name", "one")
-        .parameter("greeting", "Hello")
+        .parameter("name", "one
+        .parameter("greeting", "hello")
+        .parameter("myPeriod", "5s")
         .add();
 ----
+
+
+== Binding beans to route template
+
+The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.
+This allows to use the same template to create multiple routes, where beans are local (private) for each created route.
+
+For example given the following route template, then we can configure the bindings (and other things) as shown:
+
+[source,java]
+----
+routeTemplate()
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .configure((RouteTemplateContext rtc) ->
+        rtc.bind("myClient", S3Client.class,
+                S3Client.builder()
+                    .region(rtc.getProperty("region", Region.class))
+                    .build()
+        )
+    )
+    .from("direct:s3-store")
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#myClient")
+----
+
+The template has two parameters to specify the AWS region and the S3 bucket. To connect to S3
+then a `software.amazon.awssdk.services.s3.S3Client` bean is needed.
+
+To create this bean we can use bind a bean with the id `myClient` that is bound as `java.util.Supplier`.
+The bind operation needs to know the class type that the supplier would return, and therefore you must
+specify `S3Client.class` as parameter.
+
+This ensures that the code creating the bean is executed later when Camel is creating a route from the template.
+This makes the bean with id `myClient` a local bean that is only in the scope (namespace) in the route template.
+
+If multiple routes is created from this template, then each of the created routes, have their own
+S3Client bean created.
 
 == JMX management
 
