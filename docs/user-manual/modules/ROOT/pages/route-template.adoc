@@ -5,7 +5,7 @@ A Route template is as its name implies a template for a route, which are used
 to create routes from a set of input parameters. Another way of think is that
 route templates are parameterized routes.
 
-    Route template + input parameters => route
+_Route template_ + _input parameters_ => _route_
 
 From a route template you can create one or more routes.
 
@@ -77,33 +77,23 @@ Template parameters take precedence over regular property placeholders.
 
 == Creating a route from a route template
 
-To create routes from route templates, then you must use the Java API from `CamelContext`.
+To create routes from route templates, then you should use `org.apache.camel.builder.TemplatedRouteBuilder`.
 
-In the following you can see how this is done with the `addRouteFromTemplate` method
-
-[source,java]
-----
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("name", "one");
-    parameters.put("greeting", "hello");
-    context.addRouteFromTemplate(null, "myTemplate", parameters);
-----
-
-There is a fluent builder variation as shown below:
+In the following you can see how this is done with the builder as shown below:
 
 [source,java]
 ----
-    // create two routes from the template
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .parameter("name", "one")
-        .parameter("greeting", "Hello")
-        .add();
+// create two routes from the template
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .parameter("name", "one")
+    .parameter("greeting", "Hello")
+    .add();
 
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .parameter("name", "two")
-        .parameter("greeting", "Bonjour")
-        .parameter("myPeriod", "5s")
-        .add();
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .parameter("name", "two")
+    .parameter("greeting", "Bonjour")
+    .parameter("myPeriod", "5s")
+    .add();
 ----
 
 The returned value from `add` is the route id of the new route that was added.
@@ -113,25 +103,111 @@ not started yet.
 If no route id is provided, then Camel will auto assign a route id. In the example above then Camel would
 assign route ids such as `route1`, `route2` to these routes.
 
-If you want to specify a route id, then do as follows, where the name is myCoolRoute:
+If you want to specify a route id, then use `routeId` as follows, where the name is myCoolRoute:
 
 [source,java]
 ----
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("name", "one");
-    parameters.put("greeting", "hello");
-    context.addRouteFromTemplate("myCoolRoute", "myTemplate", parameters);
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .routeId("myCoolRoute")
+    .parameter("name", "one
+    .parameter("greeting", "hello")
+    .parameter("myPeriod", "5s")
+    .add();
 ----
 
-Or with the fluent builder:
+
+== Binding beans to route template
+
+The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.
+This allows to use the same template to create multiple routes, where beans are local (private) for each created route.
+
+NOTE: Binding beans to route template is currently only available with Java DSL / Java coding.
+
+For example given the following route template, then we can configure the bindings (and other things) as shown:
 
 [source,java]
 ----
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .routeId("myCoolRoute")
-        .parameter("name", "one")
-        .parameter("greeting", "Hello")
-        .add();
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .configure((RouteTemplateContext rtc) ->
+        rtc.bind("myClient", S3Client.class,
+                S3Client.builder()
+                    .region(rtc.getProperty("region", Region.class))
+                    .build()
+        )
+    )
+    .from("direct:s3-store")
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#myClient")
+----
+
+The template has two parameters to specify the AWS region and the S3 bucket. To connect to S3
+then a `software.amazon.awssdk.services.s3.S3Client` bean is needed.
+
+To create this bean we can use bind a bean with the id `myClient` that is bound as `java.util.Supplier`.
+The bind operation needs to know the class type that the supplier would return, and therefore you must
+specify `S3Client.class` as parameter.
+
+This ensures that the code creating the bean is executed later when Camel is creating a route from the template.
+This makes the bean with id `myClient` a local bean that is only in the scope (namespace) in the route template.
+
+If multiple routes is created from this template, then each of the created routes, have their own
+S3Client bean created.
+
+=== Binding beans to route templates from template builder
+
+The `TemplatedRouteBuilder` also allows to bind local beans (which allows to specify those beans) when
+creating routes from existing templates.
+
+Suppose the route template below is defined in XML:
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#myClient"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The template has no bean bindings for `#myClient` which would be required for creating the template.
+
+When creating routes form the template via `TemplatedRouteBuilder` then you can provide the bean binding
+if you desire the bean to be local scoped (not shared with others):
+
+[source,java]
+----
+TemplatedRouteBuilder.builder(context, "s3template")
+    .parameter("region", "US-EAST-1")
+    .parameter("bucket", "myBucket")
+    .bind("myClient", S3Client.class,
+                S3Client.builder()
+                    .region(rtc.getProperty("region", Region.class))
+                    .build())
+    .routeId("mys3route")
+    .add();
+----
+
+As you can see the binding is similar to when binding directly in the route template.
+
+Instead of binding the beans from the template builder, you could also create the bean outside the template,
+and bind it by reference.
+
+[source,java]
+----
+
+final S3Client myClient = S3Client.builder().region(Region.US_EAST_1).build();
+
+TemplatedRouteBuilder.builder(context, "s3template")
+    .parameter("region", Region.US_EAST_1)
+    .parameter("bucket", "myBucket")
+    .bind("myClient", myClient)
+    .routeId("mys3route")
+    .add();
 ----
 
 == JMX management

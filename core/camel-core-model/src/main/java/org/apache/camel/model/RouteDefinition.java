@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedRoute;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -82,6 +83,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private OutputTypeDefinition outputType;
     private List<PropertyDefinition> routeProperties;
     private Map<String, Object> templateParameters;
+    private RouteTemplateContext routeTemplateContext;
 
     public RouteDefinition() {
     }
@@ -670,6 +672,15 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     @XmlTransient
     public void setTemplateParameters(Map<String, Object> templateParameters) {
         this.templateParameters = templateParameters;
+    }
+
+    public RouteTemplateContext getRouteTemplateContext() {
+        return routeTemplateContext;
+    }
+
+    @XmlTransient
+    public void setRouteTemplateContext(RouteTemplateContext routeTemplateContext) {
+        this.routeTemplateContext = routeTemplateContext;
     }
 
     // Properties

@@ -17,17 +17,19 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
@@ -45,9 +47,15 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     private List<RouteTemplateParameterDefinition> templateParameters;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
+    @XmlTransient
+    private Consumer<RouteTemplateContext> configurer;
 
     public List<RouteTemplateParameterDefinition> getTemplateParameters() {
         return templateParameters;
+    }
+
+    public Consumer<RouteTemplateContext> getConfigurer() {
+        return configurer;
     }
 
     public void setTemplateParameters(List<RouteTemplateParameterDefinition> templateParameters) {
@@ -152,6 +160,17 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         return this;
     }
 
+    /**
+     * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
+     * gives control over the creating process, such as binding local beans and doing other kind of customization.
+     *
+     * @param configurer the configurer with callback to invoke with the given route template context
+     */
+    public RouteTemplateDefinition configure(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
+        return this;
+    }
+
     @Override
     public String getShortName() {
         return "routeTemplate";
@@ -221,6 +240,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     @FunctionalInterface
     public interface Converter {
+
         /**
          * Default implementation that uses {@link #asRouteDefinition()} to convert a {@link RouteTemplateDefinition} to
          * a {@link RouteDefinition}
@@ -231,14 +251,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
                 return in.asRouteDefinition();
             }
         };
-
-        /**
-         * @deprecated use {@link #apply(RouteTemplateDefinition, Map)}
-         */
-        @Deprecated
-        default RouteDefinition apply(RouteTemplateDefinition in) throws Exception {
-            return apply(in, Collections.emptyMap());
-        }
 
         /**
          * Convert a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.
