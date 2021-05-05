@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -25,21 +23,17 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.spi.Registry;
 
 /**
- * A {@link Map}-based registry.
+ * Used for storing beans that are supplied via a {@link Supplier}.
  * <p/>
- * Favour using {@link DefaultRegistry} instead of this.
+ * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then use
+ * {@link #bindAsPrototype(String, Class, Supplier)} instead.
  *
- * @see DefaultRegistry
+ * To bind a bean as a supplier, then use the {@link org.apache.camel.spi.Registry#bind(String, Class, Supplier)}
+ * method.
  */
-public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>> implements Registry, Closeable {
-
-    @Override
-    public Object lookupByName(String name) {
-        return lookupByNameAndType(name, Object.class);
-    }
+public class SupplierRegistry extends SimpleRegistry {
 
     @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
@@ -49,10 +43,19 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
         }
 
         Object answer = map.get(type);
+        if (answer instanceof Supplier) {
+            // okay then eval the supplier to get the actual value
+            answer = ((Supplier<?>) answer).get();
+        }
         if (answer == null) {
             // look for first entry that is the type
-            for (Object value : map.values()) {
-                if (type.isInstance(value)) {
+            for (Map.Entry<Class<?>, Object> entry : map.entrySet()) {
+                if (type.isAssignableFrom(entry.getKey())) {
+                    Object value = entry.getValue();
+                    if (value instanceof Supplier) {
+                        // okay then eval the supplier to get the actual value
+                        value = ((Supplier<?>) value).get();
+                    }
                     answer = value;
                     break;
                 }
@@ -72,26 +75,16 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
-    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> result = new LinkedHashMap<>();
-        for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
-            for (Object value : entry.getValue().values()) {
-                if (type.isInstance(value)) {
-                    value = unwrap(value);
-                    result.put(entry.getKey(), type.cast(value));
-                }
-            }
-        }
-        return result;
-    }
-
-    @Override
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> result = new LinkedHashSet<>();
         for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
-            for (Object value : entry.getValue().values()) {
-                if (type.isInstance(value)) {
-                    value = unwrap(value);
+            for (Map.Entry<Class<?>, Object> subEntry : entry.getValue().entrySet()) {
+                if (type.isAssignableFrom(subEntry.getKey())) {
+                    Object value = subEntry.getValue();
+                    if (value instanceof Supplier) {
+                        // okay then eval the supplier to get the actual value
+                        value = ((Supplier<?>) value).get();
+                    }
                     result.add(type.cast(value));
                 }
             }
@@ -100,22 +93,25 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
-    public void bind(String id, Class type, Object bean) {
-        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        Map<String, T> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
+            for (Map.Entry<Class<?>, Object> subEntry : entry.getValue().entrySet()) {
+                if (type.isAssignableFrom(subEntry.getKey())) {
+                    Object value = subEntry.getValue();
+                    if (value instanceof Supplier) {
+                        // okay then eval the supplier to get the actual value
+                        value = ((Supplier<?>) value).get();
+                    }
+                    result.put(entry.getKey(), type.cast(value));
+                }
+            }
+        }
+        return result;
     }
 
     @Override
     public void bind(String id, Class<?> type, Supplier<Object> bean) {
-        throw new UnsupportedOperationException("Use SupplierRegistry");
-    }
-
-    @Override
-    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) {
-        throw new UnsupportedOperationException("Use SupplierRegistry");
-    }
-
-    @Override
-    public void close() throws IOException {
-        clear();
+        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
     }
 }
