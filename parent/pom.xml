@@ -446,7 +446,7 @@
         <opentelemetry-version>0.15.0</opentelemetry-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
-        <optaplanner-version>8.5.0.Final</optaplanner-version>
+        <optaplanner-version>8.6.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <osgi-version>6.0.0</osgi-version>
         <paho-version>1.2.5</paho-version>
