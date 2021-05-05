@@ -599,8 +599,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a new route from a given route template.
      *
-     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent builder
-     * with more functionality than this API.
+     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
+     * builder with more functionality than this API.
      *
      * @param  routeId         the id of the new route to add (optional)
      * @param  routeTemplateId the id of the route template (mandatory)
@@ -613,8 +613,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a new route from a given route template.
      *
-     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent builder
-     * with more functionality than this API.
+     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
+     * builder with more functionality than this API.
      *
      * @param  routeId              the id of the new route to add (optional)
      * @param  routeTemplateId      the id of the route template (mandatory)
