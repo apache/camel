@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.ConsulException;
@@ -157,6 +158,16 @@ public class ConsulRegistry implements Registry {
     @Override
     public void bind(String id, Class type, Object bean) throws RuntimeCamelException {
         put(id, bean);
+    }
+
+    @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        throw new UnsupportedOperationException("Binding with supplier not supported");
+    }
+
+    @Override
+    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        throw new UnsupportedOperationException("Binding with supplier not supported");
     }
 
     public void remove(String key) {
