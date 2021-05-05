@@ -121,11 +121,13 @@ If you want to specify a route id, then use `routeId` as follows, where the name
 The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.
 This allows to use the same template to create multiple routes, where beans are local (private) for each created route.
 
+NOTE: Binding beans to route template is currently only available with Java DSL / Java coding.
+
 For example given the following route template, then we can configure the bindings (and other things) as shown:
 
 [source,java]
 ----
-routeTemplate()
+routeTemplate("s3template")
     .templateParameter("region")
     .templateParameter("bucket")
     .configure((RouteTemplateContext rtc) ->
@@ -151,6 +153,62 @@ This makes the bean with id `myClient` a local bean that is only in the scope (n
 
 If multiple routes is created from this template, then each of the created routes, have their own
 S3Client bean created.
+
+=== Binding beans to route templates from template builder
+
+The `TemplatedRouteBuilder` also allows to bind local beans (which allows to specify those beans) when
+creating routes from existing templates.
+
+Suppose the route template below is defined in XML:
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#myClient"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The template has no bean bindings for `#myClient` which would be required for creating the template.
+
+When creating routes form the template via `TemplatedRouteBuilder` then you can provide the bean binding
+if you desire the bean to be local scoped (not shared with others):
+
+[source,java]
+----
+TemplatedRouteBuilder.builder(context, "s3template")
+    .parameter("region", "US-EAST-1")
+    .parameter("bucket", "myBucket")
+    .bind("myClient", S3Client.class,
+                S3Client.builder()
+                    .region(rtc.getProperty("region", Region.class))
+                    .build())
+    .routeId("mys3route")
+    .add();
+----
+
+As you can see the binding is similar to when binding directly in the route template.
+
+Instead of binding the beans from the template builder, you could also create the bean outside the template,
+and bind it by reference.
+
+[source,java]
+----
+
+final S3Client myClient = S3Client.builder().region(Region.US_EAST_1).build();
+
+TemplatedRouteBuilder.builder(context, "s3template")
+    .parameter("region", Region.US_EAST_1)
+    .parameter("bucket", "myBucket")
+    .bind("myClient", myClient)
+    .routeId("mys3route")
+    .add();
+----
 
 == JMX management
 
