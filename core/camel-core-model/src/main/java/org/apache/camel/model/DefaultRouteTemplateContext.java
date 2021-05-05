@@ -67,6 +67,13 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getProperty(String name, Class<?> type) {
+        Object value = parameters.get(name);
+        return (T) camelContext.getTypeConverter().tryConvertTo(type, value);
+    }
+
+    @Override
     public void setParameter(String name, Object value) {
         parameters.put(name, value);
     }

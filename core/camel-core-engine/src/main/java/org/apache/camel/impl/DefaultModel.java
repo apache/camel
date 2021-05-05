@@ -246,6 +246,11 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
+        // apply configurer if any present
+        if (target.getConfigurer() != null) {
+            target.getConfigurer().accept(routeTemplateContext);
+        }
+
         final Map<String, Object> prop = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {

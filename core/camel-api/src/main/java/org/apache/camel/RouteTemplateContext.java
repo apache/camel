@@ -91,6 +91,16 @@ public interface RouteTemplateContext {
     Object getProperty(String name);
 
     /**
+     * Gets the property with the given name
+     *
+     * @param  name                    name of property
+     * @param  type                    the type of the property
+     * @return                         the property value or <tt>null</tt> if no property exists
+     * @throws TypeConversionException is thrown if error during type conversion
+     */
+    <T> T getProperty(String name, Class<?> type);
+
+    /**
      * Sets a parameter
      *
      * @param name  the parameter name
