@@ -155,7 +155,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
                 .parameter("bar", "myBar")
                 .configure(rtc -> {
                     rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Configure " + ex.getMessage().getBody()
-                            + " from " + rtc.getProperty("foo")));
+                                                                                + " from " + rtc.getProperty("foo")));
                 })
                 .routeId("myRoute")
                 .add();
@@ -190,7 +190,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
                 .parameter("bar", "myBar")
                 .configure(rtc -> {
                     rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Configure " + ex.getMessage().getBody()
-                            + " from " + rtc.getProperty("foo")));
+                                                                                + " from " + rtc.getProperty("foo")));
                 })
                 .routeId("myRoute")
                 .add();
@@ -200,7 +200,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
                 .parameter("bar", "myBar")
                 .configure(rtc -> {
                     rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Configure2 " + ex.getMessage().getBody()
-                            + " from " + rtc.getProperty("foo")));
+                                                                                + " from " + rtc.getProperty("foo")));
                 })
                 .routeId("myRoute2")
                 .add();
