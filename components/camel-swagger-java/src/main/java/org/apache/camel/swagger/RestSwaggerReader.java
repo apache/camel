@@ -300,7 +300,7 @@ public class RestSwaggerReader {
                 op.summary(verb.getDescriptionText());
             }
 
-            if(Boolean.TRUE.equals(verb.getDeprecated())) {
+            if (Boolean.TRUE.equals(verb.getDeprecated())) {
                 op.deprecated(true);
             }
 
