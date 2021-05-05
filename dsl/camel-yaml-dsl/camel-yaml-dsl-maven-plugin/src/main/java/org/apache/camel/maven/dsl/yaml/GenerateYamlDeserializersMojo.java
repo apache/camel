@@ -488,14 +488,36 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         //
         // Generate setProperty body
         //
+        boolean caseAdded = false;
+
         CodeBlock.Builder setProperty = CodeBlock.builder();
         setProperty.beginControlFlow("switch(propertyKey)");
 
-        for (FieldInfo field : fields(info)) {
-            generateSetValue(setProperty, field, properties);
+        if (implementType(info, ERROR_HANDLER_BUILDER_CLASS)) {
+            List<MethodInfo> methods = methods(info).stream()
+                .filter(mi -> java.lang.reflect.Modifier.isPublic(mi.flags()))
+                .filter(mi -> mi.name().matches("^set[1-9A-Z].*$"))
+                .filter(mi -> mi.parameters().size() == 1)
+                .filter(mi -> PRIMITIVE_CLASSES.contains(mi.parameters().get(0).name().toString()))
+                .filter(mi -> mi.returnType().kind() == Type.Kind.VOID)
+                .collect(Collectors.toList());
+
+            for (MethodInfo method : methods) {
+                if (generateSetValue(setProperty, method, properties)) {
+                    caseAdded = true;
+                }
+            }
+        } else {
+            for (FieldInfo field : fields(info)) {
+                if (generateSetValue(setProperty, field, properties)) {
+                    caseAdded = true;
+                }
+            }
         }
 
         if (implementType(info, OUTPUT_NODE_CLASS)) {
+            caseAdded = true;
+
             setProperty.beginControlFlow("case \"steps\":");
             setProperty.addStatement("setSteps(target, node);");
             setProperty.addStatement("break");
@@ -570,7 +592,10 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         }
 
         setProperty.endControlFlow();
-        setProperty.addStatement("return true");
+
+        if (caseAdded) {
+            setProperty.addStatement("return true");
+        }
 
         //
         // setProperty(T target, String propertyKey, String propertyName, Node value) throws Exception
@@ -621,9 +646,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     }
 
     @SuppressWarnings("MethodLength")
-    private void generateSetValue(CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
-        if(hasAnnotation(field, XML_TRANSIENT_CLASS) && !hasAnnotation(field, DSL_PROPERTY_ANNOTATION)) {
-            return;
+    private boolean generateSetValue(CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
+        if (hasAnnotation(field, XML_TRANSIENT_CLASS) && !hasAnnotation(field, DSL_PROPERTY_ANNOTATION)) {
+            return false;
         }
 
         //
@@ -698,7 +723,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 }
             }
 
-            return;
+            return true;
         }
 
         //
@@ -709,7 +734,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             !hasAnnotation(field, XML_ELEMENT_ANNOTATION_CLASS) &&
             !hasAnnotation(field, XML_ELEMENT_REF_ANNOTATION_CLASS) &&
             !hasAnnotation(field, XML_TRANSIENT_CLASS)) {
-            return;
+            return false;
         }
 
         final String fieldName = StringHelper.camelCaseToDash(fieldName(field)).toLowerCase(Locale.US);
@@ -723,7 +748,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             if (!parameterized.name().equals(CLASS_CLASS) && parameterized.arguments().size() == 1) {
                 final Type parametrizedType = parameterized.arguments().get(0);
                 if (parametrizedType.name().equals(PROCESSOR_DEFINITION_CLASS)) {
-                    return;
+                    return false;
                 }
 
                 switch (parameterized.name().toString()) {
@@ -769,7 +794,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         parametrizedType.name().toString(), isRequired(field))
                             );
                         }
-                        return;
+                        return true;
                     case "java.util.Set":
                         if (parametrizedType.name().equals(STRING_CLASS)) {
                             cb.beginControlFlow("case $S:", fieldName);
@@ -812,7 +837,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         parametrizedType.name().toString(), isRequired(field))
                             );
                         }
-                        return;
+                        return true;
                     default:
                         throw new UnsupportedOperationException("Unable to handle field: " + field.name() + " with type: " + field.type().name());
                 }
@@ -857,24 +882,28 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     );
                     break;
                 case "Z":
+                case "boolean":
                     cb.addStatement("boolean val = asBoolean(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
                     annotations.add(yamlProperty(fieldName, "boolean", isRequired(field)));
                     break;
                 case "I":
+                case "int":
                     cb.addStatement("int val = asInt(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
                     annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
                     break;
                 case "J":
+                case "long":
                     cb.addStatement("long val = asLong(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
                     annotations.add(yamlProperty(fieldName, "number", isRequired(field)));
                     break;
                 case "D":
+                case "double":
                     cb.addStatement("double val = asDouble(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
@@ -948,5 +977,126 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         }
 
         cb.endControlFlow();
+
+        return true;
+    }
+
+
+    @SuppressWarnings("MethodLength")
+    private boolean generateSetValue(CodeBlock.Builder cb, MethodInfo method, Collection<AnnotationSpec> annotations) {
+        final String name = StringHelper.camelCaseToDash(method.name()).toLowerCase(Locale.US).substring(4);
+        final Type parameterType = method.parameters().get(0);
+
+        //
+        // Others
+        //
+        cb.beginControlFlow("case $S:", name);
+
+        ClassInfo c = view.getClassByName(parameterType.name());
+        if (c != null && c.isEnum()) {
+            cb.addStatement("target.$L($L.valueOf(asText(node)))", method.name(), parameterType);
+            cb.addStatement("break");
+
+            Set<String> values = new TreeSet<>();
+
+            List<FieldInfo> fields = c.fields();
+            for (int i = 1; i< fields.size(); i++) {
+                values.add(fields.get(i).name());
+            }
+
+            AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
+            builder.addMember("name", "$S", name);
+            builder.addMember("type", "$S", "enum:" + String.join(",", values));
+
+            annotations.add(builder.build());
+        } else {
+            switch (parameterType.name().toString()) {
+                case "[B":
+                    cb.addStatement("byte[] val = asByteArray(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+
+                    annotations.add(
+                        yamlPropertyWithFormat(name, "string", "binary")
+                    );
+                    break;
+                case "Z":
+                case "boolean":
+                    cb.addStatement("boolean val = asBoolean(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "boolean"));
+                    break;
+                case "I":
+                case "int":
+                    cb.addStatement("int val = asInt(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "number"));
+                    break;
+                case "J":
+                case "long":
+                    cb.addStatement("long val = asLong(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "number"));
+                    break;
+                case "D":
+                case "double":
+                    cb.addStatement("double val = asDouble(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "number"));
+                    break;
+                case "java.lang.String":
+                    cb.addStatement("String val = asText(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    break;
+                case "java.lang.Class":
+                    cb.addStatement("java.lang.Class<?> val = asClass(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "string"));
+                    break;
+                case "[Ljava.lang.Class;":
+                    cb.addStatement("java.lang.Class<?>[] val = asClassArray(node)");
+                    cb.addStatement("target.$L(val)", method.name());
+                    cb.addStatement("break");
+                    break;
+                case "java.lang.Integer":
+                case "java.lang.Short":
+                case "java.lang.Long":
+                case "java.lang.Float":
+                case "java.lang.Double":
+                    cb.addStatement("String val = asText(node)");
+                    cb.addStatement("target.$L($L.valueOf(val))", method.name(), parameterType.toString());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "number"));
+                    break;
+                case "java.lang.Boolean":
+                    cb.addStatement("String val = asText(node)");
+                    cb.addStatement("target.$L($L.valueOf(val))", method.name(), parameterType.toString());
+                    cb.addStatement("break");
+                    annotations.add(yamlProperty(name, "boolean"));
+                    break;
+                default:
+                    if (parameterType.kind() == Type.Kind.CLASS) {
+                        cb.addStatement("$L val = asType(node, $L.class)", parameterType.toString(), parameterType.toString());
+                        cb.addStatement("target.$L(val)", method.name());
+                        cb.addStatement("break");
+
+                        annotations.add(
+                            yamlPropertyWithSubtype(name, "object", parameterType.toString())
+                        );
+                    } else {
+                        throw new UnsupportedOperationException("Unable to handle method: " + method.name() + " with type: " + parameterType);
+                    }
+            }
+        }
+
+        cb.endControlFlow();
+
+        return true;
     }
 }
