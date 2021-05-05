@@ -16,16 +16,13 @@
  */
 package org.apache.camel.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.BrowseableBeanRepository;
 import org.apache.camel.support.LocalBeanRegistry;
-import org.apache.camel.support.SupplierRegistry;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 // TODO: Should this be moved to some other module/package?
 
@@ -68,7 +65,7 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     }
 
     @Override
-    public BeanRepository getLocalBeanRepository() {
+    public BrowseableBeanRepository getLocalBeanRepository() {
         return registry;
     }
 }

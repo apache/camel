@@ -66,6 +66,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.BrowseableBeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -77,9 +78,12 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.SupplierRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -94,6 +98,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     protected static final ThreadLocal<OptionHolder> OPTIONS = ThreadLocal.withInitial(OptionHolder::new);
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
+    private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
     private Model model = new DefaultModel(this);
 
@@ -748,16 +753,27 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
                     // copy parameters/bean repository to not cause side-effect
                     Map<String, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
-                    BeanRepository lbr = localBeans.getLocalBeanRepository();
+                    LocalBeanRegistry bbr = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
+                    if (bbr != null) {
+                        bbr = bbr.copy();
+                    }
+
                     // make all bean in the bean repository use unique keys (need to add uuid counter)
                     // so when the route template is used again to create another route, then there is
                     // no side-effect from previously used values that Camel may use in its endpoint
                     // registry and elsewhere
-
-                    for (Map.Entry<String, Object> param : params.entrySet()) {
-                        Object value = param.getValue();
-                        if (value instanceof String) {
-                            String oldKey = (String) value;
+                    if (bbr != null) {
+                        for (Map.Entry<String, Object> param : params.entrySet()) {
+                            Object value = param.getValue();
+                            if (value instanceof String) {
+                                String oldKey = (String) value;
+                                boolean clash = bbr.keys().stream().anyMatch(k -> k.equals(oldKey));
+                                if (clash) {
+                                    String newKey = oldKey + "-" + UUID.generateUuid();
+                                    bbr.swapKey(oldKey, newKey);
+                                    param.setValue(newKey);
+                                }
+                            }
                         }
                     }
 
@@ -766,8 +782,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
-                    if (localBeans != null) {
-                        localBeans.setLocalBeanRepository(routeDefinition.getRouteTemplateContext().getLocalBeanRepository());
+                    if (bbr != null) {
+                        localBeans.setLocalBeanRepository(bbr);
                     }
 
                     // need to reset auto assigned ids, so there is no clash when creating routes

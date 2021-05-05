@@ -16,17 +16,27 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.spi.BrowseableBeanRepository;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * A special registry which is used for local beans where key bindings
- * can be swapped to ensure keys are globally unique.
+ * A special registry which is used for local beans.
  *
  * This {@link org.apache.camel.spi.Registry} is only intended to be used by camel-core.
  */
-public final class LocalBeanRegistry extends SupplierRegistry {
+public final class LocalBeanRegistry extends SupplierRegistry implements BrowseableBeanRepository {
+
+    public LocalBeanRegistry() {
+    }
+
+    public LocalBeanRegistry copy() {
+        LocalBeanRegistry copy = new LocalBeanRegistry();
+        copy.putAll(this);
+        return copy;
+    }
 
     public Set<String> keys() {
         return Collections.unmodifiableSet(keySet());

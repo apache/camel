@@ -19,14 +19,11 @@ package org.apache.camel.builder;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
-// TODO: local bind extrapolate {{key}} with hashed so they are local (endpoint uri lookup problem)
 
 public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
@@ -173,7 +170,6 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     }
 
     @Test
-    @Disabled("TODO: Fix me")
     public void testLocalBeanInConfigureTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

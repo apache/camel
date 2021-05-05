@@ -19,13 +19,13 @@ package org.apache.camel.spi;
 import java.util.Set;
 
 /**
- * A special {@link BeanRepository} which is used to store beans in local mode (their own namespace).
+ * A browsable {@link BeanRepository} which allows to browsing via key index.
  */
-public interface LocalBeanRepository extends BeanRepository {
+public interface BrowseableBeanRepository extends BeanRepository {
 
+    /**
+     * The keys for browsing the beans in this repository
+     */
     Set<String> keys();
-
-    // TODO: Should we allow to mutate the keys, or just an SPI that allows to be Browsable
-    void swapKey(String oldKey, String newKey);
 
 }

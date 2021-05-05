@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.BrowseableBeanRepository;
 
 /**
  * The context used during creating a {@link Route} from a route template.
@@ -80,6 +81,6 @@ public interface RouteTemplateContext {
     /**
      * Gets the local bean repository for the route template when creating the new route
      */
-    BeanRepository getLocalBeanRepository();
+    BrowseableBeanRepository getLocalBeanRepository();
 
 }
