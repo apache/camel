@@ -66,7 +66,6 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.spi.BrowseableBeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -84,7 +83,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.support.SimpleUuidGenerator;
-import org.apache.camel.support.SupplierRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -753,7 +751,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
                     // copy parameters/bean repository to not cause side-effect
                     Map<String, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
-                    LocalBeanRegistry bbr = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
+                    LocalBeanRegistry bbr
+                            = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
                     if (bbr != null) {
                         bbr = bbr.copy();
                     }

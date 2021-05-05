@@ -19,7 +19,6 @@ package org.apache.camel;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.BrowseableBeanRepository;
 
 /**

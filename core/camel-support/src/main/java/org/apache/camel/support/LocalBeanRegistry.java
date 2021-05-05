@@ -16,11 +16,11 @@
  */
 package org.apache.camel.support;
 
-import org.apache.camel.spi.BrowseableBeanRepository;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.camel.spi.BrowseableBeanRepository;
 
 /**
  * A special registry which is used for local beans.
