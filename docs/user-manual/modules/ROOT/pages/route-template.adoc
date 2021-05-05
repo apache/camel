@@ -5,7 +5,7 @@ A Route template is as its name implies a template for a route, which are used
 to create routes from a set of input parameters. Another way of think is that
 route templates are parameterized routes.
 
-    Route template + input parameters => route
+_Route template_ + _input parameters_ => _route_
 
 From a route template you can create one or more routes.
 
@@ -83,17 +83,17 @@ In the following you can see how this is done with the builder as shown below:
 
 [source,java]
 ----
-    // create two routes from the template
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .parameter("name", "one")
-        .parameter("greeting", "Hello")
-        .add();
+// create two routes from the template
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .parameter("name", "one")
+    .parameter("greeting", "Hello")
+    .add();
 
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .parameter("name", "two")
-        .parameter("greeting", "Bonjour")
-        .parameter("myPeriod", "5s")
-        .add();
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .parameter("name", "two")
+    .parameter("greeting", "Bonjour")
+    .parameter("myPeriod", "5s")
+    .add();
 ----
 
 The returned value from `add` is the route id of the new route that was added.
@@ -107,12 +107,12 @@ If you want to specify a route id, then use `routeId` as follows, where the name
 
 [source,java]
 ----
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .routeId("myCoolRoute")
-        .parameter("name", "one
-        .parameter("greeting", "hello")
-        .parameter("myPeriod", "5s")
-        .add();
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .routeId("myCoolRoute")
+    .parameter("name", "one
+    .parameter("greeting", "hello")
+    .parameter("myPeriod", "5s")
+    .add();
 ----
 
 

@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -111,7 +110,7 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
-    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) {
         throw new UnsupportedOperationException("Use SupplierRegistry");
     }
 
