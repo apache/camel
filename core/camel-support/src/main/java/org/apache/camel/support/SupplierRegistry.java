@@ -27,7 +27,8 @@ import org.apache.camel.NoSuchBeanException;
 /**
  * Used for storing beans that are supplied via a {@link Supplier}.
  * <p/>
- * Notice that the supplier will be called each time the bean is being looked up (not cached).
+ * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then use
+ * {@link #bindAsPrototype(String, Class, Supplier)} instead.
  *
  * To bind a bean as a supplier, then use the {@link org.apache.camel.spi.Registry#bind(String, Class, Supplier)}
  * method.

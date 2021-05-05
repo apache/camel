@@ -54,6 +54,9 @@ public interface RouteTemplateContext {
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
      * <p/>
+     * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then
+     * use {@link #bindAsPrototype(String, Class, Supplier)} instead.
+     * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
      * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
@@ -65,12 +68,35 @@ public interface RouteTemplateContext {
     void bind(String id, Class<?> type, Supplier<Object> bean);
 
     /**
+     * Binds the bean (via a supplier) to the repository (if possible).
+     * <p/>
+     * Notice that the supplier will be called each time the bean is being looked up (not cached).
+     * <p/>
+     * Binding by id and type allows to bind multiple entries with the same id but with different type.
+     *
+     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean a supplier for the bean
+     */
+    void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean);
+
+    /**
      * Gets the property with the given name
      *
      * @param  name name of property
      * @return      the property value or <tt>null</tt> if no property exists
      */
     Object getProperty(String name);
+
+    /**
+     * Sets a parameter
+     *
+     * @param name  the parameter name
+     * @param value the parameter value
+     */
+    void setParameter(String name, Object value);
 
     /**
      * The parameters to use for the route template when creating the new route

@@ -37,6 +37,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.function.Suppliers;
 
 /**
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
@@ -173,6 +174,12 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
 
     @Override
     public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        // wrap in cached supplier (memorize)
+        supplierRegistry.bind(id, type, Suppliers.memorize(bean));
+    }
+
+    @Override
+    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
         supplierRegistry.bind(id, type, bean);
     }
 

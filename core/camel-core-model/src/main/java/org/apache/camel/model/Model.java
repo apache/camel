@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.builder.TemplatedRouteBuilder;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -169,11 +170,12 @@ public interface Model {
     /**
      * Adds a new route from a given route template
      *
-     * @param  routeId         the id of the new route to add (optional)
-     * @param  routeTemplateId the id of the route template (mandatory)
-     * @param  parameters      parameters to use for the route template when creating the new route
-     * @return                 the id of the route added (for example when an id was auto assigned)
-     * @throws Exception       is thrown if error creating and adding the new route
+     * @param      routeId         the id of the new route to add (optional)
+     * @param      routeTemplateId the id of the route template (mandatory)
+     * @param      parameters      parameters to use for the route template when creating the new route
+     * @return                     the id of the route added (for example when an id was auto assigned)
+     * @throws     Exception       is thrown if error creating and adding the new route
+     * @deprecated                 use {@link TemplatedRouteBuilder} instead.
      */
     @Deprecated
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;

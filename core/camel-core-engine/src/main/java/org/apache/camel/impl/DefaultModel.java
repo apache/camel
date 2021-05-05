@@ -30,8 +30,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.builder.DefaultRouteTemplateContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.DefaultRouteTemplateContext;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -225,7 +225,10 @@ public class DefaultModel implements Model {
     @Deprecated
     public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
             throws Exception {
-        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext, parameters);
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
+        if (parameters != null) {
+            parameters.forEach(rtc::setParameter);
+        }
         return addRouteFromTemplate(routeId, routeTemplateId, rtc);
     }
 

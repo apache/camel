@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -24,6 +23,7 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.DefaultRouteTemplateContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteTemplateDefinition;
 
@@ -34,8 +34,6 @@ public final class TemplatedRouteBuilder {
 
     private final CamelContext camelContext;
     private final String routeTemplateId;
-    // TODO: use parameters directly on routeTemplateContext (need SPI update)
-    private final Map<String, Object> parameters = new HashMap<>();
     private final RouteTemplateContext routeTemplateContext;
     private String routeId;
     private Consumer<RouteTemplateDefinition> handler;
@@ -44,7 +42,7 @@ public final class TemplatedRouteBuilder {
     private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
         this.camelContext = camelContext;
         this.routeTemplateId = routeTemplateId;
-        this.routeTemplateContext = new DefaultRouteTemplateContext(camelContext, parameters);
+        this.routeTemplateContext = new DefaultRouteTemplateContext(camelContext);
     }
 
     /**
@@ -76,7 +74,7 @@ public final class TemplatedRouteBuilder {
      * @param value parameter value
      */
     public TemplatedRouteBuilder parameter(String name, Object value) {
-        parameters.put(name, value);
+        routeTemplateContext.setParameter(name, value);
         return this;
     }
 
@@ -86,7 +84,7 @@ public final class TemplatedRouteBuilder {
      * @param parameters the template parameters to add
      */
     public TemplatedRouteBuilder parameters(Map<String, Object> parameters) {
-        this.parameters.putAll(parameters);
+        parameters.forEach(routeTemplateContext::setParameter);
         return this;
     }
 
