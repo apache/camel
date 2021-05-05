@@ -13346,6 +13346,13 @@ default value is true.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="deprecated" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets deprecated flag in openapi. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

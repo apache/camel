@@ -16,13 +16,31 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
+import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
+import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asType;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 @YamlIn
 @YamlType(
@@ -30,30 +48,51 @@ import org.snakeyaml.engine.v2.nodes.Node;
           types = ErrorHandlerBuilderRef.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
-                  @YamlProperty(name = "ref", type = "string")
+                  @YamlProperty(name = "ref",
+                                type = "string"),
+                  @YamlProperty(name = "none",
+                                type = "object:org.apache.camel.builder.NoErrorHandlerBuilder"),
+                  @YamlProperty(name = "log",
+                                type = "object:org.apache.camel.builder.DefaultErrorHandlerBuilder"),
+                  @YamlProperty(name = "dead-letter-channel",
+                                type = "object:org.apache.camel.builder.DeadLetterChannelBuilder"),
           })
-public class ErrorHandlerBuilderDeserializer extends YamlDeserializerBase<ErrorHandlerBuilderRef> {
-    public ErrorHandlerBuilderDeserializer() {
-        super(ErrorHandlerBuilderRef.class);
+public class ErrorHandlerBuilderDeserializer implements ConstructNode {
+
+    private static CamelContextCustomizer customizer(ErrorHandlerBuilder builder) {
+        return new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                camelContext.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(builder);
+            }
+        };
     }
 
     @Override
-    protected ErrorHandlerBuilderRef newInstance() {
-        return new ErrorHandlerBuilderRef();
-    }
+    public Object construct(Node node) {
+        final MappingNode bn = asMappingNode(node);
+        final YamlDeserializationContext dc = getDeserializationContext(node);
 
-    @Override
-    protected ErrorHandlerBuilderRef newInstance(String value) {
-        return new ErrorHandlerBuilderRef(value);
-    }
+        for (NodeTuple tuple : bn.getValue()) {
+            final String key = asText(tuple.getKeyNode());
+            final Node val = tuple.getValueNode();
 
-    @Override
-    protected boolean setProperty(ErrorHandlerBuilderRef target, String propertyKey, String propertyName, Node value) {
-        if ("ref".equals(propertyKey)) {
-            target.setRef(asText(value));
-            return true;
+            setDeserializationContext(val, dc);
+
+            switch (key) {
+                case "ref":
+                    return customizer(asType(val, ErrorHandlerBuilderRef.class));
+                case "none":
+                    return customizer(asType(val, NoErrorHandlerBuilder.class));
+                case "dead-letter-channel":
+                    return customizer(asType(val, DeadLetterChannelBuilder.class));
+                case "log":
+                    return customizer(asType(val, DefaultErrorHandlerBuilder.class));
+                default:
+                    throw new UnsupportedFieldException(val, key);
+            }
         }
 
-        return false;
+        throw new YamlDeserializationException("Unable to determine the error handler type");
     }
 }

@@ -70,7 +70,7 @@
     <avro-version>1.10.2</avro-version>
     <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
-    <aws-java-sdk2-version>2.16.54</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.16.55</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-jackson2-version>2.11.3</azure-jackson2-version>
@@ -116,7 +116,7 @@
     <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
     <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
     <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
-    <cassandra-driver-version>4.11.0</cassandra-driver-version>
+    <cassandra-driver-version>4.11.1</cassandra-driver-version>
     <cassandra-version>3.11.8</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
@@ -200,7 +200,7 @@
     <felix-scr-version>2.1.26</felix-scr-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
     <flatpack-version>4.0.4</flatpack-version>
-    <flink-version>1.12.2</flink-version>
+    <flink-version>1.13.0</flink-version>
     <fop-version>2.6</fop-version>
     <formatter-maven-plugin-version>2.14.0</formatter-maven-plugin-version>
     <freemarker-version>2.3.31</freemarker-version>
@@ -459,7 +459,7 @@
     <opentracing-version>0.33.0</opentracing-version>
     <openwebbeans-version>1.7.3</openwebbeans-version>
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <optaplanner-version>8.5.0.Final</optaplanner-version>
+    <optaplanner-version>8.6.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <osgi-version>6.0.0</osgi-version>
     <paho-version>1.2.5</paho-version>
@@ -479,7 +479,7 @@
     <qpid-proton-j-version>0.33.8</qpid-proton-j-version>
     <quartz-version>2.3.2</quartz-version>
     <quickfixj-version>2.2.0</quickfixj-version>
-    <rabbitmq-amqp-client-version>5.11.0</rabbitmq-amqp-client-version>
+    <rabbitmq-amqp-client-version>5.12.0</rabbitmq-amqp-client-version>
     <rdf4j-model-version>2.4.4</rdf4j-model-version>
     <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
     <reactive-streams-version>1.0.3</reactive-streams-version>

@@ -111,6 +111,7 @@ public class PropertiesComponent extends ServiceSupport
     private Properties initialProperties;
     private Properties overrideProperties;
     private final ThreadLocal<Properties> localProperties = new ThreadLocal<>();
+    private volatile boolean localPropertiesEnabled;
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -450,16 +451,19 @@ public class PropertiesComponent extends ServiceSupport
     public void setLocalProperties(Properties localProperties) {
         if (localProperties != null) {
             this.localProperties.set(localProperties);
+            this.localPropertiesEnabled = true;
         } else {
             this.localProperties.remove();
+            this.localPropertiesEnabled = false;
         }
     }
 
     /**
-     * Gets a list of properties that are local for the current thread only (ie thread local)
+     * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
+     * currently in use.
      */
     public Properties getLocalProperties() {
-        return localProperties.get();
+        return localPropertiesEnabled ? localProperties.get() : null;
     }
 
     /**

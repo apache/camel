@@ -82,7 +82,7 @@
         <avro-ipc-jetty-version>1.10.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.10.2</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
-        <aws-java-sdk2-version>2.16.54</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.16.55</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -98,7 +98,7 @@
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>2.9.1</caffeine-version>
         <californium-version>2.6.3</californium-version>
-        <cassandra-driver-version>4.11.0</cassandra-driver-version>
+        <cassandra-driver-version>4.11.1</cassandra-driver-version>
         <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
         <cassandra-version>3.11.8</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
@@ -184,7 +184,7 @@
         <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
         <google-maps-services-version>0.10.1</google-maps-services-version>
         <flatpack-version>4.0.4</flatpack-version>
-        <flink-version>1.12.2</flink-version>
+        <flink-version>1.13.0</flink-version>
         <fop-version>2.6</fop-version>
         <formatter-maven-plugin-version>2.14.0</formatter-maven-plugin-version>
         <ftpserver-version>1.1.1</ftpserver-version>
@@ -446,7 +446,7 @@
         <opentelemetry-version>0.15.0</opentelemetry-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
-        <optaplanner-version>8.5.0.Final</optaplanner-version>
+        <optaplanner-version>8.6.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <osgi-version>6.0.0</osgi-version>
         <paho-version>1.2.5</paho-version>
@@ -466,7 +466,7 @@
         <qpid-jms-client-version>0.58.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.2.0</quickfixj-version>
-        <rabbitmq-amqp-client-version>5.11.0</rabbitmq-amqp-client-version>
+        <rabbitmq-amqp-client-version>5.12.0</rabbitmq-amqp-client-version>
         <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
         <rdf4j-model-version>2.4.4</rdf4j-model-version>
         <reactive-streams-version>1.0.3</reactive-streams-version>

@@ -268,7 +268,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                         an = member instanceof Method ? propname(mn) : mn;
                     }
                     String sn = member instanceof Method ? mn : "set" + uppercase(mn);
-                    cases.put(an, "def." + sn + "(" + conversion(parser, type, "val") + ");");
+                    cases.put(an, "def." + sn + "(" + conversion(parser, type, "val", clazz.getName()) + ");");
                 }
                 String defaultCase = baseAttributeHandler != null ? baseAttributeHandler + ".accept(def, key, val)" : "false";
                 if (attributeMembers.size() == 1) {
@@ -519,7 +519,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     }
     // CHECKSTYLE:ON
 
-    private String conversion(JavaClass parser, GenericType type, String val) {
+    private String conversion(JavaClass parser, GenericType type, String val, String clazzName) {
         Class<?> rawClass = type.getRawClass();
         if (rawClass == String.class) {
             return val;
@@ -538,7 +538,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         } else if (rawClass == byte[].class) {
             return "asByteArray(" + val + ")";
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Unsupported type " + rawClass.getSimpleName() + " in class " + clazzName);
         }
     }
 

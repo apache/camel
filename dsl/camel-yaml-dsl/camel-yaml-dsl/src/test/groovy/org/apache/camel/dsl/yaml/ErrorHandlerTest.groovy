@@ -16,13 +16,17 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.builder.DeadLetterChannelBuilder
+import org.apache.camel.builder.DefaultErrorHandlerBuilder
+import org.apache.camel.builder.ErrorHandlerBuilderRef
+import org.apache.camel.builder.NoErrorHandlerBuilder
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.model.MyFailingProcessor
 
 class ErrorHandlerTest extends YamlTestSupport {
 
-    def "error-handler"() {
+    def "error-handler (ref with bean)"() {
         setup:
             loadRoutes """
                 - beans:
@@ -53,7 +57,64 @@ class ErrorHandlerTest extends YamlTestSupport {
                 to('direct:start').withBody('hello').send()
             }
         then:
+            context.errorHandlerFactory instanceof ErrorHandlerBuilderRef
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "error-handler (ref)"() {
+        setup:
+            loadRoutes """
+                - error-handler:
+                    ref: "myErrorHandler"
+            """
+        when:
+            context.start()
+        then:
+            with(context.errorHandlerFactory, ErrorHandlerBuilderRef) {
+                ref == 'myErrorHandler'
+            }
+    }
+
+    def "error-handler (log)"() {
+        setup:
+            loadRoutes """
+                - error-handler:
+                    log: 
+                      use-original-message: true
+            """
+        when:
+            context.start()
+        then:
+            with(context.errorHandlerFactory, DefaultErrorHandlerBuilder) {
+                useOriginalMessage
+            }
+    }
+
+    def "error-handler (dead-letter-channel)"() {
+        setup:
+            loadRoutes """
+                - error-handler:
+                    dead-letter-channel: 
+                      dead-letter-uri: "mock:on-error"
+            """
+        when:
+            context.start()
+        then:
+            with(context.errorHandlerFactory, DeadLetterChannelBuilder) {
+                deadLetterUri == 'mock:on-error'
+            }
+    }
+
+    def "error-handler (none)"() {
+        setup:
+            loadRoutes """
+                - error-handler:
+                    none: {}
+            """
+        when:
+            context.start()
+        then:
+            context.errorHandlerFactory instanceof NoErrorHandlerBuilder
     }
 
 }

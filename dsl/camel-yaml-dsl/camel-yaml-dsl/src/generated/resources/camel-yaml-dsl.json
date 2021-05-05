@@ -205,13 +205,63 @@
           }
         }
       },
+      "org.apache.camel.builder.DeadLetterChannelBuilder" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "async-delayed-redelivery" : {
+              "type" : "boolean"
+            },
+            "dead-letter-handle-new-exception" : {
+              "type" : "boolean"
+            },
+            "use-original-body" : {
+              "type" : "boolean"
+            },
+            "use-original-message" : {
+              "type" : "boolean"
+            }
+          }
+        } ]
+      },
+      "org.apache.camel.builder.DefaultErrorHandlerBuilder" : {
+        "type" : "object",
+        "properties" : {
+          "async-delayed-redelivery" : {
+            "type" : "boolean"
+          },
+          "dead-letter-handle-new-exception" : {
+            "type" : "boolean"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "org.apache.camel.builder.ErrorHandlerBuilderRef" : {
         "type" : "object",
         "properties" : {
+          "dead-letter-channel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.builder.DeadLetterChannelBuilder"
+          },
+          "log" : {
+            "$ref" : "#/items/definitions/org.apache.camel.builder.DefaultErrorHandlerBuilder"
+          },
+          "none" : {
+            "$ref" : "#/items/definitions/org.apache.camel.builder.NoErrorHandlerBuilder"
+          },
           "ref" : {
             "type" : "string"
           }
         }
+      },
+      "org.apache.camel.builder.NoErrorHandlerBuilder" : {
+        "type" : "object"
       },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
         "type" : "object"
@@ -5663,6 +5713,9 @@
           "consumes" : {
             "type" : "string"
           },
+          "deprecated" : {
+            "type" : "boolean"
+          },
           "enable-cors" : {
             "type" : "string"
           },
@@ -5736,6 +5789,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
@@ -5811,6 +5867,9 @@
           "consumes" : {
             "type" : "string"
           },
+          "deprecated" : {
+            "type" : "boolean"
+          },
           "enable-cors" : {
             "type" : "string"
           },
@@ -5884,6 +5943,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
@@ -5959,6 +6021,9 @@
           "consumes" : {
             "type" : "string"
           },
+          "deprecated" : {
+            "type" : "boolean"
+          },
           "enable-cors" : {
             "type" : "string"
           },
@@ -6032,6 +6097,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
@@ -6505,6 +6573,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
