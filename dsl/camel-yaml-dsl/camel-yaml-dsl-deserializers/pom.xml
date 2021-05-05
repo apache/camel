@@ -130,8 +130,14 @@
                                 <bannedDefinition>org.apache.camel.model.KameletDefinition</bannedDefinition>
                             </bannedDefinitions>
                             <additionalDefinitions>
+                                <!-- saga -->
                                 <additionalDefinition>org.apache.camel.model.SagaOptionDefinition</additionalDefinition>
                                 <additionalDefinition>org.apache.camel.model.SagaActionUriDefinition</additionalDefinition>
+                                <!-- error handler -->
+                                <additionalDefinition>org.apache.camel.builder.DeadLetterChannelBuilder</additionalDefinition>
+                                <additionalDefinition>org.apache.camel.builder.ErrorHandlerBuilderRef</additionalDefinition>
+                                <additionalDefinition>org.apache.camel.builder.NoErrorHandlerBuilder</additionalDefinition>
+                                <additionalDefinition>org.apache.camel.builder.DefaultErrorHandlerBuilder</additionalDefinition>
                             </additionalDefinitions>
                         </configuration>
                     </execution>
