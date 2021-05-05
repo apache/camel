@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.BeanRepository;
@@ -28,6 +30,7 @@ import org.apache.camel.support.LocalBeanRegistry;
 /**
  * Default {@link RouteTemplateContext}.
  */
+@XmlTransient
 public final class DefaultRouteTemplateContext implements RouteTemplateContext {
 
     private final CamelContext camelContext;
