@@ -730,6 +730,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         }
 
         PropertiesComponent pc = getCamelContextReference().getPropertiesComponent();
+        // route templates supports binding beans that are local for the template only
+        // in this local mode then we need to check for side-effects (see further)
         LocalBeanRepositoryAware localBeans = null;
         if (getCamelContextReference().getRegistry() instanceof LocalBeanRepositoryAware) {
             localBeans = (LocalBeanRepositoryAware) getCamelContextReference().getRegistry();
@@ -769,6 +771,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                 boolean clash = bbr.keys().stream().anyMatch(k -> k.equals(oldKey));
                                 if (clash) {
                                     String newKey = oldKey + "-" + UUID.generateUuid();
+                                    LOG.debug("Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique", routeDefinition.getId(), oldKey, newKey);
                                     bbr.swapKey(oldKey, newKey);
                                     param.setValue(newKey);
                                 }
@@ -781,7 +784,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
-                    if (bbr != null) {
+                    if (localBeans != null && bbr != null) {
                         localBeans.setLocalBeanRepository(bbr);
                     }
 
