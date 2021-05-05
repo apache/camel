@@ -5713,6 +5713,9 @@
           "consumes" : {
             "type" : "string"
           },
+          "deprecated" : {
+            "type" : "boolean"
+          },
           "enable-cors" : {
             "type" : "string"
           },
@@ -5786,6 +5789,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
@@ -5861,6 +5867,9 @@
           "consumes" : {
             "type" : "string"
           },
+          "deprecated" : {
+            "type" : "boolean"
+          },
           "enable-cors" : {
             "type" : "string"
           },
@@ -5934,6 +5943,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
@@ -6009,6 +6021,9 @@
           "consumes" : {
             "type" : "string"
           },
+          "deprecated" : {
+            "type" : "boolean"
+          },
           "enable-cors" : {
             "type" : "string"
           },
@@ -6082,6 +6097,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
@@ -6555,6 +6573,9 @@
           },
           "consumes" : {
             "type" : "string"
+          },
+          "deprecated" : {
+            "type" : "boolean"
           },
           "enable-cors" : {
             "type" : "string"
