@@ -81,6 +81,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.DataFormatsDefinition": return new ModelDeserializers.DataFormatsDefinitionDeserializer();
             case "datasonnet": return new ModelDeserializers.DatasonnetExpressionDeserializer();
             case "org.apache.camel.model.language.DatasonnetExpression": return new ModelDeserializers.DatasonnetExpressionDeserializer();
+            case "org.apache.camel.builder.DeadLetterChannelBuilder": return new ModelDeserializers.DeadLetterChannelBuilderDeserializer();
+            case "org.apache.camel.builder.DefaultErrorHandlerBuilder": return new ModelDeserializers.DefaultErrorHandlerBuilderDeserializer();
             case "default-load-balancer": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "delay": return new ModelDeserializers.DelayDefinitionDeserializer();
@@ -97,6 +99,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.validator.EndpointValidatorDefinition": return new ModelDeserializers.EndpointValidatorDefinitionDeserializer();
             case "enrich": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.model.EnrichDefinition": return new ModelDeserializers.EnrichDefinitionDeserializer();
+            case "org.apache.camel.builder.ErrorHandlerBuilderRef": return new ModelDeserializers.ErrorHandlerBuilderRefDeserializer();
             case "etcd-service-discovery": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "exchange-property": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
@@ -190,6 +193,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.MulticastDefinition": return new ModelDeserializers.MulticastDefinitionDeserializer();
             case "mvel": return new ModelDeserializers.MvelExpressionDeserializer();
             case "org.apache.camel.model.language.MvelExpression": return new ModelDeserializers.MvelExpressionDeserializer();
+            case "org.apache.camel.builder.NoErrorHandlerBuilder": return new ModelDeserializers.NoErrorHandlerBuilderDeserializer();
             case "ognl": return new ModelDeserializers.OgnlExpressionDeserializer();
             case "org.apache.camel.model.language.OgnlExpression": return new ModelDeserializers.OgnlExpressionDeserializer();
             case "on-completion": return new ModelDeserializers.OnCompletionDefinitionDeserializer();
