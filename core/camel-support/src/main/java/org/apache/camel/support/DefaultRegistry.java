@@ -97,6 +97,10 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
             this.localRepository.set(repository);
             this.localRepositoryEnabled = true;
         } else {
+            BeanRepository old = this.localRepository.get();
+            if (old != null) {
+                ServiceHelper.stopService(old);
+            }
             this.localRepository.remove();
             this.localRepositoryEnabled = false;
         }

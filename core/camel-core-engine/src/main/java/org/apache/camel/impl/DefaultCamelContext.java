@@ -782,6 +782,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 setStartingRoutes(false);
             }
             pc.setLocalProperties(null);
+            if (localBeans != null) {
+                localBeans.setLocalBeanRepository(null);
+            }
         }
     }
 
