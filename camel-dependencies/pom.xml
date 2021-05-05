@@ -116,7 +116,7 @@
     <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
     <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
     <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
-    <cassandra-driver-version>4.11.0</cassandra-driver-version>
+    <cassandra-driver-version>4.11.1</cassandra-driver-version>
     <cassandra-version>3.11.8</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
