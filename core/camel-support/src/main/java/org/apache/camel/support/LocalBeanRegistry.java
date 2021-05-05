@@ -20,14 +20,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.spi.BrowseableBeanRepository;
-
 /**
  * A special registry which is used for local beans.
  *
  * This {@link org.apache.camel.spi.Registry} is only intended to be used by camel-core.
  */
-public final class LocalBeanRegistry extends SupplierRegistry implements BrowseableBeanRepository {
+public final class LocalBeanRegistry extends SupplierRegistry {
 
     public LocalBeanRegistry() {
     }

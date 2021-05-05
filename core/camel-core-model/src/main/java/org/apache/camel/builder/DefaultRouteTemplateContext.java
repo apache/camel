@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.spi.BrowseableBeanRepository;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.LocalBeanRegistry;
 
 // TODO: Should this be moved to some other module/package?
@@ -65,7 +65,7 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     }
 
     @Override
-    public BrowseableBeanRepository getLocalBeanRepository() {
+    public BeanRepository getLocalBeanRepository() {
         return registry;
     }
 }

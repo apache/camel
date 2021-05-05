@@ -27,11 +27,11 @@ public interface LocalBeanRepositoryAware {
      *
      * @param repository the local repository, or <tt>null</tt> to unset when no longer needed.
      */
-    void setLocalBeanRepository(BrowseableBeanRepository repository);
+    void setLocalBeanRepository(BeanRepository repository);
 
     /**
      * Gets the local bean repository (if any in use)
      */
-    BrowseableBeanRepository getLocalBeanRepository();
+    BeanRepository getLocalBeanRepository();
 
 }

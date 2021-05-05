@@ -32,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.spi.BrowseableBeanRepository;
 import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceHelper;
@@ -50,7 +49,7 @@ import org.apache.camel.util.IOHelper;
 public class DefaultRegistry extends ServiceSupport implements Registry, LocalBeanRepositoryAware, CamelContextAware {
 
     protected CamelContext camelContext;
-    protected final ThreadLocal<BrowseableBeanRepository> localRepository = new ThreadLocal<>();
+    protected final ThreadLocal<BeanRepository> localRepository = new ThreadLocal<>();
     protected volatile boolean localRepositoryEnabled; // flag to keep track if local is in use or not
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
@@ -93,7 +92,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     /**
      * Sets a special local bean repository (ie thread local) that take precedence and will use first, if a bean exists.
      */
-    public void setLocalBeanRepository(BrowseableBeanRepository repository) {
+    public void setLocalBeanRepository(BeanRepository repository) {
         if (repository != null) {
             this.localRepository.set(repository);
             this.localRepositoryEnabled = true;
@@ -108,7 +107,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     }
 
     @Override
-    public BrowseableBeanRepository getLocalBeanRepository() {
+    public BeanRepository getLocalBeanRepository() {
         return localRepositoryEnabled ? localRepository.get() : null;
     }
 
