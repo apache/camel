@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -127,7 +128,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
     @Override
     protected void doBuild() throws Exception {
-        // build pipeline with befofe/after processors
+        CamelContextAware.trySetCamelContext(producer, endpoint.getCamelContext());
+        // build pipeline with before/after processors
         if (endpoint.getBefore() != null || endpoint.getAfter() != null) {
             // detour the exchange using synchronous processing
             AsyncProcessor before = null;
