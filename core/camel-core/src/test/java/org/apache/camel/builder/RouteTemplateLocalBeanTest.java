@@ -137,6 +137,87 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
+    public void testLocalBeanInConfigure() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .configure(rtc -> {
+                    rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Configure " + ex.getMessage().getBody()
+                            + " from " + rtc.getProperty("foo")));
+                })
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Configure World from one", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    @Disabled("TODO: Fix me")
+    public void testLocalBeanInConfigureTwo() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .configure(rtc -> {
+                    rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Configure " + ex.getMessage().getBody()
+                            + " from " + rtc.getProperty("foo")));
+                })
+                .routeId("myRoute")
+                .add();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "two")
+                .parameter("bar", "myBar")
+                .configure(rtc -> {
+                    rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Configure2 " + ex.getMessage().getBody()
+                            + " from " + rtc.getProperty("foo")));
+                })
+                .routeId("myRoute2")
+                .add();
+
+        assertEquals(2, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Configure World from one", out);
+        Object out2 = template.requestBody("direct:two", "Camel");
+        assertEquals("Configure2 Camel from two", out2);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
     private class BuilderProcessor implements Processor {
 
         @Override

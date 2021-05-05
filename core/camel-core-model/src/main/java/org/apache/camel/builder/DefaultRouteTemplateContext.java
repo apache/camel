@@ -16,13 +16,13 @@
  */
 package org.apache.camel.builder;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Registry;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 // TODO: Should this be moved to some other module/package?
 
@@ -55,7 +55,7 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
 
     @Override
     public Object getProperty(String name) {
-        return camelContext.resolvePropertyPlaceholders(name);
+        return parameters.get(name);
     }
 
     @Override
