@@ -264,10 +264,49 @@
         "type" : "object"
       },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
-        "type" : "object"
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+        }
       },
-      "org.apache.camel.dsl.yaml.deserializers.model.OutputAwareFromDefinition" : {
+      "org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition" : {
         "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "type" ]
+      },
+      "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "parameters" : {
+            "type" : "object"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "uri" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "steps", "uri" ]
+      },
+      "org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition"
+        } ],
         "properties" : {
           "parameters" : {
             "type" : "object"
@@ -2020,28 +2059,29 @@
         },
         "required" : [ "from", "steps" ]
       },
-      "org.apache.camel.model.RouteTemplateContextRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "ref" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "ref" ]
-      },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
         "properties" : {
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
+          "beans" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+            }
           },
-          "template-parameter" : {
+          "from" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.FromDefinition"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "parameters" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateParameterDefinition"
             }
           }
-        }
+        },
+        "required" : [ "from", "id" ]
       },
       "org.apache.camel.model.RouteTemplateParameterDefinition" : {
         "type" : "object",
@@ -2057,28 +2097,6 @@
           }
         },
         "required" : [ "name" ]
-      },
-      "org.apache.camel.model.RouteTemplatesDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "route-template" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
-            }
-          }
-        }
-      },
-      "org.apache.camel.model.RoutesDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "route" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-            }
-          }
-        }
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {
@@ -6888,14 +6906,23 @@
       "error-handler" : {
         "$ref" : "#/items/definitions/org.apache.camel.builder.ErrorHandlerBuilderRef"
       },
+      "beans" : {
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
+      },
       "from" : {
-        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.model.OutputAwareFromDefinition"
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer"
       },
       "on-exception" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
       },
       "route" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
+      },
+      "route-template" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
+      },
+      "template" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
       },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
