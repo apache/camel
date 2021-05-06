@@ -153,7 +153,7 @@ can you maintain the overall message flow when processing a message
 consisting of multiple elements, each of which may require different
 processing?
 
-|
+a|image::eip/DistributionAggregateIcon.gif[image]
 |xref:scatter-gather.adoc[Scatter-Gather] |How do you maintain the
 overall message flow when a message needs to be sent to multiple
 recipients, each of which may send a reply?
@@ -173,38 +173,41 @@ a|image::eip/MessageBrokerIcon.gif[image]
 destination of a message from the sender and maintain central control
 over the flow of messages?
 
-|
+a|image::eip/MessagingAdapterIcon.gif[image]
 |xref:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
 that a specific endpoint does not get overloaded, or we don't exceed an
 agreed SLA with some external service?
 
-|
+a|image::eip/WireTap.gif[image]
 |xref:sample-eip.adoc[Sampling] |How can I sample one message out of many
 in a given period to avoid downstream route does not get overloaded?
 
-|
+a|image::eip/MessagingAdapterIcon.gif[image]
+|xref:kamelet-eip.adoc[Kamelet] | How can I call Kamelets (route templates).
+
+a|image::eip/MessageExpirationIcon.gif[image]
 |xref:delay-eip.adoc[Delayer] |How can I delay the sending of a message?
 
-|
+a|image::eip/MessageDispatcherIcon.gif[image]
 |xref:loadBalance-eip.adoc[Load Balancer] |How can I balance load across a
 number of endpoints?
 
-|
+a|image::eip/MessageDispatcherIcon.gif[image]
 |xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
 
-|
+a|image::eip/MessagingGatewayIcon.gif[image]
 |xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
 where the service is looked up from a service registry of some sorts?
 
-|
+a|image::eip/TransactionalClientIcon.gif[image]
 |xref:saga-eip.adoc[Saga] |How can I define a series of related actions in a Camel route
 that should be either completed successfully (all of them) or not-executed/compensated?
 
-|
+a|image::eip/MessageDispatcherIcon.gif[image]
 |xref:multicast-eip.adoc[Multicast] |How can I route a message to a number
 of endpoints at the same time?
 
-|
+a|image::eip/PollingConsumerIcon.gif[image]
 |xref:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
 |=======================================================================
 
@@ -231,13 +234,13 @@ a|image::eip/NormalizerIcon.gif[image]
 |xref:normalizer.adoc[Normalizer] |How do you process messages that are
 semantically equivalent, but arrive in a different format?
 
-|
+a|image::eip/ResequencerIcon.gif[image]
 |xref:sort-eip.adoc[Sort] |How can I sort the body of a message?
 
-|
+a|image::eip/MessagingGatewayIcon.gif[image]
 |xref:script-eip.adoc[Script] |How do I execute a script which may not change the message?
 
-|
+a|image::eip/MessageSelectorIcon.gif[image]
 |xref:validate-eip.adoc[Validate] |How can I validate a message?
 |=======================================================================
 
@@ -246,7 +249,8 @@ semantically equivalent, but arrive in a different format?
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
-|
+
+a|image::eip/MessageTranslatorIcon.gif[image]
 |xref:messaging-mapper.adoc[Messaging Mapper] |How do you move data
 between domain objects and the messaging infrastructure while keeping
 the two independent of each other?
@@ -275,7 +279,7 @@ a|image::eip/DurableSubscriptionIcon.gif[image]
 |xref:durable-subscriber.adoc[Durable Subscriber] |How can a subscriber
 avoid missing messages while it's not listening for them?
 
-|
+a|image::eip/MessageFilterIcon.gif[image]
 |xref:idempotentConsumer-eip.adoc[Idempotent Consumer] |How can a message
 receiver deal with duplicate messages?
 
@@ -312,14 +316,14 @@ a|image::eip/WireTapIcon.gif[image]
 |xref:wireTap-eip.adoc[Wire Tap] |How do you inspect messages that travel
 on a point-to-point channel?
 
-|
+a|image::eip/ControlBusIcon.gif[image]
 |xref:message-history.adoc[Message History] |How can we effectively
 analyze and debug the flow of messages in a loosely coupled system?
 
-|
+a|image::eip/ControlBusIcon.gif[image]
 |xref:log-eip.adoc[Log] |How can I log processing a message?
 
-|
+a|image::eip/RoutingTableIcon.gif[image]
 |xref:step-eip.adoc[Step] | Steps groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
 
 |=======================================================================
