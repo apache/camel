@@ -107,6 +107,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             writeBodyPart(bodyContent, part, contentType);
             mp.addBodyPart(part);
             if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+                List<String> idsToRemove = new ArrayList<>();
                 for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects()
                         .entrySet()) {
                     String attachmentFilename = entry.getKey();
@@ -128,7 +129,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                         }
                     }
                     mp.addBodyPart(part);
-                    exchange.getMessage(AttachmentMessage.class).removeAttachment(attachmentFilename);
+                    idsToRemove.add(attachmentFilename);
+                }
+                for (String id : idsToRemove) {
+                    exchange.getMessage(AttachmentMessage.class).removeAttachment(id);
                 }
             }
             mm.setContent(mp);

@@ -194,6 +194,53 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void roundtripWithBinaryMultipleAttachments() throws IOException {
+        String attContentType1 = "application/binary";
+        byte[] attText1 = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        String attFileName1 = "Attachment File Name 1";
+
+        String attContentType2 = "application/binary";
+        byte[] attText2 = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        String attFileName2 = "Attachment File Name 2";
+
+        in.setBody("Body text");
+        DataSource ds1 = new ByteArrayDataSource(attText1, attContentType1);
+        DataSource ds2 = new ByteArrayDataSource(attText2, attContentType2);
+        in.addAttachment(attFileName1, new DataHandler(ds1));
+        in.addAttachment(attFileName2, new DataHandler(ds2));
+        addAttachment(ds1, attFileName1, null);
+        addAttachment(ds2, attFileName2, null);
+
+        Exchange result = template.send("direct:roundtrip", exchange);
+        AttachmentMessage out = result.getMessage(AttachmentMessage.class);
+        assertEquals("Body text", out.getBody(String.class));
+        assertTrue(out.hasAttachments());
+        assertEquals(2, out.getAttachmentNames().size());
+
+        assertTrue(out.getAttachmentNames().contains(attFileName1));
+        assertTrue(out.getAttachmentNames().contains(attFileName2));
+
+        DataHandler dh1 = out.getAttachment(attFileName1);
+        assertNotNull(dh1);
+        assertEquals(attContentType1, dh1.getContentType());
+
+        InputStream is1 = dh1.getInputStream();
+        ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is1, os1);
+        assertArrayEquals(attText1, os1.toByteArray());
+
+        DataHandler dh2 = out.getAttachment(attFileName2);
+        assertNotNull(dh2);
+        assertEquals(attContentType2, dh2.getContentType());
+
+        InputStream is2 = dh2.getInputStream();
+        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is2, os2);
+        assertArrayEquals(attText2, os2.toByteArray());
+
+    }
+
+    @Test
     public void roundtripWithBinaryAttachmentsAndBinaryContent() throws IOException {
         String attContentType = "application/binary";
         byte[] attText = { 0, 1, 2, 3, 4, 5, 6, 7 };
