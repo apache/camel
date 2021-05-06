@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -246,11 +247,6 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
-        // apply configurer if any present
-        if (target.getConfigurer() != null) {
-            target.getConfigurer().accept(routeTemplateContext);
-        }
-
         final Map<String, Object> prop = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
@@ -273,7 +269,30 @@ public class DefaultModel implements Model {
             }
         }
 
-        // then override with user parameters
+        // then override with user parameters part 1
+        if (routeTemplateContext.getParameters() != null) {
+            prop.putAll(routeTemplateContext.getParameters());
+        }
+
+        // TODO: not sure if this is the best location where this should happen, eventually this can
+        //       be moved at a later stage in the camel context but would mean that we need to add the
+        //       configurer to the route definition.
+        try {
+            Properties localProps = new Properties();
+            localProps.putAll(prop);
+
+            getCamelContext().getPropertiesComponent().setLocalProperties(localProps);
+
+            // apply configurer if any present
+            if (target.getConfigurer() != null) {
+                target.getConfigurer().accept(routeTemplateContext);
+            }
+        } finally {
+            getCamelContext().getPropertiesComponent().setLocalProperties(null);
+        }
+
+        // override with user parameters part 2: user may have added parameter
+        // in the customize callback
         if (routeTemplateContext.getParameters() != null) {
             prop.putAll(routeTemplateContext.getParameters());
         }

@@ -71,11 +71,7 @@ import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteTemplateContextRefDefinition;
-import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
-import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
@@ -11737,80 +11733,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.RouteTemplateContextRefDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "route-template-context-ref",
-            properties = @YamlProperty(name = "ref", type = "string", required = true)
-    )
-    public static class RouteTemplateContextRefDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateContextRefDefinition> {
-        public RouteTemplateContextRefDefinitionDeserializer() {
-            super(RouteTemplateContextRefDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateContextRefDefinition newInstance() {
-            return new RouteTemplateContextRefDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateContextRefDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "ref": {
-                    String val = asText(node);
-                    target.setRef(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RouteTemplateDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "route-template",
-            properties = {
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
-                    @YamlProperty(name = "template-parameter", type = "array:org.apache.camel.model.RouteTemplateParameterDefinition")
-            }
-    )
-    public static class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateDefinition> {
-        public RouteTemplateDefinitionDeserializer() {
-            super(RouteTemplateDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateDefinition newInstance() {
-            return new RouteTemplateDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setRoute(val);
-                    break;
-                }
-                case "template-parameter": {
-                    java.util.List<org.apache.camel.model.RouteTemplateParameterDefinition> val = asFlatList(node, org.apache.camel.model.RouteTemplateParameterDefinition.class);
-                    target.setTemplateParameters(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
             types = org.apache.camel.model.RouteTemplateParameterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "template-parameter",
@@ -11847,72 +11769,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RouteTemplatesDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "route-templates",
-            properties = @YamlProperty(name = "route-template", type = "array:org.apache.camel.model.RouteTemplateDefinition")
-    )
-    public static class RouteTemplatesDefinitionDeserializer extends YamlDeserializerBase<RouteTemplatesDefinition> {
-        public RouteTemplatesDefinitionDeserializer() {
-            super(RouteTemplatesDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplatesDefinition newInstance() {
-            return new RouteTemplatesDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplatesDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "route-template": {
-                    java.util.List<org.apache.camel.model.RouteTemplateDefinition> val = asFlatList(node, org.apache.camel.model.RouteTemplateDefinition.class);
-                    target.setRouteTemplates(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RoutesDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "routes",
-            properties = @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition")
-    )
-    public static class RoutesDefinitionDeserializer extends YamlDeserializerBase<RoutesDefinition> {
-        public RoutesDefinitionDeserializer() {
-            super(RoutesDefinition.class);
-        }
-
-        @Override
-        protected RoutesDefinition newInstance() {
-            return new RoutesDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RoutesDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "route": {
-                    java.util.List<org.apache.camel.model.RouteDefinition> val = asFlatList(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setRoutes(val);
                     break;
                 }
                 default: {

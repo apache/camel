@@ -30,9 +30,10 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationMode;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
 import org.apache.camel.dsl.yaml.deserializers.EndpointProducerDeserializersResolver;
 import org.apache.camel.dsl.yaml.deserializers.ModelDeserializersResolver;
-import org.apache.camel.dsl.yaml.deserializers.model.OutputAwareFromDefinition;
+import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
@@ -137,6 +138,8 @@ public class YamlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                                 "errorHandler must be defined before any routes in the RouteBuilder");
                     }
                     errorHandler((ErrorHandlerBuilder) item);
+                } else if (item instanceof RouteTemplateDefinition) {
+                    getRouteTemplateCollection().routeTemplate((RouteTemplateDefinition) item);
                 }
             }
         };
