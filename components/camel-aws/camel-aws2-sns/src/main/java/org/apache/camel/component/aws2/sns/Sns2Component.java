@@ -58,22 +58,22 @@ public class Sns2Component extends DefaultComponent {
             setProperties(getCamelContext(), this, transientParameters);
         }
 
-        configuration = this.configuration != null ? this.configuration : new Sns2Configuration();
-        Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, configuration);
-
         Map<String, Object> nonTransientParameters = getNonTransientParameters(parameters);
 
-        setProperties(endpoint, nonTransientParameters);
+        Sns2Configuration epConfiguration = this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
 
         if (remaining.startsWith("arn:")) {
-            parseRemaining(remaining);
+            parseRemaining(epConfiguration, remaining);
         } else {
-            configuration.setTopicName(remaining);
-            LOG.debug("Created the endpoint with topic {}", configuration.getTopicName());
+            epConfiguration.setTopicName(remaining);
+            LOG.debug("Created the endpoint with topic {}", epConfiguration.getTopicName());
         }
 
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonSNSClient() == null
-                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, epConfiguration);
+        setProperties(endpoint, nonTransientParameters);
+
+        if (!epConfiguration.isUseDefaultCredentialsProvider() && epConfiguration.getAmazonSNSClient() == null
+                && (epConfiguration.getAccessKey() == null || epConfiguration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
@@ -107,15 +107,15 @@ public class Sns2Component extends DefaultComponent {
         super.validateParameters(uri, getNonTransientParameters(parameters), optionPrefix);
     }
 
-    private void parseRemaining(String remaining) {
+    private void parseRemaining(Sns2Configuration epConfiguration, String remaining) {
         String[] parts = remaining.split(":");
         if (parts.length != 6 || !parts[2].equals("sns")) {
             throw new IllegalArgumentException("Topic arn must be in format arn:aws:sns:region:account:name.");
         }
-        configuration.setTopicArn(remaining);
-        configuration.setRegion(Region.of(parts[3]).toString());
+        epConfiguration.setTopicArn(remaining);
+        epConfiguration.setRegion(Region.of(parts[3]).toString());
 
-        LOG.debug("Created the endpoint with topic arn {}", configuration.getTopicArn());
+        LOG.debug("Created the endpoint with topic arn {}", epConfiguration.getTopicArn());
     }
 
     public Sns2Configuration getConfiguration() {
