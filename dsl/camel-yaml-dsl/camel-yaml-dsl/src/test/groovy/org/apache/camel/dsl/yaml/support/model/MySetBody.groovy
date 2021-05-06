@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.yaml.deserializers;
+package org.apache.camel.dsl.yaml.support.model
 
-import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
-import org.apache.camel.spi.annotations.YamlIn;
-import org.apache.camel.spi.annotations.YamlProperty;
-import org.apache.camel.spi.annotations.YamlType;
+import org.apache.camel.Exchange
+import org.apache.camel.Processor
 
-@YamlIn
-@YamlType(
-          nodes = "from",
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "__extends",
-                                type = "object:org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition")
-          })
-public class RouteFromDefinitionDeserializer extends OutputAwareFromDefinitionDeserializer {
-    public RouteFromDefinitionDeserializer() {
+class MySetBody implements Processor {
+    private String payload
+
+    String getPayload() {
+        return payload
+    }
+
+    void setPayload(String payload) {
+        this.payload = payload
+    }
+
+    @Override
+    void process(Exchange exchange) throws Exception {
+        exchange.in.body = payload
     }
 }
