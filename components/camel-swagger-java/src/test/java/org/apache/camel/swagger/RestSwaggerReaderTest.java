@@ -17,6 +17,7 @@
 package org.apache.camel.swagger;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSwaggerReaderTest extends CamelTestSupport {
@@ -46,17 +48,17 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}")
-                        .description("Saying hi").param().name("name").type(RestParamType.path)
-                        .dataType("string").description("Who is it").example("Donald Duck").endParam().to("log:hi")
-                        .get("/bye/{name}").description("Saying bye").param().name("name")
-                        .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
-                        .responseMessage().code(200).message("A reply number")
-                        .responseModel(float.class).example("success", "123").example("error", "-1").endResponseMessage()
-                        .to("log:bye").post("/bye")
-                        .description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                        .param().name("greeting").type(RestParamType.body)
-                        .dataType("string").description("Message to use as greeting")
-                        .example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
+                    .description("Saying hi").deprecated().param().name("name").type(RestParamType.path)
+                    .dataType("string").description("Who is it").example("Donald Duck").endParam().to("log:hi")
+                    .get("/bye/{name}").description("Saying bye").deprecated().param().name("name")
+                    .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
+                    .responseMessage().code(200).message("A reply number")
+                    .responseModel(float.class).example("success", "123").example("error", "-1").endResponseMessage()
+                    .to("log:bye").post("/bye")
+                    .description("To update the greeting message").consumes("application/xml").produces("application/xml")
+                    .param().name("greeting").type(RestParamType.body)
+                    .dataType("string").description("Message to use as greeting")
+                    .example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
             }
         };
     }
@@ -93,8 +95,14 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"success\" : \"123\""));
         assertTrue(json.contains("\"error\" : \"-1\""));
         assertTrue(json.contains("\"type\" : \"string\""));
+        assertTrue(json.contains("\"deprecated\" : true"));
+
+        JsonNode jsonNode = new ObjectMapper().readValue(json, JsonNode.class);
+        assertNull(jsonNode.get("paths").get("/hello/bye").get("post").get("deprecated"));
+        assertNotNull(jsonNode.get("paths").get("/hello/hi/{name}").get("get").get("deprecated"));
+        assertTrue(jsonNode.get("paths").get("/hello/hi/{name}").get("get").get("deprecated").asBoolean());
+        assertTrue(jsonNode.get("paths").get("/hello/bye/{name}").get("get").get("deprecated").asBoolean());
 
         context.stop();
     }
-
 }
