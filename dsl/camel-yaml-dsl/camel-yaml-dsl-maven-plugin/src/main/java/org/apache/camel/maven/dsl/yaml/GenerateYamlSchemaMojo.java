@@ -164,6 +164,15 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
                 continue;
             }
+            if (propertyName.equals("__extends") && propertyType.startsWith("array:")) {
+                String objectRef = StringHelper.after(propertyType, ":");
+                definition
+                    .put("type", "array")
+                    .with("items")
+                    .put("$ref", "#/items/definitions/" + objectRef);
+
+                continue;
+            }
             if (propertyName.startsWith("__")) {
                 // this is an internal name
                 continue;

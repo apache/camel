@@ -45,6 +45,11 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return this.camelContext;
+    }
+
+    @Override
     public void bind(String id, Object bean) {
         registry.bind(id, bean);
     }

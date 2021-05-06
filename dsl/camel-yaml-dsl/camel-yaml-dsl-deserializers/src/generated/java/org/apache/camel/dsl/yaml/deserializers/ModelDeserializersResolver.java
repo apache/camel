@@ -292,16 +292,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.RouteContextRefDefinition": return new ModelDeserializers.RouteContextRefDefinitionDeserializer();
             case "route": return new ModelDeserializers.RouteDefinitionDeserializer();
             case "org.apache.camel.model.RouteDefinition": return new ModelDeserializers.RouteDefinitionDeserializer();
-            case "route-template-context-ref": return new ModelDeserializers.RouteTemplateContextRefDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplateContextRefDefinition": return new ModelDeserializers.RouteTemplateContextRefDefinitionDeserializer();
-            case "route-template": return new ModelDeserializers.RouteTemplateDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplateDefinition": return new ModelDeserializers.RouteTemplateDefinitionDeserializer();
             case "template-parameter": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
             case "org.apache.camel.model.RouteTemplateParameterDefinition": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
-            case "route-templates": return new ModelDeserializers.RouteTemplatesDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplatesDefinition": return new ModelDeserializers.RouteTemplatesDefinitionDeserializer();
-            case "routes": return new ModelDeserializers.RoutesDefinitionDeserializer();
-            case "org.apache.camel.model.RoutesDefinition": return new ModelDeserializers.RoutesDefinitionDeserializer();
             case "routing-slip": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "org.apache.camel.model.RoutingSlipDefinition": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "rss": return new ModelDeserializers.RssDataFormatDeserializer();
