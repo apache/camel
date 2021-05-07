@@ -31,6 +31,7 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.storage.object.SwiftObject;
+import org.openstack4j.model.storage.object.options.ObjectListOptions;
 import org.openstack4j.model.storage.object.options.ObjectLocation;
 
 public class ObjectProducer extends AbstractOpenstackProducer {
@@ -93,7 +94,13 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class),
                 String.class);
         StringHelper.notEmpty(name, "Container name");
-        final List<? extends SwiftObject> out = os.objectStorage().objects().list(name);
+        final String path = msg.getHeader(SwiftConstants.PATH, String.class);
+        ObjectListOptions objectListOptions = ObjectListOptions.create();
+        if (path != null) {
+            objectListOptions.startsWith(path).delimiter('/');
+        }
+        List<? extends SwiftObject> out = os.objectStorage().objects().list(name, objectListOptions);
+
         exchange.getIn().setBody(out);
     }
 
