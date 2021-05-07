@@ -87,6 +87,10 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
     }
 
+    public Object constructDocument(Node node) {
+        return super.construct(node);
+    }
+
     @Override
     protected Optional<ConstructNode> findConstructorFor(Node node) {
         ConstructNode ctor = resolve(node);
@@ -134,6 +138,19 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public <T> T construct(Node key, Node val, Class<T> type) {
         Object result = construct(key, val);
+        if (result == null) {
+            return null;
+        }
+
+        return type.cast(result);
+    }
+
+    public <T> T construct(Node node, Class<T> type) {
+        ConstructNode constructor = resolve(type);
+        if (constructor == null) {
+            throw new YamlDeserializationException("Unable to find constructor for node: " + node);
+        }
+        Object result = constructor.construct(node);
         if (result == null) {
             return null;
         }

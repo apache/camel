@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.VetoCamelContextStartException;
@@ -73,6 +74,8 @@ public class KameletComponent extends DefaultComponent {
     private Map<String, Properties> templateProperties;
     @Metadata
     private Map<String, Properties> routeProperties;
+    @Metadata(defaultValue = Kamelet.DEFAULT_LOCATION)
+    private String location = Kamelet.DEFAULT_LOCATION;
 
     public KameletComponent() {
     }
@@ -263,6 +266,17 @@ public class KameletComponent extends DefaultComponent {
         this.routeProperties = routeProperties;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * The location of the Kamelets on the file system.
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     int getStateCounter() {
         return stateCounter;
     }
@@ -339,7 +353,7 @@ public class KameletComponent extends DefaultComponent {
      * Once the camel context is initialized all the endpoint tracked by this LifecycleHandler will
      * be used to create routes from templates.
      */
-    private static class LifecycleHandler extends LifecycleStrategySupport {
+    private class LifecycleHandler extends LifecycleStrategySupport {
         private final List<KameletEndpoint> endpoints;
         private final AtomicBoolean initialized;
 
@@ -348,19 +362,36 @@ public class KameletComponent extends DefaultComponent {
             this.initialized = new AtomicBoolean();
         }
 
-        public static void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
-            LOGGER.debug("Creating route from template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
+        public void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
+            final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+            final ModelCamelContext context = getCamelContext().adapt(ModelCamelContext.class);
+            final String templateId = endpoint.getTemplateId();
+            final String routeId = endpoint.getRouteId();
 
-            final ModelCamelContext context = endpoint.getCamelContext().adapt(ModelCamelContext.class);
-            final String id = context.addRouteFromTemplate(endpoint.getRouteId(), endpoint.getTemplateId(),
-                    endpoint.getKameletProperties());
+            if (context.getRouteTemplateDefinition(templateId) == null) {
+                LOGGER.debug("Loading route template={} from {}", templateId, getLocation());
+
+                String path = getLocation();
+                if (path != null) {
+                    if (!path.endsWith("/")) {
+                        path += "/";
+                    }
+
+                    ecc.getRoutesLoader().loadRoutes(
+                            ecc.getResourceLoader().resolveResource(path + templateId + ".kamelet.yaml"));
+                }
+            }
+
+            LOGGER.debug("Creating route from template={} and id={}", templateId, routeId);
+
+            final String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
             final RouteDefinition def = context.getRouteDefinition(id);
 
             if (!def.isPrepared()) {
                 context.startRouteDefinitions(Collections.singletonList(def));
             }
 
-            LOGGER.debug("Route with id={} created from template={}", id, endpoint.getTemplateId());
+            LOGGER.debug("Route with id={} created from template={}", id, templateId);
         }
 
         @Override

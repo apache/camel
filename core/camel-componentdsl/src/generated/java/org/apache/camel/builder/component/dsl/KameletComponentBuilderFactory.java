@@ -51,6 +51,21 @@ public interface KameletComponentBuilderFactory {
             extends
                 ComponentBuilder<KameletComponent> {
         /**
+         * The location of the Kamelets on the file system.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: classpath:/kamelets
+         * Group: common
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default KameletComponentBuilder location(java.lang.String location) {
+            doSetProperty("location", location);
+            return this;
+        }
+        /**
          * Set route local parameters.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -198,6 +213,7 @@ public interface KameletComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "location": ((KameletComponent) component).setLocation((java.lang.String) value); return true;
             case "routeProperties": ((KameletComponent) component).setRouteProperties((java.util.Map) value); return true;
             case "templateProperties": ((KameletComponent) component).setTemplateProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((KameletComponent) component).setBridgeErrorHandler((boolean) value); return true;
