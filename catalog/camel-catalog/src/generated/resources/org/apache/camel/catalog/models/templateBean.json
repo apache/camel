@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "templateBean",
+    "title": "Template Bean",
+    "description": "A route template bean (local bean)",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RouteTemplateBeanDefinition",
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Bean name" },
+    "beanType": { "kind": "attribute", "displayName": "Bean Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the Class of the bean" }
+  }
+}
