@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,5 +64,20 @@ public class SnsComponentTest extends CamelTestSupport {
                 from("direct:start").to("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&policy=XXX");
             }
         };
+    }
+
+    @DisplayName(value = "Test for CAMEL-16586")
+    @Test
+    public void createMultipleEndpoints() throws Exception {
+        Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
+
+        Sns2Endpoint endpoint1 = (Sns2Endpoint) component.createEndpoint("aws2-sns://Topic1?accessKey=xxx&secretKey=yyy");
+        assertEquals("Topic1", endpoint1.getConfiguration().getTopicName());
+
+        Sns2Endpoint endpoint2 = (Sns2Endpoint) component.createEndpoint("aws2-sns://Topic2?accessKey=xxx&secretKey=yyy");
+        assertEquals("Topic2", endpoint2.getConfiguration().getTopicName());
+
+        assertEquals("Topic1", endpoint1.getConfiguration().getTopicName());
+        assertEquals("Topic2", endpoint2.getConfiguration().getTopicName());
     }
 }
