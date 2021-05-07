@@ -208,9 +208,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         if (bean instanceof RouteTemplateContext.BeanSupplier) {
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
         } else if (bean instanceof Supplier) {
-            def.setBeanSupplier((ctx) -> ((Supplier<?>) bean).get());
+            def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
         } else {
-            def.setBeanSupplier((ctx) -> bean);
+            def.setBeanSupplier(ctx -> bean);
             def.setBeanType(bean.getClass());
         }
         templateBeans.add(def);
@@ -229,7 +229,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
         def.setName(name);
-        def.setBeanSupplier((ctx) -> ((Supplier<?>) bean).get());
+        def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
         templateBeans.add(def);
         return this;
     }
