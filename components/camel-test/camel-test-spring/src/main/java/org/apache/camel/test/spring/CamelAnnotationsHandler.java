@@ -149,11 +149,12 @@ public final class CamelAnnotationsHandler {
                     RouteCoverageDumper.dumpRouteCoverage(camelContext, testClass.getName(), testMethodName);
 
                     // reset JMX statistics
-                    ManagedCamelContextMBean managedCamelContext
-                            = camelContext.getExtension(ManagedCamelContext.class).getManagedCamelContext();
+                    ManagedCamelContext managedCamelContext
+                            = camelContext.getExtension(ManagedCamelContext.class);
                     if (managedCamelContext != null) {
+                        ManagedCamelContextMBean mBean = managedCamelContext.getManagedCamelContext();
                         LOGGER.debug("Resetting JMX statistics for RouteCoverage");
-                        managedCamelContext.reset(true);
+                        mBean.reset(true);
                     }
 
                     // turn off dumping one more time by removing the event listener (which would dump as well when Camel is stopping)
