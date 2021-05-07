@@ -47,6 +47,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     @XmlElement(name = "templateParameter")
     private List<RouteTemplateParameterDefinition> templateParameters;
     @XmlElement(name = "templateBean")
+    @Metadata(description = "Adds a local bean the route template uses.")
     private List<RouteTemplateBeanDefinition> templateBeans;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
