@@ -95,11 +95,15 @@ public class ObjectProducer extends AbstractOpenstackProducer {
                 String.class);
         StringHelper.notEmpty(name, "Container name");
         final String path = msg.getHeader(SwiftConstants.PATH, String.class);
-        ObjectListOptions objectListOptions = ObjectListOptions.create();
+
+        List<? extends SwiftObject> out;
         if (path != null) {
+            ObjectListOptions objectListOptions = ObjectListOptions.create();
             objectListOptions.startsWith(path).delimiter('/');
+            out = os.objectStorage().objects().list(name, objectListOptions);
+        } else {
+            out = os.objectStorage().objects().list(name);
         }
-        List<? extends SwiftObject> out = os.objectStorage().objects().list(name, objectListOptions);
 
         exchange.getIn().setBody(out);
     }
