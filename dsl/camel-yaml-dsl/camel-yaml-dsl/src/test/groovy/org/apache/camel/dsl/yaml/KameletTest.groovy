@@ -226,7 +226,7 @@ class KameletTest extends YamlTestSupport {
                       uri: "kamelet:source"
                       steps:
                         - process:
-                            ref: "myProcessor"
+                            ref: "{{myProcessor}}"
                 - from:
                     uri: "direct:start"
                     steps:
