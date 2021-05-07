@@ -16,17 +16,13 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
-import org.apache.camel.dsl.yaml.support.model.MyBean
+import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
 
 class RouteTemplateTest extends YamlTestSupport {
-    @Override
-    def doSetup() {
-        context.start()
-    }
-
     def "create template"() {
         when:
             loadRoutes '''
@@ -51,32 +47,45 @@ class RouteTemplateTest extends YamlTestSupport {
     }
 
     def "create template with beans"() {
-        when:
+        setup:
             loadRoutes """
                 - template:
                     id: "myTemplate"
                     beans:
-                      - name: "myBean"
-                        type: ${MyBean.class.name}
-                        properties:
-                          field1: 'f1'
+                      - name: "myProcessor"
+                        type: ${MyUppercaseProcessor.class.name}
                     from:
-                      uri: "direct:info"
+                      uri: "direct:{{directName}}"
                       steps:
-                        - log: "message"
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
             """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'HELLO'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
         then:
             context.routeTemplateDefinitions.size() == 1
 
             with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
                 id == 'myTemplate'
                 configurer != null
-
-                route.input.endpointUri == 'direct:info'
-                with (route.outputs[0], LogDefinition) {
-                    message == 'message'
-                }
             }
+
+            MockEndpoint.assertIsSatisfied(context)
     }
 
     def "create template with properties"() {
