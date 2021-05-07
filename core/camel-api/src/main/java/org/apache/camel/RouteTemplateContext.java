@@ -28,6 +28,9 @@ import org.apache.camel.spi.HasCamelContext;
  */
 public interface RouteTemplateContext extends HasCamelContext {
 
+    /**
+     * Used for template beans to supply the local bean the route template should use when creating route(s).
+     */
     @FunctionalInterface
     interface BeanSupplier<T> {
         T get(RouteTemplateContext rtc);
