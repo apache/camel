@@ -365,7 +365,7 @@
     <jsonassert-version>1.5.0</jsonassert-version>
     <jsonata4java-version>1.5.2</jsonata4java-version>
     <jsoup-version>1.13.1</jsoup-version>
-    <jt400-version>10.5</jt400-version>
+    <jt400-version>10.6</jt400-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <junit-jupiter-version>5.7.1</junit-jupiter-version>
     <junit-toolbox-version>2.3</junit-toolbox-version>
