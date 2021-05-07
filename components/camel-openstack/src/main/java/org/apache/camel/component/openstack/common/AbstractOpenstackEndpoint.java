@@ -70,9 +70,11 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
         IOSClientBuilder.V3 builder = OSFactory.builderV3()
                 .endpoint(getHost());
 
-        builder.credentials(getUsername(), getPassword(), Identifier.byId(getDomain()));
+        builder.credentials(getUsername(), getPassword(), Identifier.byName(getDomain()));
 
-        builder.scopeToProject(Identifier.byId(getProject()));
+        if (getProject() != null) {
+            builder.scopeToProject(Identifier.byId(getProject()));
+        }
 
         if (getConfig() != null) {
             builder.withConfig(getConfig());
