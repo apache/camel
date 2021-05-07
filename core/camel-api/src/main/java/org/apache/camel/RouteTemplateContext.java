@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.spi.BeanRepository;
@@ -118,4 +119,15 @@ public interface RouteTemplateContext extends HasCamelContext {
      * Gets the local bean repository for the route template when creating the new route
      */
     BeanRepository getLocalBeanRepository();
+
+    /**
+     * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
+     * gives control over the creating process, such as binding local beans and doing other kind of customization.
+     *
+     * @param configurer the configurer with callback to invoke with the given route template context
+     */
+    void setConfigurer(Consumer<RouteTemplateContext> configurer);
+
+    Consumer<RouteTemplateContext> getConfigurer();
+
 }
