@@ -16,30 +16,24 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
-public class KameletLocalBeanTest extends CamelTestSupport {
+public class KameletLocalBeanSupplierTest extends CamelTestSupport {
+
+    private final AtomicInteger counter = new AtomicInteger();
 
     @Test
-    public void testOne() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi John we are going to Moes");
+    public void testSupplier() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello John go to number 2", "Hi Mary go to number 1");
 
-        template.sendBody("direct:moe", "John");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testTwo() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi Jack we are going to Shamrock",
-                "Hi Mary we are going to Moes");
-
-        template.sendBody("direct:shamrock", "Jack");
-        template.sendBody("direct:moe", "Mary");
+        template.sendBody("direct:hello", "John");
+        template.sendBody("direct:hi", "Mary");
 
         assertMockEndpointsSatisfied();
     }
@@ -56,33 +50,36 @@ public class KameletLocalBeanTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("whereTo")
-                        .templateParameter("bar") // name of bar
-                        .templateBean("myBar", MyBar.class, rtc -> new MyBar(rtc.getProperty("bar", String.class)))
+                        .templateParameter("foo")
+                        .templateBean("myBar", () -> new MyStaticBar(counter.incrementAndGet()))
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
+                        .setBody(simple("{{foo}} ${body}"))
                         .to("bean:{{myBar}}");
 
-                from("direct:shamrock")
-                        .kamelet("whereTo?bar=Shamrock")
+                from("direct:hi")
+                        .kamelet("whereTo?foo=Hi")
                         .to("mock:result");
 
-                from("direct:moe")
-                        .kamelet("whereTo?bar=Moes")
+                from("direct:hello")
+                        .kamelet("whereTo?foo=Hello")
                         .to("mock:result");
             }
         };
     }
 
-    private static class MyBar {
+    private class MyStaticBar {
 
-        private final String bar;
+        private int number;
 
-        public MyBar(String bar) {
-            this.bar = bar;
+        public MyStaticBar(int number) {
+            this.number = number;
         }
 
-        public String where(String name) {
-            return "Hi " + name + " we are going to " + bar;
+        public String whereTo(String name) {
+            return name + " go to number " + number;
         }
+
     }
+
 }

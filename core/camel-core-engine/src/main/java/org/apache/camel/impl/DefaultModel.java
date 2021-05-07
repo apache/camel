@@ -43,6 +43,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
+import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
@@ -297,6 +298,28 @@ public class DefaultModel implements Model {
         }
         def.setTemplateParameters(prop);
         def.setRouteTemplateContext(routeTemplateContext);
+
+        // setup local beans
+        if (target.getTemplateBeans() != null) {
+            for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
+                if (b.getBeanType() != null) {
+                    // could be created via XML DSL where you cannot program in Java and can only specify the bean as fqn classname
+                    Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getBeanType());
+                    routeTemplateContext.bind(b.getName(), clazz, () -> camelContext.getInjector().newInstance(clazz));
+                } else if (b.getBeanSupplier() != null) {
+                    // bean class is optional for supplier
+                    if (b.getBeanClass() != null) {
+                        routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
+                    } else {
+                        routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
+                    }
+                } else if (b.getBeanClass() != null) {
+                    // we only have the bean class so we use that to create a new bean via the injector
+                    routeTemplateContext.bind(b.getName(), b.getBeanClass(),
+                            () -> camelContext.getInjector().newInstance(b.getBeanClass()));
+                }
+            }
+        }
 
         if (target.getConfigurer() != null) {
             routeTemplateContext.setConfigurer(target.getConfigurer());

@@ -94,7 +94,7 @@ public final class TemplatedRouteBuilder {
      * @param id   the id of the bean
      * @param bean the bean
      */
-    public TemplatedRouteBuilder bind(String id, Object bean) {
+    public TemplatedRouteBuilder bean(String id, Object bean) {
         routeTemplateContext.bind(id, bean);
         return this;
     }
@@ -106,7 +106,7 @@ public final class TemplatedRouteBuilder {
      * @param type the type of the bean to associate the binding
      * @param bean the bean
      */
-    public TemplatedRouteBuilder bind(String id, Class<?> type, Object bean) {
+    public TemplatedRouteBuilder bean(String id, Class<?> type, Object bean) {
         routeTemplateContext.bind(id, type, bean);
         return this;
     }
@@ -118,7 +118,7 @@ public final class TemplatedRouteBuilder {
      * @param type the type of the bean to associate the binding
      * @param bean the bean
      */
-    public TemplatedRouteBuilder bind(String id, Class<?> type, Supplier<Object> bean) {
+    public TemplatedRouteBuilder bean(String id, Class<?> type, Supplier<Object> bean) {
         routeTemplateContext.bind(id, type, bean);
         return this;
     }

@@ -22,7 +22,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
-public class KameletLocalBeanTest extends CamelTestSupport {
+public class KameletLocalBeanIoCTest extends CamelTestSupport {
 
     @Test
     public void testOne() throws Exception {
@@ -57,7 +57,8 @@ public class KameletLocalBeanTest extends CamelTestSupport {
             public void configure() throws Exception {
                 routeTemplate("whereTo")
                         .templateParameter("bar") // name of bar
-                        .templateBean("myBar", MyBar.class, rtc -> new MyBar(rtc.getProperty("bar", String.class)))
+                        // use dependency injection to create the local bean via its fqn class name
+                        .templateBean("myBar", MyInjectBar.class)
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
@@ -73,16 +74,4 @@ public class KameletLocalBeanTest extends CamelTestSupport {
         };
     }
 
-    private static class MyBar {
-
-        private final String bar;
-
-        public MyBar(String bar) {
-            this.bar = bar;
-        }
-
-        public String where(String name) {
-            return "Hi " + name + " we are going to " + bar;
-        }
-    }
 }

@@ -53,12 +53,25 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
 
     @Override
     public void bind(String id, Object bean) {
-        registry.bind(id, bean);
+        if (bean instanceof BeanSupplier) {
+            // need to unwrap bean supplier as regular supplier
+            BeanSupplier<Object> bs = (BeanSupplier<Object>) bean;
+            registry.bind(id, (Supplier<Object>) () -> bs.get(DefaultRouteTemplateContext.this));
+        } else {
+            registry.bind(id, bean);
+        }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void bind(String id, Class<?> type, Object bean) {
-        registry.bind(id, type, bean);
+        if (bean instanceof BeanSupplier) {
+            // need to unwrap bean supplier as regular supplier
+            BeanSupplier<Object> bs = (BeanSupplier<Object>) bean;
+            registry.bind(id, type, () -> bs.get(this));
+        } else {
+            registry.bind(id, type, bean);
+        }
     }
 
     @Override
