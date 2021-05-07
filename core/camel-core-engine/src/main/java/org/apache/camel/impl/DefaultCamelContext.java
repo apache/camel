@@ -751,19 +751,23 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
                         && routeDefinition.getTemplateParameters() != null) {
 
+                    // apply configurer if any present
+                    if (routeDefinition.getRouteTemplateContext().getConfigurer() != null) {
+                        routeDefinition.getRouteTemplateContext().getConfigurer()
+                                .accept(routeDefinition.getRouteTemplateContext());
+                    }
+
                     // copy parameters/bean repository to not cause side-effect
                     Map<String, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
                     LocalBeanRegistry bbr
                             = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
-                    if (bbr != null) {
-                        bbr = bbr.copy();
-                    }
+                    LocalBeanRegistry bbrCopy = new LocalBeanRegistry();
 
                     // make all bean in the bean repository use unique keys (need to add uuid counter)
                     // so when the route template is used again to create another route, then there is
                     // no side-effect from previously used values that Camel may use in its endpoint
                     // registry and elsewhere
-                    if (bbr != null) {
+                    if (bbr != null && !bbr.isEmpty()) {
                         for (Map.Entry<String, Object> param : params.entrySet()) {
                             Object value = param.getValue();
                             if (value instanceof String) {
@@ -774,9 +778,25 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                     LOG.debug(
                                             "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
                                             routeDefinition.getId(), oldKey, newKey);
-                                    bbr.swapKey(oldKey, newKey);
+                                    bbrCopy.put(newKey, bbr.remove(oldKey));
                                     param.setValue(newKey);
                                 }
+                            }
+                        }
+                        // the remainder of the local beans must also have their ids made global unique
+                        for (String oldKey : bbr.keySet()) {
+                            String newKey = oldKey + "-" + UUID.generateUuid();
+                            LOG.debug(
+                                    "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
+                                    routeDefinition.getId(), oldKey, newKey);
+                            bbrCopy.put(newKey, bbr.get(oldKey));
+                            if (!params.containsKey(oldKey)) {
+                                // if a bean was bound as local bean with a key and it was not defined as template parameter
+                                // then store it as if it was a template parameter with same key=value which allows us
+                                // to use this local bean in the route without any problem such as:
+                                //   to("bean:{{myBean}}")
+                                // and myBean is the local bean id.
+                                params.put(oldKey, newKey);
                             }
                         }
                     }
@@ -786,8 +806,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
-                    if (localBeans != null && bbr != null) {
-                        localBeans.setLocalBeanRepository(bbr);
+                    if (localBeans != null && bbrCopy != null) {
+                        localBeans.setLocalBeanRepository(bbrCopy);
                     }
 
                     // need to reset auto assigned ids, so there is no clash when creating routes

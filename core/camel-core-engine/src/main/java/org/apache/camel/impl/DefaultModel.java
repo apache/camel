@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -274,29 +273,6 @@ public class DefaultModel implements Model {
             prop.putAll(routeTemplateContext.getParameters());
         }
 
-        // TODO: not sure if this is the best location where this should happen, eventually this can
-        //       be moved at a later stage in the camel context but would mean that we need to add the
-        //       configurer to the route definition.
-        try {
-            Properties localProps = new Properties();
-            localProps.putAll(prop);
-
-            getCamelContext().getPropertiesComponent().setLocalProperties(localProps);
-
-            // apply configurer if any present
-            if (target.getConfigurer() != null) {
-                target.getConfigurer().accept(routeTemplateContext);
-            }
-        } finally {
-            getCamelContext().getPropertiesComponent().setLocalProperties(null);
-        }
-
-        // override with user parameters part 2: user may have added parameter
-        // in the customize callback
-        if (routeTemplateContext.getParameters() != null) {
-            prop.putAll(routeTemplateContext.getParameters());
-        }
-
         RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
 
         for (Map.Entry<String, RouteTemplateDefinition.Converter> entry : routeTemplateConverters.entrySet()) {
@@ -321,6 +297,10 @@ public class DefaultModel implements Model {
         }
         def.setTemplateParameters(prop);
         def.setRouteTemplateContext(routeTemplateContext);
+
+        if (target.getConfigurer() != null) {
+            routeTemplateContext.setConfigurer(target.getConfigurer());
+        }
 
         // assign ids to the routes and validate that the id's are all unique
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions);

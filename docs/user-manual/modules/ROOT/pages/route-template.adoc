@@ -121,8 +121,6 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
 The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.
 This allows to use the same template to create multiple routes, where beans are local (private) for each created route.
 
-NOTE: Binding beans to route template is currently only available with Java DSL / Java coding.
-
 For example given the following route template, then we can configure the bindings (and other things) as shown:
 
 [source,java]
@@ -131,14 +129,16 @@ routeTemplate("s3template")
     .templateParameter("region")
     .templateParameter("bucket")
     .configure((RouteTemplateContext rtc) ->
+        // name of local bean is myClient
         rtc.bind("myClient", S3Client.class,
                 S3Client.builder()
                     .region(rtc.getProperty("region", Region.class))
-                    .build()
+                    .build();
         )
     )
     .from("direct:s3-store")
-    .to("aws2-s3:{{bucket}}?amazonS3Client=#myClient")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
 ----
 
 The template has two parameters to specify the AWS region and the S3 bucket. To connect to S3
@@ -150,6 +150,10 @@ specify `S3Client.class` as parameter.
 
 This ensures that the code creating the bean is executed later when Camel is creating a route from the template.
 This makes the bean with id `myClient` a local bean that is only in the scope (namespace) in the route template.
+*Important:* the local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{{myClient}}`
+in the route template, as shown above with the _to_ endpoint. This is because the local
+bean must be made unique and Camel will internally re-assign the bean id to use an unique id instead of `myClient`. And this is done with the help
+of the property placeholder functionality.
 
 If multiple routes is created from this template, then each of the created routes, have their own
 S3Client bean created.
@@ -168,13 +172,13 @@ Suppose the route template below is defined in XML:
     <templateParameter name="bucket"/>
     <route>
       <from uri="direct:s3-store"/>
-      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#myClient"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
     </route>
   </routeTemplate>
 </camelContext>
 ----
 
-The template has no bean bindings for `#myClient` which would be required for creating the template.
+The template has no bean bindings for `#{{myClient}}` which would be required for creating the template.
 
 When creating routes form the template via `TemplatedRouteBuilder` then you can provide the bean binding
 if you desire the bean to be local scoped (not shared with others):

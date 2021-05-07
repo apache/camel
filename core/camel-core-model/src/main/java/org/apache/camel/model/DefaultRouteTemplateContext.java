@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -36,6 +37,7 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     private final CamelContext camelContext;
     private final LocalBeanRegistry registry;
     private final Map<String, Object> parameters;
+    private Consumer<RouteTemplateContext> configurer;
 
     public DefaultRouteTemplateContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -94,5 +96,15 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     @Override
     public BeanRepository getLocalBeanRepository() {
         return registry;
+    }
+
+    @Override
+    public Consumer<RouteTemplateContext> getConfigurer() {
+        return configurer;
+    }
+
+    @Override
+    public void setConfigurer(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
     }
 }

@@ -161,8 +161,9 @@ public final class TemplatedRouteBuilder {
                 }
                 handler.accept(def);
             }
+            // configurer is executed later controlled by the route template context
             if (configurer != null) {
-                configurer.accept(routeTemplateContext);
+                routeTemplateContext.setConfigurer(configurer);
             }
             return camelContext.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
         } catch (Exception e) {
