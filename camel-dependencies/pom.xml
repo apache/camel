@@ -301,7 +301,7 @@
     <java-apns-version>1.0.0.Beta6</java-apns-version>
     <java-ewah-version>1.1.6</java-ewah-version>
     <java-grok-version>0.1.9</java-grok-version>
-    <java-util-version>1.63.0</java-util-version>
+    <java-util-version>1.64.0</java-util-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javaparser-version>3.13.10</javaparser-version>
