@@ -183,7 +183,7 @@
         <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
         <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
         <google-maps-services-version>0.10.1</google-maps-services-version>
-        <flatpack-version>4.0.4</flatpack-version>
+        <flatpack-version>4.0.5-SNAPSHOT</flatpack-version>
         <flink-version>1.13.0</flink-version>
         <fop-version>2.6</fop-version>
         <formatter-maven-plugin-version>2.14.0</formatter-maven-plugin-version>
