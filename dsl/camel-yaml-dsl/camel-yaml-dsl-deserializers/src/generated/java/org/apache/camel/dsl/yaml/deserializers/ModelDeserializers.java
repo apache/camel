@@ -71,6 +71,7 @@ import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
@@ -11722,6 +11723,53 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);;
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            inline = true,
+            types = org.apache.camel.model.RouteTemplateBeanDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "template-bean",
+            properties = {
+                    @YamlProperty(name = "bean-type", type = "string"),
+                    @YamlProperty(name = "name", type = "string", required = true)
+            }
+    )
+    public static class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanDefinition> {
+        public RouteTemplateBeanDefinitionDeserializer() {
+            super(RouteTemplateBeanDefinition.class);
+        }
+
+        @Override
+        protected RouteTemplateBeanDefinition newInstance() {
+            return new RouteTemplateBeanDefinition();
+        }
+
+        @Override
+        protected RouteTemplateBeanDefinition newInstance(String value) {
+            return new RouteTemplateBeanDefinition(value);
+        }
+
+        @Override
+        protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "bean-type": {
+                    String val = asText(node);
+                    target.setBeanType(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 default: {
