@@ -1584,6 +1584,14 @@ Configures a ProducerTemplate
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="templateBean" type="tns:routeTemplateBeanDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A route template bean (local bean)
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="templateParameter" type="tns:routeTemplateParameterDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -10280,6 +10288,24 @@ Whether tracing is enabled on this route.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="routeTemplateBeanDefinition">
+    <xs:sequence/>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Bean name.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="beanType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the Class of the bean.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
   <xs:complexType name="routeTemplateContextRefDefinition">
     <xs:sequence/>
     <xs:attribute name="ref" type="xs:string" use="required">
@@ -10296,6 +10322,7 @@ Reference to the route templates in the xml dsl.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templateParameter"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templateBean"/>
           <xs:element ref="tns:route"/>
         </xs:sequence>
       </xs:extension>
