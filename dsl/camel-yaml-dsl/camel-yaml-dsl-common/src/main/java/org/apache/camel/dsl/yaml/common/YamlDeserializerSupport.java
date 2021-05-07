@@ -78,14 +78,26 @@ public class YamlDeserializerSupport {
     }
 
     public static byte[] asByteArray(Node node) {
+        if (node == null) {
+            return null;
+        }
+
         return asByteArray(asText(node));
     }
 
     public static Class<?> asClass(Node node) {
+        if (node == null) {
+            return null;
+        }
+
         return asClass(asText(node));
     }
 
     public static List<String> asStringList(Node node) {
+        if (node == null) {
+            return null;
+        }
+
         List<String> answer;
 
         if (node.getNodeType() == NodeType.SCALAR) {
@@ -103,14 +115,25 @@ public class YamlDeserializerSupport {
     }
 
     public static Set<String> asStringSet(Node node) {
+        if (node == null) {
+            return null;
+        }
+
         return asStringSet(asText(node));
     }
 
     public static Class<?>[] asClassArray(Node node) throws YamlDeserializationException {
+        if (node == null) {
+            return null;
+        }
+
         return asClassArray(asText(node));
     }
 
     public static String asText(Node node) throws YamlDeserializationException {
+        if (node == null) {
+            return null;
+        }
         if (node.getNodeType() != NodeType.SCALAR) {
             throw new IllegalArgumentException("Node is not SCALAR");
         }
@@ -119,6 +142,10 @@ public class YamlDeserializerSupport {
     }
 
     public static Map<String, Object> asMap(Node node) {
+        if (node == null) {
+            return null;
+        }
+
         final MappingNode mn = asMappingNode(node);
         final Map<String, Object> answer = new HashMap<>();
 
@@ -142,6 +169,10 @@ public class YamlDeserializerSupport {
     }
 
     public static Map<String, Object> asScalarMap(Node node) {
+        if (node == null) {
+            return null;
+        }
+
         final MappingNode mn = asMappingNode(node);
         final Map<String, Object> answer = new HashMap<>();
 
@@ -351,5 +382,28 @@ public class YamlDeserializerSupport {
                 }
             }
         }
+    }
+
+    public static Node nodeAt(Node root, String pointer) {
+        if (ObjectHelper.isEmpty(pointer)) {
+            return root;
+        }
+
+        MappingNode mn = asMappingNode(root);
+        for (String path : pointer.split("/")) {
+            for (NodeTuple child : mn.getValue()) {
+                if (child.getKeyNode() instanceof ScalarNode) {
+                    ScalarNode scalar = (ScalarNode) child.getKeyNode();
+                    if (scalar.getValue().equals(path)) {
+                        String next = pointer.substring(path.length() + 1);
+                        return ObjectHelper.isEmpty(next)
+                                ? child.getValueNode()
+                                : nodeAt(child.getValueNode(), next);
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

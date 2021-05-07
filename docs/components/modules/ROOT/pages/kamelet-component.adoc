@@ -29,13 +29,14 @@ kamelet:templateId/routeId[?options]
 
 
 // component options: START
-The Kamelet component supports 7 options, which are listed below.
+The Kamelet component supports 8 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *location* (common) | The location of the Kamelets on the file system. | classpath:/kamelets | String
 | *routeProperties* (common) | Set route local parameters. |  | Map
 | *templateProperties* (common) | Set template local parameters. |  | Map
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
