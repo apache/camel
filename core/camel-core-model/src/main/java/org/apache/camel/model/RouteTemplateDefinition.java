@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,12 +40,14 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeTemplate")
-@XmlType(propOrder = { "templateParameters", "route" })
+@XmlType(propOrder = { "templateParameters", "templateBeans", "route" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     @XmlElement(name = "templateParameter")
     private List<RouteTemplateParameterDefinition> templateParameters;
+    @XmlElement(name = "templateBean")
+    private List<RouteTemplateBeanDefinition> templateBeans;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
     @XmlTransient
@@ -54,12 +57,16 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         return templateParameters;
     }
 
-    public Consumer<RouteTemplateContext> getConfigurer() {
-        return configurer;
-    }
-
     public void setTemplateParameters(List<RouteTemplateParameterDefinition> templateParameters) {
         this.templateParameters = templateParameters;
+    }
+
+    public List<RouteTemplateBeanDefinition> getTemplateBeans() {
+        return templateBeans;
+    }
+
+    public void setTemplateBeans(List<RouteTemplateBeanDefinition> templateBeans) {
+        this.templateBeans = templateBeans;
     }
 
     public RouteDefinition getRoute() {
@@ -68,6 +75,14 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     public void setRoute(RouteDefinition route) {
         this.route = route;
+    }
+
+    public void setConfigurer(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
+    }
+
+    public Consumer<RouteTemplateContext> getConfigurer() {
+        return configurer;
     }
 
     // Fluent API
@@ -157,6 +172,84 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
      */
     public RouteTemplateDefinition templateParameters(Map<String, String> parameters) {
         parameters.forEach(this::addTemplateParameter);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name the name of the bean
+     * @param type the type of the bean to associate the binding
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanType(type);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name the name of the bean
+     * @param bean the bean or a supplier for the bean
+     */
+    @SuppressWarnings("unchecked")
+    public RouteTemplateDefinition templateBean(String name, Object bean) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        if (bean instanceof RouteTemplateContext.BeanSupplier) {
+            def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
+        } else if (bean instanceof Supplier) {
+            def.setBeanSupplier((ctx) -> ((Supplier<?>) bean).get());
+        } else {
+            def.setBeanSupplier((ctx) -> bean);
+            def.setBeanType(bean.getClass());
+        }
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name the name of the bean
+     * @param bean the supplier for the bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Supplier<Object> bean) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanSupplier((ctx) -> ((Supplier<?>) bean).get());
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name the name of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean a supplier for the bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type, RouteTemplateContext.BeanSupplier<Object> bean) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanType(type);
+        def.setBeanSupplier(bean);
+        templateBeans.add(def);
         return this;
     }
 

@@ -28,6 +28,11 @@ import org.apache.camel.spi.HasCamelContext;
  */
 public interface RouteTemplateContext extends HasCamelContext {
 
+    @FunctionalInterface
+    interface BeanSupplier<T> {
+        T get(RouteTemplateContext rtc);
+    }
+
     /**
      * Binds the bean to the repository (if possible).
      *
@@ -121,13 +126,17 @@ public interface RouteTemplateContext extends HasCamelContext {
     BeanRepository getLocalBeanRepository();
 
     /**
-     * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
-     * gives control over the creating process, such as binding local beans and doing other kind of customization.
+     * Sets a custom configurer which allows to do configuration while the route template is being used to create a
+     * route. This gives control over the creating process, such as binding local beans and doing other kind of
+     * customization.
      *
      * @param configurer the configurer with callback to invoke with the given route template context
      */
     void setConfigurer(Consumer<RouteTemplateContext> configurer);
 
+    /**
+     * Gets the custom configurer.
+     */
     Consumer<RouteTemplateContext> getConfigurer();
 
 }

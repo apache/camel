@@ -22,7 +22,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
-public class KameletLocalBeanTest extends CamelTestSupport {
+public class KameletLocalBeanConfigureTest extends CamelTestSupport {
 
     @Test
     public void testOne() throws Exception {
@@ -57,7 +57,10 @@ public class KameletLocalBeanTest extends CamelTestSupport {
             public void configure() throws Exception {
                 routeTemplate("whereTo")
                         .templateParameter("bar") // name of bar
-                        .templateBean("myBar", MyBar.class, rtc -> new MyBar(rtc.getProperty("bar", String.class)))
+                        .configure(rtc -> {
+                            // create local bean with id myBar which can be used in the routes via {{myBar}}
+                            rtc.bind("myBar", MyBar.class, new MyBar(rtc.getProperty("bar", String.class)));
+                        })
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
