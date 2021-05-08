@@ -458,7 +458,8 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                        .templateBean("myBar").method(RouteTemplateLocalBeanTest.class, "createBuilderProcessor")
+                        .templateBean("myBar", "bean",
+                                RouteTemplateLocalBeanTest.class.getName() + "?method=createBuilderProcessor")
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }

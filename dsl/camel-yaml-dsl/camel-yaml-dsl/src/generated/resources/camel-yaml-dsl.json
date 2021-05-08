@@ -2065,9 +2065,6 @@
         }, {
           "type" : "object",
           "properties" : {
-            "bean-expression" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
-            },
             "bean-type" : {
               "type" : "string"
             },

@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Expression;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.Metadata;
 
@@ -42,8 +41,8 @@ public class RouteTemplateBeanDefinition {
     private Class<?> beanClass;
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
-    @XmlElement(name = "beanExpression")
-    private ExpressionSubElementDefinition beanExpression;
+    @XmlElement
+    private RouteTemplateBeanFactoryDefinition beanFactory;
 
     public RouteTemplateBeanDefinition() {
     }
@@ -96,24 +95,14 @@ public class RouteTemplateBeanDefinition {
         this.beanSupplier = beanSupplier;
     }
 
-    public ExpressionSubElementDefinition getBeanExpression() {
-        return beanExpression;
+    public RouteTemplateBeanFactoryDefinition getBeanFactory() {
+        return beanFactory;
     }
 
     /**
-     * Bean supplier that uses Camel expression to create the local bean. For example to use groovy, joor, or other
-     * languages as scripting some code that creates the bean
+     * Bean factory that uses a scripting language to create the local bean
      */
-    public void setBeanExpression(ExpressionSubElementDefinition beanExpression) {
-        this.beanExpression = beanExpression;
+    public void setBeanFactory(RouteTemplateBeanFactoryDefinition beanFactory) {
+        this.beanFactory = beanFactory;
     }
-
-    /**
-     * Bean supplier that uses Camel expression to create the local bean. For example to use groovy, joor, or other
-     * languages as scripting some code that creates the bean
-     */
-    public void setBeanExpression(Expression expression) {
-        this.beanExpression = new ExpressionSubElementDefinition(ExpressionNodeHelper.toExpressionDefinition(expression));
-    }
-
 }

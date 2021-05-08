@@ -66,6 +66,7 @@ RouteBuilderDefinition
 RouteContextRefDefinition
 RouteDefinition
 RouteTemplateBeanDefinition
+RouteTemplateBeanFactoryDefinition
 RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition

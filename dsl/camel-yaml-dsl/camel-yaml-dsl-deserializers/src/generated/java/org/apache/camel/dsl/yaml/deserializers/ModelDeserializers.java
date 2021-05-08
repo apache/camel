@@ -11739,7 +11739,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "template-bean",
             properties = {
-                    @YamlProperty(name = "bean-expression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "bean-type", type = "string"),
                     @YamlProperty(name = "name", type = "string", required = true)
             }
@@ -11763,11 +11762,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "bean-expression": {
-                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
-                    target.setBeanExpression(val);
-                    break;
-                }
                 case "bean-type": {
                     String val = asText(node);
                     target.setBeanType(val);

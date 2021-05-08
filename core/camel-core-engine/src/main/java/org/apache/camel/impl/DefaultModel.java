@@ -53,11 +53,10 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.AntPathMatcher;
-
-// TODO: this is bad we need
-import static org.apache.camel.reifier.language.ExpressionReifier.reifier;
 
 public class DefaultModel implements Model {
 
@@ -319,16 +318,22 @@ public class DefaultModel implements Model {
                     } else {
                         routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
                     }
-                } else if (b.getBeanExpression() != null) {
-                    // need to use reifier to create expression
-                    final Expression exp = reifier(camelContext, b.getBeanExpression()).createExpression();
-                    // bean class is optional for supplier
+                } else if (b.getBeanFactory() != null) {
+                    final Language language = camelContext.resolveLanguage(b.getBeanFactory().getLanguage());
+                    final String script = b.getBeanFactory().getScript();
+
                     final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
                     routeTemplateContext.bind(b.getName(), clazz, () -> {
                         ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
                         Exchange dummy = ef.create(false);
                         try {
-                            return exp.evaluate(dummy, clazz);
+                            String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
+                            if (text != null) {
+                                Expression exp = language.createExpression(text);
+                                return exp.evaluate(dummy, clazz);
+                            } else {
+                                return null;
+                            }
                         } finally {
                             ef.release(dummy);
                         }
