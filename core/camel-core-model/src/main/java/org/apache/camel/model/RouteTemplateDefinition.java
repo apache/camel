@@ -278,8 +278,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Adds a local bean the route template uses (via fluent builder).
      *
-     * @param name     the name of the bean
-     * @return fluent builder to choose which language and script to use for creating the bean
+     * @param  name the name of the bean
+     * @return      fluent builder to choose which language and script to use for creating the bean
      */
     public RouteTemplateBeanFactoryDefinition templateBean(String name) {
         if (templateBeans == null) {

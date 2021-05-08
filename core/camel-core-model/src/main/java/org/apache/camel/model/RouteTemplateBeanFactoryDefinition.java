@@ -88,7 +88,7 @@ public class RouteTemplateBeanFactoryDefinition {
     /**
      * Calls a method on a bean for creating the local template bean
      *
-     * @param type the bean class to call
+     * @param type   the bean class to call
      * @param method the name of the method to call
      */
     public RouteTemplateDefinition bean(Class<?> type, String method) {
@@ -116,8 +116,7 @@ public class RouteTemplateBeanFactoryDefinition {
     }
 
     /**
-     * Calls joor script (Java source that is runtime compiled to Java bytecode)
-     * for creating the local template bean
+     * Calls joor script (Java source that is runtime compiled to Java bytecode) for creating the local template bean
      *
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
      * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
@@ -137,7 +136,7 @@ public class RouteTemplateBeanFactoryDefinition {
      * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
      *
      * @param language the custom language (a language not provided out of the box from Camel)
-     * @param script the script
+     * @param script   the script
      */
     public RouteTemplateDefinition language(String language, String script) {
         setLanguage(language);
