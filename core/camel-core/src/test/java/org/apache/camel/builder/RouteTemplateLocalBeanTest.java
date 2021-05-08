@@ -303,7 +303,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar", Processor.class,
-                                (ctx) -> (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody()))
+                                ctx -> (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody()))
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }
@@ -336,11 +336,11 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                        .templateBean("myBar", Processor.class, (ctx) -> (Processor) ex -> ex.getMessage().setBody("Builder" +
-                                                                                                                   counter.incrementAndGet()
-                                                                                                                   + " "
-                                                                                                                   + ex.getMessage()
-                                                                                                                           .getBody()))
+                        .templateBean("myBar", Processor.class, ctx -> (Processor) ex -> ex.getMessage().setBody("Builder" +
+                                                                                                                 counter.incrementAndGet()
+                                                                                                                 + " "
+                                                                                                                 + ex.getMessage()
+                                                                                                                         .getBody()))
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }
