@@ -26,20 +26,9 @@ public class KameletLocalBeanGroovyTest extends CamelTestSupport {
 
     @Test
     public void testOne() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi John we are going to Moes");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hi John we are going to Gr8t");
 
-        template.sendBody("direct:moe", "John");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testTwo() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi Jack we are going to Shamrock",
-                "Hi Mary we are going to Moes");
-
-        template.sendBody("direct:shamrock", "Jack");
-        template.sendBody("direct:moe", "Mary");
+        template.sendBody("direct:start", "John");
 
         assertMockEndpointsSatisfied();
     }
@@ -56,18 +45,16 @@ public class KameletLocalBeanGroovyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("whereTo")
-                        .templateParameter("bar") // name of bar
-                        .templateBean("myBar").groovy("")
+                        .templateBean("myBar", "groovy",
+                                "def bean = new org.apache.camel.component.kamelet.MyInjectBar()\n"
+                                                         + "bean.bar = 'Gr8t'\n"
+                                                         + "return bean")
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
-                from("direct:shamrock")
-                        .kamelet("whereTo?bar=Shamrock")
-                        .to("mock:result");
-
-                from("direct:moe")
-                        .kamelet("whereTo?bar=Moes")
+                from("direct:start")
+                        .kamelet("whereTo")
                         .to("mock:result");
             }
         };
