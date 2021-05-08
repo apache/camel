@@ -103,7 +103,7 @@ public class SmppConsumer extends DefaultConsumer {
     }
 
     /**
-     * Factory method to easily instantiate a mock SMPPSession
+     * Factory method to easily instantiate a SMPPSession
      * 
      * @return the SMPPSession
      */
