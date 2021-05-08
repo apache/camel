@@ -98,6 +98,7 @@ public class ObjectProducer extends AbstractOpenstackProducer {
 
         List<? extends SwiftObject> out;
         if (path != null) {
+            StringHelper.notEmpty(name, "Path");
             ObjectListOptions objectListOptions = ObjectListOptions.create();
             objectListOptions.startsWith(path).delimiter('/');
             out = os.objectStorage().objects().list(name, objectListOptions);
