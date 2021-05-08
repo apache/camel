@@ -36,7 +36,7 @@ public class RouteTemplateBeanFactoryDefinition {
     private RouteTemplateDefinition parent;
     // it only makes sense to use the languages that are general purpose scripting languages
     @XmlAttribute(required = true)
-    @Metadata(enums = "bean,groovy,joor,mvel,ognl,spel")
+    @Metadata(enums = "bean,groovy,joor,language,mvel,ognl,spel")
     private String language;
     @XmlValue
     private String script;
@@ -76,10 +76,21 @@ public class RouteTemplateBeanFactoryDefinition {
     // fluent builders
     // ----------------------------------------------------
 
+    /**
+     * Calls a method on a bean for creating the local template bean
+     *
+     * @param type the bean class to call
+     */
     public RouteTemplateDefinition bean(Class<?> type) {
         return bean(type, null);
     }
 
+    /**
+     * Calls a method on a bean for creating the local template bean
+     *
+     * @param type the bean class to call
+     * @param method the name of the method to call
+     */
     public RouteTemplateDefinition bean(Class<?> type, String method) {
         setLanguage("bean");
         if (method != null) {
@@ -90,30 +101,86 @@ public class RouteTemplateBeanFactoryDefinition {
         return parent;
     }
 
+    /**
+     * Calls a groovy script for creating the local template bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
     public RouteTemplateDefinition groovy(String script) {
         setLanguage("groovy");
         setScript(script);
         return parent;
     }
 
+    /**
+     * Calls joor script (Java source that is runtime compiled to Java bytecode)
+     * for creating the local template bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
     public RouteTemplateDefinition joor(String script) {
         setLanguage("joor");
         setScript(script);
         return parent;
     }
 
+    /**
+     * Calls a custom language for creating the local template bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param language the custom language (a language not provided out of the box from Camel)
+     * @param script the script
+     */
+    public RouteTemplateDefinition language(String language, String script) {
+        setLanguage(language);
+        setScript(script);
+        return parent;
+    }
+
+    /**
+     * Calls a MvEL script for creating the local template bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
     public RouteTemplateDefinition mvel(String script) {
         setLanguage("mvel");
         setScript(script);
         return parent;
     }
 
+    /**
+     * Calls a OGNL script for creating the local template bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
     public RouteTemplateDefinition ognl(String script) {
         setLanguage("ognl");
         setScript(script);
         return parent;
     }
 
+    /**
+     * Calls a SpEL script (Spring Expression Language) for creating the local template bean
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     *
+     * @param script the script
+     */
     public RouteTemplateDefinition spel(String script) {
         setLanguage("spel");
         setScript(script);
