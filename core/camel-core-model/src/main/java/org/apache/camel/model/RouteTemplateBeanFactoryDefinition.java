@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.Metadata;
@@ -31,12 +32,21 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "templateBeanFactory")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateBeanFactoryDefinition {
+    @XmlTransient
+    private RouteTemplateDefinition parent;
     // it only makes sense to use the languages that are general purpose scripting languages
     @XmlAttribute(required = true)
     @Metadata(enums = "bean,groovy,joor,mvel,ognl,spel")
     private String language;
     @XmlValue
     private String script;
+
+    public RouteTemplateBeanFactoryDefinition() {
+    }
+
+    public RouteTemplateBeanFactoryDefinition(RouteTemplateDefinition parent) {
+        this.parent = parent;
+    }
 
     public String getLanguage() {
         return language;
@@ -62,4 +72,52 @@ public class RouteTemplateBeanFactoryDefinition {
     public void setScript(String script) {
         this.script = script;
     }
+
+    // fluent builders
+    // ----------------------------------------------------
+
+    public RouteTemplateDefinition bean(Class<?> type) {
+        return bean(type, null);
+    }
+
+    public RouteTemplateDefinition bean(Class<?> type, String method) {
+        setLanguage("bean");
+        if (method != null) {
+            setScript(type.getName() + "?method=" + method);
+        } else {
+            setScript(type.getName());
+        }
+        return parent;
+    }
+
+    public RouteTemplateDefinition groovy(String script) {
+        setLanguage("groovy");
+        setScript(script);
+        return parent;
+    }
+
+    public RouteTemplateDefinition joor(String script) {
+        setLanguage("joor");
+        setScript(script);
+        return parent;
+    }
+
+    public RouteTemplateDefinition mvel(String script) {
+        setLanguage("mvel");
+        setScript(script);
+        return parent;
+    }
+
+    public RouteTemplateDefinition ognl(String script) {
+        setLanguage("ognl");
+        setScript(script);
+        return parent;
+    }
+
+    public RouteTemplateDefinition spel(String script) {
+        setLanguage("spel");
+        setScript(script);
+        return parent;
+    }
+
 }
