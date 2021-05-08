@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.RouteTemplateContext;
@@ -50,8 +52,12 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.util.AntPathMatcher;
+
+// TODO: this is bad we need
+import static org.apache.camel.reifier.language.ExpressionReifier.reifier;
 
 public class DefaultModel implements Model {
 
@@ -313,6 +319,20 @@ public class DefaultModel implements Model {
                     } else {
                         routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
                     }
+                } else if (b.getBeanExpression() != null) {
+                    // need to use reifier to create expression
+                    final Expression exp = reifier(camelContext, b.getBeanExpression()).createExpression();
+                    // bean class is optional for supplier
+                    final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
+                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                        ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
+                        Exchange dummy = ef.create(false);
+                        try {
+                            return exp.evaluate(dummy, clazz);
+                        } finally {
+                            ef.release(dummy);
+                        }
+                    });
                 } else if (b.getBeanClass() != null) {
                     // we only have the bean class so we use that to create a new bean via the injector
                     routeTemplateContext.bind(b.getName(), b.getBeanClass(),

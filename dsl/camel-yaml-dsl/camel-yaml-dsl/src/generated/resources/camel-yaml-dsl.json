@@ -2059,6 +2059,25 @@
         },
         "required" : [ "from", "steps" ]
       },
+      "org.apache.camel.model.RouteTemplateBeanDefinition" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "bean-expression" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
+            },
+            "bean-type" : {
+              "type" : "string"
+            },
+            "name" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "required" : [ "name" ]
+      },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
         "properties" : {

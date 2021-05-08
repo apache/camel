@@ -30,8 +30,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Expression;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
@@ -252,6 +254,55 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         def.setBeanSupplier(bean);
         templateBeans.add(def);
         return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name       the name of the bean
+     * @param expression expression to use for creating the bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Expression expression) {
+        return templateBean(name, null, expression);
+    }
+
+    /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name       the name of the bean
+     * @param type       the type of the bean to associate the binding
+     * @param expression expression to use for creating the bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type, Expression expression) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        if (type != null) {
+            def.setBeanType(type);
+        }
+        def.setBeanExpression(new ExpressionSubElementDefinition(expression));
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses using a Camel expression to create the bean.
+     *
+     * @param name the name of the bean
+     */
+    public ExpressionClause<RouteTemplateDefinition> templateBean(String name) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+
+        ExpressionClause<RouteTemplateDefinition> clause = new ExpressionClause(this);
+        templateBeans.add(def);
+        def.setBeanExpression(clause);
+        return clause;
     }
 
     /**

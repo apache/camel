@@ -1028,7 +1028,13 @@ public class ModelParser extends BaseParser {
                 default: return false;
             }
             return true;
-        }, noElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            if ("beanExpression".equals(key)) {
+                def.setBeanExpression(doParseExpressionSubElementDefinition());
+                return true;
+            }
+            return false;
+        }, noValueHandler());
     }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
