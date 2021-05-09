@@ -20,7 +20,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 
 * <<Overview>>
 * <<Documentation>>
-* <<Community>>
 * <<Requirements>>
 * <<Developers>>
 
@@ -141,17 +140,6 @@ camel routes without them knowing
 === Components, Data Formats, Languages and Enterprise Integration Patterns
 
 Consult the xref:components::index.adoc[components] documentation.
-
-== Community
-
-* link:/community/support/[Support]
-* xref:contributing.adoc[Contributing]
-* xref:release-guide.adoc[Release guide]
-* link:/community/mailing-list/[Mailing Lists]
-* https://camel.zulipchat.com[Chat room]
-* link:/community/user-stories/[User Stories]
-* link:/community/team/[Team]
-* https://github.com/camel-extra/camel-extra[Camel Extra]
 
 == Requirements
 

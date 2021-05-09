@@ -67,7 +67,7 @@ at `CamelNamespaceHandler` you'll see how we handle the Spring XML
 stuff (warning it's kinda hairy code to look at :smile:).
 If you wanted `<fooComponent>` to be a standard part of the core Camel
 schema then you'd hack that file to add your component &
-xref:contributing.adoc[contribute a patch] to the camel XSD. Otherwise
+link:/community/contributing/[contribute a patch] to the camel XSD. Otherwise
 you could write your own namespace & schema if you prefer.
 
 [[ConfiguringCamel-PropertyBinding]]
