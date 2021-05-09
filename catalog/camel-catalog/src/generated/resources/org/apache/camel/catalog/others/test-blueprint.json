@@ -1,0 +1,14 @@
+{
+ "other": {
+    "name": "test-blueprint",
+    "kind": "other",
+    "title": "Test Blueprint",
+    "description": "Camel unit testing with OSGi Blueprint",
+    "deprecated": "false",
+    "firstVersion": "2.10.0",
+    "label": "testing,java,osgi",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-test-blueprint",
+    "version": "2.25.4-SNAPSHOT"
+  }
+}
