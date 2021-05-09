@@ -5,7 +5,7 @@ Here are a list of commonly asked questions and answers. If you have any
 questions which are not on this list, please talk to us on the
 link:/community/mailing-list/[Mailing Lists].
 
-We xref:ROOT:contributing.adoc[welcome contributions] and
+We link:/community/contributing/[welcome contributions] and
 this entire website is in
 xref:how-does-the-website-work.adoc[the GitHub repository you can send a pull request],
 so please join in and help us make the documentation better!
