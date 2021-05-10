@@ -36,7 +36,7 @@ public class RouteTemplateBeanFactoryDefinition {
     private RouteTemplateDefinition parent;
     // it only makes sense to use the languages that are general purpose scripting languages
     @XmlAttribute(required = true)
-    @Metadata(enums = "bean,groovy,joor,language,mvel,ognl,spel")
+    @Metadata(enums = "bean,groovy,joor,language,mvel,ognl")
     private String language;
     @XmlValue
     private String script;
@@ -168,20 +168,6 @@ public class RouteTemplateBeanFactoryDefinition {
      */
     public RouteTemplateDefinition ognl(String script) {
         setLanguage("ognl");
-        setScript(script);
-        return parent;
-    }
-
-    /**
-     * Calls a SpEL script (Spring Expression Language) for creating the local template bean
-     *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
-     *
-     * @param script the script
-     */
-    public RouteTemplateDefinition spel(String script) {
-        setLanguage("spel");
         setScript(script);
         return parent;
     }
