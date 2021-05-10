@@ -348,7 +348,8 @@ public class DefaultModel implements Model {
                     // scripting language should be evaluated with route template context as binding
                     routeTemplateContext.bind(b.getName(), clazz, () -> {
                         Map<String, Object> bindings = new HashMap<>();
-                        bindings.put("context", routeTemplateContext);
+                        // use rtx as the short-hand name, as context would imply its CamelContext
+                        bindings.put("rtc", routeTemplateContext);
                         return slan.evaluate(script, bindings, clazz);
                     });
                 } else {

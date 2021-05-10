@@ -17,6 +17,6 @@
 import org.apache.camel.component.kamelet.MyInjectBar
 
 def bean = new MyInjectBar()
-// context is RouteTemplateContext
-bean.bar = context.getProperty('bar')
+// rtc is RouteTemplateContext
+bean.bar = rtc.getProperty('bar')
 return bean
