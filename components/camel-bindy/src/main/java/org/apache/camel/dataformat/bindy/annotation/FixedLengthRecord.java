@@ -36,9 +36,9 @@ public @interface FixedLengthRecord {
     String name() default "";
 
     /**
-     * Character to be used to add a carriage return after each record (optional) Three values can be used : WINDOWS,
-     * UNIX or MAC This option is used only during marshalling, whereas unmarshalling uses system default JDK provided
-     * line delimiter unless eol is customized
+     * Character to be used to add a carriage return after each record (optional). Possible values: WINDOWS, UNIX, MAC,
+     * or custom. This option is used only during marshalling, whereas unmarshalling uses system default JDK provided
+     * line delimiter unless eol is customized.
      * 
      * @return String
      */
@@ -48,7 +48,7 @@ public @interface FixedLengthRecord {
      * Character to be used to process considering end of line after each record while unmarshalling (optional - default
      * = "" which help default JDK provided line delimiter to be used unless any other line delimiter provided) This
      * option is used only during unmarshalling, where marshalling uses system default provided line delimiter as
-     * "WINDOWS" unless any other value is provided
+     * "WINDOWS" unless any other value is provided.
      * 
      * @return String
      */
@@ -81,17 +81,20 @@ public @interface FixedLengthRecord {
     Class<?> footer() default void.class;
 
     /**
-     * Configures the data format to skip marshalling / unmarshalling of the header record
+     * Configures the data format to skip marshalling / unmarshalling of the header record. Configure this parameter on
+     * the primary record (e.g., not the header or footer).
      */
     boolean skipHeader() default false;
 
     /**
-     * Configures the data format to skip marshalling / unmarshalling of the footer record
+     * Configures the data format to skip marshalling / unmarshalling of the footer record. Configure this parameter on
+     * the primary record (e.g., not the header or footer).
      */
     boolean skipFooter() default false;
 
     /**
-     * Indicates whether trailing characters beyond the last mapped field may be ignored
+     * Indicates that characters beyond the last mapped filed can be ignored when unmarshalling / parsing. This
+     * annotation is associated to the root class of the model and must be declared one time.
      */
     boolean ignoreTrailingChars() default false;
 
