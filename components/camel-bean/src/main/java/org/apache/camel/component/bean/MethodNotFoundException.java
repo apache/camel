@@ -54,7 +54,13 @@ public class MethodNotFoundException extends RuntimeExchangeException {
     }
 
     public MethodNotFoundException(Class<?> type, String methodName, Throwable cause) {
-        super("Method with name: " + methodName + " not found on class: " + ObjectHelper.className(type), null, cause);
+        super("Method with name: " + methodName + " not found on class: " + ObjectHelper.name(type), null, cause);
+        this.methodName = methodName;
+        this.bean = null;
+    }
+
+    public MethodNotFoundException(Class<?> type, String methodName) {
+        super("Method with name: " + methodName + " not found on class: " + ObjectHelper.name(type), null);
         this.methodName = methodName;
         this.bean = null;
     }
