@@ -27,9 +27,6 @@ import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
-/**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link org.apache.camel.spi.Language} plugin
- */
 @Language("ognl")
 public class OgnlLanguage extends LanguageSupport implements ScriptingLanguage {
 
