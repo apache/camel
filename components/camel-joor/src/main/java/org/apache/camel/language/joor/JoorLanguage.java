@@ -90,12 +90,7 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
         Object out;
         JoorScriptingMethod target = scriptingCompiler.compile(getCamelContext(), script, bindings, resultType, singleQuotes);
         try {
-            if (bindings != null && !bindings.isEmpty()) {
-                Object[] args = bindings.values().toArray(new Object[0]);
-                out = target.evaluate(args);
-            } else {
-                out = target.evaluate();
-            }
+            out = target.evaluate(bindings);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }

@@ -156,16 +156,15 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
         sb.append("    @Override\n");
         sb.append(
-                "    public Object evaluate(Object... args) throws Exception {\n");
+                "    public Object evaluate(Map<String, Object> args) throws Exception {\n");
         sb.append("        ");
 
         // bindings as local variables
         if (bindings != null) {
-            int i = 0;
             for (Map.Entry<String, Object> bind : bindings.entrySet()) {
                 String vn = bind.getKey();
                 String cn = ObjectHelper.className(bind.getValue());
-                String b = String.format("        var %s = (%s) args[%s];\n", vn, cn, i++);
+                String b = String.format("        var %s = (%s) args.get(\"%s\");\n", vn, cn, vn);
                 sb.append(b);
             }
             sb.append("\n");

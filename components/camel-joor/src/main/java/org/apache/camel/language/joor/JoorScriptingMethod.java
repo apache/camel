@@ -16,11 +16,13 @@
  */
 package org.apache.camel.language.joor;
 
+import java.util.Map;
+
 /**
  * Interface for the compiled joor scripting method when evaluating as scripting language.
  */
 public interface JoorScriptingMethod {
 
-    Object evaluate(Object... args) throws Exception;
+    Object evaluate(Map<String, Object> args) throws Exception;
 
 }
