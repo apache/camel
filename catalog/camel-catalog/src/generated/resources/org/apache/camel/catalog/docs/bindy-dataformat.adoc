@@ -106,46 +106,52 @@ to several children model classes.
 |CsvRecord |csv |Class
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.CsvRecord
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|separator |string |mandatory - can be ',' or ';' or 'anything'. The only whitespace character supported is tab (\t). No other whitespace characters (spaces) are not supported. This value is interpreted
-as a regular expression. If you want to use a sign which has a special
-meaning in regular expressions, e.g. the '\|' sign, than you have to mask
-it, like '\|'
+| separator | String | &#10003; |  a| Separator used to split a record in tokens (mandatory) - can be ',' or ';' or 'anything'. The only whitespace
+character supported is tab (\t). No other whitespace characters (spaces) are not supported. This value is
+interpreted as a regular expression. If you want to use a sign which has a special meaning in regular
+expressions, e.g. the '\|' sign, than you have to mask it, like '\|'
 
-|skipFirstLine |boolean |optional - default value = false - allow to skip the first line of the
-CSV file
+| allowEmptyStream | boolean |  | false | The allowEmptyStream parameter will allow to prcoess the unavaiable stream for CSV file.
 
-|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value.
-WINDOWS - allow to define the carriage return character to use. If you
-specify a value other than the three listed before, the value you enter
-(custom) will be used as the CRLF character(s)
+| autospanLine | boolean |  | false a| Last record spans rest of line (optional) - if enabled then the last column is auto spanned to end of line, for
+example if its a comment, etc this allows the line to contain all characters, also the delimiter char.
 
-|generateHeaderColumns |boolean |optional - default value = false - uses to generate the header columns
-of the CSV generates
+| crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional) - allow to define the carriage return
+character to use. If you specify a value other than the three listed before, the value you enter (custom) will be
+used as the CRLF character(s). Three values can be used : WINDOWS, UNIX, MAC, or custom.
 
-|autospanLine |boolean |optional - default value = false - if enabled then
-the last column is auto spanned to end of line, for example if its a
-comment, etc this allows the line to contain all characters, also the
-delimiter char.
+| endWithLineBreak | boolean |  | true | The endWithLineBreak parameter flags if the CSV file should end with a line break or not (optional)
 
-|isOrdered |boolean |optional - default value = false - allow to change the order of the
-fields when CSV is generated
+| generateHeaderColumns | boolean |  | false | The generateHeaderColumns parameter allow to add in the CSV generated the header containing names of the columns
 
-|quote |String |optional - allow to specify a quote character of the
-fields when CSV is generated. This annotation is associated to the root class of the model and must be
-declared one time.
+| isOrdered | boolean |  | false | Indicates if the message must be ordered in output
 
-|quoting |boolean |optional - default value = false - Indicate if the values (and headers)
-must be quoted when marshaling when CSV is generated.
+| name | String |  |  | Name describing the record (optional)
 
-|endWithLineBreak |boolean |optional - default value = true - Indicate if the CSV generated file
-should end with a line break.
+| quote | String |  | " a| Whether to marshal columns with the given quote character (optional) - allow to specify a quote character of the
+fields when CSV is generated. This annotation is associated to the root class of the model and must be declared
+one time.
 
-|
+| quoting | boolean |  | false | Indicate if the values (and headers) must be quoted when marshaling (optional)
+
+| quotingEscaped | boolean |  | false | Indicate if the values must be escaped when quoting (optional)
+
+| removeQuotes | boolean |  | true | The remove quotes parameter flags if unmarshalling should try to remove quotes for each field
+
+| skipField | boolean |  | false a| The skipField parameter will allow to skip fields of a CSV file. If some fields are not necessary, they can be
+skipped.
+
+| skipFirstLine | boolean |  | false a| The skipFirstLine parameter will allow to skip or not the first line of a CSV file. This line often contains
+columns definition
+
 |===
+// annotation options: END
 
 *case 1 : separator = ','*
 
@@ -350,23 +356,25 @@ to generate the CSV
 
 The link annotation will allow to link objects together.
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*Link* |all |Class & Property
+|Link |all |Class & Property
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.Link
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|linkType |LinkType |optional - by default the value is LinkType.oneToOne - so you are not
-obliged to mention it
+| linkType | LinkType |  | OneToOne | Type of link identifying the relation between the classes
 
 |===
+// annotation options: END
 
-Only one-to-one relation is allowed.
+Only one-to-one relation is allowed as of the current version.
 
 e.g : If the model Class Client is linked to the Order class, then use
 annotation Link in the Order class like this :
@@ -404,59 +412,72 @@ The DataField annotation defines the property of the field. Each
 datafield is identified by its position in the record, a type (string,
 int, date, ...) and optionally of a pattern
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*DataField* |all |Property
+|DataField |all |Property
 |===
 
-
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.DataField
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|pos |int |mandatory - The *input* position of the field. digit number starting
-from 1 to ... - See the position parameter.
+| pos | int | &#10003; |  | Position of the data in the input record, must start from 1 (mandatory). See the position parameter.
 
-|pattern |string |optional - default value = "" - will be used to format Decimal, Date,
+| align | String |  | R | Align the text to the right or left. Use values <tt>R</tt> or <tt>L</tt>.
 
-|length |int |optional - represents the length of the field (number of characters) for fixed length format
+| clip | boolean |  | false | Indicates to clip data in the field if it exceeds the allowed length when using fixed length.
 
-|precision |int |optional - represents the precision to be used when the Decimal number
-will be formatted/parsed
+| columnName | String |  |  a| Name of the header column (optional). Uses the name of the property as default. Only applicable when `CsvRecord`
+has `generateHeaderColumns = true`
 
-|pattern |string |optional - default value = "" - is used by the Java formatter
-(SimpleDateFormat by example) to format/validate data. If using pattern,
-then setting locale on bindy data format is recommended. Either set to a
-known locale such as "us" or use "default" to use platform default
-locale.
+| decimalSeparator | String |  |  | Decimal Separator to be used with BigDecimal number
 
-|position |int |optional - must be used when the position of the field in the CSV
-generated (output message) must be different compare to input position
-(pos). See the pos parameter.
+| defaultValue | String |  |  | Field's default value in case no value is set
 
-|required |boolean |optional - default value = "false"
+| delimiter | String |  |  | Optional delimiter to be used if the field has a variable length
 
-|trim |boolean |optional - default value = "false"
+| groupingSeparator | String |  |  a| Grouping Separator to be used with BigDecimal number when we would like to format/parse to number with grouping
+e.g. 123,456.789
 
-|defaultValue |string |optional - default value = "" - defines the field's
-default value when the respective CSV field is empty/not available
+| impliedDecimalSeparator | boolean |  | false | Indicates if there is a decimal point implied at a specified location
 
-|columnName |string |optional - default value = "" - defines the field's
-header name; uses the name of the property as default. Only applicable when `CsvRecord` has `generateHeaderColumns = true`
+| length | int |  | 0 | Length of the data block (number of characters) if the record is set to a fixed length
 
-|impliedDecimalSeparator |boolean |optional - default value = "false" - Indicates if there is
-a decimal point implied at a specified location
+| lengthPos | int |  | 0 | Identifies a data field in the record that defines the expected fixed length for this field
 
-|lengthPos |int |optional - can be used to identify a data field in a
-fixed-length record that defines the fixed length for this field
+| method | String |  |  a| Method name to call to apply such customization on DataField. This must be the method on the datafield itself or
+you must provide static fully qualified name of the class's method e.g: see unit test
+org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar
 
-|align |string |optional - default value = "R" - Align the text to the right or left within a fixed-length field.
-Use values 'R' or 'L'
+| name | String |  |  | Name of the field (optional)
 
-|delimiter |string |optional - can be used to demarcate the end of a variable-length field within a fixed-length record
+| paddingChar | char |  |   | The char to pad with if the record is set to a fixed length
+
+| pattern | String |  |  a| Pattern that the Java formatter (SimpleDateFormat by example) will use to transform the data (optional). If using
+pattern, then setting locale on bindy data format is recommended. Either set to a known locale such as "us" or
+use "default" to use platform default locale.
+
+| position | int |  | 0 a| Position of the field in the output message generated (should start from 1). Must be used when the position of
+the field in the CSV generated (output message) must be different compare to input position (pos). See the pos
+parameter.
+
+| precision | int |  | 0 | precision of the {@link java.math.BigDecimal} number to be created
+
+| required | boolean |  | false | Indicates if the field is mandatory
+
+| rounding | String |  | CEILING a| Round mode to be used to round/scale a BigDecimal Values : UP, DOWN, CEILING, FLOOR, HALF_UP,
+HALF_DOWN,HALF_EVEN, UNNECESSARY e.g : Number = 123456.789, Precision = 2, Rounding = CEILING Result : 123456.79
+
+| timezone | String |  |  | @return String timezone ID
+
+| trim | boolean |  | false | Indicates if the value should be trimmed
+
 |===
+// annotation options: END
 
 *case 1 : pos*
 
@@ -726,59 +747,55 @@ aligned to the right or to the left. +
  When the size of the data does not fill completely the length of the
 field, we can then add 'padd' characters.
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*FixedLengthRecord* |fixed |Class
+|FixedLengthRecord |fixed |Class
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value.
-WINDOWS - allow to define the carriage return character to use. If you
-specify a value other than the three listed before, the value you enter
-(custom) will be used as the CRLF character(s). This option is used only during marshalling, 
-whereas unmarshalling uses system default JDK provided line delimiter unless eol is customized
+| countGrapheme | boolean |  | false | Indicates how chars are counted
 
-|eol |string |optional - default="" which is empty string. Character to be used to process
-considering end of line after each record while unmarshalling (optional - default = "" 
-which help default JDK provided line delimiter to be used unless any other line delimiter
-provided). This option is used only during unmarshalling, where marshalling uses system default
-provided line delimiter as "WINDOWS" unless any other value is provided
+| crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional). Possible values: WINDOWS, UNIX, MAC,
+or custom. This option is used only during marshalling, whereas unmarshalling uses system default JDK provided
+line delimiter unless eol is customized.
 
-|paddingChar |char |mandatory - default value = ' '
+| eol | String |  |  a| Character to be used to process considering end of line after each record while unmarshalling (optional - default
+= "" which help default JDK provided line delimiter to be used unless any other line delimiter provided) This
+option is used only during unmarshalling, where marshalling uses system default provided line delimiter as
+"WINDOWS" unless any other value is provided.
 
-|length |int |mandatory = size of the fixed length record (number of characters)
+| footer | Class |  | void | Indicates that the record(s) of this type may be followed by a single footer record at the end of the file
 
-|hasHeader |boolean |optional - Indicates that the record(s) of this type may
-be preceded by a single header record at the beginning of the file /
-stream
+| header | Class |  | void a| Indicates that the record(s) of this type may be preceded by a single header record at the beginning of in the
+file
 
-|hasFooter |boolean |optional - Indicates that the record(s) of this type may
-be followed by a single footer record at the end of the file / stream
+| ignoreMissingChars | boolean |  | false | Indicates whether too short lines will be ignored
 
-|skipHeader |boolean |optional - Configures the data format to skip marshalling
-/ unmarshalling of the header record. Configure this parameter on the
-primary record (e.g., not the header or footer).
+| ignoreTrailingChars | boolean |  | false a| Indicates that characters beyond the last mapped filed can be ignored when unmarshalling / parsing. This
+annotation is associated to the root class of the model and must be declared one time.
 
-|skipFooter |boolean |optional - Configures the data format to skip marshalling
-/ unmarshalling of the footer record Configure this parameter on the
-primary record (e.g., not the header or footer)..
+| length | int |  | 0 a| The fixed length of the record (number of characters). It means that the record will always be that long padded
+with {#paddingChar()}'s
 
-|isHeader |boolean |optional - Identifies this FixedLengthRecord as a header
-record
+| name | String |  |  | Name describing the record (optional)
 
-|isFooter |boolean |optional - Identifies this FixedLengthRecords as a footer
-record
+| paddingChar | char |  |   | The char to pad with.
 
-|ignoreTrailingChars |boolean |optional - Indicates that characters beyond the last
-mapped filed can be ignored when unmarshalling / parsing. This annotation is associated to the root class of the model and must be
-declared one time.
+| skipFooter | boolean |  | false a| Configures the data format to skip marshalling / unmarshalling of the footer record. Configure this parameter on
+the primary record (e.g., not the header or footer).
+
+| skipHeader | boolean |  | false a| Configures the data format to skip marshalling / unmarshalling of the header record. Configure this parameter on
+the primary record (e.g., not the header or footer).
+
 |===
-
+// annotation options: END
 
 The hasHeader/hasFooter parameters are mutually exclusive with
 isHeader/isFooter. A record may not be both a header/footer and a
@@ -1127,7 +1144,7 @@ public class OrderFooter {
 }
 ----
 
-*case 7 : Skipping content when parsing a fixed length record.
+*case 7 : Skipping content when parsing a fixed length record*
 
 It is common to integrate with systems that provide fixed-length records
 containing more information than needed for the target use case. It is
@@ -1169,7 +1186,9 @@ keys. The key pair values are separated each other by a separator which
 can be a special character like a tab delimitor (unicode representation
 : \u0009) or a start of heading (unicode representation : \u0001)
 
- *"FIX information"*
+[NOTE]
+====
+*FIX information*
 
 More information about FIX can be found on this web site :
 http://www.fixprotocol.org/[http://www.fixprotocol.org/]. To work with
@@ -1178,35 +1197,41 @@ to the root message class which could be a Order class. This is not
 mandatory but will be very helpful when you will use camel-bindy in
 combination with camel-fix which is a Fix gateway based on quickFix
 project http://www.quickfixj.org/[http://www.quickfixj.org/].
+====
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*Message* |key value pair |Class
+|Message |key value pair |Class
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.Message
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|pairSeparator |string |mandatory - can be '=' or ';' or 'anything'
+| keyValuePairSeparator | String | &#10003; |  a| Key value pair separator is used to split the values from their keys (mandatory). Can be '\u0001', '\u0009', '#',
+or 'anything'.
 
-|keyValuePairSeparair |string |mandatory - can be '\u0001', '\u0009', '#' or 'anything'
+| pairSeparator | String | &#10003; |  | Pair separator used to split the key value pairs in tokens (mandatory). Can be '=', ';', or 'anything'.
 
-|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value
-== WINDOWS - allow to define the carriage return character to use. If you
-specify a value other than the three listed before, the value you enter
-(custom) will be used as the CRLF character(s)
+| crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional). Possible values = WINDOWS, UNIX, MAC,
+or custom. If you specify a value other than the three listed before, the value you enter (custom) will be used
+as the CRLF character(s).
 
-|type |string |optional - define the type of message (e.g. FIX, EMX, ...)
+| isOrdered | boolean |  | false a| Indicates if the message must be ordered in output. This annotation is associated to the message class of the
+model and must be declared one time.
 
-|version |string |optional - version of the message (e.g. 4.1)
+| name | String |  |  | Name describing the message (optional)
 
-|isOrdered |boolean |optional - default value = false - allow to change the order of the
-fields when FIX message is generated. This annotation is associated to the message class of the model and must
-be declared one time.
+| type | String |  | FIX | type is used to define the type of the message (e.g. FIX, EMX, ...) (optional)
+
+| version | String |  | 4.1 | version defines the version of the message (e.g. 4.1, ...) (optional)
+
 |===
+// annotation options: END
 
 *case 1 : separator = 'u0001'*
 
@@ -1232,7 +1257,7 @@ public class Order {
 }
 ----
 
- *Look at test cases*
+*Look at test cases*
 
 The ASCII character like tab, ... cannot be displayed in WIKI page. So,
 have a look to the test case of camel-bindy to see exactly how the FIX
@@ -1247,34 +1272,38 @@ pair field. Each KeyValuePairField is identified by a tag (= key) and
 its value associated, a type (string, int, date, ...), optionaly a
 pattern and if the field is required
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*KeyValuePairField* |Key Value Pair - FIX |Property
+|KeyValuePairField |Key Value Pair - FIX |Property
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.KeyValuePairField
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|tag |int |mandatory - digit number identifying the field in the message - must be
-unique
+| tag | int | &#10003; |  | tag identifying the field in the message (mandatory) - must be unique
 
-|pattern |string |optional - default value = "" - will be used to format Decimal, Date,
-...
+| impliedDecimalSeparator | boolean |  | false | <b>Camel 2.11:</b> Indicates if there is a decimal point implied at a specified location
 
-|precision |int |optional - digit number - represents the precision to be used when the
-Decimal number will be formatted/parsed
+| name | String |  |  | name of the field (optional)
 
-|position |int |optional - must be used when the position of the key/tag in the FIX
-message must be different
+| pattern | String |  |  | pattern that the formater will use to transform the data (optional)
 
-|required |boolean |optional - default value = "false"
+| position | int |  | 0 a| Position of the field in the message generated - must be used when the position of the key/tag in the FIX message
+must be different
 
-|impliedDecimalSeparator |boolean |*Camel 2.11:* optional - default value = "false" - Indicates if there is
-a decimal point implied at a specified location
+| precision | int |  | 0 | precision of the BigDecimal number to be created
+
+| required | boolean |  | false | Indicates if the field is mandatory
+
+| timezone | String |  |  | Timezone to be used.
+
 |===
+// annotation options: END
 
 *case 1 : tag*
 
@@ -1346,19 +1375,23 @@ section 2) and footer (= section 3)
 
 Only one attribute/parameter exists for this annotation.
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*Section* |FIX |Class
+|Section |FIX |Class
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.Section
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|number |int |digit number identifying the section position
+| number | int | &#10003; |  | Number of the section
+
 |===
+// annotation options: END
 
 *case 1 : Section*
 
@@ -1424,7 +1457,7 @@ The purpose of the annotation @OneToMany is to allow to work with a
 `List<?>` field defined a POJO class or from a record containing
 repetitive groups.
 
- *Restrictions OneToMany*
+*Restrictions OneToMany*
 
 Be careful, the one to many of bindy does not allow to handle
 repetitions defined on several levels of the hierarchy
@@ -1435,20 +1468,23 @@ The relation OneToMany ONLY WORKS in the following cases :
 tags/keys)
 * Generating a CSV with repetitive data
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%s,10%,80%",options="header",]
 |===
 |Annotation name |Record type |Level
 
-|*OneToMany* |all |property
+|OneToMany |all |Property
 |===
 
-[width="100%",cols="10%,10%,80%",options="header",]
+// annotation interface: org.apache.camel.dataformat.bindy.annotation.OneToMany
+// annotation options: START
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
-|Parameter name |type |Info
+| Parameter name | Type | Required | Default value | Info
 
-|mappedTo |string |optional - string - class name associated to the type of the List<Type
-of the Class>
+| mappedTo | String |  |  | Class name associated to the type of the List<Type of the Class>
+
 |===
+// annotation options: END
 
 *case 1 : Generating CSV with repetitive data*
 
