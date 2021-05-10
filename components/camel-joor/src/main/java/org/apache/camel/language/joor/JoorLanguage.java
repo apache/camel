@@ -86,6 +86,7 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
         Object out;
         JoorScriptingMethod target = scriptingCompiler.compile(getCamelContext(), script, bindings, resultType, singleQuotes);
@@ -202,6 +203,16 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
             compiler.setImports(imports);
         } else {
             compiler.getImports().addAll(imports);
+        }
+        if (scriptingCompiler.getAliases() == null) {
+            scriptingCompiler.setAliases(aliases);
+        } else {
+            scriptingCompiler.getAliases().putAll(aliases);
+        }
+        if (scriptingCompiler.getImports() == null) {
+            scriptingCompiler.setImports(imports);
+        } else {
+            scriptingCompiler.getImports().addAll(imports);
         }
     }
 

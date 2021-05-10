@@ -16,14 +16,14 @@
  */
 package org.apache.camel.language.joor;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class JoorScriptingLanguageTest extends CamelTestSupport {
 
@@ -41,7 +41,8 @@ public class JoorScriptingLanguageTest extends CamelTestSupport {
         user.setName("Scott");
         Map<String, Object> bindings = new LinkedHashMap<>();
         bindings.put("user", user);
-        String out = slan.evaluate("'Hello ' + user.getName() + ' you are ' + user.getAge() + ' years old'", bindings, String.class);
+        String out = slan.evaluate("'Hello ' + user.getName() + ' you are ' + user.getAge() + ' years old'", bindings,
+                String.class);
         Assertions.assertEquals("Hello Scott you are 33 years old", out);
     }
 }
