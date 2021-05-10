@@ -10297,7 +10297,15 @@ Whether tracing is enabled on this route.
   </xs:complexType>
 
   <xs:complexType name="routeTemplateBeanDefinition">
-    <xs:sequence/>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="beanFactory" type="tns:routeTemplateBeanFactoryDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Bean factory that uses a scripting language to create the local bean.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
