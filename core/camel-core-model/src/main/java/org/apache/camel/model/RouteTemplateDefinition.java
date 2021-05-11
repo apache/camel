@@ -212,7 +212,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
             def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
         } else {
             def.setBeanSupplier(ctx -> bean);
-            def.setBeanType(bean.getClass());
         }
         templateBeans.add(def);
         return this;
@@ -267,10 +266,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
         def.setName(name);
-        RouteTemplateBeanFactoryDefinition bf = new RouteTemplateBeanFactoryDefinition();
-        bf.setLanguage(language);
-        bf.setScript(script);
-        def.setBeanFactory(bf);
+        def.setLanguage(language);
+        def.setScript(script);
         templateBeans.add(def);
         return this;
     }
@@ -281,16 +278,14 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
      * @param  name the name of the bean
      * @return      fluent builder to choose which language and script to use for creating the bean
      */
-    public RouteTemplateBeanFactoryDefinition templateBean(String name) {
+    public RouteTemplateBeanDefinition templateBean(String name) {
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition(this);
         def.setName(name);
-        RouteTemplateBeanFactoryDefinition bf = new RouteTemplateBeanFactoryDefinition(this);
-        def.setBeanFactory(bf);
         templateBeans.add(def);
-        return bf;
+        return def;
     }
 
     /**

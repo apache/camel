@@ -2065,30 +2065,18 @@
         }, {
           "type" : "object",
           "properties" : {
-            "bean-type" : {
+            "language" : {
               "type" : "string"
             },
             "name" : {
               "type" : "string"
             },
-            "template-bean-factory" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateBeanFactoryDefinition"
+            "script" : {
+              "type" : "string"
             }
           }
         } ],
-        "required" : [ "name" ]
-      },
-      "org.apache.camel.model.RouteTemplateBeanFactoryDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "language" : {
-            "type" : "string"
-          },
-          "script" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "language" ]
+        "required" : [ "language", "name", "script" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",

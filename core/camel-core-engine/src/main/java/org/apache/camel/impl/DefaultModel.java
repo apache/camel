@@ -336,22 +336,17 @@ public class DefaultModel implements Model {
 
     private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
         for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
-            if (b.getBeanType() != null) {
-                // could be created via XML DSL where you cannot program in Java and can only specify the bean as fqn classname
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getBeanType());
-                routeTemplateContext.bind(b.getName(), clazz, () -> camelContext.getInjector().newInstance(clazz));
-            } else if (b.getBeanSupplier() != null) {
+            if (b.getBeanSupplier() != null) {
                 // bean class is optional for supplier
                 if (b.getBeanClass() != null) {
                     routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
                 } else {
                     routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
                 }
-            } else if (b.getBeanFactory() != null) {
-                final String script = b.getBeanFactory().getScript();
+            } else if (b.getScript() != null) {
+                final String script = b.getScript();
+                final Language lan = camelContext.resolveLanguage(b.getLanguage());
                 final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
-
-                final Language lan = camelContext.resolveLanguage(b.getBeanFactory().getLanguage());
                 final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
                 if (slan != null) {
                     // scripting language should be evaluated with route template context as binding

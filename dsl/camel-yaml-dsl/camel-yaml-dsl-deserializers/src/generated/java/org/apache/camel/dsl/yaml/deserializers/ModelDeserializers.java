@@ -72,7 +72,6 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
-import org.apache.camel.model.RouteTemplateBeanFactoryDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
@@ -11740,9 +11739,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "template-bean",
             properties = {
-                    @YamlProperty(name = "template-bean-factory", type = "object:org.apache.camel.model.RouteTemplateBeanFactoryDefinition"),
-                    @YamlProperty(name = "bean-type", type = "string"),
-                    @YamlProperty(name = "name", type = "string", required = true)
+                    @YamlProperty(name = "language", type = "string", required = true),
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "script", type = "string", required = true)
             }
     )
     public static class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanDefinition> {
@@ -11764,55 +11763,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "template-bean-factory": {
-                    org.apache.camel.model.RouteTemplateBeanFactoryDefinition val = asType(node, org.apache.camel.model.RouteTemplateBeanFactoryDefinition.class);
-                    target.setBeanFactory(val);
-                    break;
-                }
-                case "bean-type": {
+                case "language": {
                     String val = asText(node);
-                    target.setBeanType(val);
+                    target.setLanguage(val);
                     break;
                 }
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RouteTemplateBeanFactoryDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "template-bean-factory",
-            properties = {
-                    @YamlProperty(name = "language", type = "string", required = true),
-                    @YamlProperty(name = "script", type = "string")
-            }
-    )
-    public static class RouteTemplateBeanFactoryDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanFactoryDefinition> {
-        public RouteTemplateBeanFactoryDefinitionDeserializer() {
-            super(RouteTemplateBeanFactoryDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateBeanFactoryDefinition newInstance() {
-            return new RouteTemplateBeanFactoryDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateBeanFactoryDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "language": {
-                    String val = asText(node);
-                    target.setLanguage(val);
                     break;
                 }
                 case "script": {

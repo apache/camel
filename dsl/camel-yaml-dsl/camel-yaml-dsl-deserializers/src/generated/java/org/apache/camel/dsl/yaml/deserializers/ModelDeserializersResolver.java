@@ -294,8 +294,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.RouteDefinition": return new ModelDeserializers.RouteDefinitionDeserializer();
             case "template-bean": return new ModelDeserializers.RouteTemplateBeanDefinitionDeserializer();
             case "org.apache.camel.model.RouteTemplateBeanDefinition": return new ModelDeserializers.RouteTemplateBeanDefinitionDeserializer();
-            case "template-bean-factory": return new ModelDeserializers.RouteTemplateBeanFactoryDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplateBeanFactoryDefinition": return new ModelDeserializers.RouteTemplateBeanFactoryDefinitionDeserializer();
             case "template-parameter": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
             case "org.apache.camel.model.RouteTemplateParameterDefinition": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
             case "routing-slip": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
