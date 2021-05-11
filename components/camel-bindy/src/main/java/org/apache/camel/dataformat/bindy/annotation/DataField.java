@@ -59,6 +59,8 @@ public @interface DataField {
     String pattern() default "";
 
     /**
+     * Timezone to be used.
+     *
      * @return String timezone ID
      */
     String timezone() default "";

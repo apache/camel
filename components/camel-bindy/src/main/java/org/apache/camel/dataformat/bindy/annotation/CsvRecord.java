@@ -42,7 +42,7 @@ public @interface CsvRecord {
      * Separator used to split a record in tokens (mandatory) - can be ',' or ';' or 'anything'. The only whitespace
      * character supported is tab (\t). No other whitespace characters (spaces) are not supported. This value is
      * interpreted as a regular expression. If you want to use a sign which has a special meaning in regular
-     * expressions, e.g. the '\|' sign, than you have to mask it, like '\|'
+     * expressions, e.g. the '\|' sign, then you have to mask it, like '\|'
      */
     String separator();
 
