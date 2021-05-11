@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -96,8 +97,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     public static final DotName SEND_DEFINITION_CLASS
             = DotName.createSimple("org.apache.camel.model.SendDefinition");
     public static final DotName TO_DYNAMIC_DEFINITION_CLASS
-        = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
-
+            = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
+    public static final DotName ERROR_HANDLER_BUILDER_CLASS
+            = DotName.createSimple("org.apache.camel.builder.ErrorHandlerBuilder");
 
     public static final DotName YAML_TYPE_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
@@ -106,7 +108,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     public static final DotName YAML_OUT_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlOut");
     public static final DotName DSL_PROPERTY_ANNOTATION
-         = DotName.createSimple("org.apache.camel.spi.annotations.DslProperty");
+            = DotName.createSimple("org.apache.camel.spi.annotations.DslProperty");
 
     public static final ClassName CN_DESERIALIZER_RESOLVER
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerResolver");
@@ -115,7 +117,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     public static final ClassName CN_DESERIALIZER_BASE
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerBase");
     public static final ClassName CN_ENDPOINT_AWARE_DESERIALIZER_BASE
-        = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerEndpointAwareBase");
+            = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializerEndpointAwareBase");
     public static final ClassName CN_DESERIALIZATION_CONTEXT
             = ClassName.get("org.apache.camel.dsl.yaml.common", "YamlDeserializationContext");
     public static final ClassName CN_YAML_SUPPORT
@@ -139,6 +141,26 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     public static final ClassName CN_PROCESSOR_DEFINITION
             = ClassName.get("org.apache.camel.model", "ProcessorDefinition");
 
+    public static final Set<String> PRIMITIVE_CLASSES = new HashSet<>(
+            Arrays.asList(
+                    String.class.getName(),
+                    Character.class.getName(),
+                    Boolean.class.getName(),
+                    Byte.class.getName(),
+                    Short.class.getName(),
+                    Integer.class.getName(),
+                    Long.class.getName(),
+                    Float.class.getName(),
+                    Double.class.getName(),
+                    char.class.getName(),
+                    boolean.class.getName(),
+                    byte.class.getName(),
+                    short.class.getName(),
+                    int.class.getName(),
+                    long.class.getName(),
+                    float.class.getName(),
+                    double.class.getName()));
+
     protected IndexView view;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
@@ -147,21 +169,6 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     protected List<String> bannedDefinitions;
     @Parameter
     protected List<String> additionalDefinitions;
-
-    @Override
-    public void execute() throws MojoFailureException {
-        view = IndexerSupport.get(project);
-
-        generate();
-    }
-
-    protected abstract void generate() throws MojoFailureException;
-
-    // **************************
-    //
-    // Indexer
-    //
-    // **************************
 
     protected static boolean hasAnnotation(ClassInfo target, DotName annotationName) {
         if (target == null) {
@@ -176,6 +183,12 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         }
         return target.annotation(annotationName) != null;
     }
+
+    // **************************
+    //
+    // Indexer
+    //
+    // **************************
 
     protected static boolean hasAnnotationValue(ClassInfo target, DotName annotationName, String name) {
         if (target == null) {
@@ -257,12 +270,6 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         return builder.build();
     }
 
-    // **************************
-    //
-    // Class loading
-    //
-    // **************************
-
     protected static AnnotationSpec yamlPropertyWithFormat(String name, String type, String format) {
         return yamlPropertyWithFormat(name, type, format, false);
     }
@@ -282,7 +289,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
     // **************************
     //
-    // Helpers
+    // Class loading
     //
     // **************************
 
@@ -294,9 +301,24 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         return yamlProperty(name, type + ":" + subType, required);
     }
 
+    // **************************
+    //
+    // Helpers
+    //
+    // **************************
+
     protected static int getYamlTypeOrder(ClassInfo ci) {
         return annotationValue(ci, YAML_TYPE_ANNOTATION, "order").map(AnnotationValue::asInt).orElse(Integer.MAX_VALUE);
     }
+
+    @Override
+    public void execute() throws MojoFailureException {
+        view = IndexerSupport.get(project);
+
+        generate();
+    }
+
+    protected abstract void generate() throws MojoFailureException;
 
     protected Stream<ClassInfo> implementors(DotName type) {
         return view.getAllKnownImplementors(type).stream();
@@ -340,15 +362,15 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
 
     protected Stream<ClassInfo> all() {
         Stream<ClassInfo> discovered = Stream.of(XML_ROOT_ELEMENT_ANNOTATION_CLASS, XML_TYPE_CLASS)
-            .map(view::getAnnotations)
-            .flatMap(Collection::stream)
-            .map(AnnotationInstance::target)
-            .filter(at -> at.kind() == AnnotationTarget.Kind.CLASS)
-            .map(AnnotationTarget::asClass);
+                .map(view::getAnnotations)
+                .flatMap(Collection::stream)
+                .map(AnnotationInstance::target)
+                .filter(at -> at.kind() == AnnotationTarget.Kind.CLASS)
+                .map(AnnotationTarget::asClass);
 
         Stream<ClassInfo> additional = additionalDefinitions != null
-            ? additionalDefinitions.stream().map(DotName::createSimple).map(view::getClassByName)
-            : Stream.empty();
+                ? additionalDefinitions.stream().map(DotName::createSimple).map(view::getClassByName)
+                : Stream.empty();
 
         return Stream.concat(discovered, additional)
                 .filter(ci -> (ci.flags() & Modifier.ABSTRACT) == 0)
@@ -554,7 +576,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 annotationValue(ct, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
                         .map(AnnotationValue::asString)
                         .filter(value -> !"##default".equals(value)))
-            .orElseGet(field::name);
+                                .orElseGet(field::name);
     }
 
     protected boolean isRequired(FieldInfo fi) {
@@ -564,8 +586,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "required")
                         .map(AnnotationValue::asBoolean),
                 annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "required")
-                    .map(AnnotationValue::asBoolean))
-            .orElse(false);
+                        .map(AnnotationValue::asBoolean))
+                                .orElse(false);
     }
 
     protected boolean extendsType(ClassInfo ci, DotName superType) {

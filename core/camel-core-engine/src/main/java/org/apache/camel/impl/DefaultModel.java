@@ -27,9 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.DefaultRouteTemplateContext;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -41,13 +45,18 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
+import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.spi.ScriptingLanguage;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
@@ -220,7 +229,18 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    @Deprecated
     public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
+            throws Exception {
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
+        if (parameters != null) {
+            parameters.forEach(rtc::setParameter);
+        }
+        return addRouteFromTemplate(routeId, routeTemplateId, rtc);
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -243,7 +263,7 @@ public class DefaultModel implements Model {
                     prop.put(temp.getName(), temp.getDefaultValue());
                 } else {
                     // this is a required parameter do we have that as input
-                    if (!parameters.containsKey(temp.getName())) {
+                    if (!routeTemplateContext.getParameters().containsKey(temp.getName())) {
                         templatesBuilder.add(temp.getName());
                     }
                 }
@@ -255,9 +275,18 @@ public class DefaultModel implements Model {
             }
         }
 
-        // then override with user parameters
-        if (parameters != null) {
-            prop.putAll(parameters);
+        // then override with user parameters part 1
+        if (routeTemplateContext.getParameters() != null) {
+            prop.putAll(routeTemplateContext.getParameters());
+        }
+        // route template context should include default template parameters from the target route template
+        // so it has all parameters available
+        if (target.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (!routeTemplateContext.getParameters().containsKey(temp.getName()) && temp.getDefaultValue() != null) {
+                    routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                }
+            }
         }
 
         RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
@@ -283,6 +312,17 @@ public class DefaultModel implements Model {
             def.setId(routeId);
         }
         def.setTemplateParameters(prop);
+        def.setRouteTemplateContext(routeTemplateContext);
+
+        // setup local beans
+        if (target.getTemplateBeans() != null) {
+            addTemplateBeans(routeTemplateContext, target);
+        }
+
+        if (target.getConfigurer() != null) {
+            routeTemplateContext.setConfigurer(target.getConfigurer());
+        }
+
         // assign ids to the routes and validate that the id's are all unique
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions);
         if (duplicate != null) {
@@ -292,6 +332,54 @@ public class DefaultModel implements Model {
         }
         addRouteDefinition(def);
         return def.getId();
+    }
+
+    private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
+        for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
+            if (b.getBeanSupplier() != null) {
+                // bean class is optional for supplier
+                if (b.getBeanClass() != null) {
+                    routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
+                } else {
+                    routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
+                }
+            } else if (b.getScript() != null) {
+                final String script = b.getScript();
+                final Language lan = camelContext.resolveLanguage(b.getLanguage());
+                final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
+                final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+                if (slan != null) {
+                    // scripting language should be evaluated with route template context as binding
+                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                        Map<String, Object> bindings = new HashMap<>();
+                        // use rtx as the short-hand name, as context would imply its CamelContext
+                        bindings.put("rtc", routeTemplateContext);
+                        return slan.evaluate(script, bindings, clazz);
+                    });
+                } else {
+                    // exchange based languages needs a dummy exchange to be evaluated
+                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                        ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
+                        Exchange dummy = ef.create(false);
+                        try {
+                            String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
+                            if (text != null) {
+                                Expression exp = lan.createExpression(text);
+                                return exp.evaluate(dummy, clazz);
+                            } else {
+                                return null;
+                            }
+                        } finally {
+                            ef.release(dummy);
+                        }
+                    });
+                }
+            } else if (b.getBeanClass() != null) {
+                // we only have the bean class so we use that to create a new bean via the injector
+                routeTemplateContext.bind(b.getName(), b.getBeanClass(),
+                        () -> camelContext.getInjector().newInstance(b.getBeanClass()));
+            }
+        }
     }
 
     @Override

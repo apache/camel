@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
 import org.apache.camel.spi.Resource
 
@@ -208,6 +209,105 @@ class KameletTest extends YamlTestSupport {
                 to('direct:route').withBody('2').withHeader('StockSymbol', 1).send()
                 to('direct:route').withBody('3').withHeader('StockSymbol', 2).send()
                 to('direct:route').withBody('4').withHeader('StockSymbol', 2).send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (definition with local bean)"() {
+        setup:
+            loadRoutes """
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: ${MyUppercaseProcessor.class.name}
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'HELLO'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (definition with default parameters)"() {
+        setup:
+            loadRoutes """
+                - template:
+                    id: "myTemplate"  
+                    parameters:
+                      - name: "myParameter"
+                        default-value: "myDefaultValue"
+                        description: "myParameterDescription"
+                    from: 
+                      uri: "kamelet:source"
+                      steps:
+                        - set-body: 
+                            constant: "{{myParameter}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result" 
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'myDefaultValue'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "kamelet (definition with parameters)"() {
+        setup:
+            loadRoutes """
+                - template:
+                    id: "myTemplate"  
+                    parameters:
+                      - name: "myParameter"
+                        default-value: "myDefaultValue"
+                        description: "myParameterDescription"
+                    from: 
+                      uri: "kamelet:source"
+                      steps:
+                        - set-body: 
+                            constant: "{{myParameter}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate?myParameter=test"
+                      - to: "mock:result" 
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'test'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
             }
         then:
             MockEndpoint.assertIsSatisfied(context)

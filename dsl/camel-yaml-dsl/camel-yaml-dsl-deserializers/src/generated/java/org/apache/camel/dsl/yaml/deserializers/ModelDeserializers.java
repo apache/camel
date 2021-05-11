@@ -6,6 +6,10 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Map;
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerEndpointAwareBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
@@ -67,11 +71,8 @@ import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteTemplateContextRefDefinition;
-import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
-import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
@@ -3437,6 +3438,176 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
+            types = org.apache.camel.builder.DeadLetterChannelBuilder.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
+                    @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
+                    @YamlProperty(name = "use-original-body", type = "boolean"),
+                    @YamlProperty(name = "use-original-message", type = "boolean")
+            }
+    )
+    public static class DeadLetterChannelBuilderDeserializer extends YamlDeserializerBase<DeadLetterChannelBuilder> {
+        public DeadLetterChannelBuilderDeserializer() {
+            super(DeadLetterChannelBuilder.class);
+        }
+
+        @Override
+        protected DeadLetterChannelBuilder newInstance() {
+            return new DeadLetterChannelBuilder();
+        }
+
+        @Override
+        protected DeadLetterChannelBuilder newInstance(String value) {
+            return new DeadLetterChannelBuilder(value);
+        }
+
+        @Override
+        protected boolean setProperty(DeadLetterChannelBuilder target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "async-delayed-redelivery": {
+                    boolean val = asBoolean(node);
+                    target.setAsyncDelayedRedelivery(val);
+                    break;
+                }
+                case "dead-letter-handle-new-exception": {
+                    boolean val = asBoolean(node);
+                    target.setDeadLetterHandleNewException(val);
+                    break;
+                }
+                case "dead-letter-uri": {
+                    String val = asText(node);
+                    target.setDeadLetterUri(val);
+                    break;
+                }
+                case "executor-service-ref": {
+                    String val = asText(node);
+                    target.setExecutorServiceRef(val);
+                    break;
+                }
+                case "on-exception-occurred-ref": {
+                    String val = asText(node);
+                    target.setOnExceptionOccurredRef(val);
+                    break;
+                }
+                case "on-prepare-failure-ref": {
+                    String val = asText(node);
+                    target.setOnPrepareFailureRef(val);
+                    break;
+                }
+                case "on-redelivery-ref": {
+                    String val = asText(node);
+                    target.setOnRedeliveryRef(val);
+                    break;
+                }
+                case "retry-while-ref": {
+                    String val = asText(node);
+                    target.setRetryWhileRef(val);
+                    break;
+                }
+                case "use-original-body": {
+                    boolean val = asBoolean(node);
+                    target.setUseOriginalBody(val);
+                    break;
+                }
+                case "use-original-message": {
+                    boolean val = asBoolean(node);
+                    target.setUseOriginalMessage(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.builder.DefaultErrorHandlerBuilder.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
+                    @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
+                    @YamlProperty(name = "use-original-body", type = "boolean"),
+                    @YamlProperty(name = "use-original-message", type = "boolean")
+            }
+    )
+    public static class DefaultErrorHandlerBuilderDeserializer extends YamlDeserializerBase<DefaultErrorHandlerBuilder> {
+        public DefaultErrorHandlerBuilderDeserializer() {
+            super(DefaultErrorHandlerBuilder.class);
+        }
+
+        @Override
+        protected DefaultErrorHandlerBuilder newInstance() {
+            return new DefaultErrorHandlerBuilder();
+        }
+
+        @Override
+        protected boolean setProperty(DefaultErrorHandlerBuilder target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "async-delayed-redelivery": {
+                    boolean val = asBoolean(node);
+                    target.setAsyncDelayedRedelivery(val);
+                    break;
+                }
+                case "dead-letter-handle-new-exception": {
+                    boolean val = asBoolean(node);
+                    target.setDeadLetterHandleNewException(val);
+                    break;
+                }
+                case "dead-letter-uri": {
+                    String val = asText(node);
+                    target.setDeadLetterUri(val);
+                    break;
+                }
+                case "executor-service-ref": {
+                    String val = asText(node);
+                    target.setExecutorServiceRef(val);
+                    break;
+                }
+                case "on-exception-occurred-ref": {
+                    String val = asText(node);
+                    target.setOnExceptionOccurredRef(val);
+                    break;
+                }
+                case "on-prepare-failure-ref": {
+                    String val = asText(node);
+                    target.setOnPrepareFailureRef(val);
+                    break;
+                }
+                case "on-redelivery-ref": {
+                    String val = asText(node);
+                    target.setOnRedeliveryRef(val);
+                    break;
+                }
+                case "retry-while-ref": {
+                    String val = asText(node);
+                    target.setRetryWhileRef(val);
+                    break;
+                }
+                case "use-original-body": {
+                    boolean val = asBoolean(node);
+                    target.setUseOriginalBody(val);
+                    break;
+                }
+                case "use-original-message": {
+                    boolean val = asBoolean(node);
+                    target.setUseOriginalMessage(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             types = org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "default-load-balancer",
@@ -3555,6 +3726,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -3604,6 +3776,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {
@@ -4053,6 +4230,49 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            inline = true,
+            types = org.apache.camel.builder.ErrorHandlerBuilderRef.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = @YamlProperty(name = "support-transacted", type = "boolean")
+    )
+    public static class ErrorHandlerBuilderRefDeserializer extends YamlDeserializerBase<ErrorHandlerBuilderRef> {
+        public ErrorHandlerBuilderRefDeserializer() {
+            super(ErrorHandlerBuilderRef.class);
+        }
+
+        @Override
+        protected ErrorHandlerBuilderRef newInstance() {
+            return new ErrorHandlerBuilderRef();
+        }
+
+        @Override
+        protected ErrorHandlerBuilderRef newInstance(String value) {
+            return new ErrorHandlerBuilderRef(value);
+        }
+
+        @Override
+        protected boolean setProperty(ErrorHandlerBuilderRef target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "ref": {
+                    String val = asText(node);
+                    target.setRef(val);
+                    break;
+                }
+                case "support-transacted": {
+                    boolean val = asBoolean(node);
+                    target.setSupportTransacted(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;
@@ -4784,6 +5004,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -4833,6 +5054,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {
@@ -5200,6 +5426,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -5249,6 +5476,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {
@@ -7962,6 +8194,31 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            types = org.apache.camel.builder.NoErrorHandlerBuilder.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1
+    )
+    public static class NoErrorHandlerBuilderDeserializer extends YamlDeserializerBase<NoErrorHandlerBuilder> {
+        public NoErrorHandlerBuilderDeserializer() {
+            super(NoErrorHandlerBuilder.class);
+        }
+
+        @Override
+        protected NoErrorHandlerBuilder newInstance() {
+            return new NoErrorHandlerBuilder();
+        }
+
+        @Override
+        protected boolean setProperty(NoErrorHandlerBuilder target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                default: {
+                    return false;
+                }
+            }
+        }
+    }
+
+    @YamlType(
             inline = true,
             types = org.apache.camel.model.language.OgnlExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -8653,6 +8910,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -8702,6 +8960,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {
@@ -8979,6 +9242,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -9028,6 +9292,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {
@@ -9307,6 +9576,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -9356,6 +9626,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {
@@ -11459,69 +11734,48 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.RouteTemplateContextRefDefinition.class,
+            inline = true,
+            types = org.apache.camel.model.RouteTemplateBeanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "route-template-context-ref",
-            properties = @YamlProperty(name = "ref", type = "string", required = true)
-    )
-    public static class RouteTemplateContextRefDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateContextRefDefinition> {
-        public RouteTemplateContextRefDefinitionDeserializer() {
-            super(RouteTemplateContextRefDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplateContextRefDefinition newInstance() {
-            return new RouteTemplateContextRefDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplateContextRefDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "ref": {
-                    String val = asText(node);
-                    target.setRef(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RouteTemplateDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "route-template",
+            nodes = "template-bean",
             properties = {
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
-                    @YamlProperty(name = "template-parameter", type = "array:org.apache.camel.model.RouteTemplateParameterDefinition")
+                    @YamlProperty(name = "language", type = "string", required = true),
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "script", type = "string", required = true)
             }
     )
-    public static class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateDefinition> {
-        public RouteTemplateDefinitionDeserializer() {
-            super(RouteTemplateDefinition.class);
+    public static class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanDefinition> {
+        public RouteTemplateBeanDefinitionDeserializer() {
+            super(RouteTemplateBeanDefinition.class);
         }
 
         @Override
-        protected RouteTemplateDefinition newInstance() {
-            return new RouteTemplateDefinition();
+        protected RouteTemplateBeanDefinition newInstance() {
+            return new RouteTemplateBeanDefinition();
         }
 
         @Override
-        protected boolean setProperty(RouteTemplateDefinition target, String propertyKey,
+        protected RouteTemplateBeanDefinition newInstance(String value) {
+            return new RouteTemplateBeanDefinition(value);
+        }
+
+        @Override
+        protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setRoute(val);
+                case "language": {
+                    String val = asText(node);
+                    target.setLanguage(val);
                     break;
                 }
-                case "template-parameter": {
-                    java.util.List<org.apache.camel.model.RouteTemplateParameterDefinition> val = asFlatList(node, org.apache.camel.model.RouteTemplateParameterDefinition.class);
-                    target.setTemplateParameters(val);
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "script": {
+                    String val = asText(node);
+                    target.setScript(val);
                     break;
                 }
                 default: {
@@ -11569,72 +11823,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RouteTemplatesDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "route-templates",
-            properties = @YamlProperty(name = "route-template", type = "array:org.apache.camel.model.RouteTemplateDefinition")
-    )
-    public static class RouteTemplatesDefinitionDeserializer extends YamlDeserializerBase<RouteTemplatesDefinition> {
-        public RouteTemplatesDefinitionDeserializer() {
-            super(RouteTemplatesDefinition.class);
-        }
-
-        @Override
-        protected RouteTemplatesDefinition newInstance() {
-            return new RouteTemplatesDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RouteTemplatesDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "route-template": {
-                    java.util.List<org.apache.camel.model.RouteTemplateDefinition> val = asFlatList(node, org.apache.camel.model.RouteTemplateDefinition.class);
-                    target.setRouteTemplates(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.RoutesDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = "routes",
-            properties = @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition")
-    )
-    public static class RoutesDefinitionDeserializer extends YamlDeserializerBase<RoutesDefinition> {
-        public RoutesDefinitionDeserializer() {
-            super(RoutesDefinition.class);
-        }
-
-        @Override
-        protected RoutesDefinition newInstance() {
-            return new RoutesDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RoutesDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "route": {
-                    java.util.List<org.apache.camel.model.RouteDefinition> val = asFlatList(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setRoutes(val);
                     break;
                 }
                 default: {
@@ -15462,6 +15650,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "binding-mode", type = "string"),
                     @YamlProperty(name = "client-request-validation", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
+                    @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -15511,6 +15700,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "deprecated": {
+                    String val = asText(node);
+                    target.setDeprecated(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "enable-cors": {

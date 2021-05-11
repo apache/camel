@@ -81,6 +81,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.DataFormatsDefinition": return new ModelDeserializers.DataFormatsDefinitionDeserializer();
             case "datasonnet": return new ModelDeserializers.DatasonnetExpressionDeserializer();
             case "org.apache.camel.model.language.DatasonnetExpression": return new ModelDeserializers.DatasonnetExpressionDeserializer();
+            case "org.apache.camel.builder.DeadLetterChannelBuilder": return new ModelDeserializers.DeadLetterChannelBuilderDeserializer();
+            case "org.apache.camel.builder.DefaultErrorHandlerBuilder": return new ModelDeserializers.DefaultErrorHandlerBuilderDeserializer();
             case "default-load-balancer": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "delay": return new ModelDeserializers.DelayDefinitionDeserializer();
@@ -97,6 +99,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.validator.EndpointValidatorDefinition": return new ModelDeserializers.EndpointValidatorDefinitionDeserializer();
             case "enrich": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.model.EnrichDefinition": return new ModelDeserializers.EnrichDefinitionDeserializer();
+            case "org.apache.camel.builder.ErrorHandlerBuilderRef": return new ModelDeserializers.ErrorHandlerBuilderRefDeserializer();
             case "etcd-service-discovery": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "exchange-property": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
@@ -190,6 +193,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.MulticastDefinition": return new ModelDeserializers.MulticastDefinitionDeserializer();
             case "mvel": return new ModelDeserializers.MvelExpressionDeserializer();
             case "org.apache.camel.model.language.MvelExpression": return new ModelDeserializers.MvelExpressionDeserializer();
+            case "org.apache.camel.builder.NoErrorHandlerBuilder": return new ModelDeserializers.NoErrorHandlerBuilderDeserializer();
             case "ognl": return new ModelDeserializers.OgnlExpressionDeserializer();
             case "org.apache.camel.model.language.OgnlExpression": return new ModelDeserializers.OgnlExpressionDeserializer();
             case "on-completion": return new ModelDeserializers.OnCompletionDefinitionDeserializer();
@@ -288,16 +292,10 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.RouteContextRefDefinition": return new ModelDeserializers.RouteContextRefDefinitionDeserializer();
             case "route": return new ModelDeserializers.RouteDefinitionDeserializer();
             case "org.apache.camel.model.RouteDefinition": return new ModelDeserializers.RouteDefinitionDeserializer();
-            case "route-template-context-ref": return new ModelDeserializers.RouteTemplateContextRefDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplateContextRefDefinition": return new ModelDeserializers.RouteTemplateContextRefDefinitionDeserializer();
-            case "route-template": return new ModelDeserializers.RouteTemplateDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplateDefinition": return new ModelDeserializers.RouteTemplateDefinitionDeserializer();
+            case "template-bean": return new ModelDeserializers.RouteTemplateBeanDefinitionDeserializer();
+            case "org.apache.camel.model.RouteTemplateBeanDefinition": return new ModelDeserializers.RouteTemplateBeanDefinitionDeserializer();
             case "template-parameter": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
             case "org.apache.camel.model.RouteTemplateParameterDefinition": return new ModelDeserializers.RouteTemplateParameterDefinitionDeserializer();
-            case "route-templates": return new ModelDeserializers.RouteTemplatesDefinitionDeserializer();
-            case "org.apache.camel.model.RouteTemplatesDefinition": return new ModelDeserializers.RouteTemplatesDefinitionDeserializer();
-            case "routes": return new ModelDeserializers.RoutesDefinitionDeserializer();
-            case "org.apache.camel.model.RoutesDefinition": return new ModelDeserializers.RoutesDefinitionDeserializer();
             case "routing-slip": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "org.apache.camel.model.RoutingSlipDefinition": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "rss": return new ModelDeserializers.RssDataFormatDeserializer();

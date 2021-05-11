@@ -44,13 +44,17 @@ public final class RouteCoverageDumper {
             String dir = "target/camel-route-coverage";
             String name = testClassName + "-" + testName + ".xml";
 
-            ManagedCamelContextMBean managedCamelContext
-                    = context.getExtension(ManagedCamelContext.class).getManagedCamelContext();
+            ManagedCamelContext managedCamelContext
+                    = context.getExtension(ManagedCamelContext.class);
             if (managedCamelContext == null) {
                 LOG.warn(
-                        "Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
+                        "Cannot dump route coverage to file as JMX is not enabled."
+                         + " Ensure camel-management JAR is on classpath (can be test scope)."
+                         + " Override useJmx() method to enable JMX in the unit test classes."
+                         + " Or when using Spring you can add the @EnableRouteCoverage annotation to the test classes.");
             } else {
-                String xml = managedCamelContext.dumpRoutesCoverageAsXml();
+                ManagedCamelContextMBean mBean = managedCamelContext.getManagedCamelContext();
+                String xml = mBean.dumpRoutesCoverageAsXml();
                 String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml(testClassName, testName) + xml
                                   + "\n</camelRouteCoverage>";
 

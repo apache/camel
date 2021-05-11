@@ -65,6 +65,7 @@ RollbackDefinition
 RouteBuilderDefinition
 RouteContextRefDefinition
 RouteDefinition
+RouteTemplateBeanDefinition
 RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition

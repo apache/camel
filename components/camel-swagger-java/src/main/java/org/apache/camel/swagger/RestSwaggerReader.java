@@ -300,6 +300,10 @@ public class RestSwaggerReader {
                 op.summary(verb.getDescriptionText());
             }
 
+            if (Boolean.TRUE.equals(verb.getDeprecated())) {
+                op.deprecated(true);
+            }
+
             // security
             for (SecurityDefinition sd : verb.getSecurity()) {
                 List<String> scopes = new ArrayList<>();

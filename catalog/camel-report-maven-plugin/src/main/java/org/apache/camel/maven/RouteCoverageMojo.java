@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -438,7 +439,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
 
         sw.println();
-        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage)
+        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format(Locale.ROOT, "%.1f", percentage)
                    + "% / threshold " + coverageThreshold + ".0%)");
         sw.println("Status: " + (success ? "Success" : "Failed"));
         sw.println();
@@ -456,7 +457,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         overallCoverageAboveThreshold.set(coveredNodes == totalNumberOfNodes || percentage >= overallCoverageThreshold);
 
-        sw.println("Coverage: " + coveredNodes + " out of " + totalNumberOfNodes + " (" + String.format("%.1f", percentage)
+        sw.println("Coverage: " + coveredNodes + " out of " + totalNumberOfNodes + " ("
+                   + String.format(Locale.ROOT, "%.1f", percentage)
                    + "% / threshold " + overallCoverageThreshold + ".0%)");
         sw.println("Status: " + (overallCoverageAboveThreshold.get() ? "Success" : "Failed"));
         sw.println();
@@ -490,7 +492,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         RouteCoverageNode data = new RouteCoverageNode();
         data.setName(node.getName());
-        data.setLineNumber(Integer.valueOf(node.getLineNumber()));
+        data.setLineNumber(Integer.parseInt(node.getLineNumber()));
         data.setLevel(level.get());
         data.setClassName(node.getClassName());
         data.setMethodName(node.getMethodName());

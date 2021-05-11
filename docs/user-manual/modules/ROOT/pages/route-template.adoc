@@ -5,7 +5,7 @@ A Route template is as its name implies a template for a route, which are used
 to create routes from a set of input parameters. Another way of think is that
 route templates are parameterized routes.
 
-    Route template + input parameters => route
+_Route template_ + _input parameters_ => _route_
 
 From a route template you can create one or more routes.
 
@@ -77,33 +77,23 @@ Template parameters take precedence over regular property placeholders.
 
 == Creating a route from a route template
 
-To create routes from route templates, then you must use the Java API from `CamelContext`.
+To create routes from route templates, then you should use `org.apache.camel.builder.TemplatedRouteBuilder`.
 
-In the following you can see how this is done with the `addRouteFromTemplate` method
-
-[source,java]
-----
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("name", "one");
-    parameters.put("greeting", "hello");
-    context.addRouteFromTemplate(null, "myTemplate", parameters);
-----
-
-There is a fluent builder variation as shown below:
+In the following you can see how this is done with the builder as shown below:
 
 [source,java]
 ----
-    // create two routes from the template
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .parameter("name", "one")
-        .parameter("greeting", "Hello")
-        .add();
+// create two routes from the template
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .parameter("name", "one")
+    .parameter("greeting", "Hello")
+    .add();
 
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .parameter("name", "two")
-        .parameter("greeting", "Bonjour")
-        .parameter("myPeriod", "5s")
-        .add();
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .parameter("name", "two")
+    .parameter("greeting", "Bonjour")
+    .parameter("myPeriod", "5s")
+    .add();
 ----
 
 The returned value from `add` is the route id of the new route that was added.
@@ -113,25 +103,299 @@ not started yet.
 If no route id is provided, then Camel will auto assign a route id. In the example above then Camel would
 assign route ids such as `route1`, `route2` to these routes.
 
-If you want to specify a route id, then do as follows, where the name is myCoolRoute:
+If you want to specify a route id, then use `routeId` as follows, where the name is myCoolRoute:
 
 [source,java]
 ----
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("name", "one");
-    parameters.put("greeting", "hello");
-    context.addRouteFromTemplate("myCoolRoute", "myTemplate", parameters);
+TemplatedRouteBuilder.builder(context, "myTemplate")
+    .routeId("myCoolRoute")
+    .parameter("name", "one
+    .parameter("greeting", "hello")
+    .parameter("myPeriod", "5s")
+    .add();
 ----
 
-Or with the fluent builder:
+
+== Binding beans to route template
+
+The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.
+This allows to use the same template to create multiple routes, where beans are local (private) for each created route.
+
+For example given the following route template where we use `templateBean` to setup the local bean as shown:
 
 [source,java]
 ----
-    TemplatedRouteBuilder.builder(context, "myTemplate")
-        .routeId("myCoolRoute")
-        .parameter("name", "one")
-        .parameter("greeting", "Hello")
-        .add();
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", S3Client.class, rtc ->
+            S3Client.builder().region(rtc.getProperty("region", Region.class)).build();
+    )
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
+
+The template has two parameters to specify the AWS region and the S3 bucket. To connect to S3
+then a `software.amazon.awssdk.services.s3.S3Client` bean is needed.
+
+To create this bean we specify this with the `templateBean` DSL where we specify the bean id as `myClient`.
+The type of the bean can be specified (`S3Client.class`) however its optional
+(can be use if you need to let beans be discovered by type and not name).
+
+This ensures that the code creating the bean is executed later ( when Camel is creating a route from the template),
+then the code must be specified as a _supplier_. Because we want during creation of the bean access to template parameters,
+we use a Camel `BeanSupplier` which gives access to `RouteTemplateContext` that is the _rtc_ variable in the code above.
+
+*Important:* the local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{{myClient}}`
+in the route template, as shown above with the _to_ endpoint. This is because the local
+bean must be made unique and Camel will internally re-assign the bean id to use an unique id instead of `myClient`. And this is done with the help
+of the property placeholder functionality.
+
+If multiple routes is created from this template, then each of the created routes, have their own
+S3Client bean created.
+
+=== Binding beans to route templates from template builder
+
+The `TemplatedRouteBuilder` also allows to bind local beans (which allows to specify those beans) when
+creating routes from existing templates.
+
+Suppose the route template below is defined in XML:
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The template has no bean bindings for `#{{myClient}}` which would be required for creating the template.
+
+When creating routes form the template via `TemplatedRouteBuilder` then you can provide the bean binding
+if you desire the bean to be local scoped (not shared with others):
+
+[source,java]
+----
+TemplatedRouteBuilder.builder(context, "s3template")
+    .parameter("region", "US-EAST-1")
+    .parameter("bucket", "myBucket")
+    .bean("myClient", S3Client.class,
+                S3Client.builder()
+                    .region(rtc.getProperty("region", Region.class))
+                    .build())
+    .routeId("mys3route")
+    .add();
+----
+
+As you can see the binding is similar to when using `templateBean` directly in the route template.
+
+Instead of binding the beans from the template builder, you could also create the bean outside the template,
+and bind it by reference.
+
+[source,java]
+----
+
+final S3Client myClient = S3Client.builder().region(Region.US_EAST_1).build();
+
+TemplatedRouteBuilder.builder(context, "s3template")
+    .parameter("region", Region.US_EAST_1)
+    .parameter("bucket", "myBucket")
+    .bean("myClient", myClient)
+    .routeId("mys3route")
+    .add();
+----
+
+You should prefer to create the local beans directly from within the template (if possible) because this
+ensures the route template has this out of the box. Otherwise the bean must be created or provided every time
+a new route is created from the route template. However the latter gives freedom to create the bean in any other custom way.
+
+=== Binding beans to route templates using scripting languages
+
+You can use scripting languages like groovy, joor, mvel which creates the bean.
+This allows to define route templates with the scripting language built-in (such as groovy).
+
+For example creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
+
+[source,java]
+----
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", "groovy",
+            "software.amazon.awssdk.services.s3.S3Client.S3Client.builder()
+            .region(rtc.getProperty("region", Region.class))
+            .build()"
+    )
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
+
+The groovy code can be externalized into a file on the classpath or file system, by using `resource:` as prefix, such as:
+
+[source,java]
+----
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", "groovy", "resource:classpath:s3bean.groovy")
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
+
+Then create the file `s3bean.groovy` in the classpath root:
+
+[source,groovy]
+----
+import software.amazon.awssdk.services.s3.S3Client
+S3Client.builder()
+    .region(rtc.getProperty("region", Region.class))
+    .build()
+----
+
+The route template in XML DSL can then also use groovy language to create the bean as follows:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="groovy">
+            import software.amazon.awssdk.services.s3.S3Client
+            S3Client.builder()
+                .region(rtc.getProperty("region", Region.class))
+                .build()
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+Notice how the groovy code can be inlined directly in the route template in XML also. Of course you can also externalize
+the bean creation code to an external file, by using `resource:` as prefix:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="groovy">
+          resource:classpath:s3bean.groovy
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The languages supported are:
+
+[width="100%",cols="2s,8",options="header"]
+|===
+| Language | Description
+| bean | Calling a method on a Java class.
+| groovy | Using groovy script to create the bean.
+| joor | Using joor (Java code which are runtime compiled) to create the bean.
+| language | To use a 3rd party language to create the bean.
+| mvel | To use Mvel template script to create the bean.
+| ognl | To use OGNL template script to create the bean.
+|===
+
+Camel will bind `RouteTemplateContext` as the root object with name `rtc` when evaluating the script.
+This means you can get access to all the information from `RouteTemplateContext` and `CamelContext` via `rtc`.
+
+This is what we have done in the scripts in the previous examples where we get hold of a template parameter with:
+
+[source,groovy]
+----
+    rtc.getProperty('region', String.class)
+----
+
+To get access to `CamelContext` you can do:
+
+[source,groovy]
+----
+    var cn = rtc.getCamelContext().getName()
+----
+
+The most powerful languages to use are groovy and joor. The other languages are limited in flexibility
+as they are not complete programming languages, but are more suited for templating needs.
+
+It is recommended to either use groovy or joor, if creating the local bean requires coding,
+and the route templates are not defined using Java code.
+
+The bean language can be used when creating the local bean from an existing Java method (static or not-static method),
+and the route templates are not defined using Java code.
+
+For example suppose there is a class named `com.foo.MyAwsHelper` that has a method called `createS3Client`
+then you can call this method from the route template in XML DSL:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="bean">
+          com.foo.MyAwsHelper?method=createS3Client
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The method signature of createS3Client must then have 1 parameter for the `RouteTemplateContext` as shown:
+
+[source,java]
+----
+public static S3Client createS3Client(RouteTemplateContext rtc) {
+    return S3Client.builder()
+        .region(rtc.getProperty("region", Region.class))
+        .build();
+}
+----
+
+If you are using pure Java code (both template and creating local bean),
+then you can create the local bean using Java lambda style as previously documented.
+
+== Configuring route templates when creating route
+
+There may be some special situations where you want to be able to do some custom configuration/code when
+a route is about to be created from a route template. To support this you can use the `configure` in the route template DSL
+where you can specify the code to execute as show:
+
+[source,java]
+----
+routeTemplate("myTemplate")
+    .templateParameter("myTopic")
+    .configure((RouteTemplateContext rtc) ->
+        // do some custom code here
+    )
+    .from("direct:to-topic")
+    .to("kafka:{{myTopic}}");
 ----
 
 == JMX management

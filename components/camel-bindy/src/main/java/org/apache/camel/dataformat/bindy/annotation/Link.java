@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation allows to link classes together in the model. This release version 1.0 only supports oneToone
+ * This annotation allows to link classes together in the model. This release version 1.0 only supports one-to-one
  * relation
  */
 

@@ -188,6 +188,7 @@
 ** xref:jt400-component.adoc[JT400]
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kamelet-component.adoc[Kamelet]
+** xref:kamelet-reify-component.adoc[Kamelet Reify]
 ** xref:kubernetes-summary.adoc[Kubernetes]
 *** xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap]
 *** xref:kubernetes-custom-resources-component.adoc[Kubernetes Custom Resources]

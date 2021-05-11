@@ -15,7 +15,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-cosm
 *{component-header}*
 
 
-https://azure.microsoft.com/en-us/services/cosmos-db/[Azure Cosmos DB] is Microsoft???s globally distributed, multi-model database service for operational and analytics
+https://azure.microsoft.com/en-us/services/cosmos-db/[Azure Cosmos DB] is Microsoft's globally distributed, multi-model database service for operational and analytics
 workloads. It offers multi-mastering feature by automatically scaling throughput, compute, and storage. This
 component interacts with Azure CosmosDB through Azure SQL API.
 

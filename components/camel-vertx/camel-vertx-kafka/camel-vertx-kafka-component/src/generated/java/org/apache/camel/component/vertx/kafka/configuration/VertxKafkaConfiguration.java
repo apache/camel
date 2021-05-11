@@ -70,8 +70,8 @@ public class VertxKafkaConfiguration
     @UriParam(label = "common", defaultValue = "10s", javaType = "java.time.Duration")
     private long socketConnectionSetupTimeoutMs = 10000;
     // socket.connection.setup.timeout.max.ms
-    @UriParam(label = "common", defaultValue = "2m7s", javaType = "java.time.Duration")
-    private long socketConnectionSetupTimeoutMaxMs = 127000;
+    @UriParam(label = "common", defaultValue = "30s", javaType = "java.time.Duration")
+    private long socketConnectionSetupTimeoutMaxMs = 30000;
     // connections.max.idle.ms
     @UriParam(label = "common", defaultValue = "9m", javaType = "java.time.Duration")
     private long connectionsMaxIdleMs = 540000;
@@ -1013,7 +1013,7 @@ public class VertxKafkaConfiguration
     /**
      * JAAS login context parameters for SASL connections in the format used by
      * JAAS configuration files. JAAS configuration file format is described <a
-     * href="http://docs.oracle.com/javase/8/docs/technotes/guides/security/jgss/tutorials/LoginConfigFile.html">here</a>. The format for the value is: '<code>loginModuleClass controlFlag (optionName=optionValue)*;</code>'. For brokers, the config must be prefixed with listener prefix and SASL mechanism name in lower-case. For example, listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;
+     * href="http://docs.oracle.com/javase/8/docs/technotes/guides/security/jgss/tutorials/LoginConfigFile.html">here</a>. The format for the value is: <code>loginModuleClass controlFlag (optionName=optionValue)*;</code>. For brokers, the config must be prefixed with listener prefix and SASL mechanism name in lower-case. For example, listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;
      */
     public void setSaslJaasConfig(String saslJaasConfig) {
         this.saslJaasConfig = saslJaasConfig;
@@ -1176,12 +1176,10 @@ public class VertxKafkaConfiguration
      * A list of class names or class types, ordered by preference, of supported
      * partition assignment strategies that the client will use to distribute
      * partition ownership amongst consumer instances when group management is
-     * used.<p>In addition to the default class specified below, you can use the
-     * <code>org.apache.kafka.clients.consumer.RoundRobinAssignor</code>class
-     * for round robin assignments of partitions to consumers.
-     * </p><p>Implementing the
-     * <code>org.apache.kafka.clients.consumer.ConsumerPartitionAssignor</code>
-     * interface allows you to plug in a custom assignmentstrategy.
+     * used. Available options
+     * are:<ul><li><code>org.apache.kafka.clients.consumer.RangeAssignor</code>:
+     * The default assignor, which works on a per-topic
+     * basis.</li><li><code>org.apache.kafka.clients.consumer.RoundRobinAssignor</code>: Assigns partitions to consumers in a round-robin fashion.</li><li><code>org.apache.kafka.clients.consumer.StickyAssignor</code>: Guarantees an assignment that is maximally balanced while preserving as many existing partition assignments as possible.</li><li><code>org.apache.kafka.clients.consumer.CooperativeStickyAssignor</code>: Follows the same StickyAssignor logic, but allows for cooperative rebalancing.</li></ul><p>Implementing the <code>org.apache.kafka.clients.consumer.ConsumerPartitionAssignor</code> interface allows you to plug in a custom assignment strategy.
      */
     public void setPartitionAssignmentStrategy(
             String partitionAssignmentStrategy) {
@@ -1369,7 +1367,10 @@ public class VertxKafkaConfiguration
     }
 
     /**
-     * The maximum number of records returned in a single call to poll().
+     * The maximum number of records returned in a single call to poll(). Note,
+     * that <code>max.poll.records</code> does not impact the underlying
+     * fetching behavior. The consumer will cache the records from each fetch
+     * request and returns them incrementally from each poll.
      */
     public void setMaxPollRecords(int maxPollRecords) {
         this.maxPollRecords = maxPollRecords;
@@ -1417,7 +1418,7 @@ public class VertxKafkaConfiguration
      * Controls how to read messages written transactionally. If set to
      * <code>read_committed</code>, consumer.poll() will only return
      * transactional messages which have been committed. If set to
-     * <code>read_uncommitted</code>' (the default), consumer.poll() will return
+     * <code>read_uncommitted</code> (the default), consumer.poll() will return
      * all messages, even transactional messages which have been aborted.
      * Non-transactional messages will be returned unconditionally in either
      * mode. <p>Messages will always be returned in offset order. Hence, in

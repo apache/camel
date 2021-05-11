@@ -84,7 +84,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader 
 
         for (Resource resource : resources) {
             // the loader to use is derived from the file extension
-            final String extension = FileUtil.onlyExt(resource.getLocation(), true);
+            final String extension = FileUtil.onlyExt(resource.getLocation(), false);
 
             if (ObjectHelper.isEmpty(extension)) {
                 throw new IllegalArgumentException(

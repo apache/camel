@@ -1020,6 +1020,16 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected RouteTemplateBeanDefinition doParseRouteTemplateBeanDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateBeanDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "language": def.setLanguage(val); break;
+                case "name": def.setName(val); break;
+                default: return false;
+            }
+            return true;
+        }, noElementHandler(), (def, val) -> def.setScript(val));
+    }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
             if ("ref".equals(key)) {
@@ -1034,6 +1044,7 @@ public class ModelParser extends BaseParser {
             optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
             switch (key) {
                 case "route": def.setRoute(doParseRouteDefinition()); break;
+                case "templateBean": doAdd(doParseRouteTemplateBeanDefinition(), def.getTemplateBeans(), def::setTemplateBeans); break;
                 case "templateParameter": doAdd(doParseRouteTemplateParameterDefinition(), def.getTemplateParameters(), def::setTemplateParameters); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
@@ -2571,6 +2582,7 @@ public class ModelParser extends BaseParser {
                 case "bindingMode": def.setBindingMode(val); break;
                 case "clientRequestValidation": def.setClientRequestValidation(val); break;
                 case "consumes": def.setConsumes(val); break;
+                case "deprecated": def.setDeprecated(Boolean.valueOf(val)); break;
                 case "enableCORS": def.setEnableCORS(val); break;
                 case "method": def.setMethod(val); break;
                 case "outType": def.setOutType(val); break;

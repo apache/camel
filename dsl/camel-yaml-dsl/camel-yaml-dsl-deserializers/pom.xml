@@ -128,10 +128,21 @@
                                 <bannedDefinition>org.apache.camel.model.ExpressionSubElementDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.PropertyDefinitions</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.KameletDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RouteTemplateDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RouteTemplateContextRefDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RouteTemplatesDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RoutesDefinition</bannedDefinition>
+                                <bannedDefinition>org.apache.camel.model.RestsDefinition</bannedDefinition>
                             </bannedDefinitions>
                             <additionalDefinitions>
+                                <!-- saga -->
                                 <additionalDefinition>org.apache.camel.model.SagaOptionDefinition</additionalDefinition>
                                 <additionalDefinition>org.apache.camel.model.SagaActionUriDefinition</additionalDefinition>
+                                <!-- error handler -->
+                                <additionalDefinition>org.apache.camel.builder.DeadLetterChannelBuilder</additionalDefinition>
+                                <additionalDefinition>org.apache.camel.builder.ErrorHandlerBuilderRef</additionalDefinition>
+                                <additionalDefinition>org.apache.camel.builder.NoErrorHandlerBuilder</additionalDefinition>
+                                <additionalDefinition>org.apache.camel.builder.DefaultErrorHandlerBuilder</additionalDefinition>
                             </additionalDefinitions>
                         </configuration>
                     </execution>

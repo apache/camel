@@ -17,6 +17,7 @@
 package org.apache.camel.component.properties;
 
 import java.util.Iterator;
+import java.util.Properties;
 
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
@@ -47,9 +48,10 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
         String answer = null;
 
         // local takes precedence
-        if (component.getLocalProperties() != null) {
+        Properties local = component.getLocalProperties();
+        if (local != null) {
             // use get as the value can potentially be stored as a non string value
-            Object value = component.getLocalProperties().get(name);
+            Object value = local.get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
             }

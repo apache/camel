@@ -16,27 +16,13 @@
  */
 package org.apache.camel.language.joor;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.ExpressionEvaluationException;
+import java.util.Map;
 
-public class JoorExpressionEvaluationException extends ExpressionEvaluationException {
+/**
+ * Interface for the compiled joor scripting method when evaluating as scripting language.
+ */
+public interface JoorScriptingMethod {
 
-    private final String className;
-    private final String code;
+    Object evaluate(Map<String, Object> args) throws Exception;
 
-    public JoorExpressionEvaluationException(Expression expression, String className, String code, Exchange exchange,
-                                             Throwable cause) {
-        super(expression, "jOOR evaluation error for class: " + className + " with code:\n" + code, exchange, cause);
-        this.className = className;
-        this.code = code;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public String getCode() {
-        return code;
-    }
 }

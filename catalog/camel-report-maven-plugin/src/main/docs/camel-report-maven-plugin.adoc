@@ -178,9 +178,23 @@ For generating a report of the coverage of your Camel routes from unit testing.
 In the same manner you can generate Java code coverage reports, then this is the same but for Camel routes.
 You can therefore use this to know which parts of your Camel routes has been used or not.
 
+Camel uses JMX to capture metrics during tests which is used for calculating route coverage.
+You must have `camel-management` JAR on the classpath (can be test scoped)
+such as by declaring the following Maven dependency in your pom.xml file:
+
+[source,xml]
+----
+<!-- JMX is needed for route coverage testing -->
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-management</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
 === Enabling route coverage
 
-You can enable route coverage while running unit tests either by
+You can enable route coverage while running unit tests either by:
 
 - setting global JVM system property enabling for all test classes
 - using `@EnableRouteCoverage` annotation per test class if using `camel-test-spring` module

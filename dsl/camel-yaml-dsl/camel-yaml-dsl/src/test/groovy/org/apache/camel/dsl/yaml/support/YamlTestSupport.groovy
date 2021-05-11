@@ -52,7 +52,6 @@ class YamlTestSupport extends Specification implements HasCamelContext {
             def report = SCHEMA.validate(target)
 
             if (!report.isSuccess()) {
-
                 throw new IllegalArgumentException("${report}")
             }
         }
@@ -81,6 +80,16 @@ class YamlTestSupport extends Specification implements HasCamelContext {
         loadRoutes(
             resources.collect {
                 it -> ResourceHelper.fromString("route-${index++}.yaml", it.stripIndent())
+            }
+        )
+    }
+
+    def loadKamelets(String... resources) {
+        int index = 0
+
+        context.routesLoader.loadRoutes(
+            resources.collect {
+                it -> ResourceHelper.fromString("route-${index++}.kamelet.yaml", it.stripIndent())
             }
         )
     }

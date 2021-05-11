@@ -18,15 +18,19 @@ package org.apache.camel.language.groovy;
 
 import java.util.Map;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Service;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.ObjectHelper;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 @Language("groovy")
-public class GroovyLanguage extends LanguageSupport {
+public class GroovyLanguage extends LanguageSupport implements ScriptingLanguage {
 
     // Cache used to stores the compiled scripts (aka their classes)
     private final Map<String, GroovyClassService> scriptCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
@@ -63,6 +67,26 @@ public class GroovyLanguage extends LanguageSupport {
     public GroovyExpression createExpression(String expression) {
         expression = loadResource(expression);
         return new GroovyExpression(expression);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
+        script = loadResource(script);
+        Class<Script> clazz = getScriptFromCache(script);
+        if (clazz == null) {
+            ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
+            GroovyShell shell = new GroovyShell(cl);
+            clazz = shell.getClassLoader().parseClass(script);
+            addScriptToCache(script, clazz);
+        }
+        Script gs = ObjectHelper.newInstance(clazz, Script.class);
+
+        if (bindings != null) {
+            gs.setBinding(new Binding(bindings));
+        }
+        Object value = gs.run();
+        return getCamelContext().getTypeConverter().convertTo(resultType, value);
     }
 
     Class<Script> getScriptFromCache(String script) {

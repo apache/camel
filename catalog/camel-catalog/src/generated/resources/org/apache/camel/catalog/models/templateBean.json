@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "templateBean",
+    "title": "Template Bean",
+    "description": "A route template bean (local bean)",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RouteTemplateBeanDefinition",
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Bean name" },
+    "language": { "kind": "attribute", "displayName": "Language", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "bean", "groovy", "joor", "language", "mvel", "ognl" ], "deprecated": false, "autowired": false, "secret": false, "description": "The language to use for creating the bean (such as groovy, joor)" },
+    "script": { "kind": "value", "displayName": "Script", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The script to execute that creates the bean. If the script use the prefix resource: such as resource:classpath:com\/foo\/myscript.groovy, resource:file:\/var\/myscript.groovy, then its loaded from the external resource." }
+  }
+}
