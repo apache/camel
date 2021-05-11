@@ -533,6 +533,7 @@
         <sshd-version>2.5.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <swagger-java-version>1.6.2</swagger-java-version>
+        <swagger-openapi3-version>2.1.9</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.51</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <apicurio-version>1.0.16.Final</apicurio-version>
