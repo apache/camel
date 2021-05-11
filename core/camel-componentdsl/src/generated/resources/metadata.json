@@ -4170,6 +4170,28 @@
     "producerOnly": false,
     "lenientProperties": true
   },
+  "KameletReifyComponentBuilderFactory": {
+    "kind": "component",
+    "name": "kamelet-reify",
+    "title": "Kamelet Reify",
+    "description": "To call Kamelets (indirectly)",
+    "deprecated": false,
+    "firstVersion": "3.6.0",
+    "label": "core",
+    "javaType": "org.apache.camel.component.kameletreify.KameletReifyComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kamelet-reify",
+    "version": "3.10.0-SNAPSHOT",
+    "scheme": "kamelet-reify",
+    "extendsScheme": "",
+    "syntax": "kamelet-reify:delegateUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": true
+  },
   "KubernetesConfigMapsComponentBuilderFactory": {
     "kind": "component",
     "name": "kubernetes-config-maps",

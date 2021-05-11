@@ -8647,6 +8647,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kamelet Reify (camel-kamelet-reify)
+     * To call Kamelets (indirectly)
+     * 
+     * Category: core
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-kamelet-reify
+     * 
+     * Syntax: <code>kamelet-reify:delegateUri</code>
+     * 
+     * Path parameter: delegateUri (required)
+     * The delegated uri
+     * 
+     * @param path delegateUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.endpointBuilder("kamelet-reify", path);
+    }
+    /**
+     * Kamelet Reify (camel-kamelet-reify)
+     * To call Kamelets (indirectly)
+     * 
+     * Category: core
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-kamelet-reify
+     * 
+     * Syntax: <code>kamelet-reify:delegateUri</code>
+     * 
+     * Path parameter: delegateUri (required)
+     * The delegated uri
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path delegateUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.KameletReifyEndpointBuilder kameletReify(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
