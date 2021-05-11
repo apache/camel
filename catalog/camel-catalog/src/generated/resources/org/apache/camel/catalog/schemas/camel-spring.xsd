@@ -1592,14 +1592,6 @@ A route template bean (local bean)
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="templateBeanFactory" type="tns:routeTemplateBeanFactoryDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-A route template bean factory (local bean)
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="templateParameter" type="tns:routeTemplateParameterDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -10297,34 +10289,15 @@ Whether tracing is enabled on this route.
   </xs:complexType>
 
   <xs:complexType name="routeTemplateBeanDefinition">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="beanFactory" type="tns:routeTemplateBeanFactoryDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Bean factory that uses a scripting language to create the local bean.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Bean name.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="beanType" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the Class of the bean.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="routeTemplateBeanFactoryDefinition">
     <xs:simpleContent>
       <xs:extension base="xs:string">
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Bean name.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="language" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
