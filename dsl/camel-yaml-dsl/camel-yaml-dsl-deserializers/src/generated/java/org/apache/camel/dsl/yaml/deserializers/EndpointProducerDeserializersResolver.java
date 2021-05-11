@@ -187,6 +187,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "jt400":
             case "kafka":
             case "kamelet":
+            case "kamelet-reify":
             case "kubernetes-config-maps":
             case "kubernetes-custom-resources":
             case "kubernetes-deployments":

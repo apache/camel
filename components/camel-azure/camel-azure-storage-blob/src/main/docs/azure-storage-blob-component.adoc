@@ -106,7 +106,7 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 The Azure Storage Blob Service endpoint is configured using URI syntax:
 
 ----
-azure-storage-blob://accountName/containerName
+azure-storage-blob:accountName/containerName
 ----
 
 with the following path and query parameters:
