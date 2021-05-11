@@ -25,23 +25,32 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.http.annotation.Obsolete;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KameletReifyBasicTest extends ContainerAwareTestSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KameletReifyBasicTest.class);
-    private static final String CONTAINER_NAME = "activemq";
-    private static final String CONTAINER_IMAGE = "rmohr/activemq:5.15.9-alpine";
-    private static final int TCP_PORT = 61616;
+public class KameletReifyIT extends CamelTestSupport {
+
+    static int tcpPort = AvailablePortFinder.getNextAvailable();
+
+    @RegisterExtension
+    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+            .bare()
+            .withPersistent(false)
+            .withTcpTransport(tcpPort)
+            .build();
+
     private static final String QUEUE_NAME = "my-queue";
+
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
 
     @Test
     public void componentsAreWrapped() throws Exception {
@@ -74,7 +83,7 @@ public class KameletReifyBasicTest extends ContainerAwareTestSupport {
     //
     // **********************************************
 
-    @Obsolete
+    @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
@@ -88,19 +97,8 @@ public class KameletReifyBasicTest extends ContainerAwareTestSupport {
     }
 
     @Override
-    protected GenericContainer<?> createContainer() {
-        return new GenericContainer<>(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withExposedPorts(TCP_PORT)
-                .withLogConsumer(new Slf4jLogConsumer(LOGGER))
-                .waitingFor(Wait.forListeningPort());
-    }
-
-    @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
-        final String host = getContainerHost(CONTAINER_NAME);
-        final int port = getContainerPort(CONTAINER_NAME, TCP_PORT);
-        final String brokerUrl = String.format("tcp://%s:%d", host, port);
+        final String brokerUrl = String.format("tcp://localhost:%d", tcpPort);
 
         Properties properties = new Properties();
         properties.setProperty("amqBrokerUrl", brokerUrl);
