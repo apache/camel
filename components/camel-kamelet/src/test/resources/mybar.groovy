@@ -14,24 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet;
+import org.apache.camel.component.kamelet.MyInjectBar
 
-import org.apache.camel.PropertyInject;
-
-public class MyInjectBar {
-
-    @PropertyInject("{{bar}}")
-    private String bar;
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
-
-    public String where(String name) {
-        return "Hi " + name + " we are going to " + bar;
-    }
-}
+def bean = new MyInjectBar()
+// rtc is RouteTemplateContext
+bean.bar = rtc.getProperty('bar')
+return bean

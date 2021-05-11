@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteTemplateContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -452,6 +453,101 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
+    public void testLocalBeanExpression() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar", "bean",
+                                RouteTemplateLocalBeanTest.class.getName() + "?method=createBuilderProcessor")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Builder World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanExpressionFluent() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar").bean(RouteTemplateLocalBeanTest.class, "createBuilderProcessor")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Builder World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanExpressionFluentTwo() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateParameter("greeting", "Davs ")
+                        .templateBean("myBar").bean(RouteTemplateLocalBeanTest.class, "createBuilderProcessorTwo")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Davs Builder2 World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
     private class BuilderProcessor implements Processor {
 
         @Override
@@ -462,10 +558,27 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
     private class BuilderTwoProcessor implements Processor {
 
+        private String prefix = "";
+
+        public BuilderTwoProcessor() {
+        }
+
+        public BuilderTwoProcessor(String prefix) {
+            this.prefix = prefix;
+        }
+
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getMessage().setBody("Builder2 " + exchange.getMessage().getBody());
+            exchange.getMessage().setBody(prefix + "Builder2 " + exchange.getMessage().getBody());
         }
+    }
+
+    public Processor createBuilderProcessor() {
+        return new BuilderProcessor();
+    }
+
+    public Processor createBuilderProcessorTwo(RouteTemplateContext rtc) {
+        return new BuilderTwoProcessor(rtc.getProperty("greeting", String.class));
     }
 
 }

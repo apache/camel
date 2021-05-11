@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.RouteTemplateContext;
@@ -50,7 +52,11 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.spi.ScriptingLanguage;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
@@ -273,6 +279,15 @@ public class DefaultModel implements Model {
         if (routeTemplateContext.getParameters() != null) {
             prop.putAll(routeTemplateContext.getParameters());
         }
+        // route template context should include default template parameters from the target route template
+        // so it has all parameters available
+        if (target.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (!routeTemplateContext.getParameters().containsKey(temp.getName()) && temp.getDefaultValue() != null) {
+                    routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                }
+            }
+        }
 
         RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
 
@@ -301,24 +316,7 @@ public class DefaultModel implements Model {
 
         // setup local beans
         if (target.getTemplateBeans() != null) {
-            for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
-                if (b.getBeanType() != null) {
-                    // could be created via XML DSL where you cannot program in Java and can only specify the bean as fqn classname
-                    Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getBeanType());
-                    routeTemplateContext.bind(b.getName(), clazz, () -> camelContext.getInjector().newInstance(clazz));
-                } else if (b.getBeanSupplier() != null) {
-                    // bean class is optional for supplier
-                    if (b.getBeanClass() != null) {
-                        routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
-                    } else {
-                        routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
-                    }
-                } else if (b.getBeanClass() != null) {
-                    // we only have the bean class so we use that to create a new bean via the injector
-                    routeTemplateContext.bind(b.getName(), b.getBeanClass(),
-                            () -> camelContext.getInjector().newInstance(b.getBeanClass()));
-                }
-            }
+            addTemplateBeans(routeTemplateContext, target);
         }
 
         if (target.getConfigurer() != null) {
@@ -334,6 +332,59 @@ public class DefaultModel implements Model {
         }
         addRouteDefinition(def);
         return def.getId();
+    }
+
+    private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
+        for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
+            if (b.getBeanType() != null) {
+                // could be created via XML DSL where you cannot program in Java and can only specify the bean as fqn classname
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getBeanType());
+                routeTemplateContext.bind(b.getName(), clazz, () -> camelContext.getInjector().newInstance(clazz));
+            } else if (b.getBeanSupplier() != null) {
+                // bean class is optional for supplier
+                if (b.getBeanClass() != null) {
+                    routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
+                } else {
+                    routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
+                }
+            } else if (b.getBeanFactory() != null) {
+                final String script = b.getBeanFactory().getScript();
+                final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
+
+                final Language lan = camelContext.resolveLanguage(b.getBeanFactory().getLanguage());
+                final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+                if (slan != null) {
+                    // scripting language should be evaluated with route template context as binding
+                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                        Map<String, Object> bindings = new HashMap<>();
+                        // use rtx as the short-hand name, as context would imply its CamelContext
+                        bindings.put("rtc", routeTemplateContext);
+                        return slan.evaluate(script, bindings, clazz);
+                    });
+                } else {
+                    // exchange based languages needs a dummy exchange to be evaluated
+                    routeTemplateContext.bind(b.getName(), clazz, () -> {
+                        ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
+                        Exchange dummy = ef.create(false);
+                        try {
+                            String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
+                            if (text != null) {
+                                Expression exp = lan.createExpression(text);
+                                return exp.evaluate(dummy, clazz);
+                            } else {
+                                return null;
+                            }
+                        } finally {
+                            ef.release(dummy);
+                        }
+                    });
+                }
+            } else if (b.getBeanClass() != null) {
+                // we only have the bean class so we use that to create a new bean via the injector
+                routeTemplateContext.bind(b.getName(), b.getBeanClass(),
+                        () -> camelContext.getInjector().newInstance(b.getBeanClass()));
+            }
+        }
     }
 
     @Override

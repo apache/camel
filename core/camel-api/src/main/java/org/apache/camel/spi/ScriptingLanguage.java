@@ -14,24 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet;
+package org.apache.camel.spi;
 
-import org.apache.camel.PropertyInject;
+import java.util.Map;
 
-public class MyInjectBar {
+/**
+ * Represents a {@link Language} which is a general purpose scripting languages such as groovy, joor and others.
+ */
+@FunctionalInterface
+public interface ScriptingLanguage {
 
-    @PropertyInject("{{bar}}")
-    private String bar;
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
-
-    public String where(String name) {
-        return "Hi " + name + " we are going to " + bar;
-    }
+    /**
+     * Evaluates the script
+     *
+     * @param  script     the script
+     * @param  bindings   optional bindings to use when evaluating the script
+     * @param  resultType the expected result type
+     * @return            the result of the evaluation
+     */
+    <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType);
 }

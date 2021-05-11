@@ -2070,10 +2070,25 @@
             },
             "name" : {
               "type" : "string"
+            },
+            "template-bean-factory" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateBeanFactoryDefinition"
             }
           }
         } ],
         "required" : [ "name" ]
+      },
+      "org.apache.camel.model.RouteTemplateBeanFactoryDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "language" : {
+            "type" : "string"
+          },
+          "script" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "language" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",

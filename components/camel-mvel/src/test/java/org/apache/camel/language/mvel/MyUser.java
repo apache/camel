@@ -14,24 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet;
+package org.apache.camel.language.mvel;
 
-import org.apache.camel.PropertyInject;
+public class MyUser {
 
-public class MyInjectBar {
+    private String name;
+    private int age;
 
-    @PropertyInject("{{bar}}")
-    private String bar;
-
-    public String getBar() {
-        return bar;
+    public String getName() {
+        return name;
     }
 
-    public void setBar(String bar) {
-        this.bar = bar;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String where(String name) {
-        return "Hi " + name + " we are going to " + bar;
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }
