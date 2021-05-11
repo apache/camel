@@ -342,7 +342,44 @@ as they are not complete programming languages, but are more suited for templati
 It is recommended to either use groovy or joor, if creating the local bean requires coding,
 and the route templates are not defined using Java code.
 
-If you are using pure Java code, then you can create the local bean using Java lambda style as previously documented.
+The bean language can be used when creating the local bean from an existing Java method (static or not-static method),
+and the route templates are not defined using Java code.
+
+For example suppose there is a class named `com.foo.MyAwsHelper` that has a method called `createS3Client`
+then you can call this method from the route template in XML DSL:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="bean">
+          com.foo.MyAwsHelper?method=createS3Client
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The method signature of createS3Client must then have 1 parameter for the `RouteTemplateContext` as shown:
+
+[source,java]
+----
+public static S3Client createS3Client(RouteTemplateContext rtc) {
+    return S3Client.builder()
+        .region(rtc.getProperty("region", Region.class))
+        .build();
+}
+----
+
+If you are using pure Java code (both template and creating local bean),
+then you can create the local bean using Java lambda style as previously documented.
 
 == Configuring route templates when creating route
 

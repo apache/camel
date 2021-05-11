@@ -280,6 +280,26 @@ public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, 
                     }
                 }
             }
+            // if there are a method with no arguments, then we can use that as fallback
+            if (candidates.isEmpty()) {
+                MethodInfo fallback = null;
+                for (MethodInfo mi : bi.getMethods()) {
+                    if (mi.getMethod().getName().equals(beanMethod)) {
+                        boolean match = !mi.hasParameters();
+                        if (match) {
+                            if (fallback == null) {
+                                fallback = mi;
+                            } else {
+                                fallback = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (fallback != null) {
+                    candidates.add(fallback);
+                }
+            }
 
             if (candidates.isEmpty()) {
                 throw new MethodNotFoundException(clazz, beanMethod);
@@ -291,7 +311,8 @@ public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, 
             MethodInfo mi = candidates.get(0);
             Method method = mi.getMethod();
             // map bindings to method
-            Object[] args = bindings != null ? bindings.values().toArray(new Object[0]) : null;
+            Object[] args
+                    = method.getParameterCount() > 0 && bindings != null ? bindings.values().toArray(new Object[0]) : null;
             if (mi.isStaticMethod()) {
                 out = ObjectHelper.invokeMethod(method, null, args);
             } else {

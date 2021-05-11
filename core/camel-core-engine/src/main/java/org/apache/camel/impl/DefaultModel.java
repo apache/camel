@@ -279,6 +279,15 @@ public class DefaultModel implements Model {
         if (routeTemplateContext.getParameters() != null) {
             prop.putAll(routeTemplateContext.getParameters());
         }
+        // route template context should include default template parameters from the target route template
+        // so it has all parameters available
+        if (target.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (!routeTemplateContext.getParameters().containsKey(temp.getName()) && temp.getDefaultValue() != null) {
+                    routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                }
+            }
+        }
 
         RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
 
