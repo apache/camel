@@ -36,7 +36,7 @@ public class RouteTemplateBeanDefinition {
     @XmlTransient
     private RouteTemplateDefinition parent;
     @XmlAttribute(required = true)
-    String name;
+    private String name;
     @XmlTransient
     private Class<?> beanClass;
     // it only makes sense to use the languages that are general purpose scripting languages
