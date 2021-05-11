@@ -266,13 +266,6 @@ a byte stream and put on a JMS queue. +
 Here we unmarshal the byte stream into a HAPI Message object that is
 passed to our patient lookup service.
 
-=== Serializable messages
-
-As of HAPI 2.0, the HL7v2 model classes are fully
-serializable. So you can put HL7v2 messages directly into a JMS queue
-(i.e. without calling `marshal()` and read them again directly from the
-queue (i.e. without calling `unmarshal()`.
-
 === Segment separators
 
 Unmarshalling does not automatically fix segment
