@@ -12,7 +12,7 @@
   },
   "properties": {
     "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Bean name" },
-    "beanType": { "kind": "attribute", "displayName": "Bean Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the Class of the bean" },
-    "beanFactory": { "kind": "element", "displayName": "Bean Factory", "required": false, "type": "object", "javaType": "org.apache.camel.model.RouteTemplateBeanFactoryDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Bean factory that uses a scripting language to create the local bean" }
+    "language": { "kind": "attribute", "displayName": "Language", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "bean", "groovy", "joor", "language", "mvel", "ognl" ], "deprecated": false, "autowired": false, "secret": false, "description": "The language to use for creating the bean (such as groovy, joor)" },
+    "script": { "kind": "value", "displayName": "Script", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The script to execute that creates the bean. If the script use the prefix resource: such as resource:classpath:com\/foo\/myscript.groovy, resource:file:\/var\/myscript.groovy, then its loaded from the external resource." }
   }
 }
