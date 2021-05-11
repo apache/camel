@@ -791,6 +791,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-kamelet-reify</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kamelet</artifactId>
 		</dependency>
 		<dependency>

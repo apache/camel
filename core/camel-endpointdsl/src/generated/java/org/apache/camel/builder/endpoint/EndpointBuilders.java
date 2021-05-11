@@ -195,6 +195,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.KameletReifyEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory,
