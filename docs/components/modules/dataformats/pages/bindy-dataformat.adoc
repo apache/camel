@@ -770,8 +770,6 @@ line delimiter unless eol is customized.
 
 | eol | String |  |  a| Character to be used to process considering end of line after each record while unmarshalling (optional - default
 = "" which help default JDK provided line delimiter to be used unless any other line delimiter provided) This
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-bindy/src/main/docs/bindy-dataformat.adoc
 option is used only during unmarshalling, where marshalling uses system default provided line delimiter as
 "WINDOWS" unless any other value is provided.
 
