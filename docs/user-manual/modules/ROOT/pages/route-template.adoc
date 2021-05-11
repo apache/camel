@@ -215,6 +215,172 @@ You should prefer to create the local beans directly from within the template (i
 ensures the route template has this out of the box. Otherwise the bean must be created or provided every time
 a new route is created from the route template. However the latter gives freedom to create the bean in any other custom way.
 
+=== Binding beans to route templates using scripting languages
+
+You can use scripting languages like groovy, joor, mvel which creates the bean.
+This allows to define route templates with the scripting language built-in (such as groovy).
+
+For example creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
+
+[source,java]
+----
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", "groovy",
+            "software.amazon.awssdk.services.s3.S3Client.S3Client.builder()
+            .region(rtc.getProperty("region", Region.class))
+            .build()"
+    )
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
+
+The groovy code can be externalized into a file on the classpath or file system, by using `resource:` as prefix, such as:
+
+[source,java]
+----
+routeTemplate("s3template")
+    .templateParameter("region")
+    .templateParameter("bucket")
+    .templateBean("myClient", "groovy", "resource:classpath:s3bean.groovy")
+    .from("direct:s3-store")
+     // must refer to the bean with {{myClient}}
+    .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
+----
+
+Then create the file `s3bean.groovy` in the classpath root:
+
+[source,groovy]
+----
+import software.amazon.awssdk.services.s3.S3Client
+S3Client.builder()
+    .region(rtc.getProperty("region", Region.class))
+    .build()
+----
+
+The route template in XML DSL can then also use groovy language to create the bean as follows:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="groovy">
+            import software.amazon.awssdk.services.s3.S3Client
+            S3Client.builder()
+                .region(rtc.getProperty("region", Region.class))
+                .build()
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+Notice how the groovy code can be inlined directly in the route template in XML also. Of course you can also externalize
+the bean creation code to an external file, by using `resource:` as prefix:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="groovy">
+          resource:classpath:s3bean.groovy
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The languages supported are:
+
+[width="100%",cols="2s,8",options="header"]
+|===
+| Language | Description
+| bean | Calling a method on a Java class.
+| groovy | Using groovy script to create the bean.
+| joor | Using joor (Java code which are runtime compiled) to create the bean.
+| language | To use a 3rd party language to create the bean.
+| mvel | To use Mvel template script to create the bean.
+| ognl | To use OGNL template script to create the bean.
+|===
+
+Camel will bind `RouteTemplateContext` as the root object with name `rtc` when evaluating the script.
+This means you can get access to all the information from `RouteTemplateContext` and `CamelContext` via `rtc`.
+
+This is what we have done in the scripts in the previous examples where we get hold of a template parameter with:
+
+[source,groovy]
+----
+    rtc.getProperty('region', String.class)
+----
+
+To get access to `CamelContext` you can do:
+
+[source,groovy]
+----
+    var cn = rtc.getCamelContext().getName()
+----
+
+The most powerful languages to use are groovy and joor. The other languages are limited in flexibility
+as they are not complete programming languages, but are more suited for templating needs.
+
+It is recommended to either use groovy or joor, if creating the local bean requires coding,
+and the route templates are not defined using Java code.
+
+The bean language can be used when creating the local bean from an existing Java method (static or not-static method),
+and the route templates are not defined using Java code.
+
+For example suppose there is a class named `com.foo.MyAwsHelper` that has a method called `createS3Client`
+then you can call this method from the route template in XML DSL:
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="s3template">
+    <templateParameter name="region"/>
+    <templateParameter name="bucket"/>
+    <templateBean name="myClient">
+        <templateBeanFactory language="bean">
+          com.foo.MyAwsHelper?method=createS3Client
+        </templateBeanFactory>
+    </templateBean>
+    <route>
+      <from uri="direct:s3-store"/>
+      <to uri="aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+The method signature of createS3Client must then have 1 parameter for the `RouteTemplateContext` as shown:
+
+[source,java]
+----
+public static S3Client createS3Client(RouteTemplateContext rtc) {
+    return S3Client.builder()
+        .region(rtc.getProperty("region", Region.class))
+        .build();
+}
+----
+
+If you are using pure Java code (both template and creating local bean),
+then you can create the local bean using Java lambda style as previously documented.
+
 == Configuring route templates when creating route
 
 There may be some special situations where you want to be able to do some custom configuration/code when

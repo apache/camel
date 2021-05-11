@@ -16,7 +16,10 @@
  */
 package org.apache.camel.language.bean;
 
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
@@ -25,13 +28,19 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.component.bean.AmbiguousMethodCallException;
 import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.bean.BeanInfo;
+import org.apache.camel.component.bean.MethodInfo;
+import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -48,7 +57,7 @@ import org.apache.camel.util.URISupport;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport implements PropertyConfigurer, StaticService {
+public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
     public static final String LANGUAGE = "bean";
 
     private volatile BeanComponent beanComponent;
@@ -245,6 +254,78 @@ public class BeanLanguage extends LanguageSupport implements PropertyConfigurer,
         answer.setSimple(simple);
         answer.init(getCamelContext());
         return answer;
+    }
+
+    @Override
+    public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
+        script = loadResource(script);
+        String beanName = StringHelper.before(script, "?method=");
+        String beanMethod = StringHelper.after(script, "?method=");
+
+        try {
+            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName);
+            // find methods with that name
+            BeanInfo bi = new BeanInfo(getCamelContext(), clazz);
+
+            // find method that is the best candidate
+            // match by number of arguments
+            List<MethodInfo> candidates = new ArrayList<>();
+            for (MethodInfo mi : bi.getMethods()) {
+                if (mi.getMethod().getName().equals(beanMethod)) {
+                    // must match number of args
+                    int size = bindings != null ? bindings.size() : 0;
+                    boolean match = mi.getParameters().size() == size;
+                    if (match) {
+                        candidates.add(mi);
+                    }
+                }
+            }
+            // if there are a method with no arguments, then we can use that as fallback
+            if (candidates.isEmpty()) {
+                MethodInfo fallback = null;
+                for (MethodInfo mi : bi.getMethods()) {
+                    if (mi.getMethod().getName().equals(beanMethod)) {
+                        boolean match = !mi.hasParameters();
+                        if (match) {
+                            if (fallback == null) {
+                                fallback = mi;
+                            } else {
+                                fallback = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (fallback != null) {
+                    candidates.add(fallback);
+                }
+            }
+
+            if (candidates.isEmpty()) {
+                throw new MethodNotFoundException(clazz, beanMethod);
+            } else if (candidates.size() > 1) {
+                throw new AmbiguousMethodCallException(null, candidates);
+            }
+
+            Object out;
+            MethodInfo mi = candidates.get(0);
+            Method method = mi.getMethod();
+            // map bindings to method
+            Object[] args
+                    = method.getParameterCount() > 0 && bindings != null ? bindings.values().toArray(new Object[0]) : null;
+            if (mi.isStaticMethod()) {
+                out = ObjectHelper.invokeMethod(method, null, args);
+            } else {
+                Object bean = getCamelContext().getInjector().newInstance(clazz);
+                out = ObjectHelper.invokeMethod(method, bean, args);
+            }
+            if (out != null && resultType != null) {
+                out = getCamelContext().getTypeConverter().convertTo(resultType, out);
+            }
+            return (T) out;
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     @Override

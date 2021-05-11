@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -40,6 +41,8 @@ public class RouteTemplateBeanDefinition {
     private Class<?> beanClass;
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
+    @XmlElement
+    private RouteTemplateBeanFactoryDefinition beanFactory;
 
     public RouteTemplateBeanDefinition() {
     }
@@ -90,5 +93,16 @@ public class RouteTemplateBeanDefinition {
      */
     public void setBeanSupplier(RouteTemplateContext.BeanSupplier<Object> beanSupplier) {
         this.beanSupplier = beanSupplier;
+    }
+
+    public RouteTemplateBeanFactoryDefinition getBeanFactory() {
+        return beanFactory;
+    }
+
+    /**
+     * Bean factory that uses a scripting language to create the local bean
+     */
+    public void setBeanFactory(RouteTemplateBeanFactoryDefinition beanFactory) {
+        this.beanFactory = beanFactory;
     }
 }

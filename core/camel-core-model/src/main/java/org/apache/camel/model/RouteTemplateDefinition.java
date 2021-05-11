@@ -255,6 +255,45 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
+     * Adds a local bean the route template uses.
+     *
+     * @param name     the name of the bean
+     * @param language the language to use
+     * @param script   the script to use for creating the local bean
+     */
+    public RouteTemplateDefinition templateBean(String name, String language, String script) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        RouteTemplateBeanFactoryDefinition bf = new RouteTemplateBeanFactoryDefinition();
+        bf.setLanguage(language);
+        bf.setScript(script);
+        def.setBeanFactory(bf);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses (via fluent builder).
+     *
+     * @param  name the name of the bean
+     * @return      fluent builder to choose which language and script to use for creating the bean
+     */
+    public RouteTemplateBeanFactoryDefinition templateBean(String name) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        RouteTemplateBeanFactoryDefinition bf = new RouteTemplateBeanFactoryDefinition(this);
+        def.setBeanFactory(bf);
+        templateBeans.add(def);
+        return bf;
+    }
+
+    /**
      * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
      * gives control over the creating process, such as binding local beans and doing other kind of customization.
      *

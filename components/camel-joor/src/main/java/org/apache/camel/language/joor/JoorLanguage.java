@@ -23,7 +23,9 @@ import java.util.TreeSet;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
@@ -34,12 +36,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("joor")
-public class JoorLanguage extends LanguageSupport implements StaticService {
+public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorLanguage.class);
 
     private static Boolean java8;
     private final JoorCompiler compiler = new JoorCompiler();
+    private final JoorScriptingCompiler scriptingCompiler = new JoorScriptingCompiler();
     private final Set<String> imports = new TreeSet<>();
     private final Map<String, String> aliases = new HashMap<>();
 
@@ -80,6 +83,23 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
 
     public void setSingleQuotes(boolean singleQuotes) {
         this.singleQuotes = singleQuotes;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
+        Object out;
+        JoorScriptingMethod target = scriptingCompiler.compile(getCamelContext(), script, bindings, resultType, singleQuotes);
+        try {
+            out = target.evaluate(bindings);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+        if (out != null && resultType != null) {
+            return getCamelContext().getTypeConverter().convertTo(resultType, out);
+        } else {
+            return (T) out;
+        }
     }
 
     @Override
@@ -183,6 +203,16 @@ public class JoorLanguage extends LanguageSupport implements StaticService {
             compiler.setImports(imports);
         } else {
             compiler.getImports().addAll(imports);
+        }
+        if (scriptingCompiler.getAliases() == null) {
+            scriptingCompiler.setAliases(aliases);
+        } else {
+            scriptingCompiler.getAliases().putAll(aliases);
+        }
+        if (scriptingCompiler.getImports() == null) {
+            scriptingCompiler.setImports(imports);
+        } else {
+            scriptingCompiler.getImports().addAll(imports);
         }
     }
 
