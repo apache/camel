@@ -55,7 +55,7 @@ located on the `container1` in the `camelazure` storage account, use the followi
 
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accessKey=yourAccessKey").
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accessKey=yourAccessKey").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
@@ -106,7 +106,7 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 The Azure Storage Blob Service endpoint is configured using URI syntax:
 
 ----
-azure-storage-blob:accountName/containerName
+azure-storage-blob://accountName/containerName
 ----
 
 with the following path and query parameters:
@@ -361,14 +361,14 @@ Refer to the example section in this page to learn how to use these operations i
 To consume a blob into a file using file component, this can be done like this:
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey").
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
 However, you can also write to file directly without using the file component, you will need to specify `fileDir` folder path in order to save your blob in your machine.
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
 to("mock:results");
 --------------------------------------------------------------------------------
 
@@ -376,7 +376,7 @@ Also, the component supports batch consumer, hence you can consume multiple blob
 return multiple exchanges depending on the number of the blobs in the container. Example:
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob:/camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
+from("azure-storage-blob://camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
 to("mock:results");
 --------------------------------------------------------------------------------
 
@@ -394,7 +394,7 @@ from("direct:start")
     // e.g:
     exchange.getIn().setHeader(BlobConstants.LIST_BLOB_CONTAINERS_OPTIONS, new ListBlobContainersOptions().setMaxResultsPerPage(10));
   })
-  .to("azure-storage-blob:/camelazure?operation=listBlobContainers&client&serviceClient=#client")
+  .to("azure-storage-blob://camelazure?operation=listBlobContainers&client&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -409,7 +409,7 @@ from("direct:start")
     // e.g:
     exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "newContainerName");
   })
-  .to("azure-storage-blob:/camelazure/container1?operation=createBlobContainer&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?operation=createBlobContainer&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -424,7 +424,7 @@ from("direct:start")
     // e.g:
     exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "overridenName");
   })
-  .to("azure-storage-blob:/camelazure/container1?operation=deleteBlobContainer&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?operation=deleteBlobContainer&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -439,7 +439,7 @@ from("direct:start")
     // e.g:
     exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "overridenName");
   })
-  .to("azure-storage-blob:/camelazure/container1?operation=listBlobs&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?operation=listBlobs&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -460,7 +460,7 @@ from("direct:start")
     // set our body
     exchange.getIn().setBody(outputStream);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -470,7 +470,7 @@ If we don't set a body, then this operation will give us an `InputStream` instan
 --------------------------------------------------------------------------------
 
 from("direct:start")
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
   .process(exchange -> {
       InputStream inputStream = exchange.getMessage().getBody(InputStream.class);
       // We use Apache common IO for simplicity, but you are free to do whatever dealing
@@ -492,7 +492,7 @@ from("direct:start")
     // e.g:
     exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "overridenName");
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=deleteBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=deleteBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -508,7 +508,7 @@ from("direct:start")
     // e.g:
     exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "overridenName");
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=downloadBlobToFile&fileDir=/var/mydir&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=downloadBlobToFile&fileDir=/var/mydir&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -518,7 +518,7 @@ from("direct:start")
 --------------------------------------------------------------------------------
 
 from("direct:start")
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=downloadLink&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=downloadLink&serviceClient=#client")
   .process(exchange -> {
       String link = exchange.getMessage().getHeader(BlobConstants.DOWNLOAD_LINK, String.class);
       System.out.println("My link " + link);
@@ -539,7 +539,7 @@ from("direct:start")
     exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "overridenName");
     exchange.getIn().setBody("Block Blob");
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=uploadBlockBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadBlockBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -557,7 +557,7 @@ from("direct:start")
 
       exchange.getIn().setBody(blocks);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=stageBlockBlobList&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=stageBlockBlobList&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -576,7 +576,7 @@ from("direct:start")
 
       exchange.getIn().setBody(blocksIds);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=commitBlockBlobList&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitBlockBlobList&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -586,7 +586,7 @@ from("direct:start")
 --------------------------------------------------------------------------------
 
 from("direct:start")
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=getBlobBlockList&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlobBlockList&serviceClient=#client")
   .log("${body}")
   .to("mock:result");
 --------------------------------------------------------------------------------
@@ -598,7 +598,7 @@ from("direct:start")
 --------------------------------------------------------------------------------
 
 from("direct:start")
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=createAppendBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=createAppendBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -616,7 +616,7 @@ from("direct:start")
 
     // of course you can set whatever headers you like, refer to the headers section to learn more
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=commitAppendBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitAppendBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -626,7 +626,7 @@ from("direct:start")
 --------------------------------------------------------------------------------
 
 from("direct:start")
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=createPageBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=createPageBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -645,7 +645,7 @@ from("direct:start")
     exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
     exchange.getIn().setBody(dataStream);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=uploadPageBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadPageBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -660,7 +660,7 @@ from("direct:start")
 
     exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=resizePageBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=resizePageBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -675,7 +675,7 @@ from("direct:start")
 
     exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=clearPageBlob&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=clearPageBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -690,7 +690,7 @@ from("direct:start")
 
     exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
   })
-  .to("azure-storage-blob:/camelazure/container1?blobName=blob&operation=getPageBlobRanges&serviceClient=#client")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getPageBlobRanges&serviceClient=#client")
   .log("${body}")
   .to("mock:result");
 --------------------------------------------------------------------------------
