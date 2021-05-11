@@ -549,6 +549,7 @@
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
     <swagger-java-parser-version>1.0.51</swagger-java-parser-version>
     <swagger-java-version>1.6.2</swagger-java-version>
+    <swagger-openapi3-version>2.1.9</swagger-openapi3-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
     <testcontainers-version>1.15.3</testcontainers-version>
