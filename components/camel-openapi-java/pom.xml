@@ -82,6 +82,12 @@
             <artifactId>apicurio-data-models</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>2.1.9</version>
+        </dependency>
+
 
         <!-- servlet api -->
         <dependency>
