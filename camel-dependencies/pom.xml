@@ -232,8 +232,6 @@
     <google-cloud-functions-bom-version>1.0.8</google-cloud-functions-bom-version>
     <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
     <google-cloud-guava-version>30.0-jre</google-cloud-guava-version>
-    <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
-    <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
     <google-guava-version>19.0</google-guava-version>
     <google-mail-guava-version>17.0</google-mail-guava-version>
     <google-maps-services-version>0.10.1</google-maps-services-version>
