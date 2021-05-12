@@ -6368,6 +6368,9 @@
           "security-definitions" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesDefinition"
           },
+          "security-requirements" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesRequirement"
+          },
           "skip-binding-on-error-code" : {
             "type" : "string"
           },
@@ -6513,6 +6516,14 @@
           },
           "oauth2" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOAuth2"
+          }
+        }
+      },
+      "org.apache.camel.model.rest.RestSecuritiesRequirement" : {
+        "type" : "object",
+        "properties" : {
+          "security-requirement" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
           }
         }
       },

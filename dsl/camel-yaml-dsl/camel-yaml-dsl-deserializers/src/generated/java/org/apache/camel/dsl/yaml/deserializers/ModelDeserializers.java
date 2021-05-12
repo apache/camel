@@ -211,6 +211,7 @@ import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
+import org.apache.camel.model.rest.RestSecuritiesRequirement;
 import org.apache.camel.model.rest.RestSecurityApiKey;
 import org.apache.camel.model.rest.RestSecurityBasicAuth;
 import org.apache.camel.model.rest.RestSecurityOAuth2;
@@ -10834,6 +10835,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "security-definitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition"),
+                    @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.RestSecuritiesRequirement"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "string"),
                     @YamlProperty(name = "tag", type = "string"),
                     @YamlProperty(name = "verb", type = "array:org.apache.camel.model.rest.VerbDefinition")
@@ -10891,6 +10893,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "security-definitions": {
                     org.apache.camel.model.rest.RestSecuritiesDefinition val = asType(node, org.apache.camel.model.rest.RestSecuritiesDefinition.class);
                     target.setSecurityDefinitions(val);
+                    break;
+                }
+                case "security-requirements": {
+                    org.apache.camel.model.rest.RestSecuritiesRequirement val = asType(node, org.apache.camel.model.rest.RestSecuritiesRequirement.class);
+                    target.setSecurityRequirements(val);
                     break;
                 }
                 case "skip-binding-on-error-code": {
@@ -11242,6 +11249,44 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     }
                     existing.add(val);
                     target.setSecurityDefinitions(existing);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.rest.RestSecuritiesRequirement.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "security-requirements",
+            properties = @YamlProperty(name = "security-requirement", type = "object:org.apache.camel.model.rest.SecurityDefinition")
+    )
+    public static class RestSecuritiesRequirementDeserializer extends YamlDeserializerBase<RestSecuritiesRequirement> {
+        public RestSecuritiesRequirementDeserializer() {
+            super(RestSecuritiesRequirement.class);
+        }
+
+        @Override
+        protected RestSecuritiesRequirement newInstance() {
+            return new RestSecuritiesRequirement();
+        }
+
+        @Override
+        protected boolean setProperty(RestSecuritiesRequirement target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "security-requirement": {
+                    org.apache.camel.model.rest.SecurityDefinition val = asType(node, org.apache.camel.model.rest.SecurityDefinition.class);
+                    java.util.List<org.apache.camel.model.rest.SecurityDefinition> existing = target.getSecurityRequirements();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setSecurityRequirements(existing);
                     break;
                 }
                 default: {

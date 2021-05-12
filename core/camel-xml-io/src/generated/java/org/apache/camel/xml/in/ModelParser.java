@@ -998,6 +998,7 @@ public class ModelParser extends BaseParser {
                 case "post": doAdd(doParsePostVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "put": doAdd(doParsePutVerbDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "securityDefinitions": def.setSecurityDefinitions(doParseRestSecuritiesDefinition()); break;
+                case "securityRequirements": def.setSecurityRequirements(doParseRestSecuritiesRequirement()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -2747,6 +2748,16 @@ public class ModelParser extends BaseParser {
                 default: return false;
             }
             return true;
+        }, noValueHandler());
+    }
+    protected RestSecuritiesRequirement doParseRestSecuritiesRequirement() throws IOException, XmlPullParserException {
+        return doParse(new RestSecuritiesRequirement(),
+            noAttributeHandler(), (def, key) -> {
+            if ("securityRequirement".equals(key)) {
+                doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements);
+                return true;
+            }
+            return false;
         }, noValueHandler());
     }
     protected RestOperationResponseHeaderDefinition doParseRestOperationResponseHeaderDefinition() throws IOException, XmlPullParserException {
