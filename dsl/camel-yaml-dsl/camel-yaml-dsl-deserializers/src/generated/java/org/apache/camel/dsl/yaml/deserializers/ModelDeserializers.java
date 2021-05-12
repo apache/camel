@@ -11793,7 +11793,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "default-value", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "name", type = "string", required = true)
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "required", type = "boolean")
             }
     )
     public static class RouteTemplateParameterDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateParameterDefinition> {
@@ -11823,6 +11824,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
+                    break;
+                }
+                case "required": {
+                    String val = asText(node);
+                    target.setRequired(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 default: {

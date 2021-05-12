@@ -21,6 +21,8 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
+import org.apache.camel.model.ToDefinition
+import org.junit.jupiter.api.Assertions
 
 class RouteTemplateTest extends YamlTestSupport {
     def "create template"() {
@@ -124,4 +126,57 @@ class RouteTemplateTest extends YamlTestSupport {
                 }
             }
     }
+
+    def "create template with optional properties"() {
+        when:
+        loadRoutes """
+                - template:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "bar"
+                        required: false
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                        - to: "mock:result?retainFirst={{?bar}}"
+            """
+        then:
+        context.routeTemplateDefinitions.size() == 1
+
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            configurer == null
+
+            templateParameters.any {
+                it.name == 'foo' && it.defaultValue == null && it.isRequired()
+            }
+            templateParameters.any {
+                it.name == 'bar' && it.defaultValue == null && !it.isRequired()
+            }
+
+            route.input.endpointUri == 'direct:{{foo}}'
+            with (route.outputs[0], ToDefinition) {
+                uri == 'mock:result?retainFirst={{?bar}}'
+            }
+        }
+
+        context.start()
+
+        context.addRouteFromTemplate("myRoute1", "myTemplate", [foo: "start", bar: "1"])
+        Assertions.assertNull(context.hasEndpoint("mock:result"))
+        Assertions.assertNotNull(context.hasEndpoint("mock:result?retainFirst=1"))
+        MockEndpoint mock = context.getEndpoint("mock:result?retainFirst=1", MockEndpoint)
+        mock.expectedBodiesReceived("Hello World")
+        context.createProducerTemplate().sendBody("direct:start", "Hello World");
+        mock.assertIsSatisfied()
+        mock.reset()
+
+        context.addRouteFromTemplate("myRoute2", "myTemplate", [foo: "start2"])
+        MockEndpoint mock2 = context.getEndpoint("mock:result", MockEndpoint)
+        mock2.expectedBodiesReceived("Bye World")
+        context.createProducerTemplate().sendBody("direct:start2", "Bye World");
+        mock2.assertIsSatisfied()
+    }
+
 }

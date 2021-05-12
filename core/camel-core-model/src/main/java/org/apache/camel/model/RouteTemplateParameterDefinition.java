@@ -33,6 +33,8 @@ public class RouteTemplateParameterDefinition {
     @XmlAttribute(required = true)
     String name;
     @XmlAttribute
+    Boolean required;
+    @XmlAttribute
     String defaultValue;
     @XmlAttribute
     String description;
@@ -42,8 +44,13 @@ public class RouteTemplateParameterDefinition {
 
     public RouteTemplateParameterDefinition(String name, String defaultValue, String description) {
         this.name = name;
-        this.defaultValue = defaultValue;
         this.description = description;
+        this.defaultValue = defaultValue;
+    }
+
+    public boolean isRequired() {
+        // assumed to be required if not set explicit to false
+        return required == null || required;
     }
 
     public String getName() {
@@ -51,10 +58,22 @@ public class RouteTemplateParameterDefinition {
     }
 
     /**
-     * Parameter name
+     * The name of the parameter
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getRequired() {
+        return required;
+    }
+
+    /**
+     * Whether the parameter is required or not. A parameter is required unless this option is set to false or a default
+     * value has been configured.
+     */
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
 
     public String getDefaultValue() {
@@ -62,7 +81,7 @@ public class RouteTemplateParameterDefinition {
     }
 
     /**
-     * Parameter default value
+     * Default value of the parameter. If a default value is provided then the parameter is implied not to be required.
      */
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
@@ -73,7 +92,7 @@ public class RouteTemplateParameterDefinition {
     }
 
     /**
-     * Parameter description
+     * Description of the parameter
      */
     public void setDescription(String description) {
         this.description = description;
