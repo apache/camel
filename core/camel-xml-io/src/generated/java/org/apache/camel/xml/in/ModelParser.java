@@ -1057,6 +1057,7 @@ public class ModelParser extends BaseParser {
                 case "defaultValue": def.setDefaultValue(val); break;
                 case "description": def.setDescription(val); break;
                 case "name": def.setName(val); break;
+                case "required": def.setRequired(Boolean.valueOf(val)); break;
                 default: return false;
             }
             return true;

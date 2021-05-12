@@ -262,8 +262,8 @@ public class DefaultModel implements Model {
                 if (temp.getDefaultValue() != null) {
                     prop.put(temp.getName(), temp.getDefaultValue());
                 } else {
-                    // this is a required parameter do we have that as input
-                    if (!routeTemplateContext.getParameters().containsKey(temp.getName())) {
+                    if (temp.isRequired() && !routeTemplateContext.getParameters().containsKey(temp.getName())) {
+                        // this is a required parameter which is missing
                         templatesBuilder.add(temp.getName());
                     }
                 }
@@ -271,7 +271,7 @@ public class DefaultModel implements Model {
             if (templatesBuilder.length() > 0) {
                 throw new IllegalArgumentException(
                         "Route template " + routeTemplateId + " the following mandatory parameters must be provided: "
-                                                   + templatesBuilder.toString());
+                                                   + templatesBuilder);
             }
         }
 
