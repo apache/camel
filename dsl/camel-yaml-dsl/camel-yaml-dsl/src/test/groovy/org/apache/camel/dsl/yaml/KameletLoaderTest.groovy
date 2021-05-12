@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.model.ToDefinition
 
 class KameletLoaderTest extends YamlTestSupport {
@@ -171,6 +172,57 @@ class KameletLoaderTest extends YamlTestSupport {
                         endpointUri ==~ /aws2-s3:.*/
                     }
                 }
+            }
+    }
+
+    def "kamelet with template and optional parameters"() {
+        setup:
+            loadKamelets """
+                apiVersion: camel.apache.org/v1alpha1
+                kind: Kamelet
+                metadata:
+                  name: myTemplate
+                spec:
+                  definition:
+                    required:
+                      - foo
+                      - mockName
+                    properties:
+                      mockName:
+                        type: string  
+                      foo:
+                        type: string
+                      bar:
+                        type: string
+                  template:
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - to: "mock:{{mockName}}?retainFirst={{?bar}}"
+            """
+        when:
+            withTemplate {
+                to('kamelet:myTemplate?mockName=1&foo=start&bar=1').withBody('Hello 1').send()
+                to('kamelet:myTemplate?mockName=2&foo=start').withBody('Hello 2').send()
+            }
+        then:
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+
+                templateParameters.any {
+                    it.name == 'foo' && it.defaultValue == null && it.isRequired()
+                }
+                templateParameters.any {
+                    it.name == 'bar' && it.defaultValue == null && !it.isRequired()
+                }
+            }
+            with(context.getEndpoint("mock:1?retainFirst=1", MockEndpoint)) {
+                expectedBodiesReceived("Hello World")
+                assertIsSatisfied()
+            }
+            with(context.getEndpoint("mock:2", MockEndpoint)) {
+                expectedBodiesReceived("Bye World")
+                assertIsSatisfied()
             }
     }
 

@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -98,7 +99,7 @@ public class YamlDeserializerSupport {
             return null;
         }
 
-        List<String> answer;
+        final List<String> answer;
 
         if (node.getNodeType() == NodeType.SCALAR) {
             answer = asStringList(asText(node));
@@ -119,7 +120,20 @@ public class YamlDeserializerSupport {
             return null;
         }
 
-        return asStringSet(asText(node));
+        final Set<String> answer;
+
+        if (node.getNodeType() == NodeType.SCALAR) {
+            answer = asStringSet(asText(node));
+        } else if (node.getNodeType() == NodeType.SEQUENCE) {
+            answer = new LinkedHashSet<>();
+            for (Node item : asSequenceNode(node).getValue()) {
+                answer.add(asText(item));
+            }
+        } else {
+            throw new UnsupportedNodeTypeException(node);
+        }
+
+        return answer;
     }
 
     public static Class<?>[] asClassArray(Node node) throws YamlDeserializationException {
