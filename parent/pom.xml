@@ -49,7 +49,6 @@
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.16.2</activemq-version>
         <activemq-artemis-version>2.17.0</activemq-artemis-version>
-        <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.2</ahc-version>
         <android-annotations-version>4.1.1.4</android-annotations-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
