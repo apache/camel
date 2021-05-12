@@ -95,7 +95,6 @@
         <caffeine-version>2.9.1</caffeine-version>
         <californium-version>2.6.3</californium-version>
         <cassandra-driver-version>4.11.1</cassandra-driver-version>
-        <cassandra-driver-guava-version>25.1-jre</cassandra-driver-guava-version>
         <cassandra-version>3.11.8</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
