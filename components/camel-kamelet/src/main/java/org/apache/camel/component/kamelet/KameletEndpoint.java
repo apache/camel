@@ -51,8 +51,7 @@ public class KameletEndpoint extends DefaultEndpoint {
     @UriParam(label = "producer", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
-    public KameletEndpoint(
-                           String uri,
+    public KameletEndpoint(String uri,
                            KameletComponent component,
                            String templateId,
                            String routeId) {
