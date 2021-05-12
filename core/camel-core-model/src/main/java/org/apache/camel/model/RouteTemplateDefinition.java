@@ -45,9 +45,10 @@ import org.apache.camel.spi.Metadata;
 public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     @XmlElement(name = "templateParameter")
+    @Metadata(description = "Adds a template parameter the route template uses")
     private List<RouteTemplateParameterDefinition> templateParameters;
     @XmlElement(name = "templateBean")
-    @Metadata(description = "Adds a local bean the route template uses.")
+    @Metadata(description = "Adds a local bean the route template uses")
     private List<RouteTemplateBeanDefinition> templateBeans;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
@@ -135,7 +136,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a required parameter the route template uses.
+     * Adds a required parameter the route template uses
      *
      * @param name the name of the parameter
      */
@@ -145,7 +146,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds an optional parameter the route template uses.
+     * Adds an optional parameter the route template uses
      *
      * @param name the name of the parameter
      */
@@ -155,7 +156,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds an optional parameter the route template uses.
+     * Adds an optional parameter the route template uses
      *
      * @param name        the name of the parameter
      * @param description the description of the parameter
@@ -166,7 +167,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter (will use default value if not provided) the route template uses.
+     * Adds a parameter (will use default value if not provided) the route template uses
      *
      * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
@@ -177,7 +178,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter (will use default value if not provided) the route template uses.
+     * Adds a parameter (will use default value if not provided) the route template uses
      *
      * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
@@ -202,7 +203,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a local bean the route template uses.
+     * Adds a local bean the route template uses
      *
      * @param name the name of the bean
      * @param type the type of the bean to associate the binding
@@ -219,7 +220,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a local bean the route template uses.
+     * Adds a local bean the route template uses
      *
      * @param name the name of the bean
      * @param bean the bean or a supplier for the bean
@@ -243,7 +244,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a local bean the route template uses.
+     * Adds a local bean the route template uses
      *
      * @param name the name of the bean
      * @param bean the supplier for the bean
@@ -260,7 +261,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a local bean the route template uses.
+     * Adds a local bean the route template uses
      *
      * @param name the name of the bean
      * @param type the type of the bean to associate the binding
@@ -279,7 +280,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a local bean the route template uses.
+     * Adds a local bean the route template uses
      *
      * @param name     the name of the bean
      * @param language the language to use
@@ -298,7 +299,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a local bean the route template uses (via fluent builder).
+     * Adds a local bean the route template uses (via fluent builder)
      *
      * @param  name the name of the bean
      * @return      fluent builder to choose which language and script to use for creating the bean
@@ -334,16 +335,10 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         return "RouteTemplate[" + route.getInput().getLabel() + "]";
     }
 
-    /**
-     * Adds a parameter the route template uses.
-     */
     private void addTemplateParameter(String name, String defaultValue) {
         addTemplateParameter(name, defaultValue, null);
     }
 
-    /**
-     * Adds a parameter the route template uses.
-     */
     private void addTemplateParameter(String name, String defaultValue, String description) {
         if (this.templateParameters == null) {
             this.templateParameters = new ArrayList<>();
@@ -351,9 +346,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         this.templateParameters.add(new RouteTemplateParameterDefinition(name, defaultValue, description));
     }
 
-    /**
-     * Adds an optional parameter the route template uses.
-     */
     private void addTemplateOptionalParameter(String name, String description) {
         if (this.templateParameters == null) {
             this.templateParameters = new ArrayList<>();
