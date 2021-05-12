@@ -135,7 +135,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter the route template uses.
+     * Adds a required parameter the route template uses.
      *
      * @param name the name of the parameter
      */
@@ -145,7 +145,28 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter the route template uses.
+     * Adds an optional parameter the route template uses.
+     *
+     * @param name the name of the parameter
+     */
+    public RouteTemplateDefinition templateOptionalParameter(String name) {
+        addTemplateOptionalParameter(name, null);
+        return this;
+    }
+
+    /**
+     * Adds an optional parameter the route template uses.
+     *
+     * @param name        the name of the parameter
+     * @param description the description of the parameter
+     */
+    public RouteTemplateDefinition templateOptionalParameter(String name, String description) {
+        addTemplateOptionalParameter(name, description);
+        return this;
+    }
+
+    /**
+     * Adds a parameter (will use default value if not provided) the route template uses.
      *
      * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
@@ -156,10 +177,11 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter the route template uses.
+     * Adds a parameter (will use default value if not provided) the route template uses.
      *
      * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
+     * @param description  the description of the parameter
      */
     public RouteTemplateDefinition templateParameter(String name, String defaultValue, String description) {
         addTemplateParameter(name, defaultValue, description);
@@ -168,6 +190,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     /**
      * Adds the parameters the route template uses.
+     *
+     * The keys in the map is the parameter names, and the values are optional default value. If a parameter has no
+     * default value then the parameter is required.
      *
      * @param parameters the parameters (only name and default values)
      */
@@ -324,6 +349,18 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
             this.templateParameters = new ArrayList<>();
         }
         this.templateParameters.add(new RouteTemplateParameterDefinition(name, defaultValue, description));
+    }
+
+    /**
+     * Adds an optional parameter the route template uses.
+     */
+    private void addTemplateOptionalParameter(String name, String description) {
+        if (this.templateParameters == null) {
+            this.templateParameters = new ArrayList<>();
+        }
+        RouteTemplateParameterDefinition def = new RouteTemplateParameterDefinition(name, null, description);
+        def.setRequired(false);
+        this.templateParameters.add(def);
     }
 
     /**
