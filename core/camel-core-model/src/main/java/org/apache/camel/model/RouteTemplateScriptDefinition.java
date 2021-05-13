@@ -36,6 +36,10 @@ public class RouteTemplateScriptDefinition {
     public RouteTemplateScriptDefinition() {
     }
 
+    public RouteTemplateScriptDefinition(String script) {
+        this.script = script;
+    }
+
     public String getScript() {
         return script;
     }
