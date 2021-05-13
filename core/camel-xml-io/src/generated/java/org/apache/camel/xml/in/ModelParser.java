@@ -1023,12 +1023,23 @@ public class ModelParser extends BaseParser {
     protected RouteTemplateBeanDefinition doParseRouteTemplateBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateBeanDefinition(), (def, key, val) -> {
             switch (key) {
-                case "language": def.setLanguage(val); break;
                 case "name": def.setName(val); break;
+                case "type": def.setType(val); break;
                 default: return false;
             }
             return true;
-        }, noElementHandler(), (def, val) -> def.setScript(val));
+        }, (def, key) -> {
+            switch (key) {
+                case "property": doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties); break;
+                case "script": def.setScript(doParseRouteTemplateScriptDefinition()); break;
+                default: return false;
+            }
+            return true;
+        }, noValueHandler());
+    }
+    protected RouteTemplateScriptDefinition doParseRouteTemplateScriptDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateScriptDefinition(),
+            noAttributeHandler(), noElementHandler(), (def, val) -> def.setScript(val));
     }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {

@@ -112,6 +112,8 @@ public class SupplierRegistry extends SimpleRegistry {
 
     @Override
     public void bind(String id, Class<?> type, Supplier<Object> bean) {
-        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+        if (bean != null) {
+            computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+        }
     }
 }

@@ -2065,18 +2065,24 @@
         }, {
           "type" : "object",
           "properties" : {
-            "language" : {
-              "type" : "string"
-            },
             "name" : {
               "type" : "string"
             },
-            "script" : {
+            "property" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
+            },
+            "template-script" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateScriptDefinition"
+            },
+            "type" : {
               "type" : "string"
             }
           }
         } ],
-        "required" : [ "language", "name", "script" ]
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
@@ -2119,6 +2125,14 @@
           }
         },
         "required" : [ "name" ]
+      },
+      "org.apache.camel.model.RouteTemplateScriptDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "script" : {
+            "type" : "string"
+          }
+        }
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {

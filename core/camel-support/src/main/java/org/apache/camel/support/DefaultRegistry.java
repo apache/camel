@@ -165,22 +165,28 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
 
     @Override
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
-        // automatic inject camel context in bean if its aware
-        if (camelContext != null && bean instanceof CamelContextAware) {
-            ((CamelContextAware) bean).setCamelContext(camelContext);
+        if (bean != null) {
+            // automatic inject camel context in bean if its aware
+            if (camelContext != null && bean instanceof CamelContextAware) {
+                ((CamelContextAware) bean).setCamelContext(camelContext);
+            }
+            fallbackRegistry.bind(id, type, bean);
         }
-        fallbackRegistry.bind(id, type, bean);
     }
 
     @Override
     public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
-        // wrap in cached supplier (memorize)
-        supplierRegistry.bind(id, type, Suppliers.memorize(bean));
+        if (bean != null) {
+            // wrap in cached supplier (memorize)
+            supplierRegistry.bind(id, type, Suppliers.memorize(bean));
+        }
     }
 
     @Override
     public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
-        supplierRegistry.bind(id, type, bean);
+        if (bean != null) {
+            supplierRegistry.bind(id, type, bean);
+        }
     }
 
     @Override

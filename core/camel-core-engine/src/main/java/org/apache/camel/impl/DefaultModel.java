@@ -22,15 +22,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DefaultRouteTemplateContext;
@@ -55,9 +59,13 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ScriptingLanguage;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScriptHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.ObjectHelper;
 
 public class DefaultModel implements Model {
 
@@ -336,16 +344,22 @@ public class DefaultModel implements Model {
 
     private void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target) throws Exception {
         for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
+            final Map<String, Object> props = new HashMap<>();
+            if (b.getProperties() != null) {
+                b.getProperties().forEach(p -> props.put(p.getKey(), p.getValue()));
+            }
             if (b.getBeanSupplier() != null) {
-                // bean class is optional for supplier
-                if (b.getBeanClass() != null) {
-                    routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
-                } else {
-                    routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
+                if (props.isEmpty()) {
+                    // bean class is optional for supplier
+                    if (b.getBeanClass() != null) {
+                        routeTemplateContext.bind(b.getName(), b.getBeanClass(), b.getBeanSupplier());
+                    } else {
+                        routeTemplateContext.bind(b.getName(), b.getBeanSupplier());
+                    }
                 }
             } else if (b.getScript() != null) {
-                final String script = b.getScript();
-                final Language lan = camelContext.resolveLanguage(b.getLanguage());
+                final String script = b.getScript().getScript();
+                final Language lan = camelContext.resolveLanguage(b.getType());
                 final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
                 final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
                 if (slan != null) {
@@ -354,7 +368,11 @@ public class DefaultModel implements Model {
                         Map<String, Object> bindings = new HashMap<>();
                         // use rtx as the short-hand name, as context would imply its CamelContext
                         bindings.put("rtc", routeTemplateContext);
-                        return slan.evaluate(script, bindings, clazz);
+                        Object local = slan.evaluate(script, bindings, clazz);
+                        if (!props.isEmpty()) {
+                            setPropertiesOnTarget(camelContext, local, props);
+                        }
+                        return local;
                     });
                 } else {
                     // exchange based languages needs a dummy exchange to be evaluated
@@ -365,7 +383,11 @@ public class DefaultModel implements Model {
                             String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
                             if (text != null) {
                                 Expression exp = lan.createExpression(text);
-                                return exp.evaluate(dummy, clazz);
+                                Object local = exp.evaluate(dummy, clazz);
+                                if (!props.isEmpty()) {
+                                    setPropertiesOnTarget(camelContext, local, props);
+                                }
+                                return local;
                             } else {
                                 return null;
                             }
@@ -374,10 +396,30 @@ public class DefaultModel implements Model {
                         }
                     });
                 }
-            } else if (b.getBeanClass() != null) {
+            } else if (b.getBeanClass() != null || b.getType() != null && b.getType().startsWith("#class:")) {
+                Class<?> clazz = b.getBeanClass() != null
+                        ? b.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(7));
                 // we only have the bean class so we use that to create a new bean via the injector
-                routeTemplateContext.bind(b.getName(), b.getBeanClass(),
-                        () -> camelContext.getInjector().newInstance(b.getBeanClass()));
+                routeTemplateContext.bind(b.getName(), clazz,
+                        () -> {
+                            Object local = camelContext.getInjector().newInstance(clazz);
+                            if (!props.isEmpty()) {
+                                setPropertiesOnTarget(camelContext, local, props);
+                            }
+                            return local;
+                        });
+            } else if (b.getType() != null && b.getType().startsWith("#type:")) {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
+                Set<?> found = getCamelContext().getRegistry().findByType(clazz);
+                if (found == null || found.isEmpty()) {
+                    throw new NoSuchBeanException(null, clazz.getName());
+                } else if (found.size() > 1) {
+                    throw new NoSuchBeanException(
+                            "Found " + found.size() + " beans of type: " + clazz + ". Only one bean expected.");
+                } else {
+                    // do not set properties when using #type as it uses an existing shared bean
+                    routeTemplateContext.bind(b.getName(), clazz, found.iterator().next());
+                }
             }
         }
     }
@@ -618,6 +660,61 @@ public class DefaultModel implements Model {
         } catch (Exception e) {
             // need to ignore not same type and return it as null
             return null;
+        }
+    }
+
+    private static void setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties) {
+        ObjectHelper.notNull(context, "context");
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
+
+        if (target instanceof CamelContext) {
+            throw new UnsupportedOperationException("Configuring the Camel Context is not supported");
+        }
+
+        PropertyConfigurer configurer = null;
+        if (target instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(target);
+            configurer = ((Component) target).getComponentPropertyConfigurer();
+        }
+
+        if (configurer == null) {
+            // see if there is a configurer for it
+            configurer = context.adapt(ExtendedCamelContext.class)
+                    .getConfigurerResolver()
+                    .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+        }
+
+        try {
+            PropertyBindingSupport.build()
+                    .withMandatory(true)
+                    .withRemoveParameters(false)
+                    .withConfigurer(configurer)
+                    .withIgnoreCase(true)
+                    .withFlattenProperties(true)
+                    .bind(context, target, properties);
+        } catch (PropertyBindingException e) {
+            String key = e.getOptionKey();
+            if (key == null) {
+                String prefix = e.getOptionPrefix();
+                if (prefix != null && !prefix.endsWith(".")) {
+                    prefix = "." + prefix;
+                }
+
+                key = prefix != null
+                        ? prefix + "." + e.getPropertyName()
+                        : e.getPropertyName();
+            }
+
+            // enrich the error with more precise details with option prefix and key
+            throw new PropertyBindingException(
+                    e.getTarget(),
+                    e.getPropertyName(),
+                    e.getValue(),
+                    null,
+                    key,
+                    e.getCause());
         }
     }
 

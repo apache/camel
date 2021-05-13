@@ -223,7 +223,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
      * Adds a local bean the route template uses
      *
      * @param name the name of the bean
-     * @param bean the bean or a supplier for the bean
+     * @param bean the bean, or reference to bean (#class or #type), or a supplier for the bean
      */
     @SuppressWarnings("unchecked")
     public RouteTemplateDefinition templateBean(String name, Object bean) {
@@ -236,6 +236,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
         } else if (bean instanceof Supplier) {
             def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
+        } else if (bean instanceof String) {
+            // its a string type
+            def.setType((String) bean);
         } else {
             def.setBeanSupplier(ctx -> bean);
         }
@@ -292,7 +295,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
         def.setName(name);
-        def.setLanguage(language);
+        def.setType(language);
         def.setScript(script);
         templateBeans.add(def);
         return this;
