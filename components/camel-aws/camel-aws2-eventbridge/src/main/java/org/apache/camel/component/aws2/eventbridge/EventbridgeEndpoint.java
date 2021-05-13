@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -76,9 +77,8 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        eventbridgeClient
-                = configuration.getEventbridgeClient() != null
-                        ? configuration.getEventbridgeClient() : createEventbridgeClient();
+        eventbridgeClient = configuration.getEventbridgeClient() != null
+                ? configuration.getEventbridgeClient() : EventbridgeClientFactory.getEventbridgeClient(configuration).getEventbridgeClient();
     }
 
     @Override
@@ -97,47 +97,5 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
-    }
-
-    EventBridgeClient createEventbridgeClient() {
-        EventBridgeClient client = null;
-        EventBridgeClientBuilder clientBuilder = EventBridgeClient.builder();
-        ProxyConfiguration.Builder proxyConfig = null;
-        ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
-            proxyConfig.endpoint(proxyEndpoint);
-            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(StaticCredentialsProvider.create(cred));
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
-        }
-        if (configuration.isOverrideEndpoint()) {
-            clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
-        }
-        if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(
-                    AttributeMap.builder().put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE).build());
-            clientBuilder.httpClient(ahc);
-        }
-        client = clientBuilder.build();
-        return client;
     }
 }
