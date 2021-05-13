@@ -45,7 +45,7 @@ public class RouteTemplateBeanDefinition {
     private String type;
     @XmlElement(name = "property")
     private List<PropertyDefinition> properties;
-    @XmlElement
+    @XmlElement(name = "script")
     private RouteTemplateScriptDefinition script;
     // special for java-dsl to allow using lambda style
     @XmlTransient
