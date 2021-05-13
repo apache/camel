@@ -98,7 +98,7 @@ class RouteTemplateTest extends YamlTestSupport {
                     beans:
                       - name: "myProcessor"
                         type: "groovy"
-                        script: "return new ${MyUppercaseProcessor.class.name}"
+                        script: "new ${MyUppercaseProcessor.class.name}()"
                     from:
                       uri: "direct:{{directName}}"
                       steps:
