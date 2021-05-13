@@ -101,7 +101,9 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
 
     @Override
     public void bind(String id, Class type, Object bean) {
-        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+        if (bean != null) {
+            computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+        }
     }
 
     @Override

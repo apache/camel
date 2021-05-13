@@ -73,6 +73,7 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.RouteTemplateScriptDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
@@ -11739,9 +11740,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "template-bean",
             properties = {
-                    @YamlProperty(name = "language", type = "string", required = true),
                     @YamlProperty(name = "name", type = "string", required = true),
-                    @YamlProperty(name = "script", type = "string", required = true)
+                    @YamlProperty(name = "property", type = "array:org.apache.camel.model.PropertyDefinition"),
+                    @YamlProperty(name = "template-script", type = "object:org.apache.camel.model.RouteTemplateScriptDefinition"),
+                    @YamlProperty(name = "type", type = "string", required = true)
             }
     )
     public static class RouteTemplateBeanDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateBeanDefinition> {
@@ -11763,19 +11765,24 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RouteTemplateBeanDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "language": {
-                    String val = asText(node);
-                    target.setLanguage(val);
-                    break;
-                }
                 case "name": {
                     String val = asText(node);
                     target.setName(val);
                     break;
                 }
-                case "script": {
-                    String val = asText(node);
+                case "property": {
+                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
+                    target.setProperties(val);
+                    break;
+                }
+                case "template-script": {
+                    org.apache.camel.model.RouteTemplateScriptDefinition val = asType(node, org.apache.camel.model.RouteTemplateScriptDefinition.class);
                     target.setScript(val);
+                    break;
+                }
+                case "type": {
+                    String val = asText(node);
+                    target.setType(val);
                     break;
                 }
                 default: {
@@ -11829,6 +11836,39 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "required": {
                     String val = asText(node);
                     target.setRequired(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.RouteTemplateScriptDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "template-script",
+            properties = @YamlProperty(name = "script", type = "string")
+    )
+    public static class RouteTemplateScriptDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateScriptDefinition> {
+        public RouteTemplateScriptDefinitionDeserializer() {
+            super(RouteTemplateScriptDefinition.class);
+        }
+
+        @Override
+        protected RouteTemplateScriptDefinition newInstance() {
+            return new RouteTemplateScriptDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(RouteTemplateScriptDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "script": {
+                    String val = asText(node);
+                    target.setScript(val);
                     break;
                 }
                 default: {
