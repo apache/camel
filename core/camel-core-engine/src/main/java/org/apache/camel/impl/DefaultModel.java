@@ -346,7 +346,7 @@ public class DefaultModel implements Model {
         for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
             final Map<String, Object> props = new HashMap<>();
             if (b.getProperties() != null) {
-                b.getProperties().forEach((p) -> props.put(p.getKey(), p.getValue()));
+                b.getProperties().forEach(p -> props.put(p.getKey(), p.getValue()));
             }
             if (b.getBeanSupplier() != null) {
                 if (props.isEmpty()) {
