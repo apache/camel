@@ -16,21 +16,17 @@
  */
 package org.apache.camel.component.kamelet;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
-public class KameletLocalBeanTypeTest extends CamelTestSupport {
-
-    @BindToRegistry("myBar")
-    private MyBar bar = new MyBar();
+public class KameletLocalBeanClassThreeTest extends CamelTestSupport {
 
     @Test
     public void testOne() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi John we are going to Murphys");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hi John we are going to Moes");
 
         template.sendBody("direct:bar", "John");
 
@@ -49,25 +45,30 @@ public class KameletLocalBeanTypeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("whereTo")
-                        .templateBean("myBar", "#type:org.apache.camel.component.kamelet.KameletLocalBeanTypeTest$Bar")
+                        .templateParameter("bar")
+                        .templateBean("myBar").property("bar", "{{bar}}").beanClass(MyBar.class)
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
                 from("direct:bar")
-                        .kamelet("whereTo")
+                        .kamelet("whereTo?bar=Moes")
                         .to("mock:result");
             }
         };
     }
 
-    public interface Bar {
-        String where(String name);
-    }
+    public static class MyBar {
 
-    public static class MyBar implements Bar {
+        private String bar;
 
-        private final String bar = "Murphys";
+        public String getBar() {
+            return bar;
+        }
+
+        public void setBar(String bar) {
+            this.bar = bar;
+        }
 
         public String where(String name) {
             return "Hi " + name + " we are going to " + bar;

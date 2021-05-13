@@ -69,6 +69,7 @@ RouteTemplateBeanDefinition
 RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition
+RouteTemplateScriptDefinition
 RouteTemplatesDefinition
 RoutesDefinition
 RoutingSlipDefinition

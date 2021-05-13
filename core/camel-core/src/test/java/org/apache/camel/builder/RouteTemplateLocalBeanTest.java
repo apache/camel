@@ -587,6 +587,38 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testLocalBeanClassPropertiesFluent() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar").templateParameter("hi")
+                        .templateBean("myBar").property("prefix", "{{hi}}").beanClass(BuilderThreeProcessor.class)
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .parameter("hi", "Davs")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("DavsBuilder3 World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
     public static class BuilderTwoProcessor implements Processor {
 
         private String prefix = "";
@@ -601,6 +633,24 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getMessage().setBody(prefix + "Builder2 " + exchange.getMessage().getBody());
+        }
+    }
+
+    public static class BuilderThreeProcessor implements Processor {
+
+        private String prefix = "";
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            exchange.getMessage().setBody(prefix + "Builder3 " + exchange.getMessage().getBody());
         }
     }
 

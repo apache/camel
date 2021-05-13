@@ -16,12 +16,16 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.Metadata;
@@ -39,8 +43,10 @@ public class RouteTemplateBeanDefinition {
     private String name;
     @XmlAttribute(required = true)
     private String type;
-    @XmlValue
-    private String script;
+    @XmlElement(name = "property")
+    private List<PropertyDefinition> properties;
+    @XmlElement
+    private RouteTemplateScriptDefinition script;
     // special for java-dsl to allow using lambda style
     @XmlTransient
     private Class<?> beanClass;
@@ -93,18 +99,15 @@ public class RouteTemplateBeanDefinition {
         this.type = type;
     }
 
-    public String getScript() {
-        return script;
+    public List<PropertyDefinition> getProperties() {
+        return properties;
     }
 
     /**
-     * The script to execute that creates the bean when using scripting languages.
-     *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     * Optional properties to set on the created local bean
      */
-    public void setScript(String script) {
-        this.script = script;
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
     }
 
     public RouteTemplateContext.BeanSupplier<Object> getBeanSupplier() {
@@ -116,6 +119,31 @@ public class RouteTemplateBeanDefinition {
      */
     public void setBeanSupplier(RouteTemplateContext.BeanSupplier<Object> beanSupplier) {
         this.beanSupplier = beanSupplier;
+    }
+
+    public RouteTemplateScriptDefinition getScript() {
+        return script;
+    }
+
+    /**
+     * The script to execute that creates the bean when using scripting languages.
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     */
+    public void setScript(RouteTemplateScriptDefinition script) {
+        this.script = script;
+    }
+
+    /**
+     * The script to execute that creates the bean when using scripting languages.
+     *
+     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
+     */
+    public void setScript(String script) {
+        this.script = new RouteTemplateScriptDefinition();
+        this.script.setScript(script);
     }
 
     // fluent builders
@@ -236,6 +264,31 @@ public class RouteTemplateBeanDefinition {
         setType("ognl");
         setScript(script);
         return parent;
+    }
+
+    /**
+     * Sets a property to set on the created local bean
+     *
+     * @param key   the property name
+     * @param value the property value
+     */
+    public RouteTemplateBeanDefinition property(String key, String value) {
+        if (properties == null) {
+            properties = new ArrayList<>();
+        }
+        properties.add(new PropertyDefinition(key, value));
+        return this;
+    }
+
+    /**
+     * Sets properties to set on the created local bean
+     */
+    public RouteTemplateBeanDefinition properties(Map<String, String> properties) {
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
+        }
+        properties.forEach((k, v) -> this.properties.add(new PropertyDefinition(k, v)));
+        return this;
     }
 
 }

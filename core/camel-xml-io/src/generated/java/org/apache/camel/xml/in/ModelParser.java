@@ -1028,7 +1028,18 @@ public class ModelParser extends BaseParser {
                 default: return false;
             }
             return true;
-        }, noElementHandler(), (def, val) -> def.setScript(val));
+        }, (def, key) -> {
+            switch (key) {
+                case "property": doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties); break;
+                case "script": def.setScript(doParseRouteTemplateScriptDefinition()); break;
+                default: return false;
+            }
+            return true;
+        }, noValueHandler());
+    }
+    protected RouteTemplateScriptDefinition doParseRouteTemplateScriptDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RouteTemplateScriptDefinition(),
+            noAttributeHandler(), noElementHandler(), (def, val) -> def.setScript(val));
     }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
