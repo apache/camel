@@ -1600,6 +1600,15 @@ A route template parameter
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="templateScript" type="tns:routeTemplateScriptDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A route template script (local bean) when using scripting languages such as
+groovy
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="threadPool" type="tns:camelThreadPoolFactoryBean">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -10289,25 +10298,42 @@ Whether tracing is enabled on this route.
   </xs:complexType>
 
   <xs:complexType name="routeTemplateBeanDefinition">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="name" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:property"/>
+      <xs:element minOccurs="0" name="script" type="tns:routeTemplateScriptDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+The script to execute that creates the bean when using scripting languages. If
+the script use the prefix resource: such as
+resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy,
+then its loaded from the external resource.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
 Bean name.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="language" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The language to use for creating the bean (such as groovy, joor).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:simpleContent>
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+What type to use for creating the bean. Can be one of:
+#class,#type,bean,groovy,joor,language,mvel,ognl. #class or #type then the bean
+is created via the fully qualified classname, such as #class:com.foo.MyBean The
+others are scripting languages that gives more power to create the bean with an
+inlined code in the script section, such as using groovy.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
+
+  <xs:simpleType name="routeTemplateScriptDefinition">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
 
   <xs:complexType name="routeTemplateContextRefDefinition">
     <xs:sequence/>
