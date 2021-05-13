@@ -2127,12 +2127,16 @@
         "required" : [ "name" ]
       },
       "org.apache.camel.model.RouteTemplateScriptDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "script" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "script" : {
+              "type" : "string"
+            }
           }
-        }
+        } ]
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
         "oneOf" : [ {

@@ -221,7 +221,7 @@ class KameletTest extends YamlTestSupport {
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
-                        type: ${MyUppercaseProcessor.class.name}
+                        type: "#class:${MyUppercaseProcessor.class.name}"
                     from:
                       uri: "kamelet:source"
                       steps:

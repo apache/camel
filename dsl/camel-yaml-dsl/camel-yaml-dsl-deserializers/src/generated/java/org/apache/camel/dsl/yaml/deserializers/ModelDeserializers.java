@@ -11847,6 +11847,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.RouteTemplateScriptDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "template-script",
@@ -11860,6 +11861,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteTemplateScriptDefinition newInstance() {
             return new RouteTemplateScriptDefinition();
+        }
+
+        @Override
+        protected RouteTemplateScriptDefinition newInstance(String value) {
+            return new RouteTemplateScriptDefinition(value);
         }
 
         @Override

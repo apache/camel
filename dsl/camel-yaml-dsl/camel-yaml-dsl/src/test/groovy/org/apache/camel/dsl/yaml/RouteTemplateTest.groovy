@@ -55,7 +55,7 @@ class RouteTemplateTest extends YamlTestSupport {
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
-                        type: ${MyUppercaseProcessor.class.name}
+                        type: "#class:${MyUppercaseProcessor.class.name}"
                     from:
                       uri: "direct:{{directName}}"
                       steps:
@@ -84,7 +84,50 @@ class RouteTemplateTest extends YamlTestSupport {
 
             with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
                 id == 'myTemplate'
-                configurer != null
+                templateBeans.size() == 1
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "create template with script"() {
+        setup:
+            loadRoutes """
+                - template:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myProcessor"
+                        type: "groovy"
+                        script: "return new ${MyUppercaseProcessor.class.name}"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'HELLO'
+            }
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+                id == 'myTemplate'
+                templateBeans.size() == 1
             }
 
             MockEndpoint.assertIsSatisfied(context)
