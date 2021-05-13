@@ -229,13 +229,29 @@ public class RouteTemplateBeanDefinition {
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
      * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
      *
-     * @param language the custom language (a language not provided out of the box from Camel)
+     * @param language the language
      * @param script   the script
      */
     public RouteTemplateDefinition language(String language, String script) {
         setType(language);
         setScript(script);
         return parent;
+    }
+
+    /**
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
+     */
+    public RouteTemplateBeanDefinition type(String type) {
+        if (!type.startsWith("#type:") && !type.startsWith("#class:")) {
+            type = "#class:" + type;
+        }
+        setType(type);
+        return this;
     }
 
     /**
@@ -289,6 +305,10 @@ public class RouteTemplateBeanDefinition {
         }
         properties.forEach((k, v) -> this.properties.add(new PropertyDefinition(k, v)));
         return this;
+    }
+
+    public RouteTemplateDefinition end() {
+        return parent;
     }
 
 }
