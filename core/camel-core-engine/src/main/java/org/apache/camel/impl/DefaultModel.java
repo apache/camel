@@ -385,15 +385,10 @@ public class DefaultModel implements Model {
                         () -> camelContext.getInjector().newInstance(clazz));
             } else if (b.getType() != null && b.getType().startsWith("#type:")) {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
-                routeTemplateContext.bind(b.getName(), clazz,
-                        () -> {
-                            Set<?> set = camelContext.getRegistry().findByType(clazz);
-                            if (set.size() == 1) {
-                                return set.iterator().next();
-                            } else {
-                                return null;
-                            }
-                        });
+                Set<?> set = camelContext.getRegistry().findByType(clazz);
+                if (set.size() == 1) {
+                    routeTemplateContext.bind(b.getName(), clazz, set.iterator().next());
+                }
             }
         }
     }
