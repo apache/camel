@@ -52,9 +52,9 @@ public class EKS2Component extends DefaultComponent {
         EKS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new EKS2Configuration();
         EKS2Endpoint endpoint = new EKS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (configuration.getEksClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getEksClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, Amazon eks client or accessKey and secretKey must be specified");
         }
 
         return endpoint;
