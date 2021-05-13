@@ -55,6 +55,8 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
@@ -210,6 +212,18 @@ public class EventbridgeConfiguration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    /**
+     * Set whether the Eventbridge client should expect to load credentials through a default credentials provider or to expect
+     * static credentials to be passed in.
+     */
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
     // *************************************************
     //
