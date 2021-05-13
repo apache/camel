@@ -37,16 +37,13 @@ public class RouteTemplateBeanDefinition {
     private RouteTemplateDefinition parent;
     @XmlAttribute(required = true)
     private String name;
-    @XmlTransient
-    private Class<?> beanClass;
-    // it only makes sense to use the languages that are general purpose scripting languages
     @XmlAttribute(required = true)
-    @Metadata(enums = "bean,groovy,joor,language,mvel,ognl")
-    private String language;
+    private String type;
     @XmlValue
-    @Metadata(required = true)
     private String script;
     // special for java-dsl to allow using lambda style
+    @XmlTransient
+    private Class<?> beanClass;
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
 
@@ -80,15 +77,20 @@ public class RouteTemplateBeanDefinition {
         this.beanClass = beanType;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getType() {
+        return type;
     }
 
     /**
-     * The language to use for creating the bean (such as groovy, joor)
+     * What type to use for creating the bean. Can be one of: #class,#type,bean,groovy,joor,language,mvel,ognl.
+     *
+     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
+     *
+     * The others are scripting languages that gives more power to create the bean with an inlined code in the script
+     * section, such as using groovy.
      */
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getScript() {
@@ -96,7 +98,7 @@ public class RouteTemplateBeanDefinition {
     }
 
     /**
-     * The script to execute that creates the bean.
+     * The script to execute that creates the bean when using scripting languages.
      *
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
      * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
@@ -120,6 +122,27 @@ public class RouteTemplateBeanDefinition {
     // ----------------------------------------------------
 
     /**
+     * Creates the bean from the given class type
+     *
+     * @param type the type of the class to create as bean
+     */
+    public RouteTemplateDefinition beanClass(Class<?> type) {
+        setType("#class:" + type.getName());
+        return parent;
+    }
+
+    /**
+     * Lookup in the registry for bean instances of the given type, and if there is a single instance of the given type,
+     * then that bean will be used as the local bean (danger this bean is shared)
+     *
+     * @param type the type of the class to lookup in the registry
+     */
+    public RouteTemplateDefinition beanType(Class<?> type) {
+        setType("#type:" + type.getName());
+        return parent;
+    }
+
+    /**
      * Calls a method on a bean for creating the local template bean
      *
      * @param type the bean class to call
@@ -135,7 +158,7 @@ public class RouteTemplateBeanDefinition {
      * @param method the name of the method to call
      */
     public RouteTemplateDefinition bean(Class<?> type, String method) {
-        setLanguage("bean");
+        setType("bean");
         if (method != null) {
             setScript(type.getName() + "?method=" + method);
         } else {
@@ -153,7 +176,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition groovy(String script) {
-        setLanguage("groovy");
+        setType("groovy");
         setScript(script);
         return parent;
     }
@@ -167,7 +190,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition joor(String script) {
-        setLanguage("joor");
+        setType("joor");
         setScript(script);
         return parent;
     }
@@ -182,7 +205,7 @@ public class RouteTemplateBeanDefinition {
      * @param script   the script
      */
     public RouteTemplateDefinition language(String language, String script) {
-        setLanguage(language);
+        setType(language);
         setScript(script);
         return parent;
     }
@@ -196,7 +219,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition mvel(String script) {
-        setLanguage("mvel");
+        setType("mvel");
         setScript(script);
         return parent;
     }
@@ -210,7 +233,7 @@ public class RouteTemplateBeanDefinition {
      * @param script the script
      */
     public RouteTemplateDefinition ognl(String script) {
-        setLanguage("ognl");
+        setType("ognl");
         setScript(script);
         return parent;
     }

@@ -10337,31 +10337,21 @@ Reference to the route templates in the xml dsl.
     <xs:attribute name="name" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-The name of the parameter.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="required" type="xs:boolean">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Whether the parameter is required or not. A parameter is required unless this
-option is set to false or a default value has been configured. Default value:
-false
+Parameter name.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="defaultValue" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Default value of the parameter. If a default value is provided then the
-parameter is implied not to be required.
+Parameter default value.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="description" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Description of the parameter.
+Parameter description.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>

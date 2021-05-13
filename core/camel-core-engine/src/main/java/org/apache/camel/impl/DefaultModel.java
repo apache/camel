@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -345,7 +346,7 @@ public class DefaultModel implements Model {
                 }
             } else if (b.getScript() != null) {
                 final String script = b.getScript();
-                final Language lan = camelContext.resolveLanguage(b.getLanguage());
+                final Language lan = camelContext.resolveLanguage(b.getType());
                 final Class<?> clazz = b.getBeanClass() != null ? b.getBeanClass() : Object.class;
                 final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
                 if (slan != null) {
@@ -378,6 +379,21 @@ public class DefaultModel implements Model {
                 // we only have the bean class so we use that to create a new bean via the injector
                 routeTemplateContext.bind(b.getName(), b.getBeanClass(),
                         () -> camelContext.getInjector().newInstance(b.getBeanClass()));
+            } else if (b.getType() != null && b.getType().startsWith("#class:")) {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(7));
+                routeTemplateContext.bind(b.getName(), clazz,
+                        () -> camelContext.getInjector().newInstance(clazz));
+            } else if (b.getType() != null && b.getType().startsWith("#type:")) {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(b.getType().substring(6));
+                routeTemplateContext.bind(b.getName(), clazz,
+                        () -> {
+                            Set<?> set = camelContext.getRegistry().findByType(clazz);
+                            if (set.size() == 1) {
+                                return set.iterator().next();
+                            } else {
+                                return null;
+                            }
+                        });
             }
         }
     }

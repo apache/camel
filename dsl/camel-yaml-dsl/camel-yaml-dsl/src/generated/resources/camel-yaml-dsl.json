@@ -2065,18 +2065,18 @@
         }, {
           "type" : "object",
           "properties" : {
-            "language" : {
-              "type" : "string"
-            },
             "name" : {
               "type" : "string"
             },
             "script" : {
               "type" : "string"
+            },
+            "type" : {
+              "type" : "string"
             }
           }
         } ],
-        "required" : [ "language", "name", "script" ]
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",

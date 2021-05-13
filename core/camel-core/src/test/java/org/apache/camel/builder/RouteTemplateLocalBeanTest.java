@@ -548,7 +548,38 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         context.stop();
     }
 
-    private class BuilderProcessor implements Processor {
+    @Test
+    public void testLocalBeanClassExpressionFluent() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar").beanClass(BuilderProcessor.class)
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Builder World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    public static class BuilderProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -556,7 +587,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         }
     }
 
-    private class BuilderTwoProcessor implements Processor {
+    public static class BuilderTwoProcessor implements Processor {
 
         private String prefix = "";
 

@@ -292,7 +292,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
         RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
         def.setName(name);
-        def.setLanguage(language);
+        def.setType(language);
         def.setScript(script);
         templateBeans.add(def);
         return this;
